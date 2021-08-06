@@ -1713,6 +1713,12 @@
                   search="true" />
                 <persistence type="property" />
               </attribute>
+              <attribute qualifier="balanceAmount" type="java.lang.Double">
+                <description>Gift card movement balance amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
             </attributes>
           </itemtype>
           <!--Gift Card End-->
@@ -2337,6 +2343,11 @@
                     <persistence type="property" />
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
+                  </attribute>
+                  <attribute type="ReturnRequest" qualifier="replacementOrder">
+                    <description>To identify return Request for Order.</description>
+                    <modifiers read="true" write="true" optional="true"/>
+                    <persistence type="property"/>
                   </attribute>
                 </attributes>
             </itemtype>

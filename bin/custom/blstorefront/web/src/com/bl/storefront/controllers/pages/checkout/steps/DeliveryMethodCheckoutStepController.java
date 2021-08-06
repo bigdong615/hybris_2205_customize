@@ -135,7 +135,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
-                shippingGroup, partnerZone, true);
+                shippingGroup, partnerZone, false);
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("deliveryMethods", deliveryModes);
         return deliveryModes;

@@ -10,6 +10,7 @@ import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.product.data.AvailabilityMessage;
@@ -92,6 +93,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for cart page
@@ -183,6 +185,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
+		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel , model);
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -191,7 +194,15 @@ public class CartPageController extends AbstractCartPageController
 				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
 			}
 		}
-		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		if(BooleanUtils.isTrue(isCartForReplacementOrder(cartModel , model))){
+			cartModel.setCalculated(Boolean.TRUE);
+		}
+		else {
+			if(null != getSessionService().getAttribute(BlControllerConstants.RETURN_REQUEST)) {
+				getSessionService().removeAttribute(BlControllerConstants.RETURN_REQUEST);
+			}
+			getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		}
 		if(StringUtils.isNotEmpty(removedEntries)) {
 			GlobalMessages
 					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
@@ -1054,6 +1065,14 @@ public class CartPageController extends AbstractCartPageController
 	private String getFormattedDate(final Date date)
 	{
 		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
+	}
+
+	private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
+		HttpServletRequest httpServletRequest = (HttpServletRequest) model
+				.getAttribute(BlCoreConstants.REQUEST);
+		return null != httpServletRequest && null != httpServletRequest.getUserPrincipal() &&
+				httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT) &&
+				Objects.nonNull(cartModel.getReplacementOrder());
 	}
 
 	/**

@@ -10,6 +10,7 @@
  */
 package com.bl.controllers.cms;
 
+import com.bl.constants.BlassistedservicestorefrontWebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
 import de.hybris.platform.assistedservicefacades.AssistedServiceFacade;
 import de.hybris.platform.assistedserviceservices.exception.AssistedServiceException;
@@ -147,6 +148,9 @@ public class AssistedServiceComponentController extends AbstractController
 		model.addAllAttributes(assistedServiceFacade.getAssistedServiceSessionAttributes());
 		model.addAttribute("customerReload", "reload");
 		assistedServiceAgentLogoutStrategy.logout(request);
+		if(null != sessionService.getAttribute(BlassistedservicestorefrontWebConstants.RETURN_REQUEST)) {
+			sessionService.removeAttribute(BlassistedservicestorefrontWebConstants.RETURN_REQUEST);
+		}
 		return ASSISTED_SERVICE_COMPONENT;
 	}
 

@@ -252,6 +252,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
 
 
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+
+
 	private BlCoreConstants()
 	{
 		//empty
