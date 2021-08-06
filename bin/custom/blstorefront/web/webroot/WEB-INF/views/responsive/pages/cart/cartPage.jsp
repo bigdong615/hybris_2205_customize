@@ -55,7 +55,7 @@
 				<label class="control-label" for="name">
 					<spring:theme code="basket.save.cart.name" />
 				</label>
-                <form:input cssClass="form-control" id="saveCartName" path="name" maxlength="30" />
+                <form:input cssClass="form-control" id="saveCartName" path="name" maxlength="255" />
                  <div class="help-block right-cartName" id="remain">
                 </div>
             </div>
@@ -85,7 +85,7 @@
 $(".js-validate-saved-cart").on("click", function(e) {
    			e.preventDefault();
    			var cartName = document.getElementById("saveCartName").value;
-        if(cartName !== 'undefined' && cartName !== '' && !cartName.trim().length === false){
+        if(cartName !== 'undefined' && cartName !== ''){
                          $('#saveCartForm').submit();
         }
         else{
