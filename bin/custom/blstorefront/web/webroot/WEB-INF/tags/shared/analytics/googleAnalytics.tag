@@ -365,5 +365,21 @@ function trackContinuePaymentClick(paymentType){
    });
 }
 
+window.mediator.subscribe('placeOrderClick', function(data) {
+	if (data.reviewPageError)
+	{
+  trackPlaceOrderClick(data.reviewPageError);
+	}
+});
+
+ function trackPlaceOrderClick(reviewPageError){
+   gtag('event', 'Confirm Order Error', {
+     'event_label': reviewPageError,
+     'event_category': 'Checkout Review',
+     'non_interaction': true
+   });
+ }
+
+
 </script>
 </c:if>
