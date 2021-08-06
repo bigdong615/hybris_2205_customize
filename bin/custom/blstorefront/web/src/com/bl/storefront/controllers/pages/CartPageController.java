@@ -641,7 +641,7 @@ public class CartPageController extends AbstractCartPageController
 		else
 		{
 			final CommerceSaveCartParameterData commerceSaveCartParameterData = new CommerceSaveCartParameterData();
-			commerceSaveCartParameterData.setName(form.getName());
+			commerceSaveCartParameterData.setName(form.getName().trim());
 			commerceSaveCartParameterData.setDescription(form.getDescription());
 			commerceSaveCartParameterData.setEnableHooks(true);
 			try
