@@ -127,7 +127,7 @@
 																																				#if( ${ctx.isPurchased()} )
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 600; font-style: normal; text-align: center">${ctx.messages.getMessage('giftEmailCode')}
-																																					${ctx.recipientMessage}
+																																					${ctx.msg}
 																																				</p>
 																																				#end
 
