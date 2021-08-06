@@ -12,6 +12,7 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import de.hybris.platform.commerceservices.model.PickUpDeliveryModeModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -47,7 +48,7 @@ public class GeocodeShippingAddressAction extends AbstractProceduralAction<Order
 		final OrderModel order = orderProcessModel.getOrder();
 		try
 		{
-			if (!(order.getDeliveryMode() instanceof PickUpDeliveryModeModel))
+			if (!(order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel))
 			{
 				LOG.debug("Getting GPS from delivery address...");
 				final GPS gps = getGeoWebServiceWrapper().geocodeAddress(
@@ -67,6 +68,7 @@ public class GeocodeShippingAddressAction extends AbstractProceduralAction<Order
 					deliveryAddress.setLongitude(gps.getDecimalLongitude());
 				}
 				getModelService().save(deliveryAddress);
+
 			}
 		}
 		catch (final ConversionException | GeoServiceWrapperException e)  //NOSONAR
