@@ -26,8 +26,9 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
   private String custname;
   private String code;
   private String amount;
+  private String msg;
 
-  @Override
+@Override
   public void init(final GiftCardEmailProcessModel giftCardEmailProcessModel,
       final EmailPageModel emailPageModel) {
 
@@ -38,6 +39,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     setCustomerEmail(giftCardEmailProcessModel.getCustomerEmail());
     if (giftCardEmailProcessModel.getGiftcard() != null) {
       setGiftcard(giftCardEmailProcessModel.getGiftcard());
+      setMsg(giftCardEmailProcessModel.getGiftcard().getMessage());
       setCustname(giftCardEmailProcessModel.getGiftcard().getName());
       setCode(giftCardEmailProcessModel.getGiftcard().getCode());
       DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -106,4 +108,19 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
   public void setAmount(String amount) {
     this.amount = amount;
   }
+  /**
+ * @return the msg
+ */
+public String getMsg()
+{
+	return msg;
+}
+
+/**
+ * @param msg the msg to set
+ */
+public void setMsg(String msg)
+{
+	this.msg = msg;
+}
 }

@@ -233,25 +233,29 @@ function trackSearchClick(searchText) {
 window.mediator.subscribe('loginClick', function(data) {
 	if (data.userId)
 	{
-		trackLoginClick(data.userId);
+		trackLoginClick(data.userId,data.pageType);
 	}
 });
 
-function trackLoginClick(userId) {
+function trackLoginClick(userId,pageType) {
 	gtag('event', 'loginTrack', {
-	  'id': userId
+	    'event_category': 'Login',
+       'event_label': pageType,
+	     'id': userId
 	});
 }
 
 window.mediator.subscribe('registerClick', function(data) {
 	if (data.userId)
 	{
-		trackRegisterClick(data.userId);
+		trackRegisterClick(data.userId,data.pageType);
 	}
 });
 
-function trackRegisterClick(userId) {
+function trackRegisterClick(userId,pageType) {
 	gtag('event', 'registerClick', {
+	 'event_category': 'Register',
+   'event_label': pageType,
 	  'id': userId
 	});
 }
@@ -360,6 +364,22 @@ function trackContinuePaymentClick(paymentType){
      'non_interaction': true
    });
 }
+
+window.mediator.subscribe('placeOrderClick', function(data) {
+	if (data.reviewPageError)
+	{
+  trackPlaceOrderClick(data.reviewPageError);
+	}
+});
+
+ function trackPlaceOrderClick(reviewPageError){
+   gtag('event', 'Confirm Order Error', {
+     'event_label': reviewPageError,
+     'event_category': 'Checkout Review',
+     'non_interaction': true
+   });
+ }
+
 
 </script>
 </c:if>
