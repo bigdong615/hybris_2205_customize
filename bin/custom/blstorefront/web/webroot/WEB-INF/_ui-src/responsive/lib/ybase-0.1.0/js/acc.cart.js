@@ -416,11 +416,3 @@ ACC.cart = {
             form.submit();
        });
 
-// To remove Saved Cart Form Error and Input Box
- $('.js-remove-error-message').on("click", function(e) {
-            e.preventDefault();
-            document.getElementById("saveCartName").value="";
-            if(!$("#errorMessages_savecart").hasClass("d-none")){
-             $("#errorMessages_savecart").addClass("d-none");
-            }
- });
