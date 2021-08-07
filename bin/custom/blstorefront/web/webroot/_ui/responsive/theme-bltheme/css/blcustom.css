@@ -502,3 +502,11 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 .livechat{
   display: block !important;
 }
+
+.title-case-rename {
+  text-transform: capitalize;
+}
+.renameSaveCartName-css{
+width:100%;
+}
+
