@@ -118,7 +118,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                            "productSKU"    : '["'+productCode+'"]',
                                            "ProductName"   : '["'+productName+'"]',
                                            "quantity"      : '["'+quantity+'"]',
-                                           "AddtoCartRental"  : "1",
+                                           "add_to_cart_rental"  : "1",
                                            "isBuy"            : "0"
                                        });
 
@@ -920,7 +920,7 @@ function startUsedGearCartTimer() {
                               "productSKU"    : '["'+productCode+'"]',
                               "ProductName"   : '["'+productName+'"]',
                               "quantity"      : '["'+quantity+'"]',
-                               "AddtoCartUsed"  : "1",
+                               "add_to_cart_used"  : "1",
                                "isBuy"            : "1"
                                 });
                     		redirectToCart = true;
@@ -999,6 +999,10 @@ $('#placeOrderSummary').on("click", function(e) {
  var reviewPageError = $('.js-reviewPage-error').val();
    if( reviewPageError!= undefined &&  reviewPageError!=null){
     reviewPageError = reviewPageError.trim();
+     	utag.link({
+        "tealium_event"    : "place_order_error",
+         "checkout_error"     : '"'+reviewPageError+'"'
+          });
      window.mediator.publish('placeOrderClick', {
     	reviewPageError: reviewPageError
     	});

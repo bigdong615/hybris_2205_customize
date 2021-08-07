@@ -1230,7 +1230,8 @@ public class AccountPageController extends AbstractSearchPageController
 				final String ipAddress = request.getRemoteAddr();
 				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
 				{
-					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , BlControllerConstants.COUPON_INVALID );
+					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null ,
+							getI18nService().getCurrentLocale()));
 				}
 				else
 				{
