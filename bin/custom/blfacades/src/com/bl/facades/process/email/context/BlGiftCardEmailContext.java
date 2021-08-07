@@ -146,5 +146,4 @@ public void setMsg(final String msg)
   {
 	  this.isPurchased = isPurchased;
   }
-
 }
