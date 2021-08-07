@@ -4,6 +4,7 @@ import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.MarkReadyToShipConsignmentsCleanJobModel;
+import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.cronjob.enums.CronJobResult;
@@ -20,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.zookeeper.common.StringUtils;
 
 
 /**
@@ -58,7 +58,17 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
           "No matching consignments found while performing MarkReadyToShipConsignmentsCleanJob");
     } else {
 
-      updateCleanCompleteFlagInConsignments(consignmentModels);
+      try {
+
+        updateCleanCompleteFlagInConsignments(consignmentModels);
+      } catch (final Exception ex) {
+
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
+            "Error occurred while performing MarkReadyToShipConsignmentsCleanJob");
+
+        return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
+      }
+
     }
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
@@ -77,24 +87,32 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 
     consignmentModels.forEach(consignment -> {
 
-      final List<AtomicBoolean> allEntryCleanCompleteFlagList = new ArrayList<>();
+      final List<AtomicBoolean> allCleanConsignmentEntryList = new ArrayList<>();
 
       for (ConsignmentEntryModel entryModel : consignment.getConsignmentEntries()) {
-        final List<AtomicBoolean> entryLevelFlagList = new ArrayList<>();
+        final List<AtomicBoolean> cleanSerialLocationList = new ArrayList<>();
 
         for (BlProductModel productModel : entryModel.getSerialProducts()) {
           if (productModel instanceof BlSerialProductModel){
 
-            entryLevelFlagList.add(new AtomicBoolean(isSerialLocationClean(productModel)));
+            cleanSerialLocationList.add(new AtomicBoolean(isSerialLocationClean(productModel)));
           }
         }
 
-        final boolean entryLevelFlag =  entryLevelFlagList.stream().allMatch(AtomicBoolean::get);
+        final boolean isAllEntriesClean =  cleanSerialLocationList.stream().allMatch(AtomicBoolean::get);
 
-        allEntryCleanCompleteFlagList.add(new AtomicBoolean(entryLevelFlag));
+        allCleanConsignmentEntryList.add(new AtomicBoolean(isAllEntriesClean));
       }
       consignment.setCleanCompleteConsignment(
-          allEntryCleanCompleteFlagList.stream().allMatch(AtomicBoolean::get));
+          allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get));
+
+      if (allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get)) {
+
+        BlLogger
+            .logFormatMessageInfo(LOG, Level.DEBUG,
+                "Consignment with code {} is marked as clean complete.", consignment.getCode());
+      }
+
     });
 
     modelService.saveAll(consignmentModels);
@@ -116,24 +134,15 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
   }
 
   /**
-   * It fetches the clean cart locations from configuration file.
+   * It fetches the clean cart locations
    *
    * @return clean cart locations
    */
   private List<String> getCleanLocationCategoryList() {
 
-    //CLEAN_FRONT_DESK_CART,CLEAN_GEAR_AISLE_IN_CAGE,CLEAN_GEAR_CAGE,CLEAN_GEAR_MOBILE_CART,
-    // CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART,CLEAN_GEAR_SHIPPING_MOBILE_CART,CLEAN_MOBILE_LAUNDRY_BIN
-    final String cleanCartLocations = getConfigurationService().getConfiguration()
-        .getString("mark.ready.to.ship.consignments.clean.cart.locations");
-
-    //CLEAN_PRIORITY_GEAR_CART,CLEAN_PRIORITY_MOBILE_CART,VIP_CLEAN_PRIORITY_GEAR
-    final String cleanPriorityCartLocations = getConfigurationService().getConfiguration()
-        .getString("mark.ready.to.ship.consignments.clean.priority.cart.locations");
-
     final List<String> cleanCartLocationCategoryList = new ArrayList<>();
-    cleanCartLocationCategoryList.addAll(StringUtils.split(cleanCartLocations, ","));
-    cleanCartLocationCategoryList.addAll(StringUtils.split(cleanPriorityCartLocations, ","));
+    cleanCartLocationCategoryList.addAll(BlInventoryScanUtility.getTechEngCleanCartLocations());
+    cleanCartLocationCategoryList.addAll(BlInventoryScanUtility.getTechEngCleanPriorityCartLocations());
 
     return cleanCartLocationCategoryList;
   }

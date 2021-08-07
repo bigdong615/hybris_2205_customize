@@ -1807,6 +1807,7 @@
 	<context component="explorer-tree" principal="blinventoryuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:navigation-node id="blinventoryscan_pick_path">
+				<n:type-node code="MarkReadyToShipConsignmentsCleanJob" id="blnventoryscan_mark_consignment_clean_job"/>
 				<n:type-node code="InventoryInCompleteOrdersQueue" id="blinventory_incomplete_orders"/>
 				<n:type-node code="InventoryCompleteOrdersQueue" id="blinventory_complete_orders"/>
 			</n:navigation-node>
@@ -1817,6 +1818,8 @@
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
 			</n:navigation-node>
+			<n:type-node code="Order" id="Order"/>
+			<n:type-node code="Consignment" id="Consignment"/>
 		</n:explorer-tree>
 	</context>
 

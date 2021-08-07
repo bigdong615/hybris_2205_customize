@@ -203,11 +203,11 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
                              ;markConsignmentsCleanJob;markConsignmentsCleanJob
 
-INSERT_UPDATE MarkReadyToShipConsignmentsCleanJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
-                                                 ;markReadyToShipConsignmentsCleanJob;markConsignmentsCleanJob; ;true;;
+INSERT_UPDATE MarkReadyToShipConsignmentsCleanJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active
+                                                 ;markReadyToShipConsignmentsCleanJob;markConsignmentsCleanJob; ;true
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
-                     ;markReadyToShipConsignmentsCleanJob; 0 0 4 * * ?
+                     ;markReadyToShipConsignmentsCleanJob; 0 0/30 * * * ?
 
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]

@@ -195,6 +195,7 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;InventoryInCompleteOrdersQueue;+;+;-;-
 ;;;InventoryCompleteOrdersQueue;+;+;-;-
 ;;;PullReadyToShipOrdersCronJob;+;+;-;-
+;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
 ;;;WebScanTool;+;+;-;-
 
 $END_USERRIGHTS;;;;
