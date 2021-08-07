@@ -169,6 +169,9 @@ public class BlControllerConstants
 
 	public static final String RETURN_REQUEST = "returnRequest";
 
+	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
+	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
+
 
 	private BlControllerConstants()
 	{

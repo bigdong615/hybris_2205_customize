@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+
 /** *
  * @author Namrata Lohar
  */
@@ -71,7 +72,20 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
-    
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public PackagingInfoModel getPackageInfoByCode(final String lastScannedItem) {
+   	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {trackingNumber} = ?lastScannedItem";
+       final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+       query.addQueryParameter(BlInventoryScanLoggingConstants.LAST_SCANNED_ITEM, lastScannedItem);
+       final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE, lastScannedItem);
+       return CollectionUtils.isEmpty(results) ? null : results.get(0);
+    }
     /**
  	 * {@inheritDoc}
  	 */
@@ -119,7 +133,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : null;
  	}
- 	
+
  	/**
  	 * {@inheritDoc}
  	 */
@@ -138,7 +152,6 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
-
     public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;
     }

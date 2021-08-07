@@ -61,6 +61,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
@@ -110,6 +112,16 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        var productCategory = $('#productCategory').val()
                                        var quantity = $('#quantity').val();
                                        ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                                      // Tealium event for ATC
+                                       utag.link({
+                                           "tealium_event" : "cart_add",
+                                           "productSKU"    : '["'+productCode+'"]',
+                                           "ProductName"   : '["'+productName+'"]',
+                                           "quantity"      : '["'+quantity+'"]',
+                                           "AddtoCartRental"  : "1",
+                                           "isBuy"            : "0"
+                                       });
+
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
@@ -834,6 +846,10 @@ function startUsedGearCartTimer() {
     
          var productCode = $(this).attr('data-product-code');
          var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
          var redirectToCart = false;
          if(serialCode == '' || serialCode == undefined){
          serialCode = "serialCodeNotPresent";
@@ -895,6 +911,18 @@ function startUsedGearCartTimer() {
                     	var addToCartLayer = response.addToUsedCartLayer;
                     	if(addToCartLayer == undefined || addToCartLayer == '')
                     	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                       // Tealium event for ATC
+                       utag.link({
+                             "tealium_event" : "cart_add",
+                              "productSKU"    : '["'+productCode+'"]',
+                              "ProductName"   : '["'+productName+'"]',
+                              "quantity"      : '["'+quantity+'"]',
+                               "AddtoCartUsed"  : "1",
+                               "isBuy"            : "1"
+                                });
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}
@@ -967,6 +995,14 @@ function onUsedCloseModal()
 $('#placeOrderSummary').on("click", function(e) {
 	$('#placeOrder').click();
 });
+
+ var reviewPageError = $('.js-reviewPage-error').val();
+   if( reviewPageError!= undefined &&  reviewPageError!=null){
+    reviewPageError = reviewPageError.trim();
+     window.mediator.publish('placeOrderClick', {
+    	reviewPageError: reviewPageError
+    	});
+    }
 
 $('#placeOrder').on(
 		"click",

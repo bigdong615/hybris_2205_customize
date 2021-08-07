@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -69,6 +70,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	public static final String TRUE_VALUE = "1";
 	public static final String OR_STR = "|";
 	public static final String CAMAS_STR = ",";
+	public static final String PROD_OUT_OF_STOCK = "prodOutOfStock";
 
 
 	@Override
@@ -135,6 +137,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 		context.set(PRODUCT_NAME, productData.getDisplayName());
 		context.set(PRODUCT_SKU, productData.getCode());
 		context.setArrayValue(PRODID, productId.toArray(new String[productId.size()]));
+		context.set(PROD_OUT_OF_STOCK, StringUtils.isNotEmpty(productData.getStock().getStockLevelStatus().getCode()) ? "0": "1");
 	}
 
 	/**
