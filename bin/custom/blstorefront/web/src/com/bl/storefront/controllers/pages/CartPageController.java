@@ -42,7 +42,6 @@ import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.CommerceSaveCartParameterData;
-import de.hybris.platform.commercefacades.order.data.CommerceSaveCartResultData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -54,8 +53,8 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.site.BaseSiteService;
@@ -647,20 +646,14 @@ public class CartPageController extends AbstractCartPageController
 			commerceSaveCartParameterData.setEnableHooks(true);
 			try
 			{
-				final CommerceSaveCartResultData saveCartData = saveCartFacade.saveCart(commerceSaveCartParameterData);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "basket.save.cart.on.success",
-						new Object[]
-						{ saveCartData.getSavedCartData().getName() });
+				saveCartFacade.saveCart(commerceSaveCartParameterData);
 			}
 			catch (final CommerceSaveCartException csce)
 			{
-				LOG.error(csce.getMessage(), csce);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "basket.save.cart.on.error",
-						new Object[]
-						{ form.getName() });
+				BlLogger.logMessage(LOG , Level.DEBUG , "Error while saveCart method ", csce);
 			}
 		}
-		return REDIRECT_CART_URL;
+		return BlControllerConstants.REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
 
 	@GetMapping(value = "/export", produces = "text/csv")
@@ -961,11 +954,14 @@ public class CartPageController extends AbstractCartPageController
 		}
 		else
 		{
+			final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
+			final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(null == cartModel.getRentalStartDate() && null == cartModel.getRentalEndDate()) {
-				final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
-				final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
+				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
+			} else if(!(cartModel.getRentalStartDate().compareTo(startDate) == 0) ||
+					!(cartModel.getRentalEndDate().compareTo(endDate) == 0)) {
 				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 			}
 			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))

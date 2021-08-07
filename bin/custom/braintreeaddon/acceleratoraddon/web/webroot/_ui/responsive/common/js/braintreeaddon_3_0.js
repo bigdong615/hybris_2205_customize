@@ -1113,7 +1113,7 @@ $('#submit_silentOrderPostForm').click(function () {
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);
 	}
 	
-	if(ccEnable == false && giftcardApplied != '')
+	if((typeof editPaymentMethodsPage == 'undefined') && ccEnable == false && giftcardApplied != '')
 	{
 		allFieldValidation(ACC.ccError.onlyGCSelected);
 	}
@@ -1208,12 +1208,14 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	$('.page-loader-new-layout').show();
 	if($("#paymentMethodPayPal").is(":checked"))
 	{
+    ACC.track.trackPaymentSelection('PayPal Payment');
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
 	  $('.page-loader-new-layout').hide();
     var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
     $('#validationMessage').append(validationDiv);
   }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
+    ACC.track.trackPaymentSelection('PO Payment');
       savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
       savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
       savedPoForm.submit();
@@ -1230,6 +1232,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		}
 		else
 		{
+		ACC.track.trackPaymentSelection('Credit Cart Payment');
 			var savedCardForm = $("#submitSavedCardForm");
 			var formToSubmit = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
 			var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
@@ -1277,18 +1280,52 @@ $(".edit-cc-form").on("click",function(e){
 });
 
 
-/*$(".edit-save-click").on("click",function(e){
+if((typeof editPaymentMethodsPage != 'undefined'))
+{	
+$("#submit_silentOrderPostForm").on("click",function(e) {
 	e.preventDefault();
 	var savedCardForm = $("#braintree-payment-form");
-	//var expMonth = savedCardForm.find('input[id="expirationMonth"]').val());
-	var expMonth = document.getElementById('expirationMonth').val();
-	alert(expMonth);
-    var expYear = savedCardForm.find('input[id="expirationYear"]').val());
-    var expirationDate = createHiddenParameter("expirationDate", expMonth / expYear);
-	alert(expirationDate);
-    savedCardForm.submit();
-});*/
+	var expMonth = savedCardForm.find('input[id="expirationMonth"]').val();
+	var expYear = savedCardForm.find('input[id="expirationYear"]').val();
+	var cvv = savedCardForm.find('input[id="cvv"]').val();
+	if(expMonth == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardMonth);
+		$("#expirationMonth").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+	}
+	if(expYear == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardYear);
+		$("#expirationYear").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+		
+	}
+	if(cvv == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardCVV);
+		$("#cvv").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+		
+	}else{
+	       var expirationDate = createHiddenParameter("expirationDate", (expMonth.concat('/', expYear)));
+	       var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
+           savedCardForm.append($(expirationDate));
+           savedCardForm.append($(defaultCard));
+           savedCardForm.submit();
+	    }
+});
 
+}
 
 $(".delete-link").on("click",function(e){
 	e.preventDefault();

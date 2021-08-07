@@ -61,6 +61,7 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
+    public static final String MUST_TWO_BARCODE_ERROR_MSG = "Must have two barcode to scans";
     public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
@@ -104,7 +105,35 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
-    
+    public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
+    public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
+    public static final String LAST_LOCATION_ERROR_KEY = "blbackoffice.order.scan.last.location.error";
+ 	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
+ 	public static final String INVALID_SCAN_ERROR = "blbackoffice.order.scan.invalid.scan.error";
+ 	public static final String MANY_LOCATION_ERROR = "blbackoffice.order.scan.many.location.error";
+ 	public static final String INVALID_LOCATION_ERROR = "blbackoffice.order.scan.invalid.location.error";
+ 	public static final String LAST_INVALID_LOCATION_ERROR = "blbackoffice.order.scan.last.invalid.location.error";
+ 	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
+ 	public static final String SHIPPING_INVALID_SCAN_ERROR = "blbackoffice.shipping.scan.invalid.scan.error";
+ 	public static final String SHIPPING_SCAN_ITEM_ERROR = "blbackoffice.shipping.scan.item.error";
+ 	public static final String SHIPPING_LAST_LOCATION_ERROR_KEY = "blbackoffice.shipping.scan.last.location.error";
+ 	public static final String SHIPPING_LAST_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.last.invalid.location.error";
+ 	public static final String SHIPPING_MANY_LOCATION_ERROR ="blbackoffice.shipping.scan.many.location.error";
+ 	public static final String SHIPPING_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
+
+ 	public static final String DOUBLE_HYPHEN = "--";
+ 	public static final String NEW_LINE = "\n";
+ 	public static final String ON_CHANGE_EVENT = "onChange";
+ 	public static final String ON_CLICK_EVENT = "onClick";
+ 	public static final String CANCEL_EVENT = "cancel";
+ 	public static final String VERIFY_SCAN_EVENT = "verifyScan";
+ 	public static final String SOCKET_ID = "inputObject";
+ 	public static final String SCANNING_AREA = "scanningArea";
+ 	public static final String SCAN_TO_BIN = "scanToBin";
+ 	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
+ 	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";
+ 	public static final String EMPTY_STRING = "";
+ 	public static final String LAST_SCANNED_ITEM = "lastScannedItem";
     public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";
     public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE = "unboxPkgMissingErrorFailure";
     public static final String UNBOX_SAN_TOOL_DPC_FAILURE = "unboxInvalidDPLocationErrorFailure";
@@ -133,7 +162,6 @@ public class BlInventoryScanLoggingConstants {
      */
     public static List<String> getDefaultInventoryLocation() {
         List<String> defaultLocations = new ArrayList<>();
-        defaultLocations.add(BIN);
         defaultLocations.add(MA);
         defaultLocations.add(CA);
         defaultLocations.add(FEDEX);
@@ -143,7 +171,8 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(EMPLOYEE);
         defaultLocations.add(BOS);
         defaultLocations.add(IN_HOUSE);
+     		defaultLocations.add(MAW);
+     		defaultLocations.add(CAW);
         return defaultLocations;
     }
-    
 }

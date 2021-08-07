@@ -106,8 +106,11 @@
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
 																																					${ctx.messages.getMessage('giftEmailParagraph1', ${ctx.amount})}
 																																					<a href="${ctx.secureBaseUrl}">${ctx.messages.getMessage('giftEmailSiteName')}</a>
+																																				 #if( ${ctx.msg} != "" )
 																																					${ctx.messages.getMessage('giftEmailFor')}
-																																					%%REASON%%.
+																																					${ctx.msg}
+																																				  #end
+																																					
 																																				</p>
 
 																																				<p

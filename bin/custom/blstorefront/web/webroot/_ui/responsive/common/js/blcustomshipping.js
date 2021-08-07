@@ -158,6 +158,10 @@ function removeClass(){
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      if(typeof businessType == "string") {
+        businessType = JSON.parse(businessType);
+      }
+
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
@@ -181,9 +185,12 @@ function removeClass(){
                   showErrorForInputValidation('Ship');
               }
           }
+
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item In Stock');
       }
       else
       {
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
       
@@ -541,7 +548,7 @@ function removeClass(){
             $('.page-loader-new-layout').show();
         },
         success: function (data) {
-            if(data != null && data.length != 0 && !data.startsWith('<!DOCTYPE html>')) {
+            if(data != null && data.length != 0 && (typeof data == "object")) {
                 let partnerDelivery = '';
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
@@ -600,7 +607,10 @@ function removeClass(){
             }
         },
         complete: function(data) {
-            if(data.startsWith('<!DOCTYPE html>')) {
+            if((typeof data == "string")) {
+                window.location.reload();
+            }
+            if(data != null && (typeof data != "string") && data.statusText == 'parsererror') {
                 window.location.reload();
             }
             $('.page-loader-new-layout').hide();
@@ -755,7 +765,7 @@ function removeClass(){
                             $('.page-loader-new-layout').show();
                        },
                        success: function (data) {
-                           if(data != null && data.length != 0 && !data.startsWith('<!DOCTYPE html>')) {
+                           if(data != null && data.length != 0 && (typeof data == "object")) {
                                let sameDayShippingModes = '<b>Delivery Window</b>';
                                sameDayShippingModes += '<select id="same-day-shipping-methods-select-box" class="selectpicker mt-2"' +
                                                         ' onChange="onChangeOfSameDayShippingMethodForCost()">';
@@ -797,7 +807,7 @@ function removeClass(){
                            }
                        },
                        complete: function() {
-                            if(data.startsWith('<!DOCTYPE html>')) {
+                            if((typeof data == "string")) {
                                 window.location.reload();
                             }
                            $('.page-loader-new-layout').hide();
@@ -813,7 +823,7 @@ function removeClass(){
                     showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes', false);
                 }
             },
-            complete: function() {
+            complete: function(data) {
                 if(data != null && data.statusText == 'parsererror') {
                     window.location.reload();
                 }
@@ -841,6 +851,7 @@ function removeClass(){
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
     if(checkAvailability(deliveryMode))
     {
+        ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
             $.ajax({
@@ -909,6 +920,7 @@ function removeClass(){
       }
       else
       {
+       ACC.track.trackShippingSelection('Same Day Delivery','','Item Out of Stock');
       	window.location.reload();
     }
   }
@@ -1122,6 +1134,11 @@ function removeClass(){
     } else {
        regionIso = countryIso+ '-' +regionIso;
     }
+
+    if(addressType == null) {
+        addressType = 'UNKNOWN';
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
@@ -1206,9 +1223,12 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 if(section == 'SHIP' && businessType && data.result != null && data.addressType != 'BUSINESS') {
+                 if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
                     showAMDeliveryErrorMessage(section);
                  } else {
+                    if(data.addressType != null) {
+                        addressForm.addressType = data.addressType;
+                    }
                     //suggested state not supported error from response
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {
@@ -1442,6 +1462,7 @@ function removeClass(){
              success: function (data) {
                  if(data != null) {
                      if(upsStoreAddress != null) {
+                        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
                                 saveDeliveryMode(deliveryMethod, status)
@@ -1457,6 +1478,7 @@ function removeClass(){
                               console.log(error)
                             })
                      } else {
+                        ACC.track.trackShippingSelection('PickUP','','Item In Stock');
                         saveDeliveryMode(deliveryMethod, status)
                             .then((data) => {
                                 $('.page-loader-new-layout').hide();
@@ -1478,6 +1500,11 @@ function removeClass(){
      }
      else
      {
+     if(upsStoreAddress != null) {
+       ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
+       }else{
+        ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
+       }
      	window.location.reload();
      }
   }
