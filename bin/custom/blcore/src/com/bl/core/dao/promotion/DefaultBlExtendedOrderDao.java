@@ -1,5 +1,6 @@
 package com.bl.core.dao.promotion;
 
+import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ruleengineservices.order.dao.impl.DefaultExtendedOrderDao;
@@ -34,7 +35,9 @@ public class DefaultBlExtendedOrderDao extends DefaultExtendedOrderDao {
         result = orders.get(0);
       } else {
         for(final AbstractOrderModel abstractOrderModel :orders) {
-          if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()) && null == abstractOrderModel.getExtendedOrderCopy()) {
+          if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()) && null == abstractOrderModel.getExtendedOrderCopy() &&
+              abstractOrderModel.getExtendOrderStatus().getCode().equalsIgnoreCase(
+                  ExtendOrderStatusEnum.PROCESSING.getCode())) {
             result = abstractOrderModel;
           }
         }

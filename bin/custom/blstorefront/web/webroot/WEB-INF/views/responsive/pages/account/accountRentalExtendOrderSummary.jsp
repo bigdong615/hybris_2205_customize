@@ -126,11 +126,11 @@ $(".js-voucher-apply-account-btn").on("click", function(e) {
                $('#js-extendOrderError-update').removeClass("d-none");
                $('#js-extendOrderError-update').html($('#js-extendOrderError').val());
                $(".js-voucher-code-text-account").addClass("error");
-               	$("#errorMessages_account_voucher").addClass("d-none");
                }
                else {
                	$(".js-extendOrderError-update").addClass("error");
                	 $('#js-extendOrderError-update').addClass("d-none");
+               	 $('#errorMessages_account_voucher').addClass("d-none");
                	if(	$(".js-voucher-code-text-account").hasClass("error")) {
                	$(".js-voucher-code-text-account").removeClass("error");
                	}
@@ -161,6 +161,7 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
              data: formValues,
              success: function (data) {
               $('#orderSummary').html(data);
+               $('#errorMessages_account_voucher').addClass("d-none");
              },
              error: function (xhr, textStatus, error) {
 
