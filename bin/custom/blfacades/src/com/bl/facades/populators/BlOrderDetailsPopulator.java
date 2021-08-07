@@ -9,7 +9,6 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -29,8 +28,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * This Populator created to populate order details
@@ -38,8 +35,6 @@ import org.apache.log4j.Logger;
  */
 public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
-
-  private static final Logger LOG = Logger.getLogger(BlOrderDetailsPopulator.class);
 
   private PriceDataFactory priceDataFactory;
   private BlAddressPopulator blAddressPopulator;
