@@ -101,7 +101,7 @@ ACC.account = {
               	utag.link({
                    "tealium_event"    : "user_register",
                    "user_email"     : '"'+userId+'"',
-                    "new_registration" : "1"
+                    "newRegistration" : "1"
                       });
 							window.mediator.publish('registerClick',{
                    userId: userId,
