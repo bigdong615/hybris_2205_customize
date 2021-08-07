@@ -97,7 +97,7 @@
                                                   data-bs-toggle="modal" data-bs-target="#signIn"><i class="icon-save" alt="Save Order"></i></a>
                                    </sec:authorize>
                                     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                         <a href="#" data-bs-toggle="modal" data-bs-target="#saveCartModal"><i class="icon-save" alt="Save Order"></i></a>
+                                         <a href="#" class="js-remove-error-message" data-bs-toggle="modal" data-bs-target="#saveCartModal"><i class="icon-save" alt="Save Order"></i></a>
                                      </sec:authorize>
 
 

@@ -347,7 +347,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	 * @param actualForm savedCartForm from storefront
 	 */
 	private void convertSavedCartNameToTitleCase(final SaveCartForm newForm , final SaveCartForm actualForm) {
-      newForm.setName(WordUtils.capitalize(actualForm.getName().toLowerCase()));
+      newForm.setName(WordUtils.capitalize(actualForm.getName().trim().toLowerCase()));
       newForm.setDescription(actualForm.getDescription());
 	}
 	
