@@ -57,6 +57,8 @@
                      </c:forEach>
                   </ul>
                </select>
+               </br>
+               <a href="#" data-bs-toggle="modal" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
             </div>
          </div>
       </div>
@@ -139,6 +141,27 @@
                 		</div>
                 	</div>
                 </c:if>
+
+    <!-- Modals -->
+    <div class="modal fade" id="addCrediCard" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="text.extend.order.credi.card"/></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+           <spring:theme code="text.extend.order.credi.card.message" />
+              <form>
+                <a href="add-payment-method" class="btn btn-block btn-primary mt-4"><spring:theme code="text.extend.order.credi.continue"/></a>
+               <br>
+            <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
+                 <spring:theme code="basket.save.cart.action.cancel"/> </a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 <script>
    var enableShippingAddress = "false";
