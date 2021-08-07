@@ -91,7 +91,7 @@
                               </c:if>
                               <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                               <div class="order-actions my-4">
-                                  <a href="${printQuoteUrl}" id="printCartQuote" alt="Print Order"><i class="icon-print"></i></a>
+                                  <a href="${printQuoteUrl}" id="printCartQuote" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"><i class="icon-print"></i></a>
                                    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                                            <a class="js-login-popup" data-link="<c:url value='/login/loginpopup'/>" href="#"
                                                   data-bs-toggle="modal" data-bs-target="#signIn"><i class="icon-save" alt="Save Order"></i></a>
