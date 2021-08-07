@@ -8,6 +8,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
+import com.google.common.collect.Lists;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
@@ -253,7 +254,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 			if (null != packagingInfo)
 			{
-				packagingInfo.setSerialProducts((List<BlProductModel>)this.selectedSerialProducts);
+				packagingInfo.setSerialProducts(Lists.newArrayList(this.selectedSerialProducts));
 				modelService.save(packagingInfo);
 				modelService.refresh(packagingInfo);
 				this.showMessageBox();

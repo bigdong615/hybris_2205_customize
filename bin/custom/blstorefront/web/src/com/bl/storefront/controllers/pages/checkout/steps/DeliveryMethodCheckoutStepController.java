@@ -92,6 +92,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        model.addAttribute("pageType",BlControllerConstants.SHIPPING_PAGE);
         CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
             List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();

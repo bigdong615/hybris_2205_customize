@@ -6,12 +6,14 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
+
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -20,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -39,11 +43,24 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-
     target.setIsRentalCart(source.getIsRentalCart());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
-    populateOrderDetailsForRentalOrder(source , target);
+    if(!source.isGiftCardOrder()){	 
+        populateOrderDetailsForRentalOrder(source , target);
+    }
+    //Check gift card purchase order
+    if(source.isGiftCardOrder()){
+   	 final Optional<AbstractOrderEntryModel> giftCardOrder = source.getEntries().stream().findFirst();
+   	 if(giftCardOrder.isPresent()){
+   		 
+   		 target.setRecipientEmail(giftCardOrder.get().getRecipientEmail());
+   		 target.setRecipientName(giftCardOrder.get().getRecipientName());
+   	 }
+   	 target.setIsRentalCart(Boolean.FALSE);
+   	 target.setHasGiftCart(Boolean.TRUE);
+   	
+    }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
       final AddressData addressData = new AddressData();

@@ -28,6 +28,12 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import de.hybris.platform.product.daos.ProductDao;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.catalog.daos.CatalogVersionDao;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
+import java.util.Collection;
 
 
 /**
@@ -44,6 +50,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private BlCommerceStockService blCommerceStockService;
     private BaseStoreService baseStoreService;
     private BlDatePickerService blDatePickerService;
+    private CatalogVersionDao catalogVersionDao;
+    private ProductDao productDao;
+    private SearchRestrictionService searchRestrictionService;
+
     /**
      * {@inheritDoc}
      */
@@ -242,6 +252,50 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             getModelService().refresh(cartModel);
         }
     }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeSerialStatusInStagedVersion(final String productCode, final SerialStatusEnum serialStatus) {
+        Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
+            .CATALOG_VALUE, BlCoreConstants.STAGED);
+        List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode, catalogModels.iterator().next());
+        if(CollectionUtils.isNotEmpty(products)) {
+            BlSerialProductModel product = products.get(0);
+            product.setSerialStatus(serialStatus);
+            getModelService().save(product);
+        }
+    }
+
+    /**
+     * It gets serialProductModel of staged version
+     *
+     * @param productCode the product code
+     * @param catalogVersionModel the catalog version model
+     * @return List<BlSerialProductModel> the blSerialProducts
+     */
+    public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
+        final CatalogVersionModel catalogVersionModel) {
+        return getSessionService().executeInLocalView(new SessionExecutionBody()
+        {
+            @Override
+            public Object execute()
+            {
+                try
+                {
+                    getSearchRestrictionService().disableSearchRestrictions();
+                    return getProductDao().findProductsByCode(catalogVersionModel,
+                        productCode);
+                }
+                finally
+                {
+                    getSearchRestrictionService().enableSearchRestrictions();
+                }
+            }
+        });
+    }
 
     /**
 	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
@@ -252,11 +306,13 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
 		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
 		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+		      changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
 		      getModelService().save(blSerialProductModel);
 		  }
 	}
     
     
+	
 
 
     public CommerceCartService getCommerceCartService() {
@@ -322,5 +378,37 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
         this.blDatePickerService = blDatePickerService;
     }
+    
+    public CatalogVersionDao getCatalogVersionDao() {
+       return catalogVersionDao;
+   }
+
+   public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
+       this.catalogVersionDao = catalogVersionDao;
+   }
+
+   /**
+    * @return the productDao
+    */
+   public ProductDao getProductDao() {
+       return productDao;
+   }
+
+   /**
+    * @param productDao the productDao to set
+    */
+   public void setProductDao(ProductDao productDao) {
+       this.productDao = productDao;
+   }
+
+
+   public SearchRestrictionService getSearchRestrictionService() {
+       return searchRestrictionService;
+   }
+
+   public void setSearchRestrictionService(
+       SearchRestrictionService searchRestrictionService) {
+       this.searchRestrictionService = searchRestrictionService;
+   }
 
 }
