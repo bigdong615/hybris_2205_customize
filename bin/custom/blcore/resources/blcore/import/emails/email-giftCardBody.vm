@@ -236,10 +236,10 @@
 																											<div
 																												style="margin-top: 10px; padding: 4px 8px; font-family: helvetica, arial, sans-serif; text-align: center; background-color: #ededf0;">
 																												<a
-																													href="${ctx.secureBaseUrl}/content/contact_info"
+																													href="${ctx.secureBaseUrl}/contactus"
 																													style="font-family: sans-serif; text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailHelp')}</a>
 																												| <a
-																													href="${ctx.secureBaseUrl}/AccountHistory.do"
+																													href="${ctx.secureBaseUrl}/my-account/orders"
 																													style="text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailMyAccount')}</a>
 																											</div>
 
