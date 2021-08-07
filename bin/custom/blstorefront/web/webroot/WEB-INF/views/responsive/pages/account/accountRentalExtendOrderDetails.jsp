@@ -130,7 +130,7 @@
                        <div class="notification notification-error">
                         <spring:theme code="text.order.extend.stock.validation"/>
                          <a href="${homePageUrl}" class="gray80"><spring:theme code="text.order.extend.stock.contact.us"/></a>
-                          <spring:theme code="text.order.extend.stock.validation"/>
+                          <spring:theme code="text.order.extend.stock.contact.warning"/>
                        </div>
                     </div>
              </div>
