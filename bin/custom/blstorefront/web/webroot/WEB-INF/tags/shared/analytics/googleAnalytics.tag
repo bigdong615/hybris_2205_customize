@@ -373,7 +373,7 @@ window.mediator.subscribe('placeOrderClick', function(data) {
 });
 
  function trackPlaceOrderClick(reviewPageError){
-   gtag('event', 'Confirm Order Error', {
+   gtag('event', 'Place Order Error', {
      'event_label': reviewPageError,
      'event_category': 'Checkout Review',
      'non_interaction': true
