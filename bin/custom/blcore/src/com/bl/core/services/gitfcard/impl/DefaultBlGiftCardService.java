@@ -62,6 +62,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * giftCardBalanceAmount));
+            movement.setBalanceAmount(movement.getAmount() + giftCardModel.getBalance()); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
@@ -73,6 +74,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * totalplustax));
+            movement.setBalanceAmount(movement.getAmount() + giftCardModel.getBalance()); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
