@@ -1253,6 +1253,12 @@
 		                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
 		                <description>To identify whether it is reserved or not</description>
 	              </attribute>
+                   <attribute qualifier="softAssigned" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether it is reserved with soft assigned or not for rental gear order.</description>
+                   </attribute>
                     <attribute qualifier="repairReasons" type="RepairReasonsEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
@@ -1712,6 +1718,12 @@
                 <modifiers write="true" read="true" optional="true"
                   search="true" />
                 <persistence type="property" />
+              </attribute>
+              <attribute qualifier="balanceAmount" type="java.lang.Double">
+                <description>Gift card movement balance amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
               </attribute>
             </attributes>
           </itemtype>

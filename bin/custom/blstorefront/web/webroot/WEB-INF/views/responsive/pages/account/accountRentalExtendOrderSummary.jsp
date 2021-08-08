@@ -99,10 +99,10 @@
                        <c:url value="/my-account/extendOrder/${fn:escapeXml(orderData.code)}" var="payExtendOrderUrl"/>
                                        <form action="${payExtendOrderUrl}" method="post" id="payExtendOrderForm">
                                             <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
-                                            <input type="hidden" id="paymentId" name="paymentId" value=""/>
-                                            <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
-                                            <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
-                                            <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
+                                            <input type="hidden" id="extPaymentId" name="paymentId" value=""/>
+                                            <input type="hidden" id="extPaymentNonce" name="paymentNonce" value=""/>
+                                            <input type="hidden" id="extendOrderPoNumber" name="extendPoNumber" value=""/>
+                                            <input type="hidden" id="extendOrderPoNotes" name="extendPoNotes" value=""/>
                                             <button class="btn btn-block btn-primary mt-4 js-enable-extend-order js-po-extend-order" type="submit" disabled>
                                             <spring:theme code="text.myaccount.order.extend.rent"/></button>
                                        </form>
@@ -126,11 +126,11 @@ $(".js-voucher-apply-account-btn").on("click", function(e) {
                $('#js-extendOrderError-update').removeClass("d-none");
                $('#js-extendOrderError-update').html($('#js-extendOrderError').val());
                $(".js-voucher-code-text-account").addClass("error");
-               	$("#errorMessages_account_voucher").addClass("d-none");
                }
                else {
                	$(".js-extendOrderError-update").addClass("error");
                	 $('#js-extendOrderError-update').addClass("d-none");
+               	 $('#errorMessages_account_voucher').addClass("d-none");
                	if(	$(".js-voucher-code-text-account").hasClass("error")) {
                	$(".js-voucher-code-text-account").removeClass("error");
                	}
@@ -161,6 +161,7 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
              data: formValues,
              success: function (data) {
               $('#orderSummary').html(data);
+               $('#errorMessages_account_voucher').addClass("d-none");
              },
              error: function (xhr, textStatus, error) {
 
@@ -171,10 +172,12 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
 
    	$('#saved-payment-action-ExtendBill').on('change',function(e){
     					 var optionSelected = $("option:selected", this);
-    					 var paymentId = optionSelected.data("id");
-    						var paymentnonce = optionSelected.data("nonce");
-    						$("#paymentId").val(paymentId);
-    						$("#paymentNonce").val(paymentnonce);
+    					 var extendPaymentId = optionSelected.data("id");
+    						var extendPaymentnonce = optionSelected.data("nonce");
+    						$("#paymentId").val(extendPaymentId);
+    						$("#paymentNonce").val(extendPaymentnonce);
+    						$("#extPaymentId").val(extendPaymentId);
+                $("#extPaymentNonce").val(extendPaymentnonce);
     				 });
 
 
@@ -183,8 +186,12 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
         						var extendPoNumber1 = $("#extendPoNumberInput").val();
                     var extendPoNotes1 = $("#extendPoNotesInput").val();
                     if(extendPoNumber1 !== '' && extendPoNotes1 !== '') {
+
         						$("#extendPoNumber").val(extendPoNumber1);
         						$("#extendPoNotes").val(extendPoNotes1);
+
+        							$("#extendOrderPoNumber").val(extendPoNumber1);
+                      $("#extendOrderPoNotes").val(extendPoNotes1);
         						}
         						$("#payExtendOrderForm").submit();
         				 });

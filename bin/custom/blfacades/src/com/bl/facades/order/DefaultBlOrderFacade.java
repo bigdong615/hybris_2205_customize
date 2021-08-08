@@ -211,6 +211,17 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
       }
     }
+    if(CollectionUtils.isEmpty(orderModel.getConsignments())){
+      orderData.setIsAllProductExtendabe(false);
+      final StockResult stockResult = new StockResult();
+      stockResult.setStockLevelStatus(StockLevelStatus.OUTOFSTOCK);
+      stockResult.setAvailableCount(0);
+      stockResult.setTotalCount(0);
+      stockResults.add(stockResult);
+      orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
+          + "if you are unable to return your order by its scheduled return date.");
+
+    }
   }
 
   /**
