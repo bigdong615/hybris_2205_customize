@@ -241,9 +241,14 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 				productId.add(productData.getProductId());
 				unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
 				videoList.add(productData.isIsVideo() ? TRUE_VALUE : FALSE_VALUE);
-				outOfStockForRentalDates.add(StringUtils.equals(
-						OUT_OF_STOCK,productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE:FALSE_VALUE);
-        outOfStockForQuantity.add(orderEntryData.getAvailabilityMessage() != null ? TRUE_VALUE:FALSE_VALUE);
+				try {
+					outOfStockForRentalDates.add(StringUtils.equals(
+							OUT_OF_STOCK, productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE
+							: FALSE_VALUE);
+					outOfStockForQuantity.add(orderEntryData.getAvailabilityMessage() != null ? TRUE_VALUE:FALSE_VALUE);
+				}catch(Exception e){
+					LOG.debug("Stock not need to track on order confirmation page.");
+				}
 			});
 			String	productName = pName.toString();
 			String	productSKU = pSKU.toString();
