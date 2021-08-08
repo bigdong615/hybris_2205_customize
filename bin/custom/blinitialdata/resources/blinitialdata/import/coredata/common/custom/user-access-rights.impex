@@ -197,6 +197,7 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;PullReadyToShipOrdersCronJob;+;+;-;-
 ;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
 ;;;WebScanTool;+;+;-;-
+;;;Warehouse;+;+;-;-
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
 
