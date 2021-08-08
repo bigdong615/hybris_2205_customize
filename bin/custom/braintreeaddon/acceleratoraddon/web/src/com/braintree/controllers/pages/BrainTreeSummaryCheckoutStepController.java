@@ -105,6 +105,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		model.addAttribute("pageType","reviewSummaryPage");
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);
