@@ -60,6 +60,9 @@
 <!-- Talkable integration Script -->
 <analytics:talkableScript/>
 
+<!-- ShareASale integration Script -->
+<analytics:shareASaleScript/>
+
 <%-- Tealium Data --%>
     <tealium:tealium/>
 	<%-- Inject the page body here --%>
