@@ -55,6 +55,18 @@
                             <div id="showErrorForInputValidation">
 
                             </div>
+                            <div id="showErrorForInvalidZipInputValidation">
+
+                            </div>
+                            <div id="showErrorForInvalidEmailInputValidation">
+
+                            </div>
+                            <div id="showErrorForInvalidPhoneInputValidation">
+
+                            </div>
+                            <div id="showErrorForUPSOrPickAddressError">
+
+                            </div>
                             <div class="cart-actions">
                                 <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
