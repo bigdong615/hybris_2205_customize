@@ -167,7 +167,6 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			String stockStatus[] =	context.arrayValue(OUT_OF_STOCK_FOR_QUANTITY);
 			stockStatus[((Long) modelAndView.getModel().get(ENTRY_NUMBER)).intValue()] = TRUE_VALUE;
 		}
-
 	}
 
 	/**
