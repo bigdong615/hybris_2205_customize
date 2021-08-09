@@ -295,7 +295,7 @@
 							<spring:theme code="text.shipping.change.or.cancellation.message" />
 						</div>
 						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
+							<a href="${printReviewUrl}" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"> <i
 								class="icon-print"></i>
 							</a>
 						</div>

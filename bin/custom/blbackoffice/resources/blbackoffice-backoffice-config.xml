@@ -55,6 +55,12 @@
 			</n:explorer-tree>
 		</context>
 
+	<context merge-by="module" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
+		<n:explorer-tree>
+			<n:type-node code="GiftCard" id="GiftCard"/>
+		</n:explorer-tree>
+	</context>
+
 	<context parent="GenericItem" type="BlOptions" component="listview">
 		<list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
 			<list:column qualifier="code" />
@@ -73,6 +79,15 @@
 		</y:base>
 	</context>
 
+	<context type="GiftCard" component="cseditorareaactions" parent="GenericItem"  principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.bl.blbackoffice.actions.giftcardemailandmovement"
+						  property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
 	<context type="GiftCard" component="editorareaactions" parent="GenericItem">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
@@ -223,6 +238,7 @@
 					<editorArea:attribute qualifier="startDate" />
 					<editorArea:attribute qualifier="endDate" />
 					<editorArea:attribute qualifier="active" />
+					<editorArea:attribute qualifier="isPurchased" />
 					<editorArea:attribute qualifier="email" />
 					<editorArea:attribute qualifier="issuer"
 										  readonly="true" />
@@ -347,6 +363,7 @@
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="numberSystem"/>
 					</wz:property-list>
 				</wz:content>
@@ -369,6 +386,7 @@
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+				<wz:assign property="newBlSerialProduct.manufacturerName" value="Other"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -387,6 +405,7 @@
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
 						<wz:property qualifier="cosmeticRating"/>
 						<wz:property qualifier="functionalRating"/>
@@ -1144,7 +1163,6 @@
 					<wz:property-list root="newCSNotes">
 						<wz:property qualifier="type"/>
 						<wz:property qualifier="userID"/>
-						<wz:property qualifier="fraud"/>
 						<wz:property qualifier="note"/>
 					</wz:property-list>
 				</wz:content>
@@ -1193,6 +1211,20 @@
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType" readonly="false" />
 				</editorArea:section>
+			</ea:tab>
+			<ea:tab name="hmc.administration">
+			<ea:section name="customersupport.giftcard.tab.name">
+				<ea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="giftCard" editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor">
+					<ea:editor-parameter>
+						<ea:name>listConfigContext</ea:name>
+						<ea:value>cs-listview</ea:value>
+					</ea:editor-parameter>
+					<ea:editor-parameter>
+						<ea:name>configurableFlowConfigCtx</ea:name>
+						<ea:value>create-wizard-no-save</ea:value>
+					</ea:editor-parameter>
+				</ea:attribute>
+			</ea:section>
 			</ea:tab>
 		</editorArea:editorArea>
 	</context>
@@ -1252,7 +1284,6 @@
 		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<list-view:column label="Type" qualifier="type"/>
 			<list-view:column label="UserID" qualifier="userID"/>
-			<list-view:column label="Fraud" qualifier="fraud"/>
 			<list-view:column label="Note" qualifier="note"/>
 		</list-view:list-view>
 	</context>
@@ -1433,7 +1464,6 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
-
 	<context type="Consignment" merge-by="type" component="editorareaactions"
 		principal="frontdeskuserrole">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1444,7 +1474,6 @@
 			</y:group>
 		</y:actions>
 	</context>
-
 	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
 	<context component="explorer-tree" principal="frontdeskuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
@@ -1703,6 +1732,77 @@
 				<y:label>billChargeType+ ' - ' +chargedAmount</y:label>
 			</y:labels>
 		</y:base>
+	</context>
+
+	<context type="GiftCard" component="create-wizard-no-save">
+		<wz:flow id="giftCardCreateWizard" title="customersupport.backoffice.giftcard.title" >
+			<wz:prepare id="giftCardPrepare">
+				<wz:initialize property="newGiftCard" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newGiftCard.amount" value="ctx.parentObject.giftCardCost"/>
+				<wz:assign property="newGiftCard.customerEmail" value="ctx.parentObject.entries[0].recipientEmail"/>
+				<wz:assign property="newGiftCard.message" value="ctx.parentObject.entries[0].message"/>
+				<wz:assign property="newGiftCard.order" value="ctx.parentObject.code"/>
+				<wz:assign property="newGiftCard.name" value="ctx.parentObject.entries[0].recipientName"/>
+				<wz:assign property="newGiftCard.issuer" value="@userService.getCurrentUser().getUid()"/>
+			</wz:prepare>
+			<wz:step id="step1" label="hmc.essential">
+				<wz:content id="step1.content">
+					<wz:property-list root="newGiftCard">
+						<wz:property qualifier="code"  />
+						<wz:property qualifier="amount"  />
+						<wz:property qualifier="currency" />
+						<wz:property qualifier="customer" type="Reference(Customer)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor" />
+						<wz:property qualifier="issuer" readonly="true"/>
+						<wz:property qualifier="isPurchased"  />
+						<wz:property qualifier="email" />
+						<wz:property qualifier="startDate" />
+						<wz:property qualifier="endDate" />
+						<wz:property qualifier="active" />
+						<wz:property qualifier="customerEmail" />
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="message"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done visible="newGiftCard.customer!= null and !#empty(newGiftCard.issuer)  and newGiftCard.issuer != null and  newGiftCard.code!=null and !#empty(newGiftCard.code) and newGiftCard.currency!=null and newGiftCard.amount!=null and newGiftCard.customerEmail!=null"/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="GiftCard" component="create-wizard">
+		<wz:flow id="giftCardCreateWizard" title="customersupport.backoffice.giftcard.title" >
+			<wz:prepare id="giftCardPrepare">
+				<wz:initialize property="newGiftCard" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newGiftCard.issuer" value="@userService.getCurrentUser().getUid()"/>
+			</wz:prepare>
+			<wz:step id="step1" label="hmc.essential">
+				<wz:content id="step1.content">
+					<wz:property-list root="newGiftCard">
+						<wz:property qualifier="code"  />
+						<wz:property qualifier="amount"/>
+						<wz:property qualifier="customer"/>
+						<wz:property qualifier="issuer" />
+						<wz:property qualifier="currency"/>
+						<wz:property qualifier="isPurchased"  />
+						<wz:property qualifier="email"/>
+						<wz:property qualifier="startDate" />
+						<wz:property qualifier="endDate" />
+						<wz:property qualifier="active" />
+						<wz:property qualifier="customerEmail"/>
+						<wz:property qualifier="name" />
+						<wz:property qualifier="message"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newGiftCard"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
 	</context>
 
 </config>

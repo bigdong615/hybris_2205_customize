@@ -157,7 +157,7 @@
 					<ycommerce:testId code="paymentDetailsDelete_delete_button">
 						<button type="submit" data-payment-id="${paymentInfo.id}"
 							class="btn btn-primary btn-block my-4 paymentsDeleteBtn">
-							<spring:theme code="text.account.paymentDetails.delete" />
+							<spring:theme code="shipping.interception.change.date.warning.continue" />
 						</button>
 					</ycommerce:testId>
 					<p class="text-center mb-0">

@@ -2,7 +2,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
+<%-- Changes for BL-66 --%>
+<c:if test="${positionAttribute != 'SocialMediaSectionSlot' && positionAttribute != 'buyingUsedGearEasySection'}">
+<section id="featuredPromo">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                  <img class="promoImg" src="${media.url}">
+                <span> ${headline} <a href="${urlLink}"> <b> ${urlLink} </b> </a> </span>
+                               
+                </div>
+            </div>
+        </div>    
+</section>
+</c:if>
+<%-- Ends here --%>
 
 	<c:if test="${positionAttribute == 'SocialMediaSectionSlot'}">
 	  <div class="social">
@@ -24,4 +41,4 @@
            </c:forEach>
         </div>
 	</c:if>
-
+ 

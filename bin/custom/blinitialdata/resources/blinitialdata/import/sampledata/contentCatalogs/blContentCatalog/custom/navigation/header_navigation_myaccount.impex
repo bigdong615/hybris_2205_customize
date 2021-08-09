@@ -21,12 +21,14 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; AccountSavedCartsLink        ; Account Saved Carts Link         ; /my-account/saved-carts ; AccountSavedCartsLink        ; Saved Carts         ;                            ;                                    ;  ;  ;
                                ;                         ; AccountOrderHistoryLink      ; Account Order History Link       ; /my-account/orders ; AccountOrderHistoryLink      ; Order History       ;                            ;                                    ;  ;  ;
                                ;                         ; AccountAddressesLink         ; Account Addresses Link           ; /my-account/address-book ; AccountAddressesLink         ; Addresses           ;                            ;                                    ;  ;  ;
-                               ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; /my-accont/payment-details ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;  
+                               ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; /my-account/payment-details ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountVerificaionImagesLink ; Account Verification Images Link ; "#" ; AccountVerificaionImagesLink ; Verification Images ;                            ;                                    ;  ;  ;  
-                               ;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;  
-                               
-                               
-                               
+                               ;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;
+                               ;                         ;AccountChangePasswordLink     ; Account Change Password Link     ; /my-account/update-password       ; AccountChangePasswordLink         ; Change Password            ;                            ;                                    ;  ;  ;
+                               ;                         ;AccountChangeEmailLink        ; Account Change Email Link        ; /my-account/update-email ; AccountChangeEmailLink         ; Change Email            ;                            ;                                    ;  ;  ;
+
+
+
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name                  ; parent(uid, $contentCV) ; links(&componentRef) ; &nodeRef       ; children(uid,$contentCV) 
                                 ; AccountNavNode   ;                         ; Account Nav Node Link ; BLNavNode               ;                      ; AccountNavNode ;                          
                                 
@@ -38,10 +40,12 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                  ; $contentC
                                  ; AccountAddressesLinkEntry         ;                         ; Account Addresses Link Entry           ; AccountNavNode           ; AccountAddressesLink                                   
                                  ; AccountCreditCardsLinkEntry       ;                         ; Account Credit Cards Link Entry        ; AccountNavNode           ; AccountCreditCardsLink                                 
                                  ; AccountVerificaionImagesLinkEntry ;                         ; Account Verification Images Link Entry ; AccountNavNode           ; AccountVerificaionImagesLink                           
-                                 ; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink                                
-                                 
-                                 
-                                 
+                                 ; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink
+                                 ; AccountChangePasswordLinkEntry    ;                         ; Account Change Password Link Entry     ; AccountNavNode           ; AccountChangePasswordLink
+                                 ; AccountChangeEmailLinkEntry       ;                         ; Account Change Email Link Entry        ; AccountNavNode           ; AccountChangeEmailLink
+
+
+
 # Navigation Bar Component       
 INSERT_UPDATE AccountNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]           ; name       ; navigationNode(&nodeRef) ; styleClass ; &componentRef              
                                          ;                         ; AccountNavigationComponent ; My Account ; AccountNavNode           ;            ; AccountNavigationComponent 

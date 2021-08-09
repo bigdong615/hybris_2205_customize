@@ -203,6 +203,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String FREE_DELIVERY_MODES = "freeDeliveryModes";
 	public static final String GIFT_CARD_CODE = "giftCardCode";
 
+	public static final String SHIP_DATE = "shipDate";
+	public static final String STATUS = "status";
+
+	public static final String WAREHOUSE = "warehouse";
+	public static final String PULL_JOB_ERROR_OCCURRED = "Error occurred while performing PullReadyToShipOrdersJob";
+	public static final String EMPLOYEE = "Employee ";
+	public static final int DEFAULT_MEMBERS_COUNT = 1;
+	public static final String DEFAULT_PRODUCT_QUANTITY = "1";
+
+
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 
 	public static final String IS_USED_GEAR_PODUCT = "usedGearProduct";
@@ -233,6 +243,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMAIL_ADDRESS = "Email Address";
 	public static final String EMAIL_ADDRESSES = "Email Addresses";
 	public static final String HTML_ENABLED = "HTML Enabled";
+
+	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 	
@@ -242,6 +254,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
 
+	public static final String HARD_ASSIGNED = "hardAssign";
+	public static final String SOFT_ASSIGNED = "softAssign";
 
 	private BlCoreConstants()
 	{

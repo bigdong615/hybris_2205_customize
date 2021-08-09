@@ -1,17 +1,20 @@
 package com.bl.facades.process.email.context;
 
 
-import com.bl.core.model.GiftCardEmailProcessModel;
-import com.bl.core.model.GiftCardModel;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.model.cms2.pages.EmailPageModel;
 import de.hybris.platform.acceleratorservices.process.email.context.AbstractEmailContext;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.model.c2l.LanguageModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+
 import java.text.DecimalFormat;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.model.GiftCardEmailProcessModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.logging.BlLogger;
 
 /**
  * It is a custom implementation of OOTB class {@link AbstractEmailContext} for gift card email.
@@ -26,8 +29,11 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
   private String custname;
   private String code;
   private String amount;
+  private String msg;
+  private Boolean isPurchased;
 
-  @Override
+
+@Override
   public void init(final GiftCardEmailProcessModel giftCardEmailProcessModel,
       final EmailPageModel emailPageModel) {
 
@@ -38,9 +44,10 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     setCustomerEmail(giftCardEmailProcessModel.getCustomerEmail());
     if (giftCardEmailProcessModel.getGiftcard() != null) {
       setGiftcard(giftCardEmailProcessModel.getGiftcard());
+      setMsg(giftCardEmailProcessModel.getGiftcard().getMessage());
       setCustname(giftCardEmailProcessModel.getGiftcard().getName());
       setCode(giftCardEmailProcessModel.getGiftcard().getCode());
-      DecimalFormat decimalFormat = new DecimalFormat("0.00");
+      final DecimalFormat decimalFormat = new DecimalFormat("0.00");
       if (giftCardEmailProcessModel.getGiftcard().getCurrency() != null
           && giftCardEmailProcessModel.getGiftcard().getAmount() != null) {
         final String giftCardAmount =
@@ -48,6 +55,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
                 + decimalFormat
                 .format(giftCardEmailProcessModel.getGiftcard().getAmount().doubleValue());
         setAmount(giftCardAmount);
+		  setIsPurchased(giftCardEmailProcessModel.getGiftcard().getIsPurchased());
       }
     }
   }
@@ -79,7 +87,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     return customerEmail;
   }
 
-  public void setCustomerEmail(String customerEmail) {
+  public void setCustomerEmail(final String customerEmail) {
     this.customerEmail = customerEmail;
   }
 
@@ -87,7 +95,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     return custname;
   }
 
-  public void setCustname(String custname) {
+  public void setCustname(final String custname) {
     this.custname = custname;
   }
 
@@ -95,7 +103,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     return code;
   }
 
-  public void setCode(String code) {
+  public void setCode(final String code) {
     this.code = code;
   }
 
@@ -103,7 +111,39 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     return amount;
   }
 
-  public void setAmount(String amount) {
+  public void setAmount(final String amount) {
     this.amount = amount;
+  }
+  /**
+ * @return the msg
+ */
+public String getMsg()
+{
+	return msg;
+}
+
+/**
+ * @param msg the msg to set
+ */
+public void setMsg(final String msg)
+{
+	this.msg = msg;
+}
+
+  /**
+   * @return the isPurchased
+   */
+  public Boolean getIsPurchased()
+  {
+	  return isPurchased;
+  }
+
+  /**
+   * @param isPurchased
+   *           the isPurchased to set
+   */
+  public void setIsPurchased(final Boolean isPurchased)
+  {
+	  this.isPurchased = isPurchased;
   }
 }

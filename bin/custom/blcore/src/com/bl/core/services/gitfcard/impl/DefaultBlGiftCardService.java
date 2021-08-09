@@ -1,5 +1,6 @@
 package com.bl.core.services.gitfcard.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.cart.BlCartService;
@@ -14,9 +15,11 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -59,6 +62,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * giftCardBalanceAmount));
+             Double movementAmount = 0.0;
+             Double giftCardBalance = 0.0;
+            if(null != movement.getAmount()){
+              movementAmount = movement.getAmount();
+            }
+            if(null != giftCardModel.getBalance()){
+              giftCardBalance = giftCardModel.getBalance();
+            }
+            movement.setBalanceAmount(movementAmount + giftCardBalance); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
@@ -70,6 +82,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * totalplustax));
+            Double movementAmount = 0.0;
+            Double giftCardBalance = 0.0;
+            if(null != movement.getAmount()){
+              movementAmount = movement.getAmount();
+            }
+            if(null != giftCardModel.getBalance()){
+              giftCardBalance = giftCardModel.getBalance();
+            }
+            movement.setBalanceAmount(movementAmount + giftCardBalance); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
@@ -178,7 +199,17 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     return (calculateGiftCardBalance(giftCardModel) > 0);
 
   }
-
+  /**
+  * Generate code for gift card purchase.
+   * @return String value.
+   */
+  @Override
+  public String getUniqueGiftCodeGenertaor() {
+    Random secureRandom = new SecureRandom();
+    return secureRandom.ints(16, 0, BlCoreConstants.ALPHANUMERIC_VALUES.length())
+        .mapToObj(i -> BlCoreConstants.ALPHANUMERIC_VALUES.charAt(i))
+        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+  }
     /**
      * It checks whether gift card already applied to cart.
      * @param giftCardModel
