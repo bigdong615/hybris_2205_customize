@@ -4,6 +4,8 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.VerificationDocumentMediaModel;
 import com.bl.core.services.documentupload.BlVerificationDocumentService;
 import de.hybris.platform.core.model.user.CustomerModel;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -27,6 +29,7 @@ public class DefaultBlVerificationDocumentService implements BlVerificationDocum
     try {
       verificationDocumentMediaModel.setCode(customerModel.getName() + BlCoreConstants.HYPHEN + document.getOriginalFilename());
       getModelService().save(verificationDocumentMediaModel);
+      verificationDocumentMediaModel.setFolder(getMediaService().getFolder("verificationDocuments"));
       getMediaService().setStreamForMedia(verificationDocumentMediaModel, document.getInputStream(), document.getOriginalFilename(), document.getContentType());
       getModelService().refresh(verificationDocumentMediaModel);
       persistVerificationDocument(customerModel, verificationDocumentMediaModel);
@@ -43,24 +46,27 @@ public class DefaultBlVerificationDocumentService implements BlVerificationDocum
    * @param verificationDocumentMediaModel
    */
   private void persistVerificationDocument(final CustomerModel customerModel,final VerificationDocumentMediaModel verificationDocumentMediaModel) {
-    switch(verificationDocumentMediaModel.getDocumentType())
-    {
-      case DRIVING_LICENSE:
-        customerModel.setDrivingLicense(verificationDocumentMediaModel);
-        break;
-      case UTILITY_BILL:
-        customerModel.setUtilityBill(verificationDocumentMediaModel);
-        break;
-      case INSURANCE_CERTIFICATE:
-        customerModel.setInsuranceCertificate(verificationDocumentMediaModel);
-        break;
-      case EXTRA_DOCUMENT1:
-        customerModel.setExtraDocument1(verificationDocumentMediaModel);
-        break;
-      case EXTRA_DOCUMENT2:
-        customerModel.setExtraDocument2(verificationDocumentMediaModel);
-        break;
-    }
+    List<VerificationDocumentMediaModel> documents = new ArrayList<>(customerModel.getVerificationDocuments());
+    documents.add(verificationDocumentMediaModel);
+    customerModel.setVerificationDocuments(documents);
+//    switch(verificationDocumentMediaModel.getDocumentType())
+//    {
+//      case DRIVING_LICENSE:
+//        customerModel.setDrivingLicense(verificationDocumentMediaModel);
+//        break;
+//      case UTILITY_BILL:
+//        customerModel.setUtilityBill(verificationDocumentMediaModel);
+//        break;
+//      case INSURANCE_CERTIFICATE:
+//        customerModel.setInsuranceCertificate(verificationDocumentMediaModel);
+//        break;
+//      case EXTRA_DOCUMENT1:
+//        customerModel.setExtraDocument1(verificationDocumentMediaModel);
+//        break;
+//      case EXTRA_DOCUMENT2:
+//        customerModel.setExtraDocument2(verificationDocumentMediaModel);
+//        break;
+//    }
   }
 
   public UserService getUserService() {

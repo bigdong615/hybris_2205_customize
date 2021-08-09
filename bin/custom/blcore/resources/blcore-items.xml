@@ -425,7 +425,13 @@
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
-
+	  <relation code="Customer2VerificationDocuments" generate="true"
+		localized="false" autocreate="true">
+		<sourceElement qualifier="customer" type="Customer"
+			cardinality="one" />
+		<targetElement qualifier="verificationDocuments"
+			type="VerificationDocumentMedia" cardinality="many" collectiontype="list" />
+	  </relation>
     </relations>
 
 
@@ -1732,14 +1738,9 @@
               <attribute type="DocumentType" qualifier="documentType">
                 <persistence type="property" />
               </attribute>
-              <attribute qualifier="URL" type="java.lang.String" redeclare="true">
-                    <modifiers read="true" write="true" search="false" optional="true" encrypted="true" />
-                    <persistence type="dynamic"/>
-                    <model>
-                        <getter name="url" deprecated="true" deprecatedSince="ages"/>
-                        <setter name="url" deprecated="true" deprecatedSince="ages"/>
-                    </model>
-                </attribute>
+              <attribute type="java.util.Date" qualifier="expiryDate">
+                <persistence type="property" />
+              </attribute>
             </attributes>
           </itemtype>
 
@@ -2767,31 +2768,6 @@
                 <persistence type="property" />
                 <defaultvalue>Boolean.FALSE</defaultvalue>
                 <description>It enables/disables PO payment option for a customer</description>
-            </attribute>
-            <attribute qualifier="drivingLicense" type="VerificationDocumentMedia">
-                <description>To store driving license</description>
-                <persistence type="property" />
-                <modifiers/>
-            </attribute>
-            <attribute qualifier="utilityBill" type="VerificationDocumentMedia">
-                <description>To store utility bill</description>
-                <persistence type="property" />
-                <modifiers/>
-            </attribute>
-            <attribute qualifier="insuranceCertificate" type="VerificationDocumentMedia">
-                <description>To store insurance certificate</description>
-                <persistence type="property" />
-                <modifiers/>
-            </attribute>
-            <attribute qualifier="extraDocument1" type="VerificationDocumentMedia">
-                <description>To store extra document1</description>
-                <persistence type="property" />
-                <modifiers/>
-            </attribute>
-            <attribute qualifier="extraDocument2" type="VerificationDocumentMedia">
-                <description>To store extra document2</description>
-                <persistence type="property" />
-                <modifiers/>
             </attribute>
             </attributes>
             </itemtype>

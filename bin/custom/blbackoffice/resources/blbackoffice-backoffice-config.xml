@@ -1803,6 +1803,142 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+	
+	<!--  For Verification Agent -->
+	<context component="explorer-tree" principal="verificationdocagentrole">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+			<n:navigation-node id="Customers">
+				<n:type-node code="Customer" id="Customer"/>
+			</n:navigation-node>
+		</n:explorer-tree>
+	</context>
+
+	<context merge-by="replace" parent="User" type="Customer"
+		component="editor-area" principal="verificationdocagentrole">
+		<editorArea:editorArea
+			xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="essentials">
+				<editorArea:section
+					name="hmc.media.section.general">
+					<editorArea:attribute qualifier="name"
+						position="1" />
+					<editorArea:attribute qualifier="uid"
+						position="2" />
+					<editorArea:attribute qualifier="customerID"
+						position="3" />
+					<editorArea:attribute
+						qualifier="verificationDocuments" position="4" >
+					<editorArea:editor-parameter>
+								<editorArea:name>configurableFlowConfigCtx</editorArea:name>
+								<editorArea:value>create-wizard-no-save</editorArea:value>
+							</editorArea:editor-parameter>
+						</editorArea:attribute>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+	
+	<context type="VerificationDocumentMedia" component="configurableFlowDynamicForms" principal="verificationdocagentrole">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" modelProperty="newMedia">
+            <df:attribute id="disableFolder" qualifier="newMedia.folder" disabledIf="true" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context merge-by="replace" parent="CatalogUnawareMediaModel" type="VerificationDocumentMedia"
+		component="editor-area"
+		principal="verificationdocagentrole">
+		<ea:editorArea name="">
+			<ea:tab name="hmc.tab.common">
+				<ea:section name="hmc.media.section.general">
+					<ea:customPanel name="mediaSection" spring-bean="mediaItemUploadRenderer">
+						<ea:render-parameter>
+							<ea:name>dataModelProperty</ea:name>
+							<ea:value>currentObject</ea:value>
+						</ea:render-parameter>
+					</ea:customPanel>
+				</ea:section>
+				<ea:section name="hmc.properties">
+					<ea:attribute qualifier="documentType" />
+					<ea:attribute qualifier="expiryDate" />
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
+	</context>
+	
+	<context type="VerificationDocumentMedia" component="create-wizard-no-save" merge-by="type">
+		<wz:flow id="MediaWizard" title="create.title(ctx.TYPE_CODE)" principal="verificationdocagentrole">
+			<wz:prepare id="mediaPrepare">
+				<wz:initialize property="newMedia" type="ctx.TYPE_CODE"/>
+				<!-- <wz:assign property="newMedia.catalogVersion" value="ctx.parentObject?.catalogVersion"/> -->
+				<wz:assign property="newMedia.folder" value="@mediaService.getFolder('verificationDocuments')"/>
+				<!-- <wz:assign property="verificationDocMediaFolder" template-bean="verificationDocMediaFolder"/> -->
+			</wz:prepare>
+			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newMedia">
+						<wz:property qualifier="code" position="10"/>
+						<wz:property qualifier="catalogVersion" position="20" merge-mode="remove"/>
+						<wz:property qualifier="removable" position="30"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:next visible="!#empty(newMedia.code)"/>
+					<wz:done visible="!#empty(newMedia.code)">
+						<wz:save property="newMedia"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+			<wz:step id="step2" label="media.content.label" sublabel="media.content.sublabel">
+				<wz:content id="step2.content">
+					<wz:property qualifier="mediaContent" position="10"
+                                 type="com.hybris.cockpitng.editor.defaultfileupload.FileUploadResult" editor="com.hybris.cockpitng.editor.dndfileupload"/>
+				</wz:content>
+				<wz:navigation id="step2.navigation">
+					<wz:cancel>
+						<wz:revert property="newMedia"/>
+					</wz:cancel>
+					<wz:back/>
+					<wz:next/>
+                    <wz:custom visible="!#empty(newMedia.code)" label="com.hybris.cockpitng.widgets.configurableflow.flow.done" handler="mediaContentUpdateHandler">
+						<wz:parameter>
+							<wz:name>mediaProperty</wz:name>
+							<wz:value>newMedia</wz:value>
+						</wz:parameter>
+						<wz:parameter>
+							<wz:name>mediaContentProperty</wz:name>
+							<wz:value>mediaContent</wz:value>
+						</wz:parameter>
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+			<wz:step id="step3" label="properties.label" sublabel="properties.sublabel">
+				<wz:content id="step3.content">
+					<wz:property-list root="newMedia">
+						<wz:property qualifier="mediaFormat" merge-mode="remove"/>
+						<wz:property qualifier="mediaContainer" merge-mode="remove"/>
+						<wz:property qualifier="folder" position="10" readonly="true"/>
+						<wz:property qualifier="documentType" position="20"/>
+						<wz:property qualifier="expiryDate" position="30"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step3.navigation">
+					<wz:cancel/>
+					<wz:back/>
+                    <wz:custom visible="!#empty(newMedia.code)" label="com.hybris.cockpitng.widgets.configurableflow.flow.done" handler="mediaContentUpdateHandler">
+						<wz:parameter>
+							<wz:name>mediaProperty</wz:name>
+							<wz:value>newMedia</wz:value>
+						</wz:parameter>
+						<wz:parameter>
+							<wz:name>mediaContentProperty</wz:name>
+							<wz:value>mediaContent</wz:value>
+						</wz:parameter>
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
 
 </config>
 
