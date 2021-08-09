@@ -929,6 +929,7 @@ function createHostedFields(clientInstance) {
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
 							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 							var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
+							var orderId = createHiddenParameter("orderCode", $("#orderId").val());
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
 							submitForm.append($(paymentNonce));
@@ -954,6 +955,7 @@ function createHostedFields(clientInstance) {
 							submitForm.append($(cardDetails));
 							submitForm.append($(cardholder));
 							submitForm.append($(defaultCard));
+							submitForm.append($(orderId));
 							submitForm.submit();
 						}
 					});
@@ -1280,6 +1282,8 @@ $(".edit-cc-form").on("click",function(e){
 });
 
 
+
+
 if((typeof editPaymentMethodsPage != 'undefined'))
 {	
 $("#submit_silentOrderPostForm").on("click",function(e) {
@@ -1358,4 +1362,12 @@ $(".js-set-default-card").on("click",function(e){
         }
 });
     
+});
+
+
+$(".add-cc-form").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form").submit();
 });
