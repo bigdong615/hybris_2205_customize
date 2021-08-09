@@ -129,6 +129,7 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       giftCardPurchase.setCustomerEmail(StringUtils.isNotBlank(entry.getRecipientEmail())? entry.getRecipientEmail() : ((CustomerModel)order.getUser()).getUid());
       giftCardPurchase.setName(StringUtils.isNotBlank(entry.getRecipientName())? entry.getRecipientName(): order.getUser().getName());
       giftCardPurchase.setMessage(entry.getRecipientMessage());
+      giftCardPurchase.setCurrency(order.getCurrency());
       giftCardPurchase.setCustomer((CustomerModel) order.getUser());
       giftCardPurchase.setCode(giftCardService.getUniqueGiftCodeGenertaor());
       giftCardPurchase.setOrder(Collections.singletonList(order));

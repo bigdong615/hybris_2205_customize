@@ -237,8 +237,9 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 
 # BL-794 Declaring Enums for Conditional Ratings
 INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
-                                       ; 1                 ; 1             
-                                       ; 2                 ; 2             
+                                       ; 0                 ; 0
+                                       ; 1                 ; 1
+                                       ; 2                 ; 2
                                        ; 3                 ; 3             
                                        ; 4                 ; 4             
                                        ; 5                 ; 5             

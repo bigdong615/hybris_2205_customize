@@ -2,17 +2,20 @@ package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
-
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -21,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -48,6 +52,12 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     //Check gift card purchase order
     if(source.isGiftCardOrder()){
+   	 final Optional<AbstractOrderEntryModel> giftCardOrder = source.getEntries().stream().findFirst();
+   	 if(giftCardOrder.isPresent()){
+   		 
+   		 target.setRecipientEmail(giftCardOrder.get().getRecipientEmail());
+   		 target.setRecipientName(giftCardOrder.get().getRecipientName());
+   	 }
    	 target.setIsRentalCart(Boolean.FALSE);
    	 target.setHasGiftCart(Boolean.TRUE);
    	
@@ -62,7 +72,11 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(source.getUser() instanceof CustomerModel){
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
+
+    // To Populate Gift Card Details
+    populateGiftCardDetails(source , target);
   }
+
 
   /**
    * This method created to populate dates for order details
@@ -261,6 +275,32 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     return date.before(orderModel.getRentalStartDate()) || date.before(updateRentalDatesIfOrderIsExtended(orderModel))
     || DateUtils.isSameDay(updateRentalDatesIfOrderIsExtended(orderModel), date);
   }
+
+
+  /**
+   * This method created to populate the gift card details for order details
+   */
+
+  private void populateGiftCardDetails(final OrderModel source, final OrderData target)
+  {
+    final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+    if(CollectionUtils.isNotEmpty(source.getGiftCard())) {
+      for(final GiftCardModel giftCardModel : source.getGiftCard()){
+        final BLGiftCardData blGiftCardData = new BLGiftCardData();
+        blGiftCardData.setCode(giftCardModel.getCode());
+        for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
+          if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
+            blGiftCardData.setBalanceamount(convertDoubleToPriceData(giftCardMovementModel.getBalanceAmount() , source));
+            blGiftCardData.setRedeemamount(convertDoubleToPriceData(giftCardMovementModel.getAmount() , source));
+            blGiftCardDataList.add(blGiftCardData);
+          }
+        }
+      }
+
+    }
+    target.setGiftCardData(blGiftCardDataList);
+  }
+
 
 
   public PriceDataFactory getPriceDataFactory() {

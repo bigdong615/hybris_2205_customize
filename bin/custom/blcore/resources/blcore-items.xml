@@ -46,13 +46,13 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
-	        <value code="BOX"/>
             <value code="ADDED_TO_CART" />
             <value code="PARTIALLY_UNBOXED" />
             <value code="UNBOXED" />
             <value code="RECEIVED_OR_RETURNED" />
             <value code="REPAIR_NEEDED" />
             <value code="PARTS_NEEDED" />
+            <value code="BOXED" />
             <value code="IN_HOUSE" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
@@ -1253,6 +1253,12 @@
 		                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
 		                <description>To identify whether it is reserved or not</description>
 	              </attribute>
+                   <attribute qualifier="softAssigned" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether it is reserved with soft assigned or not for rental gear order.</description>
+                   </attribute>
                     <attribute qualifier="repairReasons" type="RepairReasonsEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
@@ -1713,6 +1719,12 @@
                   search="true" />
                 <persistence type="property" />
               </attribute>
+              <attribute qualifier="balanceAmount" type="java.lang.Double">
+                <description>Gift card movement balance amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
             </attributes>
           </itemtype>
           <!--Gift Card End-->
@@ -1977,31 +1989,31 @@
                 <attributes>
                     <attribute qualifier="daysToSkip" type="DaysCollection" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="cutOffTime" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="numberOfDaysToSkip" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="shippingMethodId" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="shippingMethodType" type="ShippingMethodTypeEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="businessTypeDelivery" type="boolean">
                         <persistence type="property" />
@@ -2015,21 +2027,19 @@
                     </attribute>
                     <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
-
-                    <attribute qualifier="preReservedDays" type="java.lang.Integer" autocreate="true">
-                      <persistence type="property"/>
-                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    <attribute qualifier="preReservedDays" type="java.lang.String" autocreate="true">
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" search="true" />
                     </attribute>
-                    <attribute qualifier="postReservedDays" type="java.lang.Integer"
-                      autocreate="true">
-                      <persistence type="property"/>
-                      <modifiers read="true" write="true" search="true" initial="true"/>
-					</attribute>
+                    <attribute qualifier="postReservedDays" type="java.lang.String" autocreate="true">
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" search="true" />
+                    </attribute>
                     <attribute qualifier="shippingOrderSequence" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                 </attributes>
             </itemtype>

@@ -30,6 +30,9 @@
 		<c:forEach items="${searchPageData.results}" var="savedCart" varStatus="loop">
 			<div class="order-block">
 				<div class="row">
+					<c:if test="${not empty saved_cart_success && renamed_cart_code eq fn:escapeXml(savedCart.code)}">
+                     		<div class="alert alert-info alert-dismissable getAccAlert col-md-6">${saved_cart_success}</div>
+        	</c:if>
 					<div class="col-12 col-md-7 my-auto"> <b>${fn:escapeXml(savedCart.name)}</b>
 						<p class="gray80 body14">
 							<fmt:formatDate value="${savedCart.saveTime}" dateStyle="medium" />
@@ -52,7 +55,7 @@
 							<c:url var="savedEditUrl" value="/my-account/saved-carts/${fn:escapeXml(savedCart.code)}/edit" />
 							  <c:url var="removeSavedUrl" value="/my-account/saved-carts/${fn:escapeXml(savedCart.code)}/delete" />
 								<li><a href="#" data-bs-toggle="modal" class ="js-rename-saved-carts" data-savedcart-id="${savedEditUrl}" data-bs-target="#renameCart"
-								data-savedcart-name="${fn:escapeXml(savedCart.name)}"><spring:theme code="text.savedcart.button.rename"/></a></li>
+								data-savedcart-name="${fn:escapeXml(savedCart.name)}" data-savedcart-code="${fn:escapeXml(savedCart.code)}"><spring:theme code="text.savedcart.button.rename"/></a></li>
 								<li>
 								<li><a href="#" data-bs-toggle="modal" class="js-remove-saved-carts" data-savedcart-id="${removeSavedUrl}"  data-bs-target="#removeCart"><spring:theme code="text.savedcart.button.remove"/></a></li>
 								</li>
@@ -61,6 +64,7 @@
 					</div>
 				</div>
 			</div>
+
 		</c:forEach>
 		 <nav:pagination searchPageData="${searchPageData}" searchUrl="${searchUrl}"/>
 	</c:otherwise>
@@ -71,7 +75,7 @@
 
 <!-- Rename Modals -->
 <div class="modal fade" id="renameCart" aria-hidden="true" aria-labelledby="..." tabindex="-1">
-	<div class="modal-dialog modal-dialog-centered modal-sm">
+	<div class="modal-dialog modal-dialog-centered modal-mm">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title"><spring:theme code="text.savedcart.rename"/></h5>
@@ -79,6 +83,8 @@
 			</div>
 			<div class="modal-body">
 			<input type="hidden"  id="renameCartIdUrl" value="" var="renameCartIdAction"/>
+			<input type="hidden"  id="renameCartCode" value="" var="renameCartId"/>
+			<input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" />
 
 				<form:form action="${renameCartIdAction}" id="renameCartForm" modelAttribute="saveCartForm" autocomplete="off">
 					<div class="form-group">
@@ -87,8 +93,8 @@
 								<spring:theme code="${messageKey}" />
 							</div>
 						</c:if>
-						<label class="control-label" for="name">
-						<form:input cssClass="form-control" id="renameSaveCartName" path="name" maxlength="255" placeholder="Cart Name" />
+						<label class="control-label renameSaveCartName-css" for="name">
+						<form:input cssClass="form-control title-case-rename" id="renameSaveCartName" path="name" maxlength="30" placeholder="Cart Name" />
 						<div class="help-block right-cartName" id="remain"></div>
 					</div>
 					<br>
@@ -96,11 +102,11 @@
 						<div class="modal-actions">
 							<div class="row">
 								<div class="col-sm-12">
-									<button type="submit" class="btn btn-primary btn-block" value="${editActionUrl}">
+									<button type="submit" class="btn btn-primary btn-block js-validate-rename-cart" value="${editActionUrl}" data-cart-code="${renameCartId}">
 										<spring:theme code="text.button.save" /> </button>
 									<br>
 									<p class="text-center mb-0">
-										<a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close" id="cancelSaveCartButton">
+										<a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close" id="cancelSaveCartButton" >
 											<spring:theme code="basket.save.cart.action.cancel" /> </a>
 									</p>
 								</div>
@@ -108,6 +114,7 @@
 						</div>
 					</div>
 				</form:form>
+							<div class ="notification notification-error d-none" id="errorMessages_renamecart"> </div>
 			</div>
 		</div>
 	</div>

@@ -2,51 +2,60 @@ package com.tealium.dataconnector.hybris;
 
 import static com.tealium.dataconnector.hybris.HybrisDataController.HybrisCustomDataConverter;
 import static com.tealium.dataconnector.hybris.HybrisDataController.HybrisCustomPageTypeCustomData;
-
 import de.hybris.platform.jalo.JaloSession;
-
 import java.util.*;
-
 import com.tealium.context.TealiumContext;
 import com.tealium.util.udohelpers.UDO;
 import com.tealium.util.udohelpers.exceptions.UDOUpdateException;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
+/**
+ * @author Vijay Vishwakarma
+ * This calss is created for customize udo data as per page specific requirement.
+ */
 public class TealiumCustomData implements HybrisCustomDataConverter
 {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TealiumCustomData.class);
+	private static final String SHIPPINGPAGE = "shippingpage";
+	private static final String PAYMENTPAGE = "paymentpage";
+	private static final String SHIPPING_PAGE = "shippingPage";
+	private static final String PAYMENT_PAGE = "paymentPage";
 	private static Map<String, HybrisCustomPageTypeCustomData> customPagesMap;
 
-	private final static ArrayList<String> searchPageFields = new ArrayList<>(Arrays.asList("search_results", "search_keyword"));
-	private final static ArrayList<String> categoryPageFields = new ArrayList<>(Arrays.asList("page_category_name"));
-	private final static ArrayList<String> productPageFields = new ArrayList<>(
-			Arrays.asList("search_results", "search_keyword", "product_id", "product_sku", "product_name", "product_brand",
-					"product_category", "product_subcategory", "product_unit_price", "breadcrumb_value", "cart_addition_pdp",
-					"product_subcategory", "product_price", "product_quantity"));
+	private static final ArrayList<String> productPageFields = new ArrayList<>(
+			Arrays.asList("isBuy", "productCategory", "ProductName", "productSKU",
+					 "prodid", "rental_days","prodOutOfStock"));
 
-	private final static ArrayList<String> cartPageFields = new ArrayList<>(
-			Arrays.asList("product_id", "product_sku", "product_name", "product_brand", "product_category", "product_subcategory",
-					"product_unit_price", "product_quantity", "continue_to_checkout"));
+	private static final  ArrayList<String> cartPageFields = new ArrayList<>(
+			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy",
+					"productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days" ,"out_of_stock_for_rental_dates","out_of_stock_for_quantity")); // NOSONAR
 
-	private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
-			Arrays.asList("order_id  ", "order_subtotal", "order_payment_type", "order_total", "order_discount", "order_shipping",
-					"order_tax", "order_currency", "order_coupon_code", "order_type", "product_id", "product_sku", "product_name",
-					"product_brand", "product_category", "product_subcategory", "product_unit_price", "product_quantity",
-					"customer_email", "state", "postal_code", "guest_order", "customer_account_number"));
 
-	private final static ArrayList<String> customerDetailPageFields = new ArrayList<>(
-			Arrays.asList("customer_name", "customer_email"));
+  private static final  ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
+      Arrays.asList("user_email", "userFirstName", "userLastName",
+					"cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","orderID","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days","order_tax","isVideo")); // NOSONAR
 
-	private final static ArrayList<String> allPageFields = new ArrayList<>(
-			Arrays.asList("page_type", "global_url", "navigation_type", "page_name", "cart_open", "cart_addition",
-					"cart_addition_pdp", "cart_addition_quick_view", "cart_addition_quick_add", "cart_addition_cart_quick_add",
-					"cart_addition_order_history", "cart_removed", "checkout", "cart_view", "empty_cart_view", "searched_keyword",
-					"type_ahead", "no_search_result_keyword", "keyword_no_search_result_page", "guest_checkout", "existing_user",
-					"new_user", "guest_checkout_click_value", "existing_user_checkout", "new_user_checkout", "checkout_step"));
 
-	private final static ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList("breadcrumb_value", "product_subcategory",
-			"product_price", "product_quantity", "page_category_name", "product_brand", "product_id", "product_sku",
-			"product_name"));
+	private static final ArrayList<String> checkoutShippingPage = new ArrayList<>(
+			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days"));
+
+	private static final ArrayList<String> checkoutBillingPage = new ArrayList<>(
+			Arrays.asList( "cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days"));
+
+	private static final ArrayList<String> allPageFields = new ArrayList<>(
+			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account"
+			));
+
+	private static final ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList(
+			"product_price", "product_quantity", "page_category_name", "product_brand","couponCode","quantity","unit_price","prodid","isVideo"
+	     ,"out_of_stock_for_rental_dates","out_of_stock_for_quantity"));
 
 	private TealiumContext context;
 
@@ -56,14 +65,14 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	@Override
 	public Map<String, HybrisCustomPageTypeCustomData> getHybrisCustomPageTypes()
 	{
-		return null;
+		return customPagesMap;
 	}
 
 	@Override
 	public UDO homePage(UDO udo)
 	{
 		defaultDataSources(udo);
-	//	context.clean();
+	  context.clean();
 		return udo;
 	}
 
@@ -78,20 +87,13 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	@Override
 	public UDO searchPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, searchPageFields);
-		context.clean();
 		return udo;
 	}
 
 	@Override
 	public UDO categoryPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, categoryPageFields);
-		context.clean();
 		return udo;
-
 	}
 
 	@Override
@@ -124,9 +126,6 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	@Override
 	public UDO customerDetailPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, customerDetailPageFields);
-		context.clean();
 		return udo;
 	}
 
@@ -137,38 +136,41 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 		{
 			customPagesMap = new HashMap<>();
 		}
-		customPagesMap.put("account", udo -> {
-			try
-			{
-				udo.setValue("customer_name", context.value("customer_name"));
-				udo.setValue("customer_email", context.value("customer_email"));
+		customPagesMap.put(SHIPPINGPAGE, new HybrisCustomPageTypeCustomData(){
+
+			@Override
+			public UDO getCustomDataUdo(UDO udo) {
+					defaultDataSources(udo);
+					fillUdo(udo, context, checkoutShippingPage);
+					context.clean();
+				  return udo;
 			}
-			catch (UDOUpdateException e)
-			{
-				e.printStackTrace();
-			}
-			return udo;
 		});
 
-		customPagesMap.put("custom_two", udo -> {
-			try
-			{
-				udo.setValue("custom_page2_key", "custom value");
+		customPagesMap.put(PAYMENTPAGE, new HybrisCustomPageTypeCustomData(){
+			@Override
+			public UDO getCustomDataUdo(UDO udo) {
+					defaultDataSources(udo);
+					fillUdo(udo, context, checkoutBillingPage);
+					context.clean();
+				return udo;
 			}
-			catch (UDOUpdateException e)
-
-			{
-				e.printStackTrace();
-			}
-			return udo;
 		});
+
 	}
 
 	private UDO defaultDataSources(UDO udo)
 	{
-		TealiumContext context = (TealiumContext) JaloSession.getCurrentSession().getAttribute("tealiumContext");
-		this.context = context;
+		TealiumContext tealiumContext = (TealiumContext) JaloSession.getCurrentSession().getAttribute("tealiumContext");
+		this.context = tealiumContext;
+		String pageType = context.getAttributes().get("pagetype");
 		fillUdo(udo, context, allPageFields);
+		if(SHIPPING_PAGE.equals(pageType)){
+			fillUdo(udo, context, checkoutShippingPage);
+		}
+		if(PAYMENT_PAGE.equals(pageType)){
+			fillUdo(udo, context, checkoutBillingPage);
+		}
 		return udo;
 	}
 
@@ -177,34 +179,30 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 		requiredFields.forEach((key) -> {
 			try
 			{
-				if (arrayValues.contains(key))
+				if (arrayValues.contains(key) && context.arrayValue(key) != null )
 				{
-					if (context.arrayValue(key) != null)
-					{
 						String[] arr = context.arrayValue(key);
 						for (int i = 0; i < arr.length; i++)
 						{
-							if (arr[i] == null || arr[i].trim() == "")
+							if (StringUtils.isEmpty(arr[i]))
 							{
 								arr[i] = "null";
 							}
 						}
-
 						udo.addArrayValues(key, context.arrayValue(key));
-					}
 				}
 				else
 				{
-					/*if (context.value(key) != null)
+					if (context.value(key) != null)
 					{
 						udo.setValue(key, context.value(key));
 						context.remove(key);
-					}*/
+					}
 				}
 			}
 			catch (UDOUpdateException e)
 			{
-				System.out.println("tealium cannot add value");
+				LOG.error("tealium cannot add value",e);
 			}
 		});
 	}

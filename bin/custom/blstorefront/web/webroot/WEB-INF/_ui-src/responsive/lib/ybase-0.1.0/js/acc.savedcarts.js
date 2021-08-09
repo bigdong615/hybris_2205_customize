@@ -16,12 +16,35 @@ ACC.savedcarts = {
     bindRenameSavedCartForm: function () {
             $(".js-rename-saved-carts").click(function (event) {
             event.preventDefault();
+
+           document.getElementById("renameSaveCartName").value="";
+           if(!$("#errorMessages_renamecart").hasClass("d-none")){
+              $("#errorMessages_renamecart").addClass("d-none");
+           }
+
              var cartId = $(this).data('savedcart-id');
              var cartName = $(this).data('savedcart-name');
+             var renameCartCode = $(this).data('savedcart-code');
              $('#renameCartIdUrl').val(cartId);
+             $('#renameCartCode').val(renameCartCode);
+
              document.getElementById("renameCartForm").action = cartId;
               $('#renameSaveCartName').attr('placeholder', cartName);
             });
+
+             $(".js-validate-rename-cart").click(function (event) {
+              event.preventDefault();
+               var cartName = document.getElementById("renameSaveCartName").value;
+               if(cartName !== 'undefined' && cartName !== ''&& !cartName.trim().length === false){
+                 $('#renameCartForm').submit();
+               }
+               else{
+               	$("#errorMessages_renamecart").removeClass("d-none");
+               	$("#errorMessages_renamecart").html("Whoops, be sure to enter a name for your cart.");
+
+               }
+
+             });
         },
 
         binddeleteCartForm: function () {
