@@ -19,6 +19,7 @@ import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.catalog.model.CompanyModel;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -29,6 +30,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.core.model.user.UserGroupModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
@@ -37,6 +39,7 @@ import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
+
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.util.List;
@@ -425,7 +428,21 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public PayPalCheckoutData getPayPalCheckoutData()
 	{
 		final PayPalCheckoutData payPalCheckoutData = payPalCardDataConverter.convert(cartService.getSessionCart());
+		//Set default address for paypal 
+       if(cartService.getSessionCart().getGiftCardCost() != null)
+		{
+    	  CompanyModel customergroup = getUserService().getUserGroupForUID("defaultAddressGroup",
+					CompanyModel.class);
+			final AddressModel contactAddress = customergroup.getContactAddress();
 
+			final PayPalAddressData payPalAddress = payPalAddressDataConverter
+					.convert(contactAddress);
+			payPalCheckoutData.setShippingAddressOverride(payPalAddress);
+			payPalCheckoutData.setEnvironment(brainTreeConfigService.getEnvironmentTypeName());
+			payPalCheckoutData.setSecure3d(brainTreeConfigService.get3dSecureConfiguration());
+			payPalCheckoutData.setSkip3dSecureLiabilityResult(brainTreeConfigService.getIsSkip3dSecureLiabilityResult());
+
+		}
 		if (cartService.getSessionCart().getDeliveryAddress() != null)
 		{
 			final PayPalAddressData payPalAddress = payPalAddressDataConverter
@@ -833,4 +850,5 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	{
 		this.orderDao = orderDao;
 	}
+	
 }
