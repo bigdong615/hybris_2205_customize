@@ -96,8 +96,15 @@ ACC.account = {
               if(pageType == null || pageType == undefined){
                pageType = '';
               	}
+              	// Track Tealium event for successful register.
+              	var userId =$('#register-form-id').val();
+              	utag.link({
+                   "tealium_event"    : "user_register",
+                   "user_email"     : '"'+userId+'"',
+                    "newRegistration" : "1"
+                      });
 							window.mediator.publish('registerClick',{
-                   userId: $('#register-form-id').val(),
+                   userId: userId,
                    pageType:pageType
                  });
 								location.reload();

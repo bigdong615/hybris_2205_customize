@@ -486,6 +486,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			setUpMetaDataForContentPage(model, extendOrderConfirmation);
 			return getViewForPage(model);
 		} else {
+			GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.paypal.error"));
 			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
 		}
 	}

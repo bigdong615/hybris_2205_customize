@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
 	public static final String PAGETYPE = "pagetype";
 	public static final String CART_DATA = "cartData";
 	public static final String PAYMENT_PAGE = "paymentPage";
@@ -42,13 +43,12 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	private static final String UNIT_PRICE = "unit_price";
 	private static final String DAMAGE_WAIVER_COST = "damage_waiver_cost";
 	private static final String COUPON_CODE = "couponCode";
-	private static final String RENTAL_DAYS = "rentalDays";
+	private static final String RENTAL_DAYS = "rental_days";
 	private static final String IS_BUY = "isBuy";
 	private static final String IS_VIDEO = "isVideo";
 	private static final String TEALIUM_CONTEXT = "tealiumContext";
 	private static final String ACCOUNT_ID = "AccountID";
 	private static final String TEALIUM_ACCOUNT = "tealium_account";
-	private static final String UTAG_MAIN_MYCOOKIE = "utag_main_mycookie";
 	private static final String USER = "user";
 	private static final String RENTAL_DATE = "rentalDate";
 	private static final String PRODUCT = "PRODUCT";
@@ -56,7 +56,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	private static final String PRODUCT_SKU = "productSKU";
 	private static final String PRODID = "prodid";
 	private static final String ORDER_TAX = "order_tax";
-	private static final String USER_EMAIL = "userEmail";
+	private static final String USER_EMAIL = "user_email";
 	private static final String USER_FIRST_NAME = "userFirstName";
 	private static final String USER_LAST_NAME = "userLastName";
 	private static final String IS_RENTAL_PAGE = "IsRentalPage";
@@ -69,9 +69,13 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	public static final String TRUE_VALUE = "1";
 	public static final String OR_STR = "|";
 	public static final String CAMAS_STR = ",";
+	public static final String PROD_OUT_OF_STOCK = "prodOutOfStock";
+	public static final String OUT_OF_STOCK_FOR_RENTAL_DATES = "out_of_stock_for_rental_dates";
+	public static final String OUT_OF_STOCK = "outOfStock";
+  public static final String OUT_OF_STOCK_FOR_QUANTITY = "out_of_stock_for_quantity";
 
 
-	@Override
+  @Override
 	public void beforeView(
 			HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
 			throws Exception {
@@ -85,7 +89,6 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			CustomerData customerData = (CustomerData) modelAndView.getModel().get(USER);
 			context.set(ACCOUNT_ID, customerData.getCustomerId());
 			context.set(TEALIUM_ACCOUNT, customerData.getUid());
-			context.set(UTAG_MAIN_MYCOOKIE, customerData.getUid());
 			RentalDateDto rentalDate = (RentalDateDto) modelAndView.getModel().get(RENTAL_DATE);
 			List<String> productId = new ArrayList<>();
 			List<String> unitPrice = new ArrayList<>();
@@ -135,6 +138,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 		context.set(PRODUCT_NAME, productData.getDisplayName());
 		context.set(PRODUCT_SKU, productData.getCode());
 		context.setArrayValue(PRODID, productId.toArray(new String[productId.size()]));
+		context.set(PROD_OUT_OF_STOCK, StringUtils.isNotEmpty(productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE: FALSE_VALUE);
 	}
 
 	/**
@@ -226,6 +230,8 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			List<String> videoList) {
 		StringBuilder pName = new StringBuilder();
 		StringBuilder pSKU = new StringBuilder();
+		List<String> outOfStockForRentalDates = new ArrayList<>();
+		List<String> outOfStockForQuantity = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(entryDataList)) {
 			entryDataList.forEach(orderEntryData -> {
 				quantity.add(orderEntryData.getQuantity().toString());
@@ -235,6 +241,14 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 				productId.add(productData.getProductId());
 				unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
 				videoList.add(productData.isIsVideo() ? TRUE_VALUE : FALSE_VALUE);
+				try {
+					outOfStockForRentalDates.add(StringUtils.equals(
+							OUT_OF_STOCK, productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE
+							: FALSE_VALUE);
+					outOfStockForQuantity.add(orderEntryData.getAvailabilityMessage() != null ? TRUE_VALUE:FALSE_VALUE);
+				}catch(Exception e){
+					LOG.debug("Stock not need to track on order confirmation page.");
+				}
 			});
 			String	productName = pName.toString();
 			String	productSKU = pSKU.toString();
@@ -247,6 +261,8 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			context.set(PRODUCT_NAME, productName);
 			context.set(PRODUCT_SKU, productSKU);
 			context.setArrayValue(PRODID, productId.toArray(new String[productId.size()]));
+			context.setArrayValue(OUT_OF_STOCK_FOR_RENTAL_DATES,outOfStockForRentalDates.toArray(new String[outOfStockForRentalDates.size()]));
+		  context.setArrayValue(OUT_OF_STOCK_FOR_QUANTITY,outOfStockForQuantity.toArray(new String[outOfStockForQuantity.size()]));
 		}
 	}
 
