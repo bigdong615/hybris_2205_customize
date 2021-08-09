@@ -23,67 +23,69 @@ import com.bl.logging.BlLogger;
  */
 public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionService {
 
-  private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionService.class);
-  private ModelService modelService;
-  private BlEmailSubscriptionRestService blEmailSubscriptionRestService;
+	private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionService.class);
+	private ModelService modelService;
+	private BlEmailSubscriptionRestService blEmailSubscriptionRestService;
 
-  /**
-   * Subscribe and save the contact.
-   * {@inheritDoc}
-   */
-  @Override
-  public void subscribe(final ContactRequest contactRequest) {
+	/**
+	 * Subscribe and save the contact.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void subscribe(final ContactRequest contactRequest) {
 
-    //call the actual rest api and collect response
-    final ContactResponseWrapper contactResponseWrapper = blEmailSubscriptionRestService
-        .subscribeEmail(contactRequest);
+			//call the actual rest api and collect response
+		final ContactResponseWrapper contactResponseWrapper = blEmailSubscriptionRestService
+				.subscribeEmail(contactRequest);
 
-    //save the contact in hybris db
-    persistContact(contactResponseWrapper);
+				//save the contact in hybris db
+				persistContact(contactResponseWrapper);
 
-  }
+	}
 
-  /**
-   * Save the contact key to database.
-   * @param contactResponseWrapper
-   */
-  private void persistContact(final ContactResponseWrapper contactResponseWrapper) {
+	/**
+	 * Save the contact key to database.
+	 * @param contactResponseWrapper
+	 */
+	private void persistContact(final ContactResponseWrapper contactResponseWrapper) {
 
-    final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
-        .create(BlStoredEmailSubscriptionModel.class);
-    emailSubscriptionModel.setContactId(String.valueOf(contactResponseWrapper.getContactID()));
-    emailSubscriptionModel.setContactKey(contactResponseWrapper.getContactKey());
-    emailSubscriptionModel.setStatusCode(contactResponseWrapper.getOperationStatus());
-    emailSubscriptionModel.setRequestString(contactResponseWrapper.getRequestString());
-    emailSubscriptionModel.setResponseString(contactResponseWrapper.getResponseString());
+		final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
+				.create(BlStoredEmailSubscriptionModel.class);
+		emailSubscriptionModel.setContactId(String.valueOf(contactResponseWrapper.getContactID()));
+		emailSubscriptionModel.setContactKey(contactResponseWrapper.getContactKey());
+		emailSubscriptionModel.setStatusCode(contactResponseWrapper.getOperationStatus());
+		emailSubscriptionModel.setRequestString(contactResponseWrapper.getRequestString());
+		emailSubscriptionModel.setResponseString(contactResponseWrapper.getResponseString());
 
-    getModelService().save(emailSubscriptionModel);
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-        "Email contact saved for subscription with id {} and with key {}",
-        contactResponseWrapper.getContactID(), contactResponseWrapper.getContactKey());
-  }
+		getModelService().save(emailSubscriptionModel);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Email contact saved for subscription with id {} and with key {}",
+				contactResponseWrapper.getContactID(), contactResponseWrapper.getContactKey());
+	}
 
-  public ModelService getModelService() {
-    return modelService;
-  }
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
 
-  public void setModelService(final ModelService modelService) {
-    this.modelService = modelService;
-  }
+	public void setModelService(final ModelService modelService)
+	{
+		this.modelService = modelService;
+	}
 
-  /**
-   * @return the blEmailSubscriptionRestService
-   */
-  public BlEmailSubscriptionRestService getBlEmailSubscriptionRestService() {
-    return blEmailSubscriptionRestService;
-  }
+	/**
+	 * @return the blEmailSubscriptionRestService
+	 */
+	public BlEmailSubscriptionRestService getBlEmailSubscriptionRestService() {
+		return blEmailSubscriptionRestService;
+	}
 
-  /**
-   * @param blEmailSubscriptionRestService the blEmailSubscriptionRestService to set
-   */
-  public void setBlEmailSubscriptionRestService(
-      final BlEmailSubscriptionRestService blEmailSubscriptionRestService) {
-    this.blEmailSubscriptionRestService = blEmailSubscriptionRestService;
-  }
+	/**
+	 * @param blEmailSubscriptionRestService the blEmailSubscriptionRestService to set
+	 */
+	public void setBlEmailSubscriptionRestService(
+			final BlEmailSubscriptionRestService blEmailSubscriptionRestService) {
+		this.blEmailSubscriptionRestService = blEmailSubscriptionRestService;
+	}
 
 }

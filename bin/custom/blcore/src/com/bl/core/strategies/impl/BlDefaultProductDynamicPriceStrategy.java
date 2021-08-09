@@ -20,17 +20,16 @@ import org.apache.log4j.Logger;
  *
  */
 public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPriceStrategy {
-
   private static final Logger LOG = Logger.getLogger(BlDefaultProductDynamicPriceStrategy.class);
 
   /**
-   * {@inheritDoc}  
+   *  {@inheritDoc}  
    */
   @Override
   public BigDecimal getDynamicPrice(final Map<Integer, BigDecimal> priceList, final long rentalDays) {
     if (MapUtils.isNotEmpty(priceList) && rentalDays > BlCoreConstants.MINIMUM_RENTAL_DAYS) {
       //find nearest lowest day and nearest highest day
-      int lowest = 0;
+      int lowest = 0 ;
       int highest = 0;
       int noOfDays = (int) rentalDays;
       //Sort those days which we are getting from keys
