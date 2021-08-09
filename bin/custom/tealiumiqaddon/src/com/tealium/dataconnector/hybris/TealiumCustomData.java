@@ -50,7 +50,7 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days"));
 
 	private static final ArrayList<String> allPageFields = new ArrayList<>(
-			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account","utag_main_mycookie"
+			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account"
 			));
 
 	private static final ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList(

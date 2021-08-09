@@ -62,6 +62,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
 	public static final String REDIRECT_PREFIX = "redirect:";
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
+	public static final String REVIEW_SUMMARY_PAGE = "reviewSummaryPage";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -105,6 +106,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		model.addAttribute("pageType", REVIEW_SUMMARY_PAGE);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);

@@ -49,7 +49,6 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	private static final String TEALIUM_CONTEXT = "tealiumContext";
 	private static final String ACCOUNT_ID = "AccountID";
 	private static final String TEALIUM_ACCOUNT = "tealium_account";
-	private static final String UTAG_MAIN_MYCOOKIE = "utag_main_mycookie";
 	private static final String USER = "user";
 	private static final String RENTAL_DATE = "rentalDate";
 	private static final String PRODUCT = "PRODUCT";
@@ -90,7 +89,6 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			CustomerData customerData = (CustomerData) modelAndView.getModel().get(USER);
 			context.set(ACCOUNT_ID, customerData.getCustomerId());
 			context.set(TEALIUM_ACCOUNT, customerData.getUid());
-			context.set(UTAG_MAIN_MYCOOKIE, customerData.getUid());
 			RentalDateDto rentalDate = (RentalDateDto) modelAndView.getModel().get(RENTAL_DATE);
 			List<String> productId = new ArrayList<>();
 			List<String> unitPrice = new ArrayList<>();
@@ -243,9 +241,14 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 				productId.add(productData.getProductId());
 				unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
 				videoList.add(productData.isIsVideo() ? TRUE_VALUE : FALSE_VALUE);
-				outOfStockForRentalDates.add(StringUtils.equals(
-						OUT_OF_STOCK,productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE:FALSE_VALUE);
-        outOfStockForQuantity.add(orderEntryData.getAvailabilityMessage() != null ? TRUE_VALUE:FALSE_VALUE);
+				try {
+					outOfStockForRentalDates.add(StringUtils.equals(
+							OUT_OF_STOCK, productData.getStock().getStockLevelStatus().getCode()) ? TRUE_VALUE
+							: FALSE_VALUE);
+					outOfStockForQuantity.add(orderEntryData.getAvailabilityMessage() != null ? TRUE_VALUE:FALSE_VALUE);
+				}catch(Exception e){
+					LOG.debug("Stock not need to track on order confirmation page.");
+				}
 			});
 			String	productName = pName.toString();
 			String	productSKU = pSKU.toString();
