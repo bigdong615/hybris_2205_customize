@@ -560,16 +560,8 @@
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
     <property name="customerAccountService" ref="customerAccountService"/>
-	</bean> -->
-
-	<!-- BL-82 Added to override OOB Method for AutoSuggestion -->
-
-	<alias name="defaultBlSolrProductSearchFacade" alias="productSearchFacade"/>
-	<bean id="defaultBlSolrProductSearchFacade"
-		class="com.bl.facades.solrfacetsearch.impl.DefaultBlSolrProductSearchFacade" parent="defaultSolrProductSearchFacade">
-		<property name="blProductSearchService" ref="commerceProductSearchService"/>
 	</bean>
-
+-->
 
 	<!--Added for MyAccount Order Page -->
 	<alias name="defaultBlOrderHistoryPopulator" alias="orderHistoryPopulator"/>
