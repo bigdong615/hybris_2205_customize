@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -83,6 +84,16 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 			return modification;
 		}
 
+		// Stock quantity for this cartEntry
+		final long cartEntryLevel = cartEntryModel.getQuantity().longValue();
+
+		//Added condition for used gear product
+
+		 if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) || cartModel.isGiftCardOrder())
+		{
+			return returnSuccessModification(cartEntryModel, cartEntryLevel);
+		}
+
 		// Overall availability of this product
 		final Long stockLevel = getStockLevel(cartEntryModel);
 
@@ -98,9 +109,13 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 			modification.setEntry(cartEntryModel);
 			return modification;
 		}
-		// Stock quantity for this cartEntry
-		final long cartEntryLevel = cartEntryModel.getQuantity().longValue();
 
+		return returnSuccessModification(cartEntryModel, cartEntryLevel);
+
+	}
+
+	private CommerceCartModification returnSuccessModification(final CartEntryModel cartEntryModel, final long cartEntryLevel)
+	{
 		final CommerceCartModification modification = new CommerceCartModification();
 		modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
 		modification.setQuantityAdded(cartEntryLevel);
@@ -108,7 +123,6 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		modification.setEntry(cartEntryModel);
 
 		return modification;
-
 	}
 
 	/**

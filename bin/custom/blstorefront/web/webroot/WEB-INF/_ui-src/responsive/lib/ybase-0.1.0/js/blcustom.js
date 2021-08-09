@@ -1,5 +1,14 @@
+jQuery(document).ready(function () {
+	$(".hidebutton").hide();
+	if($(".hidebutton").length <= 0){
+		$(".hide-after-login").hide();
+	}
+});
+
 //BL-467 clear cart functionality from cart page.
-$('.clear-cart-continue').on("click", function(event) {
+ $('.clear-cart-continue').on("click", function(event) {
+     clearInterval(z);
+ 	 localStorage.removeItem('saved_countdown');
 	$.ajax({
 		url : ACC.config.encodedContextPath + '/cart/emptyCart',
 		type : "GET",
@@ -38,12 +47,13 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	var productCode = form.find('input[name=productCode]').val();
             	var initialCartQuantity = form.find('input[name=initialQuantity]');
             	var cartQuantity = form.find('input[name=quantity]');
-
-            	ACC.track.trackRemoveFromCart(productCode, initialCartQuantity.val());
+              var productName = form.find('input[name=productName]').val();
+            	ACC.track.trackRemoveFromCart(productCode, productName ,initialCartQuantity.val());
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
             	form.submit();
+             
        });
 
 // Script to apply the selected damage Waiver from the dropdown on the cart page
@@ -51,6 +61,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
@@ -69,18 +81,64 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    url: ACC.config.encodedContextPath + "/cart/add",
                                    type: 'POST',
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                   beforeSend: function(){
+                                       $('.page-loader-new-layout').show();
+                                   },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                                      // Tealium event for ATC
+                                       utag.link({
+                                           "tealium_event" : "cart_add",
+                                           "productSKU"    : '["'+productCode+'"]',
+                                           "ProductName"   : '["'+productName+'"]',
+                                           "quantity"      : '["'+quantity+'"]',
+                                           "add_to_cart_rental"  : "1",
+                                           "isBuy"            : "0"
+                                       });
+
+                                      //On empty cart page, add class on close & continue shopping button of add to rental modal.
+                                      $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
+                                      $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
+                                      reloadEmptyCartPageOnModalClose();
+                                      mixedProductInterception(productCode, serialCode);
                                       updateQuantity();
                                       addToCartFromModal();
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
+                                   },
+                                   complete : function() {
+                                      $('.page-loader-new-layout').hide();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
+                                         $('.page-loader-new-layout').hide();
                                          $('.modal-backdrop').addClass('remove-popup-background');
                                          // log the error to the console
                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
@@ -91,92 +149,135 @@ $('.shopping-cart__item-remove').on("click", function (e){
 
  // BL-454 update quantity from rental add to cart popup.
  function updateQuantity() {
-    $('.btn-number').click(function(e) {
-    	e.preventDefault();
-    	fieldName = $(this).attr('data-field');
-    	type = $(this).attr('data-type');
-    	var input = $("input[name='" + fieldName + "']");
-    	var currentVal = parseInt(input.val());
-    	if (!isNaN(currentVal)) {
-    		if (type == 'minus') {
-    			if (currentVal > input.attr('min')) {
-    				input.val(currentVal - 1).change();
-    			}
-    			if (parseInt(input.val()) == input.attr('min')) {
-    				$(this).attr('disabled', true);
-    			}
-    		} else if (type == 'plus') {
-    			if (currentVal < input.attr('max')) {
-    				input.val(currentVal + 1).change();
-    			}
-    			if (parseInt(input.val()) == input.attr('max')) {
-    				$(this).attr('disabled', true);
-    			}
-    		}
-    	} else {
-    		input.val(0);
-    	}
-    });
-    $('.input-number').focusin(function() {
-    	$(this).data('oldValue', $(this).val());
-    });
+ 	let bouncer;
+ 	$('.btn-number').click(function(e){
+ 		e.preventDefault();
+ 		var entryNumber = parseInt($(this).attr('entryNumber'));
+ 		var form = $('#updateCartForm' + entryNumber);
+ 		var productCode = form.find('input[name=productCode]').val();
+ 		var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+ 		var entryNumber = form.find('input[name=entryNumber]').val();
+ 		fieldName = $(this).attr('data-field');
+ 		type = $(this).attr('data-type');
+ 		var input = $("input[name='"+fieldName+"']");
+ 		var currentVal = parseInt(input.val());
+ 		let finalval;
+ 		if (!isNaN(currentVal)) {
+ 			if(type == 'minus') {
+        if(currentVal > input.attr('min')) {
+ 					finalval=currentVal-1;
+ 				}
+ 				if(parseInt(input.val()) == input.attr('min')) {
+ 					$(this).attr('disabled', true);
+ 					finalval=currentVal = 1;
+ 				}
+ 			} else if(type == 'plus') {
+        if(currentVal < input.attr('max')) {
+ 					finalval=currentVal+1;
+ 				}
+ 				if(parseInt(input.val()) == input.attr('max')) {
+ 					$(this).attr('disabled', true);
+ 					finalval=currentVal = 99;
+ 				}
+ 			}
+ 		} else {
+ 			input.val(0);
+ 		}
+    input.val(finalval).change();
+ 		totalQuantityToUpdate=finalval + parseInt(initialCartQuantity);
+ 		form.find('input[name=quantity]').val(totalQuantityToUpdate-1);
 
-    $('.input-number').change(function() {
-    			minValue = parseInt($(this).attr('min'));
-    			maxValue = parseInt($(this).attr('max'));
-    			valueCurrent = parseInt($(this).val());
-    			name = $(this).attr('name');
-    			if (valueCurrent >= minValue) {
-    				$(
-    						".btn-number[data-type='minus'][data-field='"
-    						+ name + "']").removeAttr('disabled')
-    			} else {
-    				$(this).val($(this).data('oldValue'));
-    			}
-    			if (valueCurrent <= maxValue) {
-    				$(
-    						".btn-number[data-type='plus'][data-field='"
-    						+ name + "']").removeAttr('disabled')
-    			} else {
-    				$(this).val($(this).data('oldValue'));
-    			}
-    			// update cart quantity
-    			var entryNumber = parseInt($(this).attr('entryNumber'));
-    			var form = $('#updateCartForm' + entryNumber);
-    			var productCode = form.find('input[name=productCode]')
-    			.val();
-    			var initialCartQuantity = form.find(
-    			'input[name=initialQuantity]').val();
-    			var entryNumber = form.find('input[name=entryNumber]')
-    			.val();
-    			form.find('input[name=quantity]').val(valueCurrent);
-    			if (valueCurrent >= minValue && valueCurrent <= maxValue) {
-    			$.ajax({
-    				url : ACC.config.encodedContextPath
-    				+ "/cart/updateQuantity",
-    				type : 'POST',
-    				data : form.serialize(),
-    				beforeSend : function() {
-    					$('.page-loader-new-layout').show();
-    				},
-    				success : function(response) {
-    					if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
-    						ACC.minicart.updateMiniCartDisplay();
-    					}
-    				},
-    				complete : function() {
-    					$('.page-loader-new-layout').hide();
-    				},
-    				error : function(jqXHR, textStatus, errorThrown) {
-    					$('.page-loader-new-layout').hide();
-    					console.log(
-    							"The following error occurred: "
-    							+ jqXHR, textStatus,
-    							errorThrown);
-    				}
-    			});
-    			}
-    });
+ 		if (bouncer)
+ 			clearTimeout(bouncer)
+ 			bouncer = setTimeout(() => {
+        // update cart quantity
+ 				$.ajax({
+ 					url : ACC.config.encodedContextPath
+ 					+ "/cart/updateQuantity",
+ 					type : 'POST',
+ 					data : form.serialize(),
+ 					beforeSend : function() {
+ 						$('.page-loader-new-layout').show();
+ 					},
+ 					success : function(response) {
+ 						if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+ 							ACC.minicart.updateMiniCartDisplay();
+ 						}
+ 					},
+ 					complete : function() {
+ 						$('.page-loader-new-layout').hide();
+ 					},
+ 					error : function(jqXHR, textStatus, errorThrown) {
+ 						$('.page-loader-new-layout').hide();
+ 						console.log(
+ 								"The following error occurred: "
+ 								+ jqXHR, textStatus,
+ 								errorThrown);
+ 					}
+ 				});
+      }, 1000);
+ 	});
+
+ 	$('.input-number').focusin(function() {
+ 		$(this).data('oldValue', $(this).val());
+ 	});
+
+ 	$('.input-number').focusout(function(){
+ 		var currentValue = $(this).val();
+ 		var totalQuantityToUpdate;
+ 		var entryNumber = parseInt($(this).attr('entryNumber'));
+ 		var form = $('#updateCartForm' + entryNumber);
+ 		var productCode = form.find('input[name=productCode]').val();
+ 		var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+ 		var entryNumber = form.find('input[name=entryNumber]').val();
+ 		totalQuantityToUpdate = parseInt(currentValue) + parseInt(initialCartQuantity);
+ 		form.find('input[name=quantity]').val(totalQuantityToUpdate-1);
+    $.ajax({
+ 			url : ACC.config.encodedContextPath
+ 			+ "/cart/updateQuantity",
+ 			type : 'POST',
+ 			data : form.serialize(),
+ 			beforeSend : function() {
+ 				$('.page-loader-new-layout').show();
+ 			},
+ 			success : function(response) {
+ 				if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+ 					ACC.minicart.updateMiniCartDisplay();
+ 				}
+ 			},
+ 			complete : function() {
+ 				$('.page-loader-new-layout').hide();
+ 			},
+ 			error : function(jqXHR, textStatus, errorThrown) {
+ 				$('.page-loader-new-layout').hide();
+ 				console.log(
+ 						"The following error occurred: "
+ 						+ jqXHR, textStatus,
+ 						errorThrown);
+ 			}
+ 		});
+  });
+
+ 	$('.input-number').change(function() {
+ 		minValue = parseInt($(this).attr('min'));
+ 		maxValue = parseInt($(this).attr('max'));
+ 		valueCurrent = parseInt($(this).val());
+ 		name = $(this).attr('name');
+ 		if (valueCurrent >= minValue) {
+ 			$(
+ 					".btn-number[data-type='minus'][data-field='"
+ 					+ name + "']").removeAttr('disabled')
+ 		} else {
+ 			$(this).val($(this).data('oldValue'));
+ 		}
+ 		if (valueCurrent <= maxValue) {
+ 			$(
+ 					".btn-number[data-type='plus'][data-field='"
+ 					+ name + "']").removeAttr('disabled')
+ 		} else {
+ 			$(this).val($(this).data('oldValue'));
+ 		}
+ 	});
 
     $(".input-number").keydown(function(e) {
     			// Allow: backspace, delete, tab, escape, enter and .
@@ -248,6 +349,17 @@ $('#applyGcCode').click(function (e) {
 	});
 });
 
+//BL-927 Gift Card Purchase Amount
+$('#add-to-gc').click(function(e) {
+    $('.page-loader-new-layout').hide();
+    var form = $('#giftCardPurchaseForm');
+    var amount = form.find('input[name=amount]').val();
+    if (amount < 25 || amount > 500) {
+        $('.notification').show();
+        return false;
+    }
+});
+
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
@@ -307,12 +419,13 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    					arrows : true,
    					pagination :true,
    					keyboard: false,
+					drag:false
    				} ).mount();
    				 document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
    					type   : 'loop',
    					perPage: 1,
    					pagination: true,
-   					drag   : false,
+   					drag   : true,
    					fixedHeight: 140,
    					breakpoints: {
    						'991': {
@@ -355,6 +468,10 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                      success: function (response) {
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
+                                      document.getElementById(popUpId).setAttribute("disabled", true);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                          ACC.minicart.updateMiniCartDisplay();
+                                      }
                                      },
                                       complete: function() {
                                         $('.page-loader-new-layout').hide();
@@ -370,41 +487,77 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
   }
 
 //BL-458 Quantity Change
+let bouncer;
 $('.btn-number').click(function(e){
 	e.preventDefault();
-	fieldName = $(this).attr('data-field');
+  fieldName = $(this).attr('data-field');
 	type = $(this).attr('data-type');
 	var input = $("input[name='"+fieldName+"']");
 	var currentVal = parseInt(input.val());
+	let finalval;
 	if (!isNaN(currentVal)) {
 		if(type == 'minus') {
       if(currentVal > input.attr('min')) {
-				input.val(currentVal - 1).change();
+        finalval=currentVal-1;
 			}
 			if(parseInt(input.val()) == input.attr('min')) {
 				$(this).attr('disabled', true);
+				finalval=currentVal = 1;
 			}
     } else if(type == 'plus') {
       if(currentVal < input.attr('max')) {
-				input.val(currentVal + 1).change();
+        finalval=currentVal+1;
 			}
 			if(parseInt(input.val()) == input.attr('max')) {
 				$(this).attr('disabled', true);
+				finalval=currentVal = 99;
 			}
-		}
+    }
 	} else {
 		input.val(0);
 	}
+
+	input.val(finalval).change();
+	var entryNumber = parseInt($(this).attr('entryNumber'));
+	var form = $('#updateCartForm' + entryNumber);
+	var productCode = form.find('input[name=productCode]').val();
+	var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+	var entryNumber = form.find('input[name=entryNumber]').val();
+	form.find('input[name=quantity]').val(finalval);
+  if (bouncer)
+		clearTimeout(bouncer)
+		bouncer = setTimeout(() => {
+      if (initialCartQuantity != finalval) {
+				ACC.track.trackUpdateCart(productCode, initialCartQuantity,
+						finalval);
+				form.submit();
+			}
+    }, 1000);
 });
 $('.input-number').focusin(function(){
 	$(this).data('oldValue', $(this).val());
+});
+
+$('.input-number').focusout(function(){
+  var currentValue = $(this).val();
+  var entryNumber = parseInt($(this).attr('entryNumber'));
+  var form = $('#updateCartForm' + entryNumber);
+  var productCode = form.find('input[name=productCode]').val();
+  var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+  var entryNumber = form.find('input[name=entryNumber]').val();
+  form.find('input[name=quantity]').val(currentValue);
+   if (initialCartQuantity != currentValue) {
+      	ACC.track.trackUpdateCart(productCode, initialCartQuantity,
+      						currentValue);
+      	form.submit();
+   }
 });
 
 $('.input-number').change(function() {
 	minValue = parseInt($(this).attr('min'));
 	maxValue = parseInt($(this).attr('max'));
 	valueCurrent = parseInt($(this).val());
-  name = $(this).attr('name');
+	name = $(this).attr('name');
 	if(valueCurrent >= minValue) {
 		$(".btn-number[data-type='minus'][data-field='"+name+"']").removeAttr('disabled')
 	} else {
@@ -415,20 +568,6 @@ $('.input-number').change(function() {
 	} else {
 		$(this).val($(this).data('oldValue'));
 	}
-	//update cart quantity
-	if (valueCurrent >= minValue && valueCurrent <= maxValue) {
-  	var entryNumber = parseInt($(this).attr('entryNumber'));
-  	var form = $('#updateCartForm' + entryNumber);
-  	var productCode = form.find('input[name=productCode]').val();
-  	var initialCartQuantity = form.find('input[name=initialQuantity]').val();
-  	var entryNumber = form.find('input[name=entryNumber]').val();
-  	form.find('input[name=quantity]').val(valueCurrent);
-  	if (initialCartQuantity != valueCurrent) {
-  		ACC.track.trackUpdateCart(productCode, initialCartQuantity,
-  				valueCurrent);
-  		form.submit();
-  	}
-  }
 });
 
 $(".input-number").keydown(function (e) {
@@ -447,3 +586,464 @@ $(".input-number").keydown(function (e) {
 	}
 });
 
+//BL-454 It triggers, when user clicks on continue button from mixed product interception modal.
+function mixedProductInterception(productCode, serialCode){
+$('#mixedProductInterception').on("click", function(event) {
+	var redirectToCart = false;
+	$.ajax({
+		url : ACC.config.encodedContextPath + '/cart/emptyCart',
+		type : "GET",
+		beforeSend: function(){
+         $('.page-loader-new-layout').show();
+     },
+		success : function(data) {
+			redirectToCart = addProductToCart(productCode, serialCode);
+		},
+		complete:function(){
+			if(redirectToCart)
+			{
+				
+				window.location.href = ACC.config.encodedContextPath + '/cart';
+			}
+		},
+		error : function(xht, textStatus, ex) {
+		  $('.page-loader-new-layout').hide();
+			console.log("Error while removing cart entries");
+		}
+	});
+});
+}
+
+function addProductToCart(productCode, serialCode){
+	var redirectToCart = false;
+	if(serialCode === 'serialCodeNotPresent')
+	{
+		$.ajax({
+		  	url : ACC.config.encodedContextPath + "/cart/add",
+		  	type : 'POST',
+		  	data : {
+		  		productCodePost : productCode,
+		  		serialProductCodePost : serialCode
+		  	},
+		  	success : function(response) {
+		  	  $('.page-loader-new-layout').hide();
+		  	  $('#addToCartModalDialog').addClass('modal-lg');
+		  		$('#addToCartModalDialog').html(response.addToCartLayer);
+		  		if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+		  			ACC.minicart.updateMiniCartDisplay();
+		  		}
+		  		updateQuantity();
+		  		addToCartFromModal();
+		  		if (document.getElementById("addToCart-gear-sliders") != null) {
+		  			setTimeout(modalBodyContent, 100);
+		  		}
+		  	},
+		  	error : function(jqXHR, textStatus, errorThrown) {
+		  	  $('.page-loader-new-layout').hide();
+		  		$('.modal-backdrop').addClass('remove-popup-background');
+		  		// log the error to the console
+		  		console.log("The following error occurred: " + jqXHR, textStatus,
+		  				errorThrown);
+		  	}
+		  });
+		return redirectToCart;
+	}
+	else
+	{
+		 $.ajax({
+			  	url : ACC.config.encodedContextPath + "/cart/usedgearadd",
+			  	async: false,
+			  	type : 'GET',
+			  	data : {
+			  		productCodePost : productCode,
+			  		serialProductCodePost : serialCode
+			  	},
+			  	success : function(response) {
+			  	  $('.page-loader-new-layout').hide();
+			  	  $('#addToCartModalDialog').addClass('modal-lg');
+			  	  $('#addToCartModalDialog').html(response.addToCartLayer);
+			  	  redirectToCart = true;
+			  	},
+			  	complete: function(){
+			  		$("#addToCart").removeClass("show");
+                    $("#addToCart").hide();
+                    startUsedGearCartTimer();
+			  	},
+			  	error : function(jqXHR, textStatus, errorThrown) {
+			  	  $('.page-loader-new-layout').hide();
+			  		$('.modal-backdrop').addClass('remove-popup-background');
+			  		// log the error to the console
+			  		console.log("The following error occurred: " + jqXHR, textStatus,
+			  				errorThrown);
+			  	}
+			  });
+		 return redirectToCart;
+	}
+ return redirectToCart;
+}
+
+//BL-466 reload page, when user closes add to rental modal from empty cart page.
+function reloadEmptyCartPageOnModalClose(){
+$('.emptyCart-modalClose').click(function(e){
+  window.location.reload();
+});
+}
+
+$('.emailSubscr_btn').click(function (e){
+
+		var email = document.getElementById("emailSubscr_txt").value;
+		//validate email
+			$.ajax({
+				 url: ACC.config.encodedContextPath + "/subscribe-email/?emailId="+email,
+				 type: "GET",
+				success: function (data) {
+					if (data == "success") {
+
+					}
+				}
+			});
+});
+
+//Added code for used gear addToCart 
+$('.bl-serial-add').click(function (e)
+	{
+	 e.preventDefault();
+	 var submitForm = $('#serialSubmitForm');
+	 var csrfTokan = createHiddenParameter("CSRFToken",$(ACC.config.CSRFToken));	
+	 var productCode = createHiddenParameter("productCodePost",$(this).attr('data-product-code'));
+     var serialCode = createHiddenParameter("serialProductCodePost", $(this).attr('data-serial'));
+     
+     if(serialCode == '' || serialCode == undefined){
+    serialCode = "serialCodeNotPresent";
+    }
+    
+     submitForm.append($(productCode)); 
+     submitForm.append($(serialCode));
+     submitForm.append($(csrfTokan));
+     submitForm.submit();
+    
+     startUsedGearCartTimer();
+
+  });
+
+function createHiddenParameter(name, value) {
+    var input = $(HTML.INPUT).attr(HTML.TYPE, "hidden").attr("name", name).val(
+        value);
+    return input;
+}
+
+//BL -471 Used Gear cart timer
+
+$('.usedgear-signout').on("click", function (e) {
+	fetchdata();
+	clearInterval(z);
+	localStorage.removeItem('saved_countdown');
+	
+});
+
+function startUsedGearCartTimer() {
+		
+		localStorage.setItem('StartCartTimer',"StartCartTimer");	
+	}
+	var timeStop="false";
+
+	var storeCartTime = localStorage.getItem('StartCartTimer');
+	if(  storeCartTime == "StartCartTimer")
+	{
+	    localStorage.removeItem('saved_countdown');
+	    localStorage.removeItem('StartCartTimer');
+		var timercount= document.getElementById("timer-count").getAttribute("value") ;
+		var newTimer =new Date().getTime() + (timercount)*1000 +2000;
+	   
+	}
+
+	var saved_countdown = localStorage.getItem('saved_countdown');
+	if(saved_countdown==null)
+	{
+	var new_countdown= new Date().getTime() + (timercount)*1000 +2000;
+	localStorage.setItem('saved_countdown',new_countdown);
+	}
+
+	else{
+		newTimer = saved_countdown ;
+	}
+
+	timeStop = localStorage.getItem('timeStop');
+	if(timeStop=="true"){
+	    clearInterval(z);
+	    localStorage.removeItem('timeStop');
+	    localStorage.removeItem('saved_countdown');
+	}
+
+	if(isNaN(newTimer) )
+	{
+		localStorage.removeItem('saved_countdown');
+		 clearInterval(z);
+	}
+	else if(timeStop==null){
+	var z= setInterval(updateCountdown,1000);
+	}
+
+	function updateCountdown(){
+	  var now = new Date().getTime();
+
+
+	// Find the distance between now and the allowed time
+	var distance =newTimer - now;
+
+	let minutes = Math.floor(distance/60000);
+
+	// Time counter
+	var counter = Math.floor((distance % (1000 * 60)) / 1000);
+	counter =counter<10?'0'+counter:counter;
+
+	// If the count down is over, write some text
+	if (minutes<0) {
+	clearInterval(z);
+	localStorage.removeItem('saved_countdown');
+	fetchdata();
+	}
+	
+	
+
+	if(minutes<0){
+		document.getElementById("usedTimer").innerHTML = "Expired";
+	}
+	else{
+	document.getElementById("usedTimer").innerHTML = `${minutes}:${counter}`;
+	}
+
+	};
+
+	function fetchdata(){
+	var timerStop = true;
+	$.ajax({
+	url: ACC.config.encodedContextPath + "/cart/cartTimerOut",
+	type: "POST",
+	data:{usedGearTimerEnd: timerStop},
+	success: function(response){
+	// Perform operation on the return value
+	window.location.href = ACC.config.encodedContextPath + "/cart";
+	localStorage.setItem("timeStop","true");
+	},
+	error: function (xht, textStatus, ex) {
+	console.log("Error while removing cart entries");
+	}
+	});
+
+	}
+	
+	$('.js-add-to-used-cart').on("click",function(e) {
+        e.preventDefault();
+        /*       $('.page-loader-new-layout').hide();
+        var form = $('#giftCardPurchaseForm');
+        var amount = form.find('input[name=amount]').val();
+        if (amount < 25 || amount > 500) {
+            $('.notification').show();
+            return false;
+        }*/
+         var form = $('#giftCardPurchaseForm');
+    
+         var productCode = $(this).attr('data-product-code');
+         var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
+         var redirectToCart = false;
+         if(serialCode == '' || serialCode == undefined){
+         serialCode = "serialCodeNotPresent";
+         }
+         $.ajax({
+                    url: ACC.config.encodedContextPath + "/cart/usedgearadd",
+                    type: 'GET',
+                    data: form.serialize() + "&productCodePost="+productCode+"&serialProductCodePost="+serialCode,
+                    beforeSend: function(){
+                        $('.page-loader-new-layout').show();
+                    },
+                    success: function (response) {
+                    	var addToCartGiftCardLayer = response.addToCartGiftCardLayer;
+                    	var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                    	var multipleGiftCardWarningLayer = response.multipleGiftCardWarningLayer;
+                    	if(addToCartGiftCardLayer != undefined && addToCartGiftCardLayer != '')
+                    	{
+                    		$('#addToCartModalDialog').html(response.addToCartGiftCardLayer);
+                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                 ACC.minicart.updateMiniCartDisplay();
+                              }
+                    		onGiftCardCloseModal();
+                     		setTimeout(function(){
+                          	   $("#signUp").modal('hide');
+                          	   $("#addToCart").addClass("show");
+                                 $("#addToCart").show();
+                             },500);
+                     		mixedProductInterception(productCode, serialCode);
+                    	}
+                    	 else if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                     	{
+                     		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                     		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                               }
+                     		onGiftCardCloseModal();
+                      		setTimeout(function(){
+                           	   $("#signUp").modal('hide');
+                           	   $("#addToCart").addClass("show");
+                                  $("#addToCart").show();
+                              },500);
+                      		mixedProductInterception(productCode, serialCode);
+                     	}
+                     	else if(multipleGiftCardWarningLayer != undefined && multipleGiftCardWarningLayer != '')
+                     	{
+                     		$('#addToCartModalDialog').html(response.multipleGiftCardWarningLayer);
+                     		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                               }
+                     		onGiftCardCloseModal();
+                      		setTimeout(function(){
+                           	   $("#signUp").modal('hide');
+                           	   $("#addToCart").addClass("show");
+                                  $("#addToCart").show();
+                              },500);
+                      		mixedProductInterception(productCode, serialCode);
+                     	}
+                    	else{
+                    	var addToCartLayer = response.addToUsedCartLayer;
+                    	if(addToCartLayer == undefined || addToCartLayer == '')
+                    	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                       // Tealium event for ATC
+                       utag.link({
+                             "tealium_event" : "cart_add",
+                              "productSKU"    : '["'+productCode+'"]',
+                              "ProductName"   : '["'+productName+'"]',
+                              "quantity"      : '["'+quantity+'"]',
+                               "add_to_cart_used"  : "1",
+                               "isBuy"            : "1"
+                                });
+                    		redirectToCart = true;
+                    		startUsedGearCartTimer();
+                    	}
+                    	else
+                    	{
+                    		$('#addToCartModalDialog').html(response.addToUsedCartLayer);
+                    		onUsedCloseModal();
+                    		setTimeout(function(){
+                         	   $("#signUp").modal('hide');
+                         	   $("#addToCart").addClass("show");
+                                $("#addToCart").show();
+                            },500);
+                    	  mixedProductInterception(productCode, serialCode);
+                    	}
+                    	
+                    	}
+                    },
+                    complete : function() {
+                    	if(redirectToCart)
+                    	{
+                    		window.location.href = ACC.config.encodedContextPath + '/cart';
+                    	}
+                       $('.page-loader-new-layout').hide();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                          $('.page-loader-new-layout').hide();
+                          $('.modal-backdrop').addClass('remove-popup-background');
+                          // log the error to the console
+                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                    }
+         });
+
+});
+
+	function onGiftCardCloseModal()
+	{
+		$("#closeGiftCardModal , #cancelGiftCardModal").on("click", function(event){
+			event.preventDefault();
+			var doReload = $("#doReload").val();
+			if(doReload === 'true')
+			{
+				location.reload();
+			}
+			else
+			{
+				$("#addToCart").removeClass("show");
+	            $("#addToCart").hide();
+			}
+		});
+	}
+	
+function onUsedCloseModal()
+{
+	$("#closeUsedCartModal , #cancelUsedCartModal").on("click", function(event){
+		event.preventDefault();
+		var doReload = $("#doReload").val();
+		if(doReload === 'true')
+		{
+			location.reload();
+		}
+		else
+		{
+			$("#addToCart").removeClass("show");
+            $("#addToCart").hide();
+		}
+	});
+}
+
+//BL-625 place order with order notes.
+$('#placeOrderSummary').on("click", function(e) {
+	$('#placeOrder').click();
+});
+
+ var reviewPageError = $('.js-reviewPage-error').val();
+   if( reviewPageError!= undefined &&  reviewPageError!=null){
+    reviewPageError = reviewPageError.trim();
+     	utag.link({
+        "tealium_event"    : "place_order_error",
+         "checkout_error"     : '"'+reviewPageError+'"'
+          });
+     window.mediator.publish('placeOrderClick', {
+    	reviewPageError: reviewPageError
+    	});
+    }
+
+$('#placeOrder').on(
+		"click",
+		function(e) {
+			var submitForm = $("#placeOrderForm1");
+			var csrfTokan = createHiddenParameter("CSRFToken",
+					$(ACC.config.CSRFToken));
+			submitForm.append($(csrfTokan));
+			submitForm.submit();
+		});
+
+//Handled min and max character for order notes.
+var inputQuantity = [];
+$(function() {
+	$(".order-notes").on(
+			"keyup",
+			function(e) {
+				var $field = $(this), val = this.value;
+				$thisIndex=parseInt($field.data("idx"),10); 
+				if (val.length > Number($field.attr("maxlength"))) {
+					val = val.slice(0, 5);
+					$field.val(val);
+				}
+				inputQuantity[$thisIndex] = val;
+			});
+});
+
+//Print order confirmation page
+$('#printOrderConfirmation').on("click",function(e) {
+		e.preventDefault();
+		var submitForm = $("#printOrderConfirmationForm");
+		submitForm.submit();
+});
+
+function hideShorting(){ 
+    $('.container').on('click', function(){  
+	   $(".product-sort").find(".bootstrap-select").removeClass('open')
+   });
+  }; 
+  hideShorting();

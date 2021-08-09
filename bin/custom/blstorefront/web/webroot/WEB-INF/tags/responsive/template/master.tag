@@ -14,7 +14,7 @@
 <%@ taglib prefix="htmlmeta" uri="http://hybris.com/tld/htmlmeta"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ taglib prefix="tealium" tagdir="/WEB-INF/tags/addons/tealiumiqaddon/shared/analytics" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <!DOCTYPE html>
@@ -45,6 +45,7 @@
 			<link rel="shortcut icon" type="image/x-icon" media="all" href="${originalContextPath}${favIconPath}" />
 		</c:otherwise>
 	</c:choose>
+    <tealium:sync/>
 
 	<%-- CSS Files Are Loaded First as they can be downloaded in parallel --%>
 	<template:styleSheets/>
@@ -54,9 +55,16 @@
 	<analytics:analytics/>
 	<generatedVariables:generatedVariables/>
 </head>
-
 <body class="${pageBodyCssClasses} ${cmsPageRequestContextData.liveEdit ? ' yCmsLiveEdit' : ''} language-${fn:escapeXml(currentLanguage.isocode)}">
 
+<!-- Talkable integration Script -->
+<analytics:talkableScript/>
+
+<!-- ShareASale integration Script -->
+<analytics:shareASaleScript/>
+
+<%-- Tealium Data --%>
+    <tealium:tealium/>
 	<%-- Inject the page body here --%>
 	<jsp:doBody/>
 

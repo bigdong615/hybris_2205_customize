@@ -2,13 +2,15 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
+import com.bl.core.enums.OptimizedShippingMethodEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -29,11 +31,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.ClosureUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import javax.annotation.Resource;
 
 /**
  * It is used to assign serial products to sourcing results in context.
@@ -47,31 +50,40 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private ModelService modelService;
   private SearchRestrictionService searchRestrictionService;
   private SessionService sessionService;
+  private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
 
   /**
    * {@inheritDoc}
    */
   public boolean assignSerialsFromLocation(final SourcingContext context,
-      final SourcingLocation sourcingLocation) throws BlSourcingException {
+      SourcingLocation sourcingLocation) throws BlSourcingException {
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Assigning serials from warehouse {}",
         sourcingLocation.getWarehouse().getCode());
+
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
-    context.getOrderEntries().forEach(entry -> {
+    final SourcingLocation finalSourcingLocation = getBlShippingOptimizationStrategy().getProductAvailabilityForThreeDayGround(
+              context, sourcingLocation);
+      context.getOrderEntries().forEach(entry -> {
 
-      final List<StockLevelModel> stocks = sourcingLocation.getAvailabilityMap()
+      final List<StockLevelModel> stocks = finalSourcingLocation.getAvailabilityMap()
           .get(entry.getProduct().getCode());
 
       if (CollectionUtils.isNotEmpty(stocks)) {
         validateAllocationRulesAndAssignSerials(context, context.getResult().getResults(),
-            sourcingLocation.getWarehouse(), result, allEntrySourceComplete, entry,
+            finalSourcingLocation.getWarehouse(), result, allEntrySourceComplete, entry,
             stocks);
       } else {
         allEntrySourceComplete.add(new AtomicBoolean(false));
       }
     });
 
+    //Ground availability status
+    if(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode().equals(finalSourcingLocation.getGroundAvailabilityCode()) &&
+            finalSourcingLocation.isGroundAvailability()) {
+        result.setThreeDayGroundAvailability(finalSourcingLocation.isGroundAvailability());
+    }
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
   }
 
@@ -352,28 +364,27 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts) {
 
-    final Set<String> serialProductCodesToAssign = new HashSet<>(
+    final Set<BlSerialProductModel> serialProductsToAssign = new HashSet<>(
         (null != result.getSerialProductMap() && null != result.getSerialProductMap()
             .get(entry.getEntryNumber())) ? result.getSerialProductMap().get(entry.getEntryNumber())
             : Collections.emptySet());
-    final Set<String> serialProductCodes = serialProducts.stream()
-        .map(BlSerialProductModel::getCode)
-        .filter(code -> !serialProductCodesToAssign.contains(code))
+    final Set<BlSerialProductModel> serialProductSet = serialProducts.stream()
+        .filter(product -> !serialProductsToAssign.contains(product))
         .collect(Collectors.toSet());
-    serialProductCodesToAssign.addAll(serialProductCodes);
+    serialProductsToAssign.addAll(serialProductSet);
 
     final Map<AbstractOrderEntryModel, Long> allocationMap =
         MapUtils.isNotEmpty(result.getAllocation()) ? result.getAllocation() : new HashMap<>();
-    allocationMap.put(entry, (long) serialProductCodesToAssign.size());
+    allocationMap.put(entry, (long) serialProductsToAssign.size());
 
-    final Set<String> entrySerialProductCodes = new HashSet<>(entry.getSerialProductCodes());
-    entrySerialProductCodes.addAll(serialProductCodesToAssign);
-    entry.setSerialProductCodes(entrySerialProductCodes);
+    final Set<BlProductModel> entrySerialProducts = new HashSet<>(entry.getSerialProducts());
+    entrySerialProducts.addAll(serialProductsToAssign);
+    entry.setSerialProducts(new ArrayList<>(entrySerialProducts));
 
-    final Map<Integer, Set<String>> serialProductMap =
+    final Map<Integer, Set<BlSerialProductModel>> serialProductMap =
         MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap()
             : new HashMap<>();
-    serialProductMap.put(entry.getEntryNumber(), serialProductCodesToAssign);
+    serialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "Serial products {} are assigned for product code {}",
@@ -511,6 +522,14 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
   public void setSessionService(final SessionService sessionService) {
     this.sessionService = sessionService;
+  }
+
+  public BlShippingOptimizationStrategy getBlShippingOptimizationStrategy() {
+      return blShippingOptimizationStrategy;
+  }
+
+  public void setBlShippingOptimizationStrategy(BlShippingOptimizationStrategy blShippingOptimizationStrategy) {
+      this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
   }
 
 }

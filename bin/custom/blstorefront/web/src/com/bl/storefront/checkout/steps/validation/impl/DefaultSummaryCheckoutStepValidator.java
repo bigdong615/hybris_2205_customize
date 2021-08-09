@@ -9,6 +9,8 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMe
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation.AbstractCheckoutStepValidator;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -25,6 +27,12 @@ public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepVal
 	@Override
 	public ValidationResults validateOnEnter(final RedirectAttributes redirectAttributes)
 	{
+		//For gift card moved to payment step
+		if (BooleanUtils.isTrue(getCheckoutFlowFacade().getCheckoutCart().getHasGiftCart()))
+		{
+			return ValidationResults.SUCCESS;
+		}
+
 		final ValidationResults cartResult = checkCartAndDelivery(redirectAttributes);
 		if (cartResult != null) {
 			return cartResult;
@@ -39,7 +47,8 @@ public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepVal
 	}
 
 	protected ValidationResults checkPaymentMethodAndPickup(final RedirectAttributes redirectAttributes) {
-		if (getCheckoutFlowFacade().hasNoPaymentInfo())
+
+		if (StringUtils.isEmpty(getCheckoutFlowFacade().getCheckoutCart().getPoNumber()) && getCheckoutFlowFacade().hasNoPaymentInfo())
 		{
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.INFO_MESSAGES_HOLDER,
 					"checkout.multi.paymentDetails.notprovided");

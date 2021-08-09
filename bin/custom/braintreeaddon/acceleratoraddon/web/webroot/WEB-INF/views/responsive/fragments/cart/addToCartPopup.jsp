@@ -5,6 +5,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
@@ -44,6 +45,12 @@
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
+                     <input type="hidden" id="productCode" value="${product.code}" />
+                     <input type="hidden" id="productName" value="${product.name}" />
+                     <input type="hidden" id="productBrand" value="${product.manufacturer}" />
+                     <input type="hidden" id="productCategory" value="${product.categories[0].name}" />
+                     <input type="hidden" id="productType" value="rental gear" />
+                     <input type="hidden" id="quantity" value="${entry.quantity}" />
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${entry.basePrice.formattedValue}</b>
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
@@ -57,7 +64,7 @@
                         	<div class="input-group">
                         		<span class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				data-type="minus" data-field="quant[1]">
+                        				data-type="minus" data-field="quant[1]" entryNumber="${entry.entryNumber}">
                         				<span class="glyphicon glyphicon-minus"></span>
                         			</button>
                         		</span> <input type="text" name="quant[1]" class="form-control input-number"
@@ -65,7 +72,7 @@
                         			entryNumber="${entry.entryNumber}"> <span
                         			class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				data-type="plus" data-field="quant[1]">
+                        				data-type="plus" data-field="quant[1]" entryNumber="${entry.entryNumber}">
                         				<span class="glyphicon glyphicon-plus"></span>
                         			</button>
                         		</span>
@@ -102,7 +109,21 @@
                                                                                   </c:if>
                                                                               </c:otherwise>
                                                                      </c:choose>
-                                                                           <span class="bookmark"></span>
+                                                                     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                                                                           <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                                                                              <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
+                                                                                   <c:choose>
+                                                                                      <c:when test="${productReference.target.isBookMarked}">
+                                                                                        <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                            data-bookmark-value="${productReference.target.isBookMarked}"></span>
+                                                                                      </c:when>
+                                                                                      <c:otherwise>
+                                                                                        <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                         data-bookmark-value="${productReference.target.isBookMarked}"></span>
+                                                                                      </c:otherwise>
+                                                                                   </c:choose>
+                                                                             </form>
+                                                                      </sec:authorize>
                                                                                <div class="card-sliders splide">
                                                                                  <div class="splide__track">
                                                                                    <ul class="splide__list">
@@ -133,9 +154,6 @@
                                                                                            <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
                                                                                       </c:when>
                                                                                        <c:otherwise>
-                                                                                       <div class="page-loader-new-layout">
-                                                                                                  <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
-                                                                                             </div>
                                                                                             <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                                                 <button type="button" class="btn btn-primary btn-block js-add-to-cart-popup" id="modalCard-${loopindex.index}" data-bs-toggle="modal"
                                                                                                    data-bs-target="#addToCart" data-product-code="${productReference.target.code}">

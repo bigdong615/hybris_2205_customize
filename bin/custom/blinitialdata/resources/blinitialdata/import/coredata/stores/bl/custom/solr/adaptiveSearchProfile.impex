@@ -1,0 +1,34 @@
+#
+# Import the Adaptive search Solr configuration for the Bl store
+#
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores adaptiveSearchProfile.impex =========================");
+
+
+$productCatalog = blProductCatalog
+$solrIndexedType = blProductType
+$indexLanguages = en
+
+
+## Catalog For Adapative Search ###
+INSERT_UPDATE CatalogVersion; catalog(id)[unique = true]; version[unique = true]; languages(isocode)
+                            ; $productCatalog           ; Online                ; $indexLanguages
+
+# search profile
+INSERT_UPDATE AsSimpleSearchProfile; code[unique = true]   ; name[lang = $indexLanguages]; indexType[default = $solrIndexedType]; catalogVersion(catalog(id), version)[unique = true]
+                                   ; BlSimpleSearchProfile ; Bl Simple Search Profile    ;                                      ; $productCatalog:Online
+
+# Category Search Profile
+INSERT_UPDATE AsCategoryAwareSearchProfile; code[unique = true]; name[lang = $indexLanguages]; indexType[unique = true, default = $solrIndexedType]; catalogVersion(catalog(id), version)[unique = true][default = $productCatalog:Online]
+                                          ; cameras            ; Cameras Category            ;                                                     ;
+                                          ; production         ; Production Category         ;                                                     ;
+                                          ; lenses             ; Lenses Category             ;                                                     ;
+
+## Activation Set for Search and category profile
+INSERT_UPDATE AsSearchProfileActivationSet; indexType[default = $solrIndexedType][unique = true]; catalogVersion(catalog(id), version)[unique = true]; searchProfiles(code)
+                                          ;                                                     ; $productCatalog:Online                             ; BlSimpleSearchProfile ,cameras, production , lenses
+
+
+
+
+

@@ -288,6 +288,8 @@
         <property name="commonI18NService" ref="commonI18NService"/>
         <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
         <property name="customFieldsService" ref="customFieldsService"/>
+        <property name="braintreeSubmitForSettlementService" ref="braintreeSubmitForSettlementService" />
+        <property name="customerAccountService" ref="customerAccountService"/>
     </bean>
 
     <alias name="braintreeTransactionConverter" alias="transactionSearchResultConverter"/>

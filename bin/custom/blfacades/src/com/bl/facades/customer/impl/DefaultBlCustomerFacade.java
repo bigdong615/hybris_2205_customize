@@ -16,7 +16,6 @@ import de.hybris.platform.core.model.user.UserModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -105,4 +104,29 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
    	 }
    	 return null;
     }
+
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public AddressData getDefaultBillingAddress()
+ 	{
+ 		try
+ 		{
+ 			final CustomerModel currentUser = getCurrentSessionCustomer();
+ 			if (Objects.nonNull(currentUser) && !getUserService().isAnonymousUser(currentUser))
+ 			{
+ 				final AddressModel defaultPaymentAddress = currentUser.getDefaultBillingAddress();
+ 				return Objects.nonNull(defaultPaymentAddress) && BooleanUtils.isTrue(defaultPaymentAddress.getBillingAddress())
+ 						? getAddressConverter().convert(defaultPaymentAddress)
+ 						: null;
+ 			}
+ 		}
+ 		catch (final Exception exception)
+ 		{
+ 			BlLogger.logMessage(LOG, Level.ERROR, "Error while getting default billing address from current session customer",
+ 					exception);
+ 		}
+ 		return null;
+ 	}
 }

@@ -19,7 +19,6 @@
 
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
 <template:errorSpanField path="${path}">
 	<ycommerce:testId code="LoginPage_Item_${idKey}">
 		<spring:theme code="${placeholder}" var="placeHolderMessage" htmlEscape="false"/>

@@ -45,6 +45,7 @@ $contentCatalogsCustomOrderPagePath = /blinitialdata/import/coredata/contentCata
 
 #Mention here MyAccount Page related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomMyAccountPagePath/core_data_accountpage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomMyAccountPagePath/cms-content_creditCardPage.impex"), "utf-8", 0, 0);
 
 # Rental Cart Page Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCartPagePath/cms-content_rentalCartPage.impex"), "utf-8", 0, 0);

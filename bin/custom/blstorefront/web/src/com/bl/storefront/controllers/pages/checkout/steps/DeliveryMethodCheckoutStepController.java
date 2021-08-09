@@ -92,6 +92,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        model.addAttribute("pageType",BlControllerConstants.SHIPPING_PAGE);
         CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
             List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -270,9 +271,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
         }
 
-        if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
-            getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
-        }
+//        if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
+//            getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
+//        }
 
         getUserFacade().addAddress(newAddress);
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
@@ -338,7 +339,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                return BlDeliveryModeLoggingConstants.PIN_ERROR;
             }
         } else {
-            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+            if(businessType && (StringUtils.isEmpty(addressType) || !addressType.equals(AddressTypeEnum.BUSINESS.getCode()))) {
                 return BlDeliveryModeLoggingConstants.AM_ERROR;
             }
         }

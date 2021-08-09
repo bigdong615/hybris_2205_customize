@@ -1,3 +1,4 @@
+
 @import url(https://fonts.googleapis.com/css?family=Dosis:400,300,500,600);
 .break-word {
     overflow-wrap: break-word;
@@ -745,18 +746,20 @@
     }
 }
 .ASM_close {
-    float: right;
-    font-size: 45px;
-    font-weight: 200;
-    line-height: 50px;
-    color: #1473DF;
-    cursor: pointer;
-    background: transparent;
-    border: 0;
-    -webkit-appearance: none;
-    padding-left: 20px;
-    border-left: 1px solid #39495e;
-    padding-bottom: 8px;
+      float: right;
+      font-size: 45px;
+      font-weight: 200;
+      margin: 0 !important;
+      color: #1473DF;
+      cursor: pointer !important;
+      background: transparent;
+      border: none;
+      height: 59px !important;
+      line-height: 48px;
+      border-left: 1px solid #39495e !important;
+      text-align: center;
+      width: 66px;
+      padding: 0;
 }
 .ASM_close:hover,
 .ASM_close:focus {
@@ -1133,9 +1136,9 @@
     transition: transform 0.3s ease-out;
 }
 #_asm .ASM-btn {
-    height: 40px;
+    height:auto !important;
     border: 0;
-    padding: 0 15px;
+    padding: 7px 15px;
     font-size: 19px;
     font-weight: 300;
     text-transform: uppercase;
@@ -1157,11 +1160,15 @@
 #_asm .ASM-btn.ASM-btn-login, #_asm .ASM-btn.ASM-btn-bind-cart {
     background: #fad714;
     width: 100%;
+        height: 39px !important;
+        line-height: 22px;
 }
 #_asm .ASM-btn.ASM-btn-create-account {
     background: #d2dbe6;
     color: #0354ae;
     width: 100%;
+    height: 38px !important;
+    margin-top: 8px !important;
 }
 #_asmBindForm {
     vertical-align: bottom;
@@ -1188,7 +1195,9 @@
     font-size: 18px;
     margin-left: -1px;
     vertical-align: bottom;
+    height:39px !important;
     width: 100%;
+    margin: 8px 0 0 0;
 }
 @media (min-width: 668px) and (max-width: 1049px) {
     #_asm .ASM-btn.ASM-btn-start-session {
@@ -1242,9 +1251,12 @@
 #_asm .ASM_input_holder {
     display: inline-block;
     position: relative;
+
 }
 #_asm .ASM_input_holder.input-group {
     display: table;
+    padding:0;
+    background:none;
 }
 #_asm .ASM_input_holder label {
     font-family: "Dosis", Helvetica, Arial, sans-serif;
@@ -1276,13 +1288,15 @@
     line-height: 37px;
 }
 #_asm .ASM-input {
-    height: 40px;
-    padding: 6px 10px;
-    font-size: 19px;
-    line-height: 20px;
-    border-radius: 0;
-    border: 0;
-    width: 100%;
+   height:38px !important;
+       padding: 6px 10px;
+       font-size: 19px;
+       line-height: 20px;
+       border-radius: 0;
+       border: 0;
+       background: #fff;
+       width: 92%;
+       float: left;
 }
 #_asm .ASM-input[disabled], #_asm .ASM-input.disabled, #_asm .ASM-input[readonly], #_asm .ASM-input[readonly]:focus {
     background-color: #b4bac2;
@@ -1327,19 +1341,18 @@ select[multiple]#_asm .ASM-input {
 }
 #_asm .ASM_header .first-top-row {
     border-bottom: 1px solid #39495e;
-    margin: 0 -4em 10px -4em;
-    padding: 0 4em;
+        margin: 0 0 0 0;
+        padding: 12px 0 27px 0;
 }
 #_asm .ASM_header .first-top-row .element-separator-height{
-    height: 60px;
-    padding-top: 10px;
+
 }
 #_asm .ASM_header .ASM_logo {
     font-family: "Dosis", Helvetica, Arial, sans-serif;
     float: left;
     font-size: 25px;
     font-weight: 300;
-    line-height: 30px;
+    line-height: 0px;
     color: #fff;
     margin-top: 10px;
 }
@@ -1972,6 +1985,7 @@ select[multiple]#_asm .ASM-input {
     position: relative;
     width: 100%;
     vertical-align: middle;
+    height:39px !important;
 }
 
 
@@ -2218,7 +2232,7 @@ select[multiple]#_asm .ASM-input {
 
 .ASM_customer-list-modal .techne-table > thead > tr > th,
 .asm__customer360 .techne-table > thead > tr > th{
-    border-width: 1px;
+    border-width: 0px;
 }
 .ASM_customer-list-modal a, .ASM_customer360-modal a{
     color: #0486e0;
@@ -2340,7 +2354,7 @@ button.ASM_close  {
 }
 
 #_asm span.input-group-addon {
-    padding: 6px 12px;
+    padding: 10px 12px !important;
     font-size: 14px;
     font-weight: normal;
     line-height: 1;
@@ -2711,4 +2725,206 @@ button.ASM_close  {
 #_asm.asm-collapsed .ASM_header
 {
     display: none;
+}
+.ASM_login .input-group {
+    background-color: white;
+    padding:0;
+    border-radius: 0;
+}
+.ASM_login .input-group input:focus {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    height: 43px !important;
+}
+.ASM_input_holder .input-group {
+    background-color: white;
+    padding: 0;
+    border-radius: 0;
+}
+.ASM_input_holder .ASM-input{margin:0 !important}
+.ASM_logo{float:left}
+.ASM_logo span.ASM_cut_text {
+    display: none !important;
+}
+.ASM_logo {
+    font-family: "Dosis", Helvetica, Arial, sans-serif;
+    float: left;
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 30px;
+    color: #fff;
+    margin-top: 10px;
+}
+.first-top-row {
+   border-bottom: 1px solid #39495e;
+       margin-bottom: 0 !important;
+       padding-bottom: 0 !important;
+}
+.ASM_login{margin:17px 0 17px 0;}
+.ASM_loggedin{float:right;display:flex;margin: 5px 0 0 0;}
+.ASM_timer {
+    display: inline-block;
+    font-weight: 300;
+    font-size: 14px;
+    margin-left: 15px;
+    color: #ffffff;
+    border-right: 1px solid #39495e;
+    padding-top:8px;
+}
+.ASM_loggedin_agent_store_name{
+width: auto;
+    float: left;
+    padding-top: 8px;
+}
+
+.ASM_loggedin_agent_store_name p{
+ color: #ffffff;
+     margin: 0 0 0 14px;
+     font-size: 14px;
+}
+.customerId{width:100%;}
+.cartId{width:100%}
+.customerId .ASM-input{
+width:100% !important;
+}
+.cartId .ASM-input{
+width:100% !important;
+}
+#colorbox, #cboxOverlay, #cboxWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow: hidden;
+}
+#cboxOverlay {
+    width: 100%;
+    height: 100%;
+    background:#000;
+}
+#cboxContent {
+    background: #fff;
+    overflow: visible;
+}
+.ASM_icon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'asm_icons', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.ASM_icon-close:hover {
+    opacity: .5;
+}
+#cboxClose {
+    position: absolute;
+    right: 13px;
+    top: 10px;
+    background: transparent;
+    border: 0 none;
+    color: #797979;
+    padding: 5px;
+    font-size:16px;
+}
+#cboxLoadedContent {
+
+    padding: 15px 0px 30px 40px;
+    margin-top:20px;
+}
+.ASM-btn{
+ padding-bottom: 9px !important;
+ padding-top: 9px !important;
+}
+.customerId{
+margin: 8px 0 8px 0;
+}
+.cartId{
+margin: 8px 0 8px 0;
+}
+.ASM-btn-customer360 {
+      margin: 8px 0 0 0 !important;
+    line-height: 19px;
+}
+#stopEmulate.ASM-btn-end-session {
+
+    height: 39px !important;
+    margin: 8px 0 0 0 !important;
+}
+
+ @font-face{font-family:'Glyphicons Halflings';src:url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot');src:url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.woff') format('woff'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.ttf') format('truetype'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');}.glyphicon{position:relative;top:1px;display:inline-block;font-family:'Glyphicons Halflings';font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;}
+
+
+.glyphicon {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: "Glyphicons Halflings";
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+}
+.glyphicon-sort-by-attributes-alt:before {
+    content: "\e156";
+}
+.glyphicon-shopping-cart:before {
+    content: "\e116";
+}
+.nav-order-tools:before {
+    position: relative;
+    top: 23%;
+    display: inline;
+    font-family: 'Glyphicons Halflings', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\e032";
+   color: #0486e0;
+    font-size: 30px;
+}
+.ASM_customer-list-modal .asm-account-section .default-pic:before {
+    content: '\e801';
+}
+.visible-xs, .visible-sm, .visible-md, .visible-lg {
+    display: none !important;
+}
+.glyphicon-chevron-down:before {
+    content: "\e114";
+}
+.ASM-customer360_icon:before {
+    font-family: 'asm_icons', sans-serif;
+    content: '\e800';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    color: #fff;
+    font-size: 30px;
+    display: inline-block;
+    margin-top: -2px;
+}
+.ASM_icon-chain {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    background: #27394f;
+    padding: 17px 20px 13px 10px;
+    font-size: 30px;
+}
+.pagination-bar {
+    margin: 30px 0;
+}
+.y-toolbar__wrapper.y-toolbar__dropdown .dropdown-menu>li:focus,.dropdown-menu>li>a:hover {
+    text-decoration: none;
+    color: #262626;
+    background-color: #d2dbe6;
+    outline:none;
 }

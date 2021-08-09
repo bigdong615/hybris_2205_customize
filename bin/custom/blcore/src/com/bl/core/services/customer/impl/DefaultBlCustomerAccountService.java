@@ -1,13 +1,18 @@
 package com.bl.core.services.customer.impl;
 
 import com.bl.core.services.customer.BlCustomerAccountService;
+import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.commerceservices.customer.PasswordMismatchException;
 import de.hybris.platform.commerceservices.customer.impl.DefaultCustomerAccountService;
+import de.hybris.platform.commerceservices.event.ChangeUIDEvent;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.util.Assert;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
@@ -19,6 +24,8 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 public class DefaultBlCustomerAccountService extends DefaultCustomerAccountService implements BlCustomerAccountService {
 
+    @Resource(name="brainTreeCustomerAccountDao")
+    private BrainTreeCustomerAccountDao brainTreeCustomerAccountDao;
     /**
      *This method is overridden to disable register email.
      */
@@ -53,6 +60,44 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
         }
         getModelService().save(customerModel);
         getModelService().refresh(customerModel);
+    }
+
+    /**
+     *  This method used to get address list from db.
+     * @param customerModel
+     * @return
+     */
+    @Override
+    public List<AddressModel> getAddressBookDeliveryEntries(final CustomerModel customerModel)
+    {
+        validateParameterNotNull(customerModel, "Customer model cannot be null");
+        return brainTreeCustomerAccountDao.findAddressBookDeliveryEntriesForCustomer(customerModel,
+            getCommerceCommonI18NService().getAllCountries());
+    }
+
+    /**
+     * This method is used to change the UID for the current customer
+     * @param newUid
+     *           given new uid
+     * @param currentPassword
+     *           password checked for authorization change
+     * @throws DuplicateUidException
+     * @throws PasswordMismatchException
+     */
+    @Override
+    public void changeUid(final String newUid, final String currentPassword)
+        throws DuplicateUidException, PasswordMismatchException
+    {
+        Assert.hasText(newUid, "The field [newEmail] cannot be empty");
+        Assert.hasText(currentPassword, "The field [currentPassword] cannot be empty");
+
+        final String newUidLower = newUid.toLowerCase();
+        final CustomerModel currentUser = (CustomerModel) getUserService().getCurrentUser();
+        final ChangeUIDEvent event = new ChangeUIDEvent(currentUser.getOriginalUid(), newUid);
+        currentUser.setOriginalUid(newUid);
+        checkUidUniqueness(newUidLower);
+        adjustPassword(currentUser, newUidLower, currentPassword);
+        getEventService().publishEvent(initializeEvent(event, currentUser));
     }
 }
 

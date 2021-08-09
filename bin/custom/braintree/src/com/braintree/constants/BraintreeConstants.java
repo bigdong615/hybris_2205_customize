@@ -30,6 +30,7 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String BRAINTREE_MERCHANT_ID = "braintree.merchant_id";
 	public static final String SINGLE_USE_PARAMETER = "braintree.single.use";
 	public static final String BRAINTREE_SUBMIT_FOR_SETTLEMENT = "braintree.submit.for.settlement";
+	public static final String PAYPAL_DEFAULT_ADDRESS = "defaultAddressGroup";
 	public static final String LOG_ALL_ENABLE = "braintree.log.all.enable";
 	public static final String LOG_PACKAGE_PATH = "com.braintree";
 	public static final String BRAINTREE_PROVIDER_NAME = "BrainTree";
@@ -39,7 +40,6 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String ENVIRONMENT_SANDBOX = "sandbox";
 	public static final String ENVIRONMENT_PRODUCTION = "production";
 	public static final String BRAINTREE_3D_SECURE = "braintree.3d.secure";
-	@Deprecated
 	public static final String BRAINTREE_PAYMENT = "CreditCard";
 	public static final String BRAINTREE_CREDITCARD_PAYMENT = "CreditCard";
 	public static final String PAYPAL_PAYMENT = "PayPalAccount";
@@ -104,7 +104,10 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String BRAINTREE_GOOGLE_PAY_MERCHANT_ID = "braintree.googlePay.merchant_id";
 	public static final String BRAINTREE_GOOGLE_PAY_ENABLE = "braintree.googlePay.enable";
 	public static final String BRAINTREE_GOOGLE_PAY_COUNTRY_CODE = "braintree.googlepay.seller.country.code";
-  public static final String IS_ENABLED = "isEnabled";
+	public static final String AUTH_AMOUNT_TO_VERIFY_CARD = "braintree.authAmount.verify.card";
+	public static final String IS_ENABLED = "isEnabled";
+
+	public static final String EMPTY_STRING = "";
 
 	private BraintreeConstants()
 	{

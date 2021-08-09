@@ -85,6 +85,8 @@
 		<script src="${commonResourcePathHtml}/js/acc.consent.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cookienotification.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.closeaccount.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.wishlist.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.blanalyticsevent.js"></script>
 
 		<script src="${commonResourcePathHtml}/js/acc.csv-import.js"></script>
 
@@ -128,6 +130,15 @@
 					 $("#summary-litepicker").val('');
 					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 				 }
+				 
+				 $('#saved-payment-action-payBill').on('change',function(e){
+					 var optionSelected = $("option:selected", this);
+					 var paymentId = optionSelected.data("id");
+						var paymentnonce = optionSelected.data("nonce");
+						$("#paymentId").val(paymentId);
+						$("#paymentNonce").val(paymentnonce);
+				 });
+				 
 			});
 		</script>
 		
@@ -410,6 +421,7 @@
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
         				var searchText = document.getElementById('js-site-search-input').value;
+        				trackDateSelection(date1,date2);
           				var rentalGear = 'rentalGear';
           				var contextPath = ACC.config.contextPath;
           				$.ajax({
@@ -477,6 +489,7 @@
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
+          				trackDateSelection(date1,date2);
           				var rentalGear = 'rentalGear';
           				var contextPath = ACC.config.contextPath;
           				$.ajax({
@@ -695,6 +708,7 @@
 												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
+                                           			trackDateSelection(date1,date2);
                                           				$.ajax({
                                       	                    url: ACC.config.encodedContextPath + '/datepicker',
                                       	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -757,6 +771,7 @@
                                      				},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
+                                           			trackDateSelection(date1,date2);
                                            			$.ajax({
                                                          url: ACC.config.encodedContextPath + '/datepicker',
                                                          data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1155,6 +1170,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                    }else{
+                                   trackDateSelection(date1,date2);
                       				$.ajax({
                   	                    url: ACC.config.encodedContextPath + '/datepicker',
                   	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1221,6 +1237,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                       }else{
+                                      trackDateSelection(date1,date2);
                       			$.ajax({
                                     url: ACC.config.encodedContextPath + '/datepicker',
                                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1253,8 +1270,7 @@
                         });
                   </script>
         		</c:if>
-				
-				<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage'}">
+				<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'Review') == false}">
         		<input type="hidden" id="isFromPaymentPage" value="true">
         			<script>
         			$(document).ready(function() {
@@ -1344,6 +1360,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                    }else{
+                                   trackDateSelection(date1,date2);
                       				$.ajax({
                   	                    url: ACC.config.encodedContextPath + '/datepicker',
                   	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1410,6 +1427,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                       }else{
+                                      trackDateSelection(date1,date2);
                       			$.ajax({
                                     url: ACC.config.encodedContextPath + '/datepicker',
                                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1484,6 +1502,258 @@
         } ).mount();
     </script>
         		</c:if>
+    	<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'review') == true}">
+        	<input type="hidden" id="isFromReviewPage" value="true">
+        		<script>
+        			$(document).ready(function() {			
+        				$(".reviewEdit").click(function(e) {
+							e.preventDefault();
+        					var sectionSelected = this.getAttribute("data-section");
+        					var redirectUrl = this.getAttribute("data-redirect-url");        					
+        					$("#urlToRedirect").val(redirectUrl);
+        					$("#clickedSection").val(sectionSelected);
+        				});
+        				
+                        $("#continueChanges").click(function(e) {
+                        	e.preventDefault();
+                        	if($("#clickedSection").val() == 'summaryRentalDate')
+                        	{
+                        		$('.page-loader-new-layout').show();
+                            	var rentalStartDate = $("#rentalStartDate").val();
+                            	var rentalEndDate = $("#rentalEndDate").val();
+                            	$.ajax({
+                                	url: ACC.config.encodedContextPath + '/datepicker',
+                                	data: {selectedFromDate: rentalStartDate, selectedToDate: rentalEndDate},
+                                	type: "GET",
+                                	success: function (data) {
+                                	    if(data=='success')
+                                	    window.location.href = ACC.config.encodedContextPath + '/cart';
+                                	},
+                                	error: function (xhr, textStatus, error) {
+	
+	                                }
+                            	});
+                        	}
+                        	else
+                        	{
+                        		window.location.href = $("#urlToRedirect").val();
+                        	}
+                        });
+                        
+                        $("#shippingCloseModal").click(function(e) {
+                        	resetDateValues(e);
+                        });
+                        
+                        $("#shippingCloseIconModal").click(function(e) {
+                        	resetDateValues(e);
+                        });
+                    }); 
+        			
+                    function resetDateValues(e)
+                    {
+                    	e.preventDefault();
+                    	$("#summary-litepicker").val('');
+                    	$("#rentalStartDate").val("");
+                    	$("#rentalEndDate").val("");
+                    	$("#urlToRedirect").val("");
+                    	$("#clickedSection").val("");
+                    	$('#editWarning').modal('hide');
+                    }
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                 // BL-520 - disable previous dates
+                    let date = new Date();
+                    let dd = String(date.getDate() - 1).padStart(2, '0');
+                    let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    let yyyy = date.getFullYear();
+                    let today = mm + '/' + dd + '/' + yyyy;
+
+                 // BL-520 - disable dates after one year from today's date
+                    let oneYearFromNow = new Date();
+                    let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                    const disallowedDates = [['2001-01-01', today]];
+                        
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                    const summarypicker = new Litepicker({
+                        element: document.getElementById('summary-litepicker'),
+                        plugins: ['mobilefriendly'],
+                        singleMode: false,
+                        numberOfMonths: 2,
+                        numberOfColumns: 2,
+                        autoApply: false,
+                        format: "MMM D, YYYY",
+                        resetButton: () => {
+							let btn = document.createElement('button');
+							btn.innerText = 'Reset Dates';
+							btn.className = 'reset-button';
+							btn.addEventListener('click', (evt) => {
+								evt.preventDefault();
+								$.ajax({
+									url: ACC.config.encodedContextPath + '/resetDatepicker',
+									type: "GET",
+									success: function (data) {
+										if(data=='success')
+										window.location.reload();
+									},
+									error: function (xhr, textStatus, error) {
+	
+									}
+								});
+							});
+							return btn;
+						},
+                        setup: (picker) => {
+                      		picker.on('button:apply', (date1, date2) => {
+							 //	var isFromSummaryPage = $("#isFromSummaryPage").val();
+								if($("#isFromReviewPage").val() === 'true')
+								{
+									$("#rentalStartDate").val(date1.toDateString());
+									$("#rentalEndDate").val(date2.toDateString());
+									$("#clickedSection").val('summaryRentalDate');
+									$('#editWarning').modal('show');
+								}
+								else
+								{
+								trackDateSelection(date1,date2);
+									$.ajax({
+										url: ACC.config.encodedContextPath + '/datepicker',
+										data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+										type: "GET",
+										success: function (data) {
+											if(data=='success')
+											window.location.reload();
+										},
+										error: function (xhr, textStatus, error) {
+	
+										}
+									});
+								}
+							});
+                      	},
+                      //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                            const d = day.getDay();
+                            return [6, 0].includes(d);
+                        },
+                        lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                        maxDays: 90,
+                      //Disable dates after one year from today
+                        maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                        firstDay: 0,
+                      //Change the defaul button values
+                        buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                    });
+                </script>
+		</c:if>
+
+	<c:if test="${cmsPage.uid eq 'extendRentalOrderDetails'}">
+		<input type="hidden" id="rentalEndDate" value = "${orderData.rentalEndDateForJs}">
+		<input type="hidden" id="rentalStartDate" value = "${orderData.rentalStartDateForJs}">
+		<input type="hidden" id="orderCode" value = "${fn:escapeXml(orderData.code)}">
+	<script>
+          //Replace button text
+          $(".dropdown-menu li button").click(function(){
+            $(this).parents(".dropdown").find('.btn').html($(this).html() + ' <span class="caret"></span>');
+            $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+          });
+
+
+          // Initialize RENTAL EXTENSION Calendar Litepicker - required for THIS page
+           let endDate = $("#rentalEndDate").val(); // Existing Order End Date
+           let rentalStartDate = $("#rentalStartDate").val();  // Existing Order start Date
+           const startDate = new Date(rentalStartDate);
+           var orderCode = $("#orderCode").val(); // To Get Order Code
+
+           startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
+                                     const disallowedDates = [['2001-01-01', endDate]];
+                                       const picker = new Litepicker({
+                                      element: document.getElementById('rental-litepicker'),
+                                  //    plugins: ['mobilefriendly'],
+                                      singleMode: true,
+                                      numberOfMonths: 2,
+                                      numberOfColumns: 2,
+                                      autoApply: false,
+                                      format: "MMM D, YYYY",
+                                      resetButton: () => {
+                          				 let btn = document.createElement('button');
+                          				 btn.innerText = 'Reset Dates';
+                          				 btn.className = 'reset-button';
+                          				 btn.addEventListener('click', (evt) => {
+                          				 evt.preventDefault();
+                                   window.location.reload();
+                                  });
+                          				return btn;
+                          				},
+                                      setup: (picker) => {
+                                			picker.on('button:apply', (newEndDate) => {
+                                				$.ajax({
+                            	                    url: ACC.config.encodedContextPath +'/my-account/extendDate/',
+                            	                    data: {extendEndDate: newEndDate.toDateString() , orderCode : orderCode , orderEndDate:endDate},
+                            	                    type: "GET",
+                            	                    success: function (data) {
+                            	                    $('#orderSummary').html(data);
+                            	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
+                            	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
+                            	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
+                            	                    if($('#js-isAllProductExtendabe').val() !== '') {
+                            	                    if($("#add-error-message").hasClass("d-none")){
+                                                                                    $("#add-error-message").removeClass("d-none");
+                                                  }
+                                                  }
+                                                  if($('#js-isAllProductExtendabe').val() === '') {
+                                                    $("#add-error-message").addClass("d-none");
+                                                    }
+                            	                    },
+                            	                    error: function (xhr, textStatus, error) {
+
+                            	                    }
+                            	                });
+                                			});
+                                			},
+                                          lockDaysFilter: (day) => {
+                                              const d = day.getDay();
+                                              return [6, 0].includes(d);
+                                            },
+                                          lockDays: disallowedDates,
+                                      //Disable dates after one year from today
+                                          maxDate: startDate,
+                                     //Change the defaul button values
+                                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                  });
+
+          // Initialize RENTAL EXTENSION MOBILE Calendar Litepicker - required for THIS page
+          const rmpicker = new Litepicker({
+              element: document.getElementById('rental-mobile-litepicker'),
+              plugins: ['mobilefriendly'],
+              singleMode: true,
+              numberOfMonths: 1,
+              numberOfColumns: 1,
+              autoApply: false,
+              format: "MMM D YYYY",
+              resetButton: true,
+              buttonText : {"reset":"Reset"},
+          });
+          // Mobile Menu styles - #my-menu is required for ALL pages
+          document.addEventListener(
+              "DOMContentLoaded", () => {
+                  new Mmenu( "#my-menu", {
+                      extensions: ["fullscreen","position-front"],
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ]
+                      }],
+                  } );
+              }
+          );
+          // Initialize Mega menu rollover - required for ALL pages
+          $('.menu-large').hover(
+              function(){ $('.screen').addClass('show') },
+              function(){ $('.screen').removeClass('show') }
+          );
+      </script>
+  </c:if>
+
 	</c:otherwise>
 </c:choose>
 

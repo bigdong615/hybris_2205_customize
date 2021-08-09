@@ -41,7 +41,6 @@ import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.payment.commands.request.AuthorizationRequest;
 import de.hybris.platform.payment.commands.request.CreateSubscriptionRequest;
 import de.hybris.platform.payment.commands.request.VoidRequest;
@@ -53,12 +52,11 @@ import de.hybris.platform.payment.methods.PaymentMethod;
 public interface BrainTreePaymentService extends PaymentMethod
 {
 
-	SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest) throws AdapterException;
+	SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest);
 
-	BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest)
-			throws AdapterException;
+	BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest);
 
-	BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest) throws AdapterException;
+	BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest);
 
 	String generateClientToken();
 
@@ -210,5 +208,20 @@ public interface BrainTreePaymentService extends PaymentMethod
 
 	WebhookNotification getWebhookNotification(BrainTreeWebhookNotificationRequest webhookNotificationRequest);
 
-	PayPalAccount getPaymentMethodFromBTByToken(final  String paymentMethodToken);
+	PayPalAccount getPaymentMethodFromBTByToken(final String paymentMethodToken);
+
+	/**
+	 * It fetches the payment info model by payment info id
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce);
+
+	/**
+	 * It creates payment method
+	 */
+	public void createPaymentMethodTokenForOrderReplenishment();
 }

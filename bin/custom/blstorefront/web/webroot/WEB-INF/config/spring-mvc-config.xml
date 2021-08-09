@@ -66,7 +66,7 @@
 		<bean class="com.bl.storefront.interceptors.beforecontroller.SecurityUserCheckBeforeControllerHandler" />
 		<bean class="com.bl.storefront.interceptors.beforecontroller.RequireHardLoginBeforeControllerHandler" >
 				<property name="redirectStrategy" ref="redirectStrategy"/>
-				<property name="loginUrl" value="/login"/>
+				<property name="loginUrl" value="/"/>
 				<property name="loginAndCheckoutUrl" value="/login/checkout"/>
 				<property name="requireHardLoginEvaluator" ref="requireHardLoginEvaluator"/>
 		</bean>
@@ -92,7 +92,9 @@
 	<util:list id="defaultBeforeViewHandlersList"  >
 	<!-- The CmsPageBeforeViewHandler could change the target view, so it should be run first. -->
 		<bean class="com.bl.storefront.interceptors.beforeview.CmsPageBeforeViewHandler" />
-		<bean class="com.bl.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" />
+		<bean class="com.bl.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" >
+		      <property name="baseStoreService" ref="baseStoreService"/>
+		</bean>
 		<bean class="com.bl.storefront.interceptors.beforeview.SeoRobotsFollowBeforeViewHandler" >
 			<property name="robotIndexForJSONMapping">
 				<map>
@@ -122,6 +124,9 @@
 			<property name="cookieNotificationCookieGenerator" ref="cookieNotificationCookieGenerator" />
 		</bean>
 
+		<bean class="com.bl.storefront.interceptors.beforeview.TealiumContextBeforeViewHandler">
+
+		</bean>
 	</util:list>
 	
 	<!-- Interceptor that runs once per request and before the controller handler method is called -->
@@ -287,7 +292,7 @@
 		<entry key="saved-carts" value="/my-account/saved-carts"/>
 		<entry key="savedCartDetailsPage" value="/my-account/saved-carts"/>
 		<entry key="storefinderPage" value="/store-finder"/>
-		<entry key="login" value="/login"/>
+		<entry key="login" value="/"/>
 		<entry key="checkout-login" value="/login/checkout"/>
 		<entry key="forgottenPassword" value="/login/pw/request"/>
 		<entry key="updatePassword" value="/my-account/update-password"/>
@@ -367,5 +372,7 @@
 	<!--BL-542 Shipping-->
 	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
 	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil" parent="defaultAddressDataUtil"/>
+
+
 
 </beans>

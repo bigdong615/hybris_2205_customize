@@ -15,8 +15,8 @@
 <c:if test="${not empty deliveryAddresses}">
     <div id="delivery-saved-addresses-dropdown">
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
-        <div class="dropdown my-2">
-            <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start my-4" onChange="onSavedAddressChange()">
+        <div class="dropdown">
+            <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start" onChange="onSavedAddressChange()">
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
                     <c:choose>
                         <c:when test="${deliveryAddress.defaultAddress}">
@@ -40,18 +40,19 @@
     </div>
 </c:if>
 
-<div id="delivery-shippingAddressFormDiv">
+<div id="delivery-shippingAddressFormDiv" class="mb-3">
     <b class="mt-4"><spring:theme code="text.existing.shipping.address"/></b>
     <div id="delivery-shippingAddressForm" class="mb-1">
         <form:form method="POST" modelAttribute="addressForm">
             <formElement:formInputBox idKey="address.firstName" placeholder="address.firstName" labelKey="" path="firstName" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.lastName" labelKey="" placeholder="address.lastName" path="lastName" inputCSS="form-control" mandatory="true" />
+            <formElement:formInputBox idKey="address.companyName" labelKey="" placeholder="address.companyName" path="companyName" inputCSS="form-control" mandatory="false" />
             <formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="line1" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.line2" labelKey="" placeholder="address.street2" path="line2" inputCSS="form-control" mandatory="false"/>
             <formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="townCity" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="postcode" inputCSS="form-control" mandatory="true" />
             <formElement:formSelectBox idKey="address.countryIso" labelKey="" path="countryIso" mandatory="true" skipBlank="false"
-                skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 7}" selectCSSClass="form-control"/>
+                skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 0}" selectCSSClass="form-control"/>
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control" mandatory="false" />
             <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control" mandatory="false" />
         </form:form>

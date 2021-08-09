@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -7,6 +8,8 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import java.util.Objects;
 
 import org.apache.commons.lang3.BooleanUtils;
+import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.core.model.product.ProductModel;
 
 
 /**
@@ -26,6 +29,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	{
 		super.populate(source, target);
 		populateDamageWaiverValues(source, target);
+		populateGiftCartPurcahseValues(source, target);
 	}
 
 	/**
@@ -47,5 +51,40 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
+	}
+	
+	/**
+	 * Populate gift cart purchase value from order entry
+	 * @param source
+	 *           the source
+	 * @param target
+	 *           the target
+	 */
+
+	private void populateGiftCartPurcahseValues(final AbstractOrderEntryModel source, final OrderEntryData target)
+	{
+			target.setRecipientEmail(source.getRecipientEmail());
+			target.setRecipientName(source.getRecipientName());
+			target.setRecipientMessage(source.getRecipientMessage());
+	}
+	
+	/**
+	 * Adds the product data.
+	 *
+	 * @param orderEntry
+	 *           the order entry
+	 * @param entry
+	 *           the entry
+	 */
+	@Override
+	protected void addProduct(final AbstractOrderEntryModel orderEntry, final OrderEntryData entry)
+	{
+		final ProductModel product = orderEntry.getProduct();
+		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
+				? ((BlSerialProductModel) product).getBlProduct() : product));
+		if(product!= null) {
+			entry.getProduct().setProductId(((BlProductModel) product).getProductId());
+			entry.getProduct().setIsVideo(((BlProductModel) product).getIsVideo());
+		}
 	}
 }

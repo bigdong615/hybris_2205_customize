@@ -35,7 +35,7 @@
                   <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="<spring:theme code="text.rental.date.placeholder"/>">
                   </ycommerce:testId>
                   <div class="input-group-append d-md-block input-button-search">
-                     <button class="btn btn-search btn-link js_search_button" type="submit"><spring:theme code="text.rental.search"/></button>
+                     <button class="btn btn-search btn-link js_search_button js-search-track" type="submit"><spring:theme code="text.rental.search"/></button>
                   </div>
                </div>
             </form>

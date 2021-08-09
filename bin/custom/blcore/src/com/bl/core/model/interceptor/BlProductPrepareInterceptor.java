@@ -2,10 +2,12 @@ package com.bl.core.model.interceptor;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.DurationEnum;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -33,6 +35,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
 
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
+  private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
 
   @Override
@@ -41,24 +44,24 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     Collection<BlSerialProductModel> serialProducts = blProductModel.getSerialProducts();
 
     if (interceptorContext.isNew(blProductModel) && StringUtils
-        .isBlank(blProductModel.getProductId())) {
+        .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
 
     if (CollectionUtils.isNotEmpty(serialProducts)) {
-      if (null != blProductModel.getForSaleBasePrice() && interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)
-          && blProductModel.getForSaleBasePrice().compareTo(BigDecimal.ZERO) > 0) {
+      if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)) {
         calculateFinalSalePriceForSerialProducts(blProductModel, serialProducts,
             interceptorContext);
       }
-      if (null != blProductModel.getForSaleDiscount() && interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)
-          && blProductModel.getForSaleDiscount() > 0) {
+      if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)) {
         calculateIncentivizedPriceForSerialProducts(blProductModel, serialProducts,
             interceptorContext);
       }
     }
+
   }
+
 
   /**
    * Calculate final sale base prices for all serial products
@@ -67,16 +70,20 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    * @param interceptorContext
    */
   private void calculateFinalSalePriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
-      serialProducts.forEach(serialProduct-> {
-        if(serialProduct.getConditionRatingOverallScore() > 0.0D) {
+    final BigDecimal forSaleBasePrice = blProductModel.getForSaleBasePrice();
+    serialProducts.forEach(serialProduct-> {
+       if(null != forSaleBasePrice && forSaleBasePrice.compareTo(BigDecimal.ZERO) > 0  && null != serialProduct.getConditionRatingOverallScore() && serialProduct.getConditionRatingOverallScore() > 0.0D) {
           serialProduct.setFinalSalePrice(getBlPricingService()
-              .calculateFinalSalePriceForSerial(blProductModel.getForSaleBasePrice(),
+              .calculateFinalSalePriceForSerial(forSaleBasePrice,
                   serialProduct.getConditionRatingOverallScore()));
         }
-        interceptorContext.getModelService().save(serialProduct);
+       else{
+         serialProduct.setFinalSalePrice(null);
+       }
+          serialProduct.setBlProduct(blProductModel);
+           interceptorContext.getModelService().save(serialProduct);
 
       });
-
   }
 
   /**
@@ -89,7 +96,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     final Integer forSaleDiscount = blProductModel.getForSaleDiscount();
       serialProducts.stream().forEach( serialProduct -> {
         BigDecimal calculatedIncentivizedPrice = null;
-        if(serialProduct.getFinalSalePrice().compareTo(BigDecimal.ZERO) > 0) {
+        if(null != forSaleDiscount && forSaleDiscount > 0 && null != serialProduct.getFinalSalePrice() && serialProduct.getFinalSalePrice().compareTo(BigDecimal.ZERO) > 0) {
           final BigDecimal finalSalePrice = serialProduct.getFinalSalePrice()
               .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
          calculatedIncentivizedPrice = finalSalePrice.subtract(
@@ -102,6 +109,10 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
               finalSalePrice.doubleValue());
           serialProduct.setIncentivizedPrice(calculatedIncentivizedPrice);
         }
+        else{
+          serialProduct.setIncentivizedPrice(null);
+        }
+        serialProduct.setBlProduct(blProductModel);
         interceptorContext.getModelService().save(serialProduct);
       });
 
@@ -119,7 +130,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if (retailPrice != null && retailPrice > 0.0D) {
+    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
@@ -154,6 +165,15 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
 
   public void setBlPricingService(BlPricingService blPricingService) {
     this.blPricingService = blPricingService;
+  }
+
+  public CatalogVersionService getCatalogVersionService() {
+    return catalogVersionService;
+  }
+
+  public void setCatalogVersionService(
+      CatalogVersionService catalogVersionService) {
+    this.catalogVersionService = catalogVersionService;
   }
 
 }

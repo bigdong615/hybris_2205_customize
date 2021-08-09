@@ -4,6 +4,8 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+
 import org.apache.commons.collections4.CollectionUtils;
 
 /**
@@ -13,7 +15,9 @@ import org.apache.commons.collections4.CollectionUtils;
 public class DefaultBlCommerceCartCalculationStrategy extends
     DefaultCommerceCartCalculationStrategy {
 
+ 
   private BlGiftCardService giftCardService;
+  private ModelService modelService;
 
   /**
    * It does calculation on cart.
@@ -26,6 +30,10 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     if(CollectionUtils.isNotEmpty(order.getGiftCard())){
        order.setCalculated(false);
     }
+    if(parameter.getGiftCardAmount()!= null)
+    {
+   	 setGiftCardAmount(order,parameter);
+    }
     final boolean result = super.calculateCart(parameter);
 
     if (recalculate) {
@@ -33,7 +41,18 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     }
     return result;
   }
-
+  
+  /**
+   * This method save gift card amount on order 
+   */
+  private void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
+  {
+	  order.setGiftCardOrder(true);
+	  order.setGiftCardCost(parameter.getGiftCardAmount());
+	  getModelService().save(order);
+	  getModelService().refresh(order);
+  }
+  
   public BlGiftCardService getGiftCardService() {
     return giftCardService;
   }
@@ -41,4 +60,20 @@ public class DefaultBlCommerceCartCalculationStrategy extends
   public void setGiftCardService(BlGiftCardService giftCardService) {
     this.giftCardService = giftCardService;
   }
+  /**
+ 	 * @return the modelService
+ 	 */
+ 	public ModelService getModelService()
+ 	{
+ 		return modelService;
+ 	}
+
+ 	/**
+ 	 * @param modelService the modelService to set
+ 	 */
+ 	public void setModelService(ModelService modelService)
+ 	{
+ 		this.modelService = modelService;
+ 	}
+
 }

@@ -6,7 +6,6 @@ package com.bl.integration.constants;
 /**
  * Global class for all Blintegration constants. You can add global constants for your extension into this class.
  */
-@SuppressWarnings({"deprecation","squid:CallToDeprecatedMethod"})
 public final class BlintegrationConstants extends GeneratedBlintegrationConstants
 {
 	public static final String EXTENSIONNAME = "blintegration";
@@ -19,7 +18,6 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String API_VERSION = "1.0.0";
 
 	public static final String AUTHORIZATION_URL = "/authorizationserver/oauth/token";
-    @SuppressWarnings("squid:S2068")
 	public static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_password";
 	public static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
 
@@ -43,7 +41,26 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
 	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
 	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
-	
+
+	public static final String REQUEST_OPTION = "nonvalidate";
+	public static final String CUSTOMER_CONTEXT = "JAX-WS Test Client";
+
+	public static final String CLIENT_SIDE_ERROR = "400";
+	public static final String CLIENT_SIDE_ERROR_DESCRIPTION = "Client Trasportation Error";
+	public static final String LABEL_IMAGE_FORMAT_CODE = "ZPL";
+	public static final String LABEL_IMAGE_FORMAT_DESCRIPTION = "ZPL";
+	public static final String LABEL_SPECIFICATION_HTTPUSERAGENT = "Mozilla/4.5";
+	public static final String LABEL_INDICATOR = "1";
+	public static final String PACKAGE_DESCRIPTION = "Package 1";
+	public static final String SHIPMENT_DESCRIPTION = "Some Goods";
+	public static final String UTF_8_CODE = "utf-8";
+	public static final String PACAKAGING_TYPE_CODE = "02";
+	public static final String PACAKAGING_TYPE_DESCIPTION = "Customer Supplied Package";
+	public static final String SIGNATURE_SERVICE_CODE = "SERVICE_DEFAULT";
+	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
+	public static final String RECIPIENT_TYPE = "RECIPIENT";
+	public static final String SUCCESS = "success";
+
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class

@@ -8,8 +8,18 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav"%>
+<%@ taglib prefix="livechat" tagdir="/WEB-INF/tags/shared/livechat" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<spring:eval expression="@configurationService.configuration.getProperty('livechat.button.id.value')" var="buttonId"/>
+<spring:eval expression="@configurationService.configuration.getProperty('livechat.endpointURL.link')" var="liveChatURL"/>
+ <livechat:livechat/>
+
+<cms:pageSlot position="TopHeaderSlot" var="component" element="div" class="container">
+  <cms:component component="${component}" />
+</cms:pageSlot>
+
+<span id="timer-count" value="${usedGearTimer}"></span>
 
       <cms:pageSlot position="PromoBannerSlot" var="component" element="div" > 
          <cms:component component="${component}" />
@@ -21,7 +31,7 @@
 <cms:pageSlot position="SiteLogoHeaderSlot" var="logo" limit="1">
 						<cms:component component="${logo}"/>
 					</cms:pageSlot>
- <div class="mobile-right d-inline-block d-lg-none">  
+ <div class="mobile-right d-inline-block d-lg-none">
             <li class="nav-item dropdown  nav-account">
                  <a class="nav-link dropdown-toggle" href="#" id="accountdropdown" data-bs-toggle="dropdown" aria-expanded="false"><spring:theme code="text.account.yourAccount"/></a>
                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountdropdown">
@@ -47,13 +57,13 @@
 					<cms:component component="${component}"/>
 			    </cms:pageSlot>
 	   		</div>
-  </div>	
+  </div>
   <!-- Mobile Menu -->	
   <nav id="my-menu">	
   	<ul>
   		<!-- BL-377 Mobile Navigation bar -->
   		 <cms:pageSlot position="NavigationBarMobileSlot" var="component">
-			<cms:component component="${component}" />	
+			<cms:component component="${component}" />
          </cms:pageSlot>
          <!-- BL-388 Mobile device - Header - Ship or PickUp section -->
          <li>
@@ -73,6 +83,15 @@
 				<cms:component component="${component}" />
 		   </cms:pageSlot>
 		</li>
+		<!-- [BL-1043] Live Chat Mobile view-->
+     <li id="liveAgentChat_online" class="live-chat clickGA livechat">
+       <a id="liveagent_button_online_${buttonId}" href="javascript://Chat" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
+       <!----><span class="expertHelpIcon"></span><spring:theme code="text.live.chat.label" /></a>
+     </li>
+
+     <li id="liveAgentChat_offline" class="live-chat clickGA" style="display: none !important;">
+          <div id="liveagent_button_offline_${buttonId}" style=""><!-- Offline Chat Content --></div>
+     </li>
 		<li>
 			<span>
 				<cms:pageSlot position="MobileHeaderBottomInfo" var="component" class="">
@@ -109,6 +128,14 @@
 			<cms:component component="${component}" />
 	   </cms:pageSlot>      
 	   </li>
+	   <li id="liveAgentChat_online" class="live-chat clickGA" style="">
+     <a style=" text-decoration:none;" id="liveagent_button_online_${buttonId}" href="javascript://Chat" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
+     <!----><span class="expertHelpIcon"></span><spring:theme code="text.live.chat.label" /></a>
+     </li>
+
+     <li id="liveAgentChat_offline" class="live-chat clickGA" style="display: none !important;">
+      <div id="liveagent_button_offline_${buttonId}" style=""><!-- Offline Chat Content --></div>
+     </li>
     </ul>
   </div>			
 					

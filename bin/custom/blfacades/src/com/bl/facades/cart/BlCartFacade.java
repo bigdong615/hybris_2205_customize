@@ -5,9 +5,13 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
 
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
+
+import java.util.List;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -60,6 +64,17 @@ public interface BlCartFacade extends CartFacade {
   CartModificationData addToCart(final String productCode,final long quantity,final String serialCode) throws CommerceCartModificationException;
 
   /**
+   * This method is used to add product to cart.
+   *
+   * @param productCode the product code
+   * @param quantity the quantity
+   * @param serialCode the serial code
+   * @return the cart modification data
+   * @throws CommerceCartModificationException the commerce cart modification exception
+   */
+  CartModificationData addToCart(final String productCode,final long quantity,final String serialCode,final GiftCardPurchaseForm giftCardForm) throws CommerceCartModificationException;
+
+  /**
    * It prevents the product to be added to cart if rental products is added in used gear cart and vice-versa
    *
    * @param productCode the product code
@@ -67,7 +82,26 @@ public interface BlCartFacade extends CartFacade {
    * @return true, if is rental product added to cart in used gear cart
    */
   boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode);
+  /**
+   * This method is used to check if cart has rental products or used gear products.
+   * 
+   * @return true, if cart has rental products or used gear products.
+   */
+  boolean cartHasRentalOrUsedGearProducts();
   
+  /**
+   * This method is used to check if cart has gift card or not.
+   * 
+   * @return true, if cart has gift card.
+   */
+  boolean cartHasGiftCard(final String productCode);
+   
+  /**
+   * This method is used to check gift card product or not.
+   * 
+   * @return true, if cart has gift card.
+   */
+  boolean isGiftCardProduct(final String code);
   /**
 	 * Check availability for rental cart entries. If available quantity is less then the entry quantity then it will set
 	 * message on cart line items.
@@ -105,5 +139,39 @@ public interface BlCartFacade extends CartFacade {
 	 * @return String
 	 */
 	String identifyCartType();
-	
+
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 */
+	String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage); // NOSONAR
+
+	/**
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
+	 * @param entryNumber
+	 * @param quantity
+	 * @param cartModel
+	 * @return
+	 * @throws CommerceCartModificationException
+	 */
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity, final CartModel cartModel) throws CommerceCartModificationException; // NOSONAR
+
+	/**
+	 * This method used for collecting discontinue entries number form cart.
+	 * @return List<Integer>
+	 * @param cartModel
+	 * @param removedEntry
+	 */
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry); // NOSONAR
+
+	/**
+	 * This method saves PO payment details.
+	 * @param poNumber
+	 * @param poNotes
+	 */
+	void savePoPaymentDetails(final String poNumber, final String poNotes);
+
+	/**
+	 * If credit card or paypal payment method selected then remove po number from cartModel.
+	 */
+	void removePoNumber();
 }

@@ -41,6 +41,7 @@ BL-31 Added for error message in login and create account popup
 .sortDropdownForListPage {
   border: none;
   background: transparent;
+  padding: 0 7px 0 7px;
   color: #3d3c3c;
 }
 /*for BL-494 */
@@ -132,7 +133,7 @@ text-decoration :none ;
 .btnwidth .btnwidthplp {width :100%; margin-top:1%;}
 .btnwidth .btnwidthusedgear{width :100%;}
 /* BL-606 */
-.splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
+.splide__slide .card h6.product, #productList .card h6.product {height :42px; overflow: hidden;}
 @media only screen and (max-width: 1025px) and (min-width: 991px)   {
   .splide__slide .card h6.product, #productList .card h6.product {height :43px; overflow: hidden;}
   #gear-slider .splide__slide .card h6.product {height :35px; overflow: hidden;}
@@ -218,14 +219,22 @@ width: 25px;
 margin: 0;
 }
 .glyphicon-minus:before {
-content: "-";
-color:#52BFC0;
-font-size: 21px;
+      content: "-";
+    color: #52BFC0;
+    font-size: 35px;
+    font-weight: inherit;
+    position: relative;
+    line-height: 0px;
+    top: -6px;
 }
 .glyphicon-plus:before {
-content: "+";
-color:#52BFC0;
-font-size: 21px;
+    content: "+";
+    color: #52BFC0;
+    font-size: 11px;
+    font-weight: inherit;
+    line-height: 8px;
+    position: relative;
+    top: -4px;
 }
 /*BL-712*/
 .boldCustom {
@@ -248,6 +257,261 @@ font-size: 21px;
 .selectBoxSize{
     width:100%;
 }
+
+
+
+.product-sort{
+  display: inline-flex;
+  vertical-align: middle;
+  right:0px !important;
+}
+.product-sort .btn-group{
+  position: relative !important;
+    background: none !important;
+    border: none !important;
+    outline: none;
+}
+.product-sort .btn :hover{
+  background:none ;
+  outline: none;
+  padding: 0;
+  border: none;
+}
+.product-sort .btn{
+  background:none !important ;
+  outline: none;
+  padding: 0;
+  border: none;
+  letter-spacing: inherit;
+}
+.product-sort span{
+  text-transform: capitalize;
+  display:contents !important;
+}
+.product-sort .dropdown-menu {
+  margin: 0 !important;
+  padding:7px 0 7px 0 !important;
+}
+.product-sort .dropdown-menu li {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.product-sort .dropdown-menu>li>a {
+  display: block;
+  padding: 5px 0 5px 13px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #3d3c3c !important;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.product-sort .dropdown-menu>li:focus, .dropdown-menu>li>a:hover{
+  background: none !important;
+  outline: none;
+  color: #e64b4f !important;
+}
+.product-sort .dropdown-menu[style] {
+  left: auto!important;
+  right: 0 !important;
+}
+@media only screen and (max-width: 767px) and (min-width: 0px){
+.product-sort .dropdown-menu[style] {
+    left: inherit !important;
+    right:inherit !important;
+  }
+  #featuredPromo span{left:24px !important;bottom:9% !important;}  
+  .expertHelpIcon {margin-top: 4px !important;}
+}
+.icon-date-forward {
+    background: url(../assets/icon-arrow.svg) center no-repeat;
+}
+.rental-terms {
+    padding-bottom: 15px;
+    text-align: right;
+}
+.scroll-over-text{
+  overflow-y: scroll;
+  height:160px;
+ }
+.scroll-over-text::-webkit-scrollbar {
+  display: none;
+} 
+/* Hide scrollbar for IE, Edge add Firefox */
+.scroll-over-text {
+  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+}
+.paypalNotification {
+	margin-top: 45px !important;
+}
+
+.paymentDisabled {
+	height: 16px;
+    width: 16px;
+    margin-right: 8px;
+    content: " ";
+    display: inline-block;
+    vertical-align: baseline;
+    border: 8px solid #EAEAEA;
+    margin-bottom: -2px;
+    border-radius: 50%;
+}
+
+/* for wishlist */
+.bookmark-checked{background-color:red !important;}
+.order-block form{display:inline-table;}
+.bookmarkpage .lightteal {
+    background: none;
+    border: none;
+    text-transform: capitalize;
+    cursor:pointer;
+    text-decoration:underline;
+     margin-right: 6px;
+}
+.bookmarkpage .lightteal:hover {
+    color: #e64b4f !important;
+}
+.order-block .btn-primary:hover{
+    background-color: #da474a !important;
+    border: 1px solid #da474a !important;
+    color:#fff !important;
+}
+@media print {
+    body { font-size: 12px; }
+    h1 { font-size: 24px!important; }
+    h2 { font-size: 22px; }
+    h3 { font-size: 20px; }
+    h4 { font-size: 18px; }
+    h5 { font-size: 16px; }
+    h6 { font-size: 14px; }
+    .body14, p { font-size: 12px; }
+    .reviewCart { margin-bottom: 20px!important; }
+    hr { margin: 10px; padding: 10px; }
+   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+        float: left;
+   }
+   .col-md-12 {
+        width: 100%;
+   }
+   .col-md-11 {
+        width: 91.66666667%;
+   }
+   .col-md-10 {
+        width: 83.33333333%;
+   }
+   .col-md-9 {
+        width: 75%;
+   }
+   .col-md-8 {
+        width: 66.66666667%;
+   }
+   .col-md-7 {
+        width: 58.33333333%;
+   }
+   .col-md-6 {
+        width: 50%;
+   }
+   .col-md-5 {
+        width: 41.66666667%;
+   }
+   .col-md-4 {
+        width: 33.33333333%;
+   }
+   .col-md-3 {
+        width: 25%;
+   }
+   .col-md-2 {
+        width: 16.66666667%;
+   }
+   .col-md-1 {
+        width: 8.33333333%;
+   }
+}
+/* checkout */
+.rental-terms {
+    padding-bottom:15px;
+    text-align:right;
+}
+.print-quote #cartProcess {
+    border: none;
+    margin-top: 0;
+}
+.print-quote #orderSummary {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+.printQuoteDate {
+	color: #52bfc0;
+}
+.word-break{word-break: break-word;}
+.hostedFields input[type="checkbox"]{
+  position: static;
+  width:auto;
+}
+#billingDetails input[type="checkbox"]{
+  position: static;
+  width:auto;
+}
+.billingAddressForm input[type="checkbox"]{
+  margin-left:-10px;
+}
+#featuredPromo .col-12{position: relative;}
+#featuredPromo span{position: absolute;left: 97px;;bottom: 30%;color: #000;font-size: 16px;}
+#featuredPromo span a b{color: #fff;font-weight:100;}
+#featuredPromo span a{color: #000;text-decoration: none;display: contents;}
+/* for Gift Card */
+.gift-card-plp{width: 100%;margin: 0 0 41px 0;height: 258px;}
+.gift-card-plp img{width: 100%;}
+.gift-card-pdp{width: 100%;margin: 0 0 41px 0;}
+.gift-card-pdp img{width: 100%;}
+.gc-pdp-form input{margin:0 0 7px 0;height:42px ;}
+
+/* for default Credit card  */
+.js-set-default-card {
+  position: absolute !important;
+    top: 10px;
+    left: 10px;
+    z-index: 99;
+    font-size:10px;
+    outline: none !important;
+   text-transform: none;
+    background-color: transparent;
+    border: 1px solid #d4d4d3;
+    color: #212529;
+}
+.js-set-default-card:hover {
+    background: #efefef;
+}
+#default-card{
+	margin:23px 0 27px -9px !important;
+}    
+input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:before {
+    margin-right:8px;
+}
+
+.expertHelpIcon {
+    background-image: url(https://cdn.static-bl.com/images/expertHelpIconNew.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px !important;
+    margin-right: 10px;
+    margin-bottom: -5px;
+    background-size: contain;
+}
+.livechat{
+  display: block !important;
+}
+
+.title-case-rename {
+  text-transform: capitalize;
+}
+.renameSaveCartName-css{
+width:100%;
+}
+
 
 
 /** BL-82 Starts
@@ -323,3 +587,4 @@ ul.ui-autocomplete.active {
 }
 
 /**BL-82 Ends**/
+

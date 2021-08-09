@@ -6,16 +6,20 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,6 +59,14 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
                                                                    final boolean payByCustomer);
 
     /**
+     * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes from service
+     * @param payByCustomer to get customer related delivery modes
+     * @return Collection object with delivery-modes differentiating in UPS and FedEx
+     */
+    Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModesForUsedGear(final boolean payByCustomer);
+                                                                   
+
+    /**
      *This method will fetch all the Partner PickUp Store from service
      *
      * @return Collection of PartnerPickUp Stores
@@ -72,6 +84,14 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
                                                                          final boolean payByCustomer);
 
     /**
+     * method with contain business logic for Partner-PickUp to fetch all modes from service
+     * @param payByCustomer to get customer related delivery modes
+     * @return Collection object with delivery-modes differentiating in Partner-PickUp Stores
+     */
+    Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModesForUsedGear(final boolean payByCustomer);
+                                                                         
+
+    /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone from service.
      * @param partnerZone i.e., name
@@ -82,6 +102,19 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
                                                                          final String rentalEnd, final boolean payByCustomer);
+    
+    
+    /**
+     * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
+     *  depending on the selected zone from service.
+     * @param partnerZone i.e., name
+     * @param rentalStart date
+     * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
+     * @return Collection of BlPickUpZoneDeliveryModeModel
+     */
+    Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone, final boolean payByCustomer);
+
 
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute from service
@@ -91,6 +124,15 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection of BlRushDeliveryModeModel
      */
     Collection<BlRushDeliveryModeData> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime,
+                                                              final boolean payByCustomer);
+
+    /**
+     * This method will fetch all time windows for RushDelivery depending on deliveryType attribute from service
+     * @param deliveryMode to specify SF or NYC Shipping group
+     * @param payByCustomer to get customer related delivery modes
+     * @return Collection of BlRushDeliveryModeModel
+     */
+    Collection<BlRushDeliveryModeData> getBlRushDeliveryModesForUsedGear(final String deliveryMode,
                                                               final boolean payByCustomer);
 
     /**
@@ -126,6 +168,17 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     boolean setDeliveryMode(final String deliveryModeCode, final boolean status);
 
+    /**
+	  * To create the auth transaction of the order
+	  * @param cartModel the cart
+	  * @param amountToAuthorize the amount
+	  * @param submitForSettlement 
+	  * @param paymentInfo the payment info
+     * @return true if successful
+     */
+    boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo);
+
+    
     /**
      * This method will check validity of user entered pinCode for SF or NYC
      *
@@ -184,15 +237,15 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * It removes, applied gift card from cart.
-     * @param giftCardCode
-     * @param cartModel
+     * @param giftCardCode the gift card code
+     * @param cartModel the gift card code
      * @return String
      */
     String removeGiftCardFromCart(final String giftCardCode, final CartModel cartModel);
 
     /**
      * It checks, gift card committed movement.
-     * @param giftCardMovementModelList
+     * @param giftCardMovementModelList the gift card movement model list
      * @return boolean value
      */
     boolean isCommittedMovement(final List<GiftCardMovementModel> giftCardMovementModelList);
@@ -200,7 +253,21 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     /**
      * It checks, if gift card has been applied then recalculate cart and checks if applied gift card has
      * insufficient balance then remove it from cart.
-     * @return String
+     * @return String the string
      */
     List<String> recalculateCartForGiftCard();
+    
+    /**
+     * Gets the modified total for print quote page.
+     *
+     * @param abstractOrderData the abstractOrderData
+     * @return the modified total for print quote
+     */
+    void getModifiedTotalForPrintQuote(final AbstractOrderData abstractOrderData);
+
+    /**
+     * It saves order notes
+     * @param orderNotes the orderNotes
+     */
+    void saveOrderNotes(final String orderNotes);
 }
