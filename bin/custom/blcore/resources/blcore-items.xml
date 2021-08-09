@@ -2357,6 +2357,12 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
                   </attribute>
+                  <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
+                    <persistence type="property" />
+                    <description>Flag to identify the order type is new gear order or not</description>
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

@@ -15,7 +15,7 @@ public class BraintreeEventPublishingSubmitOrderStrategy extends EventPublishing
 	@Override
 	public void submitOrder(OrderModel order)
 	{
-		if (!order.isGiftCardOrder())
+		if (!order.isGiftCardOrder() && !order.getIsNewGearOrder())
 		{	
 		  super.submitOrder(order);
 		}
