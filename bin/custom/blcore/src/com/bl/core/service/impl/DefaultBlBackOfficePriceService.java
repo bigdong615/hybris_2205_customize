@@ -12,9 +12,11 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Preconditions;
 
 /**
  * DefaultBlBackOfficePriceService class is used to get product dynamic price
@@ -34,31 +36,29 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
   @Override
   public BigDecimal getProductPrice(final ProductModel productModel, final Date arrivalDate,
       final Date returnDate) throws ParseException {
-    Map<Integer, BigDecimal> priceList ;
-    if(productModel != null)
-    {
-      // Prepare map for BL described Price info
-      priceList=getBlProductPriceRatioUtil().getPriceRatios(productModel);
-      //((PriceRowModel) ((List)productModel.getEurope1Prices()).get(0)).getDuration()
-      if(MapUtils.isNotEmpty(priceList))
-      {
-        // convert String format time to LocalDate type
-        final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        final long d = ChronoUnit.DAYS.between(arrDate, retDate);
-        BlLogger.logMessage(LOG, Level.INFO, new StringBuilder("##### Arrival Date :")
-            .append(arrivalDate).append(" Return Date :").append(returnDate)
-            .append(" Rental Days :").append(d).append(" #####").toString());
-        if (priceList.containsKey((int) d)) {
-          return priceList.get((int) d);
-        } else {
-          return getBlCustomProductDynamicPriceStrategy().getDynamicPrice(priceList, d);
-        }
-      }
+    Preconditions.checkNotNull(productModel);
+    // Prepare map for BL described Price info
+    final Map<Integer, BigDecimal> priceList = getBlProductPriceRatioUtil()
+        .getPriceRatios(productModel);
+    //((PriceRowModel) ((List)productModel.getEurope1Prices()).get(0)).getDuration()
+    if (MapUtils.isEmpty(priceList)) {
+      BlLogger.logMessage(LOG, Level.WARN, "! Rental Price not found");
+      return null;
     }
-    BlLogger.logMessage(LOG, Level.WARN, "! Rental Price not found");
-    return null;
+    // convert String format time to LocalDate type
+    final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
+        .toLocalDate();
+    final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+    final long daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
+    BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,
+        "##### Arrival Date : {} Return Date : {} Rental Days : {} ########"
+        , arrivalDate.toString(), returnDate.toString(),daysDiff);
+    if (priceList.containsKey((int) daysDiff)) {
+      return priceList.get((int) daysDiff);
+    } else {
+      return getBlCustomProductDynamicPriceStrategy().getDynamicPrice(priceList, daysDiff);
+    }
   }
 
   public BlPriceRatioUtil getBlProductPriceRatioUtil() {
