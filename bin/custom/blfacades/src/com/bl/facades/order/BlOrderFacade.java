@@ -78,4 +78,10 @@ public interface BlOrderFacade extends OrderFacade {
    */
   boolean savePoPaymentForExtendOrder(final String poNumber , final String poNotes , final String orderCode);
 
+  /**
+   * This method will update if order has returned from Customer
+   * @param orderCode
+   * @return
+   */
+  boolean hasOrderReturned(String orderCode);
 }

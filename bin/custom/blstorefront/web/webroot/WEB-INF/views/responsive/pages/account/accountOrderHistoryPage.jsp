@@ -73,7 +73,7 @@
                                 </c:if>
                 						</div>
                 						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.status.code ne 'COMPLETED')}">
+                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && !hasOrderReturned)}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
