@@ -1,6 +1,5 @@
 package com.bl.core.interceptor;
 
-import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.service.BlBackOfficePriceService;
 import com.bl.logging.BlLogger;
@@ -12,13 +11,17 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.Date;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * Prepare interceptor for AbstractOrder item type.
+ *
+ * @author Kalyan Kumar
+ */
 public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
     PrepareInterceptor<AbstractOrderModel> {
 
@@ -52,7 +55,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
             orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
           }
         } catch (final ParseException e) {
-          BlLogger.logMessage(LOG, Level.ERROR, e.getMessage(), e);
+          BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
         }
       }
     }

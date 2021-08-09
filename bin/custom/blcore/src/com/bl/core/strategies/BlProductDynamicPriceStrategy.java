@@ -19,5 +19,5 @@ public interface BlProductDynamicPriceStrategy
    * @return BigDecimal which is actual rental price of a product
    *
    */
-  BigDecimal getDynamicPrice(Map<Integer, BigDecimal> priceList, long rentalDays);
+  BigDecimal getDynamicPrice(final Map<Integer, BigDecimal> priceList, final long rentalDays);
 }

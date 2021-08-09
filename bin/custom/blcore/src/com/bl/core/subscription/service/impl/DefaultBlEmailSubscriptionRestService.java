@@ -172,7 +172,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
           "Create Contact API response Object : {}",
           getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
-      ContactResponseWrapper contactResponseWrapper = new ContactResponseWrapper();
+      final ContactResponseWrapper contactResponseWrapper = new ContactResponseWrapper();
       contactResponseWrapper.setRequestString(getMapper().writerWithDefaultPrettyPrinter()
           .writeValueAsString(subscriptionCreateContactRequest));
       if (null != response) {

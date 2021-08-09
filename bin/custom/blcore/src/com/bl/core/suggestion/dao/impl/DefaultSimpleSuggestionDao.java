@@ -35,26 +35,26 @@ public class DefaultSimpleSuggestionDao extends AbstractItemDao implements Simpl
   private static final String REF_QUERY_PARAM_TYPE = "referenceType";
   private static final String REF_QUERY_PARAM_TYPES = "referenceTypes";
 
-  private static final String REF_QUERY_CATEGORY_START = "SELECT {p.PK}"
-      + " FROM {Product AS p"
-      + " LEFT JOIN ProductReference AS r ON {p.PK}={r.target}"
-      + " LEFT JOIN OrderEntry AS e ON {r.source}={e.product}"
-      + " LEFT JOIN Order AS o ON {e.order}={o.PK}"
-      + " LEFT JOIN CategoryProductRelation AS c2p ON {r.source}={c2p.target}"
-      + " LEFT JOIN Category AS c ON {c2p.source}={c.PK} }"
-      + " WHERE {o.user}=?user AND {c.PK}=?category";
+  private static final String REF_QUERY_CATEGORY_START = new StringBuilder("SELECT {p.PK}")
+      .append(" FROM {Product AS p")
+      .append(" LEFT JOIN ProductReference AS r ON {p.PK}={r.target}")
+      .append(" LEFT JOIN OrderEntry AS e ON {r.source}={e.product}")
+      .append(" LEFT JOIN Order AS o ON {e.order}={o.PK}")
+      .append(" LEFT JOIN CategoryProductRelation AS c2p ON {r.source}={c2p.target}")
+      .append(" LEFT JOIN Category AS c ON {c2p.source}={c.PK} }")
+      .append(" WHERE {o.user}=?user AND {c.PK}=?category").toString();
 
   private static final String REF_QUERY_PRODUCT_START =
-      "SELECT DISTINCT {p.PK}, COUNT({p.PK}) AS NUM"
-          + " FROM {Product AS p"
-          + " LEFT JOIN ProductReference AS r ON {p.PK}={r.target} }"
-          + " WHERE {r.source} IN (?products) AND {r.target} NOT IN (?products)";
+      new StringBuilder("SELECT DISTINCT {p.PK}, COUNT({p.PK}) AS NUM")
+          .append(" FROM {Product AS p")
+          .append(" LEFT JOIN ProductReference AS r ON {p.PK}={r.target} }")
+          .append(" WHERE {r.source} IN (?products) AND {r.target} NOT IN (?products)").toString();
 
   private static final String REF_QUERY_TYPE = " AND {r.referenceType} IN (?referenceType)";
   private static final String REF_QUERY_TYPES = " AND {r.referenceType} IN (?referenceTypes)";
-  private static final String REF_QUERY_SUB = " AND NOT EXISTS ({{"
-      + " SELECT 1 FROM {OrderEntry AS e2 LEFT JOIN Order AS o2 ON {e2.order}={o2.PK} } "
-      + " WHERE {e2.product}={r.target} AND {o2.user}=?user }})";
+  private static final String REF_QUERY_SUB = new StringBuilder(" AND NOT EXISTS ({{")
+      .append(" SELECT 1 FROM {OrderEntry AS e2 LEFT JOIN Order AS o2 ON {e2.order}={o2.PK} } ")
+      .append(" WHERE {e2.product}={r.target} AND {o2.user}=?user }})").toString();
 
   private static final String REF_QUERY_CATEGORY_ORDER = " ORDER BY {o.creationTime} DESC";
 
@@ -64,13 +64,11 @@ public class DefaultSimpleSuggestionDao extends AbstractItemDao implements Simpl
 
   @Override
   public List<ProductModel> findProductsRelatedToPurchasedProductsByCategory(
-      final CategoryModel category,
-      final List<ProductReferenceTypeEnum> referenceTypes, final UserModel user,
-      final boolean excludePurchased,
-      final Integer limit) {
+      final CategoryModel category, final List<ProductReferenceTypeEnum> referenceTypes,
+      final UserModel user, final boolean excludePurchased, final Integer limit) {
 		Preconditions.checkNotNull(category);
 		Preconditions.checkNotNull(user);
-    final int maxResultCount = limit == null ? DEFAULT_LIMIT : limit.intValue();
+    final int maxResultCount = limit == null ? DEFAULT_LIMIT : limit;
 
     final Map<String, Object> params = new HashMap<>();
     final StringBuilder builder = new StringBuilder(REF_QUERY_CATEGORY_START);

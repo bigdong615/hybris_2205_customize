@@ -13,6 +13,12 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * The type Bl default product dynamic price strategy.
+ *
+ * @author Kalyan Kumar
+ *
+ */
 public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPriceStrategy {
 
   private static final Logger LOG = Logger.getLogger(BlDefaultProductDynamicPriceStrategy.class);
@@ -21,17 +27,16 @@ public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPri
    * {@inheritDoc}  
    */
   @Override
-  public BigDecimal getDynamicPrice(Map<Integer, BigDecimal> priceList, long rentalDays) {
+  public BigDecimal getDynamicPrice(final Map<Integer, BigDecimal> priceList, final long rentalDays) {
     if (MapUtils.isNotEmpty(priceList) && rentalDays > BlCoreConstants.MINIMUM_RENTAL_DAYS) {
       //find nearest lowest day and nearest highest day
       int lowest = 0;
       int highest = 0;
       int noOfDays = (int) rentalDays;
-      Set<Integer> keys = priceList.keySet();
       //Sort those days which we are getting from keys
-      Set<Integer> sortedKeys = keys.stream().sorted()
+      final Set<Integer> sortedKeys = priceList.keySet().stream().sorted()
           .collect(Collectors.toCollection(LinkedHashSet::new));
-      for (int k : sortedKeys) {
+      for (final int k : sortedKeys) {
         if (k < noOfDays) {
           lowest = k;
         } else {
@@ -39,9 +44,9 @@ public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPri
           break;
         }
       }
-      int diffInDays = highest - lowest;
-      BigDecimal diffInPrice = priceList.get(highest).subtract(priceList.get(lowest));
-      BigDecimal perDayPrice = diffInPrice
+      final int diffInDays = highest - lowest;
+      final BigDecimal diffInPrice = priceList.get(highest).subtract(priceList.get(lowest));
+      final BigDecimal perDayPrice = diffInPrice
           .divide(new BigDecimal(diffInDays), BlCoreConstants.PRECISION, RoundingMode.DOWN);
       return priceList.get(lowest).add(perDayPrice.multiply((new BigDecimal(noOfDays - lowest))))
           .setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN);

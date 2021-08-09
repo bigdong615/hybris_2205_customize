@@ -32,7 +32,8 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
    *  {@inheritDoc}  
    */
   @Override
-  public BigDecimal getProductPrice(ProductModel productModel,Date arrivalDate,Date returnDate) throws ParseException {
+  public BigDecimal getProductPrice(final ProductModel productModel, final Date arrivalDate,
+      final Date returnDate) throws ParseException {
     Map<Integer, BigDecimal> priceList ;
     if(productModel != null)
     {
@@ -42,11 +43,13 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
       if(MapUtils.isNotEmpty(priceList))
       {
         // convert String format time to LocalDate type
-        LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        long d = ChronoUnit.DAYS.between(arrDate, retDate);
-        BlLogger.logMessage(LOG, Level.INFO, "##### Arrival Date :"+arrivalDate+" Return Date :"+returnDate+" Rental Days :"+d+" #####");
+        final long d = ChronoUnit.DAYS.between(arrDate, retDate);
+        BlLogger.logMessage(LOG, Level.INFO, new StringBuilder("##### Arrival Date :")
+            .append(arrivalDate).append(" Return Date :").append(returnDate)
+            .append(" Rental Days :").append(d).append(" #####").toString());
         if (priceList.containsKey((int) d)) {
           return priceList.get((int) d);
         } else {
@@ -54,7 +57,7 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
         }
       }
     }
-    BlLogger.logMessage(LOG, Level.WARN, "!Rental Price not found");
+    BlLogger.logMessage(LOG, Level.WARN, "! Rental Price not found");
     return null;
   }
 
