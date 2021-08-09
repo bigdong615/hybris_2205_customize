@@ -93,7 +93,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import reactor.core.publisher.Mono;
 
 /**
  * Controller for cart page
@@ -185,7 +184,11 @@ public class CartPageController extends AbstractCartPageController
 	{
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
+
+		if(Objects.nonNull(cartModel)){
 		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel , model);
+		}
+
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -194,8 +197,9 @@ public class CartPageController extends AbstractCartPageController
 				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
 			}
 		}
-		if(BooleanUtils.isTrue(isCartForReplacementOrder(cartModel , model))){
+		if(Objects.nonNull(cartModel) && BooleanUtils.isTrue(isCartForReplacementOrder(cartModel , model))){
 			cartModel.setCalculated(Boolean.TRUE);
+			model.addAttribute("isReplacementOrderCart" , true);
 		}
 		else {
 			if(null != getSessionService().getAttribute(BlControllerConstants.RETURN_REQUEST)) {
@@ -1071,11 +1075,8 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
-		HttpServletRequest httpServletRequest = (HttpServletRequest) model
-				.getAttribute(BlCoreConstants.REQUEST);
-		return null != httpServletRequest && null != httpServletRequest.getUserPrincipal() &&
-				httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT) &&
-				Objects.nonNull(cartModel.getReplacementOrder());
+		return  BlReplaceMentOrderUtils.isReplaceMentOrder(model) &&
+				Objects.nonNull(cartModel.getReplacementOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 	}
 
 	/**

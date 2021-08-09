@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.ui.Model;
 
 public class BlReplaceMentOrderUtils {
@@ -28,13 +29,10 @@ public class BlReplaceMentOrderUtils {
   }
 
   public static void updateCartForReplacementOrder(final AbstractOrderModel abstractOrderModel , final Model model) {
-    HttpServletRequest httpServletRequest = (HttpServletRequest) model.getAttribute(BlCoreConstants.REQUEST);
-    if (null != httpServletRequest && null != httpServletRequest.getUserPrincipal() &&
-        httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT)) {
+    if (BooleanUtils.isTrue(isReplaceMentOrder(model))) {
       for (OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
         if (CollectionUtils.isNotEmpty(orderModel.getReturnRequests())) {
-          getSessionService().setAttribute(
-              BlCoreConstants.RETURN_REQUEST, orderModel.getReturnRequests().iterator().next());
+          getSessionService().setAttribute(BlCoreConstants.RETURN_REQUEST, orderModel.getReturnRequests().iterator().next());
           for (ReturnRequestModel returnRequestModel : orderModel.getReturnRequests()) {
             setCartPrice(abstractOrderModel , returnRequestModel);
           }
@@ -43,7 +41,7 @@ public class BlReplaceMentOrderUtils {
     }
   }
 
-private static void setCartPrice(final AbstractOrderModel abstractOrderModel , final ReturnRequestModel returnRequestModel){
+public static void setCartPrice(final AbstractOrderModel abstractOrderModel , final ReturnRequestModel returnRequestModel){
   if(null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)){
     ReturnRequestModel returnRequest = getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
     if(returnRequest.getOrder().getCode().equalsIgnoreCase(returnRequestModel.getOrder().getCode())){
@@ -52,7 +50,7 @@ private static void setCartPrice(final AbstractOrderModel abstractOrderModel , f
       abstractOrderModel.setTotalTax(0.0);
       abstractOrderModel.setSubtotal(0.0);
       abstractOrderModel.setTotalDamageWaiverCost(0.0);
-      abstractOrderModel.setReplacementOrder(returnRequestModel);
+      abstractOrderModel.setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
       final List<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
       setPriceForOrderEntries(abstractOrderModel , abstractOrderEntryModels);
       abstractOrderModel.setEntries(abstractOrderEntryModels);
@@ -62,7 +60,7 @@ private static void setCartPrice(final AbstractOrderModel abstractOrderModel , f
   }
 }
 
-  private static void setPriceForOrderEntries(final AbstractOrderModel abstractOrderModel  ,
+  public static void setPriceForOrderEntries(final AbstractOrderModel abstractOrderModel  ,
       final List<AbstractOrderEntryModel> abstractOrderEntryModels) {
     for(AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderModel.getEntries()){
       abstractOrderEntryModel.setTotalPrice(0.0);
@@ -74,6 +72,12 @@ private static void setCartPrice(final AbstractOrderModel abstractOrderModel , f
       getModelService().refresh(abstractOrderEntryModel);
     }
   }
+
+  public static boolean isReplaceMentOrder(final Model model) {
+      return null != getSessionService().getAttribute(BlCoreConstants.ACTING_USER_UID) &&
+        null != getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER);
+  }
+
   public static SessionService getSessionService() {
     return null == sessionService ? (SessionService) Registry.getApplicationContext()
         .getBean("sessionService") : sessionService;

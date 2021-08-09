@@ -40,6 +40,11 @@
                             </p>
                             </c:if>
                             <div class="accordion" id="shippingOptions">
+                             <c:choose>
+                               <c:when test="${isReplacementOrderCart eq true}">
+                                  <checkout:blDeliveryMethod/>
+                               </c:when>
+                               <c:otherwise>
                                 <div class="accordion-item shipProduct">
                                     <checkout:fast/>
                                 </div>
@@ -50,16 +55,26 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
-                                </c:if>
+                                 </c:if>
+                               </c:otherwise>
+                             </c:choose>
+
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
                             </div>
                             <div class="cart-actions">
                                 <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
-                                <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
-                                    <spring:theme code="text.checkout.multi.order.delivery.continue"/>
-                                </button>
+                                <c:choose>
+                                  <c:when test="${isReplacementOrderCart eq true}">
+                                   <checkout:blReplacementOrder/>
+                              </c:when>
+                              <c:otherwise>
+                              <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
+                                                                  <spring:theme code="text.checkout.multi.order.delivery.continue"/>
+                                                              </button>
+                              </c:otherwise>
+                             </c:choose>
                             </div>
                             <div id="statusUpdateTestMessage">
 

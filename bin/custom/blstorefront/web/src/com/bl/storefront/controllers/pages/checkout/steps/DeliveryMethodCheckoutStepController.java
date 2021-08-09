@@ -44,9 +44,12 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -119,6 +122,10 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
+        if(BooleanUtils.isTrue(isCartForReplacementOrder(blCartService.getSessionCart(), model))){
+            model.addAttribute("isReplacementOrderCart" , true);
+        }
+
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
@@ -135,9 +142,13 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
-                shippingGroup, partnerZone, false);
+                shippingGroup, partnerZone, true);
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("deliveryMethods", deliveryModes);
+        if(BooleanUtils.isTrue(isCartForReplacementOrder(blCartService.getSessionCart(), model))){
+            model.addAttribute("isReplacementOrderCart" , true);
+        }
+
         return deliveryModes;
     }
 
@@ -422,6 +433,41 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
     }
 
+
+    @GetMapping(value = "/selectReplacementAddress")
+    @RequireHardLogIn
+    @ResponseBody
+    public String doSelectDeliveryAddressForOrderReplaceMent(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+        @RequestParam("shippingGroup") final String shippingGroup,
+        @RequestParam("deliveryMode") final String deliveryMode,
+        @RequestParam("rushZip") final String rushZip,
+        @RequestParam("businessType") final boolean businessType,
+        final RedirectAttributes redirectAttributes) {
+        if (StringUtils.isNotBlank(selectedAddressCode)) {
+            final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                if (pinError != null) {
+                    return pinError;
+                }
+                setDeliveryAddress(selectedAddressData);      // needs to change
+            }
+        }
+        return SUCCESS;
+    }
+
+
+    private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) model
+            .getAttribute(BlCoreConstants.REQUEST);
+        return null != httpServletRequest && null != httpServletRequest.getUserPrincipal() &&
+            httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT) &&
+            Objects.nonNull(cartModel.getReplacementOrder()) && null != getSessionService().getAttribute(
+            BlCoreConstants.RETURN_REQUEST);
+    }
+
     protected String getBreadcrumbKey() {
         return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
     }
@@ -438,4 +484,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
         this.checkoutFacade = checkoutFacade;
     }
+
+
+
 }
