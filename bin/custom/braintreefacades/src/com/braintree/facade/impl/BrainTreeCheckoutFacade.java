@@ -431,8 +431,10 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		//Set default address for paypal 
        if(cartService.getSessionCart().getGiftCardCost() != null)
 		{
-    	  CompanyModel customergroup = getUserService().getUserGroupForUID("defaultAddressGroup",
+    	  CompanyModel customergroup = getUserService().getUserGroupForUID(BraintreeConstants.PAYPAL_DEFAULT_ADDRESS,
 					CompanyModel.class);
+    	  if(customergroup != null)
+    	  {
 			final AddressModel contactAddress = customergroup.getContactAddress();
 
 			final PayPalAddressData payPalAddress = payPalAddressDataConverter
@@ -441,7 +443,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			payPalCheckoutData.setEnvironment(brainTreeConfigService.getEnvironmentTypeName());
 			payPalCheckoutData.setSecure3d(brainTreeConfigService.get3dSecureConfiguration());
 			payPalCheckoutData.setSkip3dSecureLiabilityResult(brainTreeConfigService.getIsSkip3dSecureLiabilityResult());
-
+    	  }
 		}
 		if (cartService.getSessionCart().getDeliveryAddress() != null)
 		{
