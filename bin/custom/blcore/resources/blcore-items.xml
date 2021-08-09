@@ -2359,7 +2359,9 @@
                   </attribute>
                   <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
-                    <description>Flag to identify the order type is new gear order or not</description>
+                    <description>Flag to identify the order type is new gear order or not. By using
+                      this flag we are stopping the order process.
+                    </description>
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                   </attribute>
