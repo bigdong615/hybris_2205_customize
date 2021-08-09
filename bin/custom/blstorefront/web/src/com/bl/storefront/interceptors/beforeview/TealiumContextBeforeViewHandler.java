@@ -48,7 +48,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	private static final String IS_VIDEO = "isVideo";
 	private static final String TEALIUM_CONTEXT = "tealiumContext";
 	private static final String ACCOUNT_ID = "AccountID";
-	private static final String TEALIUM_ACCOUNT = "tealium_account";
+	private static final String TEALIUM_ACCOUNT = "accountID";
 	private static final String USER = "user";
 	private static final String RENTAL_DATE = "rentalDate";
 	private static final String PRODUCT = "PRODUCT";
