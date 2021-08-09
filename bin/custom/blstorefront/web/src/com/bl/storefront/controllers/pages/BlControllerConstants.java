@@ -65,6 +65,7 @@ public class BlControllerConstants
 	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
+	public static final String ACCOUNT_DEACTIVATED = "login.error.account.deactivate.title";
 
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
