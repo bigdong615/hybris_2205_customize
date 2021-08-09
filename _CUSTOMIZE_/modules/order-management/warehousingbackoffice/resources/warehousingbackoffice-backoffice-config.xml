@@ -1574,9 +1574,11 @@
                 <y:label>actiongroup.common</y:label>
                 
                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createpackageaction" property="currentObject" />
-                 <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.clearpackageaction" property="currentObject" />
-                  <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createshipmentaction" property="currentObject" />
-				  <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" property="currentObject" />
+                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" property="currentObject" />
+                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.packagescanaction" property="currentObject" />
+                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" property="currentObject" />
+                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.clearpackageaction" property="currentObject" />
+                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.createshipmentaction" property="currentObject" />
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.printpickslipaction" property="currentObject" />
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.printpackaction" property="currentObject" />
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.printshippinglabelaction" property="currentObject" />
