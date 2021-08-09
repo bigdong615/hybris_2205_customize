@@ -44,16 +44,32 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     if (canBeSourcedCompletely(sourcingContext)) {
       final boolean sourcingComplete = assignSerials(sourcingContext);
       sourcingContext.getResult().setComplete(sourcingComplete);
+
+      if (!sourcingComplete) {
+
+        updateOrderStatusForSourcingIncomplete(sourcingContext);
+      }
     } else {
-      //can not be sourced all the products from all warehouses
-      sourcingContext.getResult().setComplete(false);
-      AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-      order.setStatus(OrderStatus.SUSPENDED);
-      modelService.save(order);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
-          order.getCode());
-      throw new BlSourcingException("All products can not be sourced.");
+
+      updateOrderStatusForSourcingIncomplete(sourcingContext);
     }
+  }
+
+  /**
+   * This method will suspend the order when some of the products can not be sourced.
+   *
+   * @param sourcingContext the sourcingContext
+   */
+  private void updateOrderStatusForSourcingIncomplete(final SourcingContext sourcingContext) {
+
+    //can not be sourced all the products from all warehouses
+    sourcingContext.getResult().setComplete(false);
+    AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
+    order.setStatus(OrderStatus.SUSPENDED);
+    modelService.save(order);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
+        order.getCode());
+    throw new BlSourcingException("All products can not be sourced.");
   }
 
   /**
