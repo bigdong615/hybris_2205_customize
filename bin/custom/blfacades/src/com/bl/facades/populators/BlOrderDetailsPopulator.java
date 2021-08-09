@@ -6,7 +6,7 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
-
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -71,6 +71,12 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(source.getUser() instanceof CustomerModel){
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
+    AtomicDouble totalAmt = new AtomicDouble(0.0);
+    source.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
+            .forEach(consignmentEntry -> consignmentEntry.getBillingCharges()
+                    .forEach((serialCode,listOfCharges) -> listOfCharges.forEach(billing -> {
+                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());}))));
+    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
   }
 
   /**
