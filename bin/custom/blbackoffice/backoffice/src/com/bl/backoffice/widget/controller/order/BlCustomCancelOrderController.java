@@ -521,7 +521,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         this.getLabel("customersupportbackoffice.cancelorder.confirm.error")});
         }
       } catch (final OrderCancelException | CancellationException | IllegalArgumentException e) {
-        BlLogger.logMessage(LOGGER, org.apache.log4j.Level.ERROR, "Error occurred while ", e);
+        BlLogger.logFormattedMessage(LOGGER, org.apache.log4j.Level.ERROR, StringUtils.EMPTY, e,
+            "Error occurred while processing cancellation of order with number : {} ",
+            this.getOrderModel().getCode());
         this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, Level.FAILURE,
             new Object[]{this.getLabel("customersupportbackoffice.cancelorder.confirm.error")});
       }
