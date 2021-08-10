@@ -42,7 +42,8 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
     }
     final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
     final Date rentalReturnDate = abstractOrderModel.getRentalEndDate();
-    if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+    if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
+        && rentalReturnDate != null) {
       for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
         //update rental date based on order dates
         orderEntry.setRentalStartDate(rentalStartDate);
