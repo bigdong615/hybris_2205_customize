@@ -1464,6 +1464,8 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<!-- BL-863 : Front Desk Team Payment Capture Action  -->
 	<context type="Consignment" merge-by="type" component="editorareaactions"
 		principal="frontdeskuserrole">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
