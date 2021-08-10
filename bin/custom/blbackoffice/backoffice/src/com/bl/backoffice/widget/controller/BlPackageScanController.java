@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -130,8 +129,8 @@ public class BlPackageScanController extends DefaultWidgetController
 			}
 			else
 			{
-				BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG);
-				throw new WrongValueException(this.scanningArea, this.getLabel(BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR));
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR);
 			}
 		}
 
@@ -243,10 +242,8 @@ public class BlPackageScanController extends DefaultWidgetController
 				break;
 
 			default:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				throw new WrongValueException(this.scanningArea,
-						this.getLabel(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_KEY));
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_KEY);
 		}
 	}
 
