@@ -367,7 +367,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		else
 		{
-			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ONE, Collections.emptyList()));
+			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ONE, barcodes));
 		}
 	}
 	
@@ -408,7 +408,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			final List<String> collect = scannedSerialProduct.stream().map(serial -> serial.getBarcode())
 					.collect(Collectors.toList());
-			subList.removeIf(subListBarcode -> collect.contains(subListBarcode));
+			subList.removeIf(collect::contains);
 			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ONE, subList));
 		}
 		final List<BlProductModel> serialProductsOnPackage = getPackagingInfoModel().getSerialProducts();
@@ -519,7 +519,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				entryBarcode.add(((BlSerialProductModel) serial).getBarcode());
 			}
 		});
-		return barcodes.containsAll(entryBarcode);
+		return barcodes.containsAll(entryBarcode) && entryBarcode.containsAll(barcodes);
 	}
 	
 	/**
