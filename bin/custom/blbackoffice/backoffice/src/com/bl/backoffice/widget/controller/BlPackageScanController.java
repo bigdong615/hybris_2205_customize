@@ -97,8 +97,8 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG);
-			throw new WrongValueException(this.scanningArea, this.getLabel(BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY));
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
 		}
 		else
 		{
@@ -116,8 +116,8 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG);
-			throw new WrongValueException(this.scanningArea, this.getLabel(BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY));
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
 		}
 		else
 		{
