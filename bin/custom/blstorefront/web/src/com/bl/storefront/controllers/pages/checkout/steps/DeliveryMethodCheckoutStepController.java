@@ -452,7 +452,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 if (pinError != null) {
                     return pinError;
                 }
-                setDeliveryAddress(selectedAddressData);      // needs to change
+                setDeliveryAddressForReplacementOrder(selectedAddressData);
             }
         }
         return SUCCESS;
@@ -466,6 +466,22 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT) &&
             Objects.nonNull(cartModel.getReplacementOrder()) && null != getSessionService().getAttribute(
             BlCoreConstants.RETURN_REQUEST);
+    }
+
+    /**
+     * Will set the delivery address
+     *
+     * @param selectedAddressData
+     */
+    protected void setDeliveryAddressForReplacementOrder(final AddressData selectedAddressData) {
+        final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
+        if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData)) {
+            getCheckoutFacade().setDeliveryAddressForReplacementOrder(selectedAddressData);
+            if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook()) {
+                // temporary address should be removed
+                getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
+            }
+        }
     }
 
     protected String getBreadcrumbKey() {

@@ -1179,4 +1179,15 @@
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
+
+	<alias alias="commerceDeliveryAddressStrategy" name="defaultBlCommerceDeliveryAddressStrategy"/>
+	<bean id="defaultBlCommerceDeliveryAddressStrategy"
+		class="com.bl.core.replacementorder.replacementorder.DefaultBlCommerceDeliveryAddressStrategy" parent="defaultCommerceDeliveryAddressStrategy">
+	</bean>
+
+	<alias alias="commerceDeliveryModeValidationStrategy" name="defaultBlCommerceDeliveryModeValidationStrategy"/>
+	<bean id="defaultBlCommerceDeliveryModeValidationStrategy"
+		class="com.bl.core.replacementorder.replacementorder.DefaultBlCommerceDeliveryModeValidationStrategy" parent="defaultCommerceDeliveryModeValidationStrategy">
+	</bean>
+
 </beans>

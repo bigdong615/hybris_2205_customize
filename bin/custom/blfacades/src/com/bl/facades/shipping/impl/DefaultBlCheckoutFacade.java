@@ -15,6 +15,7 @@ import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
@@ -50,6 +51,7 @@ import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.session.SessionService;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -89,6 +91,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 @Resource(name = "brainTreeTransactionService")
  	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
+
+
 	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
@@ -100,6 +104,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Converter<BlRushDeliveryModeModel, BlRushDeliveryModeData> blRushDeliveryModeConverter;
     private Converter<ShippingGroupModel, BlShippingGroupData> blShippingGroupConverter;
     private Converter<PartnerPickUpStoreModel, BlPartnerPickUpStoreData> blPartnerPickUpStoreConverter;
+    private SessionService sessionService;
+
 
     /**
      * {@inheritDoc}
@@ -945,6 +951,31 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    	 }   	 
     }
 
+
+    @Override
+    public boolean setDeliveryAddressForReplacementOrder(final AddressData addressData) {
+        final CartModel cartModel = getCart();
+        if (cartModel != null)
+        {
+            AddressModel addressModel = null;
+            if (addressData != null)
+            {
+                addressModel = addressData.getId() == null ? createDeliveryAddressModel(addressData, cartModel)
+                    : getDeliveryAddressModelForCode(addressData.getId());
+            }
+
+            final CommerceCheckoutParameter parameter = createCommerceCheckoutParameter(cartModel, true);
+            parameter.setAddress(addressModel);
+            parameter.setIsDeliveryAddress(false);
+            if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReplacementOrder()) &&
+                null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
+                  parameter.setIsCartForReplacementOrder(Boolean.TRUE);
+            }
+            return getCommerceCheckoutService().setDeliveryAddress(parameter);
+        }
+        return false;
+    }
+
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
     }
@@ -1066,5 +1097,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	{
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
+
+    public SessionService getSessionService() {
+        return sessionService;
+    }
+
+    public void setSessionService(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
+
 
 }

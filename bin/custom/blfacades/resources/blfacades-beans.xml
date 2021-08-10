@@ -313,8 +313,11 @@
             <property name="recipientEmail" type="java.lang.String"/>
             <property name="recipientName" type="java.lang.String" />
             <property name="recipientMessage" type="java.lang.String"/>
-            
+            <property name="isCartForReplacementOrder" type="java.lang.Boolean"/>
+
 	</bean>
+
+
 
   <!--BL-563 Gift Card-->
   <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
@@ -617,6 +620,11 @@
     <property name="product" type="de.hybris.platform.commercefacades.product.data.ProductData"/>
     <property name="entryPk" type="Long"/>
   </bean>
+
+
+	<bean class="de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter">
+		<property name="isCartForReplacementOrder" type="java.lang.Boolean"/>
+	</bean>
 
 </beans>
 

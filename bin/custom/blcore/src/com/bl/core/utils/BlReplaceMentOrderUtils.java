@@ -29,7 +29,7 @@ public class BlReplaceMentOrderUtils {
   }
 
   public static void updateCartForReplacementOrder(final AbstractOrderModel abstractOrderModel , final Model model) {
-    if (BooleanUtils.isTrue(isReplaceMentOrder(model))) {
+    if (BooleanUtils.isTrue(isReplaceMentOrder())) {
       for (OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
         if (CollectionUtils.isNotEmpty(orderModel.getReturnRequests())) {
           getSessionService().setAttribute(BlCoreConstants.RETURN_REQUEST, orderModel.getReturnRequests().iterator().next());
@@ -73,7 +73,7 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
     }
   }
 
-  public static boolean isReplaceMentOrder(final Model model) {
+  public static boolean isReplaceMentOrder() {
       return null != getSessionService().getAttribute(BlCoreConstants.ACTING_USER_UID) &&
         null != getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER);
   }

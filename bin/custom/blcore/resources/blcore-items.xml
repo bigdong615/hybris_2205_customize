@@ -2376,6 +2376,12 @@
                     <description>To identify return Request for Order.</description>
                     <modifiers read="true" write="true" optional="true"/>
                     <persistence type="property"/>
+                  </attribute>
+                  <attribute type="ReturnRequest" qualifier="returnRequestForOrder">
+                    <description>To identify return Request for Order.</description>
+                    <modifiers read="true" write="true" optional="true"/>
+                    <persistence type="property"/>
+                  </attribute>
                   <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
                     <description>Flag to identify the order type is new gear order or not. By using
