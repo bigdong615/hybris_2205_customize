@@ -65,7 +65,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     //can not be sourced all the products from all warehouses
     sourcingContext.getResult().setComplete(false);
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-    order.setStatus(OrderStatus.SUSPENDED);
+    order.setStatus(OrderStatus.MANUAL_REVIEW);
     modelService.save(order);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
         order.getCode());
