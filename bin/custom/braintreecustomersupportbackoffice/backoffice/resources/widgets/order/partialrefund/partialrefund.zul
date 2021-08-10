@@ -1,39 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
-        sclass="bt-widget-createpartialrefund-configuration"
-        id="createpartialrefundview" height="100%" width="100%">
+  xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+  sclass="bt-widget-createpartialrefund-configuration"
+  id="createpartialrefundview" height="500px" width="100%">
 
-    <separator width="100%" height="10px"/>
+  <separator width="100%" sclass="oms-widget-cancelorder-configuration--separator"/>
 
-    <hlayout height="60px" sclass="bt-widget-createpartialrefund--header">
+  <hlayout sclass="oms-widget-cancelorder-header">
+    <hbox sclass="oms-widget-cancelorder-body">
+      <vbox>
+        <label value="${labels.customersupportbackoffice.partial.refundorder.orderStatus}"
+          width="100%"/>
+        <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
+          id="orderStatus" width="100%"/>
+      </vbox>
+    </hbox>
+    <hbox sclass="oms-widget-cancelorder-body">
+      <vbox>
+        <label value="${labels.customersupportbackoffice.partial.refundorder.totalShippingCost}"
+          width="100%"/>
+        <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
+          id="totalShippingCost" width="100%"/>
+      </vbox>
+    </hbox>
+    <hbox sclass="oms-widget-cancelorder-body">
+      <vbox>
+        <label value="${labels.customersupportbackoffice.partial.refundorder.totaltax}"
+          width="100%"/>
+        <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalTax"
+          width="100%"/>
+      </vbox>
+    </hbox>
+    <hbox sclass="oms-widget-cancelorder-body">
+      <vbox>
+        <label value="${labels.customersupportbackoffice.partial.refundorder.totalOrderAmount}"
+          width="100%"/>
+        <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
+          id="totalOrderAmount" width="100%"/>
+      </vbox>
+    </hbox>
+  </hlayout>
+  <hlayout width="100%" height="380px" sclass="oms-widget-cancelorder-list">
+    <div sclass="oms-widget-cancelorder-list-container">
+      <grid id="orderEntries" style="margin-left:50px;margin-top:10px" mold="paging" pageSize="5">
+        <columns>
+          <column width="12%" sclass="oms-widget-cancelorder-listbox-header" sort="auto"
+            sortDirection="ascending">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.productCode}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.productName}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.quantity}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.productPrice}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.refundAmount}"
+              width="100%"/>
+          </column>
+        </columns>
+        <rows>
+          <template name="model">
+            <row>
+              <label value="${each.orderEntry.product.code}" width="100%"/>
+              <label value="${each.orderEntry.product.name}" width="100%"/>
+              <label value="${each.orderEntry.quantity}" width="100%"/>
+              <label value="${each.orderEntry.basePrice}" width="100%"/>
+              <doublebox sclass="bt-widget-createpartialrefund--input-text-box"
+                value="${each.lineItemRefundAmount}" width="100%"
+                constraint="no empty,no negative: Price should be greater than 0"/>
+            </row>
+          </template>
+        </rows>
+      </grid>
+    </div>
+  </hlayout>
 
-        <hbox sclass="bt-widget-refundtransaction--body">
-            <vbox>
-                <label value="${labels.braintree.backoffice.create.partial.refund.transactions}" width="100%"/>
-                <combobox id="transactionsCombobox" width="240px" readonly="true" />
-            </vbox>
-        </hbox>
-
-        <hbox sclass="bt-widget-createpartialrefund--body">
-            <vbox>
-                <label value="${labels.braintree.backoffice.create.partial.refund.amount}" width="100%"/>
-                <textbox sclass="bt-widget-createpartialrefund--input-text-box" readonly="false" id="amount"
-                         width="240px"/>
-            </vbox>
-        </hbox>
-
-        <hbox style="float:right;">
-            <div sclass="bt-widget-createpartialrefund--controller-area">
-                <div sclass="bt-widget-createpartialrefund--confirm-area" style="">
-                    <button id="refundrequest" width="100%"
-                            label="${labels.braintree.backoffice.create.partial.refund.button}"
-                            sclass="bt-widget-createpartialrefund-configuration-button bt-widget-createpartialrefund-configuration-save-button"/>
-                    <separator width="100%" height="10px"/>
-                </div>
-            </div>
-        </hbox>
-
-    </hlayout>
-
+  <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer">
+    <button id="cancelChanges"
+      label="${labels.braintree.backoffice.create.partial.cancel.button}"
+      sclass="oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-revert-button"/>
+    <button id="refundrequest"
+      label="${labels.braintree.backoffice.create.partial.refund.button}"
+      sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button"/>
+  </div>
 </widget>
