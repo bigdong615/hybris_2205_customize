@@ -66,6 +66,8 @@ public class BlControllerConstants
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
 	public static final String ACCOUNT_DEACTIVATED = "login.error.account.deactivate.title";
+	public static final String ACCOUNT_DEACTIVATED_MSG ="Account deactivated for user {}";
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG =  "Login email or password is invalid for user {}";
 
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
