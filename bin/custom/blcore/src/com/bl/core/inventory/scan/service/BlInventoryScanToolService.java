@@ -84,7 +84,7 @@ public interface BlInventoryScanToolService {
  	 *           for BlSerialProduct
  	 * @return Map<Integer, List<String>>
  	 */
- 	public List<String> getFailedBinBarcodeList(final List<String> barcodes);
+ 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes);
 
  	/**
  	 * method will verify the list of barcodes and result into list of failed barcodes that are not
@@ -110,7 +110,7 @@ public interface BlInventoryScanToolService {
 	 *           for BlSerialProduct
 	 * @return Map<Integer, List<String>>
 	 */
-	public List<String> getFailedPackageBarcodeList(final List<String> barcodes);
+	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes);
 
 	/**
 	 * This method will verify loction and update items to new working desk location

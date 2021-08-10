@@ -257,7 +257,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		
 		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product) 
-				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && BooleanUtils.isFalse(
+						ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())))
 		{
 			final BlProductModel blProductModel = (BlProductModel) product;
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
