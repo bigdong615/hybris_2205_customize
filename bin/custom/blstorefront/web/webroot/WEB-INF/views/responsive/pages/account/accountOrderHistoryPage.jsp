@@ -7,7 +7,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 
-
 <spring:htmlEscape defaultHtmlEscape="true" />
 								<c:set var="searchUrl" value="/my-account/orders?sort=${ycommerce:encodeUrl(searchPageData.pagination.sort)}" />
 								<c:url var="homepageUrl" value="/" />
