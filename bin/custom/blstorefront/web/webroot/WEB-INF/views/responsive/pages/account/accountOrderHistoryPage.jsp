@@ -7,6 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 
+
 <spring:htmlEscape defaultHtmlEscape="true" />
 								<c:set var="searchUrl" value="/my-account/orders?sort=${ycommerce:encodeUrl(searchPageData.pagination.sort)}" />
 								<c:url var="homepageUrl" value="/" />
@@ -30,8 +31,64 @@
                 	<div id="accountContent" class="col-lg-8 offset-lg-1">
                 		<h1><spring:theme code="text.myaccount.recent.order"/></h1>
                 		<c:forEach items="${searchPageData.results}" var="order">
-                			<div class="order-block">
+                		<div class="order-block">
                 				<div class="row">
+                				     <c:choose>
+                                        <c:when test="${order.isGiftCard}">
+                                            <div class="col-12 col-md-7">
+							                <p class="mb-0">
+								               <b>${order.orderDate}</b>
+							                </p>
+							               <p class="body14">
+								               ${fn:escapeXml(order.total.formattedValue)} &nbsp;
+								<spring:theme
+									code="order.gift.card.myaccount.review.page.gift.certificate" />
+							</p>
+						</div>
+						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+							<p class="my-2">
+								<spring:theme code="order.gift.card.myaccount.order.completed" />
+							</p>
+						</div>
+						                					<div class="col-6 col-md-1">
+                						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
+                							<ul class="dropdown-menu" aria-labeledby="btn-rental-001">
+                								<li>
+                									<c:url value="/my-account/order/${order.code}" var="viewOrderAction" />
+                									<a href="${viewOrderAction}">
+                										<spring:theme code="text.myaccount.order.view" /> </a>
+                								</li>
+                								<li>
+                								<c:if test="${order.rentalCart}">
+                								 <c:url value="/rent/product/${order.productCode}" var="rentOrderAction" />
+                                 <a href="${rentOrderAction}">
+                                                        <spring:theme code="order.gift.card.myaccount.order.another"/> </a>
+                							  </c:if>
+                								</li>
+                							</ul>
+                						</div>
+                					</div>
+						<div class="col-12 mt-4">
+							<div class="row">
+								<div class="col-4 col-md-2">
+									<p class="body14">
+
+										<spring:theme code="text.myaccount.order.rental.total.cost" />
+										<br>
+										<spring:theme code="text.myaccount.order" />
+									</p>
+									</p>
+								</div>
+								<div class="col-8 col-md-10">
+									<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
+										<br> ${fn:escapeXml(order.code)}
+									</p>
+								</div>
+							</div>
+						</div>
+                      </c:when>
+                          <c:otherwise>
+  
                 				<c:if test="${!order.rentalCart}">
                                  <div class="col-12 col-md-7">
                                       <p class="mb-0"><b>${order.orderDate}</b></p>
@@ -115,6 +172,8 @@
                 							</div>
                 						</div>
                 					</div>
+                					</c:otherwise>
+                					</c:choose>
                 				</div>
                 			</div>
                 		</c:forEach>
