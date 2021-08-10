@@ -26,6 +26,8 @@
             <value code="LITHIUM_METAL"/>
             <value code="NON_LITHIUM"/>
         </enumtype>
+        <!--BL custom enum type-->
+
         <enumtype generate="true" code="SerialStatusEnum" autocreate="true" dynamic="true">
             <value code="ACTIVE"/>
             <value code="COMING_FROM_PURCHASE"/>
@@ -1719,6 +1721,12 @@
                   search="true" />
                 <persistence type="property" />
               </attribute>
+              <attribute qualifier="balanceAmount" type="java.lang.Double">
+                <description>Gift card movement balance amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
             </attributes>
           </itemtype>
           <!--Gift Card End-->
@@ -1883,66 +1891,79 @@
              </attributes>
            </itemtype>
          </typegroup>
-         <typegroup name="Cart">
-         	<itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
-         		<description>Extending the AbstractOrderEntry with additional attributes.</description>
-         		<attributes>
-         			<attribute qualifier="gearGuardWaiverPrice" type="java.lang.Double">
-	         			<persistence type="property"/>
-	                 	<modifiers read="true" write="true" optional="true"/>
-	                 	<description>Gear Guard Value Waiver Price for Rental Gear</description>         				
-         			</attribute>
-         			<attribute qualifier="gearGuardProFullWaiverPrice" type="java.lang.Double">
-	         			<persistence type="property"/>
-	                 	<modifiers read="true" write="true" optional="true"/>
-	                 	<description>Gear Guard Pro Full Value Waiver Price for Rental Gear</description>         				
-         			</attribute>
-         			<attribute qualifier="gearGuardWaiverSelected" type="java.lang.Boolean">
-                <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
-                <persistence type="property"/>
-	                 	<modifiers read="true" write="true" optional="true"/>
-	                 	<description>Flag to set if Gear Guard Value Waiver is selected for Rental Gear</description>         				
-         			</attribute>
-         			<attribute qualifier="gearGuardProFullWaiverSelected" type="java.lang.Boolean">
-                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                <persistence type="property"/>
-	                 	<modifiers read="true" write="true" optional="true"/>
-	                 	<description>Flag to set if Gear Guard Pro Full Value Waiver is selected for Rental Gear</description>         				
-         			</attribute>
-         			<attribute qualifier="noDamageWaiverSelected" type="java.lang.Boolean">
-                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                <persistence type="property"/>
-	                 	<modifiers read="true" write="true" optional="true"/>
-	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
-         			</attribute>
-					<attribute qualifier="serialProducts" type="serialProducts">
-						<persistence type="property"/>
-						<modifiers read="true" write="true" optional="true"/>
-						<description>Serial products for the entry</description>
-					</attribute>
-          <attribute qualifier="options" type="optionsList">
-						<persistence type="property"/>
-						<modifiers read="true" write="true" optional="true"/>
-						<description>Option Associated to the Product</description>
-					</attribute>
-                    <attribute qualifier="recipientEmail" type="java.lang.String">
-                        <description>Email address of the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                    <attribute qualifier="recipientName" type="java.lang.String">
-                        <description>Name of the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                    <attribute qualifier="recipientMessage" type="java.lang.String">
-                        <description>Message for the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                 </attributes>
-         	</itemtype>
-         </typegroup>
+      <typegroup name="Cart">
+        <itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
+          <description>Extending the AbstractOrderEntry with additional attributes.</description>
+          <attributes>
+            <attribute qualifier="gearGuardWaiverPrice" type="java.lang.Double">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Gear Guard Value Waiver Price for Rental Gear</description>
+            </attribute>
+            <attribute qualifier="gearGuardProFullWaiverPrice" type="java.lang.Double">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Gear Guard Pro Full Value Waiver Price for Rental Gear</description>
+            </attribute>
+            <attribute qualifier="gearGuardWaiverSelected" type="java.lang.Boolean">
+              <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Flag to set if Gear Guard Value Waiver is selected for Rental Gear
+              </description>
+            </attribute>
+            <attribute qualifier="gearGuardProFullWaiverSelected" type="java.lang.Boolean">
+              <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Flag to set if Gear Guard Pro Full Value Waiver is selected for Rental
+                Gear
+              </description>
+            </attribute>
+            <attribute qualifier="noDamageWaiverSelected" type="java.lang.Boolean">
+              <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Flag to set if No Damage Waiver is selected for Rental Gear</description>
+            </attribute>
+            <attribute qualifier="rentalStartDate" type="java.util.Date">
+              <persistence type="property"/>
+              <description>BL Rental Strat Date</description>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="rentalReturnDate" type="java.util.Date">
+              <persistence type="property"/>
+              <description>BL Rental Return Date</description>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="serialProducts" type="serialProducts">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Serial products for the entry</description>
+            </attribute>
+            <attribute qualifier="options" type="optionsList">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Option Associated to the Product</description>
+            </attribute>
+            <attribute qualifier="recipientEmail" type="java.lang.String">
+              <description>Email address of the gift card recipient</description>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="recipientName" type="java.lang.String">
+              <description>Name of the gift card recipient</description>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="recipientMessage" type="java.lang.String">
+              <description>Message for the gift card recipient</description>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
 
         <!-- BL-542 -->
         <typegroup name="Shipping">
@@ -2350,6 +2371,14 @@
                     <persistence type="property" />
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
+                  </attribute>
+                  <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
+                    <persistence type="property" />
+                    <description>Flag to identify the order type is new gear order or not. By using
+                      this flag we are stopping the order process.
+                    </description>
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
                   </attribute>
                 </attributes>
             </itemtype>

@@ -17,6 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
@@ -24,6 +25,10 @@ import org.zkoss.zul.Messagebox;
 
 
 /**
+ * ########## BL-749 & BL-863 ######################
+ *
+ * Controller class used to capture the payment for frontdesk team and warehouse agent
+ *
  * @author Krishan Vashishth
  *
  */
@@ -38,6 +43,10 @@ public class CapturePaymentController extends DefaultWidgetController {
   private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
   private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "success.message.payment.captured";
   private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
+  private static final String MESSAGE_BOX_TITLE = "payment.capture.message.box.title";
+  private static final String CANCEL_BUTTON = "cancelChanges";
+  private static final String CAPTURE_BUTTON = "captureOrderPayment";
+  private static final String INPUT_OBJECT = "inputObject";
 
   @Resource
   private BlPaymentService blPaymentService;
@@ -47,7 +56,7 @@ public class CapturePaymentController extends DefaultWidgetController {
   @Wire
   private Combobox paymentTransactions;
 
-  @SocketEvent(socketId = "inputObject")
+  @SocketEvent(socketId = INPUT_OBJECT)
   public void init(final ConsignmentModel inputObject) {
     this.getWidgetInstanceManager()
         .setTitle(new StringBuilder(TITLE_MESSG).append(CONNECTOR).append(inputObject.getOrder()
@@ -63,23 +72,23 @@ public class CapturePaymentController extends DefaultWidgetController {
     }
   }
 
-  @ViewEvent(componentID = "captureOrderPayment", eventName = "onClick")
+  @ViewEvent(componentID = CAPTURE_BUTTON, eventName = Events.ON_CLICK)
   public void capturePayment() {
     BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
     if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode())
         || getOrderModel().getIsCaptured()) {
-      showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER));
+      showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
       return;
     }
     if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
       showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
     } else {
       BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
-      showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED));
+      showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
     }
   }
 
-  @ViewEvent(componentID = "cancelChanges", eventName = "onClick")
+  @ViewEvent(componentID = CANCEL_BUTTON, eventName = Events.ON_CLICK)
   public void close() {
     this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
@@ -92,8 +101,29 @@ public class CapturePaymentController extends DefaultWidgetController {
     this.orderModel = orderModel;
   }
 
-  protected void showMessageBox(final String message) {
-    Messagebox.show(message);
+  /**
+   * Show message box.
+   *
+   * @param message     the message
+   * @param isErrorMesg the is error mesg
+   */
+  protected void showMessageBox(final String message, final boolean isErrorMesg) {
+    if (isErrorMesg) {
+      Messagebox
+          .show(message, this.getLabel(MESSAGE_BOX_TITLE), Messagebox.OK, Messagebox.ERROR);
+    } else {
+      Messagebox
+          .show(message, this.getLabel(MESSAGE_BOX_TITLE), Messagebox.OK, Messagebox.INFORMATION);
+    }
     this.sendOutput(OUT_CONFIRM, COMPLETE);
+  }
+
+  /**
+   * Show message box.
+   *
+   * @param message the message
+   */
+  protected void showMessageBox(final String message) {
+    showMessageBox(message, false);
   }
 }

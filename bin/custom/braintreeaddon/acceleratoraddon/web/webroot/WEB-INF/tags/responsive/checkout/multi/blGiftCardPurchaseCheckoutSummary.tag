@@ -178,14 +178,7 @@
 								</c:if>
 							</c:forEach>
 						</c:if>
-						<div class="notification notification-tip check">
-							<spring:theme code="text.shipping.change.or.cancellation.message" />
-						</div>
-						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
-								class="icon-print"></i>
-							</a>
-						</div>
+						
 					</div>
 				</div>
 			</div>

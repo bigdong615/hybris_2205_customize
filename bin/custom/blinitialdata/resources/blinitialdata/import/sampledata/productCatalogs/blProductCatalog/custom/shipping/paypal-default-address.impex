@@ -1,0 +1,11 @@
+#% impex.info("=============================== Importing content from BLInitialData paypal-default-address.impex ========================="); 
+ 
+INSERT_UPDATE Address ; streetname[unique = true] ; postalcode[unique = true] ; town       ; country(isocode) ; region(isocodeShort) ; billingAddress ; contactAddress ; shippingAddress ; unloadingAddress ; firstname ; lastname ; &addId ;  
+                      ; 1664 Industrial Rd        ; 94070                     ; San Carlos ; US               ; CA                   ; FALSE          ; FALSE          ; TRUE            ; FALSE            ; BL        ; Paypal   ; Addr1  ;  
+                      
+                      
+INSERT_UPDATE Company ; uid[unique=true]    ; country(isocode) ; locname[lang=en] ; contactAddress(&addId) ;  
+                      ; defaultAddressGroup ; US               ; paypal address   ; Addr1                  
+                      
+                      
+                      

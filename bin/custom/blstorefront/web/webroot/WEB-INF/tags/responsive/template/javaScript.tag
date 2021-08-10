@@ -1681,18 +1681,8 @@
                           				 btn.className = 'reset-button';
                           				 btn.addEventListener('click', (evt) => {
                           				 evt.preventDefault();
-                          				 $.ajax({
-                                              url: ACC.config.encodedContextPath + '/resetExtendDate',
-                                              type: "GET",
-                                              success: function (data) {
-                                              	if(data=='success')
-                                                  window.location.reload();
-                                              },
-                                              error: function (xhr, textStatus, error) {
-
-                                              }
-                                          });
-                          				});
+                                   window.location.reload();
+                                  });
                           				return btn;
                           				},
                                       setup: (picker) => {

@@ -1463,6 +1463,8 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<!-- BL-863 : Front Desk Team Payment Capture Action  -->
 	<context type="Consignment" merge-by="type" component="editorareaactions"
 		principal="frontdeskuserrole">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1732,7 +1734,13 @@
 			</y:labels>
 		</y:base>
 	</context>
-
+	<context type="GiftCard" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>code+ ' - ' +amount</y:label>
+			</y:labels>
+		</y:base>
+	</context>
 	<context type="GiftCard" component="create-wizard-no-save">
 		<wz:flow id="giftCardCreateWizard" title="customersupport.backoffice.giftcard.title" >
 			<wz:prepare id="giftCardPrepare">

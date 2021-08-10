@@ -93,7 +93,7 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
   private AbstractPromotionActionModel getPromotionActionWithCoupon(final PromotionResultModel promotionResultModel) {
     final Optional<AbstractPromotionActionModel> promotionAction = promotionResultModel.getActions().stream()
         .filter(action -> action instanceof RuleBasedOrderEntryAdjustActionModel
-            && !((RuleBasedOrderEntryAdjustActionModel) action).getUsedCouponCodes().isEmpty())
+            && null != ((RuleBasedOrderEntryAdjustActionModel) action).getUsedCouponCodes() && !((RuleBasedOrderEntryAdjustActionModel) action).getUsedCouponCodes().isEmpty())
         .findAny();
     return promotionAction.orElse(null);
   }
