@@ -250,7 +250,7 @@
 																	 data-line2="${deliveryAddress.line2}"
 																	 data-town="${deliveryAddress.town}"
 																	 data-postalcode="${deliveryAddress.postalCode}"
-																	 data-countryisocode="${deliveryAddress.country.isocode}"
+																	 data-countryisocode="${empty deliveryAddress.country.isocode ? 'US' : deliveryAddress.country.isocode}"
 																	 data-regionisocode="deliveryAddress.region.isocode"
 																	 data-email="${deliveryAddress.email}"
 																	 data-address-id="${deliveryAddress.id}"></div>

@@ -6,7 +6,7 @@ import de.hybris.platform.acceleratorservices.process.email.context.AbstractEmai
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.core.model.c2l.LanguageModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-
+import org.apache.commons.lang.StringUtils;
 import java.text.DecimalFormat;
 
 import org.apache.log4j.Level;
@@ -27,7 +27,9 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
   private GiftCardModel giftcard;
   private String customerEmail;
   private String custname;
-  private String code;
+  private String senderName;
+
+private String code;
   private String amount;
   private String msg;
   private Boolean isPurchased;
@@ -44,8 +46,9 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
     setCustomerEmail(giftCardEmailProcessModel.getCustomerEmail());
     if (giftCardEmailProcessModel.getGiftcard() != null) {
       setGiftcard(giftCardEmailProcessModel.getGiftcard());
-      setMsg(giftCardEmailProcessModel.getGiftcard().getMessage());
-      setCustname(giftCardEmailProcessModel.getGiftcard().getName());
+      setMsg(StringUtils.isNotBlank(giftCardEmailProcessModel.getGiftcard().getMessage()) ? giftCardEmailProcessModel.getGiftcard().getMessage() : "");
+      setSenderName(giftCardEmailProcessModel.getGiftcard().getCustomer().getName());
+      setCustname(StringUtils.isNotBlank(giftCardEmailProcessModel.getGiftcard().getName()) ? giftCardEmailProcessModel.getGiftcard().getName() :giftCardEmailProcessModel.getGiftcard().getCustomer().getName());
       setCode(giftCardEmailProcessModel.getGiftcard().getCode());
       final DecimalFormat decimalFormat = new DecimalFormat("0.00");
       if (giftCardEmailProcessModel.getGiftcard().getCurrency() != null
@@ -146,4 +149,20 @@ public void setMsg(final String msg)
   {
 	  this.isPurchased = isPurchased;
   }
+  /**
+ * @return the senderName
+ */
+public String getSenderName()
+{
+	return senderName;
+}
+
+/**
+ * @param senderName the senderName to set
+ */
+public void setSenderName(String senderName)
+{
+	this.senderName = senderName;
+}
+
 }

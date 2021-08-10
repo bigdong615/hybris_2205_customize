@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
 	public static final String PAGETYPE = "pagetype";
 	public static final String CART_DATA = "cartData";
 	public static final String PAYMENT_PAGE = "paymentPage";
@@ -73,9 +73,11 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	public static final String OUT_OF_STOCK_FOR_RENTAL_DATES = "out_of_stock_for_rental_dates";
 	public static final String OUT_OF_STOCK = "outOfStock";
   public static final String OUT_OF_STOCK_FOR_QUANTITY = "out_of_stock_for_quantity";
+	public static final String ENTRY_MESSAGE = "entryMessage";
+	public static final String ENTRY_NUMBER = "entryNumber";
 
 
-  @Override
+	@Override
 	public void beforeView(
 			HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView)
 			throws Exception {
@@ -161,6 +163,10 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 		setProductEntryData(context,cartData.getEntries(), quantity, productId, unitPrice,videoList);
 		setCommonTag(context, quantity, unitPrice, cartData.getTotalUnitCount(),
 				cartData.getDeliveryCost(), cartData.getTotalPrice());
+		if(modelAndView.getModel().get(ENTRY_MESSAGE) != null){
+			String stockStatus[] =	context.arrayValue(OUT_OF_STOCK_FOR_QUANTITY);
+			stockStatus[((Long) modelAndView.getModel().get(ENTRY_NUMBER)).intValue()] = TRUE_VALUE;
+		}
 	}
 
 	/**
