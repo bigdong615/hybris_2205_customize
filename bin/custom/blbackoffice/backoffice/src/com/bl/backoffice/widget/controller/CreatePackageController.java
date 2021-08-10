@@ -4,6 +4,7 @@
 package com.bl.backoffice.widget.controller;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
@@ -24,6 +25,7 @@ import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -120,7 +122,7 @@ public class CreatePackageController extends DefaultWidgetController
 			if (CollectionUtils.isNotEmpty(this.allSerialProducts))
 			{
 				setWidgetTitle("Create Package");
-				final List<SerialProductDTO> serials = new ArrayList<SerialProductDTO>();
+				final List<SerialProductDTO> serials = new ArrayList<>();
 				for (final BlProductModel blProductModel : allSerialProducts)
 				{
 					final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
@@ -130,7 +132,7 @@ public class CreatePackageController extends DefaultWidgetController
 					serials.add(serialProduct);
 				}
 				this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
-				final ListModelList<PackagingInfoData> packageBox = new ListModelList<PackagingInfoData>(createPackageCombobox());
+				final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
 				final PackagingInfoData packagingInfoData = packageBox.get(0);
 				packageBox.addToSelection(packagingInfoData);
 				this.boxes.setModel(packageBox);
@@ -155,7 +157,10 @@ public class CreatePackageController extends DefaultWidgetController
 		getModelService().refresh(consignment);
 		for (final ConsignmentEntryModel consignmentEntryModel : consignment.getConsignmentEntries())
 		{
-			allSerialProducts.addAll(consignmentEntryModel.getSerialProducts());
+			final Map<String, ItemStatusEnum> itemsMap = consignmentEntryModel.getItems();
+
+			consignmentEntryModel.getSerialProducts().stream().filter(serialProduct -> itemsMap.containsKey(serialProduct.getCode())
+					&& ItemStatusEnum.INCLUDED.equals(itemsMap.get(serialProduct.getCode()))).forEach(product->allSerialProducts.add(product));
 		}
 		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
 
@@ -201,7 +206,7 @@ public class CreatePackageController extends DefaultWidgetController
 				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
 				if (serialProduct.getCode().equals(selctedCheckBoxArray[0]))
 				{
-					if (selctedCheckBoxArray[1].equals("true"))
+					if ("true".equals(selctedCheckBoxArray[1]))
 					{
 						this.selectedSerialProducts.add(serialProduct);
 					}
@@ -217,7 +222,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 	private List<PackagingInfoData> createPackageCombobox()
 	{
-		this.packages = new ListModelList<PackagingInfoData>();
+		this.packages = new ListModelList<>();
 		this.packingInfo = getBlWarehousingConsignmentFacade().getAllPackagingDimensions();
 		this.packageHeight.setValue(packingInfo.get(0).getHeight());
 		this.packageWeight.setValue(packingInfo.get(0).getGrossWeight());
