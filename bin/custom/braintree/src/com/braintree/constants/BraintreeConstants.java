@@ -30,6 +30,7 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String BRAINTREE_MERCHANT_ID = "braintree.merchant_id";
 	public static final String SINGLE_USE_PARAMETER = "braintree.single.use";
 	public static final String BRAINTREE_SUBMIT_FOR_SETTLEMENT = "braintree.submit.for.settlement";
+	public static final String PAYPAL_DEFAULT_ADDRESS = "defaultAddressGroup";
 	public static final String LOG_ALL_ENABLE = "braintree.log.all.enable";
 	public static final String LOG_PACKAGE_PATH = "com.braintree";
 	public static final String BRAINTREE_PROVIDER_NAME = "BrainTree";

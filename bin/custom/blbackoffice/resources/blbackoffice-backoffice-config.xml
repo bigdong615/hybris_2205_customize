@@ -1132,24 +1132,23 @@
 				</editorArea:tab>
 			</editorArea:editorArea>
 		</context>
-  	
-  	<context component="cseditorareaactions" type="Order" merge-by="type">
+
+	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
-            <y:group qualifier="common">
-                <y:label>actiongroup.common</y:label>
-                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction" property="currentObject" />
-                <y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.cancelorderaction" property="currentObject"/>
-                <y:action action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentvoidaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentcaptureaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxvoidaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxcommitaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxrequoteaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentreauthaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualdeliverycostcommitaction" property="currentObject" merge-mode="REMOVE"/>
-            </y:group>
-        </y:actions>
-    </context>
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction"
+					property="currentObject"/>
+				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
+					property="currentObject"/>
+				<y:action action-id="com.bl.blbackoffice.actions.order.customOrderRefundAction"
+					property="currentObject"/>
+				<y:action
+					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
+					property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
 
 	<!--BL-753 : OMS&WH - Different Teams - Order Notes and Customer Notes - Create Wizard for CS Role for Notes type -->
 	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
@@ -1464,6 +1463,8 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<!-- BL-863 : Front Desk Team Payment Capture Action  -->
 	<context type="Consignment" merge-by="type" component="editorareaactions"
 		principal="frontdeskuserrole">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1733,7 +1734,13 @@
 			</y:labels>
 		</y:base>
 	</context>
-
+	<context type="GiftCard" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>code+ ' - ' +amount</y:label>
+			</y:labels>
+		</y:base>
+	</context>
 	<context type="GiftCard" component="create-wizard-no-save">
 		<wz:flow id="giftCardCreateWizard" title="customersupport.backoffice.giftcard.title" >
 			<wz:prepare id="giftCardPrepare">

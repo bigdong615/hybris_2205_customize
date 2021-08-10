@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<config xmlns="http://www.hybris.com/cockpit/config"
+	      xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+	      xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+	      xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+	      xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+	      xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch"
+	      xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+	      xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+
+	<!-- blwarehousingbackoffice UI configuration should be provided here -->
+
+	<!--<context component="component-code" module="blwarehousingbackoffice">-->
+		<!--Please check documentation for code snippets for specific components-->
+	<!--</context>-->
+
+	<!--Customer support Ticket related configurations-->
+
+	<context type="CsTicket" component="simple-search" module="warehousingbackoffice">
+		<simple-search:simple-search>
+			<simple-search:field name="ticketID" />
+			<simple-search:sort-field name="modifiedtime" asc="false"/>
+		</simple-search:simple-search>
+	</context>
+
+
+	<context merge-by="type" parent="GenericItem" type="CsTicket" component="advanced-search">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="state" selected="true" />
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context component="warehousingbackofficelistview" type="CsTicket" module="warehousingbackoffice">
+		<list-view:list-view>
+			<list-view:column qualifier="ticketID" label="customersupport_backoffice_tickets_ticketID" />
+			<list-view:column qualifier="customer.name" label="customersupport_backoffice_tickets_customername"/>
+			<list-view:column qualifier="creationtime" label="customersupport_backoffice_tickets_creationTime"/>
+			<list-view:column qualifier="modifiedtime" label="customersupport_backoffice_tickets_lastModifiedTime"/>
+			<list-view:column qualifier="baseSite" label="customersupport_backoffice_tickets_site"/>
+			<list-view:column qualifier="state" label="customersupport_backoffice_tickets_status"/>
+			<list-view:column qualifier="priority" label="customersupport_backoffice_tickets_priority"/>
+			<list-view:column qualifier="category" label="customersupport_backoffice_tickets_category"/>
+			<list-view:column qualifier="headline" label="customersupport_backoffice_tickets_subject"/>
+		</list-view:list-view>
+	</context>
+
+
+	<context merge-by="type" parent="GenericItem" type="CsTicket" component="warehousingbackoffice-editor-area" module="warehousingbackoffice">
+		<editorArea:editorArea name="csTicket">
+			<editorArea:tab name="customersupport_backoffice_ticket_tab_details" tooltipText="customersupport_backoffice_ticket_tab_details_desc">
+				<editorArea:section name="hmc.tab.section.ticket.details" position="1">
+					<editorArea:attribute qualifier="customer" readonly="true" label="customersupport_backoffice_tickets_customername">
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="baseSite" readonly="true" label="customersupport_backoffice_tickets_site">
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="headline" readonly="true" label="customersupport_backoffice_tickets_subject"/>
+					<editorArea:attribute qualifier="creationtime" readonly="true" label="customersupport_backoffice_tickets_creationTime"/>
+					<editorArea:attribute qualifier="state" editor="com.hybris.cockpitng.editor.ticket.state" label="customersupport_backoffice_tickets_status"/>
+					<editorArea:attribute qualifier="category" editor="com.hybris.cockpitng.editor.ticket.category" label="customersupport_backoffice_tickets_category"/>
+					<editorArea:attribute qualifier="order" editor="com.hybris.cockpitng.editor.decoratededitor(com.hybris.cockpitng.editor.asmdeeplinkreferenceeditor, {updateAssociatedEditorDecorator})" label="customersupport_backoffice_tickets_details_associatedTo">
+						<editorArea:editor-parameter>
+							<editorArea:name>showASMPrefix</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>referenceSearchCondition_user</editorArea:name>
+							<editorArea:value>{parentObject.customer}</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="priority" editor="com.hybris.cockpitng.editor.ticket.priority" label="customersupport_backoffice_tickets_priority"/>
+					<editorArea:attribute qualifier="assignedAgent" editor="com.hybris.cockpitng.editor.decoratededitor(com.hybris.cockpitng.editor.defaultreferenceeditor, {updateAgentEditorDecorator})" label="customersupport_backoffice_ticketForm.assignedAgent">
+						<editorArea:editor-parameter>
+							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="assignedGroup" editor="com.hybris.cockpitng.editor.decoratededitor(com.hybris.cockpitng.editor.defaultreferenceeditor, {updateAgentGroupEditorDecorator})" label="customersupport_backoffice_ticketForm.assignedGroup">
+						<editorArea:editor-parameter>
+							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+				</editorArea:section>
+				<editorArea:section name="customersupport_backoffice_section_ticket_correspondence" position="2">
+					<editorArea:customPanel name="correspondencePanel" spring-bean="correspondenceRenderer" position="2"/>
+				</editorArea:section>
+				<editorArea:section name="customersupport_backoffice_tickets_tickets" position="3">
+					<editorArea:panel colspan="2" rowspan="2" name="">
+						<editorArea:attribute qualifier="tickets" editor="com.hybris.cockpitng.editor.simpleselectlisteditor" label="customersupport_backoffice_tickets_tickets_ticketsList">
+							<editorArea:editor-parameter>
+								<editorArea:name>renderOnDemandSize</editorArea:name>
+								<editorArea:value>5</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>disableRemoveReference</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
+						</editorArea:attribute>
+					</editorArea:panel>
+				</editorArea:section>
+			</editorArea:tab>
+			<editorArea:tab name="hmc.tab.ticket.history" tooltipText="customersupport_backoffice_ticket_tab_history_desc">
+				<editorArea:section name="hmc.tab.section.ticket.history">
+					<editorArea:attribute qualifier="events">
+						<editorArea:editor-parameter>
+							<editorArea:name>disableDisplayingDetails</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+
+	<context merge-by="type" type="CsTicket" component="warehousingbackoffice-editor-area" module="warehousingbackoffice">
+		<editorArea:editorArea name="">
+			<editorArea:tab name="hmc.administration" merge-mode="remove"/>
+		</editorArea:editorArea>
+	</context>
+
+<!--
+	<context type="CsTicket" component="create-wizard" principal="warehouseadministratorrole,warehousemanagerrole,warehouseagentrole">
+		<wz:flow id="csTicketWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="csTicketPrepare">
+				<wz:initialize property="customersupport_backoffice_ticketForm" template-bean="ticketForm"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.csTicket.essential.label" sublabel="create.csTicket.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="customersupport_backoffice_ticketForm">
+						<wz:property qualifier="subject" type="String" editor="com.hybris.cockpitng.editor.defaulttext"/>
+						<wz:property qualifier="intervention" type="de.hybris.platform.ticket.enums.CsInterventionType" editor="com.hybris.cockpitng.editor.nonoptionalenum"/>
+						<wz:property qualifier="category" type="de.hybris.platform.ticket.enums.CsTicketCategory" editor="com.hybris.cockpitng.editor.nonoptionalenum"/>
+						<wz:property qualifier="priority" type="de.hybris.platform.ticket.enums.CsTicketPriority" editor="com.hybris.cockpitng.editor.nonoptionalenum" />
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:next visible="!#empty(customersupport_backoffice_ticketForm.subject)" default-target="step2"/>
+				</wz:navigation>
+			</wz:step>
+			<wz:step id="step2" label="create.csTicket.association.label" sublabel="create.csTicket.association.sublabel">
+				<wz:content id="step2.content">
+					<wz:property-list root="customersupport_backoffice_ticketForm">
+						<wz:property qualifier="message" type="String" editor="com.hybris.cockpitng.editor.defaulttext">
+							<wz:editor-parameter>
+								<wz:name>rows</wz:name>
+								<wz:value>3</wz:value>
+							</wz:editor-parameter>
+						</wz:property>
+						<wz:property qualifier="basesite" type="Reference(BaseSite)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor"/>
+						<wz:property qualifier="customer" type="Reference(Customer)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor"/>
+						<wz:property qualifier="assignedTo" type="Reference(AbstractOrder)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor" >
+							<wz:editor-parameter>
+								<wz:name>referenceSearchCondition_user</wz:name>
+								<wz:value>{parentObject.customer}</wz:value>
+							</wz:editor-parameter>
+						</wz:property>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step2.navigation">
+					<wz:cancel/>
+					<wz:back />
+					<wz:next default-target="step3"/>
+					<wz:custom visible="!#empty(customersupport_backoffice_ticketForm.subject) AND customersupport_backoffice_ticketForm.basesite != null AND customersupport_backoffice_ticketForm.customer != null AND !#empty(customersupport_backoffice_ticketForm.message)" label="customersupport_backoffice_tickets_wizard_done" handler="createTicketHandler"/>
+				</wz:navigation>
+			</wz:step>
+			<wz:step id="step3" label="create.csTicket.assignment.label" sublabel="create.csTicket.assignment.sublabel">
+				<wz:content id="step3.content">
+					<wz:property-list root="customersupport_backoffice_ticketForm">
+						<wz:property qualifier="assignedAgent" type="Reference(Employee)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor"/>
+						<wz:property qualifier="assignedGroup" type="Reference(CsAgentGroup)" editor="com.hybris.cockpitng.editor.defaultreferenceeditor">
+							<wz:editor-parameter>
+								<wz:name>referenceSearchCondition_groups_contains</wz:name>
+								<wz:value>{parentObject.rootGroup}</wz:value>
+							</wz:editor-parameter>
+						</wz:property>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step3.navigation">
+					<wz:cancel/>
+					<wz:back />
+					<wz:custom visible="!#empty(customersupport_backoffice_ticketForm.subject) AND customersupport_backoffice_ticketForm.basesite != null AND customersupport_backoffice_ticketForm.customer != null AND !#empty(customersupport_backoffice_ticketForm.message)" label="customersupport_backoffice_tickets_wizard_done" handler="createTicketHandler"/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>-->
+
+	<context type="CsTicket"  component="configurableFlowDynamicForms" merge-by="module" module="warehousingbackoffice">
+		<df:dynamicForms modelProperty="customersupport_backoffice_ticketForm">
+			<df:attribute id="assignedTo" qualifier="assignedTo" triggeredOn="customer" disabledIf="customer==null"/>
+		</df:dynamicForms>
+	</context>
+
+	<context type="CsTicket" component="collection-browser" module="warehousingbackoffice">
+		<cb:collection-browser xmlns:cb="http://www.hybris.com/cockpitng/config/collectionbrowser">
+			<cb:available-molds>
+				<cb:mold spring-bean="listViewCollectionBrowserMoldStrategy"/>
+			</cb:available-molds>
+		</cb:collection-browser>
+	</context>
+
+
+	<context type="CsTicket" component="base" merge-by="type" parent="GenericItem" module="warehousingbackoffice">
+		<y:base>
+			<y:labels>
+				<y:label>ticketID + ' - ' +  headline</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context type="CsTicket" component="warehouseListviewActions" module="warehousingbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.hybris.cockpitng.action.delete" property="selectedObjects"/>
+				<y:action action-id="com.hybris.cockpitng.action.create" property="pageable.typeCode"/>
+			</y:group>
+		</y:actions>
+	</context>
+
+
+</config>
