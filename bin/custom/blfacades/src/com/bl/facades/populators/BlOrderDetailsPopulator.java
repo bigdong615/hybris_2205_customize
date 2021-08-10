@@ -215,7 +215,11 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
        final ExtendOrderData extendOrderData = new ExtendOrderData();
        extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
        extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
-       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + BlFacadesConstants.DAYS);
+       String suffix = BlFacadesConstants.DAYS;
+       if(extendOrderModel.getTotalExtendDays() <= 1) {
+         suffix = BlFacadesConstants.DAY;
+       }
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + suffix);
        extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
        extendOrderDataList.add(extendOrderData);
       }
@@ -354,9 +358,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
         blGiftCardData.setCode(giftCardModel.getCode());
         for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
           if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
-            blGiftCardData.setBalanceamount(convertDoubleToPriceData(giftCardMovementModel.getBalanceAmount() , source));
-            blGiftCardData.setRedeemamount(convertDoubleToPriceData(giftCardMovementModel.getAmount() , source));
-            blGiftCardDataList.add(blGiftCardData);
+            setGiftCardData(giftCardMovementModel , blGiftCardData , blGiftCardDataList , source);
           }
         }
       }
@@ -365,6 +367,27 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     target.setGiftCardData(blGiftCardDataList);
   }
 
+  /**
+   * This method added for setting gift card details for order details page
+   * @param giftCardMovementModel giftCardMovementModel used for order
+   * @param blGiftCardData blGiftCardData
+   * @param blGiftCardDataList blGiftCardDataList to show on order page
+   * @param source orderModel
+   */
+  private void setGiftCardData(final GiftCardMovementModel giftCardMovementModel , final BLGiftCardData blGiftCardData ,
+      final List<BLGiftCardData> blGiftCardDataList, final OrderModel source ){
+    Double balanceAmount = 0.0;
+    Double amount = 0.0;
+    if(null != giftCardMovementModel.getBalanceAmount()) {
+      balanceAmount = giftCardMovementModel.getBalanceAmount();
+    }
+    if(null != giftCardMovementModel.getAmount()){
+      amount = giftCardMovementModel.getAmount();
+    }
+    blGiftCardData.setBalanceamount(convertDoubleToPriceData(balanceAmount , source));
+    blGiftCardData.setRedeemamount(convertDoubleToPriceData(amount , source));
+    blGiftCardDataList.add(blGiftCardData);
+  }
 
 
   public PriceDataFactory getPriceDataFactory() {

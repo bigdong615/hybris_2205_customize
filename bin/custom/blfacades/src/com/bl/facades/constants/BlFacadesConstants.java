@@ -56,6 +56,8 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String BLANK = " ";
   public static final String URL_SEPERATOR = "/";
 
+  public static final String DAY = "day";
+
 
   private BlFacadesConstants() {
     //empty
