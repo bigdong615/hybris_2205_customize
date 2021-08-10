@@ -419,7 +419,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialProductsOnPackage.forEach(serial -> {
 				if (serial instanceof BlSerialProductModel)
 				{
-					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber());
+					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber()); // NOSONAR
 					modelService.save(serial);
 					BlLogger.logFormattedMessage(LOG, Level.DEBUG, "OC location updated to Tracking number {} for serial {}",
 							getPackagingInfoModel().getTrackingNumber(), serial.getCode());
@@ -516,7 +516,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		consignmentEntry.getSerialProducts().forEach(serial -> {
 			if (serial instanceof BlSerialProductModel)
 			{
-				entryBarcode.add(((BlSerialProductModel) serial).getBarcode());
+				entryBarcode.add(((BlSerialProductModel) serial).getBarcode()); // NOSONAR
 			}
 		});
 		return barcodes.containsAll(entryBarcode) && entryBarcode.containsAll(barcodes);
@@ -1000,7 +1000,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				errorSerialList = getBlSerialProductModelBooleanMap(packagingInfo, packagingInfo.getConsignment(),
 						blSerialProductModels.stream().filter(
-								serial -> barcodes.stream().anyMatch(b -> b.equals(((BlSerialProductModel) serial).getBarcode())))
+								serial -> barcodes.stream().anyMatch(b -> b.equals(((BlSerialProductModel) serial).getBarcode()))) // NOSONAR
 								.collect(Collectors.toList()),
 						blInventoryLocationModel);
 			}
@@ -1379,7 +1379,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		serialProducts.forEach(serial -> {
 			if (serial instanceof BlSerialProductModel)
 			{
-				final BlSerialProductModel blSerial = ((BlSerialProductModel) serial);
+				final BlSerialProductModel blSerial = ((BlSerialProductModel) serial); // NOSONAR
 				blSerial.setOcLocation(getBlInventoryLocation().getCode());
 				blSerial.setSerialStatus(SerialStatusEnum.BOXED);
 				modelService.save(blSerial);
