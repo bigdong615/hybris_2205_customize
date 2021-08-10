@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 
@@ -370,19 +371,33 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		String paymentInfoId = request.getParameter("paymentId");
 		String paymentMethodNonce = request.getParameter("paymentNonce");
 		String billPayTotal = request.getParameter("payBillTotal");
+		String poNumber = request.getParameter("extendPoNumber");
+		String poNotes = request.getParameter("extendPoNotes");
+
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce)) {
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
 		final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 		if(null != order) {
-			final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
-					.getBrainTreePaymentInfoForCode(
-							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
-			if(null != paymentInfo) {
-				isSuccess = brainTreeTransactionService
-						.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+			if(StringUtils.isNotBlank(poNumber)) {
+				isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, orderCode);
+				if (BooleanUtils.isTrue(isSuccess)) {
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PO);
 				}
+			}
+			else{
+				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+						.getBrainTreePaymentInfoForCode(
+								(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
+				if (null != paymentInfo) {
+					isSuccess = brainTreeTransactionService
+							.createAuthorizationTransactionOfOrder(order,
+									BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+				}
+				if (BooleanUtils.isTrue(isSuccess)) {
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
+				}
+			}
 			}
 		}
 

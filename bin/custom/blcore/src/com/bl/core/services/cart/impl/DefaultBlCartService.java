@@ -15,8 +15,11 @@ import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
 import java.util.List;
@@ -311,6 +314,24 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		  }
 	}
     
+	/**
+	   * This method created to store the PO number to order
+	   */
+	  @Override
+	  public boolean savePoPaymentDetailsForPayBill(final String poNumber , final String poNotes , final OrderModel orderModel){
+		  
+		  if(null != orderModel){
+	      orderModel.setPoNumber(poNumber.trim());
+	      orderModel.setPoNotes(poNotes);
+	      if(orderModel.getPaymentInfo() != null){
+	        orderModel.setPaymentInfo(null);
+	      }
+	      getModelService().save(orderModel);
+	      getModelService().refresh(orderModel);
+	      return true;
+	    }
+	    return false;
+	  }
     
 	
 

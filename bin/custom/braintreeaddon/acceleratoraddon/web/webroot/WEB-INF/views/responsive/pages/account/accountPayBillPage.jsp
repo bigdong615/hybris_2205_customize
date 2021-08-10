@@ -124,57 +124,15 @@
                                         </p>    
                                     </div>
                                     <div class="col-12 ">
-                                        <div class="notification notification-warning"><spring:theme code="${cartEntry.availabilityMessage.messageCode}"/></div>
+                                    <c:forEach items="${cartEntry.messages}" var="message" >
+                                        <div class="notification notification-warning"><spring:theme code="${message.messageCode}"/></div>
+                                        </c:forEach>
                                     </div>
                                 </div>
                                  </c:forEach>
-                                <!-- <div class="row mb-4 product-block">
-                                    <div class="col-3 text-center"><img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD5796f428-6173-4219-8a48-683c1afd2b05.jpg"></div>
-                                    <div class="col-9 mt-3">
-                                        <p class="gray80 body14">
-                                            <b class="gray100">Canon RF 15-35mm  F2.8 L IS USM</b>
-                                            Qty 1<br>
-                                            + No Damage Waiver<br>
-                                            Total $86.23
-                                        </p>    
-                                    </div>
-                                </div> -->
-                            
-                               <!--  <div class="row mb-4 product-block">
-                                    <div class="col-3 text-center"><img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD40fd25f3-6455-43bb-977a-794e3930e6aa.jpg"></div>
-                                    <div class="col-9 mt-3">
-                                        <p class="gray80 body14">
-                                            <b class="gray100">DJI Osmo Action 4K Camera</b>
-                                            Qty 1<br>
-                                            + Gear Guard Pro Damage Waiver<br>
-                                            + Curved Sticky Mount<br>
-                                            Total $86.23
-                                        </p>    
-                                    </div>
-                                    <div class="col-12 ">
-                                        <div class="notification notification-warning"><spring:theme code="text.order.extend.text"/></div>
-                                    </div>    
-                                </div> -->
-                                
+ 
                             </div>    
                             <b>Pay with</b>
-                            <!-- <div class="dropdown my-2">
-                              <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="assets/cc-mastercard.png" style="max-width: 33px; height: auto;"> Mastercard **** 1234 exp 11/24
-                              </button>
-                              <ul class="dropdown-menu" aria-labelledby="savedCards">
-                                <li><button class="dropdown-item"><img src="assets/cc-mastercard.png" style="max-width: 33px; height: auto;"> Mastercard **** 1234 exp 11/24</button></li>
-                                  <li><button class="dropdown-item"><img src="assets/cc-visa.png" style="max-width: 33px; height: auto;"> Visa **** 1234 exp 6/23</button></li>
-                              </ul>
-                            </div> -->
-                            
-                            <!-- <a href="#" class="gray80">+ Add a new credit card</a>
-                            <hr class="mt-4">
-                            <div class="cart-actions">
-                                <a href="#" class="btn btn-sm btn-primary float-end">Pay Bill</a>
-                            </div> -->
-                            
-                            
                             <div class="accordion" id="paymentOptions">
 								<div class="accordion-item payProduct">
 									<div class="row">
@@ -198,45 +156,45 @@
 										<div class="col-11">
 											<b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
 											<div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
-												<select class="btn btn-block btn-outline dropdown-toggle text-start" id="saved-payment-action-payBill">
-																	<ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" >
-																	<c:choose>
-																		<c:when test="false">
-																		
-																		</c:when>
-																		<c:otherwise>
-																		<li>
-																				<%-- <button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}"> --%>
-																					<option>
-																					Select Card
-																					</option>
-																				<!-- </button> -->
-																			</li>
-																		</c:otherwise>
-																	</c:choose>
+												
+																	 <c:if test="${not empty braintreePaymentInfos and braintreePaymentInfos.size() > 0}">
+																	<!-- <b class="mt-4">Saved Credit Cards</b> -->
+																		<div class="dropdown my-2">
+																	<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
+																		<c:choose>
+																			<c:when test="${not empty userSelectedPaymentInfo}">
+																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																			</c:when>
+																			<c:otherwise>
+																				Select or Enter new card
+																			</c:otherwise>
+																		</c:choose>
+																	</button>
+																	<ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" id="saved-payment-action-payBill">
 																		<c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status">
 																		<c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'CreditCard')}">
-																			<li >
-																				<%-- <button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}"> --%>
-																					<option data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
-																					<img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;">
+																			<li>
+																				<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
+																					<img src="${paymentInfo.accountHolderName}" style="max-width: 33px; height: auto;">
 																					&nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
-																					</option>
-																				<!-- </button> -->
+																				</button>
 																			</li>
 																		</c:if>
 																		</c:forEach>
 																	</ul>
-																	</select>
+																	
+																</div>
+																
+																</c:if>
 																	</br>
-                  <a href="#" data-bs-toggle="modal"  data-order="${orderData.code}:payBill" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
+                                                 <a href="#" data-bs-toggle="modal"  data-order="${orderData.code}:payBill" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
 												
 											</div>
 											
 										</div>
 										</div>
 									</div>
-								</div>
+								
 								<!-- Paypal section -->
 								<div class="accordion-item payProduct">
 									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
@@ -278,8 +236,64 @@
 										</div>
 									</div>
 								</div>
-                            
-                            
+                            <c:if test="${orderData.isPOEnabled}">
+                	<div class="accordion-item payProduct">
+                	  <c:if test="${not empty selectedPoNumber}">
+                    		<input type="hidden" id="isPOPresent" name="isPOPresent" value="true"/>
+                    </c:if>
+                	  <div class="row">
+                			<div class="col-1 text-center">
+                			  <c:choose>
+                        	<c:when test="${disablePayment}">
+                        	
+                        			<button class="btn-checkbox paymentDisabled" type="button" disabled></button>
+                        	</c:when>
+                        	<c:otherwise>
+                        	
+                				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
+                					    data-bs-target="#po-expand" aria-controls="po-expand"
+                					    aria-expanded="false">
+                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
+                						  for="paymentMethodPo"></label>
+                				    </button>
+                				  </c:otherwise>
+                        </c:choose>
+                			</div>
+                			<div class="col-11">
+                				<b><spring:theme code="text.payment.page.po" /></b>
+                				<div class="collapse" id="po-expand"
+                					data-bs-parent="#paymentOptions">
+                				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
+                					<input type="text" class="form-control po-number mt-3" name="extendPoNumberInput" id="extendPoNumberInput" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
+                						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
+                					<input type="text" class="form-control po-number mt-3" name="extendPoNotesInput" id="extendPoNotesInput" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
+                						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
+                          <input type="hidden" id="poSelected" name="poSelected" value=""/>
+                				</form:form>
+                				</div>
+                			</div>
+                		</div>
+                	</div>
+                </c:if>
+                   </div>      
+                            <div class="cart-actions">
+                            <c:url value="/my-account/payBillSuccess" var="payBillUrl"></c:url>
+                        <form action="${payBillUrl}" method="post" id="payBillForm">
+                        <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
+                       <%-- <c:set var="total" value="" /> --%>
+                       
+                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.extensionBillingCost.value}">
+                        <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
+                        <input type="hidden" id="paymentId" name="paymentId" value=""/>
+                        <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
+                        <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
+                        <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
+                        
+                        </form>
+                        		<div id="validationMessage"></div>
+                        		<div id="allFieldvalidationMessage"></div>
+                              <button class="btn btn-sm btn-primary float-end js-po-extend-order" type="submit">Pay Bill</button>   
+                            </div>  
                             
                         </div>
                     </div>
@@ -290,6 +304,7 @@
                         <hr>
                         <table id="costSummary">
                             <tbody>
+                            <!--Commented below code as of now  -->
                                 <%-- <tr>
                                     <td class="gray80">Extension Cost</td>
                                     <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
@@ -322,12 +337,19 @@
                         <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
                         <input type="hidden" id="paymentId" name="paymentId" value=""/>
                         <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
-                        <button class="btn btn-block btn-primary mt-4" type="submit">Pay Bill</button> 
-                        </form>
+                        <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
+                        <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
+                        
+                       </form>
+                       
+                        <button class="btn btn-block btn-primary mt-4 js-po-extend-order" type="submit">Pay Bill</button> 
                     </div>
-                </div>
+                 </div>
+                 <div id="validationMessage"></div>
+                 <div id="allFieldvalidationMessage"></div>
+
                 
-                
+              
                 
      <!-- Modals -->
     <div class="modal fade" id="addCrediCard" tabindex="-1" aria-hidden="true">
@@ -405,43 +427,37 @@
                 var googlePayEnabled = ${googlePayEnable};
                 </script> -->
                 
-                <script>
-   var enableShippingAddress = "true";
-   var addPaymentMethodsPage = "addPaymentMethodsPage";
-   var deliveryAddressId = "${selectedAddressCode}";
-   var paypalIntent = "${payPalConfigurationData.intent}";
-   var storeInVault = "${payPalConfigurationData.storeInVault}";
-      var clientToken = "${client_token}";
-      var isCreditCardSelect = "${is_credit_card_select}";
-      var isSingleUseSelect = "${is_single_use_select}";
-      var advancedFraudToolsEnabled = "${payPalConfigurationData.advancedFraudTools}";
-      var environment = "${payPalConfigurationData.environment}";
-      var secure3d = "${payPalConfigurationData.secure3d}";
-      var skip3dSecureLiabilityResult = "${payPalConfigurationData.skip3dSecureLiabilityResult}";
-      var dbaName = "${payPalConfigurationData.dbaName}";
-      var singleUse = "false";
-      var locale = "${payPalConfigurationData.locale}";
-      var currency = "${payPalConfigurationData.currency}";
-      var braintreeLocale = "${braintreeLocale}";
-      var billingAgreementDescription = "${billingAgreementDescription}"
-   var userAction="${userAction}";
-   var payPalStandardEnabled = ${payPalStandardEnabled};
-   var venmoEnabled = ${venmoEnabled};
-      var creditEnabled = false;
-      var payPalButtonConfig = "${payPalMarkButtonConfig}";
-   var googleMerchantId = "${googleMerchantId}";
-   var googlePayCountryCode = "${googlePayCountryCode}";
-   var googlePayEnabled = ${googlePayEnable};
-   var recipientName = "${payPalCheckoutData.shippingAddressOverride.recipientName}";
-   var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
-   var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";
-   var locality =        "${payPalCheckoutData.shippingAddressOverride.locality}";
-   var countryCodeAlpha2 = "${payPalCheckoutData.shippingAddressOverride.countryCodeAlpha2}";
-   var postalCode = "${payPalCheckoutData.shippingAddressOverride.postalCode}";
-   var region = "${payPalCheckoutData.shippingAddressOverride.region}";
-
-
+    <script>
+	var addPaymentMethodsPage = "addPaymentMethodsPage";
+	var deliveryAddressId = "${selectedAddressCode}";
+	var shippingAddressEditable = "true";
+	var shippingAddressOverride = "true";
+	var enableShippingAddress = "false";
+	var paypalIntent = "${payPalConfigurationData.intent}";
+	var storeInVault = "${payPalConfigurationData.storeInVault}";
+    var clientToken = "${client_token}";
+    var isCreditCardSelect = "${is_credit_card_select}";
+    var isSingleUseSelect = "${is_single_use_select}";
+    var advancedFraudToolsEnabled = "${payPalConfigurationData.advancedFraudTools}";
+    var environment = "${payPalConfigurationData.environment}";
+    var secure3d = "${payPalConfigurationData.secure3d}";
+    var skip3dSecureLiabilityResult = "${payPalConfigurationData.skip3dSecureLiabilityResult}";
+    var dbaName = "${payPalConfigurationData.dbaName}";
+    var singleUse = "false";
+    var locale = "${payPalConfigurationData.locale}";
+    var currency = "${payPalConfigurationData.currency}";
+    var braintreeLocale = "${braintreeLocale}";
+    var billingAgreementDescription = "${billingAgreementDescription}"
+	var userAction="${userAction}";
+	var payPalStandardEnabled = ${payPalStandardEnabled};
+	var venmoEnabled = ${venmoEnabled};
+    var creditEnabled = false;
+    var payPalButtonConfig = "${payPalMarkButtonConfig}";
+	var googleMerchantId = "${googleMerchantId}";
+	var googlePayCountryCode = "${googlePayCountryCode}";
+	var googlePayEnabled = ${googlePayEnable};
 </script>
+
 <script type="text/javascript"
    src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
 <script type="text/javascript"
@@ -450,3 +466,4 @@
    src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
 <script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal.min.js"></script>
 <script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal-checkout.min.js"></script>
+

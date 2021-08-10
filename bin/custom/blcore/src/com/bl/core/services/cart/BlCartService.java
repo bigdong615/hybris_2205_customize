@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import com.bl.core.enums.SerialStatusEnum;
+import de.hybris.platform.core.model.order.OrderModel;
 
 /**
  * It provides cart related functionality.
@@ -85,4 +86,12 @@ public interface BlCartService extends CartService {
      */
     void changeSerialStatusInStagedVersion(final String productCode,
         final SerialStatusEnum serialStaus);
+    
+    /**
+     * This method saves PO payment details.
+     * @param poNumber
+     * @param poNotes
+    * @return 
+     */
+    boolean savePoPaymentDetailsForPayBill(final String poNumber, final String poNotes, final OrderModel orderModel);
 }

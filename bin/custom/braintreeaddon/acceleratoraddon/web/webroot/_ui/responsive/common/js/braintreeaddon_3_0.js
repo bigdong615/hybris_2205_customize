@@ -1281,6 +1281,36 @@ $(".edit-cc-form").on("click",function(e){
 	$("#braintree-payment-edit-form").submit();
 });
 
+$(".js-po-extend-order").on("click", function(e) {
+	e.preventDefault();
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var poEnable = $('#paymentMethodPo').is(':checked');
+	var paymentInfoId =  $('#paymentId').val();
+	
+	if((ccEnable == true && paymentInfoId !='') || payPalEnable == true || poEnable == true ){
+	
+	var extendPoNumber1 = $("#extendPoNumberInput").val();
+	var extendPoNotes1 = $("#extendPoNotesInput").val();
+	
+	if (poEnable == true && extendPoNumber1 == '') {
+		var validationDiv = $(
+			'<div class="notification notification-error mb-4" />').text(
+			ACC.ccError.poNumber);
+	    $('#validationMessage').append(validationDiv);
+		
+    }else{
+    	$("#extendPoNumber").val(extendPoNumber1);
+		$("#extendPoNotes").val(extendPoNotes1);
+   
+	$("#payBillForm").submit();
+    }
+	}
+	else{
+		  allFieldValidation(ACC.ccError.allFieldsNotSelected);
+		}
+});
+
 
 
 

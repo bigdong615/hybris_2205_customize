@@ -33,6 +33,7 @@ import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.facades.product.data.AvailabilityMessage;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -86,7 +87,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
                       target.getEntries().forEach(entry -> {
                         if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
                         {
-                          entry.setAvailabilityMessage(getMessageForBillingType(billing.getBillChargeType()));
+                          final AvailabilityMessage messageForBillingType = getMessageForBillingType(billing.getBillChargeType());
+                          final List<AvailabilityMessage> messages = Lists.newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                          messages.add(messageForBillingType);
+                          entry.setMessages(messages);
                         }
                       });
                       totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
