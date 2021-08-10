@@ -253,6 +253,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
+  public static final String ACCEPTED = "ACCEPTED";
 
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";

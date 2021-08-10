@@ -152,26 +152,31 @@ $END_USERRIGHTS;;;;;;;;;
 
 #Access right for frontdeskusergroup
 $START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
-Usergroup ; frondeskusergroup ;                ;                ;      ;        ;        ;        ;
+Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
+Usergroup ; frondeskusergroup ;                ;                            ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
-          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
-          ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; Order          ; +    ; +      ; -      ; -
-          ;                   ;                ; User           ; +    ; -      ; -      ; -
-          ;                   ;                ; Address        ; +    ; -      ; -      ; -
-          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+          ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
+          ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
+          ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; Order                      ; +    ; +      ; -      ; -
+          ;                   ;                ; User                       ; +    ; -      ; -      ; -
+          ;                   ;                ; Address                    ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
 $END_USERRIGHTS; ; ; ;
 
 #Access rights for frontdeskuserrole
 $START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
-Usergroup ; frontdeskuserrole ;                ;                ;      ;        ;        ;        ;
+Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
+Usergroup ; frontdeskuserrole ;                ;                            ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
           ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
           ;                   ;                ; Order          ; +    ; +      ; -      ; -
           ;                   ;                ; User           ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
 $END_USERRIGHTS; ; ; ;
@@ -185,4 +190,14 @@ Usergroup ; shippingteamuserrole ;                ;                ;      ;     
           ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+          ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
+          ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
+          ;                   ;                ; Order                      ; +    ; +      ; -      ; -
+          ;                   ;                ; User                       ; +    ; -      ; -      ; -
+          ;                   ;                ; Address                    ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+          ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ;
