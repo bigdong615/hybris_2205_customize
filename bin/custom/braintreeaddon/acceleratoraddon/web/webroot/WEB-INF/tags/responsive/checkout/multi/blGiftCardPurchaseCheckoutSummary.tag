@@ -62,11 +62,8 @@
 							<div class="row">
 								<c:forEach items="${allItems}" var="cartEntry">
 									<div class="col-md-2 text-center mt-3">
-										<c:set
-											value="{request.contextPath}/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg"
-											var="altTextHtml1" />
-										<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-											title="${altText}" title="${altText}" />
+											<product:productPrimaryImage product="${cartEntry.product}"
+											format="thumbnail" />
 									</div>
 
 									<div class="col-md-6 mt-3">
@@ -181,14 +178,7 @@
 								</c:if>
 							</c:forEach>
 						</c:if>
-						<div class="notification notification-tip check">
-							<spring:theme code="text.shipping.change.or.cancellation.message" />
-						</div>
-						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
-								class="icon-print"></i>
-							</a>
-						</div>
+						
 					</div>
 				</div>
 			</div>

@@ -15,6 +15,7 @@ package com.bl.Ordermanagement.impl;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import com.bl.Ordermanagement.CheckOrderService;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -38,7 +39,7 @@ public class DefaultCheckOrderService implements CheckOrderService
 			// Order must have some lines
 			return false;
 		}
-		else if (order.getPaymentInfo() == null)
+		else if (order.getPaymentInfo() == null && StringUtils.isBlank(order.getPoNumber()))
 		{
 			// Order must have some payment info to use in the process
 			return false;
@@ -58,7 +59,7 @@ public class DefaultCheckOrderService implements CheckOrderService
 			return false;
 		}
 
-		if (order.getDeliveryAddress() == null)
+		if (order.getDeliveryAddress() == null && order.getDeliveryMode() == null)
 		{
 			for (final AbstractOrderEntryModel entry : order.getEntries())
 			{

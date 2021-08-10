@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Sunil Sahu
  */
 public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptionRestService {
-
 	private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionRestService.class);
 	private static final String SUBSCRIPTION_AUTH_BASE_URL = "email.subscription.auth.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.auth.marketingcloudapis.com
 	private static final String SUBSCRIPTION_REST_BASE_URL = "email.subscription.rest.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.rest.marketingcloudapis.com
