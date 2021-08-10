@@ -47,9 +47,9 @@ import org.zkoss.zul.Textbox;
 
 
 /**
- * @author Krishan Vashishth
- * <p>
  * The type Brain tree partial refund order controller.
+ *
+ * @author Krishan Vashishth
  */
 public class BrainTreePartialRefundOrderController extends DefaultWidgetController {
 
@@ -61,8 +61,9 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
   private static final String REFUND_BUTTON = "refundrequest";
   private static final String CANCEL_BUTTON = "cancelChanges";
     private static final String PAYMENT_NOT_CAPTURED = "partial.refundorder.captured.entries.unavailable";
+  private static final String DECIMAL_PRECISION = "#0.00";
 
-    private OrderModel order;
+  private OrderModel order;
 
   private Double refundAmount;
 
@@ -80,6 +81,11 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
   @Wire
   private Textbox totalOrderAmount;
 
+  /**
+   * Initialize.
+   *
+   * @param order the order
+   */
   @SocketEvent(socketId = INPUT_OBJECT)
   public void initialize(final OrderModel order) {
     this.setOrder(order);
@@ -98,6 +104,9 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     this.addListeners();
   }
 
+  /**
+   * Add listeners.
+   */
   private void addListeners() {
     final List<Component> listComponent = getOrderEntriesGridRows();
     if (CollectionUtils.isEmpty(listComponent)) {
@@ -116,12 +125,22 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     }
   }
 
+  /**
+   * Gets order entries grid rows.
+   *
+   * @return the order entries grid rows
+   */
   private List<Component> getOrderEntriesGridRows() {
     return this.getOrderEntries().getRows().getChildren();
   }
 
+  /**
+   * Validate request.
+   */
   private void validateRequest() {
     if (CollectionUtils.isEmpty(getOrderEntriesGridRows())) {
+      BlLogger.logMessage(LOG, Level.DEBUG,
+          this.getLabel("customersupportbackoffice.partial.refundorder.empty.entries"));
       throw new WrongValueException(String
           .format(this.getLabel("customersupportbackoffice.partial.refundorder.empty.entries"),
               order.getCode()));
@@ -135,6 +154,8 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
       }
     }
     if (amount == 0) {
+      BlLogger.logMessage(LOG, Level.DEBUG,
+          this.getLabel("customersupportbackoffice.partial.refundorder.not.updated.amount"));
       throw new WrongValueException(String.format(this.
               getLabel("customersupportbackoffice.partial.refundorder.not.updated.amount"),
           this.getOrder().getCode()));
@@ -142,9 +163,15 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     refundAmount = amount;
   }
 
+  /**
+   * Process refund.
+   *
+   * @param obj the obj
+   */
   private void processRefund(final Event obj) {
     if (Button.YES.event.equals(obj.getName())) {
-      BlLogger.logMessage(LOG, Level.INFO, "Refunding the amount " + refundAmount);
+      BlLogger.logFormattedMessage(LOG, Level.INFO,  StringUtils.EMPTY,
+          "Refunding the amount : {}", refundAmount);
       final Optional<PaymentTransactionEntryModel> capturedEntry =
           this.getOrder().getPaymentTransactions().get(0).getEntries().stream().filter(entry ->
               BlCoreConstants.ACCEPTED.equalsIgnoreCase(entry.getTransactionStatus())
@@ -159,7 +186,8 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
             showSuccessMessage(refundResult);
           }
         } catch (final BraintreeErrorException e) {
-          BlLogger.logMessage(LOG, Level.ERROR, "Error while making the refund", e);
+          BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY,
+              "Error while making the refund : {}", refundAmount, e);
           Messagebox.show(e.getMessage(), this.getLabel(WIDGET_PARTIAL_REFUND_TITLE),
               Messagebox.OK, Messagebox.ERROR);
         }
@@ -172,10 +200,20 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     }
   }
 
+  /**
+   * Auto select.
+   *
+   * @param event the event
+   */
   private void autoSelect(final Event event) {
     ((Checkbox) event.getTarget().getParent().getChildren().iterator().next()).setChecked(true);
   }
 
+  /**
+   * Sets initial amount.
+   *
+   * @param order the order
+   */
   private void setInitialAmount(final OrderModel order) {
     this.totalOrderAmount.setValue(formatAmount(order.getTotalPrice()));
     this.totalTax.setValue(formatAmount(order.getTotalTax()));
@@ -191,20 +229,30 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
   private String formatAmount(final Double amount) {
     final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat
         .getNumberInstance(Locales.getCurrent());
-    decimalFormat.applyPattern("#0.00");
+    decimalFormat.applyPattern(DECIMAL_PRECISION);
     return decimalFormat.format(amount);
   }
 
+  /**
+   * Gets order entries.
+   *
+   * @return the order entries
+   */
   public Grid getOrderEntries() {
     return orderEntries;
   }
 
+  /**
+   * Confirm refund.
+   */
   @ViewEvent(componentID = REFUND_BUTTON, eventName = Events.ON_CLICK)
   public void confirmRefund() {
     try {
       validateRequest();
       this.showMessageBox();
     } catch (final WrongValueException e) {
+      BlLogger.logMessage(LOG, Level.DEBUG,
+          this.getLabel("customersupportbackoffice.refundorder.input.error"));
       Messagebox.show(e.getMessage(),
           this.getLabel("customersupportbackoffice.refundorder.input.error"),
           Messagebox.OK, Messagebox.ERROR);
@@ -212,6 +260,9 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     this.close();
   }
 
+  /**
+   * Show message box.
+   */
   private void showMessageBox() {
     Messagebox.show(this.getLabel("customersupportbackoffice.refundorder.confirm.msg"),
         new StringBuilder(this.getLabel("customersupportbackoffice.refundorder.confirm.title"))
@@ -220,11 +271,22 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
         this::processRefund);
   }
 
+  /**
+   * Show success message.
+   *
+   * @param result the result
+   */
   private void showSuccessMessage(final BrainTreeResponseResultData result) {
     Messagebox.show(createSuccessMessage(result), getLabel(WIDGET_PARTIAL_REFUND_TITLE),
         Messagebox.OK, Messagebox.INFORMATION);
   }
 
+  /**
+   * Create success message string.
+   *
+   * @param resendResult the resend result
+   * @return the string
+   */
   private String createSuccessMessage(final BrainTreeResponseResultData resendResult) {
     final String message = getLabel(WIDGET_MESSAGE_PARTIAL_REFUND_SUCCESS);
     final String messagePostfix = getLabel(WIDGET_MESSAGE_PARTIAL_REFUND_CREATE_SUCCESS_POSTFIX);
@@ -234,6 +296,9 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
     return message;
   }
 
+  /**
+   * Close.
+   */
   @ViewEvent(componentID = CANCEL_BUTTON, eventName = Events.ON_CLICK)
   public void close() {
     this.sendOutput(OUT_CONFIRM, COMPLETE);

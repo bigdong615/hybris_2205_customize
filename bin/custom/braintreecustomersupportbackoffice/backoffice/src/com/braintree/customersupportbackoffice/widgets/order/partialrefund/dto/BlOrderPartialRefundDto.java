@@ -1,8 +1,15 @@
 package com.braintree.customersupportbackoffice.widgets.order.partialrefund.dto;
 
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import java.io.Serializable;
 
-public class BlOrderPartialRefundDto implements Comparable<BlOrderPartialRefundDto> {
+/**
+ * The type Bl order partial refund dto.
+ *
+ * @author Krishan Vashishth
+ * 
+ */
+public class BlOrderPartialRefundDto implements Serializable {
 
   private AbstractOrderEntryModel orderEntry;
 
@@ -11,12 +18,6 @@ public class BlOrderPartialRefundDto implements Comparable<BlOrderPartialRefundD
   public BlOrderPartialRefundDto(final AbstractOrderEntryModel entryModel) {
     this.orderEntry = entryModel;
     this.lineItemRefundAmount = 0.0;
-  }
-
-  @Override
-  public int compareTo(final BlOrderPartialRefundDto refundDto) {
-    return Long.compare(this.getOrderEntry().getProduct().getPk().getLong(),
-        refundDto.getOrderEntry().getProduct().getPk().getLong());
   }
 
   public AbstractOrderEntryModel getOrderEntry() {
