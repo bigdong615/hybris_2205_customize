@@ -2777,6 +2777,14 @@
             </attribute>
             </attributes>
             </itemtype>
+          <itemtype code="Employee" autocreate="false" generate="false">
+            <description>Extending Employee type with Organization Roles</description>
+            <attributes>
+              <attribute qualifier="warehouse" type="Warehouse">
+                <persistence type="property"/>
+              </attribute>
+            </attributes>
+          </itemtype>
         </typegroup>
 
         <typegroup name="PackagingInfo">

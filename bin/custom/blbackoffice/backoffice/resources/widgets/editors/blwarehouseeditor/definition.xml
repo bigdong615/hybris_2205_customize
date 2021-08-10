@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--#################### BL-747 ########################## -->
+<editor-definition id="com.bl.backoffice.editor.blwarehouseeditor"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+  <name>Bl Warehouse Editor</name>
+  <description>Bl Warehouse Editor</description>
+  <author>hybris</author>
+  <version>0.1</version>
+
+  <editorClassName>com.bl.backoffice.editor.BlCustomWarehouseEditor</editorClassName>
+  <type>de.hybris.platform.ordersplitting.model.WarehouseModel</type>
+
+  <!-- Sockets definition-->
+  <sockets>
+    <input id="referenceEditorInput"/>
+    <output id="referenceEditorOutput" type="java.util.Map"/>
+    <output id="referenceSelected" type="com.hybris.cockpitng.data.TypeAwareSelectionContext"/>
+    <output id="referenceSearchCtx" type="com.hybris.cockpitng.data.TypeAwareSelectionContext"/>
+  </sockets>
+  <settings>
+    <setting key="pageSize" default-value="5" type="java.lang.Integer"/>
+    <setting key="referenceAdvancedSearchEnabled" default-value="true" type="Boolean"/>
+  </settings>
+</editor-definition>
