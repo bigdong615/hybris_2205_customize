@@ -1041,7 +1041,7 @@ function removeClass(){
                 len = len + 1;
             }
         });
-        notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
+        notification += '<div class="notification notification-error" style="margin-top: 0px;"> You are missing ' + len + ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     } else {
         $($('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')).each(function(k, v) {
@@ -1049,7 +1049,7 @@ function removeClass(){
                 len = len + 1;
             }
         });
-        notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
+        notification += '<div class="notification notification-error" style="margin-top: 0px;"> You are missing ' + len + ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     }
     notification += '</div>' + '<br>';
@@ -1060,11 +1060,11 @@ function removeClass(){
  function showErrorForZipInputInvalidValidation(section) {
      let notification = '';
      if(section == 'Ship') {
-         notification += '<div class="notification notification-error"> You have entered invalid Zip ' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Zip ' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'postcode\')">' +
                               'Scroll up.</a>';
      } else {
-         notification += '<div class="notification notification-error"> You have entered invalid Zip ' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Zip ' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'postcode\')">' +
                              ' Scroll up.</a>';
      }
@@ -1076,11 +1076,11 @@ function removeClass(){
  function showErrorForEmailInputInvalidValidation(section) {
      let notification = '';
      if(section == 'Ship') {
-         notification += '<div class="notification notification-error"> You have entered invalid Email' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Email' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this,\'email\')">' +
                              ' Scroll up.</a>';
      } else {
-         notification += '<div class="notification notification-error"> You have entered invalid Email' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Email' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this,\'email\')">' +
                              ' Scroll up.</a>';
      }
@@ -1092,11 +1092,11 @@ function removeClass(){
  function showErrorForPhoneInputInvalidValidation(section) {
      let notification = '';
      if(section == 'Ship') {
-         notification += '<div class="notification notification-error"> You have entered invalid Phone Number' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Phone Number' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'phone\' )">' +
                              ' Scroll up.</a>';
      } else {
-         notification += '<div class="notification notification-error"> You have entered invalid Phone Number' +
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Phone Number' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'phone\' )">' +
                              ' Scroll up.</a>';
      }
