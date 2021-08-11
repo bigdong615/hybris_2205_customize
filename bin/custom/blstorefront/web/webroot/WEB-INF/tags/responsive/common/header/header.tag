@@ -83,6 +83,7 @@
 				<cms:component component="${component}" />
 		   </cms:pageSlot>
 		</li>
+		<c:if test="${empty agent.uid}">
 		<!-- [BL-1043] Live Chat Mobile view-->
      <li id="liveAgentChat_online" class="live-chat clickGA livechat">
        <a id="liveagent_button_online_${buttonId}" href="javascript://Chat" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
@@ -92,6 +93,7 @@
      <li id="liveAgentChat_offline" class="live-chat clickGA" style="display: none !important;">
           <div id="liveagent_button_offline_${buttonId}" style=""><!-- Offline Chat Content --></div>
      </li>
+     </c:if>
 		<li>
 			<span>
 				<cms:pageSlot position="MobileHeaderBottomInfo" var="component" class="">
@@ -128,6 +130,7 @@
 			<cms:component component="${component}" />
 	   </cms:pageSlot>      
 	   </li>
+	   <c:if test="${empty agent.uid}">
 	   <li id="liveAgentChat_online" class="live-chat clickGA" style="">
      <a style=" text-decoration:none;" id="liveagent_button_online_${buttonId}" href="javascript://Chat" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
      <!----><span class="expertHelpIcon"></span><spring:theme code="text.live.chat.label" /></a>
@@ -136,6 +139,7 @@
      <li id="liveAgentChat_offline" class="live-chat clickGA" style="display: none !important;">
       <div id="liveagent_button_offline_${buttonId}" style=""><!-- Offline Chat Content --></div>
      </li>
+     </c:if>
     </ul>
   </div>			
 					

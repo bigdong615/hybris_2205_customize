@@ -42,3 +42,13 @@ INSERT_UPDATE ZoneDeliveryModeValue ; deliveryMode(code)[unique=true] ; zone(cod
                                     ; RUSH_NYC_NEXT_DAY_12_To_3_BL    ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
                                     ; RUSH_NYC_NEXT_DAY_3_To_6_BL     ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
                                     ; RUSH_NYC_NEXT_DAY_4_30_To_7_30_BL;                                       ; $usCurrency                    ; 99     ; 0					 ; true
+
+UPDATE BlRushDeliveryMode; code[unique = 'true']          ; shippingOrderSequence;
+                         ; RUSH_SAN_CARLOS_9_To_12        ; 1                    ;
+                         ; RUSH_SAN_CARLOS_12_To_3        ; 2                    ;
+                         ; RUSH_SAN_CARLOS_3_To_6         ; 3                    ;
+                         ; RUSH_SAN_CARLOS_4_30_To_7_30   ; 4                    ;
+                         ; RUSH_NYC_NEXT_DAY_9_To_12      ; 1                    ;
+                         ; RUSH_NYC_NEXT_DAY_12_To_3      ; 2                    ;
+                         ; RUSH_NYC_NEXT_DAY_3_To_6       ; 3                    ;
+                         ; RUSH_NYC_NEXT_DAY_4_30_To_7_30 ; 4                    ;
