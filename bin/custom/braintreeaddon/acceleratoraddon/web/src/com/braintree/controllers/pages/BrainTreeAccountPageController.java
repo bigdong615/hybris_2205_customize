@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.apache.commons.lang3.BooleanUtils;
 
 
