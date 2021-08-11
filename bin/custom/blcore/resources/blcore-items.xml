@@ -2755,7 +2755,14 @@
 						<modifiers optional="true" read="true" write="true" />
 						<description>Used gear Site Wide promotion Discount in absolute percentage</description>
 					</attribute>
-
+                  <attribute qualifier="thresholdVIPOrderAmount" type="java.lang.Integer">
+                    <persistence type="property"/>
+                    <modifiers optional="true" read="true" write="true"/>
+                    <defaultvalue>Integer.valueOf(500)</defaultvalue>
+                    <description>To decide the order as VIP order, order total price should be
+                      greater than this threshold amount
+                    </description>
+                  </attribute>
                 </attributes>                
             </itemtype>
         </typegroup>

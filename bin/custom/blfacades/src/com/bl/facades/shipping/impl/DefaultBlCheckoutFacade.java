@@ -5,6 +5,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.NotesEnum;
+import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
@@ -53,6 +54,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -913,6 +915,42 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
   }
 
   /**
+     * This method will update the order types
+     */
+    @Override
+    public void updateOrderTypes() {
+        final CartModel cartModel = getCartService().getSessionCart();
+        try {
+            if (Objects.nonNull(cartModel) && Objects
+                .nonNull(cartModel.getUser())) {
+                final DeliveryModeModel deliveryModeModel = cartModel.getDeliveryMode();
+
+                if (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
+                    .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
+                    .contains(deliveryModeModel.getCode())) {
+
+                    cartModel.setOrderType(OrderTypeEnum.FD);
+                } else {
+                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
+                }
+
+                if (cartModel.getTotalPrice() > cartModel.getStore().getThresholdVIPOrderAmount()) {
+                    cartModel.setIsVipOrder(true);
+                } else {
+                    cartModel.setIsVipOrder(false);
+                }
+
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOG, Level.ERROR,
+                "Error occurred while updating order types for cart {}", cartModel.getCode(),
+                exception);
+        }
+    }
+
+    /**
      * Gets the price value.
      *
      * @param priceData the price data

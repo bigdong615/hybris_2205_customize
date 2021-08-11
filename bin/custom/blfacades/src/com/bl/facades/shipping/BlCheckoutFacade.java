@@ -270,4 +270,9 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param orderNotes the orderNotes
      */
     void saveOrderNotes(final String orderNotes);
+
+    /**
+     * This method will update the order types
+     */
+    void updateOrderTypes();
 }
