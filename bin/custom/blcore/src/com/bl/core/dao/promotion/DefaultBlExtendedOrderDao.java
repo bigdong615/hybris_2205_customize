@@ -41,6 +41,11 @@ public class DefaultBlExtendedOrderDao extends DefaultExtendedOrderDao {
     return result;
   }
 
+  /**
+   * This method created to get extend order from list of orders
+   * @param orders list of orders
+   * @return extend order
+   */
 
   private AbstractOrderModel getExtendOrderFromOrderModel(final List<AbstractOrderModel> orders) {
     AbstractOrderModel result = null;
