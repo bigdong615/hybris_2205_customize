@@ -60,10 +60,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
 
        try {
          getDefaultBlCalculationService().recalculateForExtendOrder(orderModel , orderModel.getTotalExtendDays());
-         if(null != orderModel.getAllPromotionResults()) {
-           getPromotionsService().updatePromotions(getPromotionGroups(), orderModel, true,
-               AutoApplyMode.APPLY_ALL, AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
-         }
+         getPromotionsService().updatePromotions(getPromotionGroups() , orderModel);
        } catch (CalculationException e) {
          BlLogger.logMessage(LOG , Level.ERROR , "Error while calculating" + orderModel.getCode() , e);
        }
