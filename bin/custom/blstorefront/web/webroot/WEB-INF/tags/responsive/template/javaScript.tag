@@ -131,11 +131,13 @@
 					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 				 }
 				 
-				 $('#saved-payment-action-payBill').on('change',function(e){
-					 var optionSelected = $("option:selected", this);
-					 var paymentId = optionSelected.data("id");
-						var paymentnonce = optionSelected.data("nonce");
-						$("#paymentId").val(paymentId);
+				 $('#saved-payment-action-payBill').on('click','li',function(e){
+					 e.preventDefault();
+						var paymentId = $(this).find("button").data("id");
+						var paymentnonce = $(this).find("button").data("nonce");
+					    var buttonData = $(this).find("button").html();
+					    $("#savedCards").html(buttonData);
+					 	$("#paymentId").val(paymentId);
 						$("#paymentNonce").val(paymentnonce);
 				 });
 				 

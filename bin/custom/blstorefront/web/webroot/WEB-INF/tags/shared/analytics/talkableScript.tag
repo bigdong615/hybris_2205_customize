@@ -21,6 +21,7 @@
 
 <c:if test = "${pageType == 'ORDERCONFIRMATION'}">
 <c:set var="address" value="${orderData.deliveryAddress}"/>
+<div id="talkable-offer"></div>
 <script>
   window._talkableq = window._talkableq || [];
   var _talkable_data = {
