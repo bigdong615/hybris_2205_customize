@@ -1,13 +1,18 @@
 package com.bl.integration.populators;
 
 import com.bl.facades.locator.data.UPSLocatorRequestData;
+import com.bl.integration.request.jaxb.AccessPointSearchType;
 import com.bl.integration.request.jaxb.AddressKeyFormatType;
 import com.bl.integration.request.jaxb.CodeType;
+import com.bl.integration.request.jaxb.IncludeCriteriaType;
 import com.bl.integration.request.jaxb.LocationSearchCriteriaType;
 import com.bl.integration.request.jaxb.LocatorRequest;
+import com.bl.integration.request.jaxb.OptionCodeType;
 import com.bl.integration.request.jaxb.OriginAddressType;
 import com.bl.integration.request.jaxb.Request;
-import com.bl.integration.request.jaxb.ServiceSearchType;
+import com.bl.integration.request.jaxb.SearchFilterType;
+import com.bl.integration.request.jaxb.SearchOptionType;
+import com.bl.integration.request.jaxb.SortCriteriaType;
 import com.bl.integration.request.jaxb.TransactionReference;
 import com.bl.integration.request.jaxb.TranslateType;
 import com.bl.integration.request.jaxb.UnitOfMeasurementType;
@@ -38,8 +43,20 @@ public class BlLocatorRequestPopulator {
   @Value("${blintegration.locator.timeout}")
   private String requestTimeout;
 
-  @Value("${blintegration.locator.codetype}")
-  private String code;
+  @Value("${blintegration.locator.codeType}")
+  private String codeTypeCode;
+
+  @Value("${blintegration.locator.option.codeType}")
+  private String optionCodeTypeCode;
+
+  @Value("${blintegration.locator.access.point.status}")
+  private String accessPointStatus;
+
+  @Value("${blintegration.locator.maximum.size}")
+  private String maximumSize;
+
+  @Value("${blintegration.locator.sort.type}")
+  private String sortType;
 
 
 public void populateLocatorRequest(final LocatorRequest locatorRequest,final UPSLocatorRequestData locatorFormDTO){
@@ -71,15 +88,36 @@ public void populateLocatorRequest(final LocatorRequest locatorRequest,final UPS
   unit.setCode(measurementUnit);
   locatorRequest.setUnitOfMeasurement(unit);
 
-  LocationSearchCriteriaType location = new LocationSearchCriteriaType();
-  ServiceSearchType search = new ServiceSearchType();
-  search.setTime(requestTimeout);
+  /************* setting LocationSearchCriteriaType start***********/
+  LocationSearchCriteriaType locationSearchCriteriaType = new LocationSearchCriteriaType();
 
-  CodeType codeType = new CodeType();
-  codeType.setCode(code);
-  search.getServiceCode().add(codeType);
+  CodeType codeType1 = new CodeType();
+  codeType1.setCode(codeTypeCode);
+  OptionCodeType optionCodeType = new OptionCodeType();
+  optionCodeType.setCode(optionCodeTypeCode);
+  SearchOptionType searchOptionType = new SearchOptionType();
+  searchOptionType.setOptionType(codeType1);
+  searchOptionType.getOptionCode().add(optionCodeType);
 
-  location.setServiceSearch(search);
-  locatorRequest.setLocationSearchCriteria(location);
+  IncludeCriteriaType criteriaType = new IncludeCriteriaType();
+  SearchFilterType filterType = new SearchFilterType();
+  filterType.setShippingAvailabilityIndicator(StringUtils.EMPTY);
+  criteriaType.setSearchFilter(filterType);
+
+  AccessPointSearchType accessPointSearchType = new AccessPointSearchType();
+  accessPointSearchType.setAccessPointStatus(accessPointStatus);
+  accessPointSearchType.setIncludeCriteria(criteriaType);
+
+  locationSearchCriteriaType.getSearchOption().add(searchOptionType);
+  locationSearchCriteriaType.setAccessPointSearch(accessPointSearchType);
+  locationSearchCriteriaType.setMaximumListSize(maximumSize);
+
+  locatorRequest.setLocationSearchCriteria(locationSearchCriteriaType);
+  /*************setting LocationSearchCriteriaType start***********/
+
+  /********setting SortCriteriaType **/
+  SortCriteriaType sortCriteriaType = new SortCriteriaType();
+  sortCriteriaType.setSortType(sortType);
+  locatorRequest.setSortCriteria(sortCriteriaType);
 }
 }
