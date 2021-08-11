@@ -102,10 +102,13 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     populateGiftCardDetails(source , target);
   }
 
-  /**
-   * This method created pay bill messages separation.
-   */
-  private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
+  
+/**
+ * This method created pay bill messages separation.
+ * @param billChargeType
+ * @return AvailabilityMessage
+ */
+private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
   {
     switch (billChargeType.getCode())
     {
@@ -123,10 +126,13 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
   }
 
-  /**
-   * This method created pay bill messages.
-   */
-  private AvailabilityMessage getMessage(final String messageCode)
+  
+/**
+ * This method created pay bill messages.
+ * @param messageCode
+ * @return AvailabilityMessage
+ */
+private AvailabilityMessage getMessage(final String messageCode)
   {
     final AvailabilityMessage am = new AvailabilityMessage();
     am.setMessageCode(messageCode);
@@ -134,10 +140,14 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   }
 
-  /**
-   * This method created to get SKU code.
-   */
-  private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
+  
+/**
+  * This method created to get SKU code.
+  * @param consignmentEntry
+  * @param serialCode
+  * @return String
+  */
+private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
   {
     final StringBuilder sb = new StringBuilder();
     consignmentEntry.getSerialProducts().forEach(serial -> {
