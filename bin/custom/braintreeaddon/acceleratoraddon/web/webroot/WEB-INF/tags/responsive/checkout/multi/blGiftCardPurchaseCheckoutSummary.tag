@@ -41,7 +41,7 @@
 		<div id="cartSteps" class="row justify-content-center">
 			<div class="col-xl-10">
 				<span class="step1 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.your.rental" /></span> <span
+						code="text.checkout.multi.order.UsedGear" /></span> <span
 					class="step2 complete"><i class="icon-check"></i> <spring:theme
 						code="text.review.page.delivery.or.pickup" /></span> <span
 					class="step3 complete"><i class="icon-check"></i> <spring:theme

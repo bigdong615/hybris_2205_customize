@@ -331,6 +331,7 @@
 									</div>
 								</div>
 								<!--BL-623 PO section -->
+			<c:if test="${!cartData.hasGiftCart}">
                 <c:if test="${cartData.isPOEnabled}">
                 	<div class="accordion-item payProduct">
                 	  <c:if test="${not empty selectedPoNumber}">
@@ -370,7 +371,7 @@
                 		</div>
                 	</div>
                 </c:if>
-							</div>
+			</c:if>				</div>
 							<%-- Error message secion --%>
 							 <c:if test="${!cartData.hasGiftCart}">
 							<cart:blGiftCard cartData="${cartData}"/>
