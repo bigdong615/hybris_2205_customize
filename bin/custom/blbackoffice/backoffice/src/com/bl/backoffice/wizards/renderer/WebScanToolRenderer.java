@@ -53,7 +53,7 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
                     StringUtils.EMPTY);
         } else {
             final Textbox barcodeInputField = new Textbox();
-            barcodeInputField.setRows(BlInventoryScanLoggingConstants.TEN);
+            barcodeInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
             barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
             barcodeInputField.setMultiline(true);
             barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
@@ -67,7 +67,8 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
             final Button clear = new Button();
             clear.setLabel("Clear");
             clear.setVisible(Boolean.TRUE);
-            clear.setStyle("margin-top:66px;float:left;margin-left: -10px;position: fixed;z-index: 1;");
+            clear.setTabindex(BlInventoryScanLoggingConstants.TWO);
+            clear.setStyle("margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;");
             clear.addEventListener("onClick", event -> {
                 barcodeInputField.setValue(StringUtils.EMPTY);
                 this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData);
