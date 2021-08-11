@@ -113,7 +113,7 @@ public void populateLocatorRequest(final LocatorRequest locatorRequest,final UPS
   locationSearchCriteriaType.setMaximumListSize(maximumSize);
 
   locatorRequest.setLocationSearchCriteria(locationSearchCriteriaType);
-  /*************setting LocationSearchCriteriaType start***********/
+  /*************setting LocationSearchCriteriaType end***********/
 
   /********setting SortCriteriaType **/
   SortCriteriaType sortCriteriaType = new SortCriteriaType();
