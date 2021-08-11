@@ -37,4 +37,11 @@ INSERT_UPDATE ZoneDeliveryModeValue; deliveryMode(code)[unique = true]; zone(cod
                                    ; FEDEX_OVERNIGHT_EARLY_AM_ON_BL   ;                                           ; $usCurrency                     ; 0    ; 0                     ; true
                                    ; FEDEX_OVERNIGHT_AM_ON_BL         ;                                           ; $usCurrency                     ; 0    ; 0                     ; true
                                    ; FEDEX_OVERNIGHT_AM_ON_SAT_BL     ;                                           ; $usCurrency                     ; 0    ; 0                     ; true
-								   
+
+UPDATE ZoneDeliveryMode       ; code[unique = 'true']          ; shippingOrderSequence  ;
+                              ; UPS_STANDARD_ROUND_TRIP        ; 1						;
+                              ; UPS_STANDARD_AM_ROUND_TRIP     ; 3                      ;
+                              ; UPS_OVERNIGHT_ROUND_TRIP       ; 2                      ;
+                              ; UPS_OVERNIGHT_SAVER_ROUND_TRIP ; 4                      ;
+                              ; FEDEX_STANDARD_ROUND_TRIP      ; 5                      ;
+                              ; FEDEX_OVERNIGHT_ROUND_TRIP     ; 6                      ;
