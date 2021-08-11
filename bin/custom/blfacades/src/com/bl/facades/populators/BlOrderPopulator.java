@@ -45,5 +45,6 @@ public class BlOrderPopulator extends OrderPopulator
         target.setGiftCardDiscount(giftDiscount);
       }
     }
+    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
   }
 }
