@@ -91,7 +91,7 @@ public interface BlCartService extends CartService {
      * This method saves PO payment details.
      * @param poNumber
      * @param poNotes
-    * @return 
+    * @return boolean
      */
     boolean savePoPaymentDetailsForPayBill(final String poNumber, final String poNotes, final OrderModel orderModel);
 }

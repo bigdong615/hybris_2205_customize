@@ -319,19 +319,19 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	   */
 	  @Override
 	  public boolean savePoPaymentDetailsForPayBill(final String poNumber , final String poNotes , final OrderModel orderModel){
-		  
-		  if(null != orderModel){
-	      orderModel.setPoNumber(poNumber.trim());
-	      orderModel.setPoNotes(poNotes);
-	      if(orderModel.getPaymentInfo() != null){
-	        orderModel.setPaymentInfo(null);
-	      }
-	      getModelService().save(orderModel);
-	      getModelService().refresh(orderModel);
-	      return true;
-	    }
-	    return false;
-	  }
+
+          if (null != orderModel) {
+              orderModel.setPoNumber(poNumber.trim());
+              orderModel.setPoNotes(poNotes);
+              if (orderModel.getPaymentInfo() != null) {
+                  orderModel.setPaymentInfo(null);
+              }
+              getModelService().save(orderModel);
+              getModelService().refresh(orderModel);
+              return true;
+          }
+          return false;
+      }
     
 	
 
