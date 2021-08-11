@@ -78,6 +78,7 @@ import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -89,8 +90,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -118,7 +117,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -265,6 +265,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "configurationService")
 	private ConfigurationService configurationService;
+
+	@Resource(name = "userService")
+	private UserService userService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -501,13 +504,6 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
 	}
-	protected boolean validateEmailAddress(final String email)
-	{
-		final Matcher matcher = Pattern
-				.compile(configurationService.getConfiguration().getString(WebConstants.EMAIL_REGEX))
-				.matcher(email);
-		return matcher.matches();
-	}
 
 	@RequestMapping(value = "/update-email", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -515,6 +511,7 @@ public class AccountPageController extends AbstractSearchPageController
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getEmailValidator().validate(updateEmailForm, bindingResult);
+		final CustomerModel currentUser = (CustomerModel) userService.getCurrentUser();
 		String returnAction = REDIRECT_TO_UPDATE_EMAIL_PAGE;
 
 		if (!bindingResult.hasErrors() && validateEmailAddress(updateEmailForm.getChkEmail())!= Boolean.TRUE )
@@ -526,11 +523,16 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 		}
+
+		else if(!StringUtils.equalsIgnoreCase(currentUser.getOriginalUid(),updateEmailForm.getEmail()) && !bindingResult.hasErrors()){
+			bindingResult.rejectValue("email", "profile.currentemail.unique", new Object[] {}, "profile.currentemail.unique");
+			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+		}
 		else
 		{
 			try
 			{
-				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
+				customerFacade.changeUid(updateEmailForm.getChkEmail(), updateEmailForm.getPassword());
 				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
@@ -553,6 +555,19 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		return returnAction;
+	}
+
+	/**
+	 * To check the new email address format
+	 * @param email
+	 * @return
+	 */
+	protected boolean validateEmailAddress(final String email)
+	{
+		final Matcher matcher = Pattern
+				.compile(configurationService.getConfiguration().getString(WebConstants.EMAIL_REGEX))
+				.matcher(email);
+		return matcher.matches();
 	}
 
 	protected String setErrorMessagesAndCMSPage(final Model model, final String cmsPageLabelOrId) throws CMSItemNotFoundException
