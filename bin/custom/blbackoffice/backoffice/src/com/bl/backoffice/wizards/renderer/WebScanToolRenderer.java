@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
 
 import java.util.Map;
@@ -52,16 +53,27 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
                     StringUtils.EMPTY);
         } else {
             final Textbox barcodeInputField = new Textbox();
-            barcodeInputField.setRows(BlInventoryScanLoggingConstants.SEVEN);
+            barcodeInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
             barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
             barcodeInputField.setMultiline(true);
             barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
             barcodeInputField.setWidth(BlInventoryScanLoggingConstants.HUN_PER);
+            barcodeInputField.setStyle("resize:none;display:block");
 
             barcodeInputField.addEventListener("onChange", event ->
                     this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData));
-
             component.appendChild(barcodeInputField);
+
+            final Button clear = new Button();
+            clear.setLabel("Clear");
+            clear.setVisible(Boolean.TRUE);
+            clear.setTabindex(BlInventoryScanLoggingConstants.TWO);
+            clear.setStyle("margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;");
+            clear.addEventListener("onClick", event -> {
+                barcodeInputField.setValue(StringUtils.EMPTY);
+                this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData);
+            });
+            component.appendChild(clear);
         }
     }
 

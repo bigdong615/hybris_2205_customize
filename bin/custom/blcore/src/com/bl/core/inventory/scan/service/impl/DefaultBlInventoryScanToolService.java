@@ -144,7 +144,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private boolean isLocationValidForMember(final List<String> memberAllowedLocationList,
 			final BlInventoryLocationModel blLocalInventoryLocation) {
 		return Objects.nonNull(blLocalInventoryLocation) && Objects.nonNull(blLocalInventoryLocation.getLocationCategory()) 
-				&& memberAllowedLocationList.contains(blLocalInventoryLocation.getLocationCategory().getCode());
+				&& (memberAllowedLocationList.contains("ALLOW_SCAN") || memberAllowedLocationList.contains(
+						blLocalInventoryLocation.getLocationCategory().getCode()));
 	}
 
     /**
