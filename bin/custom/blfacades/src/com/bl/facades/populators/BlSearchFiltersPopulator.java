@@ -121,6 +121,10 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
       addSaleAndRentQuery(target);
     }
+    if (BlCoreConstants.NEW_GEAR.equalsIgnoreCase(categoryCode)) {
+      addQueryForCategory(target,BlCoreConstants.RETAILGEAR,BlCoreConstants.TRUE);
+      addSaleAndRentQuery(target);
+    }
     else {
       if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
           && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
@@ -130,6 +134,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addFilterQueryTrue(target, categoryCode);
     }
   }
+
 
   /**
    *  this method is created for adding forSale as true for used gear categories
