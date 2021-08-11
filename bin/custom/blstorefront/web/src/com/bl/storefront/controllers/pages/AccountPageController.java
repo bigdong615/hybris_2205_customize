@@ -403,7 +403,6 @@ public class AccountPageController extends AbstractSearchPageController
 			breadcrumbs.add(new Breadcrumb("#", getMessageSource().getMessage("text.account.order.orderBreadcrumb", new Object[]
 			{ orderDetails.getCode() }, "Order {0}", getI18nService().getCurrentLocale()), null));
 			model.addAttribute(BREADCRUMBS_ATTR, breadcrumbs);
-			model.addAttribute("hasOrderReturned", blOrderFacade.hasOrderReturned(orderCode));
 
 		}
 		catch (final UnknownIdentifierException e)

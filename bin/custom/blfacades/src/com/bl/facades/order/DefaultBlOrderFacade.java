@@ -19,7 +19,6 @@ import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator;
 import com.bl.facades.populators.BlOrderAppliedVouchersPopulator;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
@@ -51,7 +50,6 @@ import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.BaseStoreModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -437,26 +435,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   @Override
   public boolean savePoPaymentForExtendOrder(final String poNumber , final String poNotes, final String orderCode) {
     return getDefaultBlExtendOrderService().savePoPayment(poNumber , poNotes , getExtendedOrderModelFromCode(orderCode));
-  }
-
-  /**
-   * This method will update if order has returned from Customer
-   *
-   * @param orderCode
-   * @return
-   */
-  @Override
-  public boolean hasOrderReturned(final String orderCode) {
-    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-    final OrderModel orderModel = getCustomerAccountService()
-        .getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
-            baseStoreModel);
-    if (CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
-      List <ConsignmentStatus> consignmentStatuses = Arrays.asList(ConsignmentStatus.UNBOXED, ConsignmentStatus.PARTIALLY_UNBOXED, ConsignmentStatus.COMPLETED, ConsignmentStatus.INCOMPLETE_RECOVERED, ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR, ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ConsignmentStatus.INCOMPLETE_MISSING_ITEMS);
-      return orderModel.getConsignments().stream()
-          .anyMatch(consignment -> consignmentStatuses.contains(consignment.getStatus()));
-    }
-    return false;
   }
 
 

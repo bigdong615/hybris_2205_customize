@@ -2357,6 +2357,12 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
                   </attribute>
+                  <attribute qualifier="orderReturnedToWarehouse" type="boolean">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>This attribute is added to manage whether the Order has returned to warehouse. This is required to show EXtend Order button for ASM agent till order is not back to warehouse</description>
+                  </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

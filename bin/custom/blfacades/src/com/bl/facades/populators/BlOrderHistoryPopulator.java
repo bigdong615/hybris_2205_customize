@@ -78,6 +78,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalActive(isRentalCartAcive(source));
      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
+   target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
   }
 
   /**
