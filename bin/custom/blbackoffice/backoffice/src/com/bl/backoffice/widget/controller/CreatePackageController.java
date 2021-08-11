@@ -4,6 +4,7 @@
 package com.bl.backoffice.widget.controller;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -98,7 +99,7 @@ public class CreatePackageController extends DefaultWidgetController
 	@Wire
 	private Combobox boxes;
 
-	public ListModelList<PackagingInfoData> packages = null;
+	public ListModelList<PackagingInfoData> packages = null; //NOSONAR
 	private List<PackagingInfoData> packingInfo = null;
 
 	double weight = 0.0;
@@ -203,20 +204,30 @@ public class CreatePackageController extends DefaultWidgetController
 			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("_");
 			for (final BlProductModel serialProduct : this.allSerialProducts)
 			{
-				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
 				if (serialProduct.getCode().equals(selctedCheckBoxArray[0]))
 				{
-					if ("true".equals(selctedCheckBoxArray[1]))
-					{
-						this.selectedSerialProducts.add(serialProduct);
-					}
-					else
-					{
-						this.selectedSerialProducts.remove(serialProduct);
-					}
+					addOrRemoveSelectedSerialProduct(selctedCheckBoxArray, serialProduct);
 					break;
 				}
 			}
+		}
+	}
+
+
+	/**
+	 * method will use to add or remove selected serial product
+	 * @param selctedCheckBoxArray
+	 * @param serialProduct
+	 */
+	private void addOrRemoveSelectedSerialProduct(final String[] selctedCheckBoxArray, final BlProductModel serialProduct)
+	{
+		if (BlInventoryScanLoggingConstants.TRUE_STRING.equals(selctedCheckBoxArray[1]))
+		{
+			this.selectedSerialProducts.add(serialProduct);
+		}
+		else
+		{
+			this.selectedSerialProducts.remove(serialProduct);
 		}
 	}
 
