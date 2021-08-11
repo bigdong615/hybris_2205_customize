@@ -84,6 +84,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalActive(isRentalCartAcive(source));
      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
+   target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
 	  final AtomicDouble totalAmt = new AtomicDouble(0.0);
 	  source.getConsignments()
 			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry

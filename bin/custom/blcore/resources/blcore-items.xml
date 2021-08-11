@@ -2373,6 +2373,14 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
                   </attribute>
+                  <attribute qualifier="orderReturnedToWarehouse" type="boolean">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>This flag is added to manage whether the Order has returned to warehouse.
+                      This is required to manage Extend Order button Visibilty for ASM agent till order is not back to warehouse.
+                    </description>
+                  </attribute>
                   <attribute qualifier="isNewGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
                     <description>Flag to identify the order type is new gear order or not. By using
