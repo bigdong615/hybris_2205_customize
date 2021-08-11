@@ -164,6 +164,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String DIRTY_PRIORITY_MOBILE_CART = "DIRTY_PRIORITY_MOBILE_CART";
     public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
     public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
+    public static final String TRUE_STRING = "true";
 
     private BlInventoryScanLoggingConstants() { }
 
