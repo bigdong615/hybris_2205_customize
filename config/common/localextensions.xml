@@ -22,7 +22,7 @@
     <!-- Extension to enable ASM -->
     <extension name='assistedservicepromotionaddon'/>
     <extension name='assistedservicewebservices'/>
-    <extension name='customersupportbackoffice'/>
+    <!-- <extension name='customersupportbackoffice'/> -->
 
     <!-- Extension to enable WishList -->
     <extension name='wishlist'/>
@@ -117,7 +117,7 @@
 
     <!-- Extension to enable Warehouses -->
     <extension name='warehousing'/>
-    <extension name='warehousingbackoffice'/>
+    <!-- <extension name='warehousingbackoffice'/>  -->
     <extension name='warehousingfacades'/>
     <extension name='warehousingwebservices'/>
 
@@ -155,7 +155,9 @@
     <extension name='bllogging'/>
     <extension name='bltaxapi'/>
     <extension name='blintegration'/>
-	
+	<extension name='blcustomersupportbackoffice'/>
+	<extension name='blwarehousingbackoffice'/>
+
 	
 	<extension name='braintree' />
       <extension name='braintreeacceleratorfacades' />

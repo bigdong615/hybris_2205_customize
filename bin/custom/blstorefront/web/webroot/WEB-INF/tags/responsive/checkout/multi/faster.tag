@@ -25,6 +25,7 @@
             <div class="dropdown my-4">
                <c:if test="${not empty partnerPickUpLocation}">
                   <select id="pick-up-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onSelectPartnerPickup(this)">
+                      <option selected disabled><spring:theme code="text.pick.up.section.pick.up.default.option"/></option>
                       <c:forEach items="${partnerPickUpLocation}" var="entry" varStatus="loop">
                           <option value="${entry.code}"> ${entry.name} </option>
                       </c:forEach>

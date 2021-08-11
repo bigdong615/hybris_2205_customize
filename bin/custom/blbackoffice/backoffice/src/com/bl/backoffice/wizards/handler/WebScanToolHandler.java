@@ -4,6 +4,7 @@ import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
@@ -73,7 +74,8 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                 getConfigKeyFromScanConfiguration(BlInventoryScanLoggingConstants.MAX_SEQUENCE_LIMIT_KEY);
 
         if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= Integer.parseInt(maxSequenceScan)) {
-            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes, Collections.emptyList()), barcodes);
+            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes,
+                    Lists.newArrayList("ALLOW_SCAN")), barcodes);
         } else {
             if (barcodeSize < BlInventoryScanLoggingConstants.TWO) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,

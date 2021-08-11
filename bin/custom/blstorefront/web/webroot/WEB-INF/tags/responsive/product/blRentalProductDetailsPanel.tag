@@ -98,7 +98,7 @@
                                   </div>
                                   </c:otherwise>
                                    </c:choose>
-                                   <c:if test = "{product.isDiscontinued ne 'true'}">
+                                   <c:if test = "${product.isDiscontinued ne 'true'}">
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>

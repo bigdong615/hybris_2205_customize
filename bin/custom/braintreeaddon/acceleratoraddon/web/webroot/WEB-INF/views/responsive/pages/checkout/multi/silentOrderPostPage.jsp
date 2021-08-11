@@ -37,15 +37,35 @@
 	expression="@configurationService.configuration.getProperty('braintree.store.in.vault')"
 	var="storeInVault" />
 <c:url value="${currentStepUrl}" var="choosePaymentMethodUrl" />
+<c:url value="/cart" var="cart" />
+<c:url value="/checkout/multi/delivery-method/chooseShipping" var="deliveryOrPickup" />
 <template:page pageTitle="${pageTitle}">
 	<section id="cartProcess">
 		<div class="container">
 			<div id="cartSteps" class="row justify-content-center">
 				<div class="col-xl-10">
-					<span class="step1 complete"><i class="icon-check"></i><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when><c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise></c:choose></span><span class="step2 complete"><i class="icon-check"></i>
-						Delivery or Pickup</span><span class="step3 active"><i
-						class="number">3</i> Payment</span><span class="step4"><i
-						class="number">4</i> Review</span>
+				    <a href="${cart}" class="text-decoration-none">
+                        <span class="step1 complete"><i class="icon-check"></i>
+                            <c:choose>
+                                <c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when>
+                                <c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise>
+                            </c:choose>
+                        </span>
+                    </a>
+                    <c:choose>
+                    <c:when test="${cartData.hasGiftCart}">
+                     <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
+                    </c:when>
+                    <c:otherwise>
+                     <a href="${deliveryOrPickup}" class="text-decoration-none">
+					  <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
+					</a>
+                    </c:otherwise>
+                    </c:choose>
+					<a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+					    <span class="step3 active"><i class="number">3</i> Payment</span>
+					</a>
+					<span class="step4"><i class="number">4</i> Review</span>
 				</div>
 			</div>
 			<div class="row justify-content-center">
@@ -250,7 +270,7 @@
 																	 data-line2="${deliveryAddress.line2}"
 																	 data-town="${deliveryAddress.town}"
 																	 data-postalcode="${deliveryAddress.postalCode}"
-																	 data-countryisocode="${deliveryAddress.country.isocode}"
+																	 data-countryisocode="${empty deliveryAddress.country.isocode ? 'US' : deliveryAddress.country.isocode}"
 																	 data-regionisocode="deliveryAddress.region.isocode"
 																	 data-email="${deliveryAddress.email}"
 																	 data-address-id="${deliveryAddress.id}"></div>
@@ -331,6 +351,7 @@
 									</div>
 								</div>
 								<!--BL-623 PO section -->
+			<c:if test="${!cartData.hasGiftCart}">
                 <c:if test="${cartData.isPOEnabled}">
                 	<div class="accordion-item payProduct">
                 	  <c:if test="${not empty selectedPoNumber}">
@@ -370,7 +391,7 @@
                 		</div>
                 	</div>
                 </c:if>
-							</div>
+			</c:if>				</div>
 							<%-- Error message secion --%>
 							 <c:if test="${!cartData.hasGiftCart}">
 							<cart:blGiftCard cartData="${cartData}"/>

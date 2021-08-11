@@ -58,11 +58,14 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
    target.setRentalCart(source.getIsRentalCart());
    target.setOrderDate(convertDateToString(source.getDate()));
-   if(BooleanUtils.isFalse(source.getIsRentalCart())) {
+   if(source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalCart())) {
      final List<String> productQtyAndName = new ArrayList<>();
      for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
        final ProductModel product = abstractOrderEntryModel.getProduct();
-       if(product instanceof BlSerialProductModel) {
+       if(source.isGiftCardOrder()){
+      	 target.setProductCode(product.getCode());
+       }
+       else if(product instanceof BlSerialProductModel) {
          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
          productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK + BlFacadesConstants.PRODUCT_SEPERATOR +
              BlFacadesConstants.BLANK + productModel.getName());

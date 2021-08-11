@@ -489,7 +489,7 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 
 .expertHelpIcon {
-    background-image: url(https://cdn.static-bl.com/images/expertHelpIconNew.png);
+    background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
     background-repeat: no-repeat;
     display: inline-block;
     margin-top: 10px;

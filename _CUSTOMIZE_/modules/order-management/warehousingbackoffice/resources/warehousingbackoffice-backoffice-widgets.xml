@@ -383,6 +383,78 @@
                         <virtual-sockets />
                     </widget>
 
+                    <widget id="capturePaymentPopup"
+                      widgetDefinitionId="custom.bl.widgets.blCapturePayment"
+                      slotId="cockpitWidgetChildrenInvisible"
+                      template="true">
+
+                        <instance-settings socketEventRoutingMode="LAST_USED">
+                            <create onInit="false" reuseExisting="true">
+                                <all-incoming-events/>
+                            </create>
+                            <close>
+                                <all-outgoing-events/>
+                            </close>
+                            <select onInit="false">
+                                <all-incoming-events/>
+                            </select>
+                        </instance-settings>
+
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <setting key="__externalLocationPath" type="String">
+                            extension://warehousingbackoffice
+                        </setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="_width" type="String">1020px</setting>
+                        <setting key="_height" type="String">650px</setting>
+                        <virtual-sockets/>
+                    </widget>
+
+                     <widget id="createShippingScanPopup" widgetDefinitionId="custom.bl.widgets.createShippingScan" slotId="cockpitWidgetChildrenInvisible"
+                            template="true">
+
+                        <instance-settings socketEventRoutingMode="LAST_USED">
+                            <create onInit="false" reuseExisting="true">
+                                <all-incoming-events/>
+                            </create>
+                            <close>
+                                <all-outgoing-events/>
+                            </close>
+                            <select onInit="false">
+                                <all-incoming-events/>
+                            </select>
+                        </instance-settings>
+
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="_width" type="String">1020px</setting>
+                        <setting key="_height" type="String">650px</setting>
+                        <virtual-sockets />
+                    </widget>
+                    
+                    <widget id="createPackageScanPopup" widgetDefinitionId="custom.bl.widgets.createPackageScan" slotId="cockpitWidgetChildrenInvisible"
+                            template="true">
+
+                        <instance-settings socketEventRoutingMode="LAST_USED">
+                            <create onInit="false" reuseExisting="true">
+                                <all-incoming-events/>
+                            </create>
+                            <close>
+                                <all-outgoing-events/>
+                            </close>
+                            <select onInit="false">
+                                <all-incoming-events/>
+                            </select>
+                        </instance-settings>
+
+                        <setting key="widgetStyleClass" type="String"></setting>
+                        <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+                        <setting key="widgetStyleAttribute" type="String"></setting>
+                        <setting key="_width" type="String">1020px</setting>
+                        <setting key="_height" type="String">650px</setting>
+                        <virtual-sockets />
+                    </widget>
                     <widget id="warehousingStockAdjustmentPopup" widgetDefinitionId="de.hybris.platform.warehousingbackoffice.widgets.stockadjustment" slotId="cockpitWidgetChildrenInvisible"
                             template="true">
 
@@ -605,4 +677,7 @@
     <widget-connection sourceWidgetId="warehousingRefineBy" outputId="outputContext" targetWidgetId="warehousingAdvancedSearch" inputId="initContext"/>
     
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.createpackageaction" outputId="blCreatePackageContext" targetWidgetId="createPackagePopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" outputId="blShippingScanContext" targetWidgetId="createShippingScanPopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.packagescanaction" outputId="blPackageScanContext" targetWidgetId="createPackageScanPopup" inputId="inputObject" />
+    <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" outputId="blCapturePaymentContext" targetWidgetId="capturePaymentPopup" inputId="inputObject" />
 </widgets>

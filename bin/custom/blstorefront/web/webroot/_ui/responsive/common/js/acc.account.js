@@ -168,7 +168,13 @@ ACC.account = {
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or Password was incorrect");
-						} else {
+						} 
+						else if(response === 'login.error.account.deactivate.title') 
+						{
+							$("#errorMessages_login").removeClass("d-none");
+							$("#errorMessages_login").html(ACC.deActivateAccount.login);
+						}
+						else {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
