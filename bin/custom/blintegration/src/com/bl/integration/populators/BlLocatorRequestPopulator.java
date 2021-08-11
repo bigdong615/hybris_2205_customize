@@ -91,12 +91,12 @@ public void populateLocatorRequest(final LocatorRequest locatorRequest,final UPS
   /************* setting LocationSearchCriteriaType start***********/
   LocationSearchCriteriaType locationSearchCriteriaType = new LocationSearchCriteriaType();
 
-  CodeType codeType1 = new CodeType();
-  codeType1.setCode(codeTypeCode);
+  CodeType codeType = new CodeType();
+  codeType.setCode(codeTypeCode);
   OptionCodeType optionCodeType = new OptionCodeType();
   optionCodeType.setCode(optionCodeTypeCode);
   SearchOptionType searchOptionType = new SearchOptionType();
-  searchOptionType.setOptionType(codeType1);
+  searchOptionType.setOptionType(codeType);
   searchOptionType.getOptionCode().add(optionCodeType);
 
   IncludeCriteriaType criteriaType = new IncludeCriteriaType();
