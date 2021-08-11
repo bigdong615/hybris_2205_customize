@@ -50,6 +50,34 @@
 			widgetDefinitionId="com.bl.backoffice.widget.frontdeskscanpop"
 			slotId="cockpitWidgetChildrenInvisible"
 			template="true">
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">
+				extension://warehousingbackoffice
+			</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1020px</setting>
+			<setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1140px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets/>
+		</widget>
+		<widget id="customCancelOrderPopup"
+			widgetDefinitionId="com.bl.backoffice.widgets.order.customCancelOrder"
+			slotId="cockpitWidgetChildrenInvisible"
+			title="Cancel an Order" template="true">
 
 			<instance-settings socketEventRoutingMode="LAST_USED">
 				<create onInit="false" reuseExisting="true">
@@ -69,6 +97,33 @@
 			</setting>
 			<setting key="widgetStyleAttribute" type="String"></setting>
 			<setting key="_width" type="String">1020px</setting>
+			<setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1140px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets/>
+		</widget>
+		<widget id="customRefundOrderPopup"
+			widgetDefinitionId="com.bl.backoffice.widgets.order.customRefundOrder"
+			slotId="cockpitWidgetChildrenInvisible"
+			title="Refund an Order" template="true">
+
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1140px</setting>
 			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets/>
 		</widget>
@@ -113,9 +168,10 @@
 	<!--BL-863 : Widgets Definition for Front Team Payment Captured Widget -->
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
 	<widget-connection sourceWidgetId="STUB_com.bl.backoffice.actions.blFrontScan.frontdeskscanaction" outputId="frontDeskScanOutContext" targetWidgetId="frontDeskScanPopUp" inputId="inputObject"/>
+	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customCancelOrderAction" outputId="customCancelOrderContext" targetWidgetId="customCancelOrderPopup" inputId="inputObject"/>
+	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customOrderRefundAction" outputId="orderRefundContext" targetWidgetId="customRefundOrderPopup" inputId="inputObject"/>
 	<!-- Unboxing Tool Section -->
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="UnboxingScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="UnboxingScanTool_conditionevaluator" outputId="true" targetWidgetId="UnboxingScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="UnboxingScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
-	
 </widgets>

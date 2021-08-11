@@ -61,14 +61,18 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
-    public static final String MUST_TWO_BARCODE_ERROR_MSG = "Must have two barcode to scans";
+    public static final String TWO_BARCODE_SCAN_ERROR_MSG = "Must have two barcode to scans";
     public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
     public static final String LAST_SCAN_ERROR_FAILURE_MSG = "Last scan must be a location";
     public static final String MANY_LOCATION_ERROR_FAILURE_MSG = "Too many location scans in sequence for an item";
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG = "Something went wrong!!";
-
+ 	public static final String SHIPPING_MAX_SCAN_ERROR_MSG = "Invalid number of barcodes in sequence";
+ 	public static final String INVALID_BARCODE_SCANNED_MSG = "Scanned barcodes are not valid {}";
+ 	public static final String SERIAL_MISMATCH_SCANNED_MSG = "Scanned serial does not match to serials on package";
+ 	public static final String INVALID_SCAN_MSG = "Invalid Scan";
+    
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String SCAN_STRING = "Scan data: ";
 
@@ -107,19 +111,25 @@ public class BlInventoryScanLoggingConstants {
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
-    public static final String LAST_LOCATION_ERROR_KEY = "blbackoffice.order.scan.last.location.error";
+ 	public static final String LAST_SCAN_INVALID_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
  	public static final String INVALID_SCAN_ERROR = "blbackoffice.order.scan.invalid.scan.error";
- 	public static final String MANY_LOCATION_ERROR = "blbackoffice.order.scan.many.location.error";
+ 	public static final String MANY_LOCATION_ERROR_KEY = "blbackoffice.order.scan.many.location.error";
  	public static final String INVALID_LOCATION_ERROR = "blbackoffice.order.scan.invalid.location.error";
- 	public static final String LAST_INVALID_LOCATION_ERROR = "blbackoffice.order.scan.last.invalid.location.error";
+ 	public static final String LAST_SCAN_LOCATION_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.invalid.location.error";
+ 	public static final String INVALID_BARCODE_SCANNED_ERROR = "blbackoffice.order.invalid.scan.error";
+ 	public static final String SERIAL_MISMATCH_SCANNED_ERROR = "blbackoffice.order.serial.mismatch.error";
+ 	public static final String INVALID_SCAN_ERROR_KEY = "blbackoffice.order.invali.scan.error.key";
+ 	public static final String TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.order.scan.item.error";
+
  	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
  	public static final String SHIPPING_INVALID_SCAN_ERROR = "blbackoffice.shipping.scan.invalid.scan.error";
- 	public static final String SHIPPING_SCAN_ITEM_ERROR = "blbackoffice.shipping.scan.item.error";
+ 	public static final String SHIPPING_TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.shipping.scan.item.error";
  	public static final String SHIPPING_LAST_LOCATION_ERROR_KEY = "blbackoffice.shipping.scan.last.location.error";
  	public static final String SHIPPING_LAST_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.last.invalid.location.error";
- 	public static final String SHIPPING_MANY_LOCATION_ERROR ="blbackoffice.shipping.scan.many.location.error";
+ 	public static final String SHIPPING_MANY_LOCATION_ERROR = "blbackoffice.shipping.scan.many.location.error";
  	public static final String SHIPPING_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
+
 
  	public static final String DOUBLE_HYPHEN = "--";
  	public static final String NEW_LINE = "\n";
