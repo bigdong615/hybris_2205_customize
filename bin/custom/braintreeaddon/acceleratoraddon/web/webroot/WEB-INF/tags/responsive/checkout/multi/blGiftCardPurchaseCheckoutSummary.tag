@@ -42,12 +42,10 @@
 			<div class="col-xl-10">
 			    <a href="${cartPageUrl}" class="text-decoration-none">
 				    <span class="step1 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.your.rental" /></span>
+						code="text.checkout.multi.order.UsedGear" /></span>
 				</a>
-				<a href="${shippingPageUrl}" class="text-decoration-none">
-					<span class="step2 complete"><i class="icon-check"></i> <spring:theme
+				<span class="step2 complete"><i class="icon-check"></i> <spring:theme
 						code="text.review.page.delivery.or.pickup" /></span>
-				</a>
 				<a href="${paymentPageUrl}" class="text-decoration-none">
 					<span class="step3 complete"><i class="icon-check"></i> <spring:theme
 						code="text.review.page.payment" /></span>

@@ -52,9 +52,16 @@
                             </c:choose>
                         </span>
                     </a>
-                    <a href="${deliveryOrPickup}" class="text-decoration-none">
-					    <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
+                    <c:choose>
+                    <c:when test="${cartData.hasGiftCart}">
+                     <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
+                    </c:when>
+                    <c:otherwise>
+                     <a href="${deliveryOrPickup}" class="text-decoration-none">
+					  <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
 					</a>
+                    </c:otherwise>
+                    </c:choose>
 					<a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
 					    <span class="step3 active"><i class="number">3</i> Payment</span>
 					</a>
@@ -344,6 +351,7 @@
 									</div>
 								</div>
 								<!--BL-623 PO section -->
+			<c:if test="${!cartData.hasGiftCart}">
                 <c:if test="${cartData.isPOEnabled}">
                 	<div class="accordion-item payProduct">
                 	  <c:if test="${not empty selectedPoNumber}">
@@ -383,7 +391,7 @@
                 		</div>
                 	</div>
                 </c:if>
-							</div>
+			</c:if>				</div>
 							<%-- Error message secion --%>
 							 <c:if test="${!cartData.hasGiftCart}">
 							<cart:blGiftCard cartData="${cartData}"/>
