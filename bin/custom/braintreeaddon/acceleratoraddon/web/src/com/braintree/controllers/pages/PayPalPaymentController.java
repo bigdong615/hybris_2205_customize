@@ -253,6 +253,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         PayPalExpressResponse payPalExpressResponse = null;
         AddressData hybrisBillingAddress = null;
         final String orderCode = request.getParameter("order_code");
+        final String payBillTotal = request.getParameter("payBillTotal");
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
         } catch (final IllegalArgumentException exeption) {
@@ -309,7 +310,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
 				if (null != paymentInfo) {
 					isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
-							BigDecimal.valueOf(order.getTotalPrice()), true, paymentInfo);
+							BigDecimal.valueOf(Double.parseDouble(payBillTotal)), true, paymentInfo);
 				}
 			}
         } catch (final Exception exception) {
@@ -324,6 +325,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 			storeCmsPageInModel(model, payBillSuccessPage);
 			setUpMetaDataForContentPage(model, payBillSuccessPage);
+			model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PAY_PAL);
 			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
 					ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 			return getViewForPage(model);

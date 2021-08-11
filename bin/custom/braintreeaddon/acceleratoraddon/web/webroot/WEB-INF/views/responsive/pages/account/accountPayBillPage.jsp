@@ -305,11 +305,11 @@
                         <table id="costSummary">
                             <tbody>
                             <!--Commented below code as of now  -->
-                                <%-- <tr>
-                                    <td class="gray80">Extension Cost</td>
+                                <tr>
+                                    <td class="gray80">Bill Cost</td>
                                     <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
                                 </tr>
-                                <tr>
+                             <%--    <tr>
                                     <td class="gray80">Damage Waiver <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                     <td class="text-end">$4.00</td>
                                 </tr>
@@ -366,7 +366,7 @@
 	              method="GET">
           <input type="hidden" id="orderId" name="orderId" value="" />
           
-           <spring:theme code="text.extend.order.credi.card.message" />
+           <spring:theme code="text.billpay.order.credi.card.message" />
               
                  <c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
                 <a href="" class="btn btn-block btn-primary mt-4 add-cc-form" data-order="${orderData.code}:payBill"><spring:theme code="text.extend.order.credi.continue"/></a>
@@ -380,54 +380,9 @@
       </div>
     </div>
                 
-                <!-- <script>
-                var paymentMethodsPage = "paymentMethodsPage";
-
-                var clientToken = "${client_token}";
-                var isCreditCardSelect = "${is_credit_card_select}";
-                var isSingleUseSelect = "${is_single_use_select}";
-
-                var advancedFraudToolsEnabled = "${payPalCheckoutData.advancedFraudTools}";
-                var environment = "${payPalCheckoutData.environment}";
-                var secure3d = "${payPalCheckoutData.secure3d}";
-                var skip3dSecureLiabilityResult = "${payPalCheckoutData.skip3dSecureLiabilityResult}";
-                var dbaName = "${payPalCheckoutData.dbaName}";
-
-                // only paypal specific configuration options
-                var storeInVault = "${payPalCheckoutData.storeInVault}";
-                var paypalIntent = "sale";
-                var amount = "${payPalCheckoutData.amount}";
-                var locale = "${payPalCheckoutData.locale}";
-                var enableShippingAddress = "${payPalCheckoutData.enableShippingAddress}";
-                var braintreeLocale = "${braintreeLocale}";
-                var currency = "${payPalCheckoutData.currency}";
-                var recipientName = "${payPalCheckoutData.shippingAddressOverride.recipientName}";
-                var streetAddress = "${payPalCheckoutData.shippingAddressOverride.streetAddress}";
-                var extendedAddress = "${payPalCheckoutData.shippingAddressOverride.extendedAddress}";
-                var locality = "${payPalCheckoutData.shippingAddressOverride.locality}";
-                var countryCodeAlpha2 = "${payPalCheckoutData.shippingAddressOverride.countryCodeAlpha2}";
-                var postalCode = "${payPalCheckoutData.shippingAddressOverride.postalCode}";
-                var region = "${payPalCheckoutData.shippingAddressOverride.region}";
-                var phone = "${payPalCheckoutData.shippingAddressOverride.phone}";
-                var billingAgreementDescription = "${billingAgreementDescription}";
-                var userAction = "${userAction}";
-                var payPalStandardEnabled =${payPalStandardEnabled};
-                var applePayEnabled = ${payPalCheckoutData.applePayEnabled};
-                var venmoEnabled = ${venmoEnabled};
-                var creditEnabled = ${isCreditEnabled};
-                var payPalButtonConfig = "${payPalMarkButtonConfig}";
-                var localPaymentMethods = "${localPaymentMethods}";
-                var lpmids = ${lpmids};
-                var venmoProfileId = "${venmoProfileId}";
-                var endpointURL = "${endpointURL}";
-                var disableMarkFunding = "${disableMarkFunding}";
-                var googleMerchantId = "${googleMerchantId}";
-                var googlePayCountryCode = "${googlePayCountryCode}";
-                var currencyMerchantAccountId = "${currencyMerchantAccount}";
-                var googlePayEnabled = ${googlePayEnable};
-                </script> -->
                 
-    <script>
+                
+ <script>
 	var addPaymentMethodsPage = "addPaymentMethodsPage";
 	var deliveryAddressId = "${selectedAddressCode}";
 	var shippingAddressEditable = "true";
