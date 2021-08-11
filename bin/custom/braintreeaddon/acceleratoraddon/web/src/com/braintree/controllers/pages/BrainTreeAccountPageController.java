@@ -1,6 +1,8 @@
 package com.braintree.controllers.pages;
 
 import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.order.BlOrderFacade;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.exceptions.ResourceErrorMessage;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -30,15 +32,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.commercefacades.order.OrderFacade;
+import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import java.io.IOException;
 import java.util.List;
-
+import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 
@@ -46,6 +60,9 @@ import static de.hybris.platform.util.localization.Localization.getLocalizedStri
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
+	private static final String PAY_BILL2 = ":payBill";
+	private static final String PAY_BILL = "/payBill";
+	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_PAYMENT_DETAILS;
@@ -55,6 +72,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	// CMS Pagesb
 	private static final String ADD_EDIT_PAYMENT_METHOD_CMS_PAGE = "add-edit-payment-method";
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
+	
+	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
 
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -70,6 +89,15 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@Resource(name = "customerFacade")
 	private BlCustomerFacade blCustomerFacade;
+	
+	@Resource()
+	private BrainTreeTransactionService brainTreeTransactionService;
+	
+	@Resource(name = "orderFacade")
+	private OrderFacade orderFacade;
+	
+	@Resource(name = "blOrderFacade")
+	private BlOrderFacade blOrderFacade;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -190,7 +218,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@RequestMapping(value = "/add-payment-method", method = RequestMethod.GET)
 	@RequireHardLogIn
-	public String addPaymentMethod(final Model model, final String selectedAddressCode) throws CMSItemNotFoundException
+	public String addPaymentMethod(@RequestParam(value = "orderId", required = false) final String orderCode, final Model model, final String selectedAddressCode) throws CMSItemNotFoundException
 	{
 
 		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
@@ -211,6 +239,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		model.addAttribute("addressForm", new AddressForm());
 		model.addAttribute("breadcrumbs", breadcrumbs);
 		model.addAttribute("metaRobots", "noindex,nofollow");
+		model.addAttribute("orderCode", orderCode);
 		return getViewForPage(model);
 	}
 
@@ -244,7 +273,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		    @RequestParam(value = "company_name") final String companyName,
 			@RequestParam(value = "selected_Billing_Address_Id") final String selectedAddressCode,
 			@RequestParam(value = "cardholder", required = false) final String cardholder,
-			@RequestParam(value = "default_Card") final String defaultCard,
+			@RequestParam(value = "default_Card") final String defaultCard, @RequestParam(value = "orderCode", required = false) final String orderCode,
 			final RedirectAttributes redirectAttributes, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm) throws CMSItemNotFoundException
 	{
 		if (StringUtils.isEmpty(nonce))
@@ -313,9 +342,85 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 				getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
-		return REDIRECT_TO_PAYMENT_INFO_PAGE;
+		if(orderCode != null && StringUtils.isNotBlank(orderCode)) {
+			String originalOrderCode = orderCode.replace(PAY_BILL2, "");
+			return REDIRECT_PREFIX + MY_ACCOUNT + originalOrderCode + PAY_BILL;
+		} else {
+			return REDIRECT_TO_PAYMENT_INFO_PAGE;
+		}
+
 	}
 
+	/**
+	 * This method created for the PayBill page. 
+	 */
+	@GetMapping(value = "/{orderCode}/payBill")
+	@RequireHardLogIn
+	public String getPayBillDetailsForOrder(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel payBillPage = getContentPageForLabelOrId(PAY_BILL_CMS_PAGE);
+		storeCmsPageInModel(model, payBillPage);
+		setUpMetaDataForContentPage(model, payBillPage);
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		model.addAttribute("orderData", orderDetails);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setupAdditionalFields(model);
+		return getViewForPage(model);
+	}
+	
+	/**
+	 * This method created for the PayBill confirmation page. 
+	 */
+	@PostMapping(value = "/payBillSuccess")
+	@RequireHardLogIn
+	public String getPayBillDetailsForOrder(final Model model, final HttpServletRequest request,
+			final HttpServletResponse response) throws CMSItemNotFoundException{
+		String orderCode = request.getParameter("orderCode");
+		String paymentInfoId = request.getParameter("paymentId");
+		String paymentMethodNonce = request.getParameter("paymentNonce");
+		String billPayTotal = request.getParameter("payBillTotal");
+		String poNumber = request.getParameter("extendPoNumber");
+		String poNotes = request.getParameter("extendPoNotes");
+
+		boolean isSuccess = false;
+		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
+			final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+			if (null != order) {
+				if (StringUtils.isNotBlank(poNumber)) {
+					isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, orderCode);
+					if (BooleanUtils.isTrue(isSuccess)) {
+						model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PO);
+					}
+				} else {
+					final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+							.getBrainTreePaymentInfoForCode(
+									(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
+					if (null != paymentInfo) {
+						isSuccess = brainTreeTransactionService
+								.createAuthorizationTransactionOfOrder(order,
+										BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+					}
+					if (BooleanUtils.isTrue(isSuccess)) {
+						model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
+					}
+				}
+			}
+		}
+
+		if (isSuccess) {
+			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			model.addAttribute("orderData", orderDetails);
+			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+			storeCmsPageInModel(model, payBillSuccessPage);
+			setUpMetaDataForContentPage(model, payBillSuccessPage);
+			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+					ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+			return getViewForPage(model);
+		} else {
+			return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
+		}
+	}
 
 	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,                         // NOSONAR
                                                                 final String cardDetails, final String cardType, final String email, final String deviceData,
@@ -415,5 +520,6 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		userFacade.setDefaultPaymentInfo(paymentInfoData);
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
+	
 
 }

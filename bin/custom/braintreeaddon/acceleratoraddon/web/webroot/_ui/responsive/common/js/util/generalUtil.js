@@ -40,7 +40,11 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     payPalForm.append($(extendOrderCode));
     var extendOrderPage = createHiddenParameter("extend_order_page", $("#js-extend-order-page").val());
     payPalForm.append($(extendOrderPage));
-
+    var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
+    var payBillTotal = createHiddenParameter("payBillTotal", $("#payBillTotal").val());
+   
+    payPalForm.append($(payBillTotal));
+    payPalForm.append($(orderCode));
 
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));

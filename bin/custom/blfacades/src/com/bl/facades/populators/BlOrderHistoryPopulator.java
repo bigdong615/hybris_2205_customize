@@ -20,6 +20,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
+import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+
 
 /**
  * This Populator Overridden to add Rental Dates
@@ -82,6 +85,15 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
+	  final AtomicDouble totalAmt = new AtomicDouble(0.0);
+	  source.getConsignments()
+			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+						  totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+					  }))));
+
+	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+
   }
 
   /**
@@ -137,6 +149,13 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
   private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
     return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
+  }
+
+  /**
+   * This method converts double to price data
+   */
+  private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
+    return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
   }
 
 }
