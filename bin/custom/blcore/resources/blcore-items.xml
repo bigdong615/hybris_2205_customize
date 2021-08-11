@@ -2561,7 +2561,12 @@
             <persistence type="property"/>
           </attribute>
           <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
-            <description>Shipping method optimization type</description>
+              <description>Shipping method optimization type</description>
+              <modifiers read="true" write="true"/>
+              <persistence type="property"/>
+          </attribute>
+          <attribute qualifier="optimizedShippingMethodType" type="OptimizedShippingTypeEnum">
+            <description>Shipping optimization type</description>
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
           </attribute>

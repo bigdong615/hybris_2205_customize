@@ -27,6 +27,7 @@ import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
+import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
@@ -73,9 +74,11 @@ import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -114,7 +117,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -258,6 +262,12 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
+
+	@Resource(name = "configurationService")
+	private ConfigurationService configurationService;
+
+	@Resource(name = "userService")
+	private UserService userService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -501,9 +511,10 @@ public class AccountPageController extends AbstractSearchPageController
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getEmailValidator().validate(updateEmailForm, bindingResult);
+		final CustomerModel currentUser = (CustomerModel) userService.getCurrentUser();
 		String returnAction = REDIRECT_TO_UPDATE_EMAIL_PAGE;
 
-		if (!bindingResult.hasErrors() && !updateEmailForm.getEmail().equals(updateEmailForm.getChkEmail()))
+		if (!bindingResult.hasErrors() && BooleanUtils.isFalse(validateEmailAddress(updateEmailForm.getChkEmail())))
 		{
 			bindingResult.rejectValue("chkEmail", "validation.checkEmail.equals", new Object[] {}, "validation.checkEmail.equals");
 		}
@@ -512,11 +523,16 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 		}
+
+		else if(!StringUtils.equalsIgnoreCase(currentUser.getOriginalUid(),updateEmailForm.getEmail()) && !bindingResult.hasErrors()){
+			bindingResult.rejectValue("email", "profile.currentemail.unique", new Object[] {}, "profile.currentemail.unique");
+			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+		}
 		else
 		{
 			try
 			{
-				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
+				customerFacade.changeUid(updateEmailForm.getChkEmail(), updateEmailForm.getPassword());
 				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
@@ -533,12 +549,25 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage(PROFILE_CURRENT_PASSWORD_INVALID, null,getI18nService().getCurrentLocale()));
 			  redirectAttributes.addFlashAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 			}
 		}
 
 		return returnAction;
+	}
+
+	/**
+	 * To check the new email address format
+	 * @param email
+	 * @return
+	 */
+	protected boolean validateEmailAddress(final String email)
+	{
+		final Matcher matcher = Pattern
+				.compile(configurationService.getConfiguration().getString(WebConstants.EMAIL_REGEX))
+				.matcher(email);
+		return matcher.matches();
 	}
 
 	protected String setErrorMessagesAndCMSPage(final Model model, final String cmsPageLabelOrId) throws CMSItemNotFoundException
