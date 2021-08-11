@@ -507,6 +507,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 setPartnerInternalAddressAsDeliveryAddress(internalStoreAddress, cartModel, deliveryModeModel);
                 final CommerceCheckoutParameter parameter = createCommerceCheckoutParameter(cartModel, true);
                 parameter.setDeliveryMode(deliveryModeModel);
+                if(BlReplaceMentOrderUtils.isReplaceMentOrder() && Objects.nonNull(cartModel.getReplacementOrder())) {
+                    parameter.setIsCartForReplacementOrder(Boolean.TRUE);
+                }
                 return getCommerceCheckoutService().setDeliveryMode(parameter);
             }
         }

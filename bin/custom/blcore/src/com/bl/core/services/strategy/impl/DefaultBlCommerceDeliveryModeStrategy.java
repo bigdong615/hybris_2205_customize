@@ -12,6 +12,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * DefaultBlCommerceDeliveryModeStrategy for setting delivery mode and actual rental dates.
@@ -58,7 +59,12 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
     commerceCartParameter.setEnableHooks(true);
     commerceCartParameter.setCart(cartModel);
-    getCommerceCartCalculationStrategy().calculateCart(commerceCartParameter);
+    if(BooleanUtils.isFalse(parameter.getIsCartForReplacementOrder())) {
+      getCommerceCartCalculationStrategy().calculateCart(commerceCartParameter);
+    }
+    else {
+      cartModel.setCalculated(Boolean.TRUE);
+    }
 
     return true;
   }

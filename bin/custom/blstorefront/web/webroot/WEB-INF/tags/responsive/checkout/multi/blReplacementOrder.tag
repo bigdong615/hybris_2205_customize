@@ -9,7 +9,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<spring:url value="/checkout/multi/summary/braintree/placeOrder"
+<spring:url value="/checkout/multi/summary/braintree/placeReplacementOrder"
 	var="placeOrderUrl" />
 
 		   <form:form action="${placeOrderUrl}" id="placeOrderForm1"

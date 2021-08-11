@@ -278,6 +278,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return redirectToOrderConfirmationPage(orderData);
 	}
 
+
+
+
+
 	private Map<String, String> getMergedCustomFields (Map<String, String> customFieldsFromUI)
 	{
 		Map<String, String> customFields = customFieldsService.getDefaultCustomFieldsMap();
@@ -404,6 +408,56 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			model.addAttribute(BraintreeaddonControllerConstants.DELIVERY_MODE, cartData.getDeliveryMode());
 			model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_INFO, cartData.getPaymentInfo());
 		}
+	}
+
+
+	@PostMapping(value = "/placeReplacementOrder")
+	@RequireHardLogIn
+	public String placeReplacementOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, @RequestParam(value ="orderNotes")
+	final String orderNotes, final Model model,
+			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
+			throws CMSItemNotFoundException, CommerceCartModificationException
+	{
+		blCheckoutFacade.saveOrderNotes(orderNotes);
+		final CartModel cartModel = blCartService.getSessionCart();
+		final OrderData orderData;
+		try
+		{
+			orderData = getCheckoutFacade().placeOrder();
+			BlLogger.logMessage(LOG , Level.INFO , "Replacement Order has been placed, number/code: " +
+					orderData.getCode() + "for -> original order number" + cartModel.getReplacementOrder().getOrder().getCode());
+
+			blRentalDateCookieGenerator.removeCookie(response);
+			blDatePickerService.removeRentalDatesFromSession();
+		}
+		catch (final Exception e)
+		{
+			LOG.error("Failed to place Order, message: " + e.getMessage(), e);
+			GlobalMessages.addErrorMessage(model, "checkout.placeOrder.failed");
+			return enterStep(model, redirectModel);
+		}
+
+		return redirectToOrderConfirmationPage(orderData);
+	}
+
+
+	protected boolean validateReplacementOrderForm(final PlaceOrderForm placeOrderForm, final Model model)
+	{
+		boolean invalid = false;
+
+		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
+		{
+			GlobalMessages.addErrorMessage(model, "checkout.deliveryAddress.notSelected");
+			invalid = true;
+		}
+
+		if (getCheckoutFlowFacade().hasNoDeliveryMode())
+		{
+			GlobalMessages.addErrorMessage(model, "checkout.deliveryMethod.notSelected");
+			invalid = true;
+		}
+		getCheckoutFacade().getCheckoutCart();
+		return invalid;
 	}
 
 	public CustomFieldsService getCustomFieldsService() {

@@ -1741,14 +1741,7 @@ function removeClass(){
          },
          success: function (data) {
              if(data == 'SUCCESS') {
-                saveDeliveryModeForOrderReplacement(deliveryMode, false)
-                    .then((data) => {
-                        $('.page-loader-new-layout').hide();
-                        window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-                    })
-                    .catch((error) => {
-                      console.log(error)
-                    })
+                saveDeliveryModeForOrderReplacement(deliveryMode, false);
              } else if(data == 'AM-ERROR') {
                 showAMDeliveryErrorMessage('SHIP');
                 $('.page-loader-new-layout').hide();
