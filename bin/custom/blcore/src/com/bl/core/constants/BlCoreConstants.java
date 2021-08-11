@@ -257,7 +257,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";
-  public static final String BASE_STORE_UID = "bl";
 
   private BlCoreConstants()
 	{

@@ -24,8 +24,12 @@ INSERT_UPDATE Employee ; uid[unique=true]       ; name                     ; gro
                        ; WalthamWarehouseAgent1 ; Waltham Warehouse Agent1 ; warehouseagentgroup,walthamstoreemployees 
                        ; WalthamWarehouseAgent2 ; Waltham Warehouse Agent2 ; warehouseagentgroup,walthamstoreemployees 
                        ; CarlosWarehouseAgent1  ; Carlos Warehouse Agent1  ; warehouseagentgroup,carlosstoreemployees  
-                       ; CarlosWarehouseAgent2  ; Carlos Warehouse Agent2  ; warehouseagentgroup,carlosstoreemployees  
-                       
+                       ; CarlosWarehouseAgent2  ; Carlos Warehouse Agent2  ; warehouseagentgroup,carlosstoreemployees
+
+UPDATE UserGroup; uid[unique = true]    ; warehouse(code)
+                ; walthamstoreemployees ; warehouse_ma ;
+                ; carlosstoreemployees  ; warehouse_ca ;
+
 INSERT_UPDATE PoS2WarehouseRel ; source(name)[unique=true] ; target(code)[unique=true] 
                                ; BL WALTHAM POS            ; warehouse_ma              
                                ; BL SAN CARLOS POS         ; warehouse_ca              
