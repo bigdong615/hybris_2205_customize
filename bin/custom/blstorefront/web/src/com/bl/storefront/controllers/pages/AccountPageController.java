@@ -514,7 +514,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final CustomerModel currentUser = (CustomerModel) userService.getCurrentUser();
 		String returnAction = REDIRECT_TO_UPDATE_EMAIL_PAGE;
 
-		if (!bindingResult.hasErrors() && validateEmailAddress(updateEmailForm.getChkEmail())!= Boolean.TRUE )
+		if (!bindingResult.hasErrors() && BooleanUtils.isFalse(validateEmailAddress(updateEmailForm.getChkEmail())))
 		{
 			bindingResult.rejectValue("chkEmail", "validation.checkEmail.equals", new Object[] {}, "validation.checkEmail.equals");
 		}
