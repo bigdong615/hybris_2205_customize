@@ -102,6 +102,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     populateGiftCardDetails(source , target);
   }
 
+  /**
+   * This method created pay bill messages separation.
+   */
   private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
   {
     switch (billChargeType.getCode())
@@ -120,6 +123,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
   }
 
+  /**
+   * This method created pay bill messages.
+   */
   private AvailabilityMessage getMessage(final String messageCode)
   {
     final AvailabilityMessage am = new AvailabilityMessage();
@@ -128,6 +134,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   }
 
+  /**
+   * This method created to get SKU code.
+   */
   private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
   {
     final StringBuilder sb = new StringBuilder();
