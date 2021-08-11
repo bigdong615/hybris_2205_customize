@@ -358,6 +358,10 @@ $('#add-to-gc').click(function(e) {
         $('.notification').show();
         return false;
     }
+    else{
+    	$('.notification').hide();
+    	$('#signIn').modal('show');
+    }
 });
 
 //BL-563 Remove Gift Card
@@ -835,13 +839,19 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
-        /*       $('.page-loader-new-layout').hide();
         var form = $('#giftCardPurchaseForm');
         var amount = form.find('input[name=amount]').val();
         if (amount < 25 || amount > 500) {
             $('.notification').show();
+            $("body").removeClass("modal-open");
+            $("body").removeAttr("style");
+            $('tn-gift-card-pdp').show();
+            $(".modal-backdrop").remove();
             return false;
-        }*/
+        }
+        if (amount >25 || amount < 500){
+        	 $('.notification').hide();
+        }
          var form = $('#giftCardPurchaseForm');
     
          var productCode = $(this).attr('data-product-code');
