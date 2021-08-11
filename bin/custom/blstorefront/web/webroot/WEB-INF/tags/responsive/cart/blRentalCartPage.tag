@@ -22,7 +22,9 @@
           <div class="container">
               <div id="cartSteps" class="row justify-content-center">
                   <div class="col-xl-10">
-                      <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                      <a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+                        <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                      </a>
                       <span class="step2"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
                       <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
                       <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
