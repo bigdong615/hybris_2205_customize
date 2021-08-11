@@ -385,8 +385,6 @@
  <script>
 	var addPaymentMethodsPage = "addPaymentMethodsPage";
 	var deliveryAddressId = "${selectedAddressCode}";
-	var shippingAddressEditable = "true";
-	var shippingAddressOverride = "true";
 	var enableShippingAddress = "false";
 	var paypalIntent = "${payPalConfigurationData.intent}";
 	var storeInVault = "${payPalConfigurationData.storeInVault}";
