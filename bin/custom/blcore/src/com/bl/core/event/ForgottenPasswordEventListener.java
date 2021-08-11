@@ -8,7 +8,6 @@ import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
 import de.hybris.platform.commerceservices.event.ForgottenPwdEvent;
 import de.hybris.platform.commerceservices.model.process.ForgottenPasswordProcessModel;
-import de.hybris.platform.core.model.c2l.LanguageModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -61,7 +60,8 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	@Override
 	protected void onSiteEvent(final ForgottenPwdEvent event)
 	{
-		final ForgottenPasswordProcessModel forgottenPasswordProcessModel = (ForgottenPasswordProcessModel) getBusinessProcessService()
+
+		final ForgottenPasswordProcessModel forgottenPasswordProcessModel =  getBusinessProcessService()
 				.createProcess("forgottenPassword-" + event.getCustomer().getUid() + "-" + System.currentTimeMillis(),
 						"forgottenPasswordEmailProcess");
 		forgottenPasswordProcessModel.setSite(event.getSite() != null ? event.getSite() : getBaseSiteService().getCurrentBaseSite());
