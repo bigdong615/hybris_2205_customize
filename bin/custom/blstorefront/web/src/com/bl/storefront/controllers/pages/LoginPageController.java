@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
@@ -12,11 +14,17 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.user.UserService;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +46,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/login")
 public class LoginPageController extends AbstractBlLoginPageController
 {
+	private static final Logger LOG = Logger.getLogger(LoginPageController.class);
+	
 	private HttpSessionRequestCache httpSessionRequestCache;
 
 	@Resource(name = "blRegisterFormValidator")
 	private Validator blRegisterFormValidator;
+	
+	@Resource(name = "userService")
+	private UserService userService;
 
 	@Override
 	protected String getView()
@@ -89,6 +102,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 		model.addAttribute(new GuestForm());
 
 		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
+		final String userId = username;
 		if (username != null)
 		{
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
@@ -98,8 +112,27 @@ public class LoginPageController extends AbstractBlLoginPageController
 		if (loginError)
 		{
 			model.addAttribute(BlControllerConstants.LOG_IN_ERROR, loginError);
-			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
-			return BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT;
+			try
+			{
+				if (BooleanUtils.isTrue(userService.getUserForUID(userId).isLoginDisabled()))
+				{
+					GlobalMessages.addErrorMessage(model, BlControllerConstants.ACCOUNT_DEACTIVATED);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlControllerConstants.ACCOUNT_DEACTIVATED_MSG, userId);
+					return BlControllerConstants.ACCOUNT_DEACTIVATED.trim();
+				}
+				else
+				{
+					GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG, userId);
+				}
+				return BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT;
+			}
+			catch (final UnknownIdentifierException ex)
+			{
+				GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG, userId);
+				return BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT;
+			}
 		}
 		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
