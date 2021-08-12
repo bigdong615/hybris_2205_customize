@@ -14,6 +14,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -91,6 +92,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 @Resource(name = "brainTreeTransactionService")
  	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
+    private BlCartService blCartService;
 	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
@@ -914,40 +916,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
   }
 
-  /**
-     * This method will update the order types
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void updateOrderTypes() {
-        final CartModel cartModel = getCartService().getSessionCart();
-        try {
-            if (Objects.nonNull(cartModel) && Objects
-                .nonNull(cartModel.getUser())) {
-                final DeliveryModeModel deliveryModeModel = cartModel.getDeliveryMode();
 
-                if (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
-                    .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
-                    .contains(deliveryModeModel.getCode())) {
-
-                    cartModel.setOrderType(OrderTypeEnum.FD);
-                } else {
-                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
-                }
-
-                if (cartModel.getTotalPrice() > cartModel.getStore().getThresholdVIPOrderAmount()) {
-                    cartModel.setIsVipOrder(true);
-                } else {
-                    cartModel.setIsVipOrder(false);
-                }
-
-                getModelService().save(cartModel);
-                getModelService().refresh(cartModel);
-            }
-        } catch (final Exception exception) {
-            BlLogger.logMessage(LOG, Level.ERROR,
-                "Error occurred while updating order types for cart {}", cartModel.getCode(),
-                exception);
-        }
     }
 
     /**
@@ -1105,4 +1079,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
 
+    public BlCartService getBlCartService() {
+        return blCartService;
+    }
+
+    /**
+     * @param blCartService the blCartService to set
+     */
+    public void setBlCartService(final BlCartService blCartService) {
+        this.blCartService = blCartService;
+    }
 }

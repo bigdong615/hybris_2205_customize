@@ -2,7 +2,9 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -16,11 +18,13 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -332,9 +336,68 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
           }
           return false;
       }
-    
-	
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateOrderTypes() {
+        final CartModel cartModel = getSessionCart();
+        try {
+            if (Objects.nonNull(cartModel) && Objects.nonNull(cartModel.getDeliveryMode())
+                && Objects.nonNull(cartModel.getStore())) {
+
+                if (isFrontDeskOrder(cartModel)) {
+
+                    cartModel.setOrderType(OrderTypeEnum.FD);
+                    BlLogger.logMessage(LOGGER, Level.DEBUG,
+                        "Setting order type to FD for cart code {}", cartModel.getCode());
+                } else {
+
+                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
+                    BlLogger.logMessage(LOGGER, Level.DEBUG,
+                        "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                }
+
+                cartModel.setIsVipOrder(isVipOrder(cartModel));
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting order type VIP : {} for cart code {}",
+                    cartModel.getIsVipOrder(), cartModel.getCode());
+
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOGGER, Level.ERROR,
+                "Error occurred while updating order types for cart {}", cartModel.getCode(),
+                exception);
+        }
+    }
+
+    /**
+     * This method returns true if this is VIP order.
+     *
+     * @param cartModel
+     */
+    private boolean isVipOrder(final CartModel cartModel) {
+
+        return (null != cartModel.getStore().getVipOrderThreshold()
+            && cartModel.getTotalPrice() > cartModel.getStore().getVipOrderThreshold()) ? true
+            : false;
+    }
+
+    /**
+     * This method returns true if this is Front desk order.
+     *
+     * @param cartModel
+     */
+    public boolean isFrontDeskOrder(final CartModel cartModel) {
+
+        final DeliveryModeModel deliveryModeModel = cartModel.getDeliveryMode();
+
+        return (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
+            .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
+            .contains(deliveryModeModel.getCode()));
+    }
 
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;

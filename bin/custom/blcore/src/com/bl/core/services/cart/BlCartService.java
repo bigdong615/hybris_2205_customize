@@ -94,4 +94,9 @@ public interface BlCartService extends CartService {
     * @return boolean
      */
     boolean savePoPaymentDetailsForPayBill(final String poNumber, final String poNotes, final OrderModel orderModel);
+
+    /**
+     * This method will update the order types like VIP order, FD/SHIPPING order
+     */
+    void updateOrderTypes();
 }
