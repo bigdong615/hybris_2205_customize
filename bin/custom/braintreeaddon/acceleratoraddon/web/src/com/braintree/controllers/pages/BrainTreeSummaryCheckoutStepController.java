@@ -208,6 +208,8 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
 		}
 
+		blCheckoutFacade.updateOrderTypes();
+
 		if (validateOrderForm(placeOrderForm, model))
 		{
 			return enterStep(model, redirectModel);

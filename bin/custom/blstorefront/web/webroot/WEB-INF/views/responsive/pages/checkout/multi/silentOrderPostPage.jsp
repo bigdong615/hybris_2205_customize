@@ -21,6 +21,8 @@
 
 <spring:eval expression="@configurationService.configuration.getProperty('braintree.store.in.vault')" var="storeInVault"/>
 <c:url value="${currentStepUrl}" var="choosePaymentMethodUrl"/>
+<c:url value="/cart" var="cart" />
+<c:url value="/checkout/multi/delivery-method/chooseShipping" var="deliveryOrPickup" />
 <template:page pageTitle="${pageTitle}" >
 
     <%--<div class="row">
@@ -474,7 +476,16 @@
         <div class="container">
             <div id="cartSteps" class="row justify-content-center">
                 <div class="col-xl-10">
-                    <span class="step1 complete"><i class="icon-check"></i> Your Rental</span><span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span><span class="step3 active"><i class="number">3</i> Payment</span><span class="step4"><i class="number">4</i> Review</span>
+                    <a href="${cart}" class="text-decoration-none">
+                        <span class="step1 complete"><i class="icon-check"></i> Your Rental</span>
+                    </a>
+                    <a href="${deliveryOrPickup}" class="text-decoration-none">
+                        <span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span>
+                    </a>
+                    <a href="#" class="window.location.reload(true)" class="text-decoration-none">
+                        <span class="step3 active"><i class="number">3</i> Payment</span>
+                    </a>
+                    <span class="step4"><i class="number">4</i> Review</span>
                 </div>
             </div>
             <div class="row justify-content-center">

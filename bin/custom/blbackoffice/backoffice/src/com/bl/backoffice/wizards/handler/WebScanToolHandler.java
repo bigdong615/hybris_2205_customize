@@ -1,9 +1,12 @@
 package com.bl.backoffice.wizards.handler;
 
+import com.bl.backoffice.wizards.renderer.WebScanToolRenderer;
 import com.bl.backoffice.wizards.util.WebScanToolData;
+import com.bl.backoffice.wizards.util.WebScanToolUtil;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
@@ -12,8 +15,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +31,12 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
 
     private NotificationService notificationService;
     private BlInventoryScanToolService blInventoryScanToolService;
+
+    @Autowired
+    private WebScanToolUtil webScanToolUtil;
+
+    @Autowired
+    private WebScanToolRenderer webScanToolRenderer;
 
     /**
      *
@@ -59,6 +68,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                         BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
                         StringUtils.EMPTY);
             }
+            this.triggerClear(webScanToolData);
         }
     }
 
@@ -73,7 +83,8 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                 getConfigKeyFromScanConfiguration(BlInventoryScanLoggingConstants.MAX_SEQUENCE_LIMIT_KEY);
 
         if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= Integer.parseInt(maxSequenceScan)) {
-            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes, Collections.emptyList()), barcodes);
+            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes,
+                    Lists.newArrayList("ALLOW_SCAN")), barcodes);
         } else {
             if (barcodeSize < BlInventoryScanLoggingConstants.TWO) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
@@ -134,6 +145,18 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         }
     }
 
+    /**
+     * javadoc
+     *
+     * This method will clear text box contents and set updated list to the WebScanToolData
+     *
+     * @param webScanToolData data
+     */
+    public void triggerClear(final WebScanToolData webScanToolData) {
+        final WebScanToolRenderer webScanToolRenderer = new WebScanToolRenderer();
+        webScanToolRenderer.triggerClear(webScanToolData, this.getWebScanToolUtil());
+    }
+
     public NotificationService getNotificationService() {
         return notificationService;
     }
@@ -148,5 +171,21 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
 
     public void setBlInventoryScanToolService(final BlInventoryScanToolService blInventoryScanToolService) {
         this.blInventoryScanToolService = blInventoryScanToolService;
+    }
+
+    public WebScanToolUtil getWebScanToolUtil() {
+        return webScanToolUtil;
+    }
+
+    public void setWebScanToolUtil(WebScanToolUtil webScanToolUtil) {
+        this.webScanToolUtil = webScanToolUtil;
+    }
+
+    public WebScanToolRenderer getWebScanToolRenderer() {
+        return webScanToolRenderer;
+    }
+
+    public void setWebScanToolRenderer(WebScanToolRenderer webScanToolRenderer) {
+        this.webScanToolRenderer = webScanToolRenderer;
     }
 }

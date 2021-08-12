@@ -29,7 +29,6 @@
 						<spring:theme code="text.review.page.payment.ending" /><br>
 						<spring:theme code="text.review.page.payment.exp" /><br>
 						</c:if>
-						<spring:theme code="text.review.page.payment.amount" />
 					</p>
 				</div>
 				<div class="col-6">
@@ -38,7 +37,6 @@
 						${fn:escapeXml(paymentInfo.cardNumber)}<br>
 						${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}<br>
 						</c:if>
-						<format:price priceData="${orderData.totalPriceWithTax}"/>
 					</p>
 				</div>
 			</div>
