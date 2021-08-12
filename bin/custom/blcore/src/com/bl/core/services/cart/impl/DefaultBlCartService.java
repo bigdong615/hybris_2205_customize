@@ -11,6 +11,8 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.daos.CatalogVersionDao;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
@@ -19,12 +21,14 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.product.daos.ProductDao;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +39,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import de.hybris.platform.product.daos.ProductDao;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.session.SessionExecutionBody;
-import de.hybris.platform.catalog.daos.CatalogVersionDao;
-import de.hybris.platform.catalog.model.CatalogVersionModel;
-import java.util.Collection;
 
 
 /**
@@ -360,7 +358,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 }
 
                 cartModel.setIsVipOrder(isVipOrder(cartModel));
-                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting order type VIP : {} for cart code {}",
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+                    "Setting order type VIP : {} for cart code {}",
                     cartModel.getIsVipOrder(), cartModel.getCode());
 
                 getModelService().save(cartModel);
@@ -381,8 +380,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private boolean isVipOrder(final CartModel cartModel) {
 
         return (null != cartModel.getStore().getVipOrderThreshold()
-            && cartModel.getTotalPrice() > cartModel.getStore().getVipOrderThreshold()) ? true
-            : false;
+            && cartModel.getTotalPrice() > cartModel.getStore().getVipOrderThreshold());
     }
 
     /**
