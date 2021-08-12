@@ -21,6 +21,9 @@ public interface BraintreeaddonControllerConstants
     public static final String PAY_PAL_HAED_ERROR = "braintree.paypal.head.error";
     
     public static final String FROM_PAGE_STATUS = "fromPage";
+    public static final String GIFTCARDPURCHASENAME = "name";
+    public static final String GIFTCARDPURCHASEEMAIL = "email";
+    public static final String GIFTCARDPURCHASEMESSAGE = "message";
     public static final String REVIEW_PAGE = "Review";
     public static final String RENTAL_DATE = "rentalDate";
     public static final String CURRENT_PAGE = "currentPage";

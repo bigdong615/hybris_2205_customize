@@ -285,9 +285,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
  //It saves Gift Card Purchase Form
 	private void updateGiftCardPurchaseForm(HttpServletRequest request) {
 		final GiftCardPurchaseForm giftCardPurchaseForm = new GiftCardPurchaseForm();
-		giftCardPurchaseForm.setName(StringUtils.stripToEmpty(request.getParameter("name")));
-		giftCardPurchaseForm.setEmail(StringUtils.stripToEmpty(request.getParameter("email")));
-		giftCardPurchaseForm.setMessage(StringUtils.stripToEmpty(request.getParameter("message")));
+		giftCardPurchaseForm.setName(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASENAME)));
+		giftCardPurchaseForm.setEmail(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASEEMAIL)));
+		giftCardPurchaseForm.setMessage(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASEMESSAGE)));
 		blCheckoutFacade.updateGiftCardPurchaseForm(giftCardPurchaseForm);
 	}
 
