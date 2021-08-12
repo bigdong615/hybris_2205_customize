@@ -133,6 +133,8 @@ UserGroup ; customersupportagentgroup ;                ;                        
           ;                           ;                ;                                ; CustomerNotes.type             ; -                ; -    ; -      ; -
           ;                           ;                ;                                ; Notes.type       ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
@@ -147,6 +149,9 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes.order      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS;;;;;;;;;
