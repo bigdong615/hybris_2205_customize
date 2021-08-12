@@ -46,7 +46,7 @@
 								cartData="${cartData}" />
 						</c:forEach>
 						  <div class="cart-actions">
-                                  <a href="${paymentPageUrl}" class="btn btn-sm btn-primary float-end" id="">
+                                  <a href="#" class="btn btn-sm btn-primary float-end" id="submitCard">
                                  <spring:theme code="general.continue.button" /></a>
                               </div>
 
