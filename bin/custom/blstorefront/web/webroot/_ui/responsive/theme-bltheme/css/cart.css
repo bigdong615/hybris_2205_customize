@@ -4,6 +4,10 @@ v0.01
 Designed by Veneer Studio
 ©2021
 **/
+
+.text-decoration-none {
+    text-decoration: none;
+}
 .formControlErrorClass { border:  2px solid red; }
 .btn-check:focus+.btn, .btn:focus {
     outline: 0;

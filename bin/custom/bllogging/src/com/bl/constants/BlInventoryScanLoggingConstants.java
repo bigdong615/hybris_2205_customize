@@ -21,6 +21,7 @@ public class BlInventoryScanLoggingConstants {
     public static final int SEVEN = 7;
     public static final int EIGHT = 8;
     public static final int TEN = 10;
+    public static final int FIFTEEN = 15;
     public static final int FORTY = 40;
 
     public static final String HUN_PER = "100%";
@@ -163,6 +164,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String DIRTY_PRIORITY_MOBILE_CART = "DIRTY_PRIORITY_MOBILE_CART";
     public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
     public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
+    public static final String TRUE_STRING = "true";
 
     private BlInventoryScanLoggingConstants() { }
 
