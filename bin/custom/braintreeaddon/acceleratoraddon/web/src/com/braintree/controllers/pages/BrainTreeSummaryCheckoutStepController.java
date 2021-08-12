@@ -7,6 +7,7 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.ControllerConstants;
@@ -200,6 +201,8 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
+
+		updateGiftCardPurchaseForm(request);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		blCheckoutFacade.saveOrderNotes(orderNotes);
 		final CartModel cartModel = blCartService.getSessionCart();
@@ -278,6 +281,14 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		}
 
 		return redirectToOrderConfirmationPage(orderData);
+	}
+ //It saves Gift Card Purchase Form
+	private void updateGiftCardPurchaseForm(HttpServletRequest request) {
+		final GiftCardPurchaseForm giftCardPurchaseForm = new GiftCardPurchaseForm();
+		giftCardPurchaseForm.setName(StringUtils.stripToEmpty(request.getParameter("name")));
+		giftCardPurchaseForm.setEmail(StringUtils.stripToEmpty(request.getParameter("email")));
+		giftCardPurchaseForm.setMessage(StringUtils.stripToEmpty(request.getParameter("message")));
+		blCheckoutFacade.updateGiftCardPurchaseForm(giftCardPurchaseForm);
 	}
 
 	private Map<String, String> getMergedCustomFields (Map<String, String> customFieldsFromUI)
