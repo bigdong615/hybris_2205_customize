@@ -1266,14 +1266,20 @@ function removeClass(){
         line2Status = validateField(townCity.val(), townCity);
     }
     if(postcode != null) {
-        if(postcode.val().length > 0 && postcode.val().length < 5) {
-            postcode.addClass('error');
-            showErrorForZipInputInvalidValidation(section);
-            postcodeStatus = true;
+        postcodeStatus = validateZip(postcode.val());
+        if(!postcodeStatus) {
+            if(postcode.val().length > 0) {
+                postcode.addClass('error');
+                showErrorForZipInputInvalidValidation(section);
+                postcodeStatus = true;
+            } else {
+                postcode.addClass('error');
+            }
         } else {
-            postcodeStatus = validateField(postcode.val(), postcode);
+            postcode.removeClass('error');
         }
     }
+    
     if(regionIso != null) {
         regionIsoStatus = validateField(regionIso.val(), regionIso);
     }
