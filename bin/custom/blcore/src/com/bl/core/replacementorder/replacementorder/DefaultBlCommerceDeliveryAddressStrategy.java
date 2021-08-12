@@ -16,7 +16,9 @@ public class DefaultBlCommerceDeliveryAddressStrategy extends
   @Override
   public boolean storeDeliveryAddress(final CommerceCheckoutParameter parameter)
   {
-    final CartModel cartModel = parameter.getCart();
+    return super.storeDeliveryAddress(parameter);
+  }
+   /* final CartModel cartModel = parameter.getCart();
     final AddressModel addressModel = parameter.getAddress();
     final boolean flagAsDeliveryAddress = parameter.isIsDeliveryAddress();
 
@@ -58,5 +60,5 @@ public class DefaultBlCommerceDeliveryAddressStrategy extends
     }
 
     return false;
-  }
+  }*/
 }

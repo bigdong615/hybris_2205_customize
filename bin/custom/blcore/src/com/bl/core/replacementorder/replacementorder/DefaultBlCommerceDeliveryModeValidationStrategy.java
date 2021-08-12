@@ -16,7 +16,8 @@ public class DefaultBlCommerceDeliveryModeValidationStrategy extends
   @Override
   public void validateDeliveryMode(final CommerceCheckoutParameter parameter)
   {
-    final CartModel cartModel = parameter.getCart();
+    super.validateDeliveryMode(parameter);
+    /*final CartModel cartModel = parameter.getCart();
     validateParameterNotNull(cartModel, "Cart model cannot be null");
 
     final DeliveryModeModel currentDeliveryMode = cartModel.getDeliveryMode();
@@ -44,6 +45,6 @@ public class DefaultBlCommerceDeliveryModeValidationStrategy extends
           getCommerceCartCalculationStrategy().calculateCart(commerceCartParameter);
         }
       }
-    }
+    }*/
   }
 }

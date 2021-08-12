@@ -12,9 +12,12 @@
  */
 package com.bl.Ordermanagement.impl;
 
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import com.bl.Ordermanagement.CheckOrderService;
+import java.util.Objects;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -39,7 +42,8 @@ public class DefaultCheckOrderService implements CheckOrderService
 			// Order must have some lines
 			return false;
 		}
-		else if (order.getPaymentInfo() == null && StringUtils.isBlank(order.getPoNumber()))
+		else if (BooleanUtils.isFalse(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.isNull(order.getReplacementOrder())
+				&& order.getPaymentInfo() == null && StringUtils.isBlank(order.getPoNumber()))
 		{
 			// Order must have some payment info to use in the process
 			return false;

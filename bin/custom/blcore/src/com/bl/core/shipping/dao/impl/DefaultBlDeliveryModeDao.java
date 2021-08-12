@@ -286,6 +286,20 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
   		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
   	}
 
+
+  @Override
+  public Collection<ZoneDeliveryModeModel> getAllPayByBlDeliveryModes(final Boolean payByCustomer)
+  {
+    final StringBuilder deliveyModeList = new StringBuilder(
+        "select {pk} from {ZoneDeliveryMode} where {active} = 1 and {payByCustomer} = 0");
+
+    final FlexibleSearchQuery query = new FlexibleSearchQuery(deliveyModeList);
+
+    final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel> search(query)
+        .getResult();
+    return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+  }
+
     /**
      * {@inheritDoc}
      */

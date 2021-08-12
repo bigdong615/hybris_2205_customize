@@ -175,6 +175,10 @@ public class BlControllerConstants
 	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
 	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
 
+	public static final String EXTEND = "extendOrder";
+	public static final String EMPTY = "";
+	public static final String PAY_BILL = "payBill";
+
 
 	private BlControllerConstants()
 	{

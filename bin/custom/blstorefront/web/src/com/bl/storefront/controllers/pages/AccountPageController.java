@@ -1199,13 +1199,26 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request,
 			final HttpServletResponse response, final Model model, final RedirectAttributes redirectModel) throws CommerceCartModificationException {
 
-		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+		OrderData orderData = null;
+		try {
+			orderData = blOrderFacade
+					.setRentalExtendOrderDetails(orderCode, orderEndDate, selectedEndDate);
 
-		model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
 
-		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
-		{
-			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
+			return Account.AccountOrderExtendSummaryPage;
+		}
+		catch (Exception e) {
+			orderData = new OrderData();
+			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
+					+ "if you are unable to return your order by its scheduled return date.");
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
 		}
 		return Account.AccountOrderExtendSummaryPage;
 	}

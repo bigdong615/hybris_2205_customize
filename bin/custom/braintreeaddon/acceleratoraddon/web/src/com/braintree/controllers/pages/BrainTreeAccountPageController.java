@@ -1,6 +1,7 @@
 package com.braintree.controllers.pages;
 
 import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.exceptions.ResourceErrorMessage;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -190,8 +191,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@RequestMapping(value = "/add-payment-method", method = RequestMethod.GET)
 	@RequireHardLogIn
-	public String addPaymentMethod(final Model model, final String selectedAddressCode) throws CMSItemNotFoundException
-	{
+	public String addPaymentMethod(@RequestParam(value = "orderId", required = false) final String orderCode,
+			final Model model, final String selectedAddressCode) throws CMSItemNotFoundException {
 
 		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
 		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
@@ -211,6 +212,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		model.addAttribute("addressForm", new AddressForm());
 		model.addAttribute("breadcrumbs", breadcrumbs);
 		model.addAttribute("metaRobots", "noindex,nofollow");
+		model.addAttribute("orderCode", orderCode);
 		return getViewForPage(model);
 	}
 
@@ -244,7 +246,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		    @RequestParam(value = "company_name") final String companyName,
 			@RequestParam(value = "selected_Billing_Address_Id") final String selectedAddressCode,
 			@RequestParam(value = "cardholder", required = false) final String cardholder,
-			@RequestParam(value = "default_Card") final String defaultCard,
+			@RequestParam(value = "default_Card") final String defaultCard,@RequestParam(value = "orderCode", required = false) final String orderCode,
 			final RedirectAttributes redirectAttributes, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm) throws CMSItemNotFoundException
 	{
 		if (StringUtils.isEmpty(nonce))
@@ -313,6 +315,16 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 				getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
+
+		if(StringUtils.isNotBlank(orderCode)) {
+			String originalOrderCode = orderCode.replace(BlControllerConstants.RATIO + getRedirectionUrl(orderCode), BlControllerConstants.EMPTY);
+			if(getRedirectionUrl(orderCode).equalsIgnoreCase(BlControllerConstants.EXTEND)) {
+				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + originalOrderCode;
+			}
+			else {
+				//return REDIRECT_PREFIX + MY_ACCOUNT + originalOrderCode + PAY_BILL;
+			}
+		}
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
@@ -416,4 +428,14 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
+
+
+	/**
+	 * This method create to get the URL based on order code
+	 * @param orderCode orderCode
+	 * @return string
+	 */
+	private String getRedirectionUrl(final String orderCode) {
+		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.PAY_BILL;
+	}
 }

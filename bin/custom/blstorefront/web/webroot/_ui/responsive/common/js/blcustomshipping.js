@@ -637,7 +637,7 @@ function removeClass(){
 
  function onAddNewAddressClicked() {
     hideErrorForInputValidation();
-    if($('input[name="shipProduct"]:checked').attr('id') == 'ship-it') {
+    if($('input[name="shipProduct"]:checked').attr('id') == 'ship-it' || $('input[name="shipProduct"]:checked').attr('id') == 'bl-delivery') {
         $('#delivery-shippingAddressFormDiv').show();
         $('#ship-it-save-address-div').show();
     } else {
@@ -655,7 +655,7 @@ function removeClass(){
 
  function onSavedAddressChange() {
     $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
-    if($('input[name="shipProduct"]:checked').attr('id') == 'ship-it') {
+    if($('input[name="shipProduct"]:checked').attr('id') == 'ship-it' || $('input[name="shipProduct"]:checked').attr('id') == 'bl-delivery') {
         $('#delivery-shippingAddressFormDiv').hide();
         $('#ship-it-save-address-div').hide();
         $('#ship-it-save-address-div #ship-it-save-address').prop("checked", true);
@@ -1065,9 +1065,15 @@ function removeClass(){
  }
 
  function defaultShipIt() {
+
+     if($('#isReplacementOrderCart').val() == 'true') {
+      $('#bl-delivery').prop("checked", true);
+     }
+     if($('#isReplacementOrderCart').val() === 'undefined' || $('#isReplacementOrderCart').val() == 'false') {
      $('#ship-it').prop("checked", true);
      $('.ship-it-tab-content').hide();
      $('#tab-SHIP_HOME_HOTEL_BUSINESS').show();
+     }
  }
 
  function hideLabelsFromForm() {

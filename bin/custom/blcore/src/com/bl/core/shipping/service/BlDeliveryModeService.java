@@ -321,4 +321,8 @@ public interface BlDeliveryModeService {
      * @return model
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
+
+
+    Collection<ZoneDeliveryModeModel> getAllPayByBlDeliveryModes(final Boolean payByCustomer);
+
 }

@@ -9,6 +9,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.BlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.utils.BlExtendOrderUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -89,21 +90,28 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	@Override
 	public void calculateEntries(final AbstractOrderModel order, final boolean forceRecalculate) throws CalculationException
 	{
-		double subtotal = 0.0;
-		double totalDamageWaiverCost = 0.0;
-		for (final AbstractOrderEntryModel e : order.getEntries())
-		{
-			recalculateOrderEntryIfNeeded(e, forceRecalculate);
-			subtotal += e.getTotalPrice().doubleValue();
-			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
+		if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
+			BlReplaceMentOrderUtils.updateCartForReplacementOrder(order);
 		}
-		final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
-		order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", finaltotalDamageWaiverCost);
-		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
-		order.setTotalPrice(totalPriceWithDamageWaiverCost);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
-		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+		else {
+			double subtotal = 0.0;
+			double totalDamageWaiverCost = 0.0;
+			for (final AbstractOrderEntryModel e : order.getEntries()) {
+				recalculateOrderEntryIfNeeded(e, forceRecalculate);
+				subtotal += e.getTotalPrice().doubleValue();
+				totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
+			}
+			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
+			order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
+					finaltotalDamageWaiverCost);
+			final Double totalPriceWithDamageWaiverCost = Double
+					.valueOf(subtotal + totalDamageWaiverCost);
+			order.setTotalPrice(totalPriceWithDamageWaiverCost);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
+					totalPriceWithDamageWaiverCost);
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+		}
 	}
 
 	/**
@@ -122,48 +130,54 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	protected void calculateTotals(final AbstractOrderModel order, final boolean recalculate,
 			final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap) throws CalculationException
 	{
-		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
-		{
+		if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
+			BlReplaceMentOrderUtils.updateCartForReplacementOrder(order);
+		}
+		else {
+			if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order)) {
 
-            double totalDamageWaiverCost = 0.0;
-			final CurrencyModel curr = order.getCurrency();
-			final int digits = curr.getDigits().intValue();
-			// subtotal
-			final double subtotal = order.getSubtotal().doubleValue();
-			//totalDamageWaiverCost
-			if(BooleanUtils.isTrue(order.getIsRentalCart()))
-			{
-			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
-					? order.getTotalDamageWaiverCost().doubleValue()
-					: 0.0d;
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
-			}
-			// discounts
-			final double totalDiscounts = calculateDiscountValues(order, recalculate);
-			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
-			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
+				double totalDamageWaiverCost = 0.0;
+				final CurrencyModel curr = order.getCurrency();
+				final int digits = curr.getDigits().intValue();
+				// subtotal
+				final double subtotal = order.getSubtotal().doubleValue();
+				//totalDamageWaiverCost
+				if (BooleanUtils.isTrue(order.getIsRentalCart())) {
+					totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+							? order.getTotalDamageWaiverCost().doubleValue()
+							: 0.0d;
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
+							totalDamageWaiverCost);
+				}
+				// discounts
+				final double totalDiscounts = calculateDiscountValues(order, recalculate);
+				final double roundedTotalDiscounts = getDefaultCommonI18NService()
+						.roundCurrency(totalDiscounts, digits);
+				order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 
-			// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
-			if(BooleanUtils.isTrue(order.getIsExtendedOrder())){
-				order.setDeliveryCost(0.0);
-			}
+				// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
+				if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+					order.setDeliveryCost(0.0);
+				}
 
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
-			// set total
-			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
-					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
-			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
-			order.setTotalPrice(Double.valueOf(totalRounded));
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
-			order.setTotalTax(Double.valueOf(totalRoundedTaxes));
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
-			setCalculatedStatus(order);
-			saveOrder(order);
+				getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+				// set total
+				final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
+						+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
+				final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
+				order.setTotalPrice(Double.valueOf(totalRounded));
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
+				final double totalRoundedTaxes = getDefaultCommonI18NService()
+						.roundCurrency(order.getTotalTax(), digits);
+				order.setTotalTax(Double.valueOf(totalRoundedTaxes));
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
+				setCalculatedStatus(order);
+				saveOrder(order);
 
-			// To set the current extend order in session
-			if(BooleanUtils.isTrue(order.getIsExtendedOrder())) {
-				BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+				// To set the current extend order in session
+				if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+					BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+				}
 			}
 		}
 

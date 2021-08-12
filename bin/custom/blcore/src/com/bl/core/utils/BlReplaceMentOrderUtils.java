@@ -28,7 +28,7 @@ public class BlReplaceMentOrderUtils {
     //empty to avoid instantiating utils class
   }
 
-  public static void updateCartForReplacementOrder(final AbstractOrderModel abstractOrderModel , final Model model) {
+  public static void updateCartForReplacementOrder(final AbstractOrderModel abstractOrderModel) {
     if (BooleanUtils.isTrue(isReplaceMentOrder())) {
       for (OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
         if (CollectionUtils.isNotEmpty(orderModel.getReturnRequests())) {
@@ -54,6 +54,7 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       final List<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
       setPriceForOrderEntries(abstractOrderModel , abstractOrderEntryModels);
       abstractOrderModel.setEntries(abstractOrderEntryModels);
+      abstractOrderModel.setCalculated(Boolean.TRUE);
       getModelService().save(abstractOrderModel);
       getModelService().refresh(abstractOrderModel);
     }
@@ -67,6 +68,7 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       abstractOrderEntryModel.setTaxValues(Collections.emptyList());
       abstractOrderEntryModel.setGearGuardWaiverPrice(0.0);
       abstractOrderEntryModel.setGearGuardProFullWaiverPrice(0.0);
+      abstractOrderEntryModel.setCalculated(Boolean.TRUE);
       abstractOrderEntryModels.add(abstractOrderEntryModel);
       getModelService().save(abstractOrderEntryModel);
       getModelService().refresh(abstractOrderEntryModel);

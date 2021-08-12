@@ -19,23 +19,9 @@
     </div>
     <div class="col-11">
         <b>BL</b>
-        <span class="gray80"><spring:theme code="text.checkout.multi.order.delivery.fast.ship.it.msg"/></span>
         <div class="collapse show" id="bl-delivery-expand" data-bs-parent="#shippingOptions">
             <div class="tab-container">
-                <div class="tab-navigation">
-                    <select id="bl-delivery-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfShipItShippingMethod()">
-                        <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
-                                <c:choose>
-                                    <c:when test="${entry.defaultShippingGroup}">
-                                        <option value="${entry.code}" selected="selected"> ${entry.name} </option>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <option value="${entry.code}"> ${entry.name} </option>
-                                    </c:otherwise>
-                                </c:choose>
-                        </c:forEach>
-                    </select>
-                </div>
+
                 <div id="tab-SHIP_HOME_HOTEL_BUSINESS" class="ship-it-tab-content">
                     <checkout:addressForm />
                     <div id="ship-it-save-address-div" class="mb-5">
@@ -48,9 +34,6 @@
                     <div id="shipToHomeShippingMethods" class="sub-option"></div>
                 </div>
                 <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
-                    <div id="shipToUPSShippingMethods" class="sub-option">
-
-                    </div>
                     <div id="checkZipForUPSPickup" style="display:none;">
                         <b class="mt-4"><spring:theme code="text.ship.it.ups.find.nearest.location"/></b>
                         <div class="input-group mt-2 mb-5">

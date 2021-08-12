@@ -42,6 +42,7 @@
                             <div class="accordion" id="shippingOptions">
                              <c:choose>
                                <c:when test="${isReplacementOrderCart eq true}">
+                               <input type="hidden" value="true" id="isReplacementOrderCart"/>
                                   <checkout:blDeliveryMethod/>
                                </c:when>
                                <c:otherwise>

@@ -28,6 +28,8 @@
 						action="${request.contextPath}/my-account/add-payment-method"
 						method="POST">
 						<div class="hostedFields">
+												<input type="hidden" name="orderCode" id="orderCode" value="${orderCode}"/>
+
 
 							<div class="control-group cardForm" style="dispaly: none;"
 								id="cardForn">

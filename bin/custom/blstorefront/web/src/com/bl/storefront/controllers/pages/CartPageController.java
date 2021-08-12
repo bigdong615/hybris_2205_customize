@@ -186,7 +186,7 @@ public class CartPageController extends AbstractCartPageController
 		CartModel cartModel = blCartService.getSessionCart();
 
 		if(Objects.nonNull(cartModel)){
-		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel , model);
+		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel);
 		}
 
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);

@@ -9,6 +9,7 @@ import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
@@ -16,8 +17,10 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.controllers.pages.CartPageController;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -50,10 +53,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -66,6 +77,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     private static final String CART_DATA = "cartData";
     private static final String SUCCESS = "SUCCESS";
 
+
+    private static final Logger LOG = Logger.getLogger(DeliveryMethodCheckoutStepController.class);
     @Resource(name = "checkoutFacade")
     private BlCheckoutFacade checkoutFacade;
 
@@ -122,7 +135,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
-        if(BooleanUtils.isTrue(isCartForReplacementOrder(blCartService.getSessionCart(), model))){
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReplacementOrder())){
             model.addAttribute("isReplacementOrderCart" , true);
         }
 
@@ -141,14 +154,24 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                             @RequestParam(value = "partnerZone", defaultValue = "")
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
-        final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
-                shippingGroup, partnerZone, true);
-        model.addAttribute(CART_DATA, cartData);
-        model.addAttribute("deliveryMethods", deliveryModes);
-        if(BooleanUtils.isTrue(isCartForReplacementOrder(blCartService.getSessionCart(), model))){
-            model.addAttribute("isReplacementOrderCart" , true);
-        }
+        Collection<? extends DeliveryModeData> deliveryModes;
 
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(blCartService.getSessionCart().getReplacementOrder())) {
+            deliveryModes = getCheckoutFacade().getDeliveryModesForReplacementOrder(false);
+            BlLogger.logMessage(LOG , Level.INFO , deliveryModes.stream().toString() , "********************");
+        }
+        else {
+           deliveryModes = getCheckoutFacade()
+                .getSupportedDeliveryModes(
+                    shippingGroup, partnerZone, true);
+            model.addAttribute(CART_DATA, cartData);
+            model.addAttribute("deliveryMethods", deliveryModes);
+            if (BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder() &&
+                Objects.nonNull(blCartService.getSessionCart().getReplacementOrder()))) {
+                model.addAttribute("isReplacementOrderCart", true);
+            }
+
+        }
         return deliveryModes;
     }
 
@@ -487,6 +510,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     protected String getBreadcrumbKey() {
         return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
     }
+
 
     protected CheckoutStep getCheckoutStep() {
         return getCheckoutStep(DELIVERY_METHOD);

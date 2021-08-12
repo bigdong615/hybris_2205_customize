@@ -271,5 +271,8 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     void saveOrderNotes(final String orderNotes);
 
+    Collection<? extends DeliveryModeData> getDeliveryModesForReplacementOrder(final boolean payByCustomer);
+
+
     boolean setDeliveryAddressForReplacementOrder(final AddressData addressData);
 }

@@ -3,6 +3,7 @@ package com.bl.facades.shipping.impl;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.constants.GeneratedBlCoreConstants.Attributes.ZoneDeliveryMode;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
@@ -155,6 +156,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     @Override
     public Collection<? extends DeliveryModeData> getSupportedDeliveryModes(final String shippingGroup, final String partnerZone,
                                                                             final boolean payByCustomer) {
+
+        BlLogger.logMessage(LOG , Level.INFO , "+++++++++++++++++++" + payByCustomer +"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        BlLogger.logMessage(LOG , Level.INFO , "+++++++++++++++++++" + shippingGroup +"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
             if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
@@ -921,7 +925,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
   }
 
-  /**
+
+    /**
      * Gets the price value.
      *
      * @param priceData the price data
@@ -953,6 +958,26 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    		 throw exception;
    	 }   	 
     }
+
+    @Override
+    public Collection<? extends DeliveryModeData> getDeliveryModesForReplacementOrder(
+        boolean payByCustomer) {
+        Collection<ZoneDeliveryModeModel> deliveryModeModels = getBlZoneDeliveryModeService().getAllPayByBlDeliveryModes(payByCustomer);
+
+        if (CollectionUtils.isNotEmpty(deliveryModeModels)) {
+            final Collection<ZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
+            for (ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
+                final ZoneDeliveryModeData zoneDeliveryModeData = getZoneDeliveryModeConverter().convert(zoneDeliveryModeModel);
+                if (null != zoneDeliveryModeData) {
+                    zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(0.0), getCart().getCurrency().getIsocode()));
+                    resultDeliveryData.add(zoneDeliveryModeData);
+                }
+            }
+            return resultDeliveryData;
+        }
+        return Collections.emptyList();
+    }
+
 
 
     @Override

@@ -830,6 +830,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
 
+    @Override
+    public Collection<ZoneDeliveryModeModel> getAllPayByBlDeliveryModes(final Boolean payByCustomer) {
+        return getBlZoneDeliveryModeDao().getAllPayByBlDeliveryModes(payByCustomer);
+    }
+
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
     }
