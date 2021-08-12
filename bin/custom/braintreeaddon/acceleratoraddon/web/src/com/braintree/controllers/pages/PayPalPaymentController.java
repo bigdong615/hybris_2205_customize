@@ -6,7 +6,7 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_HAED_ERROR;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
-
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
@@ -62,6 +62,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.commercefacades.order.OrderFacade;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 
 
 @Controller
@@ -69,7 +71,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PayPalPaymentController extends AbstractCheckoutController
 {
 	protected static final String REDIRECT_URL_CART = REDIRECT_PREFIX + BraintreeaddonWebConstants.CART_URL;
-	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String DEVICE_DATA = "device_data";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
@@ -113,6 +114,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@Resource
 	private BrainTreeTransactionService brainTreeTransactionService;
 
+	
+	@Resource(name = "orderFacade")
+	private OrderFacade orderFacade;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -248,6 +252,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
         PayPalExpressResponse payPalExpressResponse = null;
         AddressData hybrisBillingAddress = null;
+        final String orderCode = request.getParameter("order_code");
+        final String payBillTotal = request.getParameter("payBillTotal");
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
         } catch (final IllegalArgumentException exeption) {
@@ -296,24 +302,43 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			 hybrisBillingAddress.setEmail(payPalEmail);
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
 		 }
-
+		  boolean isSuccess = false;
         try {
-            brainTreePaymentFacade.completeCreateSubscription(subscriptionInfo, false);
+			AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+			if (null != order) {
+				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade.completeCreateSubscription(
+						subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
+				if (null != paymentInfo) {
+					isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+							BigDecimal.valueOf(Double.parseDouble(payBillTotal)), true, paymentInfo);
+				}
+			}
         } catch (final Exception exception) {
             final String errorMessage = getLocalizedString("braintree.billing.general.error");
             handleErrors(errorMessage, model);
             return CheckoutOrderPageErrorPage;
         }
-        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-                getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
-        return REDIRECT_TO_PAYMENT_INFO_PAGE;
+        if(isSuccess) {
+			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			model.addAttribute("orderData", orderDetails);
+			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+			storeCmsPageInModel(model, payBillSuccessPage);
+			setUpMetaDataForContentPage(model, payBillSuccessPage);
+			model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PAY_PAL);
+			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+					ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+			return getViewForPage(model);
+		} else {
+			return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
+		}
     }
 
 	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
 	public String doInitializeMiniCartPaypalShortcut() throws CMSItemNotFoundException, JsonGenerationException,
-            JsonMappingException, IOException
+	                                                           JsonMappingException, IOException
 	{
 		return buildPayPalMiniCartResponse();
 	}
