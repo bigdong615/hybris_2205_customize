@@ -250,7 +250,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@RequireHardLogIn
 	@PreValidateQuoteCheckoutStep
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
-	public String enterStep(final Model model, final RedirectAttributes redirectAttributes, final HttpServletRequest request, @Valid GiftCardPurchaseForm giftCardPurchaseForm, final BindingResult bindingResult) throws CMSItemNotFoundException
+	public String enterStep(final Model model, final RedirectAttributes redirectAttributes, final HttpServletRequest request, @Valid final GiftCardPurchaseForm giftCardPurchaseForm, final BindingResult bindingResult) throws CMSItemNotFoundException
 	{
 		if(getCheckoutFacade().updateGiftCardPurchaseForm(giftCardPurchaseForm)){
 			return enterStep(model,redirectAttributes);

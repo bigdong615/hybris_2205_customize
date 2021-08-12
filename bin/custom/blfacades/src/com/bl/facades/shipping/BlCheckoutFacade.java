@@ -65,7 +65,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModesForUsedGear(final boolean payByCustomer);
 
-
     /**
      *This method will fetch all the Partner PickUp Store from service
      *
@@ -90,7 +89,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModesForUsedGear(final boolean payByCustomer);
 
-
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone from service.
@@ -102,7 +100,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
                                                                          final String rentalEnd, final boolean payByCustomer);
-
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
@@ -181,7 +178,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * This method will check validity of user entered pinCode for SF or NYC
-     *
      * @param pinCode to be checked for validity
      * @param deliveryType i.e., SF or NYC
      * @return return true / false
@@ -213,7 +209,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * This method will integrate AVS in checkout flow
-     *
      * @param addressData requested address data
      * @return Address Validation Response addresses
      */
@@ -221,7 +216,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * Check availability for delivery mode.
-     *
      * @param deliveryModeCode the delivery mode code
      * @return true, if successful
      */

@@ -928,7 +928,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    * @param GiftCardPurchaseForm the giftCardPurchaseForm
    */
     @Override
-    public boolean updateGiftCardPurchaseForm(GiftCardPurchaseForm giftCardPurchaseForm) {
+    public boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm) {
       try {
           final CartModel cartModel = getCartService().getSessionCart();
           if(Objects.nonNull(cartModel)){
