@@ -706,6 +706,7 @@ $('.emailSubscr_btn').click(function (e){
 					}
 				}
 			});
+			$("#emailSubscr_txt").val("");
 });
 
 //Added code for used gear addToCart 
