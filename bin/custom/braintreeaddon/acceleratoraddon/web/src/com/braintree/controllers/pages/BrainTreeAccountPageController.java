@@ -406,9 +406,17 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		}
 	}
 
-	/**
-	 * This method will return true after auth success. 
-	 */
+    /**
+     * This method will return true after Authorization and capture done successfully
+     *
+     * @param paymentInfoId
+     * @param paymentMethodNonce
+     * @param billPayTotal
+     * @param poNumber
+     * @param poNotes
+     * @return boolean
+     *
+     */
 	private boolean payBillSuccess(final Model model, String paymentInfoId, String paymentMethodNonce,
 			String billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
 		boolean isSuccess = false;
