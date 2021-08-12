@@ -49,7 +49,9 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                               
                               ; MobileMiniCartSlot                              ;                                                                                ;                           ; minicart            
                               ; TopHeaderSlot                          ;                                                                                ;                           ; wide
                               ; SocialMediaSectionSlot                          ;                                                                                ;                           ; wide
-                              
+                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+
+
 ###  Define Content Slots  ###
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                                ; name                                                 ; active[default=true] 
                           ;                         ; OrderConfirmationPageFeaturedStoriesSectionSlot ; Order Confirmation Page FeaturedStories Section Slot ;                      
@@ -76,7 +78,9 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileMiniCartSlot-orderConfirmationPage                  ; MobileMiniCartSlot                  ;                                                                                    ; MobileMiniCartSlot                       ; true           
                                     ;                         ; TopHeaderSlot-orderConfirmationPage              ; TopHeaderSlot              ;                                                                                    ; TopHeaderSlot                   ; true
                                      ;                         ; SocialMediaSectionSlot-orderConfirmationPage              ; SocialMediaSectionSlot              ;                                                                                    ; SocialMediaSectionSlot                   ; true
-                                     
+                                     ;                         ; MyAccountSlot-orderConfirmationPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+
+
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                                                      ; position[unique=true]                           ; page(uid,$contentCV)[unique=true][default='orderConfirmation'] ; contentSlot(uid,$contentCV)[unique=true]        
                                  ;                         ; OrderConfirmationPageFeaturedStoriesSectionSlot-orderConfirmationPage ; OrderConfirmationPageFeaturedStoriesSectionSlot ;                                                                ; OrderConfirmationPageFeaturedStoriesSectionSlot ; true 
