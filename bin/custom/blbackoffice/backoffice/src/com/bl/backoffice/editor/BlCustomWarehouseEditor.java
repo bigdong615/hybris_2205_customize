@@ -60,8 +60,6 @@ public class BlCustomWarehouseEditor<T> extends DefaultReferenceEditor<T> {
     if (warehouse == null) {
       throw new IllegalArgumentException("Found warehouse as null either at user or base store");
     }
-    BlLogger.logFormattedMessage(LOG, Level.DEBUG, StringUtils.EMPTY,
-        "Found warehouse with code : {}", warehouse.getCode());
     addSelectedObject((T) warehouse);
   }
 }
