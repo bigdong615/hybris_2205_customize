@@ -961,32 +961,36 @@ function removeClass(){
             var email = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
             var phone = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
             if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Rush")) {
-                $.ajax({
-                   url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
-                   data: {
-                       deliveryNote: sameDayDeliveryNote,
-                       statusUpdate: $('#same-day-status-updates').prop("checked")
-                   },
-                   type: "GET",
-                   dataType: 'json',
-                   beforeSend: function(){
-                        $('.page-loader-new-layout').show();
-                   },
-                   success: function (data) {
-                        if(data == 'SUCCESS') {
-                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
-                                                        townCity.val(),regionIso.val(), 'US', postcode.val(),
-                                                        $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
-                                                        phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
-                        }
-                   },
-                   complete: function() {
-                       $('.page-loader-new-layout').hide();
-                   },
-                   error: function (data) {
-                        $('.page-loader-new-layout').hide();
-                   }
-                });
+                if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
+                    $.ajax({
+                       url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
+                       data: {
+                           deliveryNote: sameDayDeliveryNote,
+                           statusUpdate: $('#same-day-status-updates').prop("checked")
+                       },
+                       type: "GET",
+                       dataType: 'json',
+                       beforeSend: function(){
+                            $('.page-loader-new-layout').show();
+                       },
+                       success: function (data) {
+                            if(data == 'SUCCESS') {
+                                addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
+                                                            townCity.val(),regionIso.val(), 'US', postcode.val(),
+                                                            $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
+                                                            phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
+                            }
+                       },
+                       complete: function() {
+                           $('.page-loader-new-layout').hide();
+                       },
+                       error: function (data) {
+                            $('.page-loader-new-layout').hide();
+                       }
+                    });
+                }
             } else {
                 showErrorForInputValidation('Rush');
                 $('.page-loader-new-layout').hide();
@@ -1266,14 +1270,20 @@ function removeClass(){
         line2Status = validateField(townCity.val(), townCity);
     }
     if(postcode != null) {
-        if(postcode.val().length > 0 && postcode.val().length < 5) {
-            postcode.addClass('error');
-            showErrorForZipInputInvalidValidation(section);
-            postcodeStatus = true;
+        postcodeStatus = validateZip(postcode.val());
+        if(!postcodeStatus) {
+            if(postcode.val().length > 0) {
+                postcode.addClass('error');
+                showErrorForZipInputInvalidValidation(section);
+                postcodeStatus = true;
+            } else {
+                postcode.addClass('error');
+            }
         } else {
-            postcodeStatus = validateField(postcode.val(), postcode);
+            postcode.removeClass('error');
         }
     }
+    
     if(regionIso != null) {
         regionIsoStatus = validateField(regionIso.val(), regionIso);
     }
