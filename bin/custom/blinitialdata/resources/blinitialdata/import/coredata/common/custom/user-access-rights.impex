@@ -11,15 +11,33 @@ INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
 #Employee creation for frondesk user rols/group
 INSERT_UPDATE BackofficeRole; UID[unique = true]; locname[lang = de]; locname[lang = en]; backOfficeLoginDisabled; authorities
                             ; frontdeskuserrole ; Bl User Role      ; Bl User Role      ; FALSE                  ; frontdeskuserrole
-
+                            ; shippingteamuserrole ; Bl User Role   ; Bl User Role      ; FALSE                  ; shippingteamuserrole
+	
 INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
                        ; frondeskusergroup ; employeegroup,frontdeskuserrole
+                       ; shippingteamkusergroup ; employeegroup,shippingteamuserrole
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
+                                    ; shippingteamkusergroup         ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
                       ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup ; 1234
+                      ; shippingteamuser ; Front desk team user ; Bl User     ; shippingteamkusergroup ; 1234
+
+
+# BL-828, BL-829 Employee creation for inventory team user rols/group
+INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];backOfficeLoginDisabled;authorities
+                            ;blinventoryuserrole;Bl Inventory User Role;Bl Inventory User Role;FALSE;blinventoryuserrole
+
+INSERT_UPDATE Usergroup;uid[unique=true];groups(uid);locname[lang=en];description
+                       ;blinventoryusergroup;employeegroup,blinventoryuserrole;BL Inventory User Group;User group for BL inventory team members
+
+INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
+                                    ;blinventoryusergroup;blinventoryuserrole
+
+INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
+                      ;blinventoryuser;Bl Inventory User;blinventoryusergroup;1234
 
 
 $START_USERRIGHTS;;;;;;;;;
@@ -168,6 +186,24 @@ $START_USERRIGHTS; ; ; ; ; ; ; ;
 Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
 Usergroup ; frontdeskuserrole ;                ;                            ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
+          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
+          ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; Order          ; +    ; +      ; -      ; -
+          ;                   ;                ; User           ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
+          ;                   ;                ; Address        ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+$END_USERRIGHTS; ; ; ;
+#Access rights for shippingteamuserrole
+$START_USERRIGHTS; ; ; ; ; ; ; ;
+Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
+Usergroup ; shippingteamuserrole ;                ;                ;      ;        ;        ;        ;
+# Access Rights for Warehousing agent group;;;;;;;;
+          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
+          ;                   ;                ; Order          ; +    ; +      ; -      ; -
+          ;                   ;                ; User           ; +    ; -      ; -      ; -
+          ;                   ;                ; Address        ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
           ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
@@ -179,3 +215,19 @@ Usergroup ; frontdeskuserrole ;                ;                            ;   
           ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
           ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ;
+
+#Access rights for BL Inventory user group
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;blinventoryusergroup;;;;;;;
+
+;;;InventoryInCompleteOrdersQueue;+;+;-;-
+;;;InventoryCompleteOrdersQueue;+;+;-;-
+;;;PullReadyToShipOrdersCronJob;+;+;-;-
+;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
+;;;WebScanTool;+;+;-;-
+;;;Warehouse;+;+;-;-
+;;;Consignment;+;+;-;-
+;;;Order;+;+;-;-
+
+$END_USERRIGHTS;;;;

@@ -13,6 +13,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -30,6 +31,7 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
 import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
@@ -66,7 +68,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import com.braintree.model.BrainTreePaymentInfoModel;
 
 /**
  * {javadoc}
@@ -89,6 +90,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 @Resource(name = "brainTreeTransactionService")
  	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
+    private BlCartService blCartService;
 	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
@@ -912,7 +914,15 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
   }
 
-  /**
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateOrderTypes() {
+        blCartService.updateOrderTypes();
+    }
+
+    /**
      * Gets the price value.
      *
      * @param priceData the price data
@@ -1067,4 +1077,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
 
+    public BlCartService getBlCartService() {
+        return blCartService;
+    }
+
+    /**
+     * @param blCartService the blCartService to set
+     */
+    public void setBlCartService(final BlCartService blCartService) {
+        this.blCartService = blCartService;
+    }
 }
