@@ -383,28 +383,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		boolean isSuccess = false;
 		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
+				StringUtils.isNotBlank(paymentMethodNonce) ) {
 			final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
-			if (null != order) {
-				if (StringUtils.isNotBlank(poNumber)) {
-					isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, orderCode);
-					if (BooleanUtils.isTrue(isSuccess)) {
-						model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PO);
-					}
-				} else {
-					final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
-							.getBrainTreePaymentInfoForCode(
-									(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
-					if (null != paymentInfo) {
-						isSuccess = brainTreeTransactionService
-								.createAuthorizationTransactionOfOrder(order,
-										BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
-					}
-					if (BooleanUtils.isTrue(isSuccess)) {
-						model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
-					}
-				}
-			}
+
+				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
+						poNotes, order);
+
 		}
 
 		if (isSuccess) {
@@ -420,6 +404,33 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		} else {
 			return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
 		}
+	}
+
+	/**
+	 * This method will return true after auth success. 
+	 */
+	private boolean payBillSuccess(final Model model, String paymentInfoId, String paymentMethodNonce,
+			String billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
+		boolean isSuccess = false;
+		if (null != order && StringUtils.isNotBlank(poNumber)) {
+			isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, order.getCode());
+			if (BooleanUtils.isTrue(isSuccess)) {
+				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PO);
+			}
+		} else if(null != order) {
+			final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+					.getBrainTreePaymentInfoForCode(
+							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
+			if (null != paymentInfo) {
+				isSuccess = brainTreeTransactionService
+						.createAuthorizationTransactionOfOrder(order,
+								BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+			}
+			if (BooleanUtils.isTrue(isSuccess)) {
+				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
+			}
+		}
+		return isSuccess;
 	}
 
 	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,                         // NOSONAR
