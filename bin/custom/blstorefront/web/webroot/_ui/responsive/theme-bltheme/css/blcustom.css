@@ -491,7 +491,7 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 
 .expertHelpIcon {
-    background-image: url(https://cdn.static-bl.com/images/expertHelpIconNew.png);
+    background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
     background-repeat: no-repeat;
     display: inline-block;
     margin-top: 10px;
@@ -510,6 +510,9 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 .renameSaveCartName-css{
 width:100%;
+}
+.changeEmail-error .help-block{
+margin:-14px 0 13px 0 !important;
 }
 
 

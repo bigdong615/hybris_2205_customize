@@ -929,6 +929,7 @@ function createHostedFields(clientInstance) {
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
 							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 							var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
+							var orderId = createHiddenParameter("orderCode", $("#orderId").val());
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
 							submitForm.append($(paymentNonce));
@@ -954,6 +955,7 @@ function createHostedFields(clientInstance) {
 							submitForm.append($(cardDetails));
 							submitForm.append($(cardholder));
 							submitForm.append($(defaultCard));
+							submitForm.append($(orderId));
 							submitForm.submit();
 						}
 					});
@@ -1279,6 +1281,38 @@ $(".edit-cc-form").on("click",function(e){
 	$("#braintree-payment-edit-form").submit();
 });
 
+$(".js-po-extend-order").on("click", function(e) {
+	e.preventDefault();
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var poEnable = $('#paymentMethodPo').is(':checked');
+	var paymentInfoId =  $('#paymentId').val();
+	
+	if((ccEnable == true && paymentInfoId !='') || payPalEnable == true || poEnable == true ){
+	
+	var extendPoNumber1 = $("#extendPoNumberInput").val();
+	var extendPoNotes1 = $("#extendPoNotesInput").val();
+	
+	if (poEnable == true && extendPoNumber1 == '') {
+		var validationDiv = $(
+			'<div class="notification notification-error mb-4" />').text(
+			ACC.ccError.poNumber);
+	    $('#validationMessage').append(validationDiv);
+		
+    }else{
+    	$("#extendPoNumber").val(extendPoNumber1);
+		$("#extendPoNotes").val(extendPoNotes1);
+   
+	$("#payBillForm").submit();
+    }
+	}
+	else{
+		  allFieldValidation(ACC.ccError.allFieldsNotSelected);
+		}
+});
+
+
+
 
 if((typeof editPaymentMethodsPage != 'undefined'))
 {	
@@ -1358,4 +1392,12 @@ $(".js-set-default-card").on("click",function(e){
         }
 });
     
+});
+
+
+$(".add-cc-form").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form").submit();
 });

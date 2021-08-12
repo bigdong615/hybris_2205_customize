@@ -67,15 +67,15 @@
 							<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
 						       <c:set value="hidebutton" var="hidebutton" />
 							</sec:authorize>
-							<button type="button"
-								data-link="<c:url value='/login/loginpopup'/>"
+							<button type="button" id="add-to-gc"
+								data-link="<c:url value='/login/loginpopup'/>" 
 								class="btn btn-primary btn-block mt-4 mb-0 mb-md-5  js-login-popup hide-after-login"
-								data-bs-toggle="modal" data-bs-target="#signIn"
+								data-bs-toggle="modal" data-bs-target=""
 								data-click="serial_entry_">
 								<spring:theme code="basket.add.to.basket" />
 							</button>
 							<button type="button" data-bs-toggle="modal" data-bs-target="#addToCart"
-								class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-used-cart   ${hidebutton} serial_entry_${loop.index } "
+								class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 btn-gift-card-pdp js-add-to-used-cart   ${hidebutton} serial_entry_${loop.index } "
 								data-product-code="${product.code}" >
 								<spring:theme code="basket.add.to.basket" />
 							</button>

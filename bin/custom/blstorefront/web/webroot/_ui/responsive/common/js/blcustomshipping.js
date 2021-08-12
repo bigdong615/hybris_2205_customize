@@ -177,10 +177,14 @@ function removeClass(){
               var regionIso = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]');
               var email = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
               var phone = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
-              if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
+              if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Ship")) {
+                  if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+                        $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
+                        $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
                   addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
+                  }
               } else {
                   showErrorForInputValidation('Ship');
               }
@@ -268,14 +272,39 @@ function removeClass(){
  }
 
  function shipToUPSStoreLocationContinue(shippingMethod) {
+     if($('#changeUPSStoreButton').is(":visible")) {
+         utag.link({
+           "tealium_event"    : "continue_shipping_click",
+           "shipping_method"   : "Ship It-Ship to UPS",
+           "shipping_method_not_available"     : "0"
+         });
+         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
+         var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
+         addNewAddress(createUPSStoreAddress(), deliveryMethod)
+             .then((data) => {
+                 saveDeliveryMode(deliveryMethod, false)
+                     .then((data) => {
+                         $('.page-loader-new-layout').hide();
+                         window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+                     })
+                     .catch((error) => {
+                       console.log(error)
+                     })
+             })
+             .catch((error) => {
+               console.log(error)
+             })
+     } else {
+        showErrorForUPSOrPickAddressError();
+     }
      //shipping by someone form data
-     if($('#ship-it-pickup-gear').find('#pickup-person').find('input[id="store-pickup-other"]').prop("checked")) {
+     /*if($('#ship-it-pickup-gear').find('#pickup-person').find('input[id="store-pickup-other"]').prop("checked")) {
          if($("#ship-it-pickup-person").css('display') == 'block') {
              var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
              var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
              var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
              var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
-             if(validateFormData(firstName, lastName, null, null, null, null, email, phone)) {
+             if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
                  savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                         $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
              } else {
@@ -285,7 +314,7 @@ function removeClass(){
      } else {
          savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
                          .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-     }
+     }*/
  }
 
  function onClickOfFindStore() {
@@ -352,6 +381,9 @@ function removeClass(){
                                              '</div>';
                          }
                          $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
+                         if(data.length == 1) {
+                             $('#ship-it-SHIP_UPS_OFFICE #ups-location-1').first().find('input[name="ups-location"]').prop("checked", true);
+                         }
                      }
                  } else {
                      showErrorNotification('Whoops! Something went wrong, please try again to Find UPS store later.', false);
@@ -374,6 +406,8 @@ function removeClass(){
   }
 
  function onSelectOfUPSStore(upsSelectedStoreId) {
+     $('#showErrorForUPSOrPickAddressError').html('');
+     $('#showErrorForUPSOrPickAddressError').hide();
      let stores = JSON.parse(sessionStorage.getItem("UPSStores"));
      if(stores != null && stores.length != 0) {
          for (let i = 0; i < stores.length; i++) {
@@ -444,6 +478,8 @@ function removeClass(){
   }
 
  function changeUPSStore() {
+     $('#showErrorForUPSOrPickAddressError').html('');
+     $('#showErrorForUPSOrPickAddressError').hide();
      $('#showErrorForInputValidation').html('');
      $('#showErrorForInputValidation').hide();
      $('#checkZipForUPSPickup').show();
@@ -484,19 +520,18 @@ function removeClass(){
      hideErrorForInputValidation();
      resetSelectBox('pick-up-select-box');
      resetPartnerPickUpSection();
-     showPartnerPickUpDeliveryModes($('#pick-up-select-box').val());
      $('#pickup-me').prop("checked", true);
      $('#pick-up-notification').val('');
  });
 
  function pickUpPartnerLocationContinue(shippingMethod) {
-     if($('#pick-up-pickup-gear').find('#pickup-person').find('input[id="pickup-other"]').prop("checked")) {
+     /*if($('#pick-up-pickup-gear').find('#pickup-person').find('input[id="pickup-other"]').prop("checked")) {
          if($("#store-pickup-person").css('display') == 'block') {
              var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
              var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
              var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
              var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
-             if(validateFormData(firstName, lastName, null, null, null, null, email, phone)) {
+             if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
                    savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                              $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
              } else {
@@ -506,6 +541,26 @@ function removeClass(){
      } else {
            savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
                  $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
+     }*/
+
+     if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
+        // track Tealium event on continue shipping.
+        utag.link({
+         "tealium_event"    : "continue_shipping_click",
+         "shipping_method"   : "PickUP",
+         "shipping_method_not_available"     : "0"
+        });
+        ACC.track.trackShippingSelection('PickUP','','Item In Stock');
+        saveDeliveryMode($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true)
+            .then((data) => {
+                $('.page-loader-new-layout').hide();
+                window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+     } else {
+        showErrorForUPSOrPickAddressError();
      }
  }
 
@@ -700,6 +755,8 @@ function removeClass(){
   function onSelectPartnerPickup(event) {
      resetPartnerPickUpSection();
      showPartnerPickUpDeliveryModes(event.value);
+     $('#showErrorForUPSOrPickAddressError').html('');
+     $('#showErrorForUPSOrPickAddressError').hide();
   }
 
   //SF Or NYC
@@ -903,33 +960,37 @@ function removeClass(){
             var regionIso = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]');
             var email = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
             var phone = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
-            if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
-                $.ajax({
-                   url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
-                   data: {
-                       deliveryNote: sameDayDeliveryNote,
-                       statusUpdate: $('#same-day-status-updates').prop("checked")
-                   },
-                   type: "GET",
-                   dataType: 'json',
-                   beforeSend: function(){
-                        $('.page-loader-new-layout').show();
-                   },
-                   success: function (data) {
-                        if(data == 'SUCCESS') {
-                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
-                                                        townCity.val(),regionIso.val(), 'US', postcode.val(),
-                                                        $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
-                                                        phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
-                        }
-                   },
-                   complete: function() {
-                       $('.page-loader-new-layout').hide();
-                   },
-                   error: function (data) {
-                        $('.page-loader-new-layout').hide();
-                   }
-                });
+            if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Rush")) {
+                if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
+                    $.ajax({
+                       url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
+                       data: {
+                           deliveryNote: sameDayDeliveryNote,
+                           statusUpdate: $('#same-day-status-updates').prop("checked")
+                       },
+                       type: "GET",
+                       dataType: 'json',
+                       beforeSend: function(){
+                            $('.page-loader-new-layout').show();
+                       },
+                       success: function (data) {
+                            if(data == 'SUCCESS') {
+                                addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
+                                                            townCity.val(),regionIso.val(), 'US', postcode.val(),
+                                                            $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
+                                                            phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
+                            }
+                       },
+                       complete: function() {
+                           $('.page-loader-new-layout').hide();
+                       },
+                       error: function (data) {
+                            $('.page-loader-new-layout').hide();
+                       }
+                    });
+                }
             } else {
                 showErrorForInputValidation('Rush');
                 $('.page-loader-new-layout').hide();
@@ -977,20 +1038,75 @@ function removeClass(){
  //Error Notifications
  function showErrorForInputValidation(section) {
     let notification = '';
+    var len = 0;
     if(section == 'Ship') {
-        notification += '<div class="notification notification-error"> You are missing ' +
-                            $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error').length +
-                            ' required fields.' +
+        $($('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')).each(function(k, v) {
+            if(v.value == "") {
+                len = len + 1;
+            }
+        });
+        notification += '<div class="notification notification-error" style="margin-top: 0px;"> You are missing ' + len + ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     } else {
-        notification += '<div class="notification notification-error"> You are missing ' +
-                            $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error').length +
-                            ' required fields.' +
+        $($('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')).each(function(k, v) {
+            if(v.value == "") {
+                len = len + 1;
+            }
+        });
+        notification += '<div class="notification notification-error" style="margin-top: 0px;"> You are missing ' + len + ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     }
     notification += '</div>' + '<br>';
     $('#showErrorForInputValidation').html(notification);
     $('#showErrorForInputValidation').show();
+ }
+
+ function showErrorForZipInputInvalidValidation(section) {
+     let notification = '';
+     if(section == 'Ship') {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Zip ' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'postcode\')">' +
+                              'Scroll up.</a>';
+     } else {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Zip ' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'postcode\')">' +
+                             ' Scroll up.</a>';
+     }
+     notification += '</div>' + '<br>';
+     $('#showErrorForInvalidZipInputValidation').html(notification);
+     $('#showErrorForInvalidZipInputValidation').show();
+  }
+
+ function showErrorForEmailInputInvalidValidation(section) {
+     let notification = '';
+     if(section == 'Ship') {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Email' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this,\'email\')">' +
+                             ' Scroll up.</a>';
+     } else {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Email' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this,\'email\')">' +
+                             ' Scroll up.</a>';
+     }
+     notification += '</div>' + '<br>';
+     $('#showErrorForInvalidEmailInputValidation').html(notification);
+     $('#showErrorForInvalidEmailInputValidation').show();
+ }
+
+ function showErrorForPhoneInputInvalidValidation(section) {
+     let notification = '';
+     if(section == 'Ship') {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Phone Number' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'phone\' )">' +
+                             ' Scroll up.</a>';
+     } else {
+         notification += '<div class="notification notification-error" style="margin-top: 0px;"> You have entered invalid Phone Number' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForInvalidError(this, \'phone\' )">' +
+                             ' Scroll up.</a>';
+     }
+     notification += '</div>' + '<br>';
+     $('#showErrorForInvalidPhoneInputValidation').html(notification);
+     $('#showErrorForInvalidPhoneInputValidation').show();
  }
 
  function scrollUpForError(event) {
@@ -1001,15 +1117,42 @@ function removeClass(){
      }
   }
 
+  function scrollUpForInvalidError(event, fieldName) {
+       if(event.getAttribute('class') == 'Ship') {
+           return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group')
+                    .find('input[id="address.'+fieldName+'"]')[0].scrollIntoView(true);
+       } else {
+           return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group')
+                    .find('input[id="address.'+fieldName+'"]')[0].scrollIntoView(true);
+       }
+    }
+
+    function showErrorForUPSOrPickAddressError() {
+         let notification = '';
+         notification += '<div class="notification notification-error"> You need to select a Pickup location';
+         notification += '</div>' + '<br>';
+         $('#showErrorForUPSOrPickAddressError').html(notification);
+         $('#showErrorForUPSOrPickAddressError').show();
+     }
+
   function showErrorForInputValidationPick(section) {
      let notification = '';
+     var len = 0;
      if(section == 'Ship') {
-         notification += '<div class="notification notification-error"> You are missing ' +
-                             $("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+        $($("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error')).each(function(k, v) {
+            if(v.value == "") {
+                len = len + 1;
+            }
+        });
+         notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
      } else {
-         notification += '<div class="notification notification-error"> You are missing ' +
-                             $("#store-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+        $($("#store-pickup-person #blPickUpByForm").find('.form-group .error')).each(function(k, v) {
+            if(v.value == "") {
+                len = len + 1;
+            }
+        });
+        notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
      }
      notification += '</div>';
@@ -1026,8 +1169,16 @@ function removeClass(){
  }
 
  function hideErrorForInputValidation() {
-    $('#showErrorForInputValidation').html('');
-    $('#showErrorForInputValidation').hide();
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
+     $('#showErrorForInvalidZipInputValidation').html('');
+     $('#showErrorForInvalidZipInputValidation').hide();
+     $('#showErrorForInvalidEmailInputValidation').html('');
+     $('#showErrorForInvalidEmailInputValidation').hide();
+     $('#showErrorForInvalidPhoneInputValidation').html('');
+     $('#showErrorForInvalidPhoneInputValidation').hide();
+     $('#showErrorForUPSOrPickAddressError').html('');
+     $('#showErrorForUPSOrPickAddressError').hide();
  }
 
  function showErrorNotificationForPickUpId(msg, status) {
@@ -1105,7 +1256,7 @@ function removeClass(){
      }
  }
 
- function validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone) {
+ function validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, section) {
     let firstNameStatus = validateField(firstName.val(), firstName);
     let lastNameStatus = validateField(lastName.val(), lastName);
     let line1Status = '';
@@ -1119,13 +1270,26 @@ function removeClass(){
         line2Status = validateField(townCity.val(), townCity);
     }
     if(postcode != null) {
-        postcodeStatus = validateField(postcode.val(), postcode);
+        postcodeStatus = validateZip(postcode.val());
+        if(!postcodeStatus) {
+            if(postcode.val().length > 0) {
+                postcode.addClass('error');
+                showErrorForZipInputInvalidValidation(section);
+                postcodeStatus = true;
+            } else {
+                postcode.addClass('error');
+            }
+        } else {
+            postcode.removeClass('error');
+        }
     }
+    
     if(regionIso != null) {
         regionIsoStatus = validateField(regionIso.val(), regionIso);
     }
-    let emailStatus = validateEmail(email.val(), email);
-    let phoneStatus = validatePhone(phone.val(), phone);
+
+    let emailStatus = validateEmail(email.val(), email, section);
+    let phoneStatus = validatePhone(phone.val(), phone, section);
     if(line1 != null && townCity != null && postcode != null && regionIso != null) {
         if(firstNameStatus && lastNameStatus && line1Status && line2Status && postcodeStatus && regionIsoStatus && emailStatus && phoneStatus) {
             return true;
@@ -1184,7 +1348,7 @@ function removeClass(){
  }
 
  function validateZip(zipCode) {
-    if(zipCode != null && zipCode.length != 0) {
+    if(zipCode != null && zipCode.trim() != '' && zipCode.length != 0) {
         let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
         return zipRegex.test(zipCode.trim());
     } else {
@@ -1201,22 +1365,37 @@ function removeClass(){
       return false;
   }
 
- function validateEmail(email, fieldName) {
-      if(email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+ function validateEmail(email, fieldName, section) {
+      if(email == "" && email.trim() == '') {
+        fieldName.addClass('error');
+        return true;
+      } else {
+        let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(email && email.trim() != '' && re.test(String(email).toLowerCase())) {
           fieldName.removeClass('error');
           return true;
+        } else {
+          fieldName.addClass('error');
+          showErrorForEmailInputInvalidValidation(section);
+          return true;
+        }
       }
-      fieldName.addClass('error');
-      return false;
  }
 
- function validatePhone(phone, fieldName) {
-      if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
-          fieldName.removeClass('error');
+ function validatePhone(phone, fieldName, section) {
+      if(phone == "" && phone.trim() == '') {
+          fieldName.addClass('error');
           return true;
+      } else {
+          if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+            fieldName.removeClass('error');
+            return true;
+          } else {
+            fieldName.addClass('error');
+            showErrorForPhoneInputInvalidValidation(section);
+            return true;
+          }
       }
-      fieldName.addClass('error');
-      return false;
  }
 
  //AJAX
