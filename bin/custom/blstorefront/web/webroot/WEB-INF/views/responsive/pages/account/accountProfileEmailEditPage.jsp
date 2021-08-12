@@ -16,7 +16,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-lg-7">
-                            <form:form action="update-email" method="post" modelAttribute="updateEmailForm" class="my-4">
+                            <form:form action="update-email" method="post" modelAttribute="updateEmailForm" class="my-4 changeEmail-error">
                                 <formElement:formInputBox idKey="profile.email" path="email" inputCSS="form-control mb-3" mandatory="true" placeholder="Current Email"/>
                                 <formElement:formInputBox idKey="profile.checkEmail" path="chkEmail" inputCSS="form-control mb-3" mandatory="true" placeholder="New Email"/>
                                 <formElement:formPasswordBox idKey="profile.pwd" path="password" inputCSS="form-control ${errormsgvalid}" mandatory="true" placeholder="Password"/>

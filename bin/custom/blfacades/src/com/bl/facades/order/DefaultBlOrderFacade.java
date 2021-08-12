@@ -437,6 +437,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getDefaultBlExtendOrderService().savePoPayment(poNumber , poNotes , getExtendedOrderModelFromCode(orderCode));
   }
 
+  /**
+   * This method created to store the po number to payBill order
+   */
+  @Override
+  public boolean savePoPaymentForPayBillOrder(final String poNumber , final String poNotes, final String orderCode) {
+	  final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+	    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+	        baseStoreModel);
+    return getBlCartService().savePoPaymentDetailsForPayBill(poNumber , poNotes , orderModel);
+  }
 
   /**
    * This method created to get order model from order code
