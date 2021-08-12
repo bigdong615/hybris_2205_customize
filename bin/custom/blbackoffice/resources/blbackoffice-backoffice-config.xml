@@ -1873,6 +1873,25 @@
 			<n:type-node code="Consignment" id="Consignment"/>
 		</n:explorer-tree>
 	</context>
+	
+		<context parent="GenericItem" type="Order" component="cs-editor-area">
+        <editorArea:editorArea name="Order editor area" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
+                <editorArea:section name="customersupportbackoffice.section.order.hierarchy.consignments">
+                    <editorArea:panel name="customersupport_backoffice_consignments_panel">
+                        <editorArea:attribute
+                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                qualifier="consignments" readonly="true" label="customersupportbackoffice.section.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewConsignments</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
+            </editorArea:tab>
+  		</editorArea:editorArea>
+    	</context>
 
 </config>
 
