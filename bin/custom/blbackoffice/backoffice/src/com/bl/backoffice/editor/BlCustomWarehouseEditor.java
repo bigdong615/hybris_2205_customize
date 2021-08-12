@@ -51,6 +51,9 @@ public class BlCustomWarehouseEditor<T> extends DefaultReferenceEditor<T> {
                 && ((UserGroupModel) userGroup).getWarehouse() != null).findFirst();
         if (optionalGroup.isPresent()) {
           warehouse = ((UserGroupModel) optionalGroup.get()).getWarehouse();
+          BlLogger.logFormattedMessage(LOG, Level.DEBUG, StringUtils.EMPTY,
+              "Warehouse Code : {} Found For User Group : {}", warehouse.getCode(),
+              optionalGroup.get().getUid());
         }
       }
     }

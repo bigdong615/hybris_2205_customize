@@ -2812,6 +2812,8 @@
             <attributes>
               <attribute qualifier="warehouse" type="Warehouse">
                 <persistence type="property"/>
+                <description>Warehouse type used to associate with user group.
+                  One usergroup will be associated with one warehouse to filter the results</description>
               </attribute>
             </attributes>
           </itemtype>
