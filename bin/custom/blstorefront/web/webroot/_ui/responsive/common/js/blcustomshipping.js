@@ -961,32 +961,36 @@ function removeClass(){
             var email = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
             var phone = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
             if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Rush")) {
-                $.ajax({
-                   url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
-                   data: {
-                       deliveryNote: sameDayDeliveryNote,
-                       statusUpdate: $('#same-day-status-updates').prop("checked")
-                   },
-                   type: "GET",
-                   dataType: 'json',
-                   beforeSend: function(){
-                        $('.page-loader-new-layout').show();
-                   },
-                   success: function (data) {
-                        if(data == 'SUCCESS') {
-                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
-                                                        townCity.val(),regionIso.val(), 'US', postcode.val(),
-                                                        $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
-                                                        phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
-                        }
-                   },
-                   complete: function() {
-                       $('.page-loader-new-layout').hide();
-                   },
-                   error: function (data) {
-                        $('.page-loader-new-layout').hide();
-                   }
-                });
+                if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
+                    $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
+                    $.ajax({
+                       url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
+                       data: {
+                           deliveryNote: sameDayDeliveryNote,
+                           statusUpdate: $('#same-day-status-updates').prop("checked")
+                       },
+                       type: "GET",
+                       dataType: 'json',
+                       beforeSend: function(){
+                            $('.page-loader-new-layout').show();
+                       },
+                       success: function (data) {
+                            if(data == 'SUCCESS') {
+                                addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
+                                                            townCity.val(),regionIso.val(), 'US', postcode.val(),
+                                                            $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
+                                                            phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
+                            }
+                       },
+                       complete: function() {
+                           $('.page-loader-new-layout').hide();
+                       },
+                       error: function (data) {
+                            $('.page-loader-new-layout').hide();
+                       }
+                    });
+                }
             } else {
                 showErrorForInputValidation('Rush');
                 $('.page-loader-new-layout').hide();
