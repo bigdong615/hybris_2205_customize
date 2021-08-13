@@ -957,16 +957,7 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
-	<!--BL-82 Added for creating custom method to set custom parameter -->
 
-	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
-	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
-	</bean>
-
-	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
-	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
-		<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
-	</bean>
 
 	<!-- [BL-663]: Custom Actions for used gear products promotion-->
 	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
@@ -1198,5 +1189,25 @@
 	</bean>
 
 	<!--BL-828 end -->
+
+
+	<!--BL-82 Added for creating custom method to set custom parameter -->
+
+	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
+	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
+	</bean>
+
+	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
+	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
+		<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
+	</bean>
+
+
+	<alias name="defaultBlSolrAutoSuggestService" alias="solrAutoSuggestService" />
+	<bean id="defaultBlSolrAutoSuggestService"
+		class="com.bl.core.search.solrfacetsearch.services.DefaultBlSolrAutoSuggestService" parent="defaultSolrAutoSuggestService">
+	</bean>
+
+	<!-- Added for creating custom method to set custom parameter -->
 
 </beans>
