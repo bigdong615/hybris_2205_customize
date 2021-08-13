@@ -77,5 +77,12 @@ public interface BlOrderFacade extends OrderFacade {
    * @param poNotes
    */
   boolean savePoPaymentForExtendOrder(final String poNumber , final String poNotes , final String orderCode);
+  
+  /**
+   * This method created to save the PO payment
+   * @param poNumber
+   * @param poNotes
+   */
+  boolean savePoPaymentForPayBillOrder(final String poNumber , final String poNotes , final String orderCode);
 
 }

@@ -1179,7 +1179,6 @@
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
-
 	<alias alias="commerceDeliveryAddressStrategy" name="defaultBlCommerceDeliveryAddressStrategy"/>
 	<bean id="defaultBlCommerceDeliveryAddressStrategy"
 		class="com.bl.core.replacementorder.replacementorder.DefaultBlCommerceDeliveryAddressStrategy" parent="defaultCommerceDeliveryAddressStrategy">
@@ -1189,5 +1188,13 @@
 	<bean id="defaultBlCommerceDeliveryModeValidationStrategy"
 		class="com.bl.core.replacementorder.replacementorder.DefaultBlCommerceDeliveryModeValidationStrategy" parent="defaultCommerceDeliveryModeValidationStrategy">
 	</bean>
+	<!--BL-828 Marking consignments cleanCompleteFlag start -->
+	<bean id="markConsignmentsCleanJob" class="com.bl.core.job.MarkReadyToShipConsignmentsCleanJob"
+		parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-828 end -->
 
 </beans>

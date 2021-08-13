@@ -63,6 +63,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarSlot             ;                                                                                    ;                          ; navigation
                              ; NavigationBarMobileSlot       ;                                                                                    ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; MyAccountSlot                      ;                                                                       ;                           ; navigation
 
 
 # Search Results Empty Page Template
@@ -87,6 +88,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarSlot             ;                                                                                     ;                          ; navigation
                              ; NavigationBarMobileSlot       ;                                                                                     ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; MyAccountSlot                      ;                                                                       ;                           ; navigation
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'SearchResultsGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -114,6 +116,8 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterSubscriptionSlot-searchGrid        ; FooterSubscriptionSlot        ;                                                                                        ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-searchGrid           ; FooterCopyRightslot           ;                                                                                        ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-searchGrid         ; SocialMediaSectionSlot        ;                                                                                        ; SocialMediaSectionSlot                   ; true
+                                    ;                         ; MyAccountSlot-searchGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+
 
 
 
@@ -141,6 +145,8 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterSubscriptionSlot-searchempty        ; FooterSubscriptionSlot        ;                                                                                         ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-searchempty           ; FooterCopyRightslot           ;                                                                                         ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-searchempty         ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                    ;                         ; MyAccountSlot-searchempty                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+
 
 
 INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]; name                ; masterTemplate(uid, $contentCV); label; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false']

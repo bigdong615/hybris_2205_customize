@@ -75,6 +75,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarSlot             ;                                                                              ;                          ; navigation
                              ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; MyAccountSlot                      ;                                                                       ;                           ; navigation
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -104,6 +105,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                          ; FooterSubscriptionSlot-productGrid        ; FooterSubscriptionSlot        ;                                                                                  ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-productGrid           ; FooterCopyRightslot           ;                                                                                  ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
+                                    ;                         ; MyAccountSlot-productGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
 
 
 
