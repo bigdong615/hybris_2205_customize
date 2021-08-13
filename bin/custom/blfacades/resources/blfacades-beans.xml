@@ -44,6 +44,8 @@
 		<property name="productId" type="java.lang.String"/>
 	<property name="productType" type="java.lang.String"/>
 		<property name="isVideo" type="boolean"/>
+		<property name="retailGear" type="boolean"/>
+		<property name="retailGearPrice" type="java.math.BigDecimal"/>
   </bean>
 
 

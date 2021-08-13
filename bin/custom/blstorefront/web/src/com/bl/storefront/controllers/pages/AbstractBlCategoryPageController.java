@@ -120,9 +120,14 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 searchQuery = getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE);
             }
         }
-
+        String blPageType;
+        if (category.getCode().equals(BlCoreConstants.NEW_GEAR)){
+            blPageType=BlCoreConstants.RENTAL_GEAR;
+        }else{
+            blPageType= category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE;
+        }
         final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
-            sortCode, categoryPage , category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE);
+            sortCode, categoryPage , blPageType);
 
         ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData = null;
         try
@@ -144,7 +149,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      *  this method is created for adding model attribute to rental and used gear category
      */
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
-        if(category.isRentalCategory()){
+
+        if(category.isRentalCategory() || category.getCode().equals(BlCoreConstants.NEW_GEAR)){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
