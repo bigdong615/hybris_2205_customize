@@ -365,7 +365,11 @@ public class CartPageController extends AbstractCartPageController
 					final CartModel cartModel = blCartService.getSessionCart();
 					Optional<AbstractOrderEntryModel> findEntry = cartModel.getEntries().stream().filter(entry -> entry.getEntryNumber() == entryNumber).findFirst();
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-
+					//Added condition to update gift card purchase status when remove from cart
+					if(BooleanUtils.isTrue(cartModel.isGiftCardOrder()))
+					{
+						blCartService.updateGiftCardPurchaseStatus(cartModel);
+				  }
 					//Added condition to change serial status when entry remove from cart
 					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{
