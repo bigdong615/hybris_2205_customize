@@ -1174,6 +1174,13 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+	
+	<context type="Order" component="cs-listview" merge-by="type">
+        <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
+            <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+            <list:column qualifier="date" merge-mode="REMOVE"/>
+        </list:list-view>
+    </context>
 
 
 
