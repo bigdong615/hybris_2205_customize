@@ -44,16 +44,16 @@
     <div sclass="oms-widget-cancelorder-list-container">
       <grid id="orderEntries" style="margin-left:50px;margin-top:10px" mold="paging" pageSize="5">
         <columns>
-          <column width="12%" sclass="oms-widget-cancelorder-listbox-header" sort="auto"
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header" sort="auto"
             sortDirection="ascending">
             <label value="${labels.customersupportbackoffice.partial.refundorder.productCode}"
               width="100%"/>
           </column>
-          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+          <!--<column width="18%" sclass="oms-widget-cancelorder-listbox-header">
             <label value="${labels.customersupportbackoffice.partial.refundorder.productName}"
               width="100%"/>
-          </column>
-          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+          </column>-->
+          <column width="10%" sclass="oms-widget-cancelorder-listbox-header">
             <label value="${labels.customersupportbackoffice.partial.refundorder.quantity}"
               width="100%"/>
           </column>
@@ -62,7 +62,19 @@
               width="100%"/>
           </column>
           <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
-            <label value="${labels.customersupportbackoffice.partial.refundorder.refundAmount}"
+            <label value="${labels.customersupportbackoffice.partial.refundorder.shippingPrice}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.totaltax}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.totalDamageWaiverCost}"
+              width="100%"/>
+          </column>
+          <column width="18%" sclass="oms-widget-cancelorder-listbox-header">
+            <label value="${labels.customersupportbackoffice.partial.refundorder.totalRefundAmount}"
               width="100%"/>
           </column>
         </columns>
@@ -70,11 +82,20 @@
           <template name="model">
             <row>
               <label value="${each.orderEntry.product.code}" width="100%"/>
-              <label value="${each.orderEntry.product.name}" width="100%"/>
+              <!--<label value="${each.orderEntry.product.name}" width="100%"/>-->
               <label value="${each.orderEntry.quantity}" width="100%"/>
               <label value="${each.orderEntry.basePrice}" width="100%"/>
               <doublebox sclass="bt-widget-createpartialrefund--input-text-box"
-                value="${each.lineItemRefundAmount}" width="100%"
+                value="${each.lineItemShippingPrice}" width="100%"
+                constraint="no empty,no negative: Price should be greater than 0"/>
+              <doublebox sclass="bt-widget-createpartialrefund--input-text-box"
+                value="${each.lineItemTax}" width="100%"
+                constraint="no empty,no negative: Price should be greater than 0"/>
+              <doublebox sclass="bt-widget-createpartialrefund--input-text-box"
+                value="${each.lineItemDamageWaiverCost}" width="100%"
+                constraint="no empty,no negative: Price should be greater than 0"/>
+              <doublebox sclass="bt-widget-createpartialrefund--input-text-box"
+                value="${each.lineItemRefundAmount}" width="100%" readonly="true"
                 constraint="no empty,no negative: Price should be greater than 0"/>
             </row>
           </template>
@@ -90,5 +111,10 @@
     <button id="refundrequest"
       label="${labels.braintree.backoffice.create.partial.refund.button}"
       sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button"/>
+    <button id="updateRefundAmount"
+      label="${labels.braintree.backoffice.create.partial.update.refund.button}"
+      sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button">
+      Calculate Refund
+    </button>
   </div>
 </widget>

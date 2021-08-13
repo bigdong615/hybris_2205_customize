@@ -261,6 +261,11 @@
       
       <enumtype code="ItemBillingChargeTypeEnum" autocreate="true" generate="true" dynamic="true"/>
 
+      <enumtype code="OrderReturnType" autocreate="true" dynamic="true">
+        <value code="REPLACEMENT"/>
+        <value code="REFUND"/>
+      </enumtype>
+
 	  </enumtypes>
 
 
@@ -470,7 +475,16 @@
 					</attribute>
 				</attributes>
 			</itemtype>
-		
+
+      <itemtype code="Order" autocreate="false" generate="false">
+      <attributes>
+        <attribute qualifier="orderReturnType" type="OrderReturnType">
+          <persistence type="property"/>
+          <description>Order Return Type For example : Replacement, Refund</description>
+        </attribute>
+      </attributes>
+      </itemtype>
+
 			<itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
 				<description>Custom Simple Banner Component type that contains additional attribute to display Promotion Image under category navigation.</description>
 			</itemtype>
