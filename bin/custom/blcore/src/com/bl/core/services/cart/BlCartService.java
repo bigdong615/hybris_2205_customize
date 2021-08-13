@@ -69,6 +69,12 @@ public interface BlCartService extends CartService {
      * @param cartEntry
      */
     void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry);
+    /**
+     * Change gift card purchase status when remove from cart
+     *
+     * @param cartModel
+     */
+    void updateGiftCardPurchaseStatus(final CartModel cartModel);
 
 
     /**
