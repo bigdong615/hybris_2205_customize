@@ -12,6 +12,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -51,6 +52,8 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       abstractOrderModel.setSubtotal(0.0);
       abstractOrderModel.setTotalDamageWaiverCost(0.0);
       abstractOrderModel.setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
+      abstractOrderModel.setPaymentInfo(returnRequestModel.getOrder().getPaymentInfo());
+      abstractOrderModel.setDeliveryAddress(returnRequestModel.getOrder().getDeliveryAddress());
       final List<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
       setPriceForOrderEntries(abstractOrderModel , abstractOrderEntryModels);
       abstractOrderModel.setEntries(abstractOrderEntryModels);
@@ -78,6 +81,21 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
   public static boolean isReplaceMentOrder() {
       return null != getSessionService().getAttribute(BlCoreConstants.ACTING_USER_UID) &&
         null != getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER);
+  }
+
+
+  public static void setIsCartUsedForReplacementOrder(final AbstractOrderModel abstractOrderModel) {
+    abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
+    if(BooleanUtils.isFalse(abstractOrderModel.getCalculated())){
+      abstractOrderModel.setCalculated(Boolean.TRUE);
+    }
+    getModelService().save(abstractOrderModel);
+    getModelService().refresh(abstractOrderModel);
+  }
+
+  public static boolean isCartForReplacement(final AbstractOrderModel abstractOrderModel){
+    return Objects.nonNull(abstractOrderModel.getReplacementOrder()) &&
+        BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder());
   }
 
   public static SessionService getSessionService() {

@@ -42,8 +42,7 @@ public class DefaultCheckOrderService implements CheckOrderService
 			// Order must have some lines
 			return false;
 		}
-		else if (BooleanUtils.isFalse(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.isNull(order.getReplacementOrder())
-				&& order.getPaymentInfo() == null && StringUtils.isBlank(order.getPoNumber()))
+		else if (order.getPaymentInfo() == null && StringUtils.isBlank(order.getPoNumber()))
 		{
 			// Order must have some payment info to use in the process
 			return false;

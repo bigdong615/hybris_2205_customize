@@ -2399,6 +2399,13 @@
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                   </attribute>
+                  <attribute qualifier="isCartUsedForReplacementOrder" type="java.lang.Boolean">
+                    <persistence type="property" />
+                    <description>This is created to identify whether this cart is used for replacement order . </description>
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                  </attribute>
+
                 </attributes>
             </itemtype>
         </typegroup>

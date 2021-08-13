@@ -14,9 +14,6 @@
 
 		   <form:form action="${placeOrderUrl}" id="placeOrderForm1"
             	modelAttribute="placeOrderForm">
-            	         	<input type="text" class="form-control order-notes" name="orderNotes"	id="notes"
-                          		placeholder="<spring:theme code="text.review.page.order.notes.placeholder"/>"
-                          		min="1" max="1000" maxlength="1000" value="${cartData.orderNotes}" />
             	<hr class="mt-5">
             	<div class="cart-actions">
             		<input type="hidden" id="shipsFromPostalCode"

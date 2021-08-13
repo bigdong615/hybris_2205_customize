@@ -3,6 +3,7 @@ package com.braintree.controllers.pages;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
@@ -429,16 +430,15 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@PostMapping(value = "/placeReplacementOrder")
 	@RequireHardLogIn
-	public String placeReplacementOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, @RequestParam(value ="orderNotes")
-	final String orderNotes, final Model model,
+	public String placeReplacementOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm , final Model model,
 			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
-		blCheckoutFacade.saveOrderNotes(orderNotes);
 		final CartModel cartModel = blCartService.getSessionCart();
 		final OrderData orderData;
 		try
 		{
+			BlReplaceMentOrderUtils.setIsCartUsedForReplacementOrder(cartModel);
 			orderData = getCheckoutFacade().placeOrder();
 			BlLogger.logMessage(LOG , Level.INFO , "Replacement Order has been placed, number/code: " +
 					orderData.getCode() + "for -> original order number" + cartModel.getReplacementOrder().getOrder().getCode());
@@ -456,25 +456,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return redirectToOrderConfirmationPage(orderData);
 	}
 
-
-	protected boolean validateReplacementOrderForm(final PlaceOrderForm placeOrderForm, final Model model)
-	{
-		boolean invalid = false;
-
-		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
-		{
-			GlobalMessages.addErrorMessage(model, "checkout.deliveryAddress.notSelected");
-			invalid = true;
-		}
-
-		if (getCheckoutFlowFacade().hasNoDeliveryMode())
-		{
-			GlobalMessages.addErrorMessage(model, "checkout.deliveryMethod.notSelected");
-			invalid = true;
-		}
-		getCheckoutFacade().getCheckoutCart();
-		return invalid;
-	}
 
 	public CustomFieldsService getCustomFieldsService() {
 		return customFieldsService;

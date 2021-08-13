@@ -450,11 +450,8 @@
 		<property name="brainTreeCheckoutFacade" ref="brainTreeCheckoutFacade"/>
 		<property name="checkoutFacade" ref="checkoutFacade"/>
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy"/>
-<<<<<<< HEAD
 		<property name="sessionService" ref="sessionService"/>
-=======
 		<property name="blCartService" ref="cartService"/>
->>>>>>> develop
 	</bean>
 
 	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>

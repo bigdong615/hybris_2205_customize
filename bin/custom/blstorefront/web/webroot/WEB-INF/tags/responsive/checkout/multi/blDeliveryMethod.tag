@@ -34,17 +34,6 @@
                     <div id="shipToHomeShippingMethods" class="sub-option"></div>
                 </div>
                 <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
-                    <div id="checkZipForUPSPickup" style="display:none;">
-                        <b class="mt-4"><spring:theme code="text.ship.it.ups.find.nearest.location"/></b>
-                        <div class="input-group mt-2 mb-5">
-                          <input id="ship-it-ups-zip-code" type="text" class="form-control" placeholder="Zip code">
-                          <div class="input-group-append">
-                            <button class="btn btn-secondary" type="button" onClick="onClickOfFindStore()">
-                                <spring:theme code="text.ship.it.ups.find.store"/>
-                            </button>
-                          </div>
-                        </div>
-                    </div>
                     <div id="ship-it-SHIP_UPS_OFFICE">
 
                     </div>

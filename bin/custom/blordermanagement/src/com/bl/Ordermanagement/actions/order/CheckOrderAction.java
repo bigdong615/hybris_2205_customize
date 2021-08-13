@@ -51,8 +51,7 @@ public class CheckOrderAction extends AbstractSimpleDecisionAction<OrderProcessM
 			return Transition.NOK;
 		}
 
-		if (getCheckOrderService().check(order) || BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder())
-				&& Objects.nonNull(order.getReplacementOrder()))
+		if (getCheckOrderService().check(order) || BlReplaceMentOrderUtils.isCartForReplacement(order))
 		{
 			setOrderStatus(order, OrderStatus.CHECKED_VALID);
 			return Transition.OK;
