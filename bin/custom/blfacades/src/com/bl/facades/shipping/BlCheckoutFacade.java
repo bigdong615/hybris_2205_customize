@@ -6,6 +6,7 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -45,7 +46,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection of data
      */
     Collection<? extends DeliveryModeData> getSupportedDeliveryModes(final String shippingGroup, final String partnerZone,
-                                                                     final boolean payByCustomer);
+        final boolean payByCustomer);
 
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes from service
@@ -55,7 +56,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection object with delivery-modes differentiating in UPS and FedEx
      */
     Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModes(final String rentalStart, final String rentalEnd,
-                                                                   final boolean payByCustomer);
+        final boolean payByCustomer);
 
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes from service
@@ -63,7 +64,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection object with delivery-modes differentiating in UPS and FedEx
      */
     Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModesForUsedGear(final boolean payByCustomer);
-                                                                   
+
 
     /**
      *This method will fetch all the Partner PickUp Store from service
@@ -80,7 +81,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection object with delivery-modes differentiating in Partner-PickUp Stores
      */
     Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModes(final String rentalStart, final String rentalEnd,
-                                                                         final boolean payByCustomer);
+        final boolean payByCustomer);
 
     /**
      * method with contain business logic for Partner-PickUp to fetch all modes from service
@@ -88,7 +89,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection object with delivery-modes differentiating in Partner-PickUp Stores
      */
     Collection<BlPickUpZoneDeliveryModeData> getAllUSPStoreDeliveryModesForUsedGear(final boolean payByCustomer);
-                                                                         
+
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
@@ -100,9 +101,9 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
     Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
-                                                                         final String rentalEnd, final boolean payByCustomer);
-    
-    
+        final String rentalEnd, final boolean payByCustomer);
+
+
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone from service.
@@ -123,7 +124,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection of BlRushDeliveryModeModel
      */
     Collection<BlRushDeliveryModeData> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime,
-                                                              final boolean payByCustomer);
+        final boolean payByCustomer);
 
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute from service
@@ -132,7 +133,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Collection of BlRushDeliveryModeModel
      */
     Collection<BlRushDeliveryModeData> getBlRushDeliveryModesForUsedGear(final String deliveryMode,
-                                                              final boolean payByCustomer);
+        final boolean payByCustomer);
 
     /**
      * This method will check pinCode validity for UPS stores
@@ -168,16 +169,16 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     boolean setDeliveryMode(final String deliveryModeCode, final boolean status);
 
     /**
-	  * To create the auth transaction of the order
-	  * @param cartModel the cart
-	  * @param amountToAuthorize the amount
-	  * @param submitForSettlement 
-	  * @param paymentInfo the payment info
+     * To create the auth transaction of the order
+     * @param cartModel the cart
+     * @param amountToAuthorize the amount
+     * @param submitForSettlement
+     * @param paymentInfo the payment info
      * @return true if successful
      */
     boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo);
 
-    
+
     /**
      * This method will check validity of user entered pinCode for SF or NYC
      *
@@ -209,7 +210,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param addressData data
      */
     void setUPSAddressOnCartForIam(final AddressData addressdata);
-    
+
     /**
      * This method will integrate AVS in checkout flow
      *
@@ -217,7 +218,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Address Validation Response addresses
      */
     AVSResposeData getAVSResponse(final AddressData addressData);
-    
+
     /**
      * Check availability for delivery mode.
      *
@@ -225,14 +226,14 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return true, if successful
      */
     boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
-    
-  	/**
-  	 * This method will return all the delivery modes
-  	 *
-  	 * @param payByCustomer
-  	 * @return Collection of ZoneDeliveryModeModels
-  	 */
-  	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
+
+    /**
+     * This method will return all the delivery modes
+     *
+     * @param payByCustomer
+     * @return Collection of ZoneDeliveryModeModels
+     */
+    Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
 
     /**
      * It removes, applied gift card from cart.
@@ -255,7 +256,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return String the string
      */
     List<String> recalculateCartForGiftCard();
-    
+
     /**
      * Gets the modified total for print quote page.
      *
@@ -274,4 +275,11 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * This method will update the order types
      */
     void updateOrderTypes();
+
+    /**
+     * It saves Gift Card Purchase Form
+     * @param GiftCardPurchaseForm the giftCardPurchaseForm
+     */
+    boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm);
+
 }

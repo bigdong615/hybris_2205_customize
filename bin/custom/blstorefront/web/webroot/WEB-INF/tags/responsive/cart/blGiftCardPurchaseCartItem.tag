@@ -15,6 +15,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/rent/product/${entry.product.code}" var="productUrl" />
 <c:url value="/cart/update" var="cartUpdateFormAction" />
+<c:url value="/checkout/multi/payment-method/giftCardPaymentAdd" var="paymentPageUrl" />
 
 <div class="cartProduct">
 	<div class="row">
@@ -51,7 +52,7 @@
 	<div class="row mt-3">
 		<div class="col-md-10 offset-md-2">
 			<form:form method="POST" modelAttribute="giftCardPurchaseForm"
-				id="giftCardPurchaseForm">
+				id="giftCardPurchaseForm" action="${paymentPageUrl}">
 				<div class="gc-pdp-form">
 					<input type="text" class="form-control"
 						id="first-name"
