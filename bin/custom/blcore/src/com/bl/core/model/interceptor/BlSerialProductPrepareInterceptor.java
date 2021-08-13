@@ -1,6 +1,7 @@
 package com.bl.core.model.interceptor;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlRepairLogModel;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -25,6 +26,10 @@ import com.bl.core.enums.RepairTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.CustomerResponsibleRepairLogModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
@@ -404,8 +409,10 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	/**
 	 * Creates the repair log if repair needed.
 	 *
-	 * @param blSerialProduct the bl serial product
-	 * @param ctx the ctx
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param ctx
+	 *           the ctx
 	 */
 	private void createRepairLogIfRepairNeeded(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
@@ -417,22 +424,22 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				case BlCoreConstants.IN_HOUSE_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Inhouse Report log implementation
+					addGeneratedRepairLog(InHouseRepairLogModel.class, blSerialProduct, ctx);
 					break;
 				case BlCoreConstants.VENDOR_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Vendor Report log implementation
+					addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct, ctx);
 					break;
-				case BlCoreConstants.CUSTOMER_BLAME_REPAIR:
+				case BlCoreConstants.CUSTOMER_RESPONSIBLE_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Customer Blame Report log implementation
+					addGeneratedRepairLog(CustomerResponsibleRepairLogModel.class, blSerialProduct, ctx);
 					break;
 				case BlCoreConstants.PARTS_NEEDED_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Parts Needed Report log implementation
+					addGeneratedRepairLog(PartsNeededRepairLogModel.class, blSerialProduct, ctx);
 					break;
 				default:
 					BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
@@ -441,6 +448,44 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					break;
 			}
 		}
+	}
+
+	/**
+	 * Saves the generated repair log on Serial.
+	 *
+	 * @param repairLogType
+	 *           the repair log type
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param ctx
+	 *           the ctx
+	 */
+	private void addGeneratedRepairLog(final Class repairLogType, final BlSerialProductModel blSerialProduct,
+			final InterceptorContext ctx)
+	{
+		final BlRepairLogModel repairLog = ctx.getModelService().create(repairLogType);
+		repairLog.setItemBarcode(blSerialProduct.getBarcode());
+		repairLog.setSerialCode(blSerialProduct.getCode());
+		ctx.getModelService().save(repairLog);
+		setOtherDataToRepairLog(repairLog, blSerialProduct, ctx);
+	}
+	
+	/**
+	 * Sets the other data to repair log from serial.
+	 *
+	 * @param repairLog the repair log
+	 * @param blSerialProduct the bl serial product
+	 * @param ctx the ctx
+	 */
+	private void setOtherDataToRepairLog(final BlRepairLogModel repairLog, final BlSerialProductModel blSerialProduct,
+			final InterceptorContext ctx)
+	{
+		if(Objects.nonNull(blSerialProduct.getRepairReasons()))
+		{
+			repairLog.setRepairReasons(blSerialProduct.getRepairReasons());
+		}
+		repairLog.setOtherRepairReasons(StringUtils.stripToEmpty(blSerialProduct.getOtherRepairReasons()));
+		ctx.getModelService().save(repairLog);
 	}
 
 	/**
@@ -454,7 +499,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		return (ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)
 				|| ctx.isModified(blSerialProduct, BlSerialProductModel.REPAIRLOGTYPE))
-				&& SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus());
+				&& (SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus())
+						|| SerialStatusEnum.PARTS_NEEDED.equals(blSerialProduct.getSerialStatus()));
 	}
 
 	/**
