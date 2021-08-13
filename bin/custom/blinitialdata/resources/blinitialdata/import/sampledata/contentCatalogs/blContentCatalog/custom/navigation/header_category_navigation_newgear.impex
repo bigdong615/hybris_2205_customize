@@ -76,7 +76,7 @@ INSERT_UPDATE AssistedServiceSessionRestriction;$contentCV[unique=true];uid[uniq
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;
 # NewGear -- all new gear
-                               ;                         ; AllNewGearLink           ; AllNewGear Link      ; "/rent/category/newgear" ; newgear                          ;                                    ; All New Gear        ;
+                               ;                         ; AllNewGearLink           ; AllNewGear Link      ; "/buy/category/newgear" ; newgear                          ;                                    ; All New Gear        ;
 
 INSERT_UPDATE CMSInverseRestriction;$contentCV[unique=true];name;originalRestriction(&uid);uid[unique=true];
                                    ;;ASMCategoryReverseRestriction;ASM Category Reverse Restriction;ASM category ASMCategoryReverseRestriction;

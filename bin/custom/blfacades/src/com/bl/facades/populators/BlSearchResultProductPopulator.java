@@ -91,7 +91,14 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
     target.setIsDiscontinued(this.<Boolean>getValue(source, "isDiscontinued"));
-
+    if(null != this.getValue(source , BlCoreConstants.RETAILGEAR)) {
+      target.setRetailGear(this.<Boolean>getValue(source, "retailGear"));
+      final Double retailGearPrice = this.<Double> getValue(source, "retailGearPrice");
+      if(PredicateUtils.notNullPredicate().evaluate(retailGearPrice))
+      {
+        target.setRetailGearPrice(getProductPriceData(BigDecimal.valueOf(retailGearPrice)));
+      }
+    }
    // Adding this condition to segregate the rental and used gear data and to prevent unwanted calls on each PLP AND SLP.
     if(BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(source.getBlPage())) {
       addProductTag(source,target);

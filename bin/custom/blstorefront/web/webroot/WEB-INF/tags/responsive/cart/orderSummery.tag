@@ -44,6 +44,9 @@
 						<c:when test="${cartData.isRentalCart}">
 							<spring:theme code="text.checkout.multi.order.summary.cost" />
 						</c:when>
+						<c:when test="${cartData.isNewGearOrder}">
+							<spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
+						</c:when>
 						<c:otherwise>
 							<spring:theme
 								code="text.checkout.multi.order.summary.cost.usedGear" />
@@ -117,7 +120,7 @@
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
-	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view'}">
+	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isNewGearOrder eq false}">
 		<c:url value="/cart/voucher/apply" var="voucherUrl" />
 		<form:form action="${voucherUrl}" modelAttribute="voucherForm"
 			method="POST" id="applyVoucherForm">

@@ -235,6 +235,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));
 			}
+			if (BooleanUtils.isTrue(((BlProductModel) product).getRetailGear()))
+			{
+				return createNewPriceValue(order.getCurrency().getIsocode(),((BlProductModel) product).getRetailGearPrice().doubleValue(),BooleanUtils.toBoolean(order.getNet()));
+			}
 			else{
 				return findBasePrice(entry);
 			}

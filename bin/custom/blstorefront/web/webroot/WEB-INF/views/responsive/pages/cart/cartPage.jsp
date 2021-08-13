@@ -19,6 +19,9 @@
 <c:when test="${cartData.hasGiftCart}">
  <cart:blGiftCardPurchaseCartPage/>
 </c:when>
+<c:when test="${cartData.isNewGearOrder}">
+ <cart:blNewGearCartPage/>
+</c:when>
 <c:otherwise>
 <c:choose>
       <c:when test="${cartData.isRentalCart}">

@@ -155,6 +155,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
+        if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+        	parameter.setRetailGear(blProductModel.getRetailGear());
+				}
       }
     } catch (final RuntimeException exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,

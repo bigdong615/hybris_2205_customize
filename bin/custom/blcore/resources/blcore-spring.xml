@@ -1188,4 +1188,7 @@
 
 	<!--BL-828 end -->
 
+	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
+		parent="abstractValueResolver"/>
+
 </beans>

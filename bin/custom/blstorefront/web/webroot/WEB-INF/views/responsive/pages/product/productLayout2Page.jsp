@@ -7,22 +7,23 @@
 
 <template:page pageTitle="${pageTitle}">
 
-<!-- BL-927: Added condition for Gift Card as per requirement --> 
+<!-- BL-927: Added condition for Gift Card as per requirement -->
 <c:choose>
       <c:when test="${product.productType eq 'GIFTCARD'}">
        <product:giftCardProductDetailsPanel />
       </c:when>
-<c:otherwise>
-  <c:choose>
+
        <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
-              <product:blRentalProductDetailsPanel />
+          <product:blRentalProductDetailsPanel />
       </c:when>
       <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
          <product:blUsedProductDetailsPanel/>
       </c:when>
+       <c:when test="${product.retailGear eq true}">
+          <product:newgearProductDetailsPanel/>
+      </c:when>
 
-   </c:choose>
-
+<c:otherwise>
 </c:otherwise>
 </c:choose>
 

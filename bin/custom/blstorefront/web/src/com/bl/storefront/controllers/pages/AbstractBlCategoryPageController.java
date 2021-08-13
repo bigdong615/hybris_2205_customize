@@ -122,7 +122,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         String blPageType;
         if (category.getCode().equals(BlCoreConstants.NEW_GEAR)){
-            blPageType=BlCoreConstants.RENTAL_GEAR;
+            blPageType=BlCoreConstants.USED_GEAR_CODE;
         }else{
             blPageType= category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE;
         }
@@ -150,7 +150,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
 
-        if(category.isRentalCategory() || category.getCode().equals(BlCoreConstants.NEW_GEAR)){
+        if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
