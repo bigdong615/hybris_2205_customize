@@ -2020,7 +2020,7 @@
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                        <deployment table="shippingGroup" typecode="12209" />
+                        <deployment table="shippingGroup" typecode="12509" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
@@ -2578,7 +2578,7 @@
             </itemtype>
 
             <itemtype code="OptimizedShippingMethod" generate="true" autocreate="true">
-                <deployment table="optShipMethod" typecode="12215"/>
+                <deployment table="optShipMethod" typecode="12515"/>
                 <attributes>
                     <attribute type="java.lang.String" qualifier="code">
                         <modifiers read="true" write="true" unique="true" optional="false"/>
@@ -3764,7 +3764,7 @@
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, {orderItem:isVIPOrder} as isVIPOrder, {orderItem:isUsedGearOrder} as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:productCount} as productCount, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
+          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, {orderItem:isVIPOrder} as isVIPOrder, {orderItem:isUsedGearOrder} as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
         </value>
       </property>
     </custom-properties>
@@ -3780,7 +3780,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(10)
+              new Integer(9)
             </value>
           </property>
         </custom-properties>
@@ -3796,7 +3796,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(12)
+              new Integer(11)
             </value>
           </property>
         </custom-properties>
@@ -3860,23 +3860,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(9)
-            </value>
-          </property>
-        </custom-properties>
-      </attribute>
-      <attribute generate="false" autocreate="true" qualifier="productCount" type="java.lang.String" metatype="ViewAttributeDescriptor">
-        <persistence type="jalo" qualifier=""/>
-        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-        <custom-properties>
-          <property name="param">
-            <value>
-              Boolean.FALSE
-            </value>
-          </property>
-          <property name="position">
-            <value>
-              new Integer(7)
+              new Integer(8)
             </value>
           </property>
         </custom-properties>
@@ -3924,7 +3908,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(8)
+              new Integer(7)
             </value>
           </property>
         </custom-properties>
@@ -3940,7 +3924,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(13)
+              new Integer(12)
             </value>
           </property>
         </custom-properties>
@@ -3956,7 +3940,7 @@
           </property>
           <property name="position">
             <value>
-              new Integer(11)
+              new Integer(10)
             </value>
           </property>
         </custom-properties>
