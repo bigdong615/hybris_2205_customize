@@ -1243,7 +1243,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			return Account.AccountOrderExtendSummaryPage;
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			orderData = new OrderData();
 			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
 					+ "if you are unable to return your order by its scheduled return date.");
