@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -42,6 +43,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.Password
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ProfileValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.AddressVerificationResultHandler;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
+import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
@@ -80,6 +82,7 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
+import de.hybris.platform.util.PartOfItemAlreadyAssignedToTheParentException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1240,7 +1243,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			return Account.AccountOrderExtendSummaryPage;
 		}
-		catch (Exception e) {
+		catch (final Exception e) {
 			orderData = new OrderData();
 			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
 					+ "if you are unable to return your order by its scheduled return date.");

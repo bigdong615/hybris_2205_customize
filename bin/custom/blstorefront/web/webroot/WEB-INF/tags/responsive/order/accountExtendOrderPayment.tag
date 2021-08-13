@@ -196,6 +196,7 @@
    var googlePayEnabled = ${googlePayEnable};
 
 
+
 </script>
 <script type="text/javascript"
    src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
