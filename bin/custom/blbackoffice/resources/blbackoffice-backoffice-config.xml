@@ -1185,7 +1185,7 @@
 
 
 <!--To calculate the total without tax -->
-	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
+	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
 			name="Order editor area">
 			<ea:tab name="customersupportbackoffice.order.tab.details">
@@ -1216,6 +1216,9 @@
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType" readonly="false" />
+					<editorArea:attribute qualifier="isVipOrder" readonly="false"/>
+					<editorArea:attribute qualifier="isRentalCart" readonly="false"/>
+					<editorArea:attribute qualifier="status" readonly="false"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">

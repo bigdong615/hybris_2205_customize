@@ -21,10 +21,10 @@ public class ConsignmentOrderTypeHandler extends
   @Override
   public OrderTypeEnum get(final ConsignmentModel consignmentModel) {
 
-    if (null == consignmentModel || null == consignmentModel.getOrder() || null == consignmentModel
-        .getOrder().getOrderType()) {
+    if (null != consignmentModel && (null == consignmentModel.getOrder() || null == consignmentModel
+        .getOrder().getOrderType())) {
 
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+      BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
           "Returning null value for order type of consignment as orderModel or order type is found to be null");
 
       return null;
