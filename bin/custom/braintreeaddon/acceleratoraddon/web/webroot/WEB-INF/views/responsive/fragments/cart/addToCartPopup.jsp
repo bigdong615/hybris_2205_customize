@@ -178,13 +178,14 @@
                             		<component:emptyComponent />
                             	</c:otherwise>
               </c:choose>
+               </c:if>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
                 <a href="${viewCartUrl}" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
             </div>
    </div>
 
-  </ycommerce:testId>                
+  </ycommerce:testId>
 	</spring:htmlEscape>
 </spring:escapeBody>"
 }

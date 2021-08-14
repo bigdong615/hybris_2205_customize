@@ -71,7 +71,7 @@
 										<c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="loopStatus">
 											<c:if test="${not empty childLevel2.children }">
 												<c:set var="hasChildren" value="true"/>
-											</c:if>DefaultBlused
+											</c:if>
 											<c:if test="${not empty childLevel2.entries}">
 												<c:set var="breakRow" value="${breakRow + 1 }" />
 												<c:if test="${breakRow == 1 }">

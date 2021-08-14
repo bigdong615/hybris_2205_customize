@@ -21,10 +21,6 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
    */
   @Override
   protected String resolveInternal(final CategoryModel source) {
-
-    if(source.getCode().contains(BlCoreConstants.NEW_GEAR)){
-      return getCategoryUrl(getDefaultPattern(), source);
-    }
     // if source is rental get the url for rental gear else for usedgear
     if (source.isRentalCategory()) {
       return CollectionUtils.isEmpty(source.getSupercategories()) ? getCategoryUrl(

@@ -38,7 +38,7 @@
             <div class="splide__track" >
                    <ul class="splide__list">
                          <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-                         ${fn:escapeXml(container.product.url)}
+
                                  <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
                          </c:forEach>
                    </ul>
