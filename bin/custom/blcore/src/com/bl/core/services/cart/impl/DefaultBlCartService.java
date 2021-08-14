@@ -240,7 +240,19 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			}
 		}
     }
-
+    /**
+     * Change gift card purchase status when remove from cart
+     *
+     * @param cartModel
+     */
+    @Override
+    public void updateGiftCardPurchaseStatus(final CartModel cartModel){
+      if(CollectionUtils.isEmpty(cartModel.getEntries())){
+          cartModel.setGiftCardOrder(Boolean.FALSE);
+          getModelService().save(cartModel);
+          getModelService().refresh(cartModel);
+      }
+    }
     /**
      *{@inheritDoc}
      */

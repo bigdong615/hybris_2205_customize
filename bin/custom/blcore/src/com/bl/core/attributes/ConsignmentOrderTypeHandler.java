@@ -24,7 +24,7 @@ public class ConsignmentOrderTypeHandler extends
     if (null == consignmentModel || null == consignmentModel.getOrder() || null == consignmentModel
         .getOrder().getOrderType()) {
 
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+      BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
           "Returning null value for order type of consignment as orderModel or order type is found to be null");
 
       return null;
