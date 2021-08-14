@@ -200,6 +200,7 @@ public interface BlInventoryScanToolService {
  	void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel order);
 
 	/**
+	 *This method will return true if BIN
 	 *
 	 * @param barcodeList list
 	 * @return true if BIN update parent location
@@ -207,6 +208,7 @@ public interface BlInventoryScanToolService {
 	boolean checkBINOrSerialScan(final List<String> barcodeList);
 
 	/**
+	 * This method will perform scan for BIN location
 	 *
 	 * @param barcodeList list
 	 * @return true if BIN update parent location

@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
@@ -105,13 +106,14 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             }
             final ZoneDeliveryModeModel zoneDeliveryModeData = (ZoneDeliveryModeModel) cartModel.getDeliveryMode();
             if(zoneDeliveryModeData != null) {
-                model.addAttribute("shippingMethod", zoneDeliveryModeData.getShippingGroup().getCode()+"-"+zoneDeliveryModeData.getCode());
+                model.addAttribute("shippingMethod", zoneDeliveryModeData.getShippingGroup().getCode()+ BlCoreConstants.HYPHEN
+                        +zoneDeliveryModeData.getCode());
             }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
 
-        if((boolean) getSessionService().getAttribute("isPaymentPageVisited")) {
+        if((boolean) getSessionService().getAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED)) {
             model.addAttribute("previousPage", Boolean.TRUE);
         }
 
@@ -135,6 +137,13 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
+    /**
+     * javadoc
+     * This method will send address for back traversal scenario
+     * @param model model
+     * @param redirectAttributes attr
+     * @return AddressData
+     */
     @GetMapping(value = "/checkAddressWithCartAddress")
     @RequireHardLogIn
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)

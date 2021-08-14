@@ -125,7 +125,13 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         }
     }
 
-    private void checkSuccessForScan(List<String> barcodes) {
+    /**
+     * javadoc
+     * This method will check barcodes for scan
+     *
+     * @param barcodes barcodes
+     */
+    private void checkSuccessForScan(final List<String> barcodes) {
         final List<String> failedBarcodeList = getBlInventoryScanToolService().getFailedBarcodeList(barcodes);
         if (CollectionUtils.isNotEmpty(failedBarcodeList)) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
@@ -141,9 +147,10 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
 
     /**
      * javadoc
-     * @param result
-     * @param barcodes
      * method will notify user according to result number calculated in previous method
+     *
+     * @param result result
+     * @param barcodes barcodes
      */
     private void createResponseMegForBINScan(final int result, final List<String> barcodes) {
         switch (result) {

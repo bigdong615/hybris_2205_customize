@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.GiftCardModel;
@@ -185,7 +186,7 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
-		sessionService.setAttribute("isPaymentPageVisited", false);
+		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);

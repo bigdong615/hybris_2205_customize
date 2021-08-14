@@ -239,11 +239,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public boolean checkBINOrSerialScan(final List<String> barcodeList) {
     	if(CollectionUtils.isNotEmpty(barcodeList)) {
-    		if(barcodeList.get(BlInventoryScanLoggingConstants.ZERO).startsWith(BlInventoryScanLoggingConstants.BIN)) {
-    			return Boolean.TRUE;
-			}
+			return barcodeList.get(BlInventoryScanLoggingConstants.ZERO).startsWith(BlInventoryScanLoggingConstants.BIN) ?
+					Boolean.TRUE : Boolean.FALSE;
 		}
-		return Boolean.FALSE;
+    	return Boolean.FALSE;
 	}
 
     /**
