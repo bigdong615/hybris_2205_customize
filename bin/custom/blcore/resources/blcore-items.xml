@@ -218,6 +218,7 @@
       <enumtype code="OrderStatus" autocreate="false" generate="false">
             <value code="INVERIFICATION"/>
             <value code="MANUAL_REVIEW"/>
+            <value code="SHIPPING_MANUAL_REVIEW"/>
         </enumtype>
       
       
