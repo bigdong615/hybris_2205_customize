@@ -11,7 +11,7 @@
 # -----------------------------------------------------------------------
 # ImpEx for Electronics Store
 
-#% impex.info("=============================== Importing content from BLInitialData coredata/common points-of-service.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs points-of-service.impex =========================");
 
 
 $defaultPassword=1234
