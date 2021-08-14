@@ -8,8 +8,9 @@
       <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/cancelorderaction.js</js>
       <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/returnorderaction.js</js>
       <css>/_ui/addons/blorderselfserviceaddon/responsive/common/css/blorderselfserviceaddon.css</css>
-      <js>/_ui/addons/blstocknotificationaddon/responsive/common/js/blstocknotificationaddon.js</js>
-      <css>/_ui/addons/blstocknotificationaddon/responsive/common/css/blstocknotificationaddon.css</css>
+      <js>/_ui/addons/profiletagaddon/responsive/common/js/profiletagaddon.js</js>
+      <js>/_ui/addons/profiletagaddon/responsive/common/js/acc.product.js</js>
+      <css>/_ui/addons/profiletagaddon/responsive/common/css/profiletagaddon.css</css>
       <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/urlsearchparamspolyfill.js</js>
       <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/blassistedservicestorefront.js</js>
       <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/jquery.tablesorter.pager.js</js>
@@ -26,21 +27,8 @@
       <js>/_ui/addons/smarteditaddon/shared/common/js/adjustComponentRenderingToSE.js</js>
       <js>/_ui/addons/smarteditaddon/responsive/common/js/smarteditaddon.js</js>
       <css>/_ui/addons/smarteditaddon/responsive/common/css/smarteditaddon.css</css>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/braintreeConstants.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/braintreeaddon_3_0.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/util/braintreeUtil.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/util/generalUtil.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/applePay.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/googlePay.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/creditCard.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/payPalButton.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/localPayment.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/venmo.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/creditMessages.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/expressCheckoutPage.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/billingPage.js</js>
-      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/myAccountPage.js</js>
-      <css>/_ui/addons/braintreeaddon/responsive/common/css/braintreeaddon.css</css>
+      <js>/_ui/addons/selectivecartsplitlistaddon/responsive/common/js/selectivecartsplitlistaddon.js</js>
+      <css>/_ui/addons/selectivecartsplitlistaddon/responsive/common/css/selectivecartsplitlistaddon.css</css>
    </group>
 </groups>
 

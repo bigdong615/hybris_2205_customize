@@ -1,20 +1,16 @@
 ACC.track = {
-	trackAddToCart: function (productCode, productName,productBrand,productType,productCategory,quantity)
+	trackAddToCart: function (productCode, quantity, cartData)
 	{
 		window.mediator.publish('trackAddToCart',{
 			productCode: productCode,
-			productName : productName,
 			quantity: quantity,
-			productBrand: productBrand,
-			productType : productType,
-			productCategory : productCategory
+			cartData: cartData
 		});
 	},
-	trackRemoveFromCart: function(productCode, productName, initialCartQuantity)
+	trackRemoveFromCart: function(productCode, initialCartQuantity)
 	{
 		window.mediator.publish('trackRemoveFromCart',{
 			productCode: productCode,
-			productName: productName,
 			initialCartQuantity: initialCartQuantity
 		});
 	},
@@ -31,28 +27,6 @@ ACC.track = {
     trackShowReviewClick: function(productCode)
     {
         window.mediator.publish('trackShowReviewClick',{});
-    },
-
-    trackChangeDamageWaiver: function(productCode, damageWaiverType){
-    window.mediator.publish('changeDamageWaiver',{
-     productCode:productCode,
-     damageWaiverType: damageWaiverType
-    });
-    },
-
-    trackShippingSelection: function(shippingType,shippingOption,stockStatus){
-      window.mediator.publish('continueShippingClick',{
-          shippingType:shippingType,
-          shippingOption: shippingOption,
-          stockStatus:stockStatus
-         });
-    },
-    trackPaymentSelection: function(paymentType){
-          window.mediator.publish('continuePaymentClick',{
-          paymentType:paymentType
-         });
     }
-
-
 
 };

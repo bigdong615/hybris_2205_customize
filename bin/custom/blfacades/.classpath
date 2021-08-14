@@ -3,12 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="eclipsebin/notused"/>
 	<classpathentry exported="true" kind="src" path="/acceleratorfacades" />
-	<classpathentry exported="true" kind="src" path="/blintegration" />
 	<classpathentry exported="true" kind="src" path="/blcore" />
-	<classpathentry exported="true" kind="src" path="/customerinterestsfacades" />
-	<classpathentry exported="true" kind="src" path="/stocknotificationfacades" />
-	<classpathentry exported="true" kind="src" path="/braintreefacades" />
-	<classpathentry exported="true" kind="src" path="/warehousingfacades" />
 	<classpathentry exported="true" kind="lib" path="resources" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="src" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="testsrc" />

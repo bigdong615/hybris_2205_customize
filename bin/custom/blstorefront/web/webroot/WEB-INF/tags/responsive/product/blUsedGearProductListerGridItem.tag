@@ -16,7 +16,7 @@
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 <c:set value="image coming soon" var="altText"/>
 <c:choose>
- <c:when test="${product.retailGear eq true && not empty agent.uid}">
+ <c:when test="${product.retailGear eq true}">
                 <product:blNewGearProductListerGridItem product="${product}"/>
 </c:when>
 <c:otherwise>

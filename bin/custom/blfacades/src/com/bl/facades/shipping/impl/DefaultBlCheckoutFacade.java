@@ -154,9 +154,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                                                                             final boolean payByCustomer) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            if (BooleanUtils.isFalse(cartModel.getIsNewGearOrder()) && BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
+            if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) || BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
                 return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
             } else {
                 return Collections.emptyList();

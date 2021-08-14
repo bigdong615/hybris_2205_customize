@@ -15,6 +15,7 @@
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
+  ${cartData.isNewGearOrder}---------
 <c:choose>
 <c:when test="${cartData.hasGiftCart}">
  <cart:blGiftCardPurchaseCartPage/>
