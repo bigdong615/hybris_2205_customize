@@ -1087,6 +1087,15 @@
 		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
 		<property name="typeCode" value="Consignment"/>
 	</bean>
+	
+	<alias name="blConsignmentStatusValidateInterceptor" alias="blConsignmentStatusValidateInterceptor"/>
+	<bean id="blConsignmentStatusValidateInterceptor" class="com.bl.core.model.interceptor.BlConsignmentStatusValidateInterceptor"/>
+	
+	<bean id="blConsignmentStatusValidateInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentStatusValidateInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
 
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>

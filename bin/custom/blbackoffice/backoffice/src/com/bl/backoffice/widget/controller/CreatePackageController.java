@@ -113,6 +113,8 @@ public class CreatePackageController extends DefaultWidgetController
 	public void initReallocationConsignmentForm(final ConsignmentModel consignment)
 	{
 		setConsignment(consignment);
+		if (!ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(consignment.getStatus()))
+		{
 		this.consignmentCode.setValue(consignment.getCode());
 		this.customerName.setValue(consignment.getOrder().getUser().getUid());
 		this.serialEntry.setChecked(false);
@@ -145,6 +147,7 @@ public class CreatePackageController extends DefaultWidgetController
 				Messagebox.show("All Serials are assigned to the package, " + "hence no Serials are available", "Info", Messagebox.OK,
 						"icon");
 			}
+		}
 		}
 	}
 

@@ -94,7 +94,7 @@ public interface BlInventoryScanToolService {
  	 * @param selectedConsignment for ConsignmentModel
  	 * @return List<String>
  	 */
- 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
