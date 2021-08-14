@@ -16,6 +16,8 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.WarehouseService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
