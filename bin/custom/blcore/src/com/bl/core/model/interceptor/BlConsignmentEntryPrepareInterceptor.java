@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -95,7 +94,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				.findAny().orElse(null);
 		if (serial instanceof BlSerialProductModel)
 		{
-			return BooleanUtils.isFalse(SerialStatusEnum.UNBOXED.equals(((BlSerialProductModel) serial).getSerialStatus()));
+			return SerialStatusEnum.UNBOXED.equals(((BlSerialProductModel) serial).getSerialStatus());
 		}
 		return Boolean.FALSE;
 	}

@@ -30,6 +30,7 @@ import com.bl.core.model.CustomerResponsibleRepairLogModel;
 import com.bl.core.model.InHouseRepairLogModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
+import com.bl.core.repair.log.service.BlRepairLogService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
@@ -47,6 +48,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	/** The bl pricing service. */
 	private BlPricingService blPricingService;
 	private BlStockService blStockService;
+	private BlRepairLogService blRepairLogService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -480,11 +482,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void setOtherDataToRepairLog(final BlRepairLogModel repairLog, final BlSerialProductModel blSerialProduct,
 			final InterceptorContext ctx)
 	{
-		if(Objects.nonNull(blSerialProduct.getRepairReasons()))
-		{
-			repairLog.setRepairReasons(blSerialProduct.getRepairReasons());
-		}
-		repairLog.setOtherRepairReasons(StringUtils.stripToEmpty(blSerialProduct.getOtherRepairReasons()));
+		getBlRepairLogService().setRepairReasonOnRepairLog(repairLog, blSerialProduct);
 		ctx.getModelService().save(repairLog);
 	}
 
@@ -553,6 +551,22 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlStockService(final BlStockService blStockService)
 	{
 		this.blStockService = blStockService;
+	}
+
+	/**
+	 * @return the blRepairLogService
+	 */
+	public BlRepairLogService getBlRepairLogService()
+	{
+		return blRepairLogService;
+	}
+
+	/**
+	 * @param blRepairLogService the blRepairLogService to set
+	 */
+	public void setBlRepairLogService(BlRepairLogService blRepairLogService)
+	{
+		this.blRepairLogService = blRepairLogService;
 	}
 
 }

@@ -1397,9 +1397,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		modelService.save(consignmentModel);
 		modelService.refresh(consignmentModel);
 		final AbstractOrderModel order = consignmentModel.getOrder();
-		order.setOrderReturnedToWarehouse(Boolean.TRUE);
-		modelService.save(order);
-		modelService.refresh(order);		
+		if(Objects.nonNull(order))
+		{
+			order.setOrderReturnedToWarehouse(Boolean.TRUE);
+			modelService.save(order);
+			modelService.refresh(order);	
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, 
+					"Setting Order Returned to Warehouse Flag as true for Order with code : {}", order.getCode());
+		}			
 	}
 
 	/**

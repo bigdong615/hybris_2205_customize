@@ -19,6 +19,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 
 /**
+ * This class is responsible to get dynamic value of Damage Waiver taken by customer on the order.
  * @author Ravikumar
  *
  */

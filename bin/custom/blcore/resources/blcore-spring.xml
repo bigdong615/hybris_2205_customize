@@ -634,6 +634,7 @@
 	<bean id="blSerialProductPrepareInterceptor" class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1188,6 +1189,12 @@
 
 	<!--BL-828 end -->
 	
+	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
+	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
+		<property name="blProductDao" ref="productDao"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+	
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
 	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
 	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor"/>
@@ -1201,8 +1208,7 @@
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
 	<alias name="blRepairLogPrepareInterceptor" alias="blRepairLogPrepareInterceptor"/>
 	<bean id="blRepairLogPrepareInterceptor" class="com.bl.core.model.interceptor.BlRepairLogPrepareInterceptor">
-		<property name="blProductDao" ref="productDao"/>
-		<property name="userService" ref="userService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
 	</bean>
 	
 	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->
