@@ -1,7 +1,6 @@
 package com.bl.core.model.interceptor;
 
 import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlRepairLogModel;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
