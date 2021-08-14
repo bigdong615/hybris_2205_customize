@@ -507,7 +507,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	private final Map<String, List<String>> isValidSerial(final List<String> barcodes, final List<BlProductModel> consignmentEntry)
 	{
-		final Map<String, List<String>> missing = new HashMap<>();
+		final Map<String, List<String>> invalidSerials = new HashMap<>();
 		final List<String> entryBarcode = new ArrayList<>();
 		final List<String> newBarcode = new ArrayList<>(barcodes);
 		consignmentEntry.forEach(serial -> {
@@ -522,21 +522,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		if(CollectionUtils.isEmpty(newBarcode) && CollectionUtils.isEmpty(entryBarcode))
 		{
-			missing.put(BlInventoryScanLoggingConstants.SUCCESS_SCAN, Collections.emptyList());
+			invalidSerials.put(BlInventoryScanLoggingConstants.SUCCESS_SCAN, Collections.emptyList());
 		}
 		else
 		{
 			if(CollectionUtils.isNotEmpty(newBarcode))
 			{
-				missing.put(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT, newBarcode);	
+				invalidSerials.put(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT, newBarcode);	
 			}
 			if(CollectionUtils.isNotEmpty(entryBarcode))
 			{
-				missing.put(BlInventoryScanLoggingConstants.MISSING_IN_SCAN, entryBarcode);
+				invalidSerials.put(BlInventoryScanLoggingConstants.MISSING_IN_SCAN, entryBarcode);
 			}
 		}
 
-		return missing;
+		return invalidSerials;
 	}
 	
 	/**
