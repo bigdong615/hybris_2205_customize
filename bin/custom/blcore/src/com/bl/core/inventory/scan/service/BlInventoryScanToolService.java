@@ -114,7 +114,6 @@ public interface BlInventoryScanToolService {
 
 	/**
 	 * This method will verify loction and update items to new working desk location
-	 * @param lastScannedItem
 	 */
 	public void updateToUpsBound();
 
@@ -199,4 +198,18 @@ public interface BlInventoryScanToolService {
  	 *           newly placed order
  	 */
  	void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel order);
+
+	/**
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	boolean checkBINOrSerialScan(final List<String> barcodeList);
+
+	/**
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	int doBINScanFromWebScanTool(final List<String> barcodeList);
 }

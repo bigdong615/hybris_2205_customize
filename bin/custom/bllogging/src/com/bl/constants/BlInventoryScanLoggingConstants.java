@@ -18,9 +18,11 @@ public class BlInventoryScanLoggingConstants {
     public static final int THREE = 3;
     public static final int FOUR = 4;
     public static final int FIVE = 5;
+    public static final int SIX = 6;
     public static final int SEVEN = 7;
     public static final int EIGHT = 8;
     public static final int TEN = 10;
+    public static final int ELEVEN = 11;
     public static final int FIFTEEN = 15;
     public static final int FORTY = 40;
 
@@ -59,6 +61,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
+    public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
+    public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
 
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
@@ -73,7 +77,9 @@ public class BlInventoryScanLoggingConstants {
  	public static final String INVALID_BARCODE_SCANNED_MSG = "Scanned barcodes are not valid {}";
  	public static final String SERIAL_MISMATCH_SCANNED_MSG = "Scanned serial does not match to serials on package";
  	public static final String INVALID_SCAN_MSG = "Invalid Scan";
-    
+    public static final String VALID_BIN_LOCATION_ERROR_FAILURE_MSG = "Failed to update BIN inventory location for: {}";
+    public static final String VALID_PARENT_LOCATION_ERROR_FAILURE_MSG = "Last scan must be valid Parent Inventory Location for BIN";
+
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String SCAN_STRING = "Scan data: ";
 
@@ -183,8 +189,9 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(EMPLOYEE);
         defaultLocations.add(BOS);
         defaultLocations.add(IN_HOUSE);
-     		defaultLocations.add(MAW);
-     		defaultLocations.add(CAW);
+        defaultLocations.add(MAW);
+        defaultLocations.add(CAW);
+        defaultLocations.add(BIN);
         return defaultLocations;
     }
 }
