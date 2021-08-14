@@ -1233,6 +1233,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			else
 			{
 				serialList.add(blSerialProductModel.getBarcode());
+				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 		}
 		else
@@ -1240,6 +1241,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (isLocationDPC)
 			{
 				serialList.add(blSerialProductModel.getBarcode());
+				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
 			{
