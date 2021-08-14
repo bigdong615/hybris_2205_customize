@@ -17,6 +17,16 @@ public interface BlRepairLogService
 {
 
 	/**
+	 * Adds the generated repair log on serial.
+	 *
+	 * @param repairLogType
+	 *           the repair log type
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 */
+	public void addGeneratedRepairLog(final Class repairLogType, final BlSerialProductModel blSerialProduct);
+
+	/**
 	 * Adds the necessary data to repair log.
 	 *
 	 * @param blRepairLogModel

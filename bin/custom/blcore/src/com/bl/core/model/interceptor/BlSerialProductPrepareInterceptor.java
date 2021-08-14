@@ -426,22 +426,22 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				case BlCoreConstants.IN_HOUSE_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					addGeneratedRepairLog(InHouseRepairLogModel.class, blSerialProduct, ctx);
+					getBlRepairLogService().addGeneratedRepairLog(InHouseRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.VENDOR_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct, ctx);
+					getBlRepairLogService().addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.CUSTOMER_RESPONSIBLE_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					addGeneratedRepairLog(CustomerResponsibleRepairLogModel.class, blSerialProduct, ctx);
+					getBlRepairLogService().addGeneratedRepairLog(CustomerResponsibleRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.PARTS_NEEDED_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					addGeneratedRepairLog(PartsNeededRepairLogModel.class, blSerialProduct, ctx);
+					getBlRepairLogService().addGeneratedRepairLog(PartsNeededRepairLogModel.class, blSerialProduct);
 					break;
 				default:
 					BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
@@ -450,40 +450,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					break;
 			}
 		}
-	}
-
-	/**
-	 * Saves the generated repair log on Serial.
-	 *
-	 * @param repairLogType
-	 *           the repair log type
-	 * @param blSerialProduct
-	 *           the bl serial product
-	 * @param ctx
-	 *           the ctx
-	 */
-	private void addGeneratedRepairLog(final Class repairLogType, final BlSerialProductModel blSerialProduct,
-			final InterceptorContext ctx)
-	{
-		final BlRepairLogModel repairLog = ctx.getModelService().create(repairLogType);
-		repairLog.setItemBarcode(blSerialProduct.getBarcode());
-		repairLog.setSerialCode(blSerialProduct.getCode());
-		ctx.getModelService().save(repairLog);
-		setOtherDataToRepairLog(repairLog, blSerialProduct, ctx);
-	}
-	
-	/**
-	 * Sets the other data to repair log from serial.
-	 *
-	 * @param repairLog the repair log
-	 * @param blSerialProduct the bl serial product
-	 * @param ctx the ctx
-	 */
-	private void setOtherDataToRepairLog(final BlRepairLogModel repairLog, final BlSerialProductModel blSerialProduct,
-			final InterceptorContext ctx)
-	{
-		getBlRepairLogService().setRepairReasonOnRepairLog(repairLog, blSerialProduct);
-		ctx.getModelService().save(repairLog);
 	}
 
 	/**

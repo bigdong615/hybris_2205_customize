@@ -3,6 +3,7 @@ package com.bl.core.repair.log.service.impl;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 
 import java.util.Objects;
@@ -30,6 +31,7 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 
 	private BlProductDao blProductDao;
 	private UserService userService;
+	private ModelService modelService;
 
 	/**
 	 * {@inheritDoc}
@@ -102,6 +104,35 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addGeneratedRepairLog(final Class repairLogType, final BlSerialProductModel blSerialProduct)
+	{
+		final BlRepairLogModel repairLog = getModelService().create(repairLogType);
+		repairLog.setItemBarcode(blSerialProduct.getBarcode());
+		repairLog.setSerialCode(blSerialProduct.getCode());
+		getModelService().save(repairLog);
+		setOtherDataToRepairLog(repairLog, blSerialProduct);
+	}
+
+	/**
+	 * Sets the other data to repair log from serial.
+	 *
+	 * @param repairLog
+	 *           the repair log
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param ctx
+	 *           the ctx
+	 */
+	private void setOtherDataToRepairLog(final BlRepairLogModel repairLog, final BlSerialProductModel blSerialProduct)
+	{
+		setRepairReasonOnRepairLog(repairLog, blSerialProduct);
+		getModelService().save(repairLog);
+	}
+
+	/**
 	 * @return the blProductDao
 	 */
 	public BlProductDao getBlProductDao()
@@ -133,6 +164,23 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 	public void setUserService(final UserService userService)
 	{
 		this.userService = userService;
+	}
+
+	/**
+	 * @return the modelService
+	 */
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	/**
+	 * @param modelService
+	 *           the modelService to set
+	 */
+	public void setModelService(final ModelService modelService)
+	{
+		this.modelService = modelService;
 	}
 
 }
