@@ -151,6 +151,10 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.status     ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
