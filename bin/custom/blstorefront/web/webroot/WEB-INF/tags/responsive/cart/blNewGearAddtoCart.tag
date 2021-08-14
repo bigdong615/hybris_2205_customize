@@ -36,6 +36,5 @@
                       <spring:theme code="text.add.to.cart" />
 						    </button>
 						</form:form>
-				</c:otherwise>
-		</c:choose>
+
 </c:if>

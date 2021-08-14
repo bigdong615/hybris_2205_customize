@@ -39,9 +39,12 @@
             </div>
             <div class="modal-body">
               <div class="row">
+                 <c:if test="${product.retailGear eq true}">
+                 <c:set var="isNewGear" value="${product.retailGear}"/>
+                 </c:if>
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
                   <div class="col-md-7 mt-4"><b>${product.name}</b>
-                  <c:if test="${not empty rentalDate.selectedFromDate}">
+                  <c:if test="${not empty rentalDate.selectedFromDate && product.retailGear eq false}">
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
@@ -83,6 +86,7 @@
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
+              <c:if test="${isNewGear}">
              <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <c:choose>
                             	<c:when test="${not empty productReferences and productsLimit > 0}">
