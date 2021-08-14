@@ -36,8 +36,15 @@
                     <a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
                         <span class="step2 active"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
                     </a>
+                    <c:choose>
+                     <c:when test="${isReplacementOrderCart eq true}">
+
+                     </c:when>
+                     <c:otherwise>
                     <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
                     <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                    </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -54,12 +61,7 @@
                             </p>
                             </c:if>
                             <div class="accordion" id="shippingOptions">
-                             <c:choose>
-                               <c:when test="${isReplacementOrderCart eq true}">
-                               <input type="hidden" value="true" id="isReplacementOrderCart"/>
-                                  <checkout:blDeliveryMethod/>
-                               </c:when>
-                               <c:otherwise>
+
                                 <div class="accordion-item shipProduct">
                                     <checkout:fast/>
                                 </div>
@@ -71,9 +73,6 @@
                                     <checkout:fastest/>
                                 </div>
                                  </c:if>
-                               </c:otherwise>
-                             </c:choose>
-
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
@@ -131,7 +130,14 @@
                                      </c:if>
                                      </c:forEach>
                                  </c:if>
+                                  <c:choose>
+                                                      <c:when test="${isReplacementOrderCart eq true}">
+
+                                                      </c:when>
+                                                      <c:otherwise>
                                   <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                  </c:otherwise>
+                                  </c:choose>
 
                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
 

@@ -130,6 +130,11 @@
 			</form:form>
 		</div>
 	</c:if>
+
+<c:choose>
+	 <c:when test="${isReplacementOrderCart eq true}">
+	 </c:when>
+	 <c:otherwise>
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
@@ -178,6 +183,8 @@
           </p>
         </form:form>
       </c:forEach>
+    </c:otherwise>
+</c:choose>
 
 	<c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
 		<form:form id="removeGiftCardForm${loop.index}"

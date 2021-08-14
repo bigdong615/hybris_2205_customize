@@ -68,6 +68,7 @@
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
+
 												<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
 													<tr class="${(loop.index >= 3 ? 'hide-product-row ' : '')} <c:if test="${hasPromotion}"> noborder</c:if>">

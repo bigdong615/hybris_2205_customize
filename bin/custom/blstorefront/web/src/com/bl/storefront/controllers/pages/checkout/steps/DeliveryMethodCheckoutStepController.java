@@ -154,24 +154,19 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                             @RequestParam(value = "partnerZone", defaultValue = "")
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
-        Collection<? extends DeliveryModeData> deliveryModes;
 
-        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(blCartService.getSessionCart().getReplacementOrder())) {
-            deliveryModes = getCheckoutFacade().getDeliveryModesForReplacementOrder(false);
-            BlLogger.logMessage(LOG , Level.INFO , deliveryModes.stream().toString() , "********************");
+        boolean isPayByCustomer = true;
+
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) &&
+            Objects.nonNull(blCartService.getSessionCart().getReplacementOrder())) {
+                isPayByCustomer = false;
+                model.addAttribute("isReplacementOrderCart", true);
         }
-        else {
-           deliveryModes = getCheckoutFacade()
+        Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade()
                 .getSupportedDeliveryModes(
-                    shippingGroup, partnerZone, true);
+                    shippingGroup, partnerZone, isPayByCustomer);
             model.addAttribute(CART_DATA, cartData);
             model.addAttribute("deliveryMethods", deliveryModes);
-            if (BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder() &&
-                Objects.nonNull(blCartService.getSessionCart().getReplacementOrder()))) {
-                model.addAttribute("isReplacementOrderCart", true);
-            }
-
-        }
         return deliveryModes;
     }
 
@@ -475,21 +470,13 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 if (pinError != null) {
                     return pinError;
                 }
-                setDeliveryAddressForReplacementOrder(selectedAddressData);
+                setDeliveryAddress(selectedAddressData);
+               // setDeliveryAddressForReplacementOrder(selectedAddressData);
             }
         }
         return SUCCESS;
     }
 
-
-    private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) model
-            .getAttribute(BlCoreConstants.REQUEST);
-        return null != httpServletRequest && null != httpServletRequest.getUserPrincipal() &&
-            httpServletRequest.getUserPrincipal().getName().equalsIgnoreCase(BlCoreConstants.ASAGENT) &&
-            Objects.nonNull(cartModel.getReplacementOrder()) && null != getSessionService().getAttribute(
-            BlCoreConstants.RETURN_REQUEST);
-    }
 
     /**
      * Will set the delivery address

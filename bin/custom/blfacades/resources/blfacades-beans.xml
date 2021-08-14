@@ -92,6 +92,7 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
+    <property name="serialSoftAssignedOrHardAssigned" type="boolean"/>
  </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">

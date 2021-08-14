@@ -52,8 +52,6 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       abstractOrderModel.setSubtotal(0.0);
       abstractOrderModel.setTotalDamageWaiverCost(0.0);
       abstractOrderModel.setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
-      abstractOrderModel.setPaymentInfo(returnRequestModel.getOrder().getPaymentInfo());
-      abstractOrderModel.setDeliveryAddress(returnRequestModel.getOrder().getDeliveryAddress());
       final List<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
       setPriceForOrderEntries(abstractOrderModel , abstractOrderEntryModels);
       abstractOrderModel.setEntries(abstractOrderEntryModels);
@@ -85,12 +83,22 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
 
 
   public static void setIsCartUsedForReplacementOrder(final AbstractOrderModel abstractOrderModel) {
-    abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
-    if(BooleanUtils.isFalse(abstractOrderModel.getCalculated())){
-      abstractOrderModel.setCalculated(Boolean.TRUE);
+    if (BooleanUtils.isTrue(isReplaceMentOrder())) {
+      if (null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
+        final ReturnRequestModel returnRequestModel = getSessionService()
+            .getAttribute(BlCoreConstants.RETURN_REQUEST);
+        abstractOrderModel
+            .setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
+        abstractOrderModel.setPaymentInfo(returnRequestModel.getOrder().getPaymentInfo());
+      }
+
+      abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
+      if (BooleanUtils.isFalse(abstractOrderModel.getCalculated())) {
+        abstractOrderModel.setCalculated(Boolean.TRUE);
+      }
+      getModelService().save(abstractOrderModel);
+      getModelService().refresh(abstractOrderModel);
     }
-    getModelService().save(abstractOrderModel);
-    getModelService().refresh(abstractOrderModel);
   }
 
   public static boolean isCartForReplacement(final AbstractOrderModel abstractOrderModel){
