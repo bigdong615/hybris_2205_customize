@@ -126,22 +126,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 			if (CollectionUtils.isNotEmpty(this.allSerialProducts))
 			{
-				setWidgetTitle("Create Package");
-				final List<SerialProductDTO> serials = new ArrayList<>();
-				for (final BlProductModel blProductModel : allSerialProducts)
-				{
-					final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-					final SerialProductDTO serialProduct = new SerialProductDTO();
-					serialProduct.setSerialProduct(blSerialProductModel);
-					this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
-					serials.add(serialProduct);
-				}
-				this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
-				final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
-				final PackagingInfoData packagingInfoData = packageBox.get(0);
-				packageBox.addToSelection(packagingInfoData);
-				this.boxes.setModel(packageBox);
-				this.totalWeight.setValue(calculateTotalWeight(this.weight));
+				createShipmentPackage();
 			}
 			else
 			{
@@ -151,6 +136,30 @@ public class CreatePackageController extends DefaultWidgetController
 			}
 		}
 		}
+	}
+
+
+	/**
+	 * This method is used to create shipment packages
+	 */
+	private void createShipmentPackage()
+	{
+		setWidgetTitle("Create Package");
+		final List<SerialProductDTO> serials = new ArrayList<>();
+		for (final BlProductModel blProductModel : allSerialProducts)
+		{
+			final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+			final SerialProductDTO serialProduct = new SerialProductDTO();
+			serialProduct.setSerialProduct(blSerialProductModel);
+			this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
+			serials.add(serialProduct);
+		}
+		this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
+		final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
+		final PackagingInfoData packagingInfoData = packageBox.get(0);
+		packageBox.addToSelection(packagingInfoData);
+		this.boxes.setModel(packageBox);
+		this.totalWeight.setValue(calculateTotalWeight(this.weight));
 	}
 
 
@@ -166,7 +175,7 @@ public class CreatePackageController extends DefaultWidgetController
 			final Map<String, ItemStatusEnum> itemsMap = consignmentEntryModel.getItems();
 
 			consignmentEntryModel.getSerialProducts().stream().filter(serialProduct -> itemsMap.containsKey(serialProduct.getCode())
-					&& ItemStatusEnum.INCLUDED.equals(itemsMap.get(serialProduct.getCode()))).forEach(product->allSerialProducts.add(product));
+					&& ItemStatusEnum.INCLUDED.equals(itemsMap.get(serialProduct.getCode()))).forEach(allSerialProducts::add);
 		}
 		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
 

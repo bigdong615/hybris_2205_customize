@@ -92,7 +92,7 @@ public interface BlInventoryScanToolService {
  	 * 
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
- 	 * @return List<String>
+ 	 * @return Map<String, List<String>>
  	 */
  	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	

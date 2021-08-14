@@ -407,7 +407,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		if (scannedSerialProduct.size() != subList.size())
 		{
-			final List<String> collect = scannedSerialProduct.stream().map(serial -> serial.getBarcode())
+			final List<String> collect = scannedSerialProduct.stream().map(BlSerialProductModel::getBarcode)
 					.collect(Collectors.toList());
 			subList.removeIf(collect::contains);
 			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ONE, subList));
@@ -518,7 +518,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		});
 
 		newBarcode.removeIf(entryBarcode::contains);
-		entryBarcode.removeIf(eBarcode -> barcodes.contains(eBarcode));
+		entryBarcode.removeIf(barcodes::contains);
 
 		if(CollectionUtils.isEmpty(newBarcode) && CollectionUtils.isEmpty(entryBarcode))
 		{

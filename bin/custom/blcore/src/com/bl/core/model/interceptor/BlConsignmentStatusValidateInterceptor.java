@@ -26,6 +26,9 @@ public class BlConsignmentStatusValidateInterceptor implements ValidateIntercept
 	@Resource
 	private UserService userService;
 
+	/**
+	 * method will validate consignment status based on user group
+	 */
 	@Override
 	public void onValidate(final ConsignmentModel consignmentModel, final InterceptorContext interceptorContext)
 			throws InterceptorException
