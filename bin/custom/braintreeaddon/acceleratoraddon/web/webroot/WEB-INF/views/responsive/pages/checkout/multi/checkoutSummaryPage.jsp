@@ -19,9 +19,12 @@
 		<c:when test="${cartData.hasGiftCart}">
 			<checkout:blGiftCardPurchaseCheckoutSummary />
 		</c:when>
-		<c:when test="${cartData.isRentalCart}">
+		<c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
 			<checkout:blRentalCheckoutSummaryPage />
 		</c:when>
+      <c:when test="${cartData.isNewGearOrder eq true}">
+        <checkout:blNewGearCheckoutSummaryPage />
+      </c:when>
 		<c:otherwise>
 			<checkout:blUsedGearCheckoutSummary />
 		</c:otherwise>

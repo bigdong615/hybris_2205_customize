@@ -13,7 +13,7 @@
        <product:giftCardProductDetailsPanel />
       </c:when>
 
-       <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
+       <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true' && not empty agent.uid}">
           <product:blRentalProductDetailsPanel />
       </c:when>
       <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">

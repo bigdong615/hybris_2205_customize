@@ -21,30 +21,32 @@
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
-	<hr>
-	<c:choose>
-		<c:when test="${cartData.isRentalCart}">
-			<p>
-				<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
-					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
-					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-			</p>
-		</c:when>
-		<c:otherwise>
-			<b><spring:theme code="text.used.Gear.cart.timer" /> <span
-				id="usedTimer"></span></b>
-		</c:otherwise>
-	</c:choose>
-	<hr>
+	<c:if test="${cartData.isNewGearOrder eq false}">
+    <hr>
+    <c:choose>
+      <c:when test="${cartData.isRentalCart}">
+        <p>
+          <b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
+            type="text" class="form-control cart-picker"
+            id="summary-litepicker"
+            placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+        </p>
+      </c:when>
+      <c:otherwise>
+        <b><spring:theme code="text.used.Gear.cart.timer" /> <span
+          id="usedTimer"></span></b>
+      </c:otherwise>
+    </c:choose>
+    <hr>
+	</c:if>
 	<table id="costSummary">
 		<tbody>
 			<tr>
 				<td class="gray80"><c:choose>
-						<c:when test="${cartData.isRentalCart}">
+						<c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
 							<spring:theme code="text.checkout.multi.order.summary.cost" />
 						</c:when>
-						<c:when test="${cartData.isNewGearOrder}">
+						<c:when test="${cartData.isNewGearOrder eq true && not empty agent.uid}">
 							<spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
 						</c:when>
 						<c:otherwise>
@@ -55,7 +57,7 @@
 				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
 						priceData="${cartData.subTotal}" /></td>
 			</tr>
-			<c:if test="${cartData.isRentalCart}">
+			<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.damage.waiver" /> <a href="#"

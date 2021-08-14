@@ -37,10 +37,10 @@
                               <h1><spring:theme code="text.new.gear.cart.title"/></h1>
                               <hr>
                               <c:forEach items="${cartData.entries}" var="entry">
-                                 <cart:blRentalCartItem entry="${entry}" cartData="${cartData}" />
+                                 <cart:blNewGearCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
                               <div class="cart-actions">
-                                  <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                  <a href="${homePageUrl}" class="gray80"><spring:theme code="text.newgear.cart.back" /></a>
                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                                    <a class="btn btn-sm btn-primary float-end js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
                                    data-bs-toggle="modal" data-bs-target="#signIn">
@@ -49,7 +49,7 @@
                                    </a>
                                   </sec:authorize>
                                   <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                  <a href="" class="btn btn-sm btn-primary float-end" id="cart-continue">
+                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
                                     <spring:theme code="general.continue.button" />
                                    </a>
                                   </sec:authorize>
@@ -68,9 +68,7 @@
                               <c:if test="${isGiftCardRemoved eq 'true'}">
                                  <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
                               </c:if>
-                              <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                               <div class="order-actions my-4">
-                                  <a href="${printQuoteUrl}" id="printCartQuote" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"><i class="icon-print"></i></a>
                                    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                                            <a class="js-login-popup" data-link="<c:url value='/login/loginpopup'/>" href="#"
                                                   data-bs-toggle="modal" data-bs-target="#signIn"><i class="icon-save" alt="Save Order"></i></a>
