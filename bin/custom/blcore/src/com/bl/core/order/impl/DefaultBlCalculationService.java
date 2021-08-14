@@ -98,11 +98,13 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
 		}
 		final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
+		if(BooleanUtils.isFalse(order.getIsNewGearOrder())) {
 		order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", finaltotalDamageWaiverCost);
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		}
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
