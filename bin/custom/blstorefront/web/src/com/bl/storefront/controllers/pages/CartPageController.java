@@ -57,6 +57,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -166,6 +167,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "blGiftCardFacade")
 	private BlGiftCardFacade blGiftCardFacade;
 
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -181,6 +185,7 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		sessionService.setAttribute("isPaymentPageVisited", false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);

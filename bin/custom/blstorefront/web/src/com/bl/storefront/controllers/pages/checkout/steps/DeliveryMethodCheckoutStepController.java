@@ -41,10 +41,13 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -100,9 +103,18 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
                 model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
             }
+            final ZoneDeliveryModeModel zoneDeliveryModeData = (ZoneDeliveryModeModel) cartModel.getDeliveryMode();
+            if(zoneDeliveryModeData != null) {
+                model.addAttribute("shippingMethod", zoneDeliveryModeData.getShippingGroup().getCode()+"-"+zoneDeliveryModeData.getCode());
+            }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
+
+        if((boolean) getSessionService().getAttribute("isPaymentPageVisited")) {
+            model.addAttribute("previousPage", Boolean.TRUE);
+        }
+
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -121,6 +133,24 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+    }
+
+    @GetMapping(value = "/checkAddressWithCartAddress")
+    @RequireHardLogIn
+    @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
+    @ResponseBody
+    public AddressData checkAddressWithCartAddress(final Model model, final RedirectAttributes redirectAttributes) {
+        final AddressData cartAddressData = getCheckoutFacade().getCheckoutCart() != null ? getCheckoutFacade().getCheckoutCart()
+                .getDeliveryAddress() : null;
+        if(cartAddressData != null) {
+            final List<AddressData> addressData = getUserFacade().getAddressBook();
+            for(final AddressData address : addressData) {
+                if(cartAddressData.getId().equals(address.getId())) {
+                    return address;
+                }
+            }
+        }
+        return cartAddressData;
     }
 
     @GetMapping(value = "/chooseShippingDelivery")
