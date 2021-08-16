@@ -36,32 +36,32 @@ public class BlRegistrationValidator implements Validator{
     public void validate(final Object object, final Errors errors) {
         RegisterForm registerForm = (RegisterForm)object;
         final String email = registerForm.getEmail();
-        final String pwd = registerForm.getPwd();
-        final String checkPwd = registerForm.getCheckPwd();
+        final String password = registerForm.getPwd();
+        final String checkPassword = registerForm.getCheckPwd();
 
         validateEmail(errors, email);
-        validatePassword(errors, pwd);
-        comparePasswords(errors, pwd, checkPwd);
+        validatePassword(errors, password);
+        comparePasswords(errors, password, checkPassword);
     }
 
-    protected void comparePasswords(final Errors errors, final String pwd, final String checkPwd)
+    protected void comparePasswords(final Errors errors, final String password, final String checkPassword)
     {
-        if (StringUtils.isNotEmpty(pwd) && StringUtils.isNotEmpty(checkPwd) && !StringUtils.equals(pwd, checkPwd))
+        if (StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(checkPassword) && !StringUtils.equals(password, checkPassword))
         {
-            errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.VALIDATE_CHECKPWD_EQUALS);
+            errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.VALIDATE_CHECKPASSWORD_EQUALS);
         }
         else
         {
-            if (StringUtils.isEmpty(checkPwd))
+            if (StringUtils.isEmpty(checkPassword))
             {
-                errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.REGISTER_CHECKPWD_INVALID);
+                errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.REGISTER_CHECKPASSWORD_INVALID);
             }
         }
     }
 
-    protected void validatePassword(final Errors errors, final String pwd)
+    protected void validatePassword(final Errors errors, final String password)
     {
-        if (BlControllerConstants.PASSWORD_MIN_LENGTH > StringUtils.length(pwd)|| BlControllerConstants.PASSWORD_MAX_LENGTH < StringUtils.length(pwd))
+        if (BlControllerConstants.PASSWORD_MIN_LENGTH > StringUtils.length(password)|| BlControllerConstants.PASSWORD_MAX_LENGTH < StringUtils.length(password))
         {
             errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PASSWORD_INVALID);
         }
