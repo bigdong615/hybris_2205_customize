@@ -108,7 +108,7 @@ public class BlWishlistController extends AbstractSearchPageController {
     try {
       final CartModificationData cartModification = blCartFacade.addToCart(code, 1, null);
     } catch (CommerceCartModificationException e) {
-      e.printStackTrace();
+      BlLogger.logMessage(LOG, Level.ERROR, "Product could not be added to cart", e);
     }
     return REDIRECT_TO_BOOKMARKS_PAGE;
   }

@@ -34,28 +34,23 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
       throws ConversionException {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
       final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
-      Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
+      final Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
       if (Objects.nonNull(wishlist)) {
-        ProductModel product = null;
         try {
-          product = getProductService().getProductForCode(source.getCode());
-          Wishlist2EntryModel wishlist2Entry = getWishlistService()
-              .getWishlistEntryForProduct(product, wishlist);
+          final Wishlist2EntryModel wishlist2Entry = getWishlistService()
+              .getWishlistEntryForProduct(source, wishlist);
           if (Objects.nonNull(wishlist2Entry)) {
             target.setIsBookMarked(true);
           }
-        } catch (ModelNotFoundException e) {
+        } catch (final ModelNotFoundException e) {
           target.setIsBookMarked(false);
-          BlLogger
-              .logMessage(LOG, Level.ERROR,
-                  "Wishlist entry with product " + product.getCode() + "not found.",
-                  e);
-        } catch (UnknownIdentifierException e) {
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Wishlist entry with product " + source.getCode() + "not found.", e);
+        } catch (final UnknownIdentifierException e) {
           target.setIsBookMarked(false);
-          BlLogger
-              .logMessage(LOG, Level.ERROR,
-                  "Wishlist entry with product " + product.getCode() + " in wishlist " + wishlist.getName() + "  not found.",
-                  e);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Wishlist entry with product " + source.getCode() + " in wishlist " + wishlist
+                  .getName() + "  not found.", e);
         }
       }
     }
