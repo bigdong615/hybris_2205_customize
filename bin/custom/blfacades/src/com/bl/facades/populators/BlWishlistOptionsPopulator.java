@@ -4,7 +4,6 @@ import com.bl.core.model.BlProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -45,12 +44,12 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
         } catch (final ModelNotFoundException e) {
           target.setIsBookMarked(false);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-              "Wishlist entry with product " + source.getCode() + "not found.", e);
+              "Wishlist entry with product {} not found.", source.getCode());
         } catch (final UnknownIdentifierException e) {
           target.setIsBookMarked(false);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-              "Wishlist entry with product " + source.getCode() + " in wishlist " + wishlist
-                  .getName() + "  not found.", e);
+              "Wishlist entry with product {} in wishlist {} not found.", source.getCode(),
+              wishlist.getName());
         }
       }
     }
