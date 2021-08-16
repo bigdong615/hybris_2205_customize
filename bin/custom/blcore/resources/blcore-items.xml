@@ -2409,6 +2409,19 @@
 
                 </attributes>
             </itemtype>
+
+          <!--Added New attribute to identify the order for replacement in Return Request . -->
+          <itemtype code="ReturnRequest" autocreate="false" generate="false">
+            <description>Extending ReturnRequest type with additional attributes.</description>
+            <attributes>
+              <attribute qualifier="orderForReplacement" type="AbstractOrder">
+                <description>This is to identify the order which used for replacement of original order. </description>
+                <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                <persistence type="property" />
+              </attribute>
+            </attributes>
+          </itemtype>
+
         </typegroup>
 
         <typegroup>

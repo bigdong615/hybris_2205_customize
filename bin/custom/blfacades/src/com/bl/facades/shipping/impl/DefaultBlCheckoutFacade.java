@@ -157,9 +157,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     @Override
     public Collection<? extends DeliveryModeData> getSupportedDeliveryModes(final String shippingGroup, final String partnerZone,
                                                                             final boolean payByCustomer) {
-
-        BlLogger.logMessage(LOG , Level.INFO , "+++++++++++++++++++" + payByCustomer +"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        BlLogger.logMessage(LOG , Level.INFO , "+++++++++++++++++++" + shippingGroup +"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
             if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
@@ -989,51 +986,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    		 BlLogger.logMessage(LOG, Level.ERROR, "Error while converting price to PriceData object", exception);
    		 throw exception;
    	 }   	 
-    }
-
-    @Override
-    public Collection<? extends DeliveryModeData> getDeliveryModesForReplacementOrder(
-        boolean payByCustomer) {
-        Collection<ZoneDeliveryModeModel> deliveryModeModels = getBlZoneDeliveryModeService().getAllPayByBlDeliveryModes(payByCustomer);
-
-        if (CollectionUtils.isNotEmpty(deliveryModeModels)) {
-            final Collection<ZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
-            for (ZoneDeliveryModeModel zoneDeliveryModeModel : deliveryModeModels) {
-                final ZoneDeliveryModeData zoneDeliveryModeData = getZoneDeliveryModeConverter().convert(zoneDeliveryModeModel);
-                if (null != zoneDeliveryModeData) {
-                    zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(0.0), getCart().getCurrency().getIsocode()));
-                    resultDeliveryData.add(zoneDeliveryModeData);
-                }
-            }
-            return resultDeliveryData;
-        }
-        return Collections.emptyList();
-    }
-
-
-
-    @Override
-    public boolean setDeliveryAddressForReplacementOrder(final AddressData addressData) {
-        final CartModel cartModel = getCart();
-        if (cartModel != null)
-        {
-            AddressModel addressModel = null;
-            if (addressData != null)
-            {
-                addressModel = addressData.getId() == null ? createDeliveryAddressModel(addressData, cartModel)
-                    : getDeliveryAddressModelForCode(addressData.getId());
-            }
-
-            final CommerceCheckoutParameter parameter = createCommerceCheckoutParameter(cartModel, true);
-            parameter.setAddress(addressModel);
-            parameter.setIsDeliveryAddress(false);
-            if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReplacementOrder()) &&
-                null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
-                  parameter.setIsCartForReplacementOrder(Boolean.TRUE);
-            }
-            return getCommerceCheckoutService().setDeliveryAddress(parameter);
-        }
-        return false;
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {

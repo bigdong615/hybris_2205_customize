@@ -12,12 +12,9 @@
  */
 package com.bl.Ordermanagement.impl;
 
-import com.bl.core.utils.BlReplaceMentOrderUtils;
+import com.bl.Ordermanagement.CheckOrderService;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import com.bl.Ordermanagement.CheckOrderService;
-import java.util.Objects;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 

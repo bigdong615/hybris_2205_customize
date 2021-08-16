@@ -35,7 +35,6 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-    /**
     if (CollectionUtils.isEmpty(catalogVersionService.getSessionCatalogVersions())) {
       catalogVersionService.setSessionCatalogVersion(BlCoreConstants.CATALOG_VALUE,
           BlCoreConstants.CATALOG_VERSION_NAME);
@@ -60,7 +59,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
           BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
         }
       }
-    } **/
+    }
   }
 
   public BlBackOfficePriceService getBlBackOfficePriceService() {

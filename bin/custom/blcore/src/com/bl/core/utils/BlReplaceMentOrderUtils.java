@@ -52,7 +52,8 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       abstractOrderModel.setTotalTax(0.0);
       abstractOrderModel.setSubtotal(0.0);
       abstractOrderModel.setTotalDamageWaiverCost(0.0);
-      abstractOrderModel.setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
+      abstractOrderModel.setReturnRequestForOrder(returnRequestModel);
+
       final List<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
       setPriceForOrderEntries(abstractOrderModel , abstractOrderEntryModels);
       abstractOrderModel.setEntries(abstractOrderEntryModels);
@@ -89,9 +90,11 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
         final ReturnRequestModel returnRequestModel = getSessionService()
             .getAttribute(BlCoreConstants.RETURN_REQUEST);
         abstractOrderModel
-            .setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
+            .setReturnRequestForOrder(returnRequestModel);
         PaymentInfoModel paymentInfoModel = getModelService().clone(returnRequestModel.getOrder().getPaymentInfo());
         abstractOrderModel.setPaymentInfo(paymentInfoModel);
+
+
       }
 
       abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
@@ -100,11 +103,12 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
       }
       getModelService().save(abstractOrderModel);
       getModelService().refresh(abstractOrderModel);
+
     }
   }
 
   public static boolean isCartForReplacement(final AbstractOrderModel abstractOrderModel){
-    return Objects.nonNull(abstractOrderModel.getReplacementOrder()) &&
+    return Objects.nonNull(abstractOrderModel.getReturnRequestForOrder()) &&
         BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder());
   }
 

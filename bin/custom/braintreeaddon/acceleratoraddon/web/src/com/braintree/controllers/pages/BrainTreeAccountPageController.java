@@ -221,6 +221,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	@RequireHardLogIn
 	public String addPaymentMethod(@RequestParam(value = "orderId", required = false) final String orderCode,
 			final Model model, final String selectedAddressCode) throws CMSItemNotFoundException {
+
 		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
 		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
 				getMessageSource().getMessage("text.account.paymentDetails", null, getI18nService().getCurrentLocale()), null));

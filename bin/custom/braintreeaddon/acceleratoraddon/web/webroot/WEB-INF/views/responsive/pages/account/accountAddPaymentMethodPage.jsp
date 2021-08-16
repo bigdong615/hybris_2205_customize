@@ -30,7 +30,7 @@
 
 						<input type="hidden" name="orderId" id="orderId" value="${orderCode}"/>
 						<div class="hostedFields">
-												<input type="hidden" name="orderCode" id="orderCode" value="${orderCode}"/>
+
 							<div class="control-group cardForm" style="dispaly: none;"
 								id="cardForn">
 

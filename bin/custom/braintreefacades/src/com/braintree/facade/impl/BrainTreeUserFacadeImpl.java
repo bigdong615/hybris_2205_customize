@@ -736,11 +736,11 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			final List<AddressData> addressBook = new ArrayList<>();
 			AddressData defaultAddress = null;
 			if (BlReplaceMentOrderUtils.isReplaceMentOrder() && Objects
-					.nonNull(getCartService().getSessionCart().getReplacementOrder())) {
+					.nonNull(getCartService().getSessionCart().getReturnRequestForOrder())) {
 				if(null != getCartService().getSessionCart().
-						getReplacementOrder().getOrder().getDeliveryAddress()) {
+						getReturnRequestForOrder().getOrder().getDeliveryAddress()) {
 					defaultAddress = getAddressConverter().convert(getCartService().getSessionCart().
-							getReplacementOrder().getOrder().getDeliveryAddress());
+							getReturnRequestForOrder().getOrder().getDeliveryAddress());
 				}
 				else {
 					defaultAddress = getDefaultAddress();

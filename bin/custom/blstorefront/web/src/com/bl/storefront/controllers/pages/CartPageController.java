@@ -1086,7 +1086,7 @@ public class CartPageController extends AbstractCartPageController
 
 	private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
 		return  BlReplaceMentOrderUtils.isReplaceMentOrder() &&
-				Objects.nonNull(cartModel.getReplacementOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
+				Objects.nonNull(cartModel.getReturnRequestForOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 	}
 
 	/**

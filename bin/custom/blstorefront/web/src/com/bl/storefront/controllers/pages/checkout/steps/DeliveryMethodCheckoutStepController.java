@@ -75,8 +75,6 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     private static final String CART_DATA = "cartData";
     private static final String SUCCESS = "SUCCESS";
 
-
-    private static final Logger LOG = Logger.getLogger(DeliveryMethodCheckoutStepController.class);
     @Resource(name = "checkoutFacade")
     private BlCheckoutFacade checkoutFacade;
 
@@ -143,7 +141,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
-        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReplacementOrder())){
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReturnRequestForOrder())){
             model.addAttribute("isReplacementOrderCart" , true);
         }
 
@@ -191,7 +189,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         boolean isPayByCustomer = true;
 
         if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) &&
-            Objects.nonNull(blCartService.getSessionCart().getReplacementOrder())) {
+            Objects.nonNull(blCartService.getSessionCart().getReturnRequestForOrder())) {
                 isPayByCustomer = false;
                 model.addAttribute("isReplacementOrderCart", true);
         }
@@ -504,28 +502,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                     return pinError;
                 }
                 setDeliveryAddress(selectedAddressData);
-               // setDeliveryAddressForReplacementOrder(selectedAddressData);
             }
         }
         return SUCCESS;
     }
 
-
-    /**
-     * Will set the delivery address
-     *
-     * @param selectedAddressData
-     */
-    protected void setDeliveryAddressForReplacementOrder(final AddressData selectedAddressData) {
-        final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
-        if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData)) {
-            getCheckoutFacade().setDeliveryAddressForReplacementOrder(selectedAddressData);
-            if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook()) {
-                // temporary address should be removed
-                getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
-            }
-        }
-    }
 
     protected String getBreadcrumbKey() {
         return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
