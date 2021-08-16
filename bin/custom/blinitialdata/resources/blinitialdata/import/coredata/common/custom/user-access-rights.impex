@@ -239,5 +239,6 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Warehouse;+;+;-;-
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
+;;;StockLevel;+;-;-;-
 
 $END_USERRIGHTS;;;;
