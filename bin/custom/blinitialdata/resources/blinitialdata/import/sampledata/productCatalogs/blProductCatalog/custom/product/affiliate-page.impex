@@ -86,5 +86,5 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                   ;                    ; Section1Slot        ; AffiliatePageComponent 
+                   ;                    ; Section1Slot        ; AffiliatePageComponent  
 
