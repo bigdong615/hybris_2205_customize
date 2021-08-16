@@ -35,25 +35,28 @@ public interface BlPricingService {
 
   /**
    * Calculate Serial for Sale price based on conditional rating
-   * @param forSaleBasePrice
-   * @param conditionRatingOverallScore
-   * @return
+   *
+   * @param forSaleBasePrice the for sale base price
+   * @param conditionRatingOverallScore the condition rating overall score
+   * @return the big decimal
    */
   BigDecimal calculateFinalSalePriceForSerial(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore);
 
   /**
    * calculate conditional rating on the basis of cosmetic and functional rating.
-   * @param cosmeticRating
-   * @param functionalRating
-   * @return
+   *
+   * @param cosmeticRating the cosmetic rating
+   * @param functionalRating the functional rating
+   * @return the calculated conditional rating
    */
-  Double getCalculatedConditionalRating(final float cosmeticRating,final float functionalRating);
+  Double getCalculatedConditionalRating(final double cosmeticRating,final double functionalRating);
 
   /**
    * Get the  promotion price for serial
-   * @param serialProductPrice
-   * @param ugPromotionDiscount
-   * @return
+   *
+   * @param serialProductPrice the serial product price
+   * @param ugPromotionDiscount the ug promotion discount
+   * @return the serial promotion price
    */
   BigDecimal getSerialPromotionPrice(final BigDecimal serialProductPrice,final Integer ugPromotionDiscount);
 }
