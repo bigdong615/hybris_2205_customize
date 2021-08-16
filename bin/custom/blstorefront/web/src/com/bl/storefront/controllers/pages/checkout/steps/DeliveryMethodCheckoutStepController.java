@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
@@ -17,10 +18,8 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
-import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
-import com.bl.storefront.controllers.pages.CartPageController;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -44,16 +43,15 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,9 +114,19 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
                 model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
             }
+            final ZoneDeliveryModeModel zoneDeliveryModeData = (ZoneDeliveryModeModel) cartModel.getDeliveryMode();
+            if(zoneDeliveryModeData != null) {
+                model.addAttribute("shippingMethod", zoneDeliveryModeData.getShippingGroup().getCode()+ BlCoreConstants.HYPHEN
+                        +zoneDeliveryModeData.getCode());
+            }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
+
+        if((boolean) getSessionService().getAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED)) {
+            model.addAttribute("previousPage", Boolean.TRUE);
+        }
+
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -141,6 +149,31 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+    }
+
+    /**
+     * javadoc
+     * This method will send address for back traversal scenario
+     * @param model model
+     * @param redirectAttributes attr
+     * @return AddressData
+     */
+    @GetMapping(value = "/checkAddressWithCartAddress")
+    @RequireHardLogIn
+    @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
+    @ResponseBody
+    public AddressData checkAddressWithCartAddress(final Model model, final RedirectAttributes redirectAttributes) {
+        final AddressData cartAddressData = getCheckoutFacade().getCheckoutCart() != null ? getCheckoutFacade().getCheckoutCart()
+                .getDeliveryAddress() : null;
+        if(cartAddressData != null) {
+            final List<AddressData> addressData = getUserFacade().getAddressBook();
+            for(final AddressData address : addressData) {
+                if(cartAddressData.getId().equals(address.getId())) {
+                    return address;
+                }
+            }
+        }
+        return cartAddressData;
     }
 
     @GetMapping(value = "/chooseShippingDelivery")

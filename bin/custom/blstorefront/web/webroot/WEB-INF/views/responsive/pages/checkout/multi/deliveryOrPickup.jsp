@@ -14,7 +14,6 @@
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/cart" var="cart" />
-
 <template:page pageTitle="${pageTitle}">
     <section id="cartProcess" class="cart cart-rental">
         <div class="container">
@@ -60,6 +59,8 @@
                                 placeholder="<spring:theme code="text.rental.cart.select.date"/>">
                             </p>
                             </c:if>
+                            <input type="hidden" value="${shippingMethod}" id="shippingMethod">
+                            <input type="hidden" value="${previousPage}" id="previousPage">
                             <div class="accordion" id="shippingOptions">
 
                                 <div class="accordion-item shipProduct">
