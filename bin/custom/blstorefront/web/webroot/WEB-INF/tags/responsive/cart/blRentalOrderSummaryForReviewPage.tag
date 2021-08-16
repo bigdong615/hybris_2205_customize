@@ -16,34 +16,45 @@
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
-	<hr>
-	  <p>
-			<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
-					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
-					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-		</p>
-	<hr>
+	<c:if test= "${cartData.isNewGearOrder eq false}">
+    <hr>
+      <p>
+        <b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
+            type="text" class="form-control cart-picker"
+            id="summary-litepicker"
+            placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+      </p>
+    <hr>
+	</c:if>
 	<table id="costSummary">
 		<tbody>
 			<tr>
 				<td class="gray80">
-						<spring:theme code="text.checkout.multi.order.summary.cost" />
+          <c:choose>
+            <c:when test="${cartData.isNewGearOrder eq true}">
+                <spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
+            </c:when>
+            <c:otherwise>
+                <spring:theme code="text.checkout.multi.order.summary.cost" />
+            </c:otherwise>
+				</c:choose>
 				</td>
 				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
 						priceData="${cartData.subTotal}" /></td>
 			</tr>
-			<tr>
-				<td class="gray80"><spring:theme
-						code="text.cart.damage.waiver" /> <a href="#"
-						data-bs-toggle="modal" data-bs-target="#damageWaivers"> <i
-						class="icon-support"></i>
-				    </a>
-				</td>
-				<td class="text-end" id="cart-shipping-waiver"><format:blPrice
-							priceData="${cartData.totalDamageWaiverCost}" />
-				</td>
-			</tr>
+			<c:if test= "${cartData.isNewGearOrder eq false}">
+        <tr>
+          <td class="gray80"><spring:theme
+              code="text.cart.damage.waiver" /> <a href="#"
+              data-bs-toggle="modal" data-bs-target="#damageWaivers"> <i
+              class="icon-support"></i>
+              </a>
+          </td>
+          <td class="text-end" id="cart-shipping-waiver"><format:blPrice
+                priceData="${cartData.totalDamageWaiverCost}" />
+          </td>
+        </tr>
+			</c:if>
 			<tr>
 				<td class="gray80"><spring:theme
 						code="text.checkout.multi.order.summary.shipping" /></td>

@@ -46,7 +46,7 @@
 						<c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
 							<spring:theme code="text.checkout.multi.order.summary.cost" />
 						</c:when>
-						<c:when test="${cartData.isNewGearOrder eq true && not empty agent.uid}">
+						<c:when test="${cartData.isNewGearOrder eq true}">
 							<spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
 						</c:when>
 						<c:otherwise>

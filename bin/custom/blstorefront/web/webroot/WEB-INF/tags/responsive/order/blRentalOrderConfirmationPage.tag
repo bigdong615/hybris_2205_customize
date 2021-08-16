@@ -21,7 +21,9 @@
 					<h5 class="mb-5">
 						<spring:theme code="order.confirmation.page.order.number"
 							arguments="${orderCode}" /><br/>
+						<c:if test="${cartData.isNewGearOrder  eq false}">
 						(${orderData.rentalDates.selectedFromDate} - ${orderData.rentalDates.selectedToDate})
+						</c:if>
 					</h5>
 					<c:if test="${not empty orderData.giftCardData}">
 						<div
@@ -46,6 +48,7 @@
 							href="${homepageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme
 								code="order.confirmation.page.continue.shopping.button" /></a>
 					</div>
+        <c:if test="${cartData.isNewGearOrder  eq false}">
 					<div class="order-actions text-center mb-4">
             <form action="${printOrderConfirmationUrl}" id="printOrderConfirmationForm" method="GET">
               <input type="hidden" id="orderCode" name="orderCode" value="${orderCode}"/>
@@ -55,6 +58,7 @@
 						</a>
 					</div>
 				</div>
+			</c:if>s
 			</div>
 		</div>
 	</div>
