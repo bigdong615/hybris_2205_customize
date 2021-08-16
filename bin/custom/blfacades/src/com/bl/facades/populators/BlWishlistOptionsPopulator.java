@@ -44,7 +44,7 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
         } catch (final ModelNotFoundException e) {
           target.setIsBookMarked(false);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-              "Wishlist entry with product {} not found.", source.getCode());
+              "Wishlist entry with product {} not found.", source.getCode()); 
         } catch (final UnknownIdentifierException e) {
           target.setIsBookMarked(false);
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
