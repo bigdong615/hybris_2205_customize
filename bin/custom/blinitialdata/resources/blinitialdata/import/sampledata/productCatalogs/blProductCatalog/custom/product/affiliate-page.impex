@@ -52,7 +52,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
                               ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                               ; TopHeaderSlot                    ;                                                                             ;                           ; wide
-                              ; Section1Slot            ;                                                                              ;                          ;wide 
+                              ; Section1Slot            ;                                                                              ;                          ;wide
                                                 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
