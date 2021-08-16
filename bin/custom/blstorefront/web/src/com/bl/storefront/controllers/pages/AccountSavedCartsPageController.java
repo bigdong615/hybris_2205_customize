@@ -282,10 +282,9 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	}
 
 	@RequireHardLogIn
-	@RequestMapping(value = "/{cartId}/restorCart")
+	@GetMapping(value = "/{cartId}/restorCart")
 	public String postRestoreSaveCartForId(@PathVariable(value = "cartId") final String cartId,
-			final RestoreSaveCartForm restoreSaveCartForm, final BindingResult bindingResult) throws CommerceSaveCartException
-	{
+			final RestoreSaveCartForm restoreSaveCartForm, final BindingResult bindingResult) {
 		try
 		{
 			restoreSaveCartFormValidator.validate(restoreSaveCartForm, bindingResult);
@@ -322,7 +321,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		return BlControllerConstants.REDIRECT_CART_URL;
 	}
 
-	@RequestMapping(value = "/{cartId}/delete")
+	@GetMapping(value = "/{cartId}/delete")
 	@RequireHardLogIn
 	public String deleteSaveCartForId(@PathVariable(value = "cartId") final String cartId)
 			throws CommerceSaveCartException
