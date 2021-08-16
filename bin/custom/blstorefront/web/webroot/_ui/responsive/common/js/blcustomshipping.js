@@ -1389,6 +1389,14 @@ function reverseTraverseOnShipping() {
         addressType = 'UNKNOWN';
     }
 
+    if(line2 == null) {
+        line2 = '';
+    }
+
+    if(companyName == null) {
+        companyName = '';
+    }
+
     let addressForm = {
         firstName : firstName.trim(),
         lastName : lastName.trim(),
