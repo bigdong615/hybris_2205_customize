@@ -158,7 +158,6 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
-	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
 	private static final String REDIRECT_TO_ORDER_HISTORY_PAGE = REDIRECT_PREFIX + "/my-account/orders";
 	private static final String REDIRECT_TO_CONSENT_MANAGEMENT = REDIRECT_PREFIX + "/my-account/consents";
 
@@ -495,7 +494,6 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String editEmail(final Model model) throws CMSItemNotFoundException
 	{
-		final CustomerData customerData = customerFacade.getCurrentCustomer();
 		final UpdateEmailForm updateEmailForm = new UpdateEmailForm();
 
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
