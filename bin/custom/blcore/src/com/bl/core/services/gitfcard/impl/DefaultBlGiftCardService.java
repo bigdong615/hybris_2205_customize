@@ -314,7 +314,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
   @Override
   public boolean validateGiftCardBeforePlaceOrder(final OrderModel order) {
     return CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getGiftCardAmount() != null &&
-        order.getGiftCardAmount().equals(order.getGrandTotal());
+        order.getGiftCardAmount().compareTo(order.getGrandTotal()) == 0;
   }
 
   /**
