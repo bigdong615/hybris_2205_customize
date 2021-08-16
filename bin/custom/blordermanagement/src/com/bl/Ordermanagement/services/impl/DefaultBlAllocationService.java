@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -250,6 +251,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setSerialProducts(new ArrayList<>(serialProductModels));   //setting serial products from result
 
     setItemsMap(entry, serialProductModels);
+    setSerialCodesToBillingCharges(entry, serialProductModels);
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
@@ -328,6 +330,22 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     });
 
     entry.setItems(itemsMap);
+  }
+  
+  /**
+   * Sets the serial codes to billing charges.
+   *
+   * @param entry
+   *           the entry
+   * @param serialProductModels
+   *           the serial product models
+   */
+  private void setSerialCodesToBillingCharges(final ConsignmentEntryModel consignmentEntry,
+		  final Set<BlSerialProductModel> serialProductModels)
+  {
+	  final Map<String, List<BlItemsBillingChargeModel>> billingCharges = serialProductModels.stream()
+			  .collect(Collectors.toMap(BlSerialProductModel::getCode, serial -> new ArrayList<BlItemsBillingChargeModel>()));
+	  consignmentEntry.setBillingCharges(billingCharges);
   }
 
   public BlStockLevelDao getBlStockLevelDao() {

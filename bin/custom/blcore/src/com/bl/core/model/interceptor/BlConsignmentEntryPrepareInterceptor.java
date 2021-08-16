@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -41,7 +43,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	{
 		validateParameterNotNull(consignmentEntryModel,
 				"ERROR : BlConsignmentEntryPrepareInterceptor : Parameter ConsignmentEntryModel is NULL");
-
+		modifySerialCodeOnBillingChargesMap(consignmentEntryModel, interceptorContext);
 		validateBillingCharges(consignmentEntryModel, interceptorContext);
 	}
 
@@ -97,6 +99,26 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			return SerialStatusEnum.UNBOXED.equals(((BlSerialProductModel) serial).getSerialStatus());
 		}
 		return Boolean.FALSE;
+	}
+
+	/**
+	 * Modify serial code on billing charges map if Serial is modified on consignment entry.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void modifySerialCodeOnBillingChargesMap(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		if (BooleanUtils.negate(interceptorContext.isNew(consignmentEntryModel))
+				&& interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.SERIALPRODUCTS))
+		{
+			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel.getSerialProducts().stream()
+					.collect(Collectors.toMap(BlProductModel::getCode, serial -> new ArrayList<BlItemsBillingChargeModel>()));
+			consignmentEntryModel.setBillingCharges(billingCharges);
+		}
 	}
 
 }
