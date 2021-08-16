@@ -17,6 +17,8 @@
         <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
 
         <collectiontype code="BlItemCharges" elementtype="BlItemsBillingCharge" autocreate="true" generate="true" type="list"/>
+        
+        <collectiontype code="CatalogUnawareMediaList" elementtype="CatalogUnawareMedia" type="list"/>
 
     </collectiontypes>
 
@@ -256,11 +258,47 @@
       		<value code="NONE"/>
             <value code="IN_HOUSE_REPAIR" />
             <value code="VENDOR_REPAIR" />
-            <value code="CUSTOMER_BLAME_REPAIR" />
+            <value code="CUSTOMER_RESPONSIBLE_REPAIR" />
             <value code="PARTS_NEEDED_REPAIR" />
       </enumtype>
       
       <enumtype code="ItemBillingChargeTypeEnum" autocreate="true" generate="true" dynamic="true"/>
+      
+      <enumtype generate="true" code="RepairTechClaimEnum" autocreate="true" dynamic="true">
+      	<value code="TECH_ONE" />
+      	<value code="TECH_TWO" />
+      	<value code="TECH_THEREE" />
+      	<value code="SUPERVISOR" />
+    </enumtype>
+	  
+	<enumtype generate="true" code="VendorsEnum" autocreate="true" dynamic="true">
+        <value code="NONE" />
+    </enumtype>
+	
+	<enumtype generate="true" code="SubStatusEnum" autocreate="true" dynamic="true">
+        <value code="BACK_ORDERED" />
+		<value code="PARTS_ORDERED" />
+    </enumtype>
+    
+    <enumtype generate="true" code="RepairLogStatusEnum" autocreate="true" dynamic="true">
+        <value code="OPEN" />
+		<value code="CLOSED" />
+    </enumtype>
+    
+    <enumtype generate="true" code="IssueFrequencyEnum" autocreate="true" dynamic="true">
+        <value code="ALWAYS" />
+        <value code="INTERMITTENT" />
+        <value code="ONCE_BUT_NEVER_AGAIN" />        
+    </enumtype>
+    
+    <enumtype generate="true" code="RepairBlameEnum" autocreate="true" dynamic="true">
+        <value code="CUSTOMER" />
+        <value code="INTERNAL_BL" />
+        <value code="PARTS_BREAKDOWN" />
+        <value code="SHIPPING" />
+        <value code="VENDOR" />
+        <value code="UNKNOWN" />      
+    </enumtype>
 
 	  </enumtypes>
 
@@ -419,6 +457,14 @@
         <targetElement qualifier="subOptions" type="BlOptions" cardinality="many" collectiontype="list" ordered="true">
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
+      </relation>
+      
+      <relation code="RepairLog2BlSerialProduct" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="serialRepairLogs" type="BlRepairLog"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="serialProduct" type="BlSerialProduct"
+          cardinality="one" />
       </relation>
 
     </relations>
@@ -1301,6 +1347,11 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <defaultvalue>em().getEnumerationValue("RepairTypeEnum", "NONE")</defaultvalue>
                          <description>Determines what type of repair log is required</description>
+                     </attribute>
+                     <attribute qualifier="consignmentEntry" type="ConsignmentEntry">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated consignment entry on serial</description>
                      </attribute>
                  </attributes>
              </itemtype>
@@ -3047,6 +3098,222 @@
 		</itemtype>
       </typegroup>
       
+      <typegroup name="RepairLog">
+		<itemtype code="BlRepairLog" autocreate="true" generate="true">
+		<description>BlRepairLog</description>
+		<deployment table="repairLog" typecode="12232"/>          
+          	 <attributes>
+          	 	<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Repair Tech Claim</description>
+                     <persistence type="property" />
+                  </attribute>
+                <attribute qualifier="recommendToRepair" type="boolean">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Recommendation to repair or not</description>
+	                     <persistence type="property" />
+	                     <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>
+          	 	<attribute qualifier="order" type="AbstractOrder">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Order</description>
+                     <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="lastRepairReturnDay" type="java.util.Date">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Last Repair Return Day</description>
+                     <persistence type="property" />
+                  </attribute>
+          	 	<attribute qualifier="repairAssessment" type="java.lang.String">
+					<modifiers read="true" write="true"	optional="true" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute qualifier="otherDocument" type="CatalogUnawareMediaList">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Upload of image of damage</description>
+	                    <persistence type="property" />
+                  </attribute>
+                <attribute qualifier="repairLogStatus" type="RepairLogStatusEnum">
+	            	  	<modifiers read="true" write="true" optional="false" />
+	            	  	<defaultvalue>em().getEnumerationValue("RepairLogStatusEnum", "OPEN")</defaultvalue>
+	                    <description>Repair Status</description>
+	                    <persistence type="property" />
+                  </attribute>          	 
+                   <attribute qualifier="overallSpend" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Overall Spend Per Serial</description>
+                     <persistence type="property" />
+                  </attribute>
+                  <!-- <attribute qualifier="currentRetailValue" type="java.lang.Double">
+	            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+	                    <description>Current retail value</description>
+	                    <persistence type="dynamic" attributeHandler="" />
+                  </attribute> -->
+                  <attribute qualifier="returnOnInvestment" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Return On Investment Per Serial</description>
+                     <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="costForParts" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Cost For Parts</description>
+                     <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="costForLabor" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Cost For Labour</description>
+                     <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="itemBarcode" type="java.lang.String">
+					<modifiers read="true" write="true"	optional="true" />
+						<persistence type="property"/>
+					</attribute>
+				<attribute qualifier="serialCode" type="java.lang.String">
+					<modifiers read="true" write="true"	optional="true" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute qualifier="associatedConsignment" type="Consignment">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated consignment on serial</description>
+                </attribute>
+				<attribute qualifier="consignmentEntry" type="ConsignmentEntry">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated consignment entry on serial</description>
+                </attribute>
+                <attribute qualifier="userId" type="java.lang.String">
+					<modifiers read="true" write="true"	optional="true" />
+						<persistence type="property"/>
+				</attribute>
+                   <!-- <attribute qualifier="totalForPartsAndLaborCost" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                    <description>Total for Parts and Labor costs</description>
+                     <persistence type="dynamic" attributeHandler="" />
+                  </attribute> -->
+               <attribute qualifier="damageWaiverPaid" type="java.lang.Double">
+            	  	<modifiers read="true" write="false" optional="true"/>
+                    <description>Damage Waiver taken by Customer for the item</description>
+                     <persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
+                  </attribute>
+                  <!-- Tech Eng Notes Attributes -->
+                  <attribute qualifier="repairReasons" type="RepairReasonsEnum">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Determines what type of repair is required</description>
+                     </attribute>
+                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     </attribute>
+                     <attribute qualifier="notesOnIssue" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>Tech Eng. Team member can specify notes on the issue</description>
+                     </attribute>
+                  <attribute qualifier="frequency" type="IssueFrequencyEnum">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Determines the frequency of the issue on serial</description>
+                     </attribute>
+                     <attribute qualifier="cause" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>Tech Eng. Team member can specify notes on the issue</description>
+                     </attribute>
+                     <attribute qualifier="blame" type="RepairBlameEnum">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Determines the blame</description>
+                     </attribute>
+             </attributes>
+       		</itemtype>
+       		
+       		<itemtype code="InHouseRepairLog" autocreate="true" generate="true" extends="BlRepairLog"/>
+       		
+       		<itemtype code="VendorRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
+       			<attributes>      			  
+                  <attribute qualifier="repairVendor" type="VendorsEnum">
+	            	  	<modifiers read="true" write="true" optional="true" />
+	            	  	<defaultvalue>em().getEnumerationValue("VendorsEnum", "NONE")</defaultvalue>
+	                    <description>Repair Vendor</description>
+	                    <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="dateSent" type="java.util.Date">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Date Sent</description>
+	                   <persistence type="property" />
+                  </attribute>
+                   <attribute qualifier="dateReturned" type="java.util.Date">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Date Returned</description>
+	                   <persistence type="property" />
+                  </attribute>
+       			</attributes>
+       		</itemtype>
+       		<itemtype code="CustomerResponsibleRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
+       			<attributes>
+      			  <attribute qualifier="customerAlerted" type="boolean">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Customer alerted</description>
+	                    <persistence type="property" />
+	                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>                  
+                  <attribute qualifier="repairVendor" type="VendorsEnum">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Repair Vendor</description>
+	                   <persistence type="property" />
+                  </attribute>
+                   <attribute qualifier="dateSent" type="java.util.Date">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Date Sent</description>
+	                   <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="dateReturned" type="java.util.Date">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Date Returned</description>
+	                   <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="gearGaurdAvailable" type="boolean">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Customer alerted</description>
+	                    <persistence type="property" />
+	                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>
+                   <!-- <attribute qualifier="customerNotes" type="Notes">
+	            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+	                    <description>Customer Notes History</description>
+	                    <persistence type="dynamic" attributeHandler="" />
+                  </attribute> -->
+                  <attribute qualifier="customerChargeCost" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Customer Charge Cost</description>
+                     <persistence type="property" />
+                  </attribute>  
+                  <attribute qualifier="estimateApprovedCost" type="java.lang.Double">
+            	  	<modifiers read="true" write="true" optional="true"/>
+                    <description>Customer Charge Cost</description>
+                     <persistence type="property" />
+                  </attribute>                     
+       			</attributes>
+       		</itemtype>
+       		<itemtype code="PartsNeededRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
+       			<attributes>
+                   <attribute qualifier="repairVendor" type="VendorsEnum">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Repair Vendor</description>
+	                   <persistence type="property" />
+                  </attribute>
+                   <attribute qualifier="subStatus" type="SubStatusEnum">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>SUB-status</description>
+	                   <persistence type="property" />
+                  </attribute>
+       			</attributes>
+       		</itemtype>
+		</typegroup>
+      
 <typegroup name="BlReportDefinition">
 <itemtype code="CleanCompleteOrderQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
@@ -3736,7 +4003,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, {order.consolidatedOrderNote} as orderNotes, {b:name} as productName, {serial:code} as serialNumber, {serial:ocLocation} as ocLocationCode, {serial.dirtyPriorityStatus} as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT(\'%\',CONCAT({serial.pk},\'%\')) and {serial.dirtyPriorityStatus} = 1 and {serial:blProduct} = {b.pk} and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {c:optimizedShippingStartDate} = ?currentDate and {order:orderType} = {ot:pk}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {serial.dirtyPriorityStatus} = 1 and {serial:blProduct} = {b.pk} and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {c:optimizedShippingStartDate} = ?currentDate and {order:orderType} = {ot:pk}"
 			</value>
 		</property>
 	</custom-properties>
@@ -3757,6 +4024,38 @@ new Integer(0)
 				</property>
 			</custom-properties>
 		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="isUsedGearOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(3)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="isVipOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(2)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
 		<attribute generate="false" autocreate="true" qualifier="ocLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
 			<persistence type="jalo" qualifier=""/>
 			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
@@ -3768,7 +4067,23 @@ Boolean.FALSE
 				</property>
 				<property name="position">
 					<value>
-new Integer(5)
+new Integer(10)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="ocParentLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(9)
 					</value>
 				</property>
 			</custom-properties>
@@ -3784,7 +4099,7 @@ Boolean.FALSE
 				</property>
 				<property name="position">
 					<value>
-new Integer(2)
+new Integer(4)
 					</value>
 				</property>
 			</custom-properties>
@@ -3821,7 +4136,7 @@ new Integer(1)
 				</property>
 			</custom-properties>
 		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="productName" type="java.lang.String" metatype="ViewAttributeDescriptor">
+		<attribute generate="false" autocreate="true" qualifier="productCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
 			<persistence type="jalo" qualifier=""/>
 			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
 			<custom-properties>
@@ -3832,12 +4147,12 @@ Boolean.FALSE
 				</property>
 				<property name="position">
 					<value>
-new Integer(3)
+new Integer(5)
 					</value>
 				</property>
 			</custom-properties>
 		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="serialDirtyPriorityFlag" type="java.lang.Boolean" metatype="ViewAttributeDescriptor">
+		<attribute generate="false" autocreate="true" qualifier="productName" type="java.lang.String" metatype="ViewAttributeDescriptor">
 			<persistence type="jalo" qualifier=""/>
 			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
 			<custom-properties>
@@ -3853,6 +4168,22 @@ new Integer(6)
 				</property>
 			</custom-properties>
 		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="serialDirtyPriorityFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(11)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
 		<attribute generate="false" autocreate="true" qualifier="serialNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
 			<persistence type="jalo" qualifier=""/>
 			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
@@ -3864,7 +4195,7 @@ Boolean.FALSE
 				</property>
 				<property name="position">
 					<value>
-new Integer(4)
+new Integer(7)
 					</value>
 				</property>
 			</custom-properties>
@@ -3881,6 +4212,22 @@ Boolean.TRUE
 				<property name="position">
 					<value>
 new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="warehouseCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(8)
 					</value>
 				</property>
 			</custom-properties>
@@ -4362,6 +4709,115 @@ new Integer(0)
     </attributes>
   </itemtype>
   <!--  BL-827, BL-828, BL-829 invnetory user clean complete / in-complete order queue end-->
+  
+  <itemtype code="RemainingRepairItems" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+	<custom-properties>
+		<property name="query">
+			<value>
+"select {s:code} as serialCode, {s:barcode} as barcode, {o:code} as orderNumber, {s:ocLocation} as ocLocation, case when({s:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as isPrioritySerial from {BlSerialProduct as s}, {Order as o}, {Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} in ('REPAIR_NEEDED','PARTS_NEEDED') }}) and {o:pk} = {s:associatedOrder} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse"
+			</value>
+		</property>
+	</custom-properties>
+	<attributes>
+		<attribute generate="false" autocreate="true" qualifier="barcode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(1)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="isPrioritySerial" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(4)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="ocLocation" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(3)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(2)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="serialCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.TRUE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+	</attributes>
+</itemtype>
+  
 </typegroup>
       
 	</itemtypes>
