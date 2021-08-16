@@ -1,8 +1,5 @@
 package com.bl.core.repair.log.service;
 
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
-
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.model.BlSerialProductModel;
 
@@ -25,19 +22,6 @@ public interface BlRepairLogService
 	 *           the bl serial product
 	 */
 	public void addGeneratedRepairLog(final Class repairLogType, final BlSerialProductModel blSerialProduct);
-
-	/**
-	 * Adds the necessary data to repair log.
-	 *
-	 * @param blRepairLogModel
-	 *           the bl repair log model
-	 * @param interceptorContext
-	 *           the interceptor context
-	 * @throws InterceptorException
-	 *            the interceptor exception
-	 */
-	public void addNecessaryDataToRepairLog(final BlRepairLogModel blRepairLogModel, final InterceptorContext interceptorContext)
-			throws InterceptorException;
 
 	/**
 	 * Sets the other data to repair log from serial.

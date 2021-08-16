@@ -1,17 +1,29 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -44,6 +56,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
       interceptorContext.getModelService().save(abstractOrderModel);
     }
+    setSerialCodesToBillingCharges(consignmentModel, interceptorContext);
   }
 
   /**
@@ -69,6 +82,51 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignments and Order are set in to consignment order Notes");
   }
+
+  /**
+	 * Sets the serial codes to billing charges.
+	 *
+	 * @param consignmentModel
+	 *           the consignment model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void setSerialCodesToBillingCharges(final ConsignmentModel consignmentModel,
+			final InterceptorContext interceptorContext)
+	{
+		final boolean needToSave = BooleanUtils.negate(interceptorContext.isNew(consignmentModel));
+		consignmentModel.getConsignmentEntries().forEach(
+				consignmentEntryModel -> addSerialCodeListToChargeMap(consignmentEntryModel, needToSave, interceptorContext));
+	}
+
+	/**
+	 * Adds the serial code list to billing charge map.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param isModified
+	 *           the is modified
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void addSerialCodeListToChargeMap(final ConsignmentEntryModel consignmentEntryModel, final boolean needToSave,
+			final InterceptorContext interceptorContext)
+	{
+		final List<BlProductModel> serialProducts = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(consignmentEntryModel.getSerialProducts()));
+		Map<String, List<BlItemsBillingChargeModel>> billingCharges = MapUtils
+				.emptyIfNull(consignmentEntryModel.getBillingCharges());
+		if (MapUtils.isEmpty(billingCharges))
+		{
+			billingCharges = serialProducts.stream()
+					.collect(Collectors.toMap(BlProductModel::getCode, item -> new ArrayList<BlItemsBillingChargeModel>()));
+		}
+		consignmentEntryModel.setBillingCharges(billingCharges);
+		if (needToSave)
+		{
+			interceptorContext.getModelService().save(consignmentEntryModel);
+		}
+	}
 
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;

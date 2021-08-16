@@ -1191,8 +1191,6 @@
 	
 	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
 	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
-		<property name="blProductDao" ref="productDao"/>
-		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 	
@@ -1209,6 +1207,8 @@
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
 	<alias name="blRepairLogPrepareInterceptor" alias="blRepairLogPrepareInterceptor"/>
 	<bean id="blRepairLogPrepareInterceptor" class="com.bl.core.model.interceptor.BlRepairLogPrepareInterceptor">
+		<property name="blProductDao" ref="productDao"/>
+		<property name="userService" ref="userService"/>
 		<property name="blRepairLogService" ref="blRepairLogService"/>
 	</bean>
 	
