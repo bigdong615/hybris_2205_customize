@@ -98,6 +98,7 @@
              </div>
          </div>
      </div>
+     <c:if test="${not empty entry.option}">
 	<div id="damageOptions" class="row mt-3">
 		<div class="col-md-10 offset-md-2 rental-bl-options">
 			<p class="body14 mb-1"><spring:theme code="text.cart.rental.options"/></p>
@@ -114,7 +115,7 @@
 			</div>
 		</div>
 	</div>
-
+</c:if>
 
 	<%-- It will be handled in BL-463 --%>
      <%--<div id="productOptions" class="row mt-3">
