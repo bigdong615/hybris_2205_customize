@@ -634,6 +634,7 @@
 	<bean id="blSerialProductPrepareInterceptor" class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1187,6 +1188,61 @@
 	</bean>
 
 	<!--BL-828 end -->
+	
+	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
+	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
+	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor"/>
+	
+	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
+	<bean id="blConsignmentEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blConsignmentEntryPrepareInterceptor"/>
+		<property name="typeCode" value="ConsignmentEntry"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blRepairLogPrepareInterceptor" alias="blRepairLogPrepareInterceptor"/>
+	<bean id="blRepairLogPrepareInterceptor" class="com.bl.core.model.interceptor.BlRepairLogPrepareInterceptor">
+		<property name="blProductDao" ref="productDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
+	</bean>
+	
+	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blBlRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="BlRepairLog"/>
+	</bean>
+	
+	<!-- Adding InHouseRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blInHouseRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="InHouseRepairLog"/>
+	</bean>
+	
+	<!-- Adding VendorRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blVendorRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="VendorRepairLog"/>
+	</bean>
+	
+	<!-- Adding CustomerResponsibleRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blCustomerResponsibleRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="CustomerResponsibleRepairLog"/>
+	</bean>
+	
+	<!-- Adding PartsNeededRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blPartsNeededRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="PartsNeededRepairLog"/>
+	</bean>
+	
+	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
 
 	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
 		parent="abstractValueResolver"/>
