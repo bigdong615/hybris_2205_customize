@@ -11,6 +11,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.europe1.model.PDTRowModel;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
@@ -174,7 +175,7 @@ public class DefaultBlPricingService implements BlPricingService {
         .getEnumerationValue(DurationEnum.class, duration);
     final Map<String, Object> queryParams = new HashMap<>();
     queryParams.put(PriceRowModel.DURATION, durationEnum);
-    queryParams.put(PriceRowModel.PRODUCT, blProductModel); // NOSONAR
+    queryParams.put(PDTRowModel.PRODUCT, blProductModel);
     List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }
@@ -225,10 +226,10 @@ public class DefaultBlPricingService implements BlPricingService {
    * @return
    */
   @Override
-  public Double getCalculatedConditionalRating(final float cosmeticRating, final float functionalRating){
-    final float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
-    final float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
-    BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
+  public Double getCalculatedConditionalRating(final double cosmeticRating, final double functionalRating){
+    final double calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
+    final double calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
+    BigDecimal bigDecimal = new BigDecimal(Double.toString(calculatedCosmeticValue+calculatedFunctionalValue));
     bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_DOWN);
     return bigDecimal.doubleValue();
   }

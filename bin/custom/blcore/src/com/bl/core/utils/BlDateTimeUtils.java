@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
-import de.hybris.platform.acceleratorservices.payment.strategies.CreateSubscriptionRequestStrategy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -617,7 +616,7 @@ public final class BlDateTimeUtils
 		final Date endDateIncludeShipping = addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 				rentalDates.getSelectedToDate(), blackOutDates);
 		Date nextEndDate = null;
-		if (endDateIncludeShipping.compareTo(lastDateToCheck) >= 0)
+		if (Objects.nonNull(endDateIncludeShipping) && endDateIncludeShipping.compareTo(lastDateToCheck) >= 0)
 		{
 			nextEndDate = lastDateToCheck;
 			boolean dateFallsOnBlackOutDate = isDateFallsOnBlackOutDate(nextEndDate, blackOutDates)
