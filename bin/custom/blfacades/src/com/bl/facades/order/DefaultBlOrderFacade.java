@@ -128,7 +128,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       BlLogger.logMessage(LOG, Level.ERROR , "Error while adding products from rent again" + blProductModel.getCode() , exception);
     }
 
@@ -280,8 +280,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       getPromotionsService()
           .updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
-    } catch (CalculationException e) {
-      e.printStackTrace();
+    } catch (final CalculationException e) {
+      BlLogger.logMessage(LOG, Level.ERROR , "Error while Calculating promotion for extend order" , e.getMessage());
     }
 
     orderData.setSubTotalTaxForExtendRental(
