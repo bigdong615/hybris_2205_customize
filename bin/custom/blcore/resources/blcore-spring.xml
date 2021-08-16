@@ -1179,4 +1179,13 @@
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
+	<!--BL-828 Marking consignments cleanCompleteFlag start -->
+	<bean id="markConsignmentsCleanJob" class="com.bl.core.job.MarkReadyToShipConsignmentsCleanJob"
+		parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-828 end -->
+
 </beans>

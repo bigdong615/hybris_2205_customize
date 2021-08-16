@@ -27,8 +27,10 @@
 						modelAttribute="sopPaymentDetailsForm"
 						action="${request.contextPath}/my-account/add-payment-method"
 						method="POST">
-						<div class="hostedFields">
 
+						<input type="hidden" name="orderId" id="orderId" value="${orderCode}"/>
+						<div class="hostedFields">
+							
 							<div class="control-group cardForm" style="dispaly: none;"
 								id="cardForn">
 

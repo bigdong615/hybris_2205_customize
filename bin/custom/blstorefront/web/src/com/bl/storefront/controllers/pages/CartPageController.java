@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.GiftCardModel;
@@ -57,6 +58,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -166,6 +168,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "blGiftCardFacade")
 	private BlGiftCardFacade blGiftCardFacade;
 
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -181,6 +186,7 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
@@ -365,7 +371,11 @@ public class CartPageController extends AbstractCartPageController
 					final CartModel cartModel = blCartService.getSessionCart();
 					Optional<AbstractOrderEntryModel> findEntry = cartModel.getEntries().stream().filter(entry -> entry.getEntryNumber() == entryNumber).findFirst();
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-
+					//Added condition to update gift card purchase status when remove from cart
+					if(BooleanUtils.isTrue(cartModel.isGiftCardOrder()))
+					{
+						blCartService.updateGiftCardPurchaseStatus(cartModel);
+				  }
 					//Added condition to change serial status when entry remove from cart
 					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{

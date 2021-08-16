@@ -358,6 +358,10 @@ $('#add-to-gc').click(function(e) {
         $('.notification').show();
         return false;
     }
+    else{
+    	$('.notification').hide();
+    	$('#signIn').modal('show');
+    }
 });
 
 //BL-563 Remove Gift Card
@@ -702,6 +706,7 @@ $('.emailSubscr_btn').click(function (e){
 					}
 				}
 			});
+			$("#emailSubscr_txt").val("");
 });
 
 //Added code for used gear addToCart 
@@ -835,13 +840,19 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
-        /*       $('.page-loader-new-layout').hide();
         var form = $('#giftCardPurchaseForm');
         var amount = form.find('input[name=amount]').val();
         if (amount < 25 || amount > 500) {
             $('.notification').show();
+            $("body").removeClass("modal-open");
+            $("body").removeAttr("style");
+            $('tn-gift-card-pdp').show();
+            $(".modal-backdrop").remove();
             return false;
-        }*/
+        }
+        if (amount >25 || amount < 500){
+        	 $('.notification').hide();
+        }
          var form = $('#giftCardPurchaseForm');
     
          var productCode = $(this).attr('data-product-code');
@@ -1007,17 +1018,27 @@ $('#placeOrderSummary').on("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
-
-$('#placeOrder').on(
-		"click",
-		function(e) {
-			var submitForm = $("#placeOrderForm1");
-			var csrfTokan = createHiddenParameter("CSRFToken",
-					$(ACC.config.CSRFToken));
-			submitForm.append($(csrfTokan));
-			submitForm.submit();
-		});
-
+ $('#placeOrder').on(
+			"click",
+			function(e) {
+				var submitForm = $("#placeOrderForm1");
+				
+				var csrfTokan = createHiddenParameter("CSRFToken",
+						$(ACC.config.CSRFToken));
+				if($("#giftCardPurchaseForm").length > 0)
+				{
+					var giftCardForm = $("#giftCardPurchaseForm");
+					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
+					var email = createHiddenParameter("email",giftCardForm.find('input[name="email"]').val());
+					var message = createHiddenParameter("message",giftCardForm.find('textarea[name="message"]').val());
+					submitForm.append($(name));
+					submitForm.append($(email));
+					submitForm.append($(message));
+				}			
+				submitForm.append($(csrfTokan));			
+				submitForm.submit();
+});
+   
 //Handled min and max character for order notes.
 var inputQuantity = [];
 $(function() {
@@ -1047,3 +1068,9 @@ function hideShorting(){
    });
   }; 
   hideShorting();
+  
+  $("#submitCard").on("click",function(e) {
+	  e.preventDefault();
+		var submitForm = $("#giftCardPurchaseForm");
+		submitForm.submit();
+  });

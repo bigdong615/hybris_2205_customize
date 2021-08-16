@@ -29,8 +29,10 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.drools.core.rule.Collect;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -144,7 +146,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private boolean isLocationValidForMember(final List<String> memberAllowedLocationList,
 			final BlInventoryLocationModel blLocalInventoryLocation) {
 		return Objects.nonNull(blLocalInventoryLocation) && Objects.nonNull(blLocalInventoryLocation.getLocationCategory()) 
-				&& memberAllowedLocationList.contains(blLocalInventoryLocation.getLocationCategory().getCode());
+				&& (memberAllowedLocationList.contains("ALLOW_SCAN") || memberAllowedLocationList.contains(
+						blLocalInventoryLocation.getLocationCategory().getCode()));
 	}
 
     /**
@@ -166,8 +169,81 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     public String getConfigKeyFromScanConfiguration(final String key) {
         BlInventoryScanConfigurationModel blInventoryScanConfigurationModel = getBlInventoryScanToolDao().getConfigKeyFromScanConfiguration(key);
         return blInventoryScanConfigurationModel != null ? blInventoryScanConfigurationModel.getBlScanConfigValue() :
-                String.valueOf(BlInventoryScanLoggingConstants.TEN);
+                String.valueOf(BlInventoryScanLoggingConstants.ELEVEN);
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int doBINScanFromWebScanTool(final List<String> barcodeList) {
+    	final int totalBarcode = barcodeList.size();
+    	if(totalBarcode <= BlInventoryScanLoggingConstants.TWO) {
+    		final String inventoryLocation = barcodeList.get(BlInventoryScanLoggingConstants.ONE);
+			if(StringUtils.isNotEmpty(inventoryLocation) && (!inventoryLocation.startsWith(BlInventoryScanLoggingConstants.BIN))) {
+				return checkBarcodeINBINLocation(barcodeList, inventoryLocation, BlInventoryScanLoggingConstants.getDefaultInventoryLocation());
+			} else {
+				return BlInventoryScanLoggingConstants.THREE; //bin can be assign to parent only VALID_PARENT_LOCATION_ERROR_FAILURE_MSG
+			}
+		} else {
+			return BlInventoryScanLoggingConstants.FIVE; //max size limit for BIN MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG
+		}
+	}
+
+	/**
+	 * javadoc
+	 * This method will check BIN and last location is valid or not
+	 *
+	 * @param barcodeList scannedList
+	 * @param inventoryLocation last scan
+	 * @param defaultLocations all locations
+	 * @return status in int
+	 */
+	private int checkBarcodeINBINLocation(final List<String> barcodeList, final String inventoryLocation, final List<String> defaultLocations) {
+		if(CollectionUtils.isNotEmpty(defaultLocations) && (defaultLocations.stream().anyMatch(inventoryLocation::startsWith))) {
+			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(inventoryLocation);
+			if(blLocalInventoryLocation != null) {
+				return storeParentOnBINLocation(barcodeList, blLocalInventoryLocation);
+			} else {
+				return BlInventoryScanLoggingConstants.THREE; //enter a valid parent location VALID_PARENT_LOCATION_ERROR_FAILURE_MSG
+			}
+		} else {
+			return BlInventoryScanLoggingConstants.FOUR; //last scan must be a location LAST_SCAN_ERROR_FAILURE_MSG
+		}
+	}
+
+	/**
+	 * javadoc
+	 * This method will check first Location is valid or not and if valid then will update parent location
+	 *
+	 * @param barcodeList scannedList
+	 * @param blLocalInventoryLocation location
+	 * @return status in int
+	 */
+	private int storeParentOnBINLocation(final List<String> barcodeList, final BlInventoryLocationModel blLocalInventoryLocation) {
+		final BlInventoryLocationModel blBINInventoryLocationModel = getBlInventoryScanToolDao().getInventoryLocationById(
+				barcodeList.get(BlInventoryScanLoggingConstants.ZERO));
+		if(blBINInventoryLocationModel != null) {
+			blBINInventoryLocationModel.setParentInventoryLocation(blLocalInventoryLocation);
+			modelService.save(blBINInventoryLocationModel);
+			modelService.refresh(blBINInventoryLocationModel);
+			return BlInventoryScanLoggingConstants.ONE; //successful scan SCAN_BARCODE_SUCCESS_MSG
+		} else {
+			return BlInventoryScanLoggingConstants.TWO; //enter valid BIN location VALID_BIN_LOCATION_ERROR_FAILURE_MSG
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkBINOrSerialScan(final List<String> barcodeList) {
+    	if(CollectionUtils.isNotEmpty(barcodeList)) {
+			return barcodeList.get(BlInventoryScanLoggingConstants.ZERO).startsWith(BlInventoryScanLoggingConstants.BIN) ?
+					Boolean.TRUE : Boolean.FALSE;
+		}
+    	return Boolean.FALSE;
+	}
 
     /**
      * This method will update location on serial and save it. Also, it will create a history for scan and will associate with

@@ -1,15 +1,16 @@
 package com.bl.core.services.cart;
 
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * It provides cart related functionality.
@@ -68,6 +69,12 @@ public interface BlCartService extends CartService {
      * @param cartEntry
      */
     void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry);
+    /**
+     * Change gift card purchase status when remove from cart
+     *
+     * @param cartModel
+     */
+    void updateGiftCardPurchaseStatus(final CartModel cartModel);
 
 
     /**
@@ -85,4 +92,17 @@ public interface BlCartService extends CartService {
      */
     void changeSerialStatusInStagedVersion(final String productCode,
         final SerialStatusEnum serialStaus);
+    
+    /**
+     * This method saves PO payment details.
+     * @param poNumber
+     * @param poNotes
+    * @return boolean
+     */
+    boolean savePoPaymentDetailsForPayBill(final String poNumber, final String poNotes, final OrderModel orderModel);
+
+    /**
+     * This method will update the order types like VIP order, FD/SHIPPING order
+     */
+    void updateOrderTypes();
 }
