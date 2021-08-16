@@ -906,6 +906,36 @@ public class CartPageController extends AbstractCartPageController
 	}
 	
 	/**
+	 * Update cart entry with the selected options on cart page.
+	 *
+	 * @param entryNumber the entry number
+	 * @param bloptions the bloptions
+	 * @param model the model
+	 * @param request the request
+	 * @param redirectModel the redirect model
+	 * @return the string
+	 * @throws CMSItemNotFoundException the CMS item not found exception
+	 */
+	@PostMapping(path="/updateBlOptions")
+	public String updateCartEntryBlOptions(@RequestParam("entryNumber") final long entryNumber, 
+			@RequestParam("bloptions") final String bloptions, final Model model,
+			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	{
+		try
+		{	
+			getBlCartFacade().updateCartEntrySelectedOption(entryNumber, bloptions);
+			return getCartPageRedirectUrl();
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
+					"Error while updating Damage Waiver with the entry number : {}", entryNumber);
+			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.waiver.fail");
+		}
+		return prepareCartUrl(model);
+	}
+	
+	/**
 	 * Update product quantity based on the quantity selected from rental add to cart popup.
 	 *
 	 * @param entryNumber

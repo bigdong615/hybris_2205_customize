@@ -4,7 +4,9 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -21,18 +23,21 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.daos.ProductDao;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -131,7 +136,59 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
         }
     }
+    /**
+     * Update cart entry with the selected option
+     *
+     * @param entryNumber the entry number
+     * @param optionCode the optionCode
+     */
+    @Override
+    public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode){
+        {
+            final CartModel cartModel = getSessionCart();
+            final Integer cartEntryNumber = Integer.valueOf((int) entryNumber);
+            if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+                final AbstractOrderEntryModel cartEntryModel = cartModel.getEntries().stream()
+                    .filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
+                if(Objects.nonNull(cartEntryModel)){
+                    setOptionOnCartEntry(cartEntryModel,optionCode);
+                    cartModel.setCalculated(Boolean.FALSE);
+                    getModelService().save(cartEntryModel);
+                    getModelService().save(cartModel);
+                    final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
+                    getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
+                }
 
+            }
+        }
+    }
+    /**
+     * set Option On CartEntry 
+     *
+     * @param AbstractOrderEntryModel the cartEntryModel
+     * @param String the selectedOptionCode
+     */
+    private void setOptionOnCartEntry(final AbstractOrderEntryModel cartEntryModel,
+    final String selectedOptionCode){
+    ProductModel product = cartEntryModel.getProduct();
+    if(product instanceof BlProductModel){
+        BlProductModel blProductModel = (BlProductModel) product;
+        List<BlOptionsModel> options = blProductModel.getOptions();
+        if(CollectionUtils.isNotEmpty(options)){
+            BlOptionsModel option = options.iterator().next();
+            final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
+                .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
+            if(selectedSubOption.isPresent()){
+                final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
+                List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+                for(int i = 0 ; i < quantity ; i++){
+                    selectOptionList.add(selectedSubOption.get());
+                }
+                cartEntryModel.setOptions(selectOptionList);
+            }
+        }
+    }
+}
     /**
      * {@inheritDoc}
      */
