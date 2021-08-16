@@ -16,7 +16,6 @@ import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
@@ -54,7 +53,6 @@ import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import de.hybris.platform.servicelayer.session.SessionService;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -93,8 +91,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 @Resource(name = "brainTreeTransactionService")
  	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
-
- 	 private BlCartService blCartService;
+    private BlCartService blCartService;
 	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
@@ -106,7 +103,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Converter<BlRushDeliveryModeModel, BlRushDeliveryModeData> blRushDeliveryModeConverter;
     private Converter<ShippingGroupModel, BlShippingGroupData> blShippingGroupConverter;
     private Converter<PartnerPickUpStoreModel, BlPartnerPickUpStoreData> blPartnerPickUpStoreConverter;
-
 
     /**
      * {@inheritDoc}
@@ -1108,7 +1104,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	{
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
-
 
     public BlCartService getBlCartService() {
         return blCartService;

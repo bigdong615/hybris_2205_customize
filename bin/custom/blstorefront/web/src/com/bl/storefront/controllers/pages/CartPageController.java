@@ -203,7 +203,7 @@ public class CartPageController extends AbstractCartPageController
 				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
 			}
 		}
-		if(Objects.nonNull(cartModel) && BooleanUtils.isTrue(isCartForReplacementOrder(cartModel , model))){
+		if(Objects.nonNull(cartModel) && BooleanUtils.isTrue(isCartForReplacementOrder(cartModel))){
 			cartModel.setCalculated(Boolean.TRUE);
 			model.addAttribute("isReplacementOrderCart" , true);
 		}
@@ -1084,7 +1084,7 @@ public class CartPageController extends AbstractCartPageController
 		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
 	}
 
-	private boolean isCartForReplacementOrder(final CartModel cartModel , final Model model) {
+	private boolean isCartForReplacementOrder(final CartModel cartModel) {
 		return  BlReplaceMentOrderUtils.isReplaceMentOrder() &&
 				Objects.nonNull(cartModel.getReturnRequestForOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 	}

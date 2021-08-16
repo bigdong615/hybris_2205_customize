@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.ui.Model;
 
+/**
+ * @author Manikandan
+ * This class is created for replacement order
+ */
 public class BlReplaceMentOrderUtils {
 
   private static SessionService sessionService;
@@ -30,12 +32,18 @@ public class BlReplaceMentOrderUtils {
     //empty to avoid instantiating utils class
   }
 
+  /**
+   * This method created to update the cart for replacement order
+   */
   public static void updateCartForReplacementOrder(final AbstractOrderModel abstractOrderModel) {
     if (BooleanUtils.isTrue(isReplaceMentOrder())) {
-      for (OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
+      for (final OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
         if (CollectionUtils.isNotEmpty(orderModel.getReturnRequests())) {
+          // needs to remove this code , after merging  , complete flow of return request .
           getSessionService().setAttribute(BlCoreConstants.RETURN_REQUEST, orderModel.getReturnRequests().iterator().next());
-          for (ReturnRequestModel returnRequestModel : orderModel.getReturnRequests()) {
+
+
+          for (final ReturnRequestModel returnRequestModel : orderModel.getReturnRequests()) {
             setCartPrice(abstractOrderModel , returnRequestModel);
           }
         }
@@ -43,9 +51,12 @@ public class BlReplaceMentOrderUtils {
     }
   }
 
-public static void setCartPrice(final AbstractOrderModel abstractOrderModel , final ReturnRequestModel returnRequestModel){
+  /**
+   * This method created to set cart price as zero for replacement order.
+   */
+  public static void setCartPrice(final AbstractOrderModel abstractOrderModel , final ReturnRequestModel returnRequestModel){
   if(null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)){
-    ReturnRequestModel returnRequest = getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
+    final ReturnRequestModel returnRequest = getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
     if(returnRequest.getOrder().getCode().equalsIgnoreCase(returnRequestModel.getOrder().getCode())){
       abstractOrderModel.setTotalPrice(0.0);
       abstractOrderModel.setDeliveryCost(0.0);
@@ -64,9 +75,12 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
   }
 }
 
+  /**
+   * This method created set the cart entry price as zero for replacement order.
+   */
   public static void setPriceForOrderEntries(final AbstractOrderModel abstractOrderModel  ,
       final List<AbstractOrderEntryModel> abstractOrderEntryModels) {
-    for(AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderModel.getEntries()){
+    for(final AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderModel.getEntries()){
       abstractOrderEntryModel.setTotalPrice(0.0);
       abstractOrderEntryModel.setTaxValues(Collections.emptyList());
       abstractOrderEntryModel.setGearGuardWaiverPrice(0.0);
@@ -78,12 +92,18 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
     }
   }
 
+  /**
+   * This method created to check , whether is ASM user is active or not .
+   */
   public static boolean isReplaceMentOrder() {
       return null != getSessionService().getAttribute(BlCoreConstants.ACTING_USER_UID) &&
         null != getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER);
   }
 
 
+  /**
+   * This method created to set the payment info same as original order.
+   */
   public static void setIsCartUsedForReplacementOrder(final AbstractOrderModel abstractOrderModel) {
     if (BooleanUtils.isTrue(isReplaceMentOrder())) {
       if (null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
@@ -93,8 +113,6 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
             .setReturnRequestForOrder(returnRequestModel);
         PaymentInfoModel paymentInfoModel = getModelService().clone(returnRequestModel.getOrder().getPaymentInfo());
         abstractOrderModel.setPaymentInfo(paymentInfoModel);
-
-
       }
 
       abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
@@ -107,6 +125,9 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
     }
   }
 
+  /**
+   * This method created to check , whether is cart used for order replacement .
+   */
   public static boolean isCartForReplacement(final AbstractOrderModel abstractOrderModel){
     return Objects.nonNull(abstractOrderModel.getReturnRequestForOrder()) &&
         BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder());

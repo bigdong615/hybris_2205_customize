@@ -52,7 +52,6 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -141,7 +140,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
-        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel.getReturnRequestForOrder())){
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel) &&
+            Objects.nonNull(cartModel.getReturnRequestForOrder())){
             model.addAttribute("isReplacementOrderCart" , true);
         }
 

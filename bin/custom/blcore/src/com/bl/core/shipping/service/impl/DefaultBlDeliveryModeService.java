@@ -842,7 +842,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
 
-
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
     }
