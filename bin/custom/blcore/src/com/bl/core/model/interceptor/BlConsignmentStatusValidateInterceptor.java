@@ -43,6 +43,7 @@ public class BlConsignmentStatusValidateInterceptor implements ValidateIntercept
 			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(currentUser.getUid()))
 			{
 				isCsAgent = true;
+				break;
 			}
 		}
 
