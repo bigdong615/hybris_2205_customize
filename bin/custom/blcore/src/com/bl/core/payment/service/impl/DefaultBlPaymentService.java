@@ -51,6 +51,8 @@ public class DefaultBlPaymentService implements BlPaymentService
 					getModelService().save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
 				} else {
+					order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
+					modelService.save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
 				}
 			} else {
