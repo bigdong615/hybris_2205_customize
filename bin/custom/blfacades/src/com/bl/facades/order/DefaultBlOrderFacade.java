@@ -274,6 +274,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     extendOrderModel.setExtendStartEndDate(extendStartDate.getTime());
     extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
     extendOrderModel.setActualRentalEndDate(stockEndDate);
+
+    BlLogger.logMessage(LOG , Level.INFO , "Extend Order Starts on " + extendOrderModel.getExtendStartEndDate() ,
+        "And Ends on" + extendOrderModel.getRentalEndDate());
     try {
       getDefaultBlCalculationService()
           .recalculateForExtendOrder(extendOrderModel, (int) defaultAddedTimeForExtendRental);
@@ -281,7 +284,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           .updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
     } catch (final CalculationException e) {
-      BlLogger.logMessage(LOG, Level.ERROR , "Error while Calculating promotion for extend order" , e.getMessage());
+      BlLogger.logMessage(LOG, Level.ERROR , "Error while Calculating promotion for extend order number ->" + extendOrderModel.getCode()
+          , e.getMessage());
     }
 
     orderData.setSubTotalTaxForExtendRental(
