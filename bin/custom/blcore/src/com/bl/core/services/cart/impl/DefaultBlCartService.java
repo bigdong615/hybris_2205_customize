@@ -176,16 +176,19 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         List<BlOptionsModel> options = blProductModel.getOptions();
         if(CollectionUtils.isNotEmpty(options)){
             BlOptionsModel option = options.iterator().next();
-            final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
-                .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
-            if(selectedSubOption.isPresent()){
-                final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
-                List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
-                for(int i = 0 ; i < quantity ; i++){
-                    selectOptionList.add(selectedSubOption.get());
+            if(CollectionUtils.isNotEmpty(option.getSubOptions())){
+                final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
+                    .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
+                if(selectedSubOption.isPresent()){
+                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
+                    List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+                    for(int i = 0 ; i < quantity ; i++){
+                        selectOptionList.add(selectedSubOption.get());
+                    }
+                    cartEntryModel.setOptions(selectOptionList);
                 }
-                cartEntryModel.setOptions(selectOptionList);
             }
+
         }
     }
 }
