@@ -73,7 +73,6 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    */
   @Override
   public void removeCartEntries() {
-
     getBlCartService().clearCartEntries();
   }
   
@@ -170,7 +169,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     final CommerceCartModification commerceCartModification = getCommerceCartService()
         .addToCart(parameter);
-    setCartType(blSerialProductModel, cartModel, commerceCartModification);
+    setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 
     return getCartModificationConverter().convert(commerceCartModification);
   }
@@ -232,7 +231,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 
 		final CommerceCartModification commerceCartModification = getCommerceCartService().addToCart(parameter);
-		setCartType(blSerialProductModel, cartModel, commerceCartModification);
+		setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 
 		return getCartModificationConverter().convert(commerceCartModification);
 
@@ -246,10 +245,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    */
   private void setCartType(final BlSerialProductModel blSerialProductModel,
       final CartModel cartModel,
-      final CommerceCartModification commerceCartModification) {
+      final CommerceCartModification commerceCartModification,final CommerceCartParameter parameter) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
         .equals(BlFacadesConstants.SUCCESS)) {
-      if (blSerialProductModel == null) {
+
+    	if(Boolean.TRUE.equals(parameter.getRetailGear())){
+    		cartModel.setIsNewGearOrder(Boolean.TRUE);
+			}
+    	else if (blSerialProductModel == null) {
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
@@ -275,6 +278,16 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
 
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+
+			if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+				if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+         return false;
+				}else{
+					return true;
+				}
+			}else if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				return true;
+			}
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
       if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel != null) {
@@ -290,6 +303,25 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     return isAddToCartNotAllowed;
   }
 
+	/**
+	 * To check new gear product is allowed to add to cart.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode) {
+
+		CartModel cartModel = blCartService.getSessionCart();
+    BlProductModel blProductModel = (BlProductModel) getProductService()
+        .getProductForCode(productCode);
+    if( BooleanUtils.isTrue(blProductModel.getRetailGear())) {
+
+      if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+        return cartModel.getIsNewGearOrder() != null && BooleanUtils
+            .isFalse(cartModel.getIsNewGearOrder()) ;
+      }
+    }
+  return false;
+	}
 	/**
 	 * {@inheritDoc}
 	 */

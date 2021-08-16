@@ -174,4 +174,12 @@ public interface BlCartFacade extends CartFacade {
 	 * If credit card or paypal payment method selected then remove po number from cartModel.
 	 */
 	void removePoNumber();
+
+	/**
+	 * To check new gear product is allowed to add to cart.
+	 * @param productCode
+	 * @param serialCode
+	 * @return
+	 */
+	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode);
 }

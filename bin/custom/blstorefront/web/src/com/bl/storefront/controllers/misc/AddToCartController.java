@@ -172,18 +172,23 @@ public class AddToCartController extends AbstractController {
  				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
  			}
  		}
+ 		else if(blCartFacade.isNewGearProductAllowToAdd(code,serialCode)){
+      BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
+      return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+    }
  		else{
  			 if (isGiftCart)
  	 		{
  				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.GIFTCARDNOTALLOWE);
  				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
  	 		}
- 		
+
  		else if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
  		{
  			BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
  			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
  		}
+
  		}
  		return null;
  	}

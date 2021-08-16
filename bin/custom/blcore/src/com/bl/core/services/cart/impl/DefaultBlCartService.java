@@ -72,7 +72,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
                 setUsedGearSerialProductStatus(cartModel, null);
             }
-
+            cartModel.setIsNewGearOrder(false);
+            cartModel.setIsRentalCart(false);
+            getModelService().save(cartModel);
+            getModelService().refresh(cartModel);
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
             commerceCartParameter.setEnableHooks(true);
             commerceCartParameter.setCart(cartModel);
@@ -252,6 +255,18 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
           getModelService().save(cartModel);
           getModelService().refresh(cartModel);
       }
+    }
+
+    /**
+     * Change new gear purchase status when remove from cart
+     */
+    @Override
+    public void updateNewGearPurchaseStatus(final CartModel cartModel){
+        if(CollectionUtils.isEmpty(cartModel.getEntries())){
+            cartModel.setIsNewGearOrder(Boolean.FALSE);
+            getModelService().save(cartModel);
+            getModelService().refresh(cartModel);
+        }
     }
     /**
      *{@inheritDoc}
