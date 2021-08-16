@@ -110,6 +110,7 @@
 	<property name="recipientEmail" type="java.lang.String"/>
     <property name="recipientName" type="java.lang.String" />
     <property name="recipientMessage" type="java.lang.String"/>
+    <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	
   </bean>
   
@@ -171,6 +172,8 @@
         <property name="hasGiftCart" type="java.lang.Boolean"/>
         <property name="recipientEmail" type="java.lang.String"/>
         <property name="recipientName" type="java.lang.String" />
+        <property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
+         <property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -603,7 +606,9 @@
 		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
 		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
 		<property name="isRentalActive" type="java.lang.Boolean"/>
+		<property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
 		<property name="productCode" type="String"/>
+		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

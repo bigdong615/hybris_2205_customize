@@ -129,7 +129,7 @@
                                 </c:if>
                 						</div>
                 						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.status.code ne 'COMPLETED')}">
+                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
@@ -150,7 +150,7 @@
                 								<li>
                 								<c:if test="${order.rentalCart}">
                 								 <c:url value="/my-account/order/${order.code}" var="rentOrderAction" />
-                                 <a href="${rentOrderAction}">
+                                                   <a href="${rentOrderAction}">
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
                 							  </c:if>
                 								</li>
@@ -169,6 +169,19 @@
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
                 									<br> ${fn:escapeXml(order.code)}</p>
                 							</div>
+                							<c:url value="/my-account/${order.code}/payBill" var="payBillAction" />
+                						  
+                							<c:choose>
+                							<c:when test="${(order.payBillingCost.value gt 0) and (not empty (order.code))}">
+                									<div class="mt-2 notification notification-error"><spring:theme code="text.myaccount.order.unpaidbill"/> (#${fn:escapeXml(order.code)}). <a href="${payBillAction}">Pay Invoice</a></div>
+                							</c:when>
+                							<c:when test="${(order.payBillingCost.value gt 0) and (empty order.code)}">
+                							         <div class="mt-2 notification notification-error"><spring:theme code="text.myaccount.order.unpaidbill"/>. <a href="${payBillAction}">Pay Invoice</a></div>
+                							</c:when>
+                							<c:otherwise>
+                							      
+                							</c:otherwise>	
+                							</c:choose>	
                 						</div>
                 					</div>
                 					</c:otherwise>

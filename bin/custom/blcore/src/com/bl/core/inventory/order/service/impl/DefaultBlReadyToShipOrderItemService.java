@@ -41,6 +41,9 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
     final List<String> membersList = getMembersNameList(membersCount);
     int counter = 0;
 
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "Started creating ReadyToShipOrderItems for {} consignments", consignmentModels.size());
+
     final List<ReadyToShipOrderItemModel> orderItems = new ArrayList<>();
     for (ConsignmentModel consignmentModel : consignmentModels) {
 
@@ -144,6 +147,11 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
         null != (ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()
             ? ((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()).getName()
             : BlCoreConstants.EMPTY_STRING);
+
+    BlLogger
+        .logFormatMessageInfo(LOG, Level.DEBUG,
+            "Created ReadyToShipOrderItem for consignment code {} and ship date {}",
+            consignmentModel.getCode(), consignmentModel.getOptimizedShippingStartDate());
 
     return orderItem;
   }

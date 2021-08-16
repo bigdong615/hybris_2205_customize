@@ -334,7 +334,7 @@
 					type="hidden" value="" id="clickedSection">
 				<p class="body14">
 					<spring:theme
-						code="shipping.interception.change.date.warning.message" />
+						code="shipping.interception.change.warning.message" />
 				</p>
 				<a href="#" class="btn btn-primary btn-block my-4"
 					id="continueChanges"> <spring:theme

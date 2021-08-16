@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
@@ -16,6 +17,7 @@ import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardForm;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -50,6 +52,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -167,6 +170,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, true);
 		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
 		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
@@ -242,6 +246,21 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
+	}
+
+	@PostMapping(value = "/giftCardPaymentAdd")
+	@RequireHardLogIn
+	@PreValidateQuoteCheckoutStep
+	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
+	public String enterStep(final Model model, final RedirectAttributes redirectAttributes, final HttpServletRequest request, @Valid final GiftCardPurchaseForm giftCardPurchaseForm, final BindingResult bindingResult) throws CMSItemNotFoundException
+	{
+		if(getCheckoutFacade().updateGiftCardPurchaseForm(giftCardPurchaseForm)){
+			return enterStep(model,redirectAttributes);
+		}
+		GlobalMessages
+				.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+						"gift.card.error.message", new Object[]{StringUtils.EMPTY});
+		return REDIRECT_PREFIX + "/cart";
 	}
 	
 	/**
