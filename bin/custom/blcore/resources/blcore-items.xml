@@ -2374,11 +2374,6 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
                   </attribute>
-                  <attribute type="ReturnRequest" qualifier="replacementOrder">
-                    <description>To identify return Request for Order.</description>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <persistence type="property"/>
-                  </attribute>
                   <attribute type="ReturnRequest" qualifier="returnRequestForOrder">
                     <description>To identify return Request for Order.</description>
                     <modifiers read="true" write="true" optional="true"/>

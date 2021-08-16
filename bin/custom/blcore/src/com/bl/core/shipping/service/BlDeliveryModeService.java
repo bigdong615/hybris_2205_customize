@@ -321,5 +321,4 @@ public interface BlDeliveryModeService {
      * @return model
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
-
 }

@@ -266,6 +266,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
   private BlCoreConstants()
 	{
-		//emptys
+		//empty
 	}
 }

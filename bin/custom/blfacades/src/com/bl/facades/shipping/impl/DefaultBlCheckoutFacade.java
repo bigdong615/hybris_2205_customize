@@ -106,7 +106,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Converter<BlRushDeliveryModeModel, BlRushDeliveryModeData> blRushDeliveryModeConverter;
     private Converter<ShippingGroupModel, BlShippingGroupData> blShippingGroupConverter;
     private Converter<PartnerPickUpStoreModel, BlPartnerPickUpStoreData> blPartnerPickUpStoreConverter;
-    private SessionService sessionService;
 
 
     /**
@@ -1109,14 +1108,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	{
 		this.brainTreeTransactionService = brainTreeTransactionService;
 	}
-
-    public SessionService getSessionService() {
-        return sessionService;
-    }
-
-    public void setSessionService(SessionService sessionService) {
-        this.sessionService = sessionService;
-    }
 
 
     public BlCartService getBlCartService() {
