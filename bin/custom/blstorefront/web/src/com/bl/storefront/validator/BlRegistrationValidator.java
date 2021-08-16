@@ -63,7 +63,7 @@ public class BlRegistrationValidator implements Validator{
     {
         if (BlControllerConstants.PASSWORD_MIN_LENGTH > StringUtils.length(pwd)|| BlControllerConstants.PASSWORD_MAX_LENGTH < StringUtils.length(pwd))
         {
-            errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
+            errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PASSWORD_INVALID);
         }
     }
 
