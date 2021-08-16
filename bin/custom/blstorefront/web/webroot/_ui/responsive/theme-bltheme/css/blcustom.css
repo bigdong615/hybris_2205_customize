@@ -512,4 +512,7 @@ width:100%;
 .changeEmail-error .help-block{
 margin:-14px 0 13px 0 !important;
 }
+.extend-price p{
+  margin: 0 0 1px 0;
+}
 

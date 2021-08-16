@@ -1111,6 +1111,8 @@
 	      <list-view:column qualifier="reservedStatus"/>
 	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
+	      <list-view:column qualifier="serialStatus"/>
+	      <list-view:column qualifier="bufferedInventory"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1119,6 +1121,9 @@
 	      <advanced-search:field-list>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="date" selected="true"/>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialProductCode" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialStatus" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="bufferedInventory" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="reservedStatus" selected="true"/>
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
@@ -1143,7 +1148,7 @@
 				</editorArea:tab>
 			</editorArea:editorArea>
 		</context>
-
+		
 	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
@@ -1903,6 +1908,9 @@
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
 			<n:type-node code="Consignment" id="Consignment"/>
+			<n:navigation-node id="StockLevel">
+				<n:type-node code="StockLevel" id="StockLevel"/>
+			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
 	
