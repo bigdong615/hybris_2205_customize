@@ -274,8 +274,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     extendOrderModel.setExtendStartEndDate(extendStartDate.getTime());
     extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
     extendOrderModel.setActualRentalEndDate(stockEndDate);
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Extend Order Starts on {} And Ends on {}", extendOrderModel.getExtendStartEndDate() , extendOrderModel.getRentalEndDate());
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
+        extendOrderModel.getExtendStartEndDate() , extendOrderModel.getRentalEndDate());
     try {
       getDefaultBlCalculationService()
           .recalculateForExtendOrder(extendOrderModel, (int) defaultAddedTimeForExtendRental);
@@ -283,7 +284,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           .updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
     } catch (final CalculationException e) {
-      BlLogger.logFormatMessageInfo(LOG, Level.ERROR , "Error while Calculating promotion for extend order number {}" , extendOrderModel.getCode());
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR ,
+          "Error while Calculating promotion for Order with code {} extended from extended rental start date {} to extended rental end date {}."
+          , extendOrderModel.getCode() , extendOrderModel.getExtendStartEndDate() , extendOrderModel.getRentalEndDate());
     }
 
     orderData.setSubTotalTaxForExtendRental(
