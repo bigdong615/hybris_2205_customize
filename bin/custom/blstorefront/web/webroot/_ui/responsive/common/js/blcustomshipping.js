@@ -1891,8 +1891,9 @@ function reverseTraverseOnShipping() {
 
 
 
- //MainContinueMethod
- function shippingMethodReplacementOrderContinue() {
+ //Replacement place order , mai method.
+ $(document).on("click", ".js-replacement-order", function (e) {
+     e.preventDefault();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
     if(shippingCategory == 'ship-it') {
         $('#ship-it-notification').html("");
@@ -1907,7 +1908,7 @@ function reverseTraverseOnShipping() {
     } else {
         SFOrNYCShippingSectionContinueForReplacementOrder();
     }
- }
+ });
 
 
 
@@ -1939,7 +1940,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                   if($('#showErrorForInvalidZipInputValidation').css('display') == "none" &&
                         $('#showErrorForInvalidEmailInputValidation').css('display') == "none" &&
                         $('#showErrorForInvalidPhoneInputValidation').css('display') == "none") {
-                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                  addressValidationServiceForOrderReplacement(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
                   }
@@ -2019,6 +2020,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
              },
              success: function (data) {
                 if(data == 'success') {
+                 $("#replaceMentplaceOrderForm").submit();
                     resolve(data);
                 } else {
                     reject(data);
@@ -2120,7 +2122,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                          },
                          success: function (data) {
                               if(data == 'SUCCESS') {
-                                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
+                                  addressValidationServiceForOrderReplacement(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
                                                               townCity.val(),regionIso.val(), 'US', postcode.val(),
                                                               $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
                                                               phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
@@ -2154,6 +2156,183 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
     }
 
 
+//AJAX
+ function addressValidationServiceForOrderReplacement(addressForm, deliveryMode, section, businessType) {
+    sessionStorage.setItem("enteredAddressForm", JSON.stringify(addressForm));
+    sessionStorage.setItem("section", JSON.stringify(section));
+    $.ajax({
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/avsCheck',
+        data: JSON.stringify(addressForm),
+        type: "POST",
+        contentType : 'application/json; charset=utf-8',
+        mimeType : 'application/json',
+        cache : false,
+        beforeSend: function(){
+           $('.page-loader-new-layout').show();
+        },
+        success: function (data) {
+            let addressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+            if(data != null && data.statusMessage == 'Success' && data.result != null && data.result.length > 0) {
+                 sessionStorage.setItem("avsFlowDeliveryMode", JSON.stringify(deliveryMode));
+                 sessionStorage.setItem("businessType", JSON.stringify(businessType));
+                 let whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
+                                         addressForm.postcode ;
+                 $('#whatYouEnteredForReplacementOrder').html(whatYouEntered);
+                 sessionStorage.setItem("suggestedAddressForm", JSON.stringify(data.result[0]));
+                 let whatWeSuggest = data.result[0].line1 + '<br/>' + data.result[0].town + ', ' + data.result[0].region.isocodeShort +
+                                     ' ' + data.result[0].postalCode;
+                 $('#whatWeSuggestForReplacementOrder').html(whatWeSuggest);
+                 $('#avsCheckReplacementOrder').modal('show');
+            } else {
+                 if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
+                    showAMDeliveryErrorMessage(section);
+                 } else {
+                    if(data.addressType != null) {
+                        addressForm.addressType = data.addressType;
+                    }
+                    //suggested state not supported error from response
+                     addNewAddress(addressForm, deliveryMode)
+                         .then((data) => {
+                             sessionStorage.removeItem("enteredAddressForm");
+                             saveDeliveryModeForOrderReplacement(deliveryMode, false);
+                         })
+                         .catch((error) => {
+                           console.log(error)
+                         })
+                 }
+            }
+        },
+        complete: function() {
+            $('.page-loader-new-layout').hide();
+        },
+        error: function (data) {
+            $('.page-loader-new-layout').hide();
+        }
+    });
+ }
+
+
+function onClickOfSaveSuggestedAddressForReplacementOrder() {
+     let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
+     let enteredAddressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+     let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
+     let businessType = JSON.parse(sessionStorage.getItem("businessType"));
+     let section = JSON.parse(sessionStorage.getItem("section"));
+     if(section == 'SHIP') {
+        if(businessType && addressForm.addressType != 'BUSINESS') {
+            showAMDeliveryErrorMessage(section);
+            $('#avsCheck').modal('hide');
+        } else {
+            callAddNewAddressForOrderReplacement(enteredAddressForm, addressForm, deliveryMode);
+        }
+     } else {
+        callAddNewAddressForOrderReplacement(enteredAddressForm, addressForm, deliveryMode);
+     }
+ }
+
+
+
+ function callAddNewAddressForOrderReplacement(enteredAddressForm, addressForm, deliveryMode) {
+    addNewAddress(createAddressFormObjectForReplacementOrder(enteredAddressForm.firstName, enteredAddressForm.lastName, enteredAddressForm.companyName, addressForm.line1, addressForm.line2,
+         addressForm.town, addressForm.region.isocode, 'US', addressForm.postalCode, enteredAddressForm.saveInAddressBook,
+         enteredAddressForm.phone, enteredAddressForm.email, false, null, addressForm.addressType),
+         JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
+              .then((data) => {
+                  sessionStorage.removeItem("suggestedAddressForm");
+                  sessionStorage.removeItem("enteredAddressForm");
+                  sessionStorage.removeItem("avsFlowDeliveryMode");
+                  sessionStorage.removeItem("businessType");
+                  sessionStorage.removeItem("rushStatus");
+                  saveDeliveryModeForOrderReplacement(deliveryMode, false);
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+ }
+
+
+  function onClickOfSaveEnteredAddressForOrderReplacement() {
+     let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
+     let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
+     let section = JSON.parse(sessionStorage.getItem("section"));
+     let businessType = JSON.parse(sessionStorage.getItem("businessType"));
+     if(section == 'SHIP') {
+         if(businessType && addressForm.addressType != 'BUSINESS') {
+             showAMDeliveryErrorMessage(section);
+             $('#avsCheck').modal('hide');
+         } else {
+             callEnteredAddNewAddressForOrderReplacement(addressForm, deliveryMode);
+         }
+     } else {
+         callEnteredAddNewAddressForOrderReplacement(addressForm, deliveryMode);
+     }
+  }
+
+
+  function callEnteredAddNewAddressForOrderReplacement(addressForm, deliveryMode) {
+      let newAddressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+      newAddressForm['addressType'] = addressForm.addressType;
+      addNewAddress(newAddressForm, JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
+            .then((data) => {
+                sessionStorage.removeItem("suggestedAddressForm");
+                sessionStorage.removeItem("enteredAddressForm");
+                sessionStorage.removeItem("avsFlowDeliveryMode");
+                sessionStorage.removeItem("rushStatus");
+                saveDeliveryModeForOrderReplacement(deliveryMode, false);
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+   }
+
+
+ function createAddressFormObjectForReplacementOrder(firstName, lastName, companyName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
+    upsStoreAddress, openingDays, addressType) {
+    let openingDaysDetails = '';
+    if(openingDays != null) {
+        if(openingDays[0] != null) {
+            openingDaysDetails += openingDays[0].trim();
+        }
+        if(openingDays[1] != null) {
+            openingDaysDetails += ';' + openingDays[1].trim();
+        }
+        if(openingDays[2] != null) {
+            openingDaysDetails += ';' + openingDays[2].trim();
+        }
+    }
+    if(regionIso.includes('-')) {
+        regionIso = regionIso;
+    } else {
+       regionIso = countryIso+ '-' +regionIso;
+    }
+
+    if(addressType == null) {
+        addressType = 'UNKNOWN';
+    }
+
+    if(line2 == null){
+    line2 = " ";
+    }
+
+    let addressForm = {
+        firstName : firstName.trim(),
+        lastName : lastName.trim(),
+        companyName : companyName.trim(),
+        line1 : line1.trim(),
+        line2 : line2.trim(),
+        townCity : townCity.trim(),
+        regionIso : regionIso.trim(),
+        countryIso : countryIso.trim(),
+        postcode : postcode.trim(),
+        saveInAddressBook : status,
+        phone : phone.trim(),
+        email : email.trim(),
+        upsStoreAddress: upsStoreAddress,
+        openingDaysDetails: openingDaysDetails,
+        addressType: addressType.trim()
+    };
+    return addressForm;
+ }
 
 
 

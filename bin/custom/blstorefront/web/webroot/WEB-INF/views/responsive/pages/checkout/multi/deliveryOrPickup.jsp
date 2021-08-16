@@ -202,4 +202,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="avsCheckReplacementOrder" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><spring:theme code="shipping.avs.integration.address.popup.header"/></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="whatYouEnteredBody">
+                            <p class="body14"> <b> <spring:theme code="shipping.avs.integration.address.popup.enter"/></b>
+                                <div id="whatYouEnteredForReplacementOrder"> </div>
+                            </p>
+                        </div>
+                        <div id="whatWeSuggestBody">
+                            <p class="body14"><b> <spring:theme code="shipping.avs.integration.address.popup.suggest"/></b>
+                                <div id="whatWeSuggestForReplacementOrder"> </div>
+                            </p>
+                        </div>
+                        <a href="#" class="btn btn-primary btn-block my-4" onClick="onClickOfSaveSuggestedAddressForReplacementOrder()">
+                            <spring:theme code="shipping.avs.integration.address.popup.suggested"/>
+                        </a>
+                        <p class="text-center mb-0">
+                            <a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close" onClick="onClickOfSaveEnteredAddressForOrderReplacement()">
+                                <spring:theme code="shipping.avs.integration.address.popup.entered"/>
+                            </a>
+                        </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+
 </template:page>

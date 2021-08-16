@@ -12,14 +12,14 @@
 <spring:url value="/checkout/multi/summary/braintree/placeReplacementOrder"
 	var="placeOrderUrl" />
 
-		   <form:form action="${placeOrderUrl}" id="placeOrderForm1"
+		   <form:form action="${placeOrderUrl}" id="replaceMentplaceOrderForm"
             	modelAttribute="placeOrderForm">
             	<hr class="mt-5">
             	<div class="cart-actions">
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
             		<button id="placeOrder" type="button"
-            			class="btn btn-sm btn-primary float-end" onClick="shippingMethodReplacementOrderContinue()">
+            			class="btn btn-sm btn-primary float-end js-replacement-order">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
             		</button>

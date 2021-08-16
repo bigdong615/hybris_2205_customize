@@ -5,6 +5,7 @@ import de.hybris.platform.core.Registry;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -89,7 +90,8 @@ public static void setCartPrice(final AbstractOrderModel abstractOrderModel , fi
             .getAttribute(BlCoreConstants.RETURN_REQUEST);
         abstractOrderModel
             .setReplacementOrder(returnRequestModel); // Name to be changes replacementRequest
-        abstractOrderModel.setPaymentInfo(returnRequestModel.getOrder().getPaymentInfo());
+        PaymentInfoModel paymentInfoModel = getModelService().clone(returnRequestModel.getOrder().getPaymentInfo());
+        abstractOrderModel.setPaymentInfo(paymentInfoModel);
       }
 
       abstractOrderModel.setIsCartUsedForReplacementOrder(Boolean.TRUE);
