@@ -1,5 +1,6 @@
 #% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs blproduct-inventory-location.impex =========================");
-
+INSERT_UPDATE BlInventoryScanConfiguration; blScanConfigKey[unique=true]; blScanConfigValue ;
+                                          ; maxSequenceScan             ; 11                ;
 
 INSERT_UPDATE BlInventoryLocation[disable.interceptor.beans='blInventoryLocationPrepareInterceptor'];inventoryLocationID[unique='true'];code[unique='true'];name;inventoryType(code);parentInventoryLocation(inventoryLocationID);lastModifiedTime[dateformat=dd-MM-yyyy HH:mm]
                                                                                                     ;1;      MAR001 S01;          MAR001 S01;                          STATIC_SHELF;       ;            2-11-2021 17:51
