@@ -134,6 +134,14 @@ ACC.order = {
                 }
     				 });
 
+$(".add-cc-extendOrderform").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#extend-order-payment-add-form").submit();
+});
+
+
      }
 
 };

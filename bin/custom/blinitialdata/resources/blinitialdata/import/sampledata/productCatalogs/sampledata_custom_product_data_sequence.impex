@@ -48,3 +48,5 @@ $productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/paypal-default-address.impex"), "utf-8", 0, 0);
 ##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-optimization.impex"), "utf-8", 0, 0);
 
+# Point of Service Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/points-of-service.impex"), "utf-8", 0, 0);

@@ -785,13 +785,24 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
-
             <na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+			<na:notifications eventType="validBINLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.valid.BIN.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="validParentLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.valid.parent.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
         </na:notification-area>
     </context>
 
@@ -1100,6 +1111,8 @@
 	      <list-view:column qualifier="reservedStatus"/>
 	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
+	      <list-view:column qualifier="serialStatus"/>
+	      <list-view:column qualifier="bufferedInventory"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1108,6 +1121,9 @@
 	      <advanced-search:field-list>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="date" selected="true"/>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialProductCode" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialStatus" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="bufferedInventory" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="reservedStatus" selected="true"/>
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
@@ -1132,7 +1148,7 @@
 				</editorArea:tab>
 			</editorArea:editorArea>
 		</context>
-
+		
 	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
@@ -1174,6 +1190,13 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+	
+	<context type="Order" component="cs-listview" merge-by="type">
+        <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
+            <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+            <list:column qualifier="date" merge-mode="REMOVE"/>
+        </list:list-view>
+    </context>
 
 
 
@@ -1208,7 +1231,10 @@
 							<editorArea:value>true</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
-					<editorArea:attribute qualifier="orderType" readonly="false" />
+					<editorArea:attribute qualifier="orderType"/>
+					<editorArea:attribute qualifier="isVipOrder" />
+					<editorArea:attribute qualifier="isRentalCart"/>
+					<editorArea:attribute qualifier="status"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1508,7 +1534,7 @@
 			<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
-					name="optimizedShippingStartDate" selected="false" operator="greaterOrEquals"/>
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
 				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
@@ -1519,7 +1545,7 @@
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
-					name="optimizedShippingStartDate" selected="false" operator="greaterOrEquals"/>
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
 				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
@@ -1530,7 +1556,7 @@
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
-					name="optimizedShippingStartDate" selected="false" operator="greaterOrEquals"/>
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
 				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
@@ -1871,6 +1897,9 @@
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
 			<n:type-node code="Consignment" id="Consignment"/>
+			<n:navigation-node id="StockLevel">
+				<n:type-node code="StockLevel" id="StockLevel"/>
+			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
 	

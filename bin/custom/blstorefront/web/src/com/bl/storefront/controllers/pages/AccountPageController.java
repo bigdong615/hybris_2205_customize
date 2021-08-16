@@ -90,6 +90,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -117,8 +119,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -155,7 +155,6 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
-	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
 	private static final String REDIRECT_TO_ORDER_HISTORY_PAGE = REDIRECT_PREFIX + "/my-account/orders";
 	private static final String REDIRECT_TO_CONSENT_MANAGEMENT = REDIRECT_PREFIX + "/my-account/consents";
 
@@ -492,7 +491,6 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String editEmail(final Model model) throws CMSItemNotFoundException
 	{
-		final CustomerData customerData = customerFacade.getCurrentCustomer();
 		final UpdateEmailForm updateEmailForm = new UpdateEmailForm();
 
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
@@ -1173,7 +1171,7 @@ public class AccountPageController extends AbstractSearchPageController
 	/**
 	 * This method used for renting the order again from order details page
 	 */
-	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@GetMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel ,
 			final HttpServletRequest request) throws CommerceCartModificationException {
@@ -1228,13 +1226,26 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request,
 			final HttpServletResponse response, final Model model, final RedirectAttributes redirectModel) throws CommerceCartModificationException {
 
-		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+		OrderData orderData = null;
+		try {
+			orderData = blOrderFacade
+					.setRentalExtendOrderDetails(orderCode, orderEndDate, selectedEndDate);
 
-		model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
 
-		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
-		{
-			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
+			return Account.AccountOrderExtendSummaryPage;
+		}
+		catch (final Exception e) {
+			orderData = new OrderData();
+			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
+					+ "if you are unable to return your order by its scheduled return date.");
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
 		}
 		return Account.AccountOrderExtendSummaryPage;
 	}

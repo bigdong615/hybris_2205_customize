@@ -117,12 +117,12 @@
 								<br>
 								<spring:theme code="text.myaccount.order.rental.damege.waiver" /> </p>
 						</div>
-						<div class="col-7 col-md-8">
-							<p class="body14 gray60">
-							<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental}</div>Days <br>
-							<div id="js-totalCost-update"> <format:blPrice priceData="${orderData.subTotalTaxForExtendRental}"/> </div> <br>
-							<div id="js-totalDamegeWaiverCost-update"><format:blPrice priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </div>
-							</p>
+						<div class="col-7 col-md-8">							 
+						<div class="extend-price">	
+							<p class="body14 gray60" id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Days  </p>
+							<p class="body14 gray60" id="js-totalCost-update"> <format:blPrice priceData="${orderData.subTotalTaxForExtendRental}"/> </p>
+							<p class="body14 gray60" id="js-totalDamegeWaiverCost-update"> <format:blPrice priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </p>
+						</div>
 						</div>
 					</div>
              <div class="productNotifications row d-none" id="add-error-message">

@@ -692,10 +692,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * @return true if same
      */
     private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
-        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
-            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+        if(addressRequestData.getLine1().trim().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().trim().equalsIgnoreCase(addressResponseData.getTown()) &&
             addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
-            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+            checkNumberEquality(addressRequestData.getPostalCode().trim(), addressResponseData.getPostalCode())) {
                         return Boolean.TRUE;
         }
         return Boolean.FALSE;

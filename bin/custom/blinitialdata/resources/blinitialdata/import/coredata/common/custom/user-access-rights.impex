@@ -151,6 +151,10 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.status     ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
@@ -229,10 +233,12 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;InventoryInCompleteOrdersQueue;+;+;-;-
 ;;;InventoryCompleteOrdersQueue;+;+;-;-
 ;;;PullReadyToShipOrdersCronJob;+;+;-;-
+;;;MorningPullOrdersQueue;+;+;-;-
 ;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
 ;;;WebScanTool;+;+;-;-
 ;;;Warehouse;+;+;-;-
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
+;;;StockLevel;+;-;-;-
 
 $END_USERRIGHTS;;;;
