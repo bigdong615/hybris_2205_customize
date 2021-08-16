@@ -11,6 +11,8 @@ import de.hybris.platform.servicelayer.user.UserService;
 
 import javax.annotation.Resource;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
+
 
 /**
  * This validator used to validate consignment status
@@ -38,7 +40,7 @@ public class BlConsignmentStatusValidateInterceptor implements ValidateIntercept
 
 		for (final PrincipalGroupModel userGroup : currentUser.getGroups())
 		{
-			if ("customersupportagentgroup".equals(currentUser.getUid()))
+			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(currentUser.getUid()))
 			{
 				isCsAgent = true;
 			}

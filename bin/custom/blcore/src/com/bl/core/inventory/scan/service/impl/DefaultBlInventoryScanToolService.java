@@ -694,6 +694,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.remove(subPartName);
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
 			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
 			modelService.save(subpartProduct);
 			
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", subPartName,subpartProduct.getCode());
@@ -730,6 +731,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.remove(keyList.get(0));
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
 			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
 			modelService.save(subpartProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", keyList.get(0) ,subpartProduct.getCode());
 		}
@@ -750,6 +752,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", serialProduct);
 			modelService.save(serialProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ", serialProduct.getCode());
 		}
