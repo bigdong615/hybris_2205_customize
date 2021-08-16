@@ -4,7 +4,6 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -43,7 +42,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.Password
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ProfileValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.AddressVerificationResultHandler;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
-import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
@@ -82,7 +80,6 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
-import de.hybris.platform.util.PartOfItemAlreadyAssignedToTheParentException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,6 +90,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -120,8 +119,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -1174,7 +1171,7 @@ public class AccountPageController extends AbstractSearchPageController
 	/**
 	 * This method used for renting the order again from order details page
 	 */
-	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@GetMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel ,
 			final HttpServletRequest request) throws CommerceCartModificationException {

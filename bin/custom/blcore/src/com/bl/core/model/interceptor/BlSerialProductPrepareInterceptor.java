@@ -64,16 +64,19 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
-		//Intercepting the change in serialStatus and changing the consignment status accordingly if available
-		doStatusChangeOnConsignment(blSerialProduct, ctx);
-		createRepairLogIfRepairNeeded(blSerialProduct, ctx);
-		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
-		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
-		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
-		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		if(Objects.nonNull(blSerialProduct))
+		{
+			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
+			doStatusChangeOnConsignment(blSerialProduct, ctx);
+			createRepairLogIfRepairNeeded(blSerialProduct, ctx);
+			//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
+			calculateFinalSalePriceForSerial(blSerialProduct, ctx);
+			//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
+			calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
+			updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		}
 	}
 
 	/**
@@ -113,7 +116,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void updateStockRecordsOnForRentFlagUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
-			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) 
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlProductModel.FORRENT)
 					&& isEligibleForStockUpdate(blSerialProduct)) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
 				}
@@ -302,7 +305,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void doStatusChangeOnConsignment(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		if (Objects.nonNull(blSerialProduct) && Objects.nonNull(blSerialProduct.getAssociatedConsignment())
+		if (Objects.nonNull(blSerialProduct.getAssociatedConsignment())
 				&& Objects.nonNull(blSerialProduct.getSerialStatus())
 				&& ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS))
 		{
@@ -417,7 +420,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void createRepairLogIfRepairNeeded(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		if (Objects.nonNull(blSerialProduct) && isEligibleForRepairLogCreation(blSerialProduct, ctx)
+		if (isEligibleForRepairLogCreation(blSerialProduct, ctx)
 				&& isRepairLogTypeAvailable(blSerialProduct))
 		{
 			switch (blSerialProduct.getRepairLogType().getCode())
