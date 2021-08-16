@@ -1,12 +1,12 @@
  $(document).ready(function() {
     resetSelectBox('ship-it-select-box');
     defaultShipIt();
-    shipToHomeShippingMethods();
     hideLabelsFromForm();
     changeUPSStore();
     hideShippingForm();
     hideErrorForInputValidation();
     emptyAddressFormAttributes();
+    shipToHomeShippingMethods();
     $('#ship-it-savedAddresses option').each(function() {
         var optionText = this.text;
         var newOption = optionText.substring(0,52);
