@@ -149,38 +149,46 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
 							totalDamageWaiverCost);
 				}
-				// discounts
-				final double totalDiscounts = calculateDiscountValues(order, recalculate);
-				final double roundedTotalDiscounts = getDefaultCommonI18NService()
-						.roundCurrency(totalDiscounts, digits);
-				order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
-
-				// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
-				if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
-					order.setDeliveryCost(0.0);
-				}
-
-				getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
-				// set total
-				final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
-						+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
-				final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
-				order.setTotalPrice(Double.valueOf(totalRounded));
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-				final double totalRoundedTaxes = getDefaultCommonI18NService()
-						.roundCurrency(order.getTotalTax(), digits);
-				order.setTotalTax(Double.valueOf(totalRoundedTaxes));
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
-				setCalculatedStatus(order);
-				saveOrder(order);
-
-				// To set the current extend order in session
-				if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
-					BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
-				}
+				calculateTotalsForCart(order , recalculate , digits , subtotal , totalDamageWaiverCost);
 			}
 		}
 
+	}
+
+	/**
+	 * This method added to calculate the total for cart
+	 */
+
+	private void calculateTotalsForCart(final AbstractOrderModel order, final boolean recalculate , final int digits ,
+			final double subtotal , final double totalDamageWaiverCost){
+		final double totalDiscounts = calculateDiscountValues(order, recalculate);
+		final double roundedTotalDiscounts = getDefaultCommonI18NService()
+				.roundCurrency(totalDiscounts, digits);
+		order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
+
+		// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
+		if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+			order.setDeliveryCost(0.0);
+		}
+
+		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+		// set total
+		final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
+				+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
+		final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
+		order.setTotalPrice(Double.valueOf(totalRounded));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
+		final double totalRoundedTaxes = getDefaultCommonI18NService()
+				.roundCurrency(order.getTotalTax(), digits);
+		order.setTotalTax(Double.valueOf(totalRoundedTaxes));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
+		setCalculatedStatus(order);
+		saveOrder(order);
+
+		// To set the current extend order in session
+		if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+			BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+		}
 	}
 
 	/**
