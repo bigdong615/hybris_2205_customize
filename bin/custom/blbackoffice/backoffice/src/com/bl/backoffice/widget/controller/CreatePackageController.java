@@ -6,7 +6,6 @@ package com.bl.backoffice.widget.controller;
 import com.bl.blbackoffice.dto.SerialProductDTO;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.ItemStatusEnum;
-import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
