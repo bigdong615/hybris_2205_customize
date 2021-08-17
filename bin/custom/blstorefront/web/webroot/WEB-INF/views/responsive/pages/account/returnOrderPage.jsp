@@ -22,41 +22,7 @@
                           <c:if test="${orderData.isRentalCart}">
                             
                           </c:if>
-                            <div class="reviewCart">
-                                
-
-                             <c:if test="${not empty orderData.extendOrderEntrie}">
-                               <div class="col-12 mt-4">
-                                 <b><spring:theme code="text.myaccount.extend.order.details"/></b>
-                                   <c:forEach items="${orderData.extendOrderEntrie}" var="extendOrder">
-                                        <div class="row">
-                                           <div class="col-5 col-md-4">
-                                              <p class="body14"><spring:theme code="text.order.extend.text"/><br>
-                                                    <spring:theme code="text.myaccount.extend.order.added.time"/><br>
-                                                    <spring:theme code="text.myaccount.extend.order.cost"/><br>
-                                                    <spring:theme code="text.myaccount.order.rental.damege.waiver"/></p>
-                                           </div>
-                                           <div class="col-7 col-md-8">
-                                               <p class="body14 gray60">
-                                                 ${extendOrder.extendOrderEndDate}<br>
-                                                 ${extendOrder.extendOrderDaysWithoutPrevOrder}<br>
-                                                 <format:blPrice priceData="${extendOrder.extendOrderCost}"/>
-                                                <c:choose>
-                                                <c:when test="${extendOrder.extendOrderDamageWaiverCost.value > 0}">
-                                                 <format:blPrice priceData="${extendOrder.extendOrderDamageWaiverCost}"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                	$0.00
-                                                </c:otherwise>
-                                                </c:choose>
-                                               </p>
-                                           </div>
-                                        </div>
-                                   </c:forEach>
-                               </div>
-                             </c:if>
-                             </div>
-                            <div class="reviewCart">
+                           <div class="reviewCart">
                                 <h5 class="mb-4">
                                  <c:if test="${orderData.isRentalCart}">
                                 <spring:theme code="text.myaccount.order.your.rental"/>
