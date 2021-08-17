@@ -3798,7 +3798,7 @@
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, {orderItem:isVIPOrder} as isVIPOrder, {orderItem:isUsedGearOrder} as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
+          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, case when({orderItem:isVIPOrder} = 1) then 'True' else 'False' end as isVIPOrder, case when({orderItem:isUsedGearOrder} = 1) then 'True' else 'False' end as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
         </value>
       </property>
     </custom-properties>
