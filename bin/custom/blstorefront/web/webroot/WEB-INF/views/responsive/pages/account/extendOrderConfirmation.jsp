@@ -25,7 +25,7 @@
              <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'payPal')}">
                  <spring:theme code="text.extend.order.paypal"/>
              </c:if>
-             <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>${extendOrderData.addedTimeForExtendRental}
+             <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>&nbsp;${extendOrderData.addedTimeForExtendRental}
                     <spring:theme code="text.extend.order.confirmation"/><b>${extendOrderData.customerMail}</b></p>
                     <div class="confirmation-actions my-5">
                         <a href="${viewOrderAction}" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme code="text.extend.order.view.order"/></a>
