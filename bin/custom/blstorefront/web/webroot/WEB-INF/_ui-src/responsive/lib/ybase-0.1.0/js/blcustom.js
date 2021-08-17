@@ -71,7 +71,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
  
 //Script to apply the selected bl-options from the dropdown on the cart page
  $('ul.bl-options-update').on('click','li',function(e){
-	 alert("0kkk")
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var blOptions = $(this).find("a").data('id');
