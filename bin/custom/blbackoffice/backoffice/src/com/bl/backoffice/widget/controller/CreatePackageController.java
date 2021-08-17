@@ -6,10 +6,12 @@ package com.bl.backoffice.widget.controller;
 import com.bl.blbackoffice.dto.SerialProductDTO;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
+import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -32,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
@@ -45,6 +49,8 @@ import org.zkoss.zul.Textbox;
 
 public class CreatePackageController extends DefaultWidgetController
 {
+	 private static final Logger LOG = Logger.getLogger(CreatePackageController.class);
+	
 	private static final long serialVersionUID = 1L;
 	protected static final String IN_SOCKET = "consignmentInput";
 	protected static final String OUT_CONFIRM = "confirmOutput";
@@ -218,8 +224,12 @@ public class CreatePackageController extends DefaultWidgetController
 			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("_");
 			for (final BlProductModel serialProduct : this.allSerialProducts)
 			{
+				BlLogger.logMessage(LOG, Level.INFO, "************ Selected Serial Product ***********" + serialProduct);
+
 				if (serialProduct.getCode().equals(selctedCheckBoxArray[0]))
 				{
+					BlLogger.logMessage(LOG, Level.INFO, "************ Inside if Condition ***********" + serialProduct);
+					
 					addOrRemoveSelectedSerialProduct(selctedCheckBoxArray, serialProduct);
 					break;
 				}
@@ -238,10 +248,12 @@ public class CreatePackageController extends DefaultWidgetController
 		if (BlInventoryScanLoggingConstants.TRUE_STRING.equals(selctedCheckBoxArray[1]))
 		{
 			this.selectedSerialProducts.add(serialProduct);
+			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Added***********" + serialProduct);
 		}
 		else
 		{
 			this.selectedSerialProducts.remove(serialProduct);
+			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Removed***********" + serialProduct);
 		}
 	}
 
