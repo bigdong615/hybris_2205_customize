@@ -38,6 +38,16 @@
                                 <c:url var="brandUrl" value="${categoryData.url}"/>
                               </c:forEach>
                               <h1 class="mb-4">${product.displayName}</h1>
+                               <c:choose>
+                                  <c:when test="${product.isNewGearInStock eq true}">
+                                    <span class="badge badge-limited-stock"><spring:theme
+                                        code="text.product.newgear.flag.inStock"/></span>
+                                  </c:when>
+                                  <c:otherwise>
+                                    <span class="badge badge-out-of-stock"><spring:theme
+                                        code="text.product.newgear.flag.outOfStock" /></span>
+                                	</c:otherwise>
+                               </c:choose>
                               <ul class="checklist mt-4">${product.shortDescription} </ul>
                               <div class="priceSummary">
                                 <strong><format:price	priceData="${product.retailGearPrice}" /></strong>

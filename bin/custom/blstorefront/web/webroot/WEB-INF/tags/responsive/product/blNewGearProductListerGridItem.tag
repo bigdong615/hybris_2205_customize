@@ -17,6 +17,16 @@
 
 <div class="col-md-6 col-lg-4">
   <div class="card">
+  <c:choose>
+    <c:when test="${product.isNewGearInStock eq true}">
+      <span class="badge badge-limited-stock"><spring:theme
+          code="text.product.newgear.flag.inStock"/></span>
+    </c:when>
+    <c:otherwise>
+      <span class="badge badge-out-of-stock"><spring:theme
+          code="text.product.newgear.flag.outOfStock" /></span>
+  	</c:otherwise>
+  	</c:choose>
     <product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
     <h6 class="product">
      <c:url var="newGearUrl" value="/buy/product/${product.code}"/>

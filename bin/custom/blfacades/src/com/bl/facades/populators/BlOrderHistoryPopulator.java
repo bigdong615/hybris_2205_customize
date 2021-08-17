@@ -52,7 +52,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     {
    	target.setIsGiftCard(Boolean.TRUE);
     }
-   if(source.getIsNewGearOrder())
+   if(BooleanUtils.isTrue(source.getIsNewGearOrder()))
     {
    	target.setNewGearOrder(Boolean.TRUE);
     }

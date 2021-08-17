@@ -279,6 +279,9 @@
                                     <tbody>
                                         <tr>
                                             <td class="gray80">
+                                              <c:if test="${orderData.isNewGearOrder eq true}">
+                                                <spring:theme code="text.checkout.multi.newgear.order.summary.cost"/>
+                                              </c:if>
                                               <c:if test="${orderData.isRentalCart}">
                                             <spring:theme code="text.myaccount.order.rental.cost"/>
                                              </c:if>
