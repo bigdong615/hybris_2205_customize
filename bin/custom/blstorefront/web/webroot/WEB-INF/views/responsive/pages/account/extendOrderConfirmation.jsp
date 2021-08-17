@@ -14,7 +14,7 @@
 <div id="accountContent" class="col-lg-5 offset-lg-1">
                     <h1> <spring:theme code="text.extend.order" /></h1>
                     <hr>
-                    <h5 class="mb-5"><spring:theme code="text.extend.order.new.returndate" />${extendOrderData.extendOrderConfirmationDate}</h5>
+                    <h5 class="mb-5"><spring:theme code="text.extend.order.new.returndate" />&nbsp;${extendOrderData.extendOrderConfirmationDate}</h5>
               <p>
              <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'creditCard')}">
                      <spring:theme code="text.extend.order.text"/>
@@ -25,8 +25,8 @@
              <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'payPal')}">
                  <spring:theme code="text.extend.order.paypal"/>
              </c:if>
-             <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>&nbsp;${extendOrderData.addedTimeForExtendRental}
-                    <spring:theme code="text.extend.order.confirmation"/><b>${extendOrderData.customerMail}</b></p>
+   <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>
+   ${extendOrderData.addedTimeForExtendRental}&nbsp;<spring:theme code="text.extend.order.confirmation"/><b>${extendOrderData.customerMail}</b></p>
                     <div class="confirmation-actions my-5">
                         <a href="${viewOrderAction}" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme code="text.extend.order.view.order"/></a>
                         <a href="${homePageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme code="text.extend.order.start"/></a>
