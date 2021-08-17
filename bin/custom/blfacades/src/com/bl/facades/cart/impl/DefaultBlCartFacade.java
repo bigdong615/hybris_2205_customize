@@ -103,6 +103,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   {
 	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
   }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode)
+	{
+		getBlCartService().updateCartEntrySelectedOption(entryNumber, optionCode);
+	}
   
   /**
    * {@inheritDoc}
