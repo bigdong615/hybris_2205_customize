@@ -108,6 +108,14 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 					optionsDataList.add(subBlOptionData);
 				});
 				blOptionData.setSubOptions(optionsDataList);
+				if(CollectionUtils.isNotEmpty(source.getOptions())){
+					final BlOptionsModel selectedBlOptionsModel = source.getOptions().iterator().next();
+					blOptionData.setOptionCode(selectedBlOptionsModel.getCode());
+					blOptionData.setOptionName(selectedBlOptionsModel.getName());
+					blOptionData.setOptionPrice(createPrice(source,
+							Objects.nonNull(selectedBlOptionsModel.getUnitPrice()) ? selectedBlOptionsModel.getUnitPrice() : Double.valueOf(0.0d)));
+					
+				}
 				target.setOption(blOptionData);
 
 			}
