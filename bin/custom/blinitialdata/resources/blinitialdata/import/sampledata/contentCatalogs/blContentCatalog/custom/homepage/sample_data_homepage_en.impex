@@ -72,7 +72,6 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redi
                     ;                        ; /images/logo-facebook1.svg   ;http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                        ; logo-facebook.svg    ;         ; image/svg+xml              ;                         ;
 
 
-
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  
                                
