@@ -84,7 +84,6 @@ INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique
 INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef             ;  medias(code)
                               ;                         ; affiliateBannerComponent ; Affiliate Section Component ; affiliateBannerComponent ; /images/theme/affiliate.jpg
 
-
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
                    ;                    ; Section1Slot        ; affiliateCMSParagraphComponent
