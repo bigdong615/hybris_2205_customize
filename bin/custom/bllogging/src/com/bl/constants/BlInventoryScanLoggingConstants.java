@@ -77,8 +77,15 @@ public class BlInventoryScanLoggingConstants {
  	public static final String INVALID_BARCODE_SCANNED_MSG = "Scanned barcodes are not valid {}";
  	public static final String SERIAL_MISMATCH_SCANNED_MSG = "Scanned serial does not match to serials on package";
  	public static final String INVALID_SCAN_MSG = "Invalid Scan";
+
+ 	public static final String SHIPPING_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
+	public static final String SHIPPING_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order"; 
+ 	public static final String SERIAL_MISSING_ON_CONSIGNMENT_MSG = "Serial {} is missing on consignment ";
+ 	public static final String SERIAL_MISSING_ON_SCAN_MSG = "Serial {} is missing on Scan ";
+
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE_MSG = "Failed to update BIN inventory location for: {}";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE_MSG = "Last scan must be valid Parent Inventory Location for BIN";
+
 
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String SCAN_STRING = "Scan data: ";
@@ -128,6 +135,8 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SERIAL_MISMATCH_SCANNED_ERROR = "blbackoffice.order.serial.mismatch.error";
  	public static final String INVALID_SCAN_ERROR_KEY = "blbackoffice.order.invali.scan.error.key";
  	public static final String TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.order.scan.item.error";
+	public static final String PACKAGE_MANUAL_REVIEW_FAILURE = "blbackoffice.order.manual.review.error.messge";
+	public static final String PACKAGE_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.order.error.messge";
 
  	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
  	public static final String SHIPPING_INVALID_SCAN_ERROR = "blbackoffice.shipping.scan.invalid.scan.error";
@@ -136,6 +145,10 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SHIPPING_LAST_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.last.invalid.location.error";
  	public static final String SHIPPING_MANY_LOCATION_ERROR = "blbackoffice.shipping.scan.many.location.error";
  	public static final String SHIPPING_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
+ 	public static final String SHIPPING_MANUAL_REVIEW_FAILURE = "blbackoffice.shipping.manual.review.error.messge";
+	public static final String SHIPPING_CANCEL_ORDER_FAILURE = "blbackoffice.shipping.cancel.order.error.messge";
+ 	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
+ 	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
 
 
  	public static final String DOUBLE_HYPHEN = "--";
@@ -171,7 +184,13 @@ public class BlInventoryScanLoggingConstants {
     public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
     public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
     public static final String TRUE_STRING = "true";
+
+ 	public static final String MISSING_IN_CONSIGNMENT = "MISSING_IN_CONSIGNMENT";
+ 	public static final String MISSING_IN_SCAN = "MISSING_IN_SCAN";
+ 	public static final String SUCCESS_SCAN = "SUCCESS_SCAN";
     public static final String IS_PAYMENT_PAGE_VISITED = "isPaymentPageVisited";
+    public static final String CUSTOMER_SUPPORT_AGENT_GROUP = "customersupportagentgroup";
+
 
     private BlInventoryScanLoggingConstants() { }
 
