@@ -56,7 +56,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; TopHeaderSlot                    ;                                                                             ;                           ; wide
-                              ; Section1Slot                  ;                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
                               ; Section2Slot                  ;                                             ;                           ; wide
                               ; Section3Slot                  ;                                             ;                           ; wide
                               ; Section4Slot                  ;                                             ;                          ;wide
