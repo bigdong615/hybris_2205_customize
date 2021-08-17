@@ -27,8 +27,14 @@
                         <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
                       </a>
                       <span class="step2"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
-                      <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
-                      <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                      <c:choose>
+                         <c:when test="${isReplacementOrderCart eq true}">
+                         </c:when>
+                         <c:otherwise>
+                           <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
+                           <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                          </c:otherwise>
+                      </c:choose>
                   </div>
               </div>
               <div class="row justify-content-center">
@@ -97,7 +103,14 @@
                                   </c:if>
                                   </c:forEach>
                               </c:if>
+                               <c:choose>
+                                                                                    <c:when test="${isReplacementOrderCart eq true}">
+
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
                               <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                              </c:otherwise>
+                              </c:choose>
                               <div class="order-actions my-4">
                                   <a href="${printQuoteUrl}" id="printCartQuote" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"><i class="icon-print"></i></a>
                                    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">

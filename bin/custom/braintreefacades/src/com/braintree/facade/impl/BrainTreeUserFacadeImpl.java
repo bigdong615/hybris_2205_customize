@@ -6,11 +6,31 @@ package com.braintree.facade.impl;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 import com.bl.core.services.customer.BlCustomerAccountService;
-import com.braintree.command.request.*;
-import com.braintree.command.result.*;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
+import com.braintree.command.request.BrainTreeAddressRequest;
+import com.braintree.command.request.BrainTreeCreateCreditCardPaymentMethodRequest;
+import com.braintree.command.request.BrainTreeCustomerRequest;
+import com.braintree.command.request.BrainTreeDeletePaymentMethodRequest;
+import com.braintree.command.request.BrainTreeUpdatePaymentMethodRequest;
+import com.braintree.command.result.BrainTreeAddressResult;
+import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
+import com.braintree.command.result.BrainTreeFindCustomerResult;
+import com.braintree.command.result.BrainTreePaymentMethodResult;
+import com.braintree.command.result.BrainTreeUpdatePaymentMethodResult;
+import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
-import com.braintreegateway.Customer;
+import com.braintree.converters.BraintreePaymentMethodConverter;
+import com.braintree.customer.service.BrainTreeCustomerAccountService;
+import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
+import com.braintree.method.BrainTreePaymentService;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.payment.dto.BraintreeInfo;
+import com.braintree.payment.info.service.PaymentInfoService;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
+import com.braintreegateway.PaymentMethodRequest;
+import com.google.common.collect.Lists;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.impl.DefaultUserFacade;
@@ -25,33 +45,17 @@ import de.hybris.platform.payment.commands.request.CreateSubscriptionRequest;
 import de.hybris.platform.payment.commands.result.SubscriptionResult;
 import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-
-import com.braintree.converters.BraintreePaymentMethodConverter;
-import com.braintree.customer.service.BrainTreeCustomerAccountService;
-import com.braintree.facade.BrainTreeUserFacade;
-import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
-import com.braintree.method.BrainTreePaymentService;
-import com.braintree.model.BrainTreePaymentInfoModel;
-import com.braintree.payment.dto.BraintreeInfo;
-import com.braintree.payment.info.service.PaymentInfoService;
-import com.braintree.transaction.service.BrainTreeTransactionService;
-import com.braintreegateway.PaymentMethodRequest;
-import com.google.common.collect.Lists;
-
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.user.UserService;
-import com.braintree.configuration.service.BrainTreeConfigService;
 
 
 
@@ -722,16 +726,29 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	 * This method is override to get default billing address whiling fetching address book.
 	 */
 	@Override
-	public List<AddressData> getAddressBook()
-	{
+	public List<AddressData> getAddressBook() {
 		// Get the current customer's addresses
 		final CustomerModel currentUser = (CustomerModel) getUserService().getCurrentUser();
-		final Collection<AddressModel> addresses = getCustomerAccountService().getAddressBookDeliveryEntries(currentUser);
+		final Collection<AddressModel> addresses = getCustomerAccountService()
+				.getAddressBookDeliveryEntries(currentUser);
 
-		if (CollectionUtils.isNotEmpty(addresses))
-		{
+		if (CollectionUtils.isNotEmpty(addresses)) {
 			final List<AddressData> addressBook = new ArrayList<>();
-			final AddressData defaultAddress = getDefaultAddress();
+			AddressData defaultAddress = null;
+			if (BlReplaceMentOrderUtils.isReplaceMentOrder() && Objects
+					.nonNull(getCartService().getSessionCart().getReturnRequestForOrder())) {
+				if(null != getCartService().getSessionCart().
+						getReturnRequestForOrder().getOrder().getDeliveryAddress()) {
+					defaultAddress = getAddressConverter().convert(getCartService().getSessionCart().
+							getReturnRequestForOrder().getOrder().getDeliveryAddress());
+				}
+				else {
+					defaultAddress = getDefaultAddress();
+				}
+			}
+			 else {
+		         	defaultAddress = getDefaultAddress();
+			 }
 			final AddressData defaultBillingAddress = getDefaultBillingAddress();
 
 			for (final AddressModel address : addresses)

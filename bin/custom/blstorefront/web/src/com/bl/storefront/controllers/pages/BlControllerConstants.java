@@ -170,6 +170,8 @@ public class BlControllerConstants
 	public static final String RENAMED_CART_CODE = "renamed_cart_code";
 	public static final String SAVED_CART_MESSAGE = "text.saved.cart.success";
 
+	public static final String RETURN_REQUEST = "returnRequest";
+
 	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
 	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
 

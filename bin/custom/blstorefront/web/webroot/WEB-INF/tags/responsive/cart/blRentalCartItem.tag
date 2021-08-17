@@ -35,7 +35,16 @@
            </form:form>
          </div>
          <div class="col-md-3 mt-3 text-md-end">
-             <b><format:price priceData="${entry.totalPrice}" displayFreeForZero="true" /></span></b>
+             <b>
+             <c:choose>
+             <c:when test="${isReplacementOrderCart eq true}">
+              <format:price priceData="${entry.totalPrice}"/>
+             </c:when>
+             <c:otherwise>
+             <format:price priceData="${entry.totalPrice}" displayFreeForZero="true" />
+             </c:otherwise>
+             </c:choose>
+             </span></b>
              <c:url value="/cart/update" var="cartUpdateFormAction"/>
            <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                                             modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">

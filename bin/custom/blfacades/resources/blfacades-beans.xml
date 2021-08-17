@@ -92,6 +92,7 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
+    <property name="serialSoftAssignedOrHardAssigned" type="boolean"/>
  </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
@@ -326,8 +327,9 @@
             <property name="recipientEmail" type="java.lang.String"/>
             <property name="recipientName" type="java.lang.String" />
             <property name="recipientMessage" type="java.lang.String"/>
-            
 	</bean>
+
+
 
   <!--BL-563 Gift Card-->
   <bean class="com.bl.facades.giftcard.data.BLGiftCardData">

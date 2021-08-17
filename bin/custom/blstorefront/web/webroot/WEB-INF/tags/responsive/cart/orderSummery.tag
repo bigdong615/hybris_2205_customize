@@ -49,8 +49,16 @@
 								code="text.checkout.multi.order.summary.cost.usedGear" />
 						</c:otherwise>
 					</c:choose></td>
-				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
-						priceData="${cartData.subTotal}" /></td>
+				<td class="text-end" id="cart-shipping-subTotal">
+				<c:choose>
+				 <c:when test="${isReplacementOrderCart eq true}">
+				  <format:price priceData="${cartData.subTotal}" />
+				 </c:when>
+				 <c:otherwise>
+				 	 <format:blPrice priceData="${cartData.subTotal}" />
+				 </c:otherwise>
+				</c:choose>
+				</td>
 			</tr>
 			<c:if test="${cartData.isRentalCart}">
 				<tr>
@@ -59,8 +67,16 @@
 						data-bs-toggle="modal" data-bs-target="#damageWaivers"> <i
 							class="icon-support"></i>
 					</a></td>
-					<td class="text-end" id="cart-shipping-waiver"><format:blPrice
-							priceData="${cartData.totalDamageWaiverCost}" /></td>
+					<td class="text-end" id="cart-shipping-waiver">
+						<c:choose>
+          				 <c:when test="${isReplacementOrderCart eq true}">
+					           <format:price priceData="${cartData.totalDamageWaiverCost}" />
+	                 </c:when>
+	                 <c:otherwise>
+	                   <format:blPrice priceData="${cartData.totalDamageWaiverCost}" />
+	                 </c:otherwise>
+	          </c:choose>
+					</td>
 				</tr>
 			</c:if>
 			<tr>
@@ -114,6 +130,11 @@
 			</form:form>
 		</div>
 	</c:if>
+
+<c:choose>
+	 <c:when test="${isReplacementOrderCart eq true}">
+	 </c:when>
+	 <c:otherwise>
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
@@ -162,6 +183,8 @@
           </p>
         </form:form>
       </c:forEach>
+    </c:otherwise>
+</c:choose>
 
 	<c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
 		<form:form id="removeGiftCardForm${loop.index}"
