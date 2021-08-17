@@ -73,7 +73,7 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redi
 
 
 INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]              ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]   ; realfilename                                   ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
-                    ;                        ; /images/theme/affiliate.jpg    ; $siteResource/images/theme/borrowlenses-affiliate-program-header.jpg                          ;borrowlenses-affiliate-program-header           ;         ;image/png+xml
+                    ;                        ; /images/theme/affiliate.jpg    ; $siteResource/images/theme/img-blog-1.jpg                          ;borrowlenses-affiliate-program-header           ;         ;image/png+xml
 
 
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
