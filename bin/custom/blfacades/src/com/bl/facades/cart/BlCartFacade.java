@@ -37,14 +37,23 @@ public interface BlCartFacade extends CartFacade {
   void recalculateCartIfRequired();
   
   /**
-   * Update cart entry with the selected damage Waiver type.
-   *
-   * @param entryNumber the entry number
-   * @param damageWaiverType the damage Waiver type
-   */
-  void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
-  
-  /**
+	 * Update cart entry with the selected damage Waiver type.
+	 *
+	 * @param entryNumber the entry number
+	 * @param damageWaiverType the damage Waiver type
+	 */
+	void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
+
+	/**
+	 * Update cart entry with the selected option
+	 *
+	 * @param entryNumber the entry number
+	 * @param optionCode the optionCode
+	 */
+	void updateCartEntrySelectedOption(final long entryNumber, final String optionCode);
+
+
+	/**
    * Sets the rental dates on cart.
    *
    * @param rentalStartDate the rental start date

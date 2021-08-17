@@ -1,12 +1,19 @@
 package com.bl.facades.populators;
 
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
+
+import com.bl.facades.product.data.BlOptionData;
+import com.google.common.collect.Lists;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -29,6 +36,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	{
 		super.populate(source, target);
 		populateDamageWaiverValues(source, target);
+		populateOptionsValues(source, target);
 		populateGiftCartPurcahseValues(source, target);
 	}
 
@@ -67,6 +75,47 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			target.setRecipientName(source.getRecipientName());
 			target.setRecipientMessage(source.getRecipientMessage());
 	}
+	
+	/**
+	 * Populate options from order entry
+	 * @param source
+	 *           the source
+	 * @param target
+	 *           the target
+	 */
+
+	private void populateOptionsValues(final AbstractOrderEntryModel source, final OrderEntryData target)
+	{
+		final List<BlOptionData> optionsDataList = new ArrayList<>();
+		final ProductModel product = source.getProduct();
+		if(product instanceof BlProductModel){
+			final BlProductModel blProductModel = (BlProductModel) product;
+			final List<BlOptionsModel> options = blProductModel.getOptions();
+
+			if(CollectionUtils.isNotEmpty(options)){
+				final BlOptionsModel blOptionsModel = options.iterator().next();
+				final BlOptionData blOptionData = new BlOptionData();
+				blOptionData.setOptionCode(blOptionsModel.getCode());
+				blOptionData.setOptionName(blOptionsModel.getName());
+
+				List<BlOptionsModel> subOptions = Lists.newArrayList(CollectionUtils.emptyIfNull(blOptionsModel.getSubOptions()));
+				subOptions.forEach(option -> {
+					final BlOptionData subBlOptionData = new BlOptionData();
+					subBlOptionData.setOptionCode(option.getCode());
+					subBlOptionData.setOptionName(option.getName());
+					subBlOptionData.setOptionPrice(createPrice(source,
+							Objects.nonNull(option.getUnitPrice()) ? option.getUnitPrice() : Double.valueOf(0.0d)));
+					optionsDataList.add(subBlOptionData);
+				});
+				blOptionData.setSubOptions(optionsDataList);
+				target.setOption(blOptionData);
+
+			}
+		}
+
+
+	}
+
 	
 	/**
 	 * Adds the product data.

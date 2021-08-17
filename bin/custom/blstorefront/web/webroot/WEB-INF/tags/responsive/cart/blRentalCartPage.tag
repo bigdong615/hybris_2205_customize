@@ -14,6 +14,7 @@
 
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
+<c:url value="/cart/updateBlOptions" var="cartUpdatelOptionsFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
 <c:url value="/" var="homePageUrl" />
 <c:url value="/cart/reviewPrint" var="printQuoteUrl" />
@@ -54,6 +55,11 @@
 					                      <input type="hidden" name="entryNumber" value="" />
 					                      <input type="hidden" name="damageWaiverType" value="" />
            						        </form:form>
+           						  <!-- Form to update the cart total on the selection of options from the dropdown -->
+								     <form:form id="updateBlOptionsForm" action="${cartUpdatelOptionsFormAction}" method="post" >
+					                      <input type="hidden" name="entryNumber" value="" />
+					                      <input type="hidden" name="bloptions" value="" />
+           						        </form:form>        
                               <div class="cart-actions">
                                   <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
