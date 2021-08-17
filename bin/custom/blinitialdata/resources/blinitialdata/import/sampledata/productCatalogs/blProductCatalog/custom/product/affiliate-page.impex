@@ -17,7 +17,6 @@
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $lang=en
-$siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
 
 
 # Import modulegen config properties into impex macros
