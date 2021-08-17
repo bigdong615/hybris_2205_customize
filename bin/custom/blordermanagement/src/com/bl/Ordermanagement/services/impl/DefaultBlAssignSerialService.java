@@ -94,7 +94,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
   }
 
-  private boolean isAllQuantityFulfilled(final SourcingContext context) {
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isAllQuantityFulfilled(final SourcingContext context) {
     final List<AtomicBoolean> allEntryQuantityFulfilled = new ArrayList<>();
     context.getOrderEntries().stream().forEach(entry -> {
       Long allResultQuantityAllocated = 0l;

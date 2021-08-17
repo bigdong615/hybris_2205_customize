@@ -10,8 +10,10 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
+import java.util.ArrayList;
 import java.util.List;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -102,8 +104,11 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
           .assignSerialsFromLocation(context, primarySourcingLocation);
       if (!sourcingComplete) {
 
-        otherLocations.forEach(otherLocation -> blAssignSerialService
-            .assignSerialsFromLocation(context, otherLocation));
+        otherLocations.forEach(otherLocation ->
+           new AtomicBoolean(blAssignSerialService
+                .assignSerialsFromLocation(context, otherLocation)));
+
+        sourcingComplete = blAssignSerialService.isAllQuantityFulfilled(context);
       }
     }
     return sourcingComplete;
