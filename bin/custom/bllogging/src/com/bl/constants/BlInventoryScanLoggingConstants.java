@@ -45,9 +45,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String BOS = "BOS";
     public static final String IN_HOUSE = "In House Scrapped Items";
     public static final String UNKNOWN = "Unknown Carrier";
-    
     public static final String MAW = "MAW";
     public static final String CAW = "CAW";
+    public static final String BIN_LOCATION = "FDSHIP01";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -68,6 +68,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
     public static final String TWO_BARCODE_SCAN_ERROR_MSG = "Must have two barcode to scans";
     public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
+    //public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "scanBatchErrorFailure";
+
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
     public static final String LAST_SCAN_ERROR_FAILURE_MSG = "Last scan must be a location";
@@ -94,6 +96,11 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: {}";
     public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: {}";
     
+    //public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
+    //public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
+    //public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
+    public static final String BAR_CODE_SCAN_EMPTY_BAR_CODES = "No Barcodes found to scan.";
+
     public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
     public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
     public static final String VIP_WORKSTATION_TECH_ENG = "VIP_WORKSTATION_TECH_ENG";
@@ -208,9 +215,22 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(VIP);
         defaultLocations.add(EMPLOYEE);
         defaultLocations.add(BOS);
+        defaultLocations.add(MAW);
+        defaultLocations.add(CAW);
         defaultLocations.add(IN_HOUSE);
         defaultLocations.add(MAW);
         defaultLocations.add(CAW);
+        defaultLocations.add(BIN);
+        return defaultLocations;
+    }
+
+    /**
+     * Method to return the Bin locations
+     *
+     * @return List<String> for default Bin Locations
+     */
+    public static List<String> getDefaultBinInventoryLocations() {
+        final List<String> defaultLocations = new ArrayList<>();
         defaultLocations.add(BIN);
         return defaultLocations;
     }
