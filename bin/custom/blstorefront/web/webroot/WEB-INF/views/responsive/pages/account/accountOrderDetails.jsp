@@ -68,7 +68,7 @@
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
-                                            ${fn:escapeXml(orderData.code)}<br>
+                                            ${fn:escapeXml(orderData.replacementFor)}<br>
                                             N/A
                                         </p>
                                     </div>
@@ -199,6 +199,7 @@
                             							</c:choose>
                             						</div>
 
+                            <c:if test="${orderData.isReplacementOrder ne true}">
                             <div class="reviewCart">
                             <c:choose>
                              <c:when test="${not empty orderData.paymentInfo}">
@@ -248,6 +249,7 @@
                                   </c:otherwise>
                                 </c:choose>
                             </div>
+                            </c:if>
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
