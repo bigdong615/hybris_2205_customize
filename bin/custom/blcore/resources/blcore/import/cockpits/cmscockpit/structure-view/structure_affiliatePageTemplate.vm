@@ -28,8 +28,20 @@
 			</tr>
 
 			<tr>
-				<td width="20%" rowspan="2" class="structureViewSection">
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
 					<cockpit code="Section1Slot" />
+				</td>
+
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="Section2Slot" />
+				</td>
+
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="Section3Slot" />
+				</td>
+
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="Section4Slot" />
 				</td>
 			</tr>
 
@@ -41,23 +53,12 @@
 				<td height="270px" colspan="5" class="structureViewSection">
 					<cockpit code="FooterSubscriptionSlot" />
 				</td>
-			</tr>
-			<tr>
-				<td colspan="4" class="structureViewSection">
-					<cockpit code="Section1Slot" />
+
+				<td height="270px" colspan="5" class="structureViewSection">
+					<cockpit code="FooterCopyRightslot" />
 				</td>
 			</tr>
-			<tr>
-				<td colspan="4" class="structureViewSection">
-					<hr />
-				</td>
-			</tr>
-			<tr>
-				<td height="270px" colspan="3" class="structureViewSection">
-					<cockpit code="Footer" />
-				</td>
-			</tr>
-    </tbody>
+		</tbody>
 	</table>
 	<div style="width:100%; border-top: 2px solid #bbb" class="cmsContentEditor">
 		<cockpit code="editor" />
