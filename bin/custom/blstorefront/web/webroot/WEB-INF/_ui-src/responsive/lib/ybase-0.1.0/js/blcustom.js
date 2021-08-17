@@ -1076,19 +1076,18 @@ function hideShorting(){
   });
 
   $('.return-button-cls').on("click",function(e) {
-                  alert('rr');
-                  var label  = [];
-                              var fvalue = []
+        var label  = [];
+        var fvalue = []
 
-                              $(".myLabel").each(function (index) {
-                              //$(".return-prod-code").each(function (index) {
-                              label.push($(this).text());
-                              });
+        $(".myLabel").each(function (index) {
+        //$(".return-prod-code").each(function (index) {
+        label.push($(this).text());
+        });
 
-                              $("input[type='text']").each(function (index) {
-                              fvalue.push(label[index]+':'+$(this).val());
-                              }) ;
+        $("input[type='text']").each(function (index) {
+        fvalue.push(label[index]+':'+$(this).val());
+        }) ;
 
-                              alert(fvalue);
+        alert(fvalue);
 
-              });
+   });
