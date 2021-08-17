@@ -121,9 +121,9 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
       addSaleAndRentQuery(target);
     }
-    if (BlCoreConstants.NEW_GEAR.equalsIgnoreCase(categoryCode)) {
+    else if (BlCoreConstants.NEW_GEAR.equalsIgnoreCase(categoryCode)) {
       addQueryForCategory(target,BlCoreConstants.RETAILGEAR,BlCoreConstants.TRUE);
-      addSaleAndRentQuery(target);
+      addQueryForCategory(target,BlCoreConstants.IS_NEW_GEAR_INSTOCK,BlCoreConstants.TRUE);
     }
     else {
       if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)

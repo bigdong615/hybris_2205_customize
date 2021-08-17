@@ -63,7 +63,6 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
-                                <c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
@@ -85,7 +84,7 @@
 
                             </div>
                             <div class="cart-actions">
-                                <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:otherwise><spring:theme code="text.rental.cart.back" /></c:otherwise></c:choose></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>

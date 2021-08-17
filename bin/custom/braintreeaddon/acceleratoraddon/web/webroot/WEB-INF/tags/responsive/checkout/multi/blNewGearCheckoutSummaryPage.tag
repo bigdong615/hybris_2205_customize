@@ -157,7 +157,7 @@
 						</form:form>
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
-						<cart:blRentalOrderSummaryForReviewPage cartData="${cartData}"
+						<cart:blNewGearOrderSummaryForReviewPage cartData="${cartData}"
 							emptyCart="${emptyCart}" />
 					</div>
 				</div>

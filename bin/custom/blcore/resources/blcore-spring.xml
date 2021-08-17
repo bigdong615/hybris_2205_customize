@@ -985,7 +985,7 @@
 		<property name="modelService" ref="modelService" />
 		<property name="blCartService" ref="cartService"/>
 	</bean>
-	
+
 	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
 		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="usedGearSerialStatusChangeHook" />
@@ -1244,7 +1244,19 @@
 	
 	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
 
+	<!-- [BL-983] New gear Related changes-->
 	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
 		parent="abstractValueResolver"/>
+
+	<alias name="defaultNewGearOrderStatusChangeHook" alias="newGearOrderStatusChangeHook" />
+	<bean id="defaultNewGearOrderStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlNewGearOrderStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+
+	<bean id="commerceNewGearOrderStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="newGearOrderStatusChangeHook" />
+	</bean>
 
 </beans>

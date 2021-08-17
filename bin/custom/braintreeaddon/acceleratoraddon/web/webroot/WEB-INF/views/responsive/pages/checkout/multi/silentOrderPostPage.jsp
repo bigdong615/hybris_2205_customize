@@ -411,7 +411,7 @@
 							         <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
 							    </c:when>
 							    <c:otherwise>
-							         <a href="${shippingPageUrl}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:otherwise><spring:theme code="text.rental.cart.back" /></c:otherwise></c:choose></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                      <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                       <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                                </c:otherwise>

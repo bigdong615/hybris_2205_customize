@@ -45,6 +45,7 @@
 	<property name="productType" type="java.lang.String"/>
 		<property name="isVideo" type="boolean"/>
 		<property name="retailGear" type="boolean"/>
+		<property name="isNewGearInStock" type="boolean"/>
 		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
   </bean>
 

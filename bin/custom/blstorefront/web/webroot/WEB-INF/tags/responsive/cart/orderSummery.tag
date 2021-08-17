@@ -42,18 +42,20 @@
 	<table id="costSummary">
 		<tbody>
 			<tr>
-				<td class="gray80"><c:choose>
-						<c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
-							<spring:theme code="text.checkout.multi.order.summary.cost" />
-						</c:when>
-						<c:when test="${cartData.isNewGearOrder eq true}">
-							<spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
-						</c:when>
-						<c:otherwise>
-							<spring:theme
-								code="text.checkout.multi.order.summary.cost.usedGear" />
-						</c:otherwise>
-					</c:choose></td>
+				<td class="gray80">
+				<c:choose>
+          <c:when test="${cartData.isNewGearOrder eq true}">
+            <spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
+          </c:when>
+          <c:when test="${cartData.isRentalCart}">
+            <spring:theme code="text.checkout.multi.order.summary.cost" />
+          </c:when>
+          <c:otherwise>
+            <spring:theme
+              code="text.checkout.multi.order.summary.cost.usedGear" />
+          </c:otherwise>
+				</c:choose>
+				</td>
 				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
 						priceData="${cartData.subTotal}" /></td>
 			</tr>
