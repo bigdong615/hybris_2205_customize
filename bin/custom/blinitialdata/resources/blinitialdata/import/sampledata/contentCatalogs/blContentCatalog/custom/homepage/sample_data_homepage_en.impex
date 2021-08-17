@@ -72,6 +72,10 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redi
                     ;                        ; /images/logo-facebook1.svg   ;http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                        ; logo-facebook.svg    ;         ; image/svg+xml              ;                         ;
 
 
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]              ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]   ; realfilename                                   ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
+                    ;                        ; /images/theme/affiliate.jpg    ; $siteResource/images/theme/borrowlenses-affiliate-program-header.jpg                          ;borrowlenses-affiliate-program-header           ;         ;image/png+xml
+
+
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  
                                

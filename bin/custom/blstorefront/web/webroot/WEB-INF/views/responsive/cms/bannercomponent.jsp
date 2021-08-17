@@ -13,10 +13,10 @@
                 <div class="col-12">
                   <img class="promoImg" src="${media.url}">
                 <span> ${headline} <a href="${urlLink}"> <b> ${urlLink} </b> </a> </span>
-                               
+
                 </div>
             </div>
-        </div>    
+        </div>
 </section>
 </c:if>
 <%-- Ends here --%>
@@ -41,4 +41,12 @@
            </c:forEach>
         </div>
 	</c:if>
+
+	<c:if test="${positionAttribute == 'Section3Slot'}">
+              <c:forEach items="${feature.medias}" var="image">
+             <div class="col-6 col-md-3 text-center">
+                    <img src="${image.url}" />
+             </div>
+             </c:forEach>
+  	</c:if>
  
