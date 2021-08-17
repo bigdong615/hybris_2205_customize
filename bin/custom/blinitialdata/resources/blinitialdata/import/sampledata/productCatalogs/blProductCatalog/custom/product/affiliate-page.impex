@@ -35,7 +35,27 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
                          ;                          ; Section4Slot     ; Section4 Slot              ; true
 
 ###  Define Content SlotNames  ###
-INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code) 
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
                               ; Section1Slot                  ;                                             ;                           ; wide
                               ; Section2Slot                  ;                                             ;                           ; wide
                               ; Section3Slot                  ;                                             ;                           ; wide
