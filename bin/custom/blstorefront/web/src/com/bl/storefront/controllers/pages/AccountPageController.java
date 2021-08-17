@@ -11,6 +11,7 @@ import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
 import com.bl.facades.order.BlOrderFacade;
+import com.bl.facades.order.BlReturnOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
@@ -18,6 +19,7 @@ import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
+import com.bl.storefront.forms.ReturnOrderForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -42,6 +44,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.Password
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ProfileValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.AddressVerificationResultHandler;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
+import de.hybris.platform.assistedservicefacades.AssistedServiceFacade;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
@@ -74,10 +77,12 @@ import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
@@ -184,8 +189,8 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
+	private static final String ORDER_RETURN_CMS_PAGE = "returnOrder";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
-
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
@@ -267,6 +272,15 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "userService")
 	private UserService userService;
+
+	@Resource
+	private ModelService modelService;
+
+	@Resource(name = "blReturnOrderFacade")
+	private BlReturnOrderFacade blReturnOrderFacade;
+
+	@Resource
+	private AssistedServiceFacade assistedServiceFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -431,6 +445,11 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		else {
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
+		}
+
+		if(assistedServiceFacade.isAssistedServiceAgentLoggedIn())
+		{
+			model.addAttribute("asmUser", true);
 		}
 		return getViewForPage(model);
 	}
@@ -1411,4 +1430,61 @@ public class AccountPageController extends AbstractSearchPageController
 		return Account.AccountOrderExtendSummaryPage;
 	}
 
+	@GetMapping(value = "/order/" + "returnOrder/" + ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String returnOrder(@PathVariable("orderCode")
+							  final String orderCode, final Model model, final RedirectAttributes redirectModel,final ReturnOrderForm returnOrderForm,
+							  final BindingResult bindingResult) throws CMSItemNotFoundException
+	{
+		try
+		{
+			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
+
+			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
+			breadcrumbs.add(new Breadcrumb("/my-account/orders",
+					getMessageSource().getMessage("text.account.orderHistory", null, getI18nService().getCurrentLocale()), null));
+			breadcrumbs.add(new Breadcrumb("#", getMessageSource().getMessage("text.account.order.orderBreadcrumb", new Object[]
+					{ orderDetails.getCode() }, "Order {0}", getI18nService().getCurrentLocale()), null));
+			model.addAttribute(BREADCRUMBS_ATTR, breadcrumbs);
+
+		}
+		catch (final UnknownIdentifierException e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Attempted to load a order that does not exist or is not visible", e);
+			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "system.error.page.not.found", null);
+			return REDIRECT_TO_ORDER_HISTORY_PAGE;
+		}
+		final ContentPageModel orderDetailPage = getContentPageForLabelOrId(ORDER_RETURN_CMS_PAGE);
+		storeCmsPageInModel(model, orderDetailPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setUpMetaDataForContentPage(model, orderDetailPage);
+		model.addAttribute(BlControllerConstants.PAGE_TYPE, BlControllerConstants.ORDER_DETAILS);
+		if (null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries()))
+		{
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+		}
+		else
+		{
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
+		}
+		return getViewForPage(model);
 	}
+
+
+	@RequestMapping(value="/returnOrderRequest",method=RequestMethod.POST)
+	public String createReturnRequest(@Valid @ModelAttribute final ReturnOrderForm returnOrderForm, BindingResult result, final Model model, final String orderCode)
+	{
+		List<String> productReturnInfo = new ArrayList();
+
+		// To be removed later
+		productReturnInfo.add("sony-battery:2");
+		productReturnInfo.add("Canon_24-105mm_f4_IS:3");
+
+		OrderModel order = blOrderFacade.getOrderModelFromOrderCode(returnOrderForm.getOrderCode());
+		ReturnRequestModel returnRequestModel = blReturnOrderFacade.createReturnRequest(order, productReturnInfo);
+
+		return REDIRECT_PREFIX + ROOT;
+	}
+}

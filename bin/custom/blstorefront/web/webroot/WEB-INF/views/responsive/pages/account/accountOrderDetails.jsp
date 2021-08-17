@@ -8,6 +8,7 @@
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
 <%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
+<spring:url value="/my-account/order" var="orderDetailsUrl" htmlEscape="false"/>
 
 <c:choose>
 <c:when test="${!orderData.hasGiftCart}">
@@ -58,6 +59,7 @@
                                         <spring:theme code="text.account.orderHistory.orderStatus"/> <br>
                                         <spring:theme code="text.account.orderHistory.datePlaced"/> <br>
                                         <spring:theme code="text.myaccount.order"/><br>
+                                        <spring:theme code="text.myaccount.order.replacementFor"/><br>
                                         <spring:theme code="text.myaccount.order.tracking"/>
                                         </p>
                                     </div>
@@ -65,6 +67,7 @@
                                         <p class="gray80 body14">
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
+                                            ${fn:escapeXml(orderData.code)}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
                                             N/A
                                         </p>
@@ -248,7 +251,15 @@
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
-                               <c:if test="${orderData.isRentalCart}">
+                                                          
+                             <c:if test="${asmUser}">
+                             	<c:set var="orderAction" value="/returnOrder" ></c:set>
+							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
+							 		<spring:theme code="text.myaccount.order.return.request"/>
+							 	</a>
+							 </c:if>
+                             
+                            <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
 
                             <c:choose>
