@@ -70,10 +70,12 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
+                            <c:if test="${cartData.isNewGearOrder eq false}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
-                                 </c:if>
+                            </c:if>
+
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
@@ -131,21 +133,16 @@
                                      </c:if>
                                      </c:forEach>
                                  </c:if>
-<<<<<<< HEAD
-                                 <c:if test="${cartData.isNewGearOrder eq false}">
-                                  <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
-                                 </c:if>
-=======
                                   <c:choose>
-                                                      <c:when test="${isReplacementOrderCart eq true}">
+                                  <c:when test="${isReplacementOrderCart eq true}">
 
-                                                      </c:when>
-                                                      <c:otherwise>
-                                  <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                  </c:when>
+                                  <c:otherwise>
+                                    <c:if test="${cartData.isNewGearOrder eq false}">
+                                      <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                    </c:if>
                                   </c:otherwise>
                                   </c:choose>
-
->>>>>>> develop
                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
 
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>

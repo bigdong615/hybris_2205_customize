@@ -45,9 +45,16 @@
 							</p>
 						</div>
 						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+		          <c:choose>
+		          <c:when test="${order.status eg 'SOLD'}">
+		          		${order.status}
+		          </c:when>
+		          <c:otherwise>
 							<p class="my-2">
 								<spring:theme code="order.gift.card.myaccount.order.completed" />
 							</p>
+							</c:otherwise>
+							</c:choose>
 						</div>
 						                					<div class="col-6 col-md-1">
                 						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>

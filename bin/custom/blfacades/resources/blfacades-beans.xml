@@ -617,6 +617,7 @@
 		<property name="orderDate" type="String"/>
 		<property name="rentalCart" type="Boolean"/>
 		<property name="isGiftCard" type="java.lang.Boolean"/>
+		<property name="newGearOrder" type="java.lang.Boolean"/>
 		<property name="productDetails" type="java.util.List&lt;String>"/>
 		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
 		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>

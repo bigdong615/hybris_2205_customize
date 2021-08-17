@@ -260,7 +260,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
   public static final String NEW_GEAR = "newgear";
 	public static final String RETAILGEAR = "retailGear" ;
 	public static final String BARCODE = "barcode";
-  public static final String IS_NEW_GEAR_INSTOCK = "isNewGearInStock";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 
 	public static final String RETURN_REQUEST = "returnRequest";
 	public static final String ASAGENT = "asagent";
