@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -103,11 +104,18 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 			{
 				serialProductData.setSerialStatus(serialProductModel.getSerialStatus());
 			}
+			serialProductData.setSerialSoftAssignedOrHardAssigned(BooleanUtils.isFalse((Objects.isNull(serialProductModel.getHardAssigned())
+					? Boolean.FALSE : serialProductModel.getHardAssigned())) &&
+					BooleanUtils.isFalse(Objects.isNull(serialProductModel.getSoftAssigned())
+							? Boolean.FALSE :serialProductModel.getSoftAssigned())); 	// To display the serial if hard assigned and soft assigned as false
+
+
 			serialProductDataList.add(serialProductData);
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
 	}
+
 
 	/**
 	 * populate the promotion message for category wide promotion and price
