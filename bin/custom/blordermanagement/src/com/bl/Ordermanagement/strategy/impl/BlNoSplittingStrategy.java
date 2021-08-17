@@ -55,7 +55,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
       
        sourcingLocation.setCompleteSourcePossible(true);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Complete sourcing possible from primary warehouse {}",
           sourcingLocation.getWarehouse().getCode());
     } else {
       final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
@@ -70,7 +70,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
           if (isSourcingNoSplittingPossible(sourcingContext, otherSourcingLocation)) {
             
             otherSourcingLocation.setCompleteSourcePossible(true);
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Complete sourcing possible from other warehouse {}",
                 otherSourcingLocation.getWarehouse().getCode());
             break;
           }
@@ -136,6 +136,10 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
 
     allocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), allocatableQty);
     sourcingLocation.setAllocatedMap(allocatedMap);
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Sourcing Location with warehouse {} has allocatedMap =  {}",
+        sourcingLocation.getWarehouse().getCode(), allocatedMap.toString());
+
     unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), oldUnAllocatedQty - allocatableQty);
     sourcingContext.setUnallocatedMap(unAllocatedMap);
   }
@@ -161,7 +165,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
 
     }
 
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} found for product code {} from warehouse {} ",
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stock size {} found for product code {} from warehouse {} ",
         stockLevel.intValue(), productModel.getCode(), sourcingLocation.getWarehouse().getCode());
 
     return stockLevel;

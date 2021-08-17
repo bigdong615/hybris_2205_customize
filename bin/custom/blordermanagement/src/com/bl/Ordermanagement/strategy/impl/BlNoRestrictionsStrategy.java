@@ -47,6 +47,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
       if (!sourcingComplete) {
 
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            "Sourcing is In-complete after tried sourcing from all possible location");
         updateOrderStatusForSourcingIncomplete(sourcingContext);
       }
     } else {
@@ -56,7 +58,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   }
 
   /**
-   * This method will suspend the order when some of the products can not be sourced.
+   * This method will mark the order as manual review when some of the products can not be sourced.
    *
    * @param sourcingContext the sourcingContext
    */
@@ -67,9 +69,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
     order.setStatus(OrderStatus.MANUAL_REVIEW);
     modelService.save(order);
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
-        order.getCode());
-    throw new BlSourcingException("All products can not be sourced.");
+
+    throw new BlSourcingException("Some products can not be sourced.");
   }
 
   /**
@@ -85,7 +86,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
     boolean sourcingComplete = false;
     if (null != completeSourcingLocation) { //sourcing possible from single location
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing is possible from warehouse {}",
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Complete sourcing is possible from single warehouse with code {}",
           completeSourcingLocation.getWarehouse().getCode());
       sourcingComplete = blAssignSerialService
           .assignSerialsFromLocation(context, completeSourcingLocation);
@@ -95,11 +96,12 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
           .filter(sl -> !sl.getWarehouse().equals(primarySourcingLocation.getWarehouse())).collect(
               Collectors.toList());
 
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Sourcing from multiple locations, starting with primary location/warehouse {}",
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Sourcing from multiple locations, starting with primary location/warehouse {}",
           primarySourcingLocation.getWarehouse().getCode());
       sourcingComplete = blAssignSerialService
           .assignSerialsFromLocation(context, primarySourcingLocation);
       if (!sourcingComplete) {
+
         otherLocations.forEach(otherLocation -> blAssignSerialService
             .assignSerialsFromLocation(context, otherLocation));
       }
@@ -124,6 +126,11 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
         break;
       }
     }
+
+    BlLogger
+        .logFormatMessageInfo(LOG, Level.INFO, "Are all products can be sourced completely ? : {}",
+            canBeSourcedCompletely);
+
     return canBeSourcedCompletely;
   }
 
