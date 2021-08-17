@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.Date;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -39,19 +40,28 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
       catalogVersionService.setSessionCatalogVersion(BlCoreConstants.CATALOG_VALUE,
           BlCoreConstants.CATALOG_VERSION_NAME);
     }
-    final Date rentalStartDate = abstractOrderModel.getRentalStartDate();
-    final Date rentalReturnDate = abstractOrderModel.getRentalEndDate();
+
+     Date rentalStartDate = null;
+     Date rentalReturnDate = null;
+
+    if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder())) {
+      rentalStartDate = abstractOrderModel.getExtendRentalStartDate();
+      rentalReturnDate = abstractOrderModel.getExtendRentalEndDate();
+    }
+    else {
+      rentalStartDate = abstractOrderModel.getRentalStartDate();
+      rentalReturnDate = abstractOrderModel.getRentalEndDate();
+    }
+
     if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
         && rentalReturnDate != null) {
       for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
         //update rental date based on order dates
-        orderEntry.setRentalStartDate(rentalStartDate);
-        orderEntry.setRentalReturnDate(rentalReturnDate);
         // calculating base price after updating effective dates
         try {
           final BigDecimal calculatedBasePrice = getBlBackOfficePriceService()
-              .getProductPrice(orderEntry.getProduct(), orderEntry.getRentalStartDate(),
-                  orderEntry.getRentalReturnDate());
+              .getProductPrice(orderEntry.getProduct(), rentalStartDate,
+                  rentalReturnDate);
           if (calculatedBasePrice != null) {
             orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
           }

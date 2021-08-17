@@ -2453,6 +2453,12 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                   </attribute>
 
+                  <attribute qualifier="extendRentalStartDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Start date of a for extend order</description>
+                  </attribute>
+
                 </attributes>
             </itemtype>
 
