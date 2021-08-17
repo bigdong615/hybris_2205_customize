@@ -9,4 +9,13 @@
 							<cms:pageSlot position="Section1Slot" var="feature">
 								<cms:component component="${feature}" />
 							</cms:pageSlot>
+							<cms:pageSlot position="Section2Slot" var="feature">
+              								<cms:component component="${feature}" />
+              </cms:pageSlot>
+							<cms:pageSlot position="Section3Slot" var="feature">
+              								<cms:component component="${feature}" />
+              </cms:pageSlot>
+              <cms:pageSlot position="Section4Slot" var="feature">
+            								<cms:component component="${feature}" />
+            	</cms:pageSlot>
 </template:page>
