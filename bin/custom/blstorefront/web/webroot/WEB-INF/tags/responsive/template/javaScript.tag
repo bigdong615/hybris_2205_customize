@@ -1795,7 +1795,14 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
-                            	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
+                            	                    var dayOrDays = "";
+                            	                    if(($('#js-totalExtendDays').val() == 1)) {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Day';
+                            	                    }
+                            	                    else {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Days';
+                            	                    }
+                            	                    $('#js-totaldays-update').html(dayOrDays);
                             	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
                             	                    if($('#js-isAllProductExtendabe').val() !== '') {
                             	                    if($("#add-error-message").hasClass("d-none")){

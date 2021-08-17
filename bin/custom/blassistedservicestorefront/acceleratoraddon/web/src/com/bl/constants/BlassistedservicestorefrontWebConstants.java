@@ -20,4 +20,6 @@ public final class BlassistedservicestorefrontWebConstants // NOSONAR
 	{
 		//empty to avoid instantiating this constant class
 	}
+
+	public static final String RETURN_REQUEST = "returnRequest";
 }

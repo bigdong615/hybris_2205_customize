@@ -51,6 +51,7 @@ import java.math.BigDecimal;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -463,7 +464,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		 OrderModel order = null;
 		try {
 			order = brainTreePaymentFacade.gerExtendOrderFromOrderCode(orderCode);
-			if(null != order) {
+			if(null != order && BooleanUtils.isTrue(order.getIsExtendedOrder())) {
 				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
 						.completeCreateSubscription(subscriptionInfo,
 								(CustomerModel) order.getUser(), order, false, false);

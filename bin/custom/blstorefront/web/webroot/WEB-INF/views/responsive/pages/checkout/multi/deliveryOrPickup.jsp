@@ -35,8 +35,15 @@
                     <a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
                         <span class="step2 active"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
                     </a>
+                    <c:choose>
+                     <c:when test="${isReplacementOrderCart eq true}">
+
+                     </c:when>
+                     <c:otherwise>
                     <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
                     <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                    </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -66,7 +73,7 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
-                                </c:if>
+                                 </c:if>
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
@@ -84,10 +91,17 @@
 
                             </div>
                             <div class="cart-actions">
-							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
-                                <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
-                                    <spring:theme code="text.checkout.multi.order.delivery.continue"/>
-                                </button>
+                          <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+                                <c:choose>
+                                  <c:when test="${isReplacementOrderCart eq true}">
+                                   <checkout:blReplacementOrder/>
+                              </c:when>
+                              <c:otherwise>
+                              <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
+                                                                  <spring:theme code="text.checkout.multi.order.delivery.continue"/>
+                                                              </button>
+                              </c:otherwise>
+                             </c:choose>
                             </div>
                             <div id="statusUpdateTestMessage">
 
@@ -117,9 +131,21 @@
                                      </c:if>
                                      </c:forEach>
                                  </c:if>
+<<<<<<< HEAD
                                  <c:if test="${cartData.isNewGearOrder eq false}">
                                   <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                                  </c:if>
+=======
+                                  <c:choose>
+                                                      <c:when test="${isReplacementOrderCart eq true}">
+
+                                                      </c:when>
+                                                      <c:otherwise>
+                                  <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                  </c:otherwise>
+                                  </c:choose>
+
+>>>>>>> develop
                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
 
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>
@@ -184,4 +210,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="avsCheckReplacementOrder" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><spring:theme code="shipping.avs.integration.address.popup.header"/></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="whatYouEnteredBody">
+                            <p class="body14"> <b> <spring:theme code="shipping.avs.integration.address.popup.enter"/></b>
+                                <div id="whatYouEnteredForReplacementOrder"> </div>
+                            </p>
+                        </div>
+                        <div id="whatWeSuggestBody">
+                            <p class="body14"><b> <spring:theme code="shipping.avs.integration.address.popup.suggest"/></b>
+                                <div id="whatWeSuggestForReplacementOrder"> </div>
+                            </p>
+                        </div>
+                        <a href="#" class="btn btn-primary btn-block my-4" onClick="onClickOfSaveSuggestedAddressForReplacementOrder()">
+                            <spring:theme code="shipping.avs.integration.address.popup.suggested"/>
+                        </a>
+                        <p class="text-center mb-0">
+                            <a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close" onClick="onClickOfSaveEnteredAddressForOrderReplacement()">
+                                <spring:theme code="shipping.avs.integration.address.popup.entered"/>
+                            </a>
+                        </p>
+                  </div>
+                </div>
+            </div>
+        </div>
+
 </template:page>

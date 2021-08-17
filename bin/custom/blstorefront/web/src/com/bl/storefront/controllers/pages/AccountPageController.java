@@ -1345,7 +1345,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
-			if(null != orderModel) {
+			if(null != orderModel && BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
 
 				if(StringUtils.isNotBlank(poNumber)) {
 						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);

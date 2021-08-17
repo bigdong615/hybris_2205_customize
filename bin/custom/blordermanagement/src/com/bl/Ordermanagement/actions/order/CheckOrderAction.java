@@ -12,12 +12,12 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
+import com.bl.Ordermanagement.CheckOrderService;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.processengine.action.AbstractSimpleDecisionAction;
-import com.bl.Ordermanagement.CheckOrderService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -48,7 +48,7 @@ public class CheckOrderAction extends AbstractSimpleDecisionAction<OrderProcessM
 			return Transition.NOK;
 		}
 
-		if (getCheckOrderService().check(order))
+		if (getCheckOrderService().check(order) || BlReplaceMentOrderUtils.isCartForReplacement(order))
 		{
 			setOrderStatus(order, OrderStatus.CHECKED_VALID);
 			return Transition.OK;
