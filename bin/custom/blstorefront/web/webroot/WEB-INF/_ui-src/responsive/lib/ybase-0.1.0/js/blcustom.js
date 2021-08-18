@@ -1076,6 +1076,7 @@ function hideShorting(){
   });
 
   $('.return-button-cls').on("click",function(e) {
+    e.preventDefault();
 	var label  = [];
 	var fvalue = []
 
@@ -1086,7 +1087,20 @@ function hideShorting(){
 	$(".Myqtynumber").each(function (index) {
 		fvalue.push(label[index]+':'+$(this).val()+'%');
 	}) ;
- 
- 	alert(fvalue.join(""));    
+
+ 	var productList=fvalue.join("");
+         	var url=ACC.config.encodedContextPath + '/my-account/returnOrderRequest';
+         	var orderCode=$('#order-code').val();
+         		$.ajax({
+                     		url : url,
+                     		type : "POST",
+                     		data: {productList:productList,orderCode:orderCode},
+                     		success : function(data) {
+                     			window.location.href = ACC.config.encodedContextPath + "/";
+                     		},
+                     		error : function(xht, textStatus, ex) {
+                     			console.log("Error while order return");
+                     		}
+                     	});
 	 
    });

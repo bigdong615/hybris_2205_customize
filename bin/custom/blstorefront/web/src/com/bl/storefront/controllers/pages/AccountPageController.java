@@ -3,27 +3,6 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlExtendOrderUtils;
-import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
-import com.bl.facades.order.BlOrderFacade;
-import com.bl.facades.order.BlReturnOrderFacade;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.facades.wishlist.BlWishListFacade;
-import com.bl.facades.wishlist.data.Wishlist2EntryData;
-import com.bl.logging.BlLogger;
-import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
-import com.bl.storefront.forms.BlAddressForm;
-import com.bl.storefront.forms.ReturnOrderForm;
-import com.braintree.facade.BrainTreeUserFacade;
-import com.braintree.facade.impl.BrainTreeCheckoutFacade;
-import com.braintree.model.BrainTreePaymentInfoModel;
-import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -77,7 +56,6 @@ import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
@@ -85,6 +63,7 @@ import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,11 +76,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -124,6 +105,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlExtendOrderUtils;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
+import com.bl.facades.order.BlOrderFacade;
+import com.bl.facades.order.BlReturnOrderFacade;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.wishlist.BlWishListFacade;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
+import com.bl.storefront.forms.BlAddressForm;
+import com.bl.storefront.forms.ReturnOrderForm;
+import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 
 
 /**
@@ -1154,12 +1157,12 @@ public class AccountPageController extends AbstractSearchPageController
 	 *  This is to remove the discontinued products from the pageable data of WishlistEntries
 	 * @param searchPageData
 	 */
-	private void removeDiscontinuedEntries(SearchPageData<Wishlist2EntryData> searchPageData) {
+	private void removeDiscontinuedEntries(final SearchPageData<Wishlist2EntryData> searchPageData) {
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();
+		final List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();
 
 		if (Objects.nonNull(rentalDateDto) || CollectionUtils.isNotEmpty(wishlistEntries)) {
-			for (Wishlist2EntryData entry : wishlistEntries) {
+			for (final Wishlist2EntryData entry : wishlistEntries) {
 				if (BooleanUtils.isTrue(entry.getProduct().getIsDiscontinued())) {
 					wishlistFacade.removeWishlist(entry.getProduct().getCode());
 				}
@@ -1352,11 +1355,11 @@ public class AccountPageController extends AbstractSearchPageController
 			final HttpServletRequest request, final HttpServletResponse response, final Model model)
 			throws CMSItemNotFoundException {
 
-		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
-		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
+		final String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
+		final String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
 
-		String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
-		String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
+		final String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
+		final String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
 
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
@@ -1474,17 +1477,10 @@ public class AccountPageController extends AbstractSearchPageController
 
 
 	@RequestMapping(value="/returnOrderRequest",method=RequestMethod.POST)
-	public String createReturnRequest(@Valid @ModelAttribute final ReturnOrderForm returnOrderForm, BindingResult result, final Model model, final String orderCode)
+	public String createReturnRequest(final Model model, @RequestParam(value = "orderCode") final String orderCode, @RequestParam(value = "productList") String productList)
 	{
-		List<String> productReturnInfo = new ArrayList();
-
-		// To be removed later
-		productReturnInfo.add("sony-battery:2");
-		productReturnInfo.add("Canon_24-105mm_f4_IS:3");
-
-		OrderModel order = blOrderFacade.getOrderModelFromOrderCode(returnOrderForm.getOrderCode());
-		ReturnRequestModel returnRequestModel = blReturnOrderFacade.createReturnRequest(order, productReturnInfo);
-
+		final OrderModel order = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
 	}
 }

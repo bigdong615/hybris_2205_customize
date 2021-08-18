@@ -274,7 +274,7 @@
                            
                            <c:if test="${asmUser}"> 
                              	<c:set var="orderAction" value="/returnOrder" ></c:set>
-							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
+							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary" data-order-id="${orderData.code}">
 							 		<spring:theme code="text.myaccount.order.return.request"/>
 							 	</a>
 							</c:if>
