@@ -2047,6 +2047,11 @@
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
+            <attribute qualifier="aqautechProduct" type="java.lang.Boolean">
+              <description>flag to identify if entry contain aqautech product</description>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>

@@ -124,6 +124,7 @@
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	<property name="option" type="com.bl.facades.product.data.BlOptionData"/>
+		<property name="aqautechProduct" type="boolean"/>
 	
   </bean>
   
@@ -332,6 +333,7 @@
             <property name="recipientName" type="java.lang.String" />
             <property name="recipientMessage" type="java.lang.String"/>
       <property name="retailGear" type="java.lang.Boolean"/>
+		<property name="aqautechProduct" type="boolean"/>
 	</bean>
 
 

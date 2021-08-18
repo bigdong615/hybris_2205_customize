@@ -1,5 +1,6 @@
 package com.bl.facades.cart.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
@@ -166,6 +167,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setCreateNewEntry(false);
         if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
         	parameter.setRetailGear(blProductModel.getRetailGear());
+				}
+				if(BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())){
+					parameter.setAqautechProduct(Boolean.TRUE);
 				}
       }
     } catch (final RuntimeException exception) {

@@ -101,8 +101,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			for (final AbstractOrderEntryModel e : order.getEntries()) {
 				recalculateOrderEntryIfNeeded(e, forceRecalculate);
 				subtotal += e.getTotalPrice().doubleValue();
-				totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
-				totalOptionCost += getTotalOptionPrice(e);
+				if(!BlCoreConstants.AQUATECH_BRAND_ID.equals(e.getProduct().getManufacturerAID())) {
+					totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
+					totalOptionCost += getTotalOptionPrice(e);
+				}
 			}
 			if(BooleanUtils.isFalse(order.isGiftCardOrder()) || BooleanUtils.isFalse(order.getIsNewGearOrder())){
 			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
