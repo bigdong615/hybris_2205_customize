@@ -67,6 +67,9 @@
                                     <checkout:fast/>
                                 </div>
                             </c:if>
+                            <c:if test="${cartData.isNewGearOrder eq true}">
+                            <input type="hidden" class="js-new-gear-shipping-page" value="true"/>
+                            </c:if>
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>

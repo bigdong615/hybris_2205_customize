@@ -18,7 +18,7 @@
       <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
          <product:blUsedProductDetailsPanel/>
       </c:when>
-       <c:when test="${product.retailGear eq true && not empty agent.uid}">
+       <c:when test="${product.retailGear eq true}">
           <product:newgearProductDetailsPanel/>
       </c:when>
 

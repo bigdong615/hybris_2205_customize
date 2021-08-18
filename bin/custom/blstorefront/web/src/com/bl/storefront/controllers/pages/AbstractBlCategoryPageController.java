@@ -14,6 +14,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCategoryPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.catalog.model.KeywordModel;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.model.pages.CategoryPageModel;
@@ -122,6 +123,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         String blPageType;
         if (category.getCode().equals(BlCoreConstants.NEW_GEAR)){
+            if(getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null || ((AssistedServiceSession)getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent()==null){
+                return BlControllerConstants.REDIRECT_TO_HOME_URL;
+            }
             blPageType=BlCoreConstants.USED_GEAR_CODE;
         }else{
             blPageType= category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE;

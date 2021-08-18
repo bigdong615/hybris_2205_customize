@@ -1,6 +1,9 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
+import com.bl.facades.productreference.BlProductFacade;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -27,6 +30,10 @@ public class UsedProductPageController extends AbstractBlProductPageController {
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
 
+  @Resource(name = "blProductFacade")
+  private BlProductFacade blproductFacade;
+
+
   @RequestMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
   public String rentalProductDetail(@PathVariable("productCode") final String encodedProductCode,
       final Model model,
@@ -34,12 +41,17 @@ public class UsedProductPageController extends AbstractBlProductPageController {
       throws CMSItemNotFoundException, UnsupportedEncodingException {
     List<ProductOption> options;
     final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
+    final BlProductModel productModel = blproductFacade.getProductForCode(productCode);
+
     final ProductData productData = productFacade
         .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
-    if(BooleanUtils.isTrue(productData.isRetailGear())){
+    if(BooleanUtils.isTrue(productModel.getRetailGear())){
+      if(getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null || ((AssistedServiceSession)getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent()==null){
+        return BlControllerConstants.REDIRECT_TO_HOME_URL;
+      }
       options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
           ProductOption.URL, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
           ProductOption.CATEGORIES, ProductOption.CLASSIFICATION, ProductOption.VARIANT_FULL, ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA));
