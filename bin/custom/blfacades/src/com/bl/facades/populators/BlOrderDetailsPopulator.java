@@ -100,6 +100,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
   }
 
   

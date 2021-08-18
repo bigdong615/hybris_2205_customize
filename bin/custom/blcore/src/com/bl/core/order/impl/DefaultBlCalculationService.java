@@ -104,10 +104,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
 				totalOptionCost += getTotalOptionPrice(e);
 			}
-			if(BooleanUtils.isFalse(order.isGiftCardOrder())){
+			if(BooleanUtils.isFalse(order.isGiftCardOrder()) || BooleanUtils.isFalse(order.getIsNewGearOrder())){
 			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
-
-			if (BooleanUtils.isFalse(order.getIsNewGearOrder())) {
 				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
 						finaltotalDamageWaiverCost);
@@ -123,9 +121,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
 						totalPriceWithDamageWaiverCostAndOption);
 			}
-
 			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
-			}
 		}
 	}
 	/**

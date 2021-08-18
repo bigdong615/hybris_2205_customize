@@ -309,11 +309,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
 			if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
-				if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
-         return false;
-				}else{
-					return true;
-				}
+				return BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
 			}else if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
 				return true;
 			}
