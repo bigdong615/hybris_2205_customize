@@ -10,9 +10,7 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
-import java.util.ArrayList;
 import java.util.List;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.log4j.Level;

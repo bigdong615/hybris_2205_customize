@@ -1,7 +1,6 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
-import com.bl.core.constants.GeneratedBlCoreConstants.Attributes.StockLevel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;

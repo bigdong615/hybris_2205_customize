@@ -36,8 +36,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.annotation.Resource;
-
 /**
  * It is used to assign serial products to sourcing results in context.
  *
