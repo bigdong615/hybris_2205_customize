@@ -13,7 +13,10 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -459,30 +462,17 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			final HashSet<ConsignmentStatus> itemStatuses)
 	{
 		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
-		if(ConsignmentStatus.COMPLETED.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.COMPLETED, ctx);
-		}
-		else if(ConsignmentStatus.PARTIALLY_UNBOXED.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED, ctx);
-		}
-		else if(ConsignmentStatus.UNBOXED.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.UNBOXED, ctx);
-		}
-		else if(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
-		}
-		else if(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_ITEMS, ctx);
-		}
-		else if(ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.equals(consignmentStatus))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
-		}
+
+		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.PARTIALLY_UNBOXED,
+				OrderStatus.UNBOXED,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
+				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS);
+		statusToCheck.forEach(status -> {
+			if(status.toString().equals(consignmentStatus.toString()))
+			{
+				changeStatusOnOrder(order, status, ctx);
+				return;
+			}
+		});
 	}
 	
 	/**
@@ -533,6 +523,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			order.setStatus(orderStatus);
 			ctx.getModelService().save(order);
 			ctx.getModelService().refresh(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
+					orderStatus,order.getCode());
 		}
 		catch (final ModelSavingException exception)
 		{

@@ -1524,9 +1524,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param packagingInfoStatus
 	 *           status
 	 */
-	public void changePackagingInfoStatus(final PackagingInfoModel packagingInfoModel,
-			final PackagingInfoStatus packagingInfoStatus)
-	{
+	public void changePackagingInfoStatus(final PackagingInfoModel packagingInfoModel, final PackagingInfoStatus packagingInfoStatus)	{
 		packagingInfoModel.setPackagingInfoStatus(packagingInfoStatus);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing status of Packaging with PK : {} to {}", 
 				packagingInfoModel.getPk().toString(), packagingInfoStatus.getCode());
@@ -1534,46 +1532,30 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		modelService.refresh(packagingInfoModel);
 	}
 	
-	public BlInventoryLocationModel getBlInventoryLocation() {
-        return blInventoryLocation;
-    }
+	public BlInventoryLocationModel getBlInventoryLocation() { return blInventoryLocation; }
 
-    public void setBlInventoryLocation(final BlInventoryLocationModel blInventoryLocation) {
-        this.blInventoryLocation = blInventoryLocation;
-    }
+    public void setBlInventoryLocation(final BlInventoryLocationModel blInventoryLocation) { this.blInventoryLocation = blInventoryLocation; }
 
-    public BlInventoryScanToolDao getBlInventoryScanToolDao() {
-        return blInventoryScanToolDao;
-    }
+    public BlInventoryScanToolDao getBlInventoryScanToolDao() { return blInventoryScanToolDao; }
 
-    public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) {
-        this.blInventoryScanToolDao = blInventoryScanToolDao;
-    }
+    public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) { this.blInventoryScanToolDao = blInventoryScanToolDao; }
     
  	/**
  	 * @return the packagingInfoModel
  	 */
- 	public PackagingInfoModel getPackagingInfoModel()
- 	{
- 		return packagingInfoModel;
- 	}
+ 	public PackagingInfoModel getPackagingInfoModel()	{	return packagingInfoModel;	}
 
  	/**
  	 * @param packagingInfoModel
  	 *           the packagingInfoModel to set
  	 */
- 	public void setPackagingInfoModel(final PackagingInfoModel packagingInfoModel)
- 	{
- 		this.packagingInfoModel = packagingInfoModel;
- 	}
+ 	public void setPackagingInfoModel(final PackagingInfoModel packagingInfoModel) 	{	this.packagingInfoModel = packagingInfoModel;	}
 
 	@Override
-	public void updateToUpsBound()
-	{
+	public void updateToUpsBound()	{
 		final List<BlProductModel> serialProducts = getPackagingInfoModel().getSerialProducts();
 		serialProducts.forEach(serial -> {
-			if (serial instanceof BlSerialProductModel)
-			{
+			if (serial instanceof BlSerialProductModel)	{
 				final BlSerialProductModel blSerial = ((BlSerialProductModel) serial); // NOSONAR
 				blSerial.setOcLocation(getBlInventoryLocation().getCode());
 				blSerial.setSerialStatus(SerialStatusEnum.BOXED);
@@ -1582,17 +1564,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		});
 	}
 
-	/**
-	 * @return the isLocationDP
-	 */
 	public boolean isLocationDP()
 	{
 		return isLocationDP;
 	}
 
-	/**
-	 * @param isLocationDP the isLocationDP to set
-	 */
 	public void setLocationDP(boolean isLocationDP)
 	{
 		this.isLocationDP = isLocationDP;
@@ -1602,11 +1578,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean getStatusOfLocationDC()
-	{
+	public boolean getStatusOfLocationDC()	{
 		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
-		if(Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory()))
-		{
+		if(Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory())) {
 			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory());
 		}
 		return false;
