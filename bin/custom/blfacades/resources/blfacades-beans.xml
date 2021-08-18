@@ -115,7 +115,6 @@
   <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">
   	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="gearGuardProFullWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
-	<property name="totalOptionsCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
 	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
@@ -132,6 +131,7 @@
   <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
   	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="pickUpByMe" type="java.lang.Boolean"/>
+      <property name="totalOptionsCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="pickUpPersonFirstName" type="java.lang.String"/>
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
