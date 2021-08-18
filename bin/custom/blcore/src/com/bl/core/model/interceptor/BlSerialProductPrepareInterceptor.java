@@ -3,6 +3,8 @@ package com.bl.core.model.interceptor;
 import com.bl.core.model.BlProductModel;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -13,6 +15,7 @@ import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -332,6 +335,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				{
 					doStatusChangeForMultipleStatuses(itemStatuses, associatedConsignment, ctx);
 				}
+				checkAndUpdateOrderStatus(associatedConsignment.getOrder(), ctx);
 			}
 		}
 	}
@@ -347,7 +351,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void doStatusChangeForSingleStatus(final SerialStatusEnum serialStatus, final ConsignmentModel associatedConsignment,
 			final InterceptorContext ctx)
 	{
-		if (serialStatus.equals(SerialStatusEnum.RECEIVED_OR_RETURNED))
+		if (serialStatus.equals(SerialStatusEnum.RECEIVED_OR_RETURNED) || serialStatus.equals(SerialStatusEnum.IN_HOUSE))
 		{
 			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.COMPLETED, ctx);
 		}
@@ -372,7 +376,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void doStatusChangeForMultipleStatuses(final HashSet<SerialStatusEnum> itemStatuses,
 			final ConsignmentModel associatedConsignment, final InterceptorContext ctx)
 	{
-		if (itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.PARTS_NEEDED)))
+		if(itemStatuses.size() == BlCoreConstants.STATUS_LIST_SIZE_TWO 
+				&& itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.RECEIVED_OR_RETURNED, SerialStatusEnum.IN_HOUSE)))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.COMPLETED, ctx);
+		}
+		else if (itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.PARTS_NEEDED)))
 		{
 			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
 		}
@@ -407,6 +416,128 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
 					"Error while changing the status on consignment : {}", associatedConsignment.getCode());
+		}
+	}
+	
+	/**
+	 * Check and update order status.
+	 *
+	 * @param order the order
+	 * @param ctx the ctx
+	 */
+	private void checkAndUpdateOrderStatus(final AbstractOrderModel order, final InterceptorContext ctx)
+	{
+		if(Objects.nonNull(order) && CollectionUtils.isNotEmpty(order.getConsignments()))
+		{
+			final HashSet<ConsignmentStatus> itemStatuses = Sets.newHashSet();
+			order.getConsignments().forEach(consignment -> itemStatuses.add(consignment.getStatus()));
+			if(CollectionUtils.isNotEmpty(itemStatuses)) 
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Statuses found for order containing consignments : {} are {}", 
+						order.getCode(), itemStatuses.toString());
+				if(itemStatuses.size() == 1)
+				{
+					doChangeOrderStatusForSingleStatus(order, ctx, itemStatuses);
+				}
+				else
+				{
+					doChangeOrderStatusForMultipleStatuses(order, ctx, itemStatuses);
+				}
+			}
+			
+		}
+	}
+
+	/**
+	 * Do change order status for single status.
+	 *
+	 * @param order the order
+	 * @param ctx the ctx
+	 * @param itemStatuses the item statuses
+	 */
+	private void doChangeOrderStatusForSingleStatus(final AbstractOrderModel order, final InterceptorContext ctx,
+			final HashSet<ConsignmentStatus> itemStatuses)
+	{
+		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
+		if(ConsignmentStatus.COMPLETED.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.COMPLETED, ctx);
+		}
+		else if(ConsignmentStatus.PARTIALLY_UNBOXED.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED, ctx);
+		}
+		else if(ConsignmentStatus.UNBOXED.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.UNBOXED, ctx);
+		}
+		else if(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
+		}
+		else if(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_ITEMS, ctx);
+		}
+		else if(ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.equals(consignmentStatus))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
+		}
+	}
+	
+	/**
+	 * Do change order status for multiple statuses.
+	 *
+	 * @param order the order
+	 * @param ctx the ctx
+	 * @param itemStatuses the item statuses
+	 */
+	private void doChangeOrderStatusForMultipleStatuses(final AbstractOrderModel order, final InterceptorContext ctx,
+			final HashSet<ConsignmentStatus> itemStatuses)
+	{
+		if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
+		}
+		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR) 
+				&& itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
+		}
+		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
+		}
+		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS))
+		{
+			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_ITEMS, ctx);
+		}
+		else if(itemStatuses.contains(ConsignmentStatus.PARTIALLY_UNBOXED))
+		{
+			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED, ctx);
+		}
+	}
+	
+	/**
+	 * Change status on order.
+	 *
+	 * @param order the order
+	 * @param orderStatus the order status
+	 * @param ctx the ctx
+	 */
+	private void changeStatusOnOrder(final AbstractOrderModel order, final OrderStatus orderStatus,
+			final InterceptorContext ctx)
+	{
+		try
+		{
+			order.setStatus(orderStatus);
+			ctx.getModelService().save(order);
+			ctx.getModelService().refresh(order);
+		}
+		catch (final ModelSavingException exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while changing the status on order : {}", order.getCode());
 		}
 	}
 	

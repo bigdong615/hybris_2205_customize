@@ -19,6 +19,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
@@ -70,7 +71,15 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 							"Serial Status is UNBOXED for Serial Code : {} , Clearing all billing charges against this serial",
 							serialCode);
-					validatedBillingCharges.put(serialCode, new ArrayList<BlItemsBillingChargeModel>());
+					final List<BlItemsBillingChargeModel> updatedCharge = new ArrayList<>();
+					listOfBillingCharges.forEach(charge -> {
+						if (BooleanUtils.negate(ItemBillingChargeTypeEnum.valueOf("MISSING_CHARGE").equals(charge.getBillChargeType())))
+						{
+							updatedCharge.add(charge);
+						}
+					});
+
+					validatedBillingCharges.put(serialCode, updatedCharge);
 				}
 				else
 				{
