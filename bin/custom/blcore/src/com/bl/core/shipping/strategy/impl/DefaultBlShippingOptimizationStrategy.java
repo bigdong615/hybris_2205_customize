@@ -194,8 +194,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                 }
             } else {
                 return getOptimizedShippingMethod(consignmentModel, rentalStringStartDate, rentalEndDate, result, consignmentModel.getOptimizedShippingType(),
-                        getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()),
-                        getAddressZip(consignmentModel.getShippingAddress()));
+                        getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()));
             }
         }
         BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment :" + consignmentModel.getCode() + " can't be optimized as warehouse " +
@@ -213,14 +212,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      * @param optimizedShippingMethodEnum code
      * @param carrierId                   UPS/FEDEX
      * @param warehouseCode               CA/MA
-     * @param addressZip                  code
      * @return true if success
      */
     private boolean getOptimizedShippingMethod(final ConsignmentModel consignmentModel, final String rentalStartDate,
                                                final String rentalEndDate, final int result,
                                                final OptimizedShippingMethodModel optimizedShippingMethodEnum, final int carrierId,
-                                               final int warehouseCode, final String addressZip) {
-
+                                               final int warehouseCode) {
+   	 final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
         if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
             return checkTwoDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode())) {
