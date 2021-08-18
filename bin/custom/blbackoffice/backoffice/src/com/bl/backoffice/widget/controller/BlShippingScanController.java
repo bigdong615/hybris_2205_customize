@@ -1,6 +1,9 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.util.Config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
@@ -41,9 +43,6 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	private static final Logger LOG = Logger.getLogger(BlShippingScanController.class);
 
-	@Value("${blbackoffice.max.product.scan}")
-	private int maxProductScan;
-
 	@Wire
 	Textbox scanningArea;
 
@@ -71,7 +70,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	/**
 	 * This method is used to update the barcode values on change event
 	 */
-	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeScan()
 	{
 		shippingScanToolData
@@ -100,8 +99,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		}
 		else
 		{
-			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			createResponseForShippingScan(barcodes);
+			validateShippingBinLocation();
 		}
 	}
 
@@ -119,39 +117,103 @@ public class BlShippingScanController extends DefaultWidgetController
 		}
 		else
 		{
+			validateShippingScan();
+		}
+	}
+
+	/**
+	 * method will used to validate shipping scan
+	 */
+	private void validateShippingScan()
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			verifyShippingScan();
+		}
+	}
+
+	/**
+	 * method will verify shipping scan
+	 */
+	private void verifyShippingScan()
+	{
+		final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+		final int barcodeSize = barcodes.size();
+		if (barcodeSize >= BlInventoryScanLoggingConstants.TWO)
+		{
+			final Map<String, List<String>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
+					selectedConsignment);
+			createResponseMsgForShippingScan(scannedBarcodeMap);
+		}
+		else
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.SHIPPING_INVALID_SCAN_ERROR);
+		}
+	}
+
+	/**
+	 * method will shipping validate bin location
+	 */
+	private void validateShippingBinLocation()
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
 			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			final int barcodeSize = barcodes.size();
-			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO)
-			{
-				final List<String> scannedBarcodeList = getBlInventoryScanToolService().verifyShippingScan(barcodes,
-						selectedConsignment);
-				createResponseMsgForShippingScan(scannedBarcodeList);
-			}
-			else
-			{
-				notifyErrorMessage(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.SHIPPING_INVALID_SCAN_ERROR);
-			}
+			createResponseForShippingScan(barcodes);
 		}
 	}
 
 	/**
 	 * @param scannedBarcodeList
 	 */
-	private void createResponseMsgForShippingScan(final List<String> scannedBarcodeList)
+	private void createResponseMsgForShippingScan(final Map<String, List<String>> scannedBarcodeMap)
 	{
-		if (CollectionUtils.isEmpty(scannedBarcodeList))
+		if (MapUtils.isNotEmpty(scannedBarcodeMap))
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
-			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
-		}
-		else
-		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG, "Scan Verification failed ",
-					scannedBarcodeList);
-		}
+			if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.SUCCESS_SCAN))
+			{
+				BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
+				Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+				this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+			}
+			else
+			{
+				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT))
+				{
+					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG,
+							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY,
+							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT));
+				}
 
+				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_IN_SCAN))
+				{
+					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_SCAN_MSG,
+							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_SCAN_KEY,
+							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_SCAN));
+				}
+			}
+		}
 	}
 
 	/**
@@ -162,7 +224,9 @@ public class BlShippingScanController extends DefaultWidgetController
 	private void createResponseForShippingScan(final List<String> barcodes)
 	{
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize == BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
+
+		if (barcodeSize == BlInventoryScanLoggingConstants.TWO
+				&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 		{
 			createResponseMegForShippingScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
 					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
@@ -225,7 +289,7 @@ public class BlShippingScanController extends DefaultWidgetController
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
-		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ONE))
+		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ONE))
 		{
 			notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
 					BlInventoryScanLoggingConstants.SHIPPING_INVALID_LOCATION_ERROR, failedBinBarcodeMap);
