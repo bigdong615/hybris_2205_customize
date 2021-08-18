@@ -391,6 +391,10 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.updateGiftCardPurchaseStatus(cartModel);
 				  }
+          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          {
+            blCartService.updateNewGearPurchaseStatus(cartModel);
+          }
 					//Added condition to change serial status when entry remove from cart
 					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{

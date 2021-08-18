@@ -6,7 +6,10 @@
     hideShippingForm();
     hideErrorForInputValidation();
     emptyAddressFormAttributes();
+    var isNewGearShipping= $('.js-new-gear-shipping-page').val();
+    if(isNewGearShipping == undefined || isNewGearShipping == 'false'){
     shipToHomeShippingMethods();
+    }
     $('#ship-it-savedAddresses option').each(function() {
         var optionText = this.text;
         var newOption = optionText.substring(0,52);

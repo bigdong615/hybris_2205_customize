@@ -101,25 +101,29 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			for (final AbstractOrderEntryModel e : order.getEntries()) {
 				recalculateOrderEntryIfNeeded(e, forceRecalculate);
 				subtotal += e.getTotalPrice().doubleValue();
-				totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
-				totalOptionCost += getTotalOptionPrice(e);
+				if(!BlCoreConstants.AQUATECH_BRAND_ID.equals(e.getProduct().getManufacturerAID())) {
+					totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
+					totalOptionCost += getTotalOptionPrice(e);
+				}
 			}
-			if(BooleanUtils.isFalse(order.isGiftCardOrder())){
+			if(BooleanUtils.isFalse(order.isGiftCardOrder()) || BooleanUtils.isFalse(order.getIsNewGearOrder())){
 			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
-			order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
-					finaltotalDamageWaiverCost);
-			final Double finaltotalOptionCost = Double.valueOf(totalOptionCost);
-			order.setTotalOptionsCost(finaltotalOptionCost);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Option Cost : {}", finaltotalOptionCost);
+				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
+						finaltotalDamageWaiverCost);
 
-			final Double totalPriceWithDamageWaiverCostAndOption = Double
-					.valueOf(subtotal + totalDamageWaiverCost+ totalOptionCost);
-			order.setTotalPrice(totalPriceWithDamageWaiverCostAndOption);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
-					totalPriceWithDamageWaiverCostAndOption);
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+				final Double finaltotalOptionCost = Double.valueOf(totalOptionCost);
+				order.setTotalOptionsCost(finaltotalOptionCost);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Option Cost : {}", finaltotalOptionCost);
+
+				final Double totalPriceWithDamageWaiverCostAndOption = Double
+						.valueOf(subtotal + totalDamageWaiverCost+ totalOptionCost);
+
+				order.setTotalPrice(totalPriceWithDamageWaiverCostAndOption);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}",
+						totalPriceWithDamageWaiverCostAndOption);
 			}
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		}
 	}
 	/**
@@ -286,6 +290,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			{
 				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));
+			}
+			if (BooleanUtils.isTrue(((BlProductModel) product).getRetailGear()))
+			{
+				return createNewPriceValue(order.getCurrency().getIsocode(),((BlProductModel) product).getRetailGearPrice().doubleValue(),BooleanUtils.toBoolean(order.getNet()));
 			}
 			else{
 				return findBasePrice(entry);

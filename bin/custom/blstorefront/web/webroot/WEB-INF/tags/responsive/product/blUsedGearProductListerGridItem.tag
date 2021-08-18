@@ -15,7 +15,11 @@
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 <c:set value="image coming soon" var="altText"/>
-
+<c:choose>
+ <c:when test="${product.retailGear eq true}">
+                <product:blNewGearProductListerGridItem product="${product}"/>
+</c:when>
+<c:otherwise>
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
@@ -110,3 +114,5 @@
 		</ycommerce:testId>
 </div>
 </div>
+</c:otherwise>
+</c:choose>
