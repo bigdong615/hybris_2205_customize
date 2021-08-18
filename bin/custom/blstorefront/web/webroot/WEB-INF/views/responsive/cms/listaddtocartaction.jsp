@@ -11,7 +11,7 @@
         <c:when test="${blPageType eq 'usedGear'}">
         <c:choose>
          <c:when test="${product.retailGear eq true}">
-           <cart:blNewGearAddToCart/>
+           <cart:blNewGearAddtoCart/>
 
          </c:when>
          <c:otherwise>
