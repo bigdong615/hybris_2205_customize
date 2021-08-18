@@ -76,6 +76,14 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
 			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
+		}
+	}
+
+	private void updateStockRecordsForBufferInventoryFlag(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
+		final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.ISBUFFEREDINVENTORY);
+		if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.ISBUFFEREDINVENTORY)) {
+			getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
 		}
 	}
 

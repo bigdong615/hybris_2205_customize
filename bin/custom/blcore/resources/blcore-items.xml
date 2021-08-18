@@ -2837,6 +2837,21 @@
                       greater than this threshold amount
                     </description>
                   </attribute>
+                  <attribute qualifier="minQtyForBufferInventory" type="java.lang.Integer">
+                    <persistence type="property"/>
+                    <modifiers optional="true" read="true" write="true"/>
+                    <defaultvalue>Integer.valueOf(0)</defaultvalue>
+                    <description>To decide the minimum quantity needed to have for a SKU, so that any associated 
+                    	serial product can be part of buffer inventory 
+                    </description>
+                  </attribute>
+                  <attribute qualifier="bufferInventoryPercentage" autocreate="true"
+                     type="java.lang.Double">
+                     <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                     <description>It defines the buffered inventory percentage at Global level</description>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <persistence type="property"/>
+                   </attribute>
                 </attributes>                
             </itemtype>
         </typegroup>

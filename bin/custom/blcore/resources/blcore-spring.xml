@@ -505,6 +505,7 @@
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
