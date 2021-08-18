@@ -50,10 +50,10 @@ public class BlConditionRatingOverallScoreHandler implements
    */
   private Double getConditionOverallRating(final BlSerialProductModel blSerialProductModel) {
     if (getBlProductService().isFunctionalAndCosmeticIsAvailable(blSerialProductModel)) {
-      final float cosmeticRating = Float
-          .parseFloat(blSerialProductModel.getCosmeticRating().getCode());
-      final float functionalRating = Float
-          .parseFloat(blSerialProductModel.getFunctionalRating().getCode());
+      final double cosmeticRating = Double
+          .parseDouble(blSerialProductModel.getCosmeticRating().getCode());
+      final double functionalRating = Double
+          .parseDouble(blSerialProductModel.getFunctionalRating().getCode());
       final Double calculatedConditionalRating = getBlPricingService()
           .getCalculatedConditionalRating(cosmeticRating,
               functionalRating);

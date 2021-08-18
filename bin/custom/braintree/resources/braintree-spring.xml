@@ -444,6 +444,7 @@
           class="com.braintree.order.strategy.BraintreeEventPublishingSubmitOrderStrategy">
         <property name="eventService" ref="eventService"/>
         <property name="modelService" ref="modelService"/>
+        <property name="sessionService" ref="sessionService"/>
     </bean>
 
     <alias name="braintreeOrderThresholdSymptom" alias="orderThresholdSymptom"/>

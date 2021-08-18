@@ -1,5 +1,7 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.Arrays;
@@ -101,8 +103,7 @@ public class BlPackageScanController extends DefaultWidgetController
 		}
 		else
 		{
-			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			createResponseForPackageScan(barcodes);
+			validatePackageBinLocation();
 		}
 	}
 
@@ -124,8 +125,8 @@ public class BlPackageScanController extends DefaultWidgetController
 			final int barcodeSize = barcodes.size();
 			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
 			{
-				final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
-				createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
+				validatePackageScan(barcodes);
+
 			}
 			else
 			{
@@ -157,10 +158,81 @@ public class BlPackageScanController extends DefaultWidgetController
 			}
 			else
 			{
-				createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
-						BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
-						barcodes);
+				scanToUpsOutBoundCart(barcodes);
 			}
+		}
+	}
+
+	/**
+	 * method will used to scan serial to ups out bound cart
+	 *
+	 * @param barcodes
+	 */
+	private void scanToUpsOutBoundCart(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
+					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
+					barcodes);
+		}
+
+	}
+
+	/**
+	 * method will use to validate package bin location
+	 */
+	private void validatePackageBinLocation()
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+			createResponseForPackageScan(barcodes);
+		}
+	}
+
+	/**
+	 * method will used to validate package scan
+	 *
+	 * @param barcodes
+	 */
+	private void validatePackageScan(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+
+		else
+		{
+			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 		}
 	}
 
