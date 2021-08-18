@@ -46,9 +46,10 @@
                                				<div class="col-md-3 text-center">
                                					<a href="${productUrl}"> <product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/> </a>
                                				</div>
-                               				<div class="col-md-9 mt-3">
+                               				<div class="col-md-6 mt-3">
                                					<p class="gray80 body14">
-                               						<b class="gray100 myLabel">
+													   <p class="myLabel" style="display: none;"> ${cartEntry.product.code} </p>
+                               						<b class="gray100">
                                							<%-- <a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</a></b> --%>
                                							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</a></b>
                                							<spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
@@ -70,25 +71,33 @@
                                							
                                							<input type="hidden" id="ReturnProdCode" name="prodCode"  class="form-control return-prod-code" value="${cartEntry.product.code}">
                                							
-                               							<!-- =================== QTY ======================== -->
-                               							<div class="quantity">
-             	    										<div class="input-group">
-             		    										<span class="input-group-btn">
-             			  											<button type="button" class="btn btn-default btn-number" data-type="minus" data-field="quant[1]${cartEntry.entryNumber}">
-             				  											<span class="glyphicon glyphicon-minus"></span>
-             			  											</button>
-             		    										</span> 
-             		    										
-             		    									<input type="text" id="Myqty" name="titles"  class="form-control input-number" value="1" min="0" max="99"> 
-             		    									
-             		    									<span class="input-group-btn">
-             			    									<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]${cartEntry.entryNumber}">
-             				    									<span class="glyphicon glyphicon-plus"></span>
-             			    									</button>
-             		    									</span>
-             	    										</div>
-             	    										
-                										</div>				</div>  	</div>
+                               							
+                               											</div> 
+																		   <!-- =================== QTY ======================== -->
+																		   <div class="col-md-3 mt-4">
+																		   <div class="quantity">
+																			<div class="input-group">
+																				<span class="input-group-btn">
+																					  <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="quant[1]${cartEntry.entryNumber}">
+																						  <span class="glyphicon glyphicon-minus"></span>
+																					  </button>
+																				</span> 
+																				
+																			<input type="text" id="Myqty" name="titles"  class="form-control input-number Myqtynumber" value="1" min="0" max="99"> 
+																			
+																			<span class="input-group-btn">
+																				<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]${cartEntry.entryNumber}">
+																					<span class="glyphicon glyphicon-plus"></span>
+																				</button>
+																			</span>
+																			</div>
+																			
+																	   </div>
+																	</div>
+																	
+																	
+																	
+																	</div>
                                  </c:forEach>
                                  
                                  <form:hidden path="orderCode" value="${orderData.code}" />
