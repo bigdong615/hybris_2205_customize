@@ -261,6 +261,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String BARCODE = "barcode";
 
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
+	public static final String MISSING_CHARGE = "MISSING_CHARGE";
+
   private BlCoreConstants()
 	{
 		//empty

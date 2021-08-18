@@ -92,9 +92,9 @@ public interface BlInventoryScanToolService {
  	 * 
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
- 	 * @return List<String>
+ 	 * @return Map<String, List<String>>
  	 */
- 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
@@ -214,4 +214,11 @@ public interface BlInventoryScanToolService {
 	 * @return true if BIN update parent location
 	 */
 	int doBINScanFromWebScanTool(final List<String> barcodeList);
+	
+	/**
+	 * Gets the status of location Dirty cart.
+	 *
+	 * @return the status of location DC
+	 */
+	boolean getStatusOfLocationDC();
 }

@@ -35,7 +35,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.drools.core.rule.Collect;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -149,7 +149,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private boolean isLocationValidForMember(final List<String> memberAllowedLocationList,
 			final BlInventoryLocationModel blLocalInventoryLocation) {
 		return Objects.nonNull(blLocalInventoryLocation) && Objects.nonNull(blLocalInventoryLocation.getLocationCategory()) 
-				&& (memberAllowedLocationList.contains("ALLOW_SCAN") || memberAllowedLocationList.contains(
+				&& (memberAllowedLocationList.contains(BlInventoryScanLoggingConstants.ALLOW_SCAN) || memberAllowedLocationList.contains(
 						blLocalInventoryLocation.getLocationCategory().getCode()));
 	}
 
@@ -388,7 +388,28 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
  		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
  		modelService.save(blInventoryLocationScanHistory);
  		modelService.refresh(blInventoryLocationScanHistory);
+ 		if(unboxStatus)
+ 		{
+ 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
+ 		}
  	}
+ 	
+ 	/**
+	 * Sets the last oc location history on serial.
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param blInventoryLocationScanHistory
+	 *           the bl inventory location scan history
+	 */
+	private void setLastOcLocationHistoryOnSerial(final BlSerialProductModel blSerialProduct,
+			final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory)
+	{
+		blSerialProduct.setLastUnboxedOcLocationHistory(blInventoryLocationScanHistory);
+		blSerialProduct.setLastUnboxedOcLocationDate(blInventoryLocationScanHistory.getCreationtime());
+		modelService.save(blSerialProduct);
+		modelService.refresh(blSerialProduct);
+	}
 
  	/**
  	 * {@inheritDoc}
@@ -504,7 +525,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		if (scannedSerialProduct.size() != subList.size())
 		{
-			final List<String> collect = scannedSerialProduct.stream().map(serial -> serial.getBarcode())
+			final List<String> collect = scannedSerialProduct.stream().map(BlSerialProductModel::getBarcode)
 					.collect(Collectors.toList());
 			subList.removeIf(collect::contains);
 			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ONE, subList));
@@ -535,7 +556,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment)
+	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment)
 	{
 		final Collection<BlSerialProductModel> blScannedProduct = getBlInventoryScanToolDao().getSerialProductsByBarcode(barcodes);
 
@@ -563,27 +584,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param scannedSerialProduct
 	 * @param scannedSubpartProduct
 	 */
-	private List<String> validateConsignmentEntry(final List<String> barcodes, final ConsignmentModel selectedConsignment,
-			final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
-			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
-	{final List<String> failedBarcodeList = new ArrayList<>();
-
-	for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
+	private Map<String, List<String>> validateConsignmentEntry(final List<String> barcodes,
+			final ConsignmentModel selectedConsignment, final List<BlProductModel> filteredSerialProduct,
+			final List<BlProductModel> filteredSubPartProduct, final List<BlSerialProductModel> scannedSerialProduct,
+			final List<BlSerialProductModel> scannedSubpartProduct)
 	{
-		final boolean isValidSerial = isValidSerial(barcodes, consignmentEntry);
-		if (isValidSerial)
-		{
-			doScan(failedBarcodeList, filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct, scannedSubpartProduct,
-					consignmentEntry);
-		}
-		else
-		{
-			failedBarcodeList.addAll(barcodes);
-			BlLogger.logMessage(LOG, Level.DEBUG, "Scanned barcode does not match to serial on consignment");
-		}
+		final List<BlProductModel> serials = new ArrayList<>();
+		selectedConsignment.getConsignmentEntries().forEach(entry -> serials.addAll(entry.getSerialProducts()));
 
-	}
-	return failedBarcodeList;
+		final Map<String, List<String>> missingSerial = isValidSerial(barcodes, serials);
+
+		for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
+		{
+			doScan(filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct, scannedSubpartProduct, consignmentEntry);
+		}
+		return missingSerial;
 	}
 	
 	/**
@@ -608,16 +623,38 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param consignmentEntry as consignment entry
 	 * @return boolean
 	 */
-	private final boolean isValidSerial(final List<String> barcodes, final ConsignmentEntryModel consignmentEntry)
+	private final Map<String, List<String>> isValidSerial(final List<String> barcodes, final List<BlProductModel> consignmentEntry)
 	{
+		final Map<String, List<String>> invalidSerials = new HashMap<>();
 		final List<String> entryBarcode = new ArrayList<>();
-		consignmentEntry.getSerialProducts().forEach(serial -> {
+		final List<String> newBarcode = new ArrayList<>(barcodes);
+		consignmentEntry.forEach(serial -> {
 			if (serial instanceof BlSerialProductModel)
 			{
 				entryBarcode.add(((BlSerialProductModel) serial).getBarcode()); // NOSONAR
 			}
 		});
-		return barcodes.containsAll(entryBarcode) && entryBarcode.containsAll(barcodes);
+
+		newBarcode.removeIf(entryBarcode::contains);
+		entryBarcode.removeIf(barcodes::contains);
+
+		if(CollectionUtils.isEmpty(newBarcode) && CollectionUtils.isEmpty(entryBarcode))
+		{
+			invalidSerials.put(BlInventoryScanLoggingConstants.SUCCESS_SCAN, Collections.emptyList());
+		}
+		else
+		{
+			if(CollectionUtils.isNotEmpty(newBarcode))
+			{
+				invalidSerials.put(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT, newBarcode);	
+			}
+			if(CollectionUtils.isNotEmpty(entryBarcode))
+			{
+				invalidSerials.put(BlInventoryScanLoggingConstants.MISSING_IN_SCAN, entryBarcode);
+			}
+		}
+
+		return invalidSerials;
 	}
 	
 	/**
@@ -629,27 +666,26 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param consignmentEntry
 	 * @param updatedItemMap
 	 */
-	private void doScan(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
-			final List<BlProductModel> filteredSubPartProduct, final List<BlSerialProductModel> scannedSerialProduct,
-			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry)
+	private void doScan(final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
+			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct,
+			final ConsignmentEntryModel consignmentEntry)
 	{
 		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignmentEntry.getItems());
-		
-		consignmentEntry.getSerialProducts().forEach(serialItem -> 
-			getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem)
-		);
 
-		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, itemsMap);
+		consignmentEntry.getSerialProducts()
+				.forEach(serialItem -> getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem));
+
+		validateScannedSerial(scannedSerialProduct, itemsMap);
 
 		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
-		validateScannedSubpart(failedBarcodeList, filteredSubPartProduct, scannedSubpartProduct,
-				serialProductsList, itemsMap);
+		validateScannedSubpart(scannedSubpartProduct, serialProductsList, itemsMap);
 
 		consignmentEntry.setItems(itemsMap);
 		consignmentEntry.setSerialProducts(serialProductsList);
 		modelService.save(consignmentEntry);
 		modelService.refresh(consignmentEntry);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scan verified for consignment {}", consignmentEntry.getConsignment().getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scan verified for consignment {}",
+				consignmentEntry.getConsignment().getCode());
 	}
 
 	/**
@@ -661,22 +697,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param updatedItemMap
 	 * @param serialProductsList
 	 */
-	private void validateScannedSubpart(final List<String> failedBarcodeList, final List<BlProductModel> filteredSubPartProduct,
-			final List<BlSerialProductModel> scannedSubpartProduct,
+	private void validateScannedSubpart(final List<BlSerialProductModel> scannedSubpartProduct,
 			final List<BlProductModel> serialProductsList, final Map<String, ItemStatusEnum> itemsMap)
 	{
-		scannedSubpartProduct.forEach(subpartProduct -> {
-			if (!filteredSubPartProduct.contains(subpartProduct))
-			{
-				failedBarcodeList.add(subpartProduct.getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned subpart with code {} is not present on consignment.",
-						subpartProduct.getCode());
-			}
-			else
-			{
-				updateSubpartMap(serialProductsList, subpartProduct, itemsMap);
-			}
-		});
+		scannedSubpartProduct.forEach(subpartProduct -> updateSubpartMap(serialProductsList, subpartProduct, itemsMap));
 	}
 
 	/**
@@ -686,22 +710,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param scannedSerialProduct
 	 * @param updatedItemMap
 	 */
-	private void validateScannedSerial(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
-			final List<BlSerialProductModel> scannedSerialProduct,
+	private void validateScannedSerial(final List<BlSerialProductModel> scannedSerialProduct,
 			final Map<String, ItemStatusEnum> updatedItemMap)
 	{
-		scannedSerialProduct.forEach(serialProduct -> {
-			if (!filteredSerialProduct.contains(serialProduct))
-			{
-				failedBarcodeList.add(serialProduct.getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned serial with code {} is not present on consignment.",
-						serialProduct.getCode());
-			}
-			else
-			{
-				updateSerialProductMap(updatedItemMap, serialProduct);
-			}
-		});
+		scannedSerialProduct.forEach(serialProduct -> updateSerialProductMap(updatedItemMap, serialProduct));
 	}
 	
 	/**
@@ -724,6 +736,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.remove(subPartName);
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
+			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
+			modelService.save(subpartProduct);
+			
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", subPartName,subpartProduct.getCode());
 		}
 		else
@@ -757,6 +773,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.remove(keyList.get(0));
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
+			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
+			modelService.save(subpartProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", keyList.get(0) ,subpartProduct.getCode());
 		}
 	}
@@ -776,6 +795,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", serialProduct);
 			modelService.save(serialProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ", serialProduct.getCode());
 		}
@@ -985,8 +1005,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public int checkValidLocationInBarcodeListOfDPC(final List<String> barcodes)
 	{
-		return checkLocationWithType(barcodes, BlInventoryScanUtility.getDefaultInventoryLocationForDPCAndDC(),
-				BlInventoryScanUtility.getUnboxingAllowedLocations());
+		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultInventoryLocation(),
+				Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN));
 	}
 
 	/**
@@ -1021,7 +1041,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
 				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(subList);
-				final Collection<String> errorSerialList = new ArrayList<>();
+				final Map<Integer,List<String>> errorSerialList = new HashMap<>();
 				this.getMapForUnboxAtDPOrDC(subList, result, blInventoryLocationModel, packagingInfoModels, errorSerialList);
 			}
 			
@@ -1046,7 +1066,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	private void getMapForUnboxAtDPOrDC(final Collection<String> barcodes, final Map<Integer, Collection<String>> result,
 			final BlInventoryLocationModel blInventoryLocationModel, final Collection<PackagingInfoModel> packagingInfoModels,
-			Collection<String> errorSerialList)
+			Map<Integer,List<String>> errorSerialList)
 	{
 		if(CollectionUtils.isEmpty(packagingInfoModels))
 		{
@@ -1065,7 +1085,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param result the result
 	 * @param errorSerialList the error serial list
 	 */
-	private void handleUnboxingErrorMessage(final Map<Integer, Collection<String>> result, final Collection<String> errorSerialList)
+	private void handleUnboxingErrorMessage(final Map<Integer, Collection<String>> result, final Map<Integer,List<String>> errorSerialList)
 	{
 		if (Objects.isNull(errorSerialList)) 
 		{
@@ -1074,7 +1094,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		else
 		{
-			result.put(BlInventoryScanLoggingConstants.THREE, errorSerialList);
+			if(CollectionUtils.isEmpty(errorSerialList.get(BlInventoryScanLoggingConstants.FOUR)) 
+					&& CollectionUtils.isEmpty(errorSerialList.get(BlInventoryScanLoggingConstants.FIVE)))
+			{
+				result.put(BlInventoryScanLoggingConstants.THREE, Lists.newArrayList());
+			}
+			else
+			{
+				result.put(BlInventoryScanLoggingConstants.THREE, Lists.newArrayList(BlInventoryScanLoggingConstants.ERROR_EXIST));
+				result.putAll(errorSerialList);
+			}			
 			BlLogger.logMessage(LOG, Level.DEBUG, "Scanned Performed with errorSerials if any exists");
 		}
 	}
@@ -1088,9 +1117,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param errorSerialList the error serial list
 	 * @return the collection
 	 */
-	private Collection<String> doPerformDpcOrDcUnboxing(final Collection<String> barcodes,
+	private Map<Integer,List<String>> doPerformDpcOrDcUnboxing(final Collection<String> barcodes,
 			final BlInventoryLocationModel blInventoryLocationModel, final Collection<PackagingInfoModel> packagingInfoModels,
-			Collection<String> errorSerialList)
+			Map<Integer,List<String>> errorSerialList)
 	{
 		for (final PackagingInfoModel packagingInfo : packagingInfoModels)
 		{
@@ -1152,7 +1181,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 *           barcode list
 	 * @return list of serial with incorrect location
 	 */
-	private Collection<String> getBlSerialProductModelBooleanMap(final PackagingInfoModel packagingInfoModel,
+	private Map<Integer,List<String>> getBlSerialProductModelBooleanMap(final PackagingInfoModel packagingInfoModel,
 			final ConsignmentModel consignmentModel, final Collection<BlProductModel> availableBarcodeList,
 			final BlInventoryLocationModel blInventoryLocationModel)
 	{
@@ -1161,7 +1190,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			BlLogger.logMessage(LOG, Level.DEBUG, "Marking package and consignment as PARTIALLY_UNBOXED");
 			changePackagingInfoStatus(packagingInfoModel, PackagingInfoStatus.PARTIALLY_UNBOXED);
 			changeConsignmentStatus(consignmentModel, ConsignmentStatus.PARTIALLY_UNBOXED);
-			final Collection<String> failedSerials = checkSerialsForDPAndSubParts(availableBarcodeList, consignmentModel,
+			final Map<Integer,List<String>> failedSerials = checkSerialsForDPAndSubParts(availableBarcodeList, consignmentModel,
 					blInventoryLocationModel);
 			if (canChangeToUnBoxStatus(packagingInfoModel))
 			{
@@ -1206,10 +1235,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param blInventoryLocationModel the bl inventory location model
 	 * @return the collection
 	 */
-	public Collection<String> checkSerialsForDPAndSubParts(final Collection<BlProductModel> blSerialProductModels,
+	public Map<Integer,List<String>> checkSerialsForDPAndSubParts(final Collection<BlProductModel> blSerialProductModels,
 			final ConsignmentModel consignmentModel, final BlInventoryLocationModel blInventoryLocationModel)
 	{
-		final Collection<String> serialList = new ArrayList<>();
+		final List<String> dirtyPrioritySerialList = new ArrayList<>();
+		final List<String> dirtySerialList = new ArrayList<>();
+		final Map<Integer,List<String>> errorList = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(blSerialProductModels))
 		{
 			for (final BlProductModel model : blSerialProductModels)
@@ -1222,11 +1253,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 							consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
 					serialProductModel
 							.setConsignmentEntry(getConsignmentEntryFromConsignment(consignmentModel, serialProductModel.getCode()));
-					performLocationUpdateOnSerial(blInventoryLocationModel, serialList, serialProductModel);					
+					performLocationUpdateOnSerial(blInventoryLocationModel, dirtyPrioritySerialList, dirtySerialList, serialProductModel);					
 				}
 			}
 		}
-		return serialList;
+		errorList.put(BlInventoryScanLoggingConstants.FOUR, dirtySerialList);
+		errorList.put(BlInventoryScanLoggingConstants.FIVE, dirtyPrioritySerialList);
+		return errorList;
 	}
 	
 	/**
@@ -1268,8 +1301,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param serialList the serial list
 	 * @param serialProductModel the serial product model
 	 */
-	private void performLocationUpdateOnSerial(final BlInventoryLocationModel blInventoryLocationModel, final Collection<String> serialList,
-			final BlSerialProductModel serialProductModel)
+	private void performLocationUpdateOnSerial(final BlInventoryLocationModel blInventoryLocationModel, final Collection<String> dirtyPrioritySerialList,
+			final Collection<String> dirtySerialList, final BlSerialProductModel serialProductModel)
 	{
 		if(Objects.nonNull(serialProductModel.getProductType()) && serialProductModel.getProductType().equals(ProductTypeEnum.SUBPARTS))
 		{
@@ -1280,24 +1313,22 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		else
 		{
-			checkInventoryLocationForDCOrDPC(serialProductModel, isLocationDP(), blInventoryLocationModel, serialList);
+			checkInventoryLocationForDCOrDPC(serialProductModel, isLocationDP(), blInventoryLocationModel, dirtyPrioritySerialList,dirtySerialList);
 		}
 	}
 
 	/**
 	 * This method will check Inventory location for DC or DPC
 	 *
-	 * @param blSerialProductModel
-	 *           serial
-	 * @param isLocationDPC
-	 *           true/false
-	 * @param blInventoryLocationLocal
-	 *           location
-	 * @param serialList
-	 *           failedSerialList
+	 * @param blSerialProductModel the bl serial product model
+	 * @param isLocationDPC the is location DPC
+	 * @param blInventoryLocationLocal the bl inventory location local
+	 * @param dirtyPrioritySerialList the dirty priority serial list
+	 * @param dirtySerialList the dirty serial list
 	 */
 	public void checkInventoryLocationForDCOrDPC(final BlSerialProductModel blSerialProductModel, final boolean isLocationDPC,
-			final BlInventoryLocationModel blInventoryLocationLocal, final Collection<String> serialList)
+			final BlInventoryLocationModel blInventoryLocationLocal, final Collection<String> dirtyPrioritySerialList,
+			final Collection<String> dirtySerialList)
 	{
 		if (blSerialProductModel.isDirtyPriorityStatus() || doCheckDirtyPriorityStatus(blSerialProductModel))
 		{
@@ -1307,15 +1338,15 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			else
 			{
-				serialList.add(blSerialProductModel.getBarcode());
+				dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 		}
 		else
 		{
-			if (isLocationDPC)
+			if (isLocationDPC || !getStatusOfLocationDC())
 			{
-				serialList.add(blSerialProductModel.getBarcode());
+				dirtySerialList.add(blSerialProductModel.getBarcode());
 				updateLocationOnItem(blSerialProductModel, blInventoryLocationLocal, Boolean.TRUE);
 			}
 			else
@@ -1405,7 +1436,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if (serial instanceof BlSerialProductModel)
 		{
 			final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
-			if (BooleanUtils.isFalse(serialProductModel.isDirtyPriorityStatus()))
+			if (BooleanUtils.isFalse(serialProductModel.isDirtyPriorityStatus()) 
+					&& !SerialStatusEnum.RECEIVED_OR_RETURNED.equals(serialProductModel.getSerialStatus()))
 			{
 				this.checkSerialForDirtyPriority(serialProductModel);
 			}
@@ -1492,9 +1524,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param packagingInfoStatus
 	 *           status
 	 */
-	public void changePackagingInfoStatus(final PackagingInfoModel packagingInfoModel,
-			final PackagingInfoStatus packagingInfoStatus)
-	{
+	public void changePackagingInfoStatus(final PackagingInfoModel packagingInfoModel, final PackagingInfoStatus packagingInfoStatus)	{
 		packagingInfoModel.setPackagingInfoStatus(packagingInfoStatus);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing status of Packaging with PK : {} to {}", 
 				packagingInfoModel.getPk().toString(), packagingInfoStatus.getCode());
@@ -1502,46 +1532,30 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		modelService.refresh(packagingInfoModel);
 	}
 	
-	public BlInventoryLocationModel getBlInventoryLocation() {
-        return blInventoryLocation;
-    }
+	public BlInventoryLocationModel getBlInventoryLocation() { return blInventoryLocation; }
 
-    public void setBlInventoryLocation(final BlInventoryLocationModel blInventoryLocation) {
-        this.blInventoryLocation = blInventoryLocation;
-    }
+    public void setBlInventoryLocation(final BlInventoryLocationModel blInventoryLocation) { this.blInventoryLocation = blInventoryLocation; }
 
-    public BlInventoryScanToolDao getBlInventoryScanToolDao() {
-        return blInventoryScanToolDao;
-    }
+    public BlInventoryScanToolDao getBlInventoryScanToolDao() { return blInventoryScanToolDao; }
 
-    public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) {
-        this.blInventoryScanToolDao = blInventoryScanToolDao;
-    }
+    public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) { this.blInventoryScanToolDao = blInventoryScanToolDao; }
     
  	/**
  	 * @return the packagingInfoModel
  	 */
- 	public PackagingInfoModel getPackagingInfoModel()
- 	{
- 		return packagingInfoModel;
- 	}
+ 	public PackagingInfoModel getPackagingInfoModel()	{	return packagingInfoModel;	}
 
  	/**
  	 * @param packagingInfoModel
  	 *           the packagingInfoModel to set
  	 */
- 	public void setPackagingInfoModel(final PackagingInfoModel packagingInfoModel)
- 	{
- 		this.packagingInfoModel = packagingInfoModel;
- 	}
+ 	public void setPackagingInfoModel(final PackagingInfoModel packagingInfoModel) 	{	this.packagingInfoModel = packagingInfoModel;	}
 
 	@Override
-	public void updateToUpsBound()
-	{
+	public void updateToUpsBound()	{
 		final List<BlProductModel> serialProducts = getPackagingInfoModel().getSerialProducts();
 		serialProducts.forEach(serial -> {
-			if (serial instanceof BlSerialProductModel)
-			{
+			if (serial instanceof BlSerialProductModel)	{
 				final BlSerialProductModel blSerial = ((BlSerialProductModel) serial); // NOSONAR
 				blSerial.setOcLocation(getBlInventoryLocation().getCode());
 				blSerial.setSerialStatus(SerialStatusEnum.BOXED);
@@ -1550,19 +1564,25 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		});
 	}
 
-	/**
-	 * @return the isLocationDP
-	 */
 	public boolean isLocationDP()
 	{
 		return isLocationDP;
 	}
 
-	/**
-	 * @param isLocationDP the isLocationDP to set
-	 */
 	public void setLocationDP(boolean isLocationDP)
 	{
 		this.isLocationDP = isLocationDP;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean getStatusOfLocationDC()	{
+		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
+		if(Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory())) {
+			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory());
+		}
+		return false;
 	}
 }
