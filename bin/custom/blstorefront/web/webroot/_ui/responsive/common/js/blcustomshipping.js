@@ -1397,6 +1397,10 @@ function reverseTraverseOnShipping() {
         companyName = '';
     }
 
+    if(email == null) {
+        email = '';
+    }
+
     let addressForm = {
         firstName : firstName.trim(),
         lastName : lastName.trim(),
