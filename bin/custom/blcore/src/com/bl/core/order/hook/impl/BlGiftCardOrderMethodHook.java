@@ -6,7 +6,6 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -21,6 +20,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import de.hybris.platform.core.enums.OrderStatus;
 
 /**
  * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} to do the adjustments in case of gift card is applied on the order.
@@ -113,8 +113,6 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       }
     }
   }
-
-
   /**
    * Create gift card for gift card purchase order
    * @param OrderModel
