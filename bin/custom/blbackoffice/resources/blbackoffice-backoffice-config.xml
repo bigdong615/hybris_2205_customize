@@ -1162,6 +1162,11 @@
 				<y:action
 					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
 					property="currentObject"/>
+				<y:action
+					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
+					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.blCalculateAvalaraTaxAction"
+					property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>
@@ -2115,7 +2120,34 @@
 	</context>
     
     <!--BL-800 Repair Serials Queue End-->
-	
+
+
+
+	<!-- To get tax related field to customer support Agent on CUstomer Level-->
+
+	<context merge-by="principal" parent="User" type="Customer" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
+			xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+			xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+			xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+			xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.customer.tax.name" position="11">
+				<editorArea:section name="blbackoffice.tax.customer">
+					<editorArea:attribute qualifier="isTaxExempt"/>
+					<editorArea:attribute qualifier="taxExemptNumber"/>
+					<editorArea:attribute qualifier="taxExemptExpiry"/>
+					<editorArea:attribute qualifier="taxExemptState"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
 </config>
 
 

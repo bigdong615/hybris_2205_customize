@@ -185,6 +185,10 @@
         <property name="recipientName" type="java.lang.String" />
         <property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
          <property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+
+
+		<property name="orderStatus" type="java.lang.String"/>
+
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -621,6 +625,7 @@
 		<property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
 		<property name="productCode" type="String"/>
 		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="orderStatus" type="java.lang.String"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->
