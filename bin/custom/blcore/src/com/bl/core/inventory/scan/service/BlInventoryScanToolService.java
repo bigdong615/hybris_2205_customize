@@ -214,4 +214,11 @@ public interface BlInventoryScanToolService {
 	 * @return true if BIN update parent location
 	 */
 	int doBINScanFromWebScanTool(final List<String> barcodeList);
+	
+	/**
+	 * Gets the status of location Dirty cart.
+	 *
+	 * @return the status of location DC
+	 */
+	boolean getStatusOfLocationDC();
 }
