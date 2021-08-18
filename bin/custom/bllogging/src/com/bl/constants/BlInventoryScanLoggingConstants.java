@@ -194,6 +194,11 @@ public class BlInventoryScanLoggingConstants {
     public static final String CUSTOMER_SUPPORT_AGENT_GROUP = "customersupportagentgroup";
     public static final String ERROR_EXIST = "ERROR_EXIST";
     public static final String ALLOW_SCAN = "ALLOW_SCAN";
+    public static final String REPAIR_CLEAN_MOBILE_CART = "REPAIR_CLEAN_MOBILE_CART";
+    public static final String REPAIR = "REPAIR";                   
+    public static final String REPAIR_CABINET = "REPAIR_CABINET";           
+    public static final String REPAIR_MOBILE_SHELF = "REPAIR_MOBILE_SHELF";      
+    public static final String REPAIR_MOBILE_LAUNDRY_BIN = "REPAIR_MOBILE_LAUNDRY_BIN";
 
 
     private BlInventoryScanLoggingConstants() { }

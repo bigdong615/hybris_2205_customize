@@ -380,7 +380,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkTwoDayAir(final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final AddressModel shippingAddress = consignmentModel.getOrder().getDeliveryAddress();
         final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
-        if (shippingAddress != null && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
+        if (shippingAddress != null && shippingAddress.getAddressType() != null 
+      		  && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode()
                     + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, BlInventoryScanLoggingConstants.TWO, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -407,7 +408,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkNextDayAir(final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final AddressModel shippingAddress = consignmentModel.getOrder().getDeliveryAddress();
         final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
-        if (shippingAddress != null && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
+        if (shippingAddress != null &&  shippingAddress.getAddressType() != null 
+      		  && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode()
                     + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, BlInventoryScanLoggingConstants.TWO, BlDateTimeUtils.subtractDaysInRentalDates(

@@ -117,7 +117,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO,"DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
 
@@ -133,7 +133,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("serial", serial);
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : null;
  	}
 
@@ -154,7 +154,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
     public FlexibleSearchService getFlexibleSearchService() {
