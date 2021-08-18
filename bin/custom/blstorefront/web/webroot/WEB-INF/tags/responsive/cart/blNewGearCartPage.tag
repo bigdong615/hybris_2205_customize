@@ -69,16 +69,7 @@
                                  <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
                               </c:if>
                               <div class="order-actions my-4">
-                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
-                                           <a class="js-login-popup" data-link="<c:url value='/login/loginpopup'/>" href="#"
-                                                  data-bs-toggle="modal" data-bs-target="#signIn"><i class="icon-save" alt="Save Order"></i></a>
-                                   </sec:authorize>
-                                    <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                         <a href="#" class="js-remove-error-message" data-bs-toggle="modal" data-bs-target="#saveCartModal"><i class="icon-save" alt="Save Order"></i></a>
-                                     </sec:authorize>
 
-
-                                  <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a>
                               </div>
                           </div>
                       </div>
