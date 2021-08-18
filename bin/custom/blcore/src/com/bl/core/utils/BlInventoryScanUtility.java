@@ -112,6 +112,12 @@ public final class BlInventoryScanUtility
 	{
 		final List<String> repairLocations = new ArrayList<>();
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CLEAN_MOBILE_CART);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CABINET);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_LAUNDRY_BIN);
 		return repairLocations;
 	}
 
@@ -123,6 +129,7 @@ public final class BlInventoryScanUtility
 		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
 		return defaultLocations;
 	}
+
 	/**
 	 * This method will return list of location that will be applicable for DirtyCart and DirtyPriorityCart location
 	 *
@@ -179,7 +186,7 @@ public final class BlInventoryScanUtility
 	}
 
 	/**
-	* Gets the un boxing work station locations.
+	 * Gets the un boxing work station locations.
 	 *
 	 * @return the un boxing work station locations
 	 */
