@@ -1084,7 +1084,7 @@ function hideShorting(){
 	});
 
 	$(".Myqtynumber").each(function (index) {
-		fvalue.push(label[index]+':'+$(this).val()+'+');
+		fvalue.push(label[index]+':'+$(this).val()+'%');
 	}) ;
  
  	alert(fvalue.join(""));    

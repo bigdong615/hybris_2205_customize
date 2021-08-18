@@ -71,33 +71,27 @@
                                							
                                							<input type="hidden" id="ReturnProdCode" name="prodCode"  class="form-control return-prod-code" value="${cartEntry.product.code}">
                                							
-                               							
-                               											</div> 
-																		   <!-- =================== QTY ======================== -->
-																		   <div class="col-md-3 mt-4">
-																		   <div class="quantity">
-																			<div class="input-group">
-																				<span class="input-group-btn">
-																					  <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="quant[1]${cartEntry.entryNumber}">
-																						  <span class="glyphicon glyphicon-minus"></span>
-																					  </button>
-																				</span> 
-																				
-																			<input type="text" id="Myqty" name="titles"  class="form-control input-number Myqtynumber" value="1" min="0" max="99"> 
-																			
-																			<span class="input-group-btn">
-																				<button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]${cartEntry.entryNumber}">
-																					<span class="glyphicon glyphicon-plus"></span>
-																				</button>
-																			</span>
-																			</div>
-																			
-																	   </div>
-																	</div>
-																	
-																	
-																	
-																	</div>
+                               							</div> 
+														<!-- =================== QTY ======================== -->
+														<div class="col-md-3 mt-4">
+															<div class="quantity">
+											             	    <div class="input-group">
+											             		    <span class="input-group-btn">
+											             			  <button type="button" class="btn btn-default btn-number"
+											             				  data-type="minus" data-field="quant[1]${cartEntry.entryNumber}" entryNumber="${cartEntry.entryNumber}">
+											             				  <span class="glyphicon glyphicon-minus"></span>
+											             			  </button>
+											             		    </span> <input type="text" name="quant[1]${cartEntry.entryNumber}" class="form-control input-number Myqtynumber"
+											             			    value="${cartEntry.quantity}" min="1" max="99" entryNumber="${cartEntry.entryNumber}"> <span class="input-group-btn">
+											             			    <button type="button" class="btn btn-default btn-number"
+											             				    data-type="plus" data-field="quant[1]${cartEntry.entryNumber}" entryNumber="${cartEntry.entryNumber}">
+											             				    <span class="glyphicon glyphicon-plus"></span>
+											             			    </button>
+											             		    </span>
+											             	    </div>
+										                	</div>
+														</div>
+												</div>
                                  </c:forEach>
                                  
                                  <form:hidden path="orderCode" value="${orderData.code}" />

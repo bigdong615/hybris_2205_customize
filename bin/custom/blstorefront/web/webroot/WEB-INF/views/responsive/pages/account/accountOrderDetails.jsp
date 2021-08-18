@@ -254,16 +254,11 @@
                               <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
                                                           
-                             <c:if test="${asmUser}">
-                             	<c:set var="orderAction" value="/returnOrder" ></c:set>
-							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
-							 		<spring:theme code="text.myaccount.order.return.request"/>
-							 	</a>
-							 </c:if>
+                             
                              
                             <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
-
+                            
                             <c:choose>
                             <c:when test="${isUsedGearCartActive eq true}">
                                      <a href="#" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#rentAgainPopUp">
@@ -276,6 +271,13 @@
 
                             </c:otherwise>
                            </c:choose>
+                           
+                           <c:if test="${asmUser}"> 
+                             	<c:set var="orderAction" value="/returnOrder" ></c:set>
+							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
+							 		<spring:theme code="text.myaccount.order.return.request"/>
+							 	</a>
+							</c:if>
                           </div>
                             </c:if>
 
