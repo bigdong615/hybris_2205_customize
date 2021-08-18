@@ -220,6 +220,13 @@
             <value code="INVERIFICATION"/>
             <value code="MANUAL_REVIEW"/>
             <value code="SHIPPING_MANUAL_REVIEW"/>
+            <value code="INCOMPLETE" />
+      		<value code="INCOMPLETE_ITEMS_IN_REPAIR" />
+      		<value code="INCOMPLETE_MISSING_ITEMS" />
+      		<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
+      		<value code="INCOMPLETE_RECOVERED" />
+      		<value code="PARTIALLY_UNBOXED" />
+      		<value code="UNBOXED" />
         </enumtype>
       
       
@@ -300,6 +307,13 @@
         <value code="SHIPPING" />
         <value code="VENDOR" />
         <value code="UNKNOWN" />      
+    </enumtype>
+    
+    <enumtype generate="true" code="CustomerChargedEnum" autocreate="true" dynamic="true">
+        <value code="YES" />
+        <value code="NO" />
+        <value code="WAIVED" />
+        <value code="INSTALLMENT_PLAN" />
     </enumtype>
 
       <enumtype code="OrderReturnType" autocreate="true" dynamic="true">
@@ -1369,6 +1383,16 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated consignment entry on serial</description>
                      </attribute>
+                     <attribute qualifier="lastUnboxedOcLocationHistory" type="BlInventoryLocationScanHistory">
+                       <persistence type="property"/>
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>Last location InventoryHistoryLocationModel for serial product</description>
+                   </attribute>
+                   <attribute qualifier="lastUnboxedOcLocationDate" type="java.util.Date">
+                       <persistence type="property"/>
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>last OC location date at the time of unbox</description>
+                   </attribute>
                  </attributes>
              </itemtype>
 
@@ -3238,11 +3262,11 @@
 					<modifiers read="true" write="true"	optional="true" />
 						<persistence type="property"/>
 				</attribute>
-                   <!-- <attribute qualifier="totalForPartsAndLaborCost" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                <attribute qualifier="totalForPartsAndLaborCost" type="java.lang.Double">
+            	  	<modifiers read="true" write="false" optional="true"/>
                     <description>Total for Parts and Labor costs</description>
-                     <persistence type="dynamic" attributeHandler="" />
-                  </attribute> -->
+                     <persistence type="dynamic" attributeHandler="blTotalForPartsAndLabourChargeHandler" />
+                  </attribute>
                <attribute qualifier="damageWaiverPaid" type="java.lang.Double">
             	  	<modifiers read="true" write="false" optional="true"/>
                     <description>Damage Waiver taken by Customer for the item</description>
@@ -3278,6 +3302,11 @@
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Determines the blame</description>
+                     </attribute>
+                     <attribute qualifier="issueLocation" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>Tech Eng. Team member can specify notes on the issue location</description>
                      </attribute>
              </attributes>
        		</itemtype>
@@ -3347,7 +3376,13 @@
             	  	<modifiers read="true" write="true" optional="true"/>
                     <description>Customer Charge Cost</description>
                      <persistence type="property" />
-                  </attribute>                     
+                  </attribute>  
+                  <attribute qualifier="customerCharged" type="CustomerChargedEnum">
+	            	  	<modifiers read="true" write="true" optional="true" />
+	            	  	<defaultvalue>em().getEnumerationValue("CustomerChargedEnum", "NO")</defaultvalue>
+	                    <description>Customer Charged</description>
+	                    <persistence type="property" />
+                  </attribute>                   
        			</attributes>
        		</itemtype>
        		<itemtype code="PartsNeededRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
@@ -4055,7 +4090,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {serial.dirtyPriorityStatus} = 1 and {serial:blProduct} = {b.pk} and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {c:optimizedShippingStartDate} = ?currentDate and {order:orderType} = {ot:pk}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
 			</value>
 		</property>
 	</custom-properties>

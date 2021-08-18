@@ -1726,7 +1726,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="unboxInvalidDPLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="unboxInvalidDPLocationErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.priority.location.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -1977,6 +1977,7 @@
             <list-view:column qualifier="repairLogStatus"/>
             <list-view:column qualifier="serialCode"/>
             <list-view:column qualifier="itemBarcode"/>
+            <list-view:column qualifier="creationtime"/>
 		</list-view:list-view>
 	</context>
 	
@@ -2045,6 +2046,7 @@
 					<editorArea:attribute qualifier="returnOnInvestment"/>
 					<editorArea:attribute qualifier="costForParts"/>
 					<editorArea:attribute qualifier="costForLabor"/>
+					<editorArea:attribute qualifier="totalForPartsAndLaborCost"/>
 					<editorArea:attribute qualifier="itemBarcode"/>
 					<editorArea:attribute qualifier="serialCode"/>
 					<editorArea:attribute qualifier="associatedConsignment"/>
@@ -2062,6 +2064,7 @@
 					<editorArea:attribute qualifier="frequency"/>
 					<editorArea:attribute qualifier="cause"/>
 					<editorArea:attribute qualifier="blame"/>
+					<editorArea:attribute qualifier="issueLocation"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2090,6 +2093,7 @@
 					<editorArea:attribute qualifier="gearGaurdAvailable"/>
 					<editorArea:attribute qualifier="customerChargeCost"/>
 					<editorArea:attribute qualifier="estimateApprovedCost"/>
+					<editorArea:attribute qualifier="customerCharged"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
