@@ -183,6 +183,7 @@
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="VERIFICATION_NOTES"/>
         <value code="EXCEPTION_NOTES"/>
+        <value code="TESTING_NEEDED"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
@@ -239,6 +240,7 @@
       	<value code="MANUAL_REVIEW" />
       	<value code="PARTIALLY_UNBOXED" />
       	<value code="UNBOXED" />
+      	 <value code="SHIPPING_MANUAL_REVIEW"/>
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
@@ -2230,6 +2232,11 @@
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="totalOptionsCost" type="java.lang.Double">
+                        <description>Total cost of selected Damage Waiver</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>                                        
                     <attribute qualifier="pickUpByMe" type="boolean">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" optional="false" />
@@ -2425,6 +2432,11 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify whether the order is VIP order or not</description>
                   </attribute>
+                  <attribute type="ReturnRequest" qualifier="returnRequestForOrder">
+                    <description>To identify return Request for Order.</description>
+                    <modifiers read="true" write="true" optional="true"/>
+                    <persistence type="property"/>
+                  </attribute>
                   <attribute qualifier="orderReturnedToWarehouse" type="boolean">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
@@ -2441,8 +2453,34 @@
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <defaultvalue>Boolean.FALSE</defaultvalue>
                   </attribute>
+                  <attribute qualifier="isCartUsedForReplacementOrder" type="java.lang.Boolean">
+                    <persistence type="property" />
+                    <description>This is created to identify whether this cart is used for replacement order . </description>
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                  </attribute>
+
+                  <attribute qualifier="extendRentalStartDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Start date of a for extend order</description>
+                  </attribute>
+
                 </attributes>
             </itemtype>
+
+          <!--Added New attribute to identify the order for replacement in Return Request . -->
+          <itemtype code="ReturnRequest" autocreate="false" generate="false">
+            <description>Extending ReturnRequest type with additional attributes.</description>
+            <attributes>
+              <attribute qualifier="orderForReplacement" type="AbstractOrder">
+                <description>This is to identify the order which used for replacement of original order. </description>
+                <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                <persistence type="property" />
+              </attribute>
+            </attributes>
+          </itemtype>
+
         </typegroup>
 
         <typegroup>
@@ -3765,7 +3803,7 @@
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, {orderItem:isVIPOrder} as isVIPOrder, {orderItem:isUsedGearOrder} as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
+          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, case when({orderItem:isVIPOrder} = 1) then 'True' else 'False' end as isVIPOrder, case when({orderItem:isUsedGearOrder} = 1) then 'True' else 'False' end as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
         </value>
       </property>
     </custom-properties>

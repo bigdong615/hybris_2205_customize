@@ -202,6 +202,10 @@ private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final St
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
+    if(source.getTotalOptionsCost() != null){
+      target.setTotalOptionsCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalOptionsCost() ,
+          BlFacadesConstants.OPTION_FIELD), source));
+    }
 
   }
 

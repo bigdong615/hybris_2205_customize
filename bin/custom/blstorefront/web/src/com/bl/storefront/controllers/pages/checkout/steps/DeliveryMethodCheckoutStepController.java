@@ -10,6 +10,7 @@ import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
@@ -44,17 +45,23 @@ import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -133,6 +140,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel) &&
+            Objects.nonNull(cartModel.getReturnRequestForOrder())){
+            model.addAttribute("isReplacementOrderCart" , true);
+        }
+
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
@@ -173,10 +185,19 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                             @RequestParam(value = "partnerZone", defaultValue = "")
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
-        final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
-                shippingGroup, partnerZone, true);
-        model.addAttribute(CART_DATA, cartData);
-        model.addAttribute("deliveryMethods", deliveryModes);
+
+        boolean isPayByCustomer = true;
+
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) &&
+            Objects.nonNull(blCartService.getSessionCart().getReturnRequestForOrder())) {
+                isPayByCustomer = false;
+                model.addAttribute("isReplacementOrderCart", true);
+        }
+        Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade()
+                .getSupportedDeliveryModes(
+                    shippingGroup, partnerZone, isPayByCustomer);
+            model.addAttribute(CART_DATA, cartData);
+            model.addAttribute("deliveryMethods", deliveryModes);
         return deliveryModes;
     }
 
@@ -461,9 +482,36 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
     }
 
+
+    @GetMapping(value = "/selectReplacementAddress")
+    @RequireHardLogIn
+    @ResponseBody
+    public String doSelectDeliveryAddressForOrderReplaceMent(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+        @RequestParam("shippingGroup") final String shippingGroup,
+        @RequestParam("deliveryMode") final String deliveryMode,
+        @RequestParam("rushZip") final String rushZip,
+        @RequestParam("businessType") final boolean businessType,
+        final RedirectAttributes redirectAttributes) {
+        if (StringUtils.isNotBlank(selectedAddressCode)) {
+            final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                if (pinError != null) {
+                    return pinError;
+                }
+                setDeliveryAddress(selectedAddressData);
+            }
+        }
+        return SUCCESS;
+    }
+
+
     protected String getBreadcrumbKey() {
         return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
     }
+
 
     protected CheckoutStep getCheckoutStep() {
         return getCheckoutStep(DELIVERY_METHOD);
@@ -477,4 +525,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
         this.checkoutFacade = checkoutFacade;
     }
+
+
+
 }

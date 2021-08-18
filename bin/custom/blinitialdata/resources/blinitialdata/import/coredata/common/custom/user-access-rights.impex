@@ -232,6 +232,7 @@ Usergroup;blinventoryusergroup;;;;;;;
 
 ;;;InventoryInCompleteOrdersQueue;+;+;-;-
 ;;;InventoryCompleteOrdersQueue;+;+;-;-
+;;;ServicelayerJob;+;+;-;-
 ;;;PullReadyToShipOrdersCronJob;+;+;-;-
 ;;;MorningPullOrdersQueue;+;+;-;-
 ;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
