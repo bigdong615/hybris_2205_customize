@@ -1006,7 +1006,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public int checkValidLocationInBarcodeListOfDPC(final List<String> barcodes)
 	{
 		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultInventoryLocation(),
-				Lists.newArrayList("ALLOW_SCAN"));
+				Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN));
 	}
 
 	/**
