@@ -113,7 +113,8 @@
 			<p class="body14 mb-1"><spring:theme code="text.cart.rental.options"/></p>
 			<div class="dropdown">
 				<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
-                 ${entry.option.optionCode} </a>
+                 ${entry.option.optionName} <c:if test="${not empty entry.option.optionPrice}"><span class="float-end"><format:price
+								priceData="${entry.option.optionPrice}" /></span></c:if></a>
 				<ul class="dropdown-menu damage-wavier bl-options-update"
 					aria-labelledby="coverageOptions1">
 					<c:forEach items="${entry.option.subOptions}" var="subOptions">
