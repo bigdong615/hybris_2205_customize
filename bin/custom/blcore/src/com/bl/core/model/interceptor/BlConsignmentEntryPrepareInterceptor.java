@@ -2,6 +2,7 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -15,10 +16,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
@@ -70,7 +71,15 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 							"Serial Status is UNBOXED for Serial Code : {} , Clearing all billing charges against this serial",
 							serialCode);
-					validatedBillingCharges.put(serialCode, new ArrayList<BlItemsBillingChargeModel>());
+					final List<BlItemsBillingChargeModel> updatedCharge = new ArrayList<>();
+					listOfBillingCharges.forEach(charge -> {
+						if (!ItemBillingChargeTypeEnum.valueOf(BlCoreConstants.MISSING_CHARGE).equals(charge.getBillChargeType()))
+						{
+							updatedCharge.add(charge);
+						}
+					});
+
+					validatedBillingCharges.put(serialCode, updatedCharge);
 				}
 				else
 				{
@@ -112,7 +121,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	private void modifySerialCodeOnBillingChargesMap(final ConsignmentEntryModel consignmentEntryModel,
 			final InterceptorContext interceptorContext)
 	{
-		if (BooleanUtils.negate(interceptorContext.isNew(consignmentEntryModel))
+		if (!interceptorContext.isNew(consignmentEntryModel)
 				&& interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.SERIALPRODUCTS))
 		{
 			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel.getSerialProducts().stream()
