@@ -154,7 +154,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
                                     @RequestParam(value = "billingAddressId") final String billingAddressId,
                                     @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
                                     @RequestParam(value = "default_Card") final String defaultCard,
-                                    final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+									final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		try
 		{
@@ -186,7 +186,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 			return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
 		}
-
+		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+				getLocalizedString("text.account.profile.paymentCart.editPaymentMethod.success"));
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
