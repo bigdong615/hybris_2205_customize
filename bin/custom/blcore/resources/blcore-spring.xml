@@ -1254,6 +1254,8 @@
 	</bean>
 	
 	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
+	
+	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
 
 	<!-- [BL-983] New gear Related changes-->
 	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"

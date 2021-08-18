@@ -190,6 +190,8 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SUCCESS_SCAN = "SUCCESS_SCAN";
     public static final String IS_PAYMENT_PAGE_VISITED = "isPaymentPageVisited";
     public static final String CUSTOMER_SUPPORT_AGENT_GROUP = "customersupportagentgroup";
+    public static final String ERROR_EXIST = "ERROR_EXIST";
+    public static final String ALLOW_SCAN = "ALLOW_SCAN";
 
 
     private BlInventoryScanLoggingConstants() { }
