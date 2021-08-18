@@ -181,8 +181,6 @@
         <value code="BROKEN_ITEM_NOTES"/>
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
-        <value code="VERIFICATION_NOTES"/>
-        <value code="EXCEPTION_NOTES"/>
         <value code="TESTING_NEEDED"/>
       </enumtype>
 
