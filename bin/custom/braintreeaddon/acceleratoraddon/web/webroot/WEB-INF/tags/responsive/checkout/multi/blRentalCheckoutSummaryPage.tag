@@ -40,13 +40,23 @@
 	<div class="container">
 		<div id="cartSteps" class="row justify-content-center">
 			<div class="col-xl-10">
-				<span class="step1 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.your.rental" /></span> <span
-					class="step2 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.delivery.or.pickup" /></span> <span
-					class="step3 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.payment" /></span> <span class="step4 active"><i
-					class="number">4</i> <spring:theme code="text.review.page.review" /></span>
+			    <a href="${cartPageUrl}" class="text-decoration-none">
+				    <span class="step1 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.your.rental" /></span>
+				</a>
+				<a href="${shippingPageUrl}" class="text-decoration-none">
+					<span class="step2 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.delivery.or.pickup" /></span>
+			    </a>
+			    <a href="${paymentPageUrl}" class="text-decoration-none">
+					<span class="step3 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.payment" /></span>
+				</a>
+				<a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+					<span class="step4 active"><i class="number">4</i>
+					    <spring:theme code="text.review.page.review" />
+					</span>
+			    </a>
 			</div>
 		</div>
 		<div class="row justify-content-center">
@@ -295,7 +305,7 @@
 							<spring:theme code="text.shipping.change.or.cancellation.message" />
 						</div>
 						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
+							<a href="${printReviewUrl}" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"> <i
 								class="icon-print"></i>
 							</a>
 						</div>
@@ -324,7 +334,7 @@
 					type="hidden" value="" id="clickedSection">
 				<p class="body14">
 					<spring:theme
-						code="shipping.interception.change.date.warning.message" />
+						code="shipping.interception.change.warning.message" />
 				</p>
 				<a href="#" class="btn btn-primary btn-block my-4"
 					id="continueChanges"> <spring:theme

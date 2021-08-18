@@ -180,14 +180,23 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     public boolean generateShipmentLabelForConsignment(final ConsignmentModel consignmentModel) {
         if (!BlDateTimeUtils.compareTimeWithCutOff(consignmentModel.getWarehouse().getCutOffTime())) {
             final Date rentalStartDate = consignmentModel.getOrder().getRentalStartDate();
+            final String rentalStringStartDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder()
+                    .getRentalStartDate(), BlCoreConstants.DATE_FORMAT);
+            final String rentalEndDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(),
+                    BlCoreConstants.DATE_FORMAT);
             final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOptimizedShippingStartDate(),
                     rentalStartDate, consignmentModel.getWarehouse().getCutOffTime());
-            return getOptimizedShippingMethod(consignmentModel, BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder()
-                            .getRentalStartDate(), BlCoreConstants.DATE_FORMAT),
-                    BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(), BlCoreConstants.DATE_FORMAT),
-                    result, consignmentModel.getOptimizedShippingType(),
-                    getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()),
-                    getAddressZip(consignmentModel.getShippingAddress()));
+            if(OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.getCode().equals(consignmentModel.getOptimizedShippingMethodType().getCode())) {
+                if (result >= BlInventoryScanLoggingConstants.TWO) {
+                    return checkTwoDayAir(consignmentModel, rentalStringStartDate, rentalEndDate);
+                } else {
+                    return checkNextDayAir(consignmentModel, rentalStringStartDate, rentalEndDate);
+                }
+            } else {
+                return getOptimizedShippingMethod(consignmentModel, rentalStringStartDate, rentalEndDate, result, consignmentModel.getOptimizedShippingType(),
+                        getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()),
+                        getAddressZip(consignmentModel.getShippingAddress()));
+            }
         }
         BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment :" + consignmentModel.getCode() + " can't be optimized as warehouse " +
                 "cutOff time is not passed yet");
@@ -211,6 +220,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                                                final String rentalEndDate, final int result,
                                                final OptimizedShippingMethodModel optimizedShippingMethodEnum, final int carrierId,
                                                final int warehouseCode, final String addressZip) {
+
         if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
             return checkTwoDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode())) {
@@ -427,6 +437,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
         if (result != BlInventoryScanLoggingConstants.ZERO) {
             final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
+            consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
             if(optimizedShippingType != null) {
                 if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
                     consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
@@ -438,6 +449,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             }
         } else {
             consignmentModel.setOptimizedShippingType(null);
+            consignmentModel.setOptimizedShippingMethodType(null);
         }
         getModelService().save(consignmentModel);
         getModelService().refresh(consignmentModel);

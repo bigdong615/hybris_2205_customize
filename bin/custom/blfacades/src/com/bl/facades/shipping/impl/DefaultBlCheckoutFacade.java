@@ -13,6 +13,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -29,7 +30,10 @@ import com.bl.integration.services.BlUPSAddressValidatorService;
 import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
 import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
@@ -83,8 +87,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
+    
+ 	 @Resource(name = "brainTreeTransactionService")
+ 	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
-    private BlGiftCardFacade blGiftCardFacade;
+    private BlCartService blCartService;
+	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -684,10 +692,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * @return true if same
      */
     private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
-        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
-            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+        if(addressRequestData.getLine1().trim().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().trim().equalsIgnoreCase(addressResponseData.getTown()) &&
             addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
-            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+            checkNumberEquality(addressRequestData.getPostalCode().trim(), addressResponseData.getPostalCode())) {
                         return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -847,7 +855,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return null;
         }
     }
-    
+    /**
+    	  * To create the auth transaction of the order
+    	  * @param cartModel the cart
+        * @param amountToAuthorize the amount
+        * @param submitForSettlement
+        * @param paymentInfo the payment info
+        * @return true if successful
+     */
+    @Override
+   public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
+   	 
+   	 return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(cartModel,amountToAuthorize, submitForSettlement, paymentInfo);
+    }
     /**
      * {@inheritDoc}
      */
@@ -895,7 +915,42 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
   }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateOrderTypes() {
+        blCartService.updateOrderTypes();
+}
+  
   /**
+   * It saves Gift Card Purchase Form
+   * @param GiftCardPurchaseForm the giftCardPurchaseForm
+   */
+    @Override
+    public boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm) {
+      try {
+          final CartModel cartModel = getCartService().getSessionCart();
+          if(Objects.nonNull(cartModel)){
+              cartModel.getEntries().forEach(cartEntry -> {
+                  cartEntry.setRecipientName(giftCardPurchaseForm.getName());
+                  cartEntry.setRecipientEmail(giftCardPurchaseForm.getEmail());
+                  cartEntry.setRecipientMessage(giftCardPurchaseForm.getMessage());
+                  getModelService().save(cartEntry);
+                  getModelService().refresh(cartEntry);
+              });
+              getModelService().save(cartModel);
+              getModelService().refresh(cartModel);
+              return Boolean.TRUE;
+          }
+          return Boolean.FALSE;
+      }catch(final Exception exception){
+          BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "Error while saving gift card purchase form", StringUtils.EMPTY);
+          return Boolean.FALSE;
+      }
+   }
+
+    /**
      * Gets the price value.
      *
      * @param priceData the price data
@@ -1032,5 +1087,32 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     public void setBlCheckoutCartCalculationStrategy(
         CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
+    }
+ 	 
+    /**
+	 * @return the brainTreeTransactionService
+	 */
+	public BrainTreeTransactionServiceImpl getBrainTreeTransactionService()
+	{
+		return brainTreeTransactionService;
+	}
+
+	/**
+	 * @param brainTreeTransactionService the brainTreeTransactionService to set
+	 */
+	public void setBrainTreeTransactionService(BrainTreeTransactionServiceImpl brainTreeTransactionService)
+	{
+		this.brainTreeTransactionService = brainTreeTransactionService;
+	}
+
+    public BlCartService getBlCartService() {
+        return blCartService;
+    }
+
+    /**
+     * @param blCartService the blCartService to set
+     */
+    public void setBlCartService(final BlCartService blCartService) {
+        this.blCartService = blCartService;
     }
 }

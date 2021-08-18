@@ -15,15 +15,13 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/rent/product/${entry.product.code}" var="productUrl" />
 <c:url value="/cart/update" var="cartUpdateFormAction" />
+<c:url value="/checkout/multi/payment-method/giftCardPaymentAdd" var="paymentPageUrl" />
 
 <div class="cartProduct">
 	<div class="row">
 		<div class="col-md-2 text-center mt-3">
-			<c:set
-				value="/blstorefront/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg"
-				var="altTextHtml1" />
-			<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-				title="${altText}" title="${altText}" />
+		<a href="#"><product:productPrimaryImage
+					product="${entry.product}" format="thumbnail" /></a>
 		</div>
 		<div class="col-md-6 mt-3">
 			<b>${entry.product.name}</b>
@@ -54,7 +52,7 @@
 	<div class="row mt-3">
 		<div class="col-md-10 offset-md-2">
 			<form:form method="POST" modelAttribute="giftCardPurchaseForm"
-				id="giftCardPurchaseForm">
+				id="giftCardPurchaseForm" action="${paymentPageUrl}">
 				<div class="gc-pdp-form">
 					<input type="text" class="form-control"
 						id="first-name"
@@ -68,13 +66,6 @@
 						name="message">${entry.recipientMessage}</textarea>
 				</div>
 			</form:form>
-		</div>
-	</div>
-	<div class="productNotifications row hide">
-		<div class="col-12">
-			<div class="notification notification-warning">
-				<spring:theme code="text.giftcard.PurchaseForm.product.warning" />
-			</div>
 		</div>
 	</div>
 </div>

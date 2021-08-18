@@ -12,7 +12,7 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
-import de.hybris.platform.commerceservices.model.PickUpDeliveryModeModel;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -23,7 +23,6 @@ import de.hybris.platform.storelocator.GPS;
 import de.hybris.platform.storelocator.GeoWebServiceWrapper;
 import de.hybris.platform.storelocator.data.AddressData;
 import de.hybris.platform.storelocator.exception.GeoServiceWrapperException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -47,7 +46,7 @@ public class GeocodeShippingAddressAction extends AbstractProceduralAction<Order
 		final OrderModel order = orderProcessModel.getOrder();
 		try
 		{
-			if (!(order.getDeliveryMode() instanceof PickUpDeliveryModeModel))
+			if (!(order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel))
 			{
 				LOG.debug("Getting GPS from delivery address...");
 				final GPS gps = getGeoWebServiceWrapper().geocodeAddress(
@@ -67,6 +66,7 @@ public class GeocodeShippingAddressAction extends AbstractProceduralAction<Order
 					deliveryAddress.setLongitude(gps.getDecimalLongitude());
 				}
 				getModelService().save(deliveryAddress);
+
 			}
 		}
 		catch (final ConversionException | GeoServiceWrapperException e)  //NOSONAR

@@ -5,6 +5,8 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
@@ -35,6 +37,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -86,7 +89,15 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setOrder(order);
       consignment.setStatus(ConsignmentStatus.READY);
       consignment.setDeliveryMode(order.getDeliveryMode());
-      consignment.setShippingAddress(order.getDeliveryAddress());
+
+      if (null != order.getDeliveryAddress()) {
+        consignment.setShippingAddress(order.getDeliveryAddress());
+      } else if (null != order.getDeliveryMode()) {
+
+        consignment.setShippingAddress(
+            ((BlPickUpZoneDeliveryModeModel) order.getDeliveryMode()).getInternalStoreAddress());
+      }
+
       consignment
           .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
 
@@ -124,9 +135,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
         if ((!serialStocks.isEmpty()) && serialStocks.stream()
             .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+
           this.optimizeShippingMethodForConsignment(consignment, result);
           this.getModelService().save(consignment);
           serialStocks.forEach(stock -> stock.setReservedStatus(true));
+
+          //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
+
           this.getModelService().saveAll(serialStocks);
 
           return consignment;
@@ -145,6 +160,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
       } else{   // used gear cart
 
+        //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.HARD_ASSIGNED);
         //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
         this.getModelService().save(consignment);
 
@@ -153,6 +169,38 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
+
+  /**
+   * Set assigned flag to hardAssign or softAssign for the serial products
+   *
+   * @param serialProducts  -  the serialProducts
+   * @param assigned   -  the assigned
+   */
+  private void setAssignedFlagOfSerialProduct(final Collection<Set<BlSerialProductModel>> serialProducts,
+      final String assigned) {
+
+    List<BlSerialProductModel> serialProductModelList = new ArrayList<>();
+    for (Set<BlSerialProductModel> serialProductSet : serialProducts) {
+
+      if (StringUtils.equalsIgnoreCase(assigned, BlCoreConstants.HARD_ASSIGNED)) {
+
+        serialProductSet.forEach(serialProduct -> serialProduct.setHardAssigned(true));
+      } else {
+
+        serialProductSet.forEach(serialProduct -> serialProduct.setSoftAssigned(true));
+      }
+      serialProductModelList.addAll(serialProductSet);
+    }
+
+    getSessionService()
+        .executeInLocalView(new SessionExecutionBody() {
+          @Override
+          public void executeWithoutResult() {
+            getSearchRestrictionService().disableSearchRestrictions();
+            getModelService().saveAll(serialProductModelList);
+          }
+        });
   }
 
   /**
@@ -203,6 +251,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setSerialProducts(new ArrayList<>(serialProductModels));   //setting serial products from result
 
     setItemsMap(entry, serialProductModels);
+    setSerialCodesToBillingCharges(entry, serialProductModels);
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
@@ -281,6 +330,22 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     });
 
     entry.setItems(itemsMap);
+  }
+  
+  /**
+   * Sets the serial codes to billing charges.
+   *
+   * @param entry
+   *           the entry
+   * @param serialProductModels
+   *           the serial product models
+   */
+  private void setSerialCodesToBillingCharges(final ConsignmentEntryModel consignmentEntry,
+		  final Set<BlSerialProductModel> serialProductModels)
+  {
+	  final Map<String, List<BlItemsBillingChargeModel>> billingCharges = serialProductModels.stream()
+			  .collect(Collectors.toMap(BlSerialProductModel::getCode, serial -> new ArrayList<BlItemsBillingChargeModel>()));
+	  consignmentEntry.setBillingCharges(billingCharges);
   }
 
   public BlStockLevelDao getBlStockLevelDao() {

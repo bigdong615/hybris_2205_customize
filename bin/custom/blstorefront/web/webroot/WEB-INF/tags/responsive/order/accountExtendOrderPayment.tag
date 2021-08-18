@@ -57,6 +57,8 @@
                      </c:forEach>
                   </ul>
                </select>
+               </br>
+               <a href="#" data-bs-toggle="modal" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
             </div>
          </div>
       </div>
@@ -140,6 +142,31 @@
                 	</div>
                 </c:if>
 
+    <!-- Modals -->
+    <div class="modal fade" id="addCrediCard" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="text.extend.order.credi.card"/></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+           <spring:theme code="text.extend.order.credi.card.message" />
+
+           <form id="extend-order-payment-add-form"action="${request.contextPath}/my-account/add-payment-method" method="GET">
+                     <input type="hidden" id="orderId" name="orderId" value="" />
+                            <c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
+                          <a href="" class="btn btn-block btn-primary mt-4 add-cc-extendOrderform" data-order="${order.code}:extendOrder"><spring:theme code="text.extend.order.credi.continue"/></a>
+                              <br>
+                          <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
+                          <spring:theme code="basket.save.cart.action.cancel"/> </a></p>
+                     </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 <script>
    var enableShippingAddress = "false";
    var addPaymentMethodsPage = "addPaymentMethodsPage";
@@ -167,6 +194,7 @@
    var googleMerchantId = "${googleMerchantId}";
    var googlePayCountryCode = "${googlePayCountryCode}";
    var googlePayEnabled = ${googlePayEnable};
+
 
 
 </script>

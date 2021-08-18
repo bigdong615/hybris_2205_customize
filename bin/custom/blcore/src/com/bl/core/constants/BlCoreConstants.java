@@ -13,6 +13,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 {
 	public static final String EXTENSIONNAME = "blcore";
 
+
 	// implement here constants used by this extension
 	public static final String QUOTE_BUYER_PROCESS = "quote-buyer-process";
 	public static final String QUOTE_SALES_REP_PROCESS = "quote-salesrep-process";
@@ -22,6 +23,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUOTE_EXPIRED_EMAIL_PROCESS = "quote-expired-email-process";
 	public static final String QUOTE_POST_CANCELLATION_PROCESS = "quote-post-cancellation-process";
 	public static final String EMPTY_STRING = "";
+	public static final int PRECISION = 2;
+
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
 
@@ -247,9 +250,21 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
 	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
-	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
+	public static final String CUSTOMER_RESPONSIBLE_REPAIR = "CUSTOMER_RESPONSIBLE_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
+  public static final String ACCEPTED = "ACCEPTED";
+
+	public static final String HARD_ASSIGNED = "hardAssign";
+	public static final String SOFT_ASSIGNED = "softAssign";
+	
+	public static final String BARCODE = "barcode";
+
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
 
 
 	public static final String DRIVING_LICENSE = "drivingLicense";
@@ -258,7 +273,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
 	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
 
-	private BlCoreConstants()
+
+  private BlCoreConstants()
 	{
 		//empty
 	}

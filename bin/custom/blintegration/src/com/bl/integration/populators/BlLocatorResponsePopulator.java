@@ -33,6 +33,9 @@ public class BlLocatorResponsePopulator {
       List<Object> locationList = searchResult.getDisclaimerAndDropLocation();
       if (CollectionUtils.isNotEmpty(locationList)) {
         for (int count = 0; count < locationList.size(); count++) {
+          if (count > (Integer.parseInt(maximumResult) - 1)) {
+            break;
+          }
           Object location = locationList.get(count);
           if (location instanceof DropLocationType) {
             DropLocationType dropLocation = (DropLocationType) location;
@@ -60,9 +63,6 @@ public class BlLocatorResponsePopulator {
                 CollectionUtils.isNotEmpty(dropLocation.getPhoneNumber()) ? dropLocation
                     .getPhoneNumber().get(0) : "");
             locatorResponseDTOList.add(locatorResponseData);
-          }
-          if (count > (Integer.parseInt(maximumResult) - 1)) {
-            break;
           }
         }
       }

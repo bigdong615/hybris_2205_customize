@@ -31,6 +31,7 @@ import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
+import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
@@ -78,9 +79,11 @@ import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,6 +95,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -156,7 +161,6 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
-	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
 	private static final String REDIRECT_TO_ORDER_HISTORY_PAGE = REDIRECT_PREFIX + "/my-account/orders";
 	private static final String REDIRECT_TO_CONSENT_MANAGEMENT = REDIRECT_PREFIX + "/my-account/consents";
 	private static final String REDIRECT_TO_VERIFICATION_IMAGES_PAGE = REDIRECT_PREFIX + "/my-account/verificationImages";
@@ -270,6 +274,12 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "blVerificationDocumentFacade")
 	private BlVerificationDocumentFacade blVerificationDocumentFacade;
+
+	@Resource(name = "configurationService")
+	private ConfigurationService configurationService;
+
+	@Resource(name = "userService")
+	private UserService userService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -494,10 +504,8 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String editEmail(final Model model) throws CMSItemNotFoundException
 	{
-		final CustomerData customerData = customerFacade.getCurrentCustomer();
 		final UpdateEmailForm updateEmailForm = new UpdateEmailForm();
 
-		updateEmailForm.setEmail(customerData.getDisplayUid());
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
 		model.addAttribute("updateEmailForm", updateEmailForm);
 		final ContentPageModel updateEmailPage = getContentPageForLabelOrId(UPDATE_EMAIL_CMS_PAGE);
@@ -514,9 +522,10 @@ public class AccountPageController extends AbstractSearchPageController
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getEmailValidator().validate(updateEmailForm, bindingResult);
+		final CustomerModel currentUser = (CustomerModel) userService.getCurrentUser();
 		String returnAction = REDIRECT_TO_UPDATE_EMAIL_PAGE;
 
-		if (!bindingResult.hasErrors() && !updateEmailForm.getEmail().equals(updateEmailForm.getChkEmail()))
+		if (!bindingResult.hasErrors() && BooleanUtils.isFalse(validateEmailAddress(updateEmailForm.getChkEmail())))
 		{
 			bindingResult.rejectValue("chkEmail", "validation.checkEmail.equals", new Object[] {}, "validation.checkEmail.equals");
 		}
@@ -525,12 +534,17 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 		}
+
+		else if(!StringUtils.equalsIgnoreCase(currentUser.getOriginalUid(),updateEmailForm.getEmail()) && !bindingResult.hasErrors()){
+			bindingResult.rejectValue("email", "profile.currentemail.unique", new Object[] {}, "profile.currentemail.unique");
+			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+		}
 		else
 		{
 			try
 			{
-				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
+				customerFacade.changeUid(updateEmailForm.getChkEmail(), updateEmailForm.getPassword());
+				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -542,17 +556,29 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage(PROFILE_CURRENT_PASSWORD_INVALID, null,getI18nService().getCurrentLocale()));
+			  redirectAttributes.addFlashAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 			}
 		}
 
 		return returnAction;
+	}
+
+	/**
+	 * To check the new email address format
+	 * @param email
+	 * @return
+	 */
+	protected boolean validateEmailAddress(final String email)
+	{
+		final Matcher matcher = Pattern
+				.compile(configurationService.getConfiguration().getString(WebConstants.EMAIL_REGEX))
+				.matcher(email);
+		return matcher.matches();
 	}
 
 	protected String setErrorMessagesAndCMSPage(final Model model, final String cmsPageLabelOrId) throws CMSItemNotFoundException
@@ -680,31 +706,29 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
-							PROFILE_CURRENT_PASSWORD_INVALID);
+					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+					model.addAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 				}
 			}
 			else
 			{
-				bindingResult.rejectValue("checkNewPassword", "validation.checkPwd.equals", new Object[] {},
-						"validation.checkPwd.equals");
+				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+				model.addAttribute(BlControllerConstants.CURRENTPASSWORD_MSG_TYPE,true);
 			}
 		}
 
 		if (bindingResult.hasErrors())
 		{
-			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
-			storeCmsPageInModel(model, updatePasswordPage);
-			setUpMetaDataForContentPage(model, updatePasswordPage);
-
 			model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.profile.updatePasswordForm"));
-			return getViewForPage(model);
 		}
 		else
 		{
-			redirectAttributes.addFlashAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
-			return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
+			model.addAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
 		}
+		final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
+		storeCmsPageInModel(model, updatePasswordPage);
+		setUpMetaDataForContentPage(model, updatePasswordPage);
+		return getViewForPage(model);
 	}
 
 	@RequestMapping(value = "/address-book", method = RequestMethod.GET)
@@ -980,7 +1004,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute("customerData", customerFacade.getCurrentCustomer());
 		model.addAttribute("paymentInfoData", userFacade.getCCPaymentInfos(true));
 		storeCmsPageInModel(model, getContentPageForLabelOrId(PAYMENT_DETAILS_CMS_PAGE));
-		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE));
+		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(PAYMENT_DETAILS_CMS_PAGE));
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.paymentDetails"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
@@ -1205,7 +1229,7 @@ public class AccountPageController extends AbstractSearchPageController
 	/**
 	 * This method used for renting the order again from order details page
 	 */
-	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@GetMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel ,
 			final HttpServletRequest request) throws CommerceCartModificationException {
@@ -1260,13 +1284,26 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request,
 			final HttpServletResponse response, final Model model, final RedirectAttributes redirectModel) throws CommerceCartModificationException {
 
-		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+		OrderData orderData = null;
+		try {
+			orderData = blOrderFacade
+					.setRentalExtendOrderDetails(orderCode, orderEndDate, selectedEndDate);
 
-		model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
 
-		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
-		{
-			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
+			return Account.AccountOrderExtendSummaryPage;
+		}
+		catch (final Exception e) {
+			orderData = new OrderData();
+			orderData.setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us"
+					+ "if you are unable to return your order by its scheduled return date.");
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderData);
+			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
+				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+			}
 		}
 		return Account.AccountOrderExtendSummaryPage;
 	}
@@ -1291,7 +1328,8 @@ public class AccountPageController extends AbstractSearchPageController
 				final String ipAddress = request.getRemoteAddr();
 				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
 				{
-					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , BlControllerConstants.COUPON_INVALID );
+					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null ,
+							getI18nService().getCurrentLocale()));
 				}
 				else
 				{
@@ -1365,7 +1403,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
-			if(null != orderModel) {
+			if(null != orderModel && BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
 
 				if(StringUtils.isNotBlank(poNumber)) {
 						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);

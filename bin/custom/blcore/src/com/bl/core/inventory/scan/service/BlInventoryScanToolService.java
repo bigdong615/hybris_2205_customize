@@ -78,6 +78,56 @@ public interface BlInventoryScanToolService {
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
     
  	/**
+ 	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
+ 	 *         been failed to update its location in db
+ 	 * @param barcodes
+ 	 *           for BlSerialProduct
+ 	 * @return Map<Integer, List<String>>
+ 	 */
+ 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes);
+
+ 	/**
+ 	 * method will verify the list of barcodes and result into list of failed barcodes that are not
+ 	 * valid as per the order
+ 	 * 
+ 	 * @param barcodes for SerialProducts
+ 	 * @param selectedConsignment for ConsignmentModel
+ 	 * @return Map<String, List<String>>
+ 	 */
+ 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	
+	/**
+	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
+	 * @param barcodes for serial product
+	 * @return the int
+	 */
+	public int checkValidTrackingId(final String barcodes);
+	
+	/**
+	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
+	 *         been failed to update its location in db
+	 * @param barcodes
+	 *           for BlSerialProduct
+	 * @return Map<Integer, List<String>>
+	 */
+	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes);
+
+	/**
+	 * This method will verify loction and update items to new working desk location
+	 */
+	public void updateToUpsBound();
+
+	/**
+	 * This method will verify valid location and return int with appropriate notification 
+	 * @param barcodes for serial products
+	 * @param defaultLocations for locations
+	 * @param memberAllowedLocationList for allowed members
+	 * @return int
+	 */
+	public int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations,
+			final List<String> memberAllowedLocationList);
+    
+ 	/**
 	  * This method will check the valid Location provided in barcode list and return int with appropriate
 	  * notification number to notify employee for DirtyCart and DirtyPriorityCart
 	  *
@@ -148,4 +198,20 @@ public interface BlInventoryScanToolService {
  	 *           newly placed order
  	 */
  	void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel order);
+
+	/**
+	 *This method will return true if BIN
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	boolean checkBINOrSerialScan(final List<String> barcodeList);
+
+	/**
+	 * This method will perform scan for BIN location
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	int doBINScanFromWebScanTool(final List<String> barcodeList);
 }

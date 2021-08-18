@@ -131,11 +131,13 @@
 					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 				 }
 				 
-				 $('#saved-payment-action-payBill').on('change',function(e){
-					 var optionSelected = $("option:selected", this);
-					 var paymentId = optionSelected.data("id");
-						var paymentnonce = optionSelected.data("nonce");
-						$("#paymentId").val(paymentId);
+				 $('#saved-payment-action-payBill').on('click','li',function(e){
+					 e.preventDefault();
+						var paymentId = $(this).find("button").data("id");
+						var paymentnonce = $(this).find("button").data("nonce");
+					    var buttonData = $(this).find("button").html();
+					    $("#savedCards").html(buttonData);
+					 	$("#paymentId").val(paymentId);
 						$("#paymentNonce").val(paymentnonce);
 				 });
 				 
@@ -1681,18 +1683,8 @@
                           				 btn.className = 'reset-button';
                           				 btn.addEventListener('click', (evt) => {
                           				 evt.preventDefault();
-                          				 $.ajax({
-                                              url: ACC.config.encodedContextPath + '/resetExtendDate',
-                                              type: "GET",
-                                              success: function (data) {
-                                              	if(data=='success')
-                                                  window.location.reload();
-                                              },
-                                              error: function (xhr, textStatus, error) {
-
-                                              }
-                                          });
-                          				});
+                                   window.location.reload();
+                                  });
                           				return btn;
                           				},
                                       setup: (picker) => {
@@ -1704,7 +1696,14 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
-                            	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
+                            	                    var dayOrDays = "";
+                            	                    if(($('#js-totalExtendDays').val() == 1)) {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Day';
+                            	                    }
+                            	                    else {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Days';
+                            	                    }
+                            	                    $('#js-totaldays-update').html(dayOrDays);
                             	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
                             	                    if($('#js-isAllProductExtendabe').val() !== '') {
                             	                    if($("#add-error-message").hasClass("d-none")){

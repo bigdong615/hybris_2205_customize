@@ -318,6 +318,8 @@ margin: 0;
     left: inherit !important;
     right:inherit !important;
   }
+  #featuredPromo span{left:24px !important;bottom:9% !important;}  
+  .expertHelpIcon {margin-top: 4px !important;}
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -452,7 +454,10 @@ margin: 0;
 .billingAddressForm input[type="checkbox"]{
   margin-left:-10px;
 }
-
+#featuredPromo .col-12{position: relative;}
+#featuredPromo span{position: absolute;left: 97px;;bottom: 30%;color: #000;font-size: 16px;}
+#featuredPromo span a b{color: #fff;font-weight:100;}
+#featuredPromo span a{color: #000;text-decoration: none;display: contents;}
 /* for Gift Card */
 .gift-card-plp{width: 100%;margin: 0 0 41px 0;height: 258px;}
 .gift-card-plp img{width: 100%;}
@@ -483,4 +488,38 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
     margin-right:8px;
 }
 
+.expertHelpIcon {
+    background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px !important;
+    margin-right: 10px;
+    margin-bottom: -5px;
+    background-size: contain;
+}
+.livechat{
+  display: block !important;
+}
 
+.title-case-rename {
+  text-transform: capitalize;
+}
+.renameSaveCartName-css{
+width:100%;
+}
+.changeEmail-error .help-block{
+margin:-14px 0 13px 0 !important;
+}
+.extend-price p{
+  margin: 0 0 1px 0;
+}
+.rental-bl-options .dropdown .dropdown-menu li {
+    border-bottom: 1px solid #d4d3d3;
+    display: flex;
+}
+.rental-bl-options .dropdown .dropdown-menu li span{
+    float: right!important;
+    margin: 14px 15px 0 0;
+} 

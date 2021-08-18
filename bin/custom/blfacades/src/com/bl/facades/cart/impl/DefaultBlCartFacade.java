@@ -2,6 +2,7 @@ package com.bl.facades.cart.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -103,6 +104,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   {
 	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
   }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode)
+	{
+		getBlCartService().updateCartEntrySelectedOption(entryNumber, optionCode);
+	}
   
   /**
    * {@inheritDoc}
@@ -167,12 +177,31 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     final CommerceCartModification commerceCartModification = getCommerceCartService()
         .addToCart(parameter);
-    setCartType(blSerialProductModel, cartModel, commerceCartModification);
+		setCartType(blSerialProductModel, cartModel, commerceCartModification);
+		updateCartOptionEntry(commerceCartModification.getEntry(),cartModel);
 
-    return getCartModificationConverter().convert(commerceCartModification);
+		return getCartModificationConverter().convert(commerceCartModification);
   }
-
-  
+	/**
+	 * Update cart options on entry
+	 * @param AbstractOrderEntryModel
+	 *           the orderEntry
+	 * @param CartModel
+	 *           the cartModel
+	 */
+  private void updateCartOptionEntry(final AbstractOrderEntryModel orderEntry, final CartModel cartModel ){
+	  	if(cartModel.getIsRentalCart() &&CollectionUtils.isNotEmpty(orderEntry.getOptions())){
+				final BlOptionsModel optionsModel = orderEntry.getOptions().iterator().next();
+				final Integer quantity = Integer.parseInt(orderEntry.getQuantity().toString());
+				List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+				for(int i = 0 ; i < quantity ; i++){
+					selectOptionList.add(optionsModel);
+				}
+				orderEntry.setOptions(selectOptionList);
+				getModelService().save(orderEntry);
+				getModelService().refresh(orderEntry);
+			}
+		}
   /**
 	 * It performs add to cart operation based on gift card.
 	 *
@@ -252,6 +281,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.FALSE);
           //Added code for serial status changes
 		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
+		  getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
 		  getModelService().save(blSerialProductModel);
       }
     }

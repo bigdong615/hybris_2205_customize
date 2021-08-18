@@ -363,6 +363,7 @@
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="numberSystem"/>
 					</wz:property-list>
 				</wz:content>
@@ -385,6 +386,7 @@
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+				<wz:assign property="newBlSerialProduct.manufacturerName" value="Other"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -403,6 +405,7 @@
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
 						<wz:property qualifier="cosmeticRating"/>
 						<wz:property qualifier="functionalRating"/>
@@ -725,8 +728,8 @@
                     </wz:custom-view>
                 </wz:content>
                 <wz:navigation id="step1.navigation">
-                    <wz:cancel/>
-                    <wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultWebScanToolHandler">
+                    <wz:cancel />
+                    <wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultWebScanToolHandler" align="left" >
                         <wz:parameter>
                             <wz:name>webScanToolDataModelKey</wz:name>
                             <wz:value>webScanToolData</wz:value>
@@ -782,13 +785,24 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
-
             <na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+			<na:notifications eventType="validBINLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.valid.BIN.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="validParentLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.valid.parent.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
         </na:notification-area>
     </context>
 
@@ -984,7 +998,7 @@
                 <advanced-search:field name="serialProduct" selected="true"/>
                 <advanced-search:field name="scanUser" selected="true"/>
                 <advanced-search:field name="blInventoryLocation" selected="true"/>
-                <advanced-search:field name="scanTime" selected="false"/>
+                <advanced-search:field name="scanTime" selected="true"/>
             </advanced-search:field-list>
         </advanced-search:advanced-search>
     </context>
@@ -1097,6 +1111,8 @@
 	      <list-view:column qualifier="reservedStatus"/>
 	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
+	      <list-view:column qualifier="serialStatus"/>
+	      <list-view:column qualifier="bufferedInventory"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1105,6 +1121,9 @@
 	      <advanced-search:field-list>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="date" selected="true"/>
 	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialProductCode" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialStatus" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="bufferedInventory" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="reservedStatus" selected="true"/>
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
@@ -1129,24 +1148,23 @@
 				</editorArea:tab>
 			</editorArea:editorArea>
 		</context>
-  	
-  	<context component="cseditorareaactions" type="Order" merge-by="type">
+		
+	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
-            <y:group qualifier="common">
-                <y:label>actiongroup.common</y:label>
-                <y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction" property="currentObject" />
-                <y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.cancelorderaction" property="currentObject"/>
-                <y:action action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentvoidaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentcaptureaction" property="currentObject"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxvoidaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxcommitaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxrequoteaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentreauthaction" property="currentObject" merge-mode="REMOVE"/>
-				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualdeliverycostcommitaction" property="currentObject" merge-mode="REMOVE"/>
-            </y:group>
-        </y:actions>
-    </context>
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction"
+					property="currentObject"/>
+				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
+					property="currentObject"/>
+				<y:action action-id="com.bl.blbackoffice.actions.order.customOrderRefundAction"
+					property="currentObject"/>
+				<y:action
+					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
+					property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
 
 	<!--BL-753 : OMS&WH - Different Teams - Order Notes and Customer Notes - Create Wizard for CS Role for Notes type -->
 	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
@@ -1160,7 +1178,6 @@
 					<wz:property-list root="newCSNotes">
 						<wz:property qualifier="type"/>
 						<wz:property qualifier="userID"/>
-						<wz:property qualifier="fraud"/>
 						<wz:property qualifier="note"/>
 					</wz:property-list>
 				</wz:content>
@@ -1173,6 +1190,13 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+	
+	<context type="Order" component="cs-listview" merge-by="type">
+        <list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
+            <list:column qualifier="actualRentalStartDate" label="blbackoffice.order.listview.actualRentalStartDate "/>
+            <list:column qualifier="date" merge-mode="REMOVE"/>
+        </list:list-view>
+    </context>
 
 
 
@@ -1207,7 +1231,10 @@
 							<editorArea:value>true</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
-					<editorArea:attribute qualifier="orderType" readonly="false" />
+					<editorArea:attribute qualifier="orderType"/>
+					<editorArea:attribute qualifier="isVipOrder" />
+					<editorArea:attribute qualifier="isRentalCart"/>
+					<editorArea:attribute qualifier="status"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1282,7 +1309,6 @@
 		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<list-view:column label="Type" qualifier="type"/>
 			<list-view:column label="UserID" qualifier="userID"/>
-			<list-view:column label="Fraud" qualifier="fraud"/>
 			<list-view:column label="Note" qualifier="note"/>
 		</list-view:list-view>
 	</context>
@@ -1463,6 +1489,8 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<!-- BL-863 : Front Desk Team Payment Capture Action  -->
 	<context type="Consignment" merge-by="type" component="editorareaactions"
 		principal="frontdeskuserrole">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1480,16 +1508,60 @@
 			<n:type-node code="FrontDeskQueue" id="FrontDeskQueue"/>
 		</n:explorer-tree>
 	</context>
+	
+		<context component="explorer-tree" principal="shippingteamuserrole">
+			<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+				<n:type-node code="Consignment" id="Consignment"/>
+				<n:type-node code="CleanCompleteOrderQueue" id="CleanCompleteOrderQueue"/>
+				<n:type-node code="IncompleteOrdersQueue" id="IncompleteOrdersQueue"/>
+				<n:type-node code="ShippingCompleteOrderQueue" id="ShippingCompleteOrderQueue"/>
+			</n:explorer-tree>
+		</context>
 
 	<context merge-by="type" type="FrontDeskQueue" component="advanced-search" parent="GenericItem"
 		principal="frontdeskuserrole">
-		<advanced-search:advanced-search>
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
-					name="actualRentalStartDate" selected="true" operator="greaterOrEquals"/>
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
+				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
+	
+		<context merge-by="type" type="ShippingCompleteOrderQueue" component="advanced-search"
+		parent="GenericItem" principal="shippingteamuserrole">
+			<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
+				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context merge-by="type" type="IncompleteOrdersQueue" component="advanced-search"
+		parent="GenericItem" principal="shippingteamuserrole">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
+				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context merge-by="type" type="CleanCompleteOrderQueue" component="advanced-search"
+		parent="GenericItem" principal="shippingteamuserrole">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
+					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
+				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+	
 
 	<!--FronDeskUser Role perspective Ends here -->
 
@@ -1542,7 +1614,13 @@
 					<editorArea:attribute qualifier="functionalRating"/>
 					<editorArea:attribute qualifier="conditionRatingOverallScore"/>
 					<editorArea:attribute qualifier="associatedConsignment"/>
+					<editorArea:attribute qualifier="consignmentEntry"/>
 					<editorArea:attribute qualifier="testingStatus"/>
+				</editorArea:section>
+			</editorArea:tab>
+			<editorArea:tab name="hmc.tab.blSerial.repair.log" position="2">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="serialRepairLogs"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -1704,12 +1782,17 @@
 	<context type="ExportAllDirtyPrioritySerials" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="orderNumber"/>
-			<list-view:column qualifier="orderTypeFlag"/>
-			<list-view:column qualifier="orderNotes"/>
-			<list-view:column qualifier="productName"/>
-			<list-view:column qualifier="serialNumber"/>
-			<list-view:column qualifier="ocLocationCode"/>
-			<list-view:column qualifier="serialDirtyPriorityFlag"/>
+            <list-view:column qualifier="orderTypeFlag"/>
+            <list-view:column qualifier="isVipOrder"/>
+            <list-view:column qualifier="isUsedGearOrder"/>
+            <list-view:column qualifier="orderNotes"/>
+            <list-view:column qualifier="productCode"/>
+            <list-view:column qualifier="productName"/>
+            <list-view:column qualifier="serialNumber"/>
+            <list-view:column qualifier="warehouseCode"/>
+            <list-view:column qualifier="ocParentLocationCode"/>
+            <list-view:column qualifier="ocLocationCode"/>
+            <list-view:column qualifier="serialDirtyPriorityFlag"/>
 		</list-view:list-view>
 	</context>
 	<!--BL-820 ExportAllDirtySerials End-->
@@ -1732,7 +1815,13 @@
 			</y:labels>
 		</y:base>
 	</context>
-
+	<context type="GiftCard" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>code+ ' - ' +amount</y:label>
+			</y:labels>
+		</y:base>
+	</context>
 	<context type="GiftCard" component="create-wizard-no-save">
 		<wz:flow id="giftCardCreateWizard" title="customersupport.backoffice.giftcard.title" >
 			<wz:prepare id="giftCardPrepare">
@@ -1803,7 +1892,7 @@
 			</wz:step>
 		</wz:flow>
 	</context>
-	
+
 	<!--  For Verification Agent -->
 	<context component="explorer-tree" principal="verificationdocagentrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
@@ -1860,6 +1949,7 @@
 				<ea:section name="hmc.properties">
 					<ea:attribute qualifier="documentType" />
 					<ea:attribute qualifier="expiryDate" />
+					<ea:attribute qualifier="creationTime" />
 				</ea:section>
 			</ea:tab>
 		</ea:editorArea>
@@ -1940,6 +2030,226 @@
 		</wz:flow>
 	</context>
 
+	<context component="explorer-tree" principal="blinventoryuserrole">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+			<n:navigation-node id="blinventoryscan_pick_path">
+				<n:type-node code="MarkReadyToShipConsignmentsCleanJob" id="blnventoryscan_mark_consignment_clean_job"/>
+				<n:type-node code="InventoryInCompleteOrdersQueue" id="blinventory_incomplete_orders"/>
+				<n:type-node code="InventoryCompleteOrdersQueue" id="blinventory_complete_orders"/>
+			</n:navigation-node>
+			<n:navigation-node id="blnventoryscan_morning_pull">
+				<n:type-node code="PullReadyToShipOrdersCronJob" id="blnventoryscan_morning_pull_job"/>
+				<n:type-node code="MorningPullOrdersQueue" id="blnventoryscan_morning_pull_queue"/>
+			</n:navigation-node>
+			<n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
+			<n:type-node code="Order" id="Order"/>
+			<n:type-node code="Consignment" id="Consignment"/>
+			<n:navigation-node id="StockLevel">
+				<n:type-node code="StockLevel" id="StockLevel"/>
+			</n:navigation-node>
+		</n:explorer-tree>
+	</context>
+	
+		<context parent="GenericItem" type="Order" component="cs-editor-area">
+        <editorArea:editorArea name="Order editor area" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="customersupportbackoffice.order.tab.consignments">
+                <editorArea:section name="customersupportbackoffice.section.order.hierarchy.consignments">
+                    <editorArea:panel name="customersupport_backoffice_consignments_panel">
+                        <editorArea:attribute
+                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+                                qualifier="consignments" readonly="true" label="customersupportbackoffice.section.entries">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>listConfigContext</editorArea:name>
+                                <editorArea:value>referenceListViewConsignments</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:panel>
+                </editorArea:section>
+            </editorArea:tab>
+  		</editorArea:editorArea>
+    	</context>
+
+		<context type="InHouseRepairLog" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>@labelService.getObjectLabel(itemtype)+ ' - ' +repairLogStatus</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	
+	<context type="VendorRepairLog" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>@labelService.getObjectLabel(itemtype)+ ' - ' +repairLogStatus</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	
+	<context type="CustomerResponsibleRepairLog" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>@labelService.getObjectLabel(itemtype)+ ' - ' +repairLogStatus</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	
+	<context type="PartsNeededRepairLog" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>@labelService.getObjectLabel(itemtype)+ ' - ' +repairLogStatus</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+    
+    <context type="BlRepairLog" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
+			<advanced-search:field-list>
+				<advanced-search:field mandatory="false" name="itemBarcode" selected="true"/>
+                <advanced-search:field mandatory="false" name="repairLogStatus" selected="false"/>
+              	<advanced-search:field mandatory="false" name="serialCode" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlRepairLog" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="itemtype"/>
+            <list-view:column qualifier="repairLogStatus"/>
+            <list-view:column qualifier="serialCode"/>
+            <list-view:column qualifier="itemBarcode"/>
+		</list-view:list-view>
+	</context>
+	
+	<context type="BlRepairLog" component="create-wizard">
+		<wz:flow id="repairLogCreateWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="repairLogPrepare">
+				<wz:initialize property="newRepairLog" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step0" label="hmc.essential">
+				<wz:content>
+					<wz:property-list root="newRepairLog">
+						<wz:property qualifier="itemBarcode"  />
+						<wz:property qualifier="repairLogStatus"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step0.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newRepairLog"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	
+	<!--BL-800 Repair Serials Queue-->
+	<context type="RemainingRepairItems" component="advanced-search">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context parent="GenericItem" type="RemainingRepairItems" component="listview">
+		<list-view:list-view>
+			<list-view:column qualifier="serialCode"/>
+            <list-view:column qualifier="barcode"/>
+            <list-view:column qualifier="orderNumber"/>
+            <list-view:column qualifier="ocLocation"/>
+            <list-view:column qualifier="isPrioritySerial"/>
+		</list-view:list-view>
+	</context>
+	
+	<context component="explorer-tree" merge-by="module">
+        <n:explorer-tree>
+            <n:navigation-node id="Repairs">
+				<n:type-node id="RepairLog" code="BlRepairLog"/>
+				<n:type-node id="RemainingRepairItems" code="RemainingRepairItems"/>
+			</n:navigation-node>
+        </n:explorer-tree>
+    </context>
+    
+    <context merge-by="type" type="BlRepairLog" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="repairTechsForClaim"/>
+					<editorArea:attribute qualifier="recommendToRepair"/>
+					<editorArea:attribute qualifier="order"/>
+					<editorArea:attribute qualifier="lastRepairReturnDay"/>
+					<editorArea:attribute qualifier="repairAssessment"/>
+					<editorArea:attribute qualifier="otherDocument"/>
+					<editorArea:attribute qualifier="repairLogStatus"/>
+					<editorArea:attribute qualifier="overallSpend"/>
+					<editorArea:attribute qualifier="returnOnInvestment"/>
+					<editorArea:attribute qualifier="costForParts"/>
+					<editorArea:attribute qualifier="costForLabor"/>
+					<editorArea:attribute qualifier="itemBarcode"/>
+					<editorArea:attribute qualifier="serialCode"/>
+					<editorArea:attribute qualifier="associatedConsignment"/>
+					<editorArea:attribute qualifier="consignmentEntry"/>
+					<editorArea:attribute qualifier="userId"/>
+					<editorArea:attribute qualifier="damageWaiverPaid"/>
+					<editorArea:attribute qualifier="serialProduct"/>
+				</editorArea:section>
+			</editorArea:tab>
+			<editorArea:tab name="hmc.tab.blRepair.log.tech.eng.tab" position="2">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="repairReasons"/>
+					<editorArea:attribute qualifier="otherRepairReasons"/>
+					<editorArea:attribute qualifier="notesOnIssue"/>
+					<editorArea:attribute qualifier="frequency"/>
+					<editorArea:attribute qualifier="cause"/>
+					<editorArea:attribute qualifier="blame"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+	
+	<context merge-by="type" parent="BlRepairLog" type="VendorRepairLog" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
+					<editorArea:attribute qualifier="repairVendor"/>
+					<editorArea:attribute qualifier="dateSent"/>
+					<editorArea:attribute qualifier="dateReturned"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+	
+	<context merge-by="type" parent="BlRepairLog" type="CustomerResponsibleRepairLog" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
+					<editorArea:attribute qualifier="customerAlerted"/>
+					<editorArea:attribute qualifier="repairVendor"/>
+					<editorArea:attribute qualifier="dateSent"/>
+					<editorArea:attribute qualifier="dateReturned"/>
+					<editorArea:attribute qualifier="gearGaurdAvailable"/>
+					<editorArea:attribute qualifier="customerChargeCost"/>
+					<editorArea:attribute qualifier="estimateApprovedCost"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+	
+	<context merge-by="type" parent="BlRepairLog" type="PartsNeededRepairLog" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
+					<editorArea:attribute qualifier="repairVendor"/>
+					<editorArea:attribute qualifier="subStatus"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+    
+    <!--BL-800 Repair Serials Queue End-->
+	
 </config>
 
 

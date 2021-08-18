@@ -12,6 +12,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
+import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -20,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+
 
 /** *
  * @author Namrata Lohar
@@ -71,7 +73,20 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
-    
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public PackagingInfoModel getPackageInfoByCode(final String lastScannedItem) {
+   	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {trackingNumber} = ?lastScannedItem";
+       final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+       query.addQueryParameter(BlInventoryScanLoggingConstants.LAST_SCANNED_ITEM, lastScannedItem);
+       final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE, lastScannedItem);
+       return CollectionUtils.isEmpty(results) ? null : results.get(0);
+    }
     /**
  	 * {@inheritDoc}
  	 */
@@ -94,8 +109,10 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	@Override
  	public Collection<ConsignmentModel> getTodaysShippingOrders()
  	{
- 		final String barcodeList = "select distinct({c:pk}) from {Consignment as c} where to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = "
- 				+ "?currentDate";
+ 		final StringBuilder barcodeList = new StringBuilder();
+ 		barcodeList.append("select distinct({c:pk}) from {Consignment as c} where ");
+ 		barcodeList.append(Config.isSQLServerUsed() ? "CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = ?currentDate" 
+ 				: "to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = ?currentDate");
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
@@ -119,18 +136,20 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : null;
  	}
- 	
+
  	/**
  	 * {@inheritDoc}
  	 */
  	@Override
  	public Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial)
  	{
- 		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
- 				+ "{ConsignmentStatus as cs} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
- 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = "
- 				+ "?currentDate";
- 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+ 		final StringBuilder barcodeList = new StringBuilder();
+ 		barcodeList.append("select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {ConsignmentStatus as cs} ");
+ 		barcodeList.append("where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) ");
+ 		barcodeList.append("and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and "); 		
+ 		barcodeList.append(Config.isSQLServerUsed() ? "CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = ?currentDate" 
+ 				: "to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = ?currentDate");
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList.toString());
  		query.addQueryParameter("serial", serial);
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
@@ -138,7 +157,6 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
-
     public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;
     }

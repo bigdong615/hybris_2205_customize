@@ -92,8 +92,20 @@ ACC.account = {
 							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
+							var pageType=$('.js-page-type').val();
+              if(pageType == null || pageType == undefined){
+               pageType = '';
+              	}
+              	// Track Tealium event for successful register.
+              	var userId =$('#register-form-id').val();
+              	utag.link({
+                   "tealium_event"    : "user_register",
+                   "user_email"     : '"'+userId+'"',
+                    "newRegistration" : "1"
+                      });
 							window.mediator.publish('registerClick',{
-                   userId: $('#register-form-id').val()
+                   userId: userId,
+                   pageType:pageType
                  });
 								location.reload();
 							}else{
@@ -156,12 +168,23 @@ ACC.account = {
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or Password was incorrect");
-						} else {
+						} 
+						else if(response === 'login.error.account.deactivate.title') 
+						{
+							$("#errorMessages_login").removeClass("d-none");
+							$("#errorMessages_login").html(ACC.deActivateAccount.login);
+						}
+						else {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
+							var pageType=$('.js-page-type').val();
+               if(pageType == null || pageType == undefined){
+                 pageType = '';
+             	}
 							 window.mediator.publish('loginClick',{
-                    userId: $('#j_username').val()
+                    userId: $('#j_username').val(),
+                     pageType:pageType
                   });
 								location.reload();
 							}

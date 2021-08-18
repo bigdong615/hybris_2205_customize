@@ -38,7 +38,7 @@ public interface BrainTreeUserFacade extends UserFacade
 	BrainTreePaymentInfoModel addPaymentMethod(BrainTreeSubscriptionInfoData subscriptionInfoData);
 
 	boolean editPaymentMethod(final CCPaymentInfoData paymentInfo, final String expirationDate, String cvv,
-			final AddressData addressData);
+			final AddressData addressData, final String defaultCard);
 
 	/**
 	 * This method is responsible for setting default billing address.

@@ -61,10 +61,24 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
  	damageWaiverUpdateForm.submit();
+ });
+ 
+//Script to apply the selected bl-options from the dropdown on the cart page
+ $('ul.bl-options-update').on('click','li',function(e){
+ 	e.preventDefault();
+ 	var entryNumber = $(this).find("a").data('entry');
+ 	var blOptions = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+ 	var blOptionsUpdateForm = $('#updateBlOptionsForm');
+ 	blOptionsUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
+ 	blOptionsUpdateForm.find('input[name=bloptions]:hidden').val(blOptions);
+ 	blOptionsUpdateForm.submit();
  });
 
  //BL-454 add to cart
@@ -83,10 +97,43 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        $('.page-loader-new-layout').show();
                                    },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                                      // Tealium event for ATC
+                                       utag.link({
+                                           "tealium_event" : "cart_add",
+                                           "productSKU"    : '["'+productCode+'"]',
+                                           "ProductName"   : '["'+productName+'"]',
+                                           "quantity"      : '["'+quantity+'"]',
+                                           "add_to_cart_rental"  : "1",
+                                           "isBuy"            : "0"
+                                       });
+
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
@@ -97,6 +144,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
                                    },
                                    complete : function() {
                                       $('.page-loader-new-layout').hide();
@@ -321,6 +369,10 @@ $('#add-to-gc').click(function(e) {
     if (amount < 25 || amount > 500) {
         $('.notification').show();
         return false;
+    }
+    else{
+    	$('.notification').hide();
+    	$('#signIn').modal('show');
     }
 });
 
@@ -666,6 +718,7 @@ $('.emailSubscr_btn').click(function (e){
 					}
 				}
 			});
+			$("#emailSubscr_txt").val("");
 });
 
 //Added code for used gear addToCart 
@@ -799,17 +852,27 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
-        /*       $('.page-loader-new-layout').hide();
         var form = $('#giftCardPurchaseForm');
         var amount = form.find('input[name=amount]').val();
         if (amount < 25 || amount > 500) {
             $('.notification').show();
+            $("body").removeClass("modal-open");
+            $("body").removeAttr("style");
+            $('tn-gift-card-pdp').show();
+            $(".modal-backdrop").remove();
             return false;
-        }*/
+        }
+        if (amount >25 || amount < 500){
+        	 $('.notification').hide();
+        }
          var form = $('#giftCardPurchaseForm');
     
          var productCode = $(this).attr('data-product-code');
          var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
          var redirectToCart = false;
          if(serialCode == '' || serialCode == undefined){
          serialCode = "serialCodeNotPresent";
@@ -871,6 +934,18 @@ function startUsedGearCartTimer() {
                     	var addToCartLayer = response.addToUsedCartLayer;
                     	if(addToCartLayer == undefined || addToCartLayer == '')
                     	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
+                       // Tealium event for ATC
+                       utag.link({
+                             "tealium_event" : "cart_add",
+                              "productSKU"    : '["'+productCode+'"]',
+                              "ProductName"   : '["'+productName+'"]',
+                              "quantity"      : '["'+quantity+'"]',
+                               "add_to_cart_used"  : "1",
+                               "isBuy"            : "1"
+                                });
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}
@@ -944,16 +1019,38 @@ $('#placeOrderSummary').on("click", function(e) {
 	$('#placeOrder').click();
 });
 
-$('#placeOrder').on(
-		"click",
-		function(e) {
-			var submitForm = $("#placeOrderForm1");
-			var csrfTokan = createHiddenParameter("CSRFToken",
-					$(ACC.config.CSRFToken));
-			submitForm.append($(csrfTokan));
-			submitForm.submit();
-		});
-
+ var reviewPageError = $('.js-reviewPage-error').val();
+   if( reviewPageError!= undefined &&  reviewPageError!=null){
+    reviewPageError = reviewPageError.trim();
+     	utag.link({
+        "tealium_event"    : "place_order_error",
+         "checkout_error"     : '"'+reviewPageError+'"'
+          });
+     window.mediator.publish('placeOrderClick', {
+    	reviewPageError: reviewPageError
+    	});
+    }
+ $('#placeOrder').on(
+			"click",
+			function(e) {
+				var submitForm = $("#placeOrderForm1");
+				
+				var csrfTokan = createHiddenParameter("CSRFToken",
+						$(ACC.config.CSRFToken));
+				if($("#giftCardPurchaseForm").length > 0)
+				{
+					var giftCardForm = $("#giftCardPurchaseForm");
+					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
+					var email = createHiddenParameter("email",giftCardForm.find('input[name="email"]').val());
+					var message = createHiddenParameter("message",giftCardForm.find('textarea[name="message"]').val());
+					submitForm.append($(name));
+					submitForm.append($(email));
+					submitForm.append($(message));
+				}			
+				submitForm.append($(csrfTokan));			
+				submitForm.submit();
+});
+   
 //Handled min and max character for order notes.
 var inputQuantity = [];
 $(function() {
@@ -983,3 +1080,9 @@ function hideShorting(){
    });
   }; 
   hideShorting();
+  
+  $("#submitCard").on("click",function(e) {
+	  e.preventDefault();
+		var submitForm = $("#giftCardPurchaseForm");
+		submitForm.submit();
+  });

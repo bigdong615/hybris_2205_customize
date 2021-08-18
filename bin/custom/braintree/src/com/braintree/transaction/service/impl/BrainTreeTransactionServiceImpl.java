@@ -1076,7 +1076,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		braintreePaymentTransaction
 				.setPlannedAmount(paymentTransactionEntry.getAmount().setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
 
-		if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {
+		if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {
 			BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
 			braintreePaymentTransaction.setInfo(paymentInfo);
 		}

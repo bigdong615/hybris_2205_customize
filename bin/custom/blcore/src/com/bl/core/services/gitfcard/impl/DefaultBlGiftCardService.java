@@ -62,6 +62,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * giftCardBalanceAmount));
+             Double movementAmount = 0.0;
+             Double giftCardBalance = 0.0;
+            if(null != movement.getAmount()){
+              movementAmount = movement.getAmount();
+            }
+            if(null != giftCardModel.getBalance()){
+              giftCardBalance = giftCardModel.getBalance();
+            }
+            movement.setBalanceAmount(movementAmount + giftCardBalance); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
@@ -73,6 +82,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
             movement.setCommitted(Boolean.FALSE);
             movement.setAmount((-1 * totalplustax));
+            Double movementAmount = 0.0;
+            Double giftCardBalance = 0.0;
+            if(null != movement.getAmount()){
+              movementAmount = movement.getAmount();
+            }
+            if(null != giftCardModel.getBalance()){
+              giftCardBalance = giftCardModel.getBalance();
+            }
+            movement.setBalanceAmount(movementAmount + giftCardBalance); // To set balance amount for every movement
             movement.setCurrency(order.getCurrency());
             movement.setGiftCard(giftCardModel);
             movement.setTransactionId(order.getCode() + "_" + ++transactionId);
@@ -296,7 +314,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
   @Override
   public boolean validateGiftCardBeforePlaceOrder(final OrderModel order) {
     return CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getGiftCardAmount() != null &&
-        order.getGiftCardAmount().equals(order.getGrandTotal());
+        order.getGiftCardAmount().compareTo(order.getGrandTotal()) == 0;
   }
 
   /**
