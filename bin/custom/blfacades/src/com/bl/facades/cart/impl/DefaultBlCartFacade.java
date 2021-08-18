@@ -339,11 +339,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
 	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode) {
 
-		CartModel cartModel = blCartService.getSessionCart();
+		final CartModel cartModel = blCartService.getSessionCart();
     BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
     if( BooleanUtils.isTrue(blProductModel.getRetailGear())) {
-
       if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
         return cartModel.getIsNewGearOrder() != null && BooleanUtils
             .isFalse(cartModel.getIsNewGearOrder()) ;
