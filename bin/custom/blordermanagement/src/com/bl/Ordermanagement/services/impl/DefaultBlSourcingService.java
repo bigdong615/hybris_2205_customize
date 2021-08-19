@@ -91,9 +91,9 @@ public class DefaultBlSourcingService implements BlSourcingService {
       updateShippingDatesForInternalTransfers(order, context.getResult());
 
       return context.getResult();
-    } catch (final BlSourcingException blse) {
+    } catch (final BlSourcingException exception) {
 
-      throw new BlSourcingException("Error while doing the order sourcing.", blse);
+      throw exception;
     } catch (final Exception e) {
 
       if (null != order) {
