@@ -86,7 +86,7 @@
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
-              <c:if test="${isNewGear}">
+              <c:if test="${product.retailGear ne true}">
              <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <c:choose>
                             	<c:when test="${not empty productReferences and productsLimit > 0}">
