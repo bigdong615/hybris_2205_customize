@@ -18,7 +18,7 @@
 	<div class="row">
 		<div class="col-12">
 				<b class="mt-4"><spring:theme code="text.gift.title"/></b>
-				<c:if test="${not empty coupon_applied_msg}">
+				<c:if test="${not empty coupon_applied_msg && giftCardStatus eq 'success'}">
 				<div class="notification notification-warning" style="font-size: 13px;">
         		<spring:theme code="text.gift.card.disclaimer"/>
         </div>

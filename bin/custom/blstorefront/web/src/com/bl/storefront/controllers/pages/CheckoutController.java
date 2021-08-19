@@ -419,7 +419,9 @@ public class CheckoutController extends AbstractCheckoutController
 				}
 			}
 			try {
-				return handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
+				String giftCardStatus = handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
+				model.addAttribute("giftCardStatus",giftCardStatus);
+				return giftCardStatus;
 			} catch (final Exception exception) {
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 						"Error occurred while applying gift card code: {} on cart: {} for the customer: {}",
