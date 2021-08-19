@@ -73,6 +73,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         // Calculate the order now that it has been copied
         try
         {
+          orderModel.setIsOrderSubmit(Boolean.TRUE);
           getCalculationService().calculateTotals(orderModel, false);
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }

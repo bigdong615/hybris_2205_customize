@@ -42,11 +42,11 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
         getCalculationService().calculate(order);
         getModelService().save(order);
         getModelService().refresh(order);
+        this.sendOutput(SOCKET_OUT_CONTEXT, order);
       } catch (final CalculationException e) {
         BlLogger.logFormattedMessage(LOG, Level.ERROR,
             "Error while Calculating Tax for order with nummber {}", order.getCode());
       }
-    this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
     return new ActionResult(SUCCESS);
       }
     return new ActionResult(SUCCESS);
