@@ -38,6 +38,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateQuantityForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCartFormValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
@@ -114,6 +115,7 @@ public class CartPageController extends AbstractCartPageController
 	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	private static final String REDIRECT_QUOTE_EDIT_URL = REDIRECT_PREFIX + "/quote/%s/edit/";
 	private static final String REDIRECT_QUOTE_VIEW_URL = REDIRECT_PREFIX + "/my-account/my-quotes/%s/";
+	private static final String REDIRECT_EMPTY_CART = REDIRECT_PREFIX+"/cart/emptyCart";
 
 
 	private static final Logger LOG = Logger.getLogger(CartPageController.class);
@@ -190,7 +192,13 @@ public class CartPageController extends AbstractCartPageController
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-
+		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
+					((AssistedServiceSession) getSessionService()
+							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
+				return REDIRECT_EMPTY_CART;
+			}
+		}
 		if(Objects.nonNull(cartModel)){
 		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel);
 		}
