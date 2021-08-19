@@ -91,19 +91,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
       updateShippingDatesForInternalTransfers(order, context.getResult());
 
       return context.getResult();
-    } catch (final BlSourcingException exception) {
+    } catch (final BlSourcingException blSourcingException) {
+
+      throw blSourcingException;
+    } catch (final Exception exception) {
 
       throw exception;
-    } catch (final Exception e) {
-
-      if (null != order) {
-        order.setStatus(OrderStatus.SUSPENDED);
-        modelService.save(order);
-      }
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(),
-          "Error occurred while creating SourcingResults. Changing order status to SUSPENDED", e);
-
-      return null;
     }
 
   }
