@@ -181,6 +181,19 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		return listOfWarehouses;
 	}
 
+
+	@Override
+	protected void validateDelivery(final CartModel cartModel) {
+		if (cartModel.getDeliveryAddress() != null)
+		{
+			if (!isGuestUserCart(cartModel) && !getUserService().getCurrentUser().equals(cartModel.getUser()))
+			{
+				cartModel.setDeliveryAddress(null);
+				getModelService().save(cartModel);
+			}
+		}
+	}
+
 	/**
 	 * @return the blCommerceStockService
 	 */
