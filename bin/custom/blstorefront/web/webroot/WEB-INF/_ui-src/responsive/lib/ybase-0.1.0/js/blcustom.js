@@ -118,7 +118,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                        var productName = $('#productName').val();
-                                       var productCode = $('#productCode').val();
                                        var productBrand =$('#productBrand').val();
                                        var productType = $('#productType').val();
                                        var productCategory = $('#productCategory').val()
