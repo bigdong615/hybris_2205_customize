@@ -218,9 +218,9 @@ public class CreatePackageController extends DefaultWidgetController
 	public void packageSelectedProduct()
 	{
 		if (CollectionUtils.isNotEmpty(this.allSerialProducts) && this.selectedProduct != null
-				&& this.selectedProduct.getValue().contains("_"))
+				&& this.selectedProduct.getValue().contains("##"))
 		{
-			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("_");
+			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("##");
 			for (final BlProductModel serialProduct : this.allSerialProducts)
 			{
 				BlLogger.logMessage(LOG, Level.INFO, "************ Selected Serial Product ***********" + serialProduct);

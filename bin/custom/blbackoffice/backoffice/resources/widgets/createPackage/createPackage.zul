@@ -85,7 +85,7 @@
             void doChecked() {
             alert(self.getId());
             alert(self.isChecked());
-				selectedProduct.setValue(self.getId()+"_"+self.isChecked());
+				selectedProduct.setValue(self.getId()+"##"+self.isChecked());
 				Events.postEvent("onChange", selectedProduct, null);
             }
         ]]></zscript>
