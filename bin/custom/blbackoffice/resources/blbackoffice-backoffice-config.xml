@@ -765,7 +765,25 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
-            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+			<na:notifications eventType="oneBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.one.barcode.limit.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="maxBarcodeLimitEQErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.eq.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="maxBinLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.bin.limit.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+            <na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
@@ -795,6 +813,12 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+			<na:notifications eventType="scanBINSuccess" level="SUCCESS" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.bin.scan.success</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
 			<na:notifications eventType="validBINLocationErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.valid.BIN.location.failure</na:message>
 				<na:references linksEnabled="true">
