@@ -22,14 +22,14 @@
                     <a href="${cart}" class="text-decoration-none">
                     <span class="step1 complete">
                         <i class="icon-check"></i>
-                        <c:choose>
-                            <c:when test="${cartData.isRentalCart}">
-                                <spring:theme code="text.checkout.multi.order.rental"/>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:theme code="text.checkout.multi.order.UsedGear"/>
-                            </c:otherwise>
-                        </c:choose>
+                            <c:choose>
+                                <c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
+                                    <spring:theme code="text.checkout.multi.order.rental"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:theme code="text.checkout.multi.order.UsedGear"/>
+                                </c:otherwise>
+                            </c:choose>
                     </span>
                     </a>
                     <a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
@@ -52,7 +52,7 @@
                         <div id="order" class="col-lg-7">
                             <h1><spring:theme code="text.checkout.multi.order.Delivery"/></h1>
                             <hr>
-                            <c:if test="${cartData.isRentalCart}">
+                            <c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
                             <p>
                                 <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
                                 <input type="text" class="form-control cart-picker" id="litepicker"
@@ -62,18 +62,23 @@
                             <input type="hidden" value="${shippingMethod}" id="shippingMethod">
                             <input type="hidden" value="${previousPage}" id="previousPage">
                             <div class="accordion" id="shippingOptions">
-
+                            <c:if test="${cartData.isNewGearOrder eq false}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fast/>
                                 </div>
+                            </c:if>
+                            <c:if test="${cartData.isNewGearOrder eq true}">
+                            <input type="hidden" class="js-new-gear-shipping-page" value="true"/>
+                            </c:if>
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
-                                <c:if test="${cartData.isRentalCart}">
+                            <c:if test="${cartData.isNewGearOrder eq false}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
-                                 </c:if>
+                            </c:if>
+
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
@@ -87,11 +92,11 @@
                             <div id="showErrorForInvalidPhoneInputValidation">
 
                             </div>
-                            <div id="showErrorForUPSOrPickAddressError">
+                             <div id="showErrorForUPSOrPickAddressError">
 
                             </div>
                             <div class="cart-actions">
-                                <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+                          <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <c:choose>
                                   <c:when test="${isReplacementOrderCart eq true}">
                                    <checkout:blReplacementOrder/>
@@ -132,19 +137,22 @@
                                      </c:forEach>
                                  </c:if>
                                   <c:choose>
-                                                      <c:when test="${isReplacementOrderCart eq true}">
+                                  <c:when test="${isReplacementOrderCart eq true}">
 
-                                                      </c:when>
-                                                      <c:otherwise>
-                                  <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                  </c:when>
+                                  <c:otherwise>
+                                    <c:if test="${cartData.isNewGearOrder eq false}">
+                                      <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                                    </c:if>
                                   </c:otherwise>
                                   </c:choose>
-
                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
 
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>
                             <div class="order-actions my-4">
+                            <c:if test="${cartData.isNewGearOrder eq false}">
                                  <a href="#" alt="Print Order"><i class="icon-print"></i></a>
+                            </c:if>
                                  <a href="#"><i class="icon-save" alt="Save Order"></i></a>
                                  <%--<a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>--%>
                             </div>

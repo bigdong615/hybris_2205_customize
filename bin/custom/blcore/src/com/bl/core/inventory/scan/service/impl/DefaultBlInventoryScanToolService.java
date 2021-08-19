@@ -71,25 +71,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return getBlInventoryScanToolDao().getInventoryLocationById(locationId);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode) {
-		return getBlInventoryScanToolDao().getSerialProductsByBarcode(barcode);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int checkValidLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList) {
-		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
-		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream()
-				.anyMatch(b::startsWith)).collect(Collectors.toList());
-		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
-				filteredLocationList, memberAllowedLocationList);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode) {
+        return getBlInventoryScanToolDao().getSerialProductsByBarcode(barcode);
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -103,50 +91,76 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * method will check size of input barcode list and validate against its size. If doesnt satisfy AC then will send
-	 * number to notify employee
-	 *
-	 * @param inventoryLocation the inventory location
-	 * @param filteredLocationList the filtered location list
-	 * @param memberAllowedLocationList the member allowed location list
-	 * @return the int
+	 * {@inheritDoc}
 	 */
-	public int checkValidInventoryLocation(final String inventoryLocation, final List<String> filteredLocationList,
-										   final List<String> memberAllowedLocationList) {
-		if (CollectionUtils.isNotEmpty(filteredLocationList)) {
-			if (filteredLocationList.size() == BlInventoryScanLoggingConstants.ONE) {
-				return validateLocation(inventoryLocation, filteredLocationList, memberAllowedLocationList);
-			}
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG);
-			return BlInventoryScanLoggingConstants.FOUR;
+	@Override
+	public boolean checkLastBarcodeIsLocationOrNot(final List<String> barcodes, final String maxSequenceScan, final boolean status) {
+		final String lastScanBarcode = barcodes.get(barcodes.size() - 1);
+		if(barcodes.size() == Integer.parseInt(maxSequenceScan) || status) {
+			final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+			return defaultLocations.stream().anyMatch(lastScanBarcode::startsWith);
+		} else {
+			return true;
 		}
-		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG);
-		return BlInventoryScanLoggingConstants.THREE;
 	}
 
-	/**
-	 * method will validate last location in list and filteredLocationList to satisfy scenario of "last barcode
-	 * should be a valid location" and if not then will send number to notify employee
-	 *
-	 * @param inventoryLocation the inventory location
-	 * @param filteredLocationList the filtered location list
-	 * @param memberAllowedLocationList the member allowed location list
-	 * @return the int
-	 */
-	public int validateLocation(final String inventoryLocation, final List<String> filteredLocationList,
-								final List<String> memberAllowedLocationList) {
-		if (filteredLocationList.get(BlInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
-			final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(inventoryLocation);
-			if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
-				setBlInventoryLocation(blLocalInventoryLocation);
-				return BlInventoryScanLoggingConstants.ONE;
-			}
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG);
-			return BlInventoryScanLoggingConstants.TWO;
-		}
-		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG);
-		return BlInventoryScanLoggingConstants.THREE;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int checkValidLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList) {
+        final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+        final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream()
+                .anyMatch(b::startsWith)).collect(Collectors.toList());
+        return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE), 
+      		  filteredLocationList, memberAllowedLocationList);
+    }
+
+    /**
+     * method will check size of input barcode list and validate against its size. If doesnt satisfy AC then will send
+     * number to notify employee
+     *
+     * @param inventoryLocation the inventory location
+     * @param filteredLocationList the filtered location list
+     * @param memberAllowedLocationList the member allowed location list
+     * @return the int
+     */
+    public int checkValidInventoryLocation(final String inventoryLocation, final List<String> filteredLocationList,
+   		 final List<String> memberAllowedLocationList) {
+        if (CollectionUtils.isNotEmpty(filteredLocationList)) {
+            if (filteredLocationList.size() == BlInventoryScanLoggingConstants.ONE) {
+                return validateLocation(inventoryLocation, filteredLocationList, memberAllowedLocationList);
+            }
+            BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG);
+            return BlInventoryScanLoggingConstants.FOUR;
+        }
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG);
+        return BlInventoryScanLoggingConstants.THREE;
+    }
+
+    /**
+     * method will validate last location in list and filteredLocationList to satisfy scenario of "last barcode
+     * should be a valid location" and if not then will send number to notify employee
+     *
+     * @param inventoryLocation the inventory location
+     * @param filteredLocationList the filtered location list
+     * @param memberAllowedLocationList the member allowed location list
+     * @return the int
+     */
+    public int validateLocation(final String inventoryLocation, final List<String> filteredLocationList,
+   		 final List<String> memberAllowedLocationList) {
+        if (filteredLocationList.get(BlInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
+            final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(inventoryLocation);
+            if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
+                setBlInventoryLocation(blLocalInventoryLocation);
+                return BlInventoryScanLoggingConstants.ONE;
+            }
+            BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG);
+            return BlInventoryScanLoggingConstants.TWO;
+        }
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG);
+        return BlInventoryScanLoggingConstants.THREE;
+    }
 
 	/**
 	 * Checks if location is valid for member.
@@ -511,35 +525,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * This method is used to get scanned serial product
-	 *
-	 * @param blScannedProduct
-	 * @param scannedSerialProduct
-	 * @param scannedSubpartProduct
-	 */
-	private void getScannedSerial(final Collection<BlSerialProductModel> blScannedProduct,
-								  final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct) {
-		blScannedProduct.forEach(scannedProduct -> {
-			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType())) {
-				scannedSerialProduct.add(scannedProduct);
-				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned serial product with code {} added to list", scannedProduct.getCode());
-			} else if (ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType())) {
-				scannedSubpartProduct.add(scannedProduct);
-				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned subpart product with code {} added to list", scannedProduct.getCode());
-			}
-		});
-	}
-
-
-	/**
 	 * This method is used to validate serial on consignment against scanned serial
 	 *
-	 * @param barcodes
-	 * @param selectedConsignment
-	 * @param filteredSerialProduct
-	 * @param filteredSubPartProduct
-	 * @param scannedSerialProduct
-	 * @param scannedSubpartProduct
+	 * @param barcodes list
+	 * @param selectedConsignment consignment
+	 * @param filteredSerialProduct serial
+	 * @param filteredSubPartProduct subpart
+	 * @param scannedSerialProduct scanned serial
+	 * @param scannedSubpartProduct scanned subpart
 	 */
 	private Map<String, List<String>> validateConsignmentEntry(final List<String> barcodes,
 															   final ConsignmentModel selectedConsignment, final List<BlProductModel> filteredSerialProduct,
@@ -604,6 +597,285 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
+	 * This method is used to verify scan
+	 * @param filteredSerialProduct serial
+	 * @param filteredSubPartProduct subpart
+	 * @param scannedSerialProduct scanned serial
+	 * @param scannedSubpartProduct scanned subpart
+	 * @param consignmentEntry entry
+	 */
+	private void doScan(final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
+						final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct,
+						final ConsignmentEntryModel consignmentEntry)
+	{
+		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignmentEntry.getItems());
+
+		consignmentEntry.getSerialProducts()
+				.forEach(serialItem -> getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem));
+
+		validateScannedSerial(scannedSerialProduct, itemsMap);
+
+		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
+		validateScannedSubpart(scannedSubpartProduct, serialProductsList, itemsMap);
+
+		consignmentEntry.setItems(itemsMap);
+		consignmentEntry.setSerialProducts(serialProductsList);
+		modelService.save(consignmentEntry);
+		modelService.refresh(consignmentEntry);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scan verified for consignment {}",
+				consignmentEntry.getConsignment().getCode());
+	}
+
+	/**
+	 * This method is used to validate scanned sub part product
+	 * @param scannedSubpartProduct scanned subpart
+	 * @param itemsMap item
+	 * @param serialProductsList list
+	 */
+	private void validateScannedSubpart(final List<BlSerialProductModel> scannedSubpartProduct,
+										final List<BlProductModel> serialProductsList, final Map<String, ItemStatusEnum> itemsMap)
+	{
+		scannedSubpartProduct.forEach(subpartProduct -> updateSubpartMap(serialProductsList, subpartProduct, itemsMap));
+	}
+
+	/**
+	 * This method is used to validate scanned serial product
+	 * @param scannedSerialProduct serial
+	 * @param updatedItemMap item
+	 */
+	private void validateScannedSerial(final List<BlSerialProductModel> scannedSerialProduct,
+									   final Map<String, ItemStatusEnum> updatedItemMap)
+	{
+		scannedSerialProduct.forEach(serialProduct -> updateSerialProductMap(updatedItemMap, serialProduct));
+	}
+
+	/**
+	 * This method is used to update Item Map based on sub part scanned
+	 * @param serialProductsList list
+	 * @param subpartProduct product
+	 * @param itemsMap map
+	 */
+	private void updateSubpartMap(final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct,
+								  final Map<String, ItemStatusEnum> itemsMap)
+	{
+		final String subPartName = subpartProduct.getBlProduct().getName();
+		final BlProductModel blProduct = subpartProduct.getBlProduct();
+
+		if (itemsMap.containsKey(subPartName)
+				&& itemsMap.get(subPartName).equals(ItemStatusEnum.NOT_INCLUDED))
+		{
+			itemsMap.remove(subPartName);
+			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
+			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, subpartProduct);
+			modelService.save(subpartProduct);
+
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", subPartName,subpartProduct.getCode());
+		}
+		else
+		{
+			final String updatedName = subPartName.concat(BlInventoryScanLoggingConstants.DOUBLE_HYPHEN);
+			getUpdatedName(itemsMap, updatedName, subpartProduct);
+		}
+		if (serialProductsList.contains(blProduct))
+		{
+			serialProductsList.remove(blProduct);
+			serialProductsList.add(subpartProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the blproduct model {} with subpart serial product model {} in serial product list ", blProduct.getCode(),subpartProduct.getCode());
+		}
+	}
+
+	/**
+	 * This method is used to update the subpart map
+	 * @param itemsMap map
+	 * @param updatedName name
+	 * @param subpartProduct product
+	 */
+	private void getUpdatedName(final Map<String, ItemStatusEnum> itemsMap, final String updatedName,
+								final BlSerialProductModel subpartProduct)
+	{
+		BlLogger.logMessage(LOG, Level.DEBUG, updatedName);
+
+		final List<String> keyList = itemsMap.keySet().stream()
+				.filter(key -> key.contains(updatedName) && itemsMap.get(key).equals(ItemStatusEnum.NOT_INCLUDED))
+				.collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(keyList))
+		{
+			itemsMap.remove(keyList.get(0));
+			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
+			subpartProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, subpartProduct);
+			modelService.save(subpartProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", keyList.get(0) ,subpartProduct.getCode());
+		}
+	}
+
+	/**
+	 * This method is used to update Item Map based on the serial scanned
+	 * @param serialProduct product
+	 */
+	private void updateSerialProductMap(final Map<String, ItemStatusEnum> itemsMap,
+										final BlSerialProductModel serialProduct)
+	{
+		if (itemsMap.containsKey(serialProduct.getCode())
+				&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
+		{
+			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
+			serialProduct.setHardAssigned(true);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, serialProduct);
+			modelService.save(serialProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ", serialProduct.getCode());
+		}
+	}
+
+	/**
+	 * This method is used to get the serial/subpart from consignment
+	 * @param filteredSerialProduct serial
+	 * @param filteredSubPartProduct subpart
+	 * @param serialItem serial
+	 */
+	private void getSerialFromConsignment(final List<BlProductModel> filteredSerialProduct,
+										  final List<BlProductModel> filteredSubPartProduct, final BlProductModel serialItem)
+	{
+		if (serialItem instanceof BlSerialProductModel)
+		{
+			if (!ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
+			{
+				filteredSerialProduct.add(serialItem);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Serial Product with code {} added to list", serialItem.getCode());
+			}
+			else if (((BlSerialProductModel) serialItem).getBarcode() != null
+					&& ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
+			{
+				filteredSubPartProduct.add(serialItem);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Sub Part Product with code {} added to list", serialItem.getCode());
+			}
+		}
+	}
+
+	/**
+	 * This method is used to get scanned serial product
+	 * @param blScannedProduct product
+	 * @param scannedSerialProduct serial
+	 * @param scannedSubpartProduct subpart
+	 */
+	private void getScannedSerial(final Collection<BlSerialProductModel> blScannedProduct,
+								  final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
+	{
+		blScannedProduct.forEach(scannedProduct -> {
+			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
+			{
+				scannedSerialProduct.add(scannedProduct);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned serial product with code {} added to list", scannedProduct.getCode());
+			}
+			else if (ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
+			{
+				scannedSubpartProduct.add(scannedProduct);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned subpart product with code {} added to list", scannedProduct.getCode());
+			}
+		});
+	}
+
+	/**
+	 * Do update location on items.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @return the map
+	 */
+	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes)
+	{
+		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
+		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS);
+	}
+
+	/**
+	 * Update cart location on items.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param blCleanCartLocation
+	 *           the bl clean cart location
+	 * @param isPriorityCartLocation
+	 *           the is priority cart location
+	 * @return the map
+	 */
+	private Map<String, List<String>> updateCartLocation(final List<String> barcodes,
+														 final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation)
+	{
+		final List<String> failedBarcodeList = new ArrayList<>();
+		final List<String> missingBarcodeSerialList = new ArrayList<>();
+		Map<String, List<String>> processStatus = Maps.newHashMap();
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		getMissingBarcodeItems(blSerialProducts, missingBarcodeSerialList, Lists.newArrayList(subList));
+		if(CollectionUtils.isNotEmpty(missingBarcodeSerialList))
+		{
+			processStatus.put(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,missingBarcodeSerialList);
+		}
+		processStatus.putAll(performCartLocationUpdate(blSerialProducts, failedBarcodeList, blCleanCartLocation, isPriorityCartLocation));
+		return processStatus;
+	}
+
+	/**
+	 * Gets the missing barcode items.
+	 *
+	 * @param blSerialProducts the bl serial products
+	 * @param missingBarcodeSerialList the missing barcode serial list
+	 * @param barcodes the barcodes
+	 */
+	private void getMissingBarcodeItems(final Collection<BlSerialProductModel> blSerialProducts,
+										final List<String> missingBarcodeSerialList, final List<String> barcodes)
+	{
+		final List<String> availableBarcodes = blSerialProducts.stream().map(BlSerialProductModel::getBarcode)
+				.collect(Collectors.toList());
+		barcodes.removeIf(availableBarcodes::contains);
+		missingBarcodeSerialList.addAll(barcodes);
+	}
+
+	/**
+	 * Perform cart location update.
+	 *
+	 * @param blSerialProducts the bl serial products
+	 * @param failedBarcodeList the failed barcode list
+	 * @param blCleanCartLocation the bl clean cart location
+	 * @param isPriorityCartLocation the is priority cart location
+	 * @return the map
+	 */
+	private Map<String, List<String>> performCartLocationUpdate(final Collection<BlSerialProductModel> blSerialProducts,
+																final List<String> failedBarcodeList, final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation)
+	{
+		if(isPriorityCartLocation)
+		{
+			return updateCleanPriorityCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
+		}
+		return updateCleanCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
+	}
+
+	/**
+	 * Update clean cart location of item.
+	 *
+	 * @param blSerialProducts
+	 *           the bl serial products
+	 * @param failedBarcodeList
+	 *           the failed barcode list
+	 * @param blCleanCartLocation
+	 *           the bl clean cart location
+	 * @return the map
+	 */
+	private Map<String, List<String>> updateCleanCartLocation(final Collection<BlSerialProductModel> blSerialProducts,
+															  final List<String> failedBarcodeList, final BlInventoryLocationModel blCleanCartLocation) {
+		blSerialProducts.forEach(serial -> {
+			if (BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial
+				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
+			} else {
+				failedBarcodeList.add(serial.getBarcode());
+			}
+		});
+		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART);
+	}
+
+	/**
 	 * Update clean priority cart location of item.
 	 *
 	 * @param blSerialProducts
@@ -655,36 +927,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultInventoryLocation(),
 				Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN));
-	}
-
-	/**
-	 * This method is used to verify scan
-	 *
-	 * @param filteredSerialProduct
-	 * @param filteredSubPartProduct
-	 * @param scannedSerialProduct
-	 * @param scannedSubpartProduct
-	 * @param consignmentEntry
-	 */
-	private void doScan(final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
-						final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct,
-						final ConsignmentEntryModel consignmentEntry) {
-		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignmentEntry.getItems());
-
-		consignmentEntry.getSerialProducts()
-				.forEach(serialItem -> getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem));
-
-		validateScannedSerial(scannedSerialProduct, itemsMap);
-
-		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
-		validateScannedSubpart(scannedSubpartProduct, serialProductsList, itemsMap);
-
-		consignmentEntry.setItems(itemsMap);
-		consignmentEntry.setSerialProducts(serialProductsList);
-		modelService.save(consignmentEntry);
-		modelService.refresh(consignmentEntry);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scan verified for consignment {}",
-				consignmentEntry.getConsignment().getCode());
 	}
 
 	/**
@@ -806,94 +1048,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * This method is used to get the serial/subpart from consignment
-	 *
-	 * @param filteredSerialProduct
-	 * @param filteredSubPartProduct
-	 * @param serialItem
-	 */
-	private void getSerialFromConsignment(final List<BlProductModel> filteredSerialProduct,
-										  final List<BlProductModel> filteredSubPartProduct, final BlProductModel serialItem) {
-		if (serialItem instanceof BlSerialProductModel) {
-			if (!ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType())) {
-				filteredSerialProduct.add(serialItem);
-				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Serial Product with code {} added to list", serialItem.getCode());
-			} else if (((BlSerialProductModel) serialItem).getBarcode() != null
-					&& ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType())) {
-				filteredSubPartProduct.add(serialItem);
-				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Sub Part Product with code {} added to list", serialItem.getCode());
-			}
-		}
-	}
-
-	/**
-	 * This method is used to validate scanned sub part product
-	 *
-	 * @param scannedSubpartProduct
-	 * @param serialProductsList
-	 */
-	private void validateScannedSubpart(final List<BlSerialProductModel> scannedSubpartProduct,
-										final List<BlProductModel> serialProductsList, final Map<String, ItemStatusEnum> itemsMap) {
-		scannedSubpartProduct.forEach(subpartProduct -> updateSubpartMap(serialProductsList, subpartProduct, itemsMap));
-	}
-
-	/**
-	 * This method is used to update Item Map based on sub part scanned
-	 *
-	 * @param serialProductsList
-	 * @param subpartProduct
-	 * @param itemsMap
-	 */
-	private void updateSubpartMap(final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct,
-								  final Map<String, ItemStatusEnum> itemsMap) {
-		final String subPartName = subpartProduct.getBlProduct().getName();
-		final BlProductModel blProduct = subpartProduct.getBlProduct();
-
-		if (itemsMap.containsKey(subPartName)
-				&& itemsMap.get(subPartName).equals(ItemStatusEnum.NOT_INCLUDED)) {
-			itemsMap.remove(subPartName);
-			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
-			subpartProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
-			modelService.save(subpartProduct);
-
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", subPartName, subpartProduct.getCode());
-		} else {
-			final String updatedName = subPartName.concat(BlInventoryScanLoggingConstants.DOUBLE_HYPHEN);
-			getUpdatedName(itemsMap, updatedName, subpartProduct);
-		}
-		if (serialProductsList.contains(blProduct)) {
-			serialProductsList.remove(blProduct);
-			serialProductsList.add(subpartProduct);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the blproduct model {} with subpart serial product model {} in serial product list ", blProduct.getCode(), subpartProduct.getCode());
-		}
-	}
-
-	/**
-	 * This method is used to update the subpart map
-	 *
-	 * @param itemsMap
-	 * @param updatedName
-	 * @param subpartProduct
-	 */
-	private void getUpdatedName(final Map<String, ItemStatusEnum> itemsMap, final String updatedName,
-								final BlSerialProductModel subpartProduct) {
-		BlLogger.logMessage(LOG, Level.DEBUG, updatedName);
-
-		final List<String> keyList = itemsMap.keySet().stream()
-				.filter(key -> key.contains(updatedName) && itemsMap.get(key).equals(ItemStatusEnum.NOT_INCLUDED))
-				.collect(Collectors.toList());
-		if (CollectionUtils.isNotEmpty(keyList)) {
-			itemsMap.remove(keyList.get(0));
-			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
-			subpartProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
-			modelService.save(subpartProduct);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", keyList.get(0), subpartProduct.getCode());
-		}
-	}
-
-	/**
 	 * This method will change status of package and consignment also it will check failed barcodes also with correct
 	 * barcode and will execute scan records for the same
 	 *
@@ -1000,35 +1154,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		return consignmentModel.getConsignmentEntries().stream()
 				.filter(entry -> isSerialPresentInConsignmentEntry(entry, serialCode)).findFirst().orElse(null);
-	}
-
-	/**
-	 * This method is used to update Item Map based on the serial scanned
-	 *
-	 * @param itemsMap
-	 * @param serialProduct
-	 */
-	private void updateSerialProductMap(final Map<String, ItemStatusEnum> itemsMap,
-										final BlSerialProductModel serialProduct) {
-		if (itemsMap.containsKey(serialProduct.getCode())
-				&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED)) {
-			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
-			serialProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", serialProduct);
-			modelService.save(serialProduct);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ", serialProduct.getCode());
-		}
-	}
-
-	/**
-	 * This method is used to validate scanned serial product
-	 *
-	 * @param scannedSerialProduct
-	 * @param updatedItemMap
-	 */
-	private void validateScannedSerial(final List<BlSerialProductModel> scannedSerialProduct,
-									   final Map<String, ItemStatusEnum> updatedItemMap) {
-		scannedSerialProduct.forEach(serialProduct -> updateSerialProductMap(updatedItemMap, serialProduct));
 	}
 
 	/**
@@ -1232,93 +1357,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				this.checkSerialForDirtyPriority(serialProductModel);
 			}
 		}
-	}
-
-	/**
-	 * Update cart location on items.
-	 *
-	 * @param barcodes               the barcodes
-	 * @param blCleanCartLocation    the bl clean cart location
-	 * @param isPriorityCartLocation the is priority cart location
-	 * @return the map
-	 */
-	private Map<String, List<String>> updateCartLocation(final List<String> barcodes,
-														 final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation) {
-		final List<String> failedBarcodeList = new ArrayList<>();
-		final List<String> missingBarcodeSerialList = new ArrayList<>();
-		Map<String, List<String>> processStatus = Maps.newHashMap();
-		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
-		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
-		getMissingBarcodeItems(blSerialProducts, missingBarcodeSerialList, Lists.newArrayList(subList));
-		if (CollectionUtils.isNotEmpty(missingBarcodeSerialList)) {
-			processStatus.put(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, missingBarcodeSerialList);
-		}
-		processStatus.putAll(performCartLocationUpdate(blSerialProducts, failedBarcodeList, blCleanCartLocation, isPriorityCartLocation));
-		return processStatus;
-	}
-
-	/**
-	 * Gets the missing barcode items.
-	 *
-	 * @param blSerialProducts         the bl serial products
-	 * @param missingBarcodeSerialList the missing barcode serial list
-	 * @param barcodes                 the barcodes
-	 * @return the missing barcode items
-	 */
-	private void getMissingBarcodeItems(final Collection<BlSerialProductModel> blSerialProducts,
-										final List<String> missingBarcodeSerialList, final List<String> barcodes) {
-		final List<String> availableBarcodes = blSerialProducts.stream().map(BlSerialProductModel::getBarcode)
-				.collect(Collectors.toList());
-		barcodes.removeIf(availableBarcodes::contains);
-		missingBarcodeSerialList.addAll(barcodes);
-	}
-
-	/**
-	 * Perform cart location update.
-	 *
-	 * @param blSerialProducts       the bl serial products
-	 * @param failedBarcodeList      the failed barcode list
-	 * @param blCleanCartLocation    the bl clean cart location
-	 * @param isPriorityCartLocation the is priority cart location
-	 * @return the map
-	 */
-	private Map<String, List<String>> performCartLocationUpdate(final Collection<BlSerialProductModel> blSerialProducts,
-																final List<String> failedBarcodeList, final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation) {
-		if (isPriorityCartLocation) {
-			return updateCleanPriorityCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
-		}
-		return updateCleanCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
-	}
-
-	/**
-	 * Update clean cart location of item.
-	 *
-	 * @param blSerialProducts    the bl serial products
-	 * @param failedBarcodeList   the failed barcode list
-	 * @param blCleanCartLocation the bl clean cart location
-	 * @return the map
-	 */
-	private Map<String, List<String>> updateCleanCartLocation(final Collection<BlSerialProductModel> blSerialProducts,
-															  final List<String> failedBarcodeList, final BlInventoryLocationModel blCleanCartLocation) {
-		blSerialProducts.forEach(serial -> {
-			if (BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial
-				updateLocationOnItem(serial, blCleanCartLocation, Boolean.FALSE);
-			} else {
-				failedBarcodeList.add(serial.getBarcode());
-			}
-		});
-		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART);
-	}
-
-	/**
-	 * Do update location on items.
-	 *
-	 * @param barcodes the barcodes
-	 * @return the map
-	 */
-	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes) {
-		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
-		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS);
 	}
 
 	/**
@@ -1580,5 +1618,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory());
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getSuccessString(final List<String> barcodes) {
+		final List<String> resultList = new ArrayList<>();
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		if(CollectionUtils.isNotEmpty(blSerialProducts)) {
+			for (String barcode: subList) {
+				blSerialProducts.stream().filter(prod -> barcode.equals(prod.getBarcode())).findFirst()
+						.ifPresent(blSerialProductModel -> resultList.add(blSerialProductModel.getBarcode() +
+								BlInventoryScanLoggingConstants.FOR + blSerialProductModel.getCode()));
+			}
+		}
+		return resultList;
 	}
 }
