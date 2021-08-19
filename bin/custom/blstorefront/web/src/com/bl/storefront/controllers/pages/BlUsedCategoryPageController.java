@@ -36,6 +36,7 @@ public class BlUsedCategoryPageController extends AbstractBlCategoryPageControll
     final Map<Object, Object> requestAndResponseMap = new HashMap<>();
     requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
     requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
+    model.addAttribute("isNewGearCategory" ,request.getRequestURL().toString().contains("newgear"));
     return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, requestAndResponseMap);
   }
 
