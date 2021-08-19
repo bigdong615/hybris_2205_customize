@@ -179,6 +179,7 @@ public class BlControllerConstants
 	public static final String EMPTY = "";
 	public static final String PAY_BILL = "payBill";
 	public static final String REDIRECT_TO_HOME_URL ="redirect:/";
+	public static final String IS_NEW_GEAR_CATEGORY ="isNewGearCategory";
 
 
 	private BlControllerConstants()

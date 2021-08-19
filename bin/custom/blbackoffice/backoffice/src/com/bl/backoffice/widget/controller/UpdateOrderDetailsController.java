@@ -213,14 +213,16 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		for (final RegionData isoCodeList : regionForIso)
 		{
-			if (StringUtils.isNotBlank(regionCode) && regionCode.trim().equals(isoCodeList.getIsocode()))
+			if (StringUtils.isNotBlank(regionCode))
 			{
-				final RegionData regionData = i18NFacade.getRegion(COUNTRY_CODE, regionCode.trim());
-
-				listModelList.addToSelection(regionData);
-				regionCombobox.setModel(listModelList);
-				showNotify("Changed to: " + regionCode, regionCombobox);
-				break;
+				if (regionCode.trim().equals(isoCodeList.getIsocode()))
+				{
+					final RegionData regionData = i18NFacade.getRegion(COUNTRY_CODE, regionCode.trim());
+					listModelList.addToSelection(regionData);
+					regionCombobox.setModel(listModelList);
+					showNotify("Changed to: " + regionCode, regionCombobox);
+					break;
+				}
 			}
 			else
 			{
