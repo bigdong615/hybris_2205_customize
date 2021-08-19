@@ -2,6 +2,7 @@ package com.bl.core.order.strategy;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommercePlaceOrderStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -13,12 +14,20 @@ import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.util.Collections;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * @author Manikandan
+ * This class override for setting order is to submit
+ */
 public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOrderStrategy {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
 
+  /**
+   * This method override to set the order to set as submit for tax
+   */
   @Override
   public CommerceOrderResult placeOrder(final CommerceCheckoutParameter parameter) throws InvalidCartException
   {
@@ -30,7 +39,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       beforePlaceOrder(parameter);
       if (getCalculationService().requiresCalculation(cartModel))
       {
-        LOG.error(String.format("CartModel's [%s] calculated flag was false", cartModel.getCode()));
+        BlLogger.logFormattedMessage(LOG , Level.ERROR , "CartModel's [%s] calculated flag was false with cart code{}" , cartModel.getCode());
       }
 
       final CustomerModel customer = (CustomerModel) cartModel.getUser();
@@ -41,9 +50,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       {
         // Reset the Date attribute for use in determining when the order was placed
         orderModel.setDate(getTimeService().getCurrentTime());
-
-
-
         // Store the current site and store on the order
         orderModel.setSite(getBaseSiteService().getCurrentBaseSite());
         orderModel.setStore(getBaseStoreService().getCurrentBaseStore());
@@ -79,7 +85,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         }
         catch (final CalculationException ex)
         {
-          LOG.error("Failed to calculate order [" + orderModel + "]", ex);
+          BlLogger.logFormattedMessage(LOG , Level.ERROR , "Failed to calculate order with code {}" , orderModel.getCode());
         }
 
         getModelService().refresh(orderModel);

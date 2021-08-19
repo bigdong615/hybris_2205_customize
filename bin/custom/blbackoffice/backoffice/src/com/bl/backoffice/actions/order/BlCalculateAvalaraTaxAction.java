@@ -14,6 +14,10 @@ import javax.annotation.Resource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * @author Manikandan
+ * This action is created to calculate the avalara tax for cscockpit
+ */
 public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<OrderModel, OrderModel> {
 
   private static final Logger LOG = Logger.getLogger(BlCalculateAvalaraTaxAction.class);
@@ -53,6 +57,9 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
   }
 
 
+  /**
+   * This method created to perform the action
+   */
   @Override
   public boolean canPerform(final ActionContext<OrderModel> actionContext)
   {
