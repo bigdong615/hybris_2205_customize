@@ -16,8 +16,8 @@
 				<cms:component component="${component}" />
 			</cms:pageSlot>
 		</c:when>
-		<c:when test="${blPageType eq 'usedGear' and cmsPage.uid eq 'productGrid'}">
-			<cms:pageSlot position="BlUsedGearBanner" var="component">
+		<c:when test="${blPageType eq 'usedGear' and cmsPage.uid eq 'productGrid' and categoryName ne 'New Gear'}">
+		<cms:pageSlot position="BlUsedGearBanner" var="component">
 				<cms:component component="${component}" />
 			</cms:pageSlot>
 		</c:when>
