@@ -52,6 +52,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     {
    	target.setIsGiftCard(Boolean.TRUE);
     }
+   if(BooleanUtils.isTrue(source.getIsNewGearOrder()))
+    {
+   	target.setNewGearOrder(Boolean.TRUE);
+    }
 
    if(null != source.getRentalStartDate()){
     target.setRentalStartDate(convertDateToString(source.getRentalStartDate()));

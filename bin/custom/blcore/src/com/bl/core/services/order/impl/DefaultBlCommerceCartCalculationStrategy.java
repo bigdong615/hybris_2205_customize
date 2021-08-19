@@ -7,6 +7,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * It is a custom implementation of OOTB class {@link DefaultCommerceCartCalculationStrategy}
@@ -33,6 +34,11 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     if(parameter.getGiftCardAmount()!= null)
     {
    	 setGiftCardAmount(order,parameter);
+    }
+    if(BooleanUtils.isTrue(parameter.getRetailGear())){
+      order.setIsNewGearOrder(Boolean.TRUE);
+      getModelService().save(order);
+      getModelService().refresh(order);
     }
     final boolean result = super.calculateCart(parameter);
 

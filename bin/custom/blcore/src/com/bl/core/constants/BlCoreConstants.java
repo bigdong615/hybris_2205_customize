@@ -257,8 +257,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";
-	
+  public static final String NEW_GEAR = "newgear";
+	public static final String RETAILGEAR = "retailGear" ;
 	public static final String BARCODE = "barcode";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 
 	public static final String RETURN_REQUEST = "returnRequest";
 	public static final String ASAGENT = "asagent";
@@ -266,6 +268,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ACTING_USER_UID = "ACTING_USER_UID";
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
+	public static final String AQUATECH_BRAND_ID ="9";
 
   private BlCoreConstants()
 	{

@@ -218,6 +218,7 @@
             <value code="INVERIFICATION"/>
             <value code="MANUAL_REVIEW"/>
             <value code="SHIPPING_MANUAL_REVIEW"/>
+            <value code="SOLD"/>
             <value code="INCOMPLETE" />
       		<value code="INCOMPLETE_ITEMS_IN_REPAIR" />
       		<value code="INCOMPLETE_MISSING_ITEMS" />
@@ -1117,6 +1118,12 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether product is OnSale or not</description>
+                   </attribute>
+                   <attribute qualifier="newGearInStock" type="boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether the new gear product is in Stock or not</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -2035,6 +2042,11 @@
             </attribute>
             <attribute qualifier="recipientMessage" type="java.lang.String">
               <description>Message for the gift card recipient</description>
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="aqautechProduct" type="java.lang.Boolean">
+              <description>flag to identify if entry contain aqautech product</description>
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
