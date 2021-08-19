@@ -15,7 +15,7 @@ INSERT_UPDATE BackofficeRole; UID[unique = true]; locname[lang = de]; locname[la
 	
 INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
                        ; frondeskusergroup ; employeegroup,frontdeskuserrole
-                       ; shippingteamkusergroup ; employeegroup,shippingteamuserrole
+                       ; shippingteamusergroup ; employeegroup,shippingteamuserrole
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
@@ -181,8 +181,8 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
-          ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
@@ -221,8 +221,8 @@ Usergroup ; shippingteamuserrole ;                ;                ;      ;     
           ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
-          ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ;
 
 #Access rights for BL Inventory user group
