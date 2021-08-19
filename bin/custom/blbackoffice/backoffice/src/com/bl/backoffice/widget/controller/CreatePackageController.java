@@ -217,10 +217,11 @@ public class CreatePackageController extends DefaultWidgetController
 	@ViewEvent(componentID = "selectedProduct", eventName = "onChange")
 	public void packageSelectedProduct()
 	{
+		
 		if (CollectionUtils.isNotEmpty(this.allSerialProducts) && this.selectedProduct != null
-				&& this.selectedProduct.getValue().contains("##"))
+				&& this.selectedProduct.getValue().contains(BlInventoryScanLoggingConstants.SPLIT_STRING))
 		{
-			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("##");
+			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split(BlInventoryScanLoggingConstants.SPLIT_STRING);
 			for (final BlProductModel serialProduct : this.allSerialProducts)
 			{
 				BlLogger.logMessage(LOG, Level.INFO, "************ Selected Serial Product ***********" + serialProduct);

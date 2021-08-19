@@ -59,6 +59,7 @@ public class CreatePackageScanAction extends AbstractComponentWidgetAdapterAware
 		return new ActionResult(BlintegrationConstants.SUCCESS);
 	}
 	
+// TO DO : We may remove this method and use the once which is present in service getBlShipmentCreationService().checkOrderStatus(consignment), if confirmed that we do not need to show scan button for cancelled order
 	/**
 	 * method will used to check the order status for shipment
 	 * @param consignment
