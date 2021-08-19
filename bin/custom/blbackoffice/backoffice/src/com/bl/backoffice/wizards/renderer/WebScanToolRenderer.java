@@ -99,9 +99,11 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
                 WebScanToolRenderer.class);
         if(webScanToolRenderer != null) {
             final InputElement barcodeInput = webScanToolRenderer.getNewPwdInput();
-            barcodeInput.setText(StringUtils.EMPTY);
-            webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInput, webScanToolData);
-            webScanToolRenderer.setNewPwdInput(barcodeInput);
+            if(barcodeInput != null) {
+                barcodeInput.setText(StringUtils.EMPTY);
+                webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInput, webScanToolData);
+                webScanToolRenderer.setNewPwdInput(barcodeInput);
+            }
         }
     }
 
