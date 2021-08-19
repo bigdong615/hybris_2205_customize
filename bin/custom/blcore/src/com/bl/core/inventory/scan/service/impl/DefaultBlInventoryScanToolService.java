@@ -1312,6 +1312,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void flagAllDirtyPrioritySerialsOfConsignment() {
+		final Collection<ConsignmentModel> todaysShippingOrders = this.getTodaysShippingOrders();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolService : Consignments found : {} size is : {}"
+				, todaysShippingOrders.toString(), todaysShippingOrders.size());
+		if (CollectionUtils.isNotEmpty(todaysShippingOrders)) {
+			for (final ConsignmentModel consignment : todaysShippingOrders) {
+				this.flagAllDirtyPrioritySerialsOfNewOrder(consignment);
+			}
+		}
+	}
+
+	/**
 	 * Check item is dirty.
 	 *
 	 * @param serialProductModel the serial product model
@@ -1487,19 +1502,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial) {
 		return getBlInventoryScanToolDao().getAllConsignmentForSerial(serial);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void flagAllDirtyPrioritySerialsOfConsignment() {
-		final Collection<ConsignmentModel> todaysShippingOrders = this.getTodaysShippingOrders();
-		if (CollectionUtils.isNotEmpty(todaysShippingOrders)) {
-			for (final ConsignmentModel consignment : todaysShippingOrders) {
-				this.flagAllDirtyPrioritySerialsOfNewOrder(consignment);
-			}
-		}
 	}
 
 	/**

@@ -701,16 +701,7 @@
         <n:explorer-tree>
             <n:navigation-node id="BLInventoryScan">
                 <n:navigation-node id="WebScanTool"/>
-            </n:navigation-node>
-            <n:navigation-node id="UnboxingInventoryScan">
-				<n:navigation-node id="UnboxingScanTool"/>
-				<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
-			</n:navigation-node>
-			<n:navigation-node id="TechEng">
-				<n:navigation-node id="TechEngScanTool"/>
-				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
-				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>
-			</n:navigation-node>            
+            </n:navigation-node>            
         </n:explorer-tree>
     </context>
 
@@ -2088,15 +2079,6 @@
             <list-view:column qualifier="isPrioritySerial"/>
 		</list-view:list-view>
 	</context>
-	
-	<context component="explorer-tree" merge-by="module">
-        <n:explorer-tree>
-            <n:navigation-node id="Repairs">
-				<n:type-node id="RepairLog" code="BlRepairLog"/>
-				<n:type-node id="RemainingRepairItems" code="RemainingRepairItems"/>
-			</n:navigation-node>
-        </n:explorer-tree>
-    </context>
     
     <context merge-by="type" type="BlRepairLog" component="editor-area">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
@@ -2213,6 +2195,81 @@
 		<list-view:list-view>
 			<list-view:column qualifier="serialCode"/>
 			<list-view:column qualifier="shippingMethod"/>
+			<list-view:column qualifier="nextOrderCode"/>
+			<list-view:column qualifier="currentOcLocation"/>
+			<list-view:column qualifier="serialStatus"/>
+			<list-view:column qualifier="shippingDate"/>
+			<list-view:column qualifier="previousOrderStatus"/>
+			<list-view:column qualifier="unboxedDate"/>
+		</list-view:list-view>
+	</context>
+	
+	<context component="explorer-tree" principal="techEnguserrole">
+        <n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+        	<n:navigation-node id="TechEngScanTool"/>
+			<n:navigation-node id="TechEngQueue" >				
+				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
+				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>
+				<n:type-node id="RemainingVipOrderItems" code="RemainingVipOrderItems"/>
+				<n:type-node id="TestingNeededItemsQueue" code="TestingNeededItemsQueue"/>				
+			</n:navigation-node>
+			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+			<n:type-node id="RepairLog" code="BlRepairLog"/>            
+        </n:explorer-tree>
+    </context>
+    
+   <context component="explorer-tree" principal="repairmemberuserrole">
+        <n:explorer-tree>
+            <n:type-node id="RepairLog" code="BlRepairLog"/>
+            <n:type-node id="RemainingRepairItems" code="RemainingRepairItems"/>
+            <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+        </n:explorer-tree>
+    </context>
+    
+    <context component="explorer-tree" principal="unboxingmemberuserrole">
+        <n:explorer-tree>
+            <n:navigation-node id="UnboxingScanTool"/>
+            <n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
+            <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+        </n:explorer-tree>
+    </context>
+    
+    <!-- BL-999 -->
+    <context type="RemainingVipOrderItems" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="currentDate" selected="true" mandatory="true"/>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="RemainingVipOrderItems" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="nextOrderCode"/>
+			<list-view:column qualifier="isVipOrder"/>
+			<list-view:column qualifier="currentOcLocation"/>
+			<list-view:column qualifier="serialStatus"/>
+			<list-view:column qualifier="shippingDate"/>
+			<list-view:column qualifier="previousOrderStatus"/>
+			<list-view:column qualifier="unboxedDate"/>
+		</list-view:list-view>
+	</context>
+	
+	<!-- BL-1002 -->
+    <context type="TestingNeededItemsQueue" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="currentDate" selected="true" mandatory="true"/>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="TestingNeededItemsQueue" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="serialCode"/>
 			<list-view:column qualifier="nextOrderCode"/>
 			<list-view:column qualifier="currentOcLocation"/>
 			<list-view:column qualifier="serialStatus"/>
