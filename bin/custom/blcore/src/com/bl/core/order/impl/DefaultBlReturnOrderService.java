@@ -1,6 +1,7 @@
 package com.bl.core.order.impl;
 
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
 import de.hybris.platform.basecommerce.enums.ReturnStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -20,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -52,28 +54,34 @@ public class DefaultBlReturnOrderService extends DefaultReturnService implements
 
 		final List<ReturnEntryModel> returnEntries = new ArrayList();
 		for(final String productData : products) {
-			// set returnEntry for every product - quantity combination
 			setReturnEntry(orderModel, productData, returnEntries, returnRequest);
 		}
 		getModelService().save(returnRequest);
-
-		// add return request in session
 		addReturnRequestInSession(returnRequest);
-
 		startReturnProcess(returnRequest);
 		return returnRequest;
 	}
 
+	/*
+	 * Set the required products after validation
+	 * */
 	private void setProducts(List<String> products, String productList) {
 		productList = StringUtils.chop(productList);
 		productList = productList.substring(1);
 		final String[] productInfo = productList.split("% ");
 
-		for (final String product : productInfo) {
-			products.add(product);
+		for (final String productData : productInfo) {
+			String[] product = productData.split(":");
+			String qty = (String) Array.get(product, 1);
+			if(!qty.equalsIgnoreCase("0"))	{
+				products.add(productData);
+			}
 		}
 	}
 
+	/**
+	 * Set returnEntry for every product - quantity combination
+	 */
 	private void setReturnEntry(final AbstractOrderModel order, final String productData, final List<ReturnEntryModel> returnEntries, final ReturnRequestModel returnRequestModel)
 	{
 		final String[] prod = productData.split(":");
@@ -89,38 +97,41 @@ public class DefaultBlReturnOrderService extends DefaultReturnService implements
 				blReturnEntry.setStatus(ReturnStatus.APPROVAL_PENDING); // TBD: Mandatory field value
 				blReturnEntry.setExpectedQuantity(Long.parseLong(prodQty)); // TBD for return qty attribute
 				getModelService().save(blReturnEntry);
-
 				returnEntries.add(blReturnEntry);
-
 			}
 		}
 		returnRequestModel.setReturnEntries(returnEntries);
 	}
 
+	/*
+	 *  Add return request in session
+	 * */
 	private void addReturnRequestInSession(final ReturnRequestModel returnRequest) {
 		if(sessionService.hasCurrentSession())
 		{
 			sessionService.getCurrentSession();
 			sessionService.setAttribute(BlCoreConstants.RETURN_REQUEST, returnRequest);
+			BlLogger.logMessage(LOG, Level.DEBUG, "Return request added in session");
 		}
 		else {
 			sessionService.createNewSession();
 			sessionService.getCurrentSession();
 			sessionService.setAttribute(BlCoreConstants.RETURN_REQUEST, returnRequest);
+			BlLogger.logMessage(LOG, Level.DEBUG, "Return request added in session");
 		}
 	}
 
+	/*
+	 * Start return process
+	 * */
 	private void startReturnProcess(final ReturnRequestModel returnRequest) {
-
 		final String fulfilmentProcessDefinitionName = "return-process";
 		final String processCode = fulfilmentProcessDefinitionName + "-" + returnRequest.getCode() + "-" + System.currentTimeMillis();
 		final ReturnProcessModel businessProcessModel = businessProcessService.createProcess(processCode, fulfilmentProcessDefinitionName);
 		businessProcessModel.setReturnRequest(returnRequest);
 		getModelService().save(businessProcessModel);
-
 		businessProcessService.startProcess(businessProcessModel);
-		if (LOG.isInfoEnabled())
-		{
+		if (LOG.isInfoEnabled()){
 			LOG.info(String.format("Started the process %s", processCode));
 		}
 	}

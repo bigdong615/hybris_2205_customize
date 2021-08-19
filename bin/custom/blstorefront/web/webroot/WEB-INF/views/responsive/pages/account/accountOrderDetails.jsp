@@ -59,7 +59,10 @@
                                         <spring:theme code="text.account.orderHistory.orderStatus"/> <br>
                                         <spring:theme code="text.account.orderHistory.datePlaced"/> <br>
                                         <spring:theme code="text.myaccount.order"/><br>
-                                        <spring:theme code="text.myaccount.order.replacementFor"/><br>
+                                        
+                                        <c:if test="${orderData.isReplacementOrder eq true}">
+                                        	<spring:theme code="text.myaccount.order.replacementFor"/><br>
+                                        </c:if>
                                         <spring:theme code="text.myaccount.order.tracking"/>
                                         </p>
                                     </div>
@@ -68,7 +71,10 @@
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
-                                            ${fn:escapeXml(orderData.replacementFor)}<br>
+                                            
+                                            <c:if test="${orderData.isReplacementOrder eq true}">
+                                            	${fn:escapeXml(orderData.replacementFor)}<br>
+                                            </c:if>
                                             N/A
                                         </p>
                                     </div>

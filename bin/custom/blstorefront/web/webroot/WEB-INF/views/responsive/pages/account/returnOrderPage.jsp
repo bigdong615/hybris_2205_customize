@@ -73,18 +73,23 @@
                                							
                                							</div> 
 														<!-- =================== QTY ======================== -->
+														<input type="hidden" id="originalQty${loop.index}" value="${cartEntry.quantity}"/>
 														<div class="col-md-3 mt-4">
 															<div class="quantity">
 											             	    <div class="input-group">
 											             		    <span class="input-group-btn">
-											             			  <button type="button" class="btn btn-default btn-number"
+											             			  <button type="button" class="btn btn-default btn-number replacement-minus return-minus-btn${loop.index}"
 											             				  data-type="minus" data-field="quant[1]${cartEntry.entryNumber}" entryNumber="${cartEntry.entryNumber}">
 											             				  <span class="glyphicon glyphicon-minus"></span>
 											             			  </button>
-											             		    </span> <input type="text" name="quant[1]${cartEntry.entryNumber}" class="form-control input-number Myqtynumber"
-											             			    value="${cartEntry.quantity}" min="0" max="99" entryNumber="${cartEntry.entryNumber}"> <span class="input-group-btn">
-											             			    <button type="button" class="btn btn-default btn-number"
-											             				    data-type="plus" data-field="quant[1]${cartEntry.entryNumber}" entryNumber="${cartEntry.entryNumber}">
+											             		    </span> 
+											             		    											             			    
+											             			    <input type="text" name="quant[1]${cartEntry.entryNumber}" class="form-control input-number Myqtynumber return-qty-check return-qty-check${loop.index}"
+											             			    value="0" min="0" max="99" entryNumber="${cartEntry.entryNumber}"> 
+											             			    
+											             			<span class="input-group-btn">
+											             			    <button type="button" class="btn btn-default btn-number replacement-plus return-plus-btn${loop.index}"
+											             				    data-type="plus" data-field="quant[1]${cartEntry.entryNumber}" entryNumber="${cartEntry.entryNumber}" >
 											             				    <span class="glyphicon glyphicon-plus"></span>
 											             			    </button>
 											             		    </span>
@@ -94,14 +99,12 @@
 												</div>
                                  </c:forEach>
                                  
-                                 <form:hidden id="order-code" path="orderCode" value="${orderData.code}" />
-                            		<form:hidden path="returnOrderEntries" value="1,2" id="returnOrderEntries${loop.index}"/>                      	
-                            	
-									<!-- <input type="submit" id="returnOrder" > -->
-                            		<%-- <button type="submit" id="returnButton" class="return-button-cls btn btn-sm btn-primary float-end">
+                                 	<form:hidden id="order-code" path="orderCode" value="${orderData.code}" />
+                            		<form:hidden path="returnOrderEntries" value="1,2" id="returnOrderEntries${loop.index}"/>                     	
+                            		<%-- <a href="" class="return-button-cls btn btn-sm btn-primary float-end"><spring:theme code="text.myaccount.order.return.order"/></a> --%>
+                            		<button type="button" class="return-button-cls btn btn-sm btn-primary float-end">
                             			<spring:theme code="text.myaccount.order.return.order"/>
-                            		</button> --%>
-                            		<a href="" class="return-button-cls btn btn-sm btn-primary float-end"><spring:theme code="text.myaccount.order.return.order"/></a>
+                            		</button>
                             	</form:form>
                             </div>
                            

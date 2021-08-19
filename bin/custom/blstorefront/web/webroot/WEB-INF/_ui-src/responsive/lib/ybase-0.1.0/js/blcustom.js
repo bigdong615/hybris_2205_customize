@@ -3,6 +3,15 @@ jQuery(document).ready(function () {
 	if($(".hidebutton").length <= 0){
 		$(".hide-after-login").hide();
 	}
+    //BL-917: Replacement order
+	var fvalue = []
+        $(".return-qty-check").each(function (index) {
+            if($(this).val()==0)
+            {
+                $('.return-button-cls').attr('disabled', true);
+                $('.return-minus-btn'+index).attr('disabled', true);
+            }
+        }) ;
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -1086,6 +1095,7 @@ function hideShorting(){
 		submitForm.submit();
   });
 
+  //BL-917: Replacement order
   $('.return-button-cls').on("click",function(e) {
     e.preventDefault();
 	var label  = [];
@@ -1115,3 +1125,28 @@ function hideShorting(){
                      	});
 	 
    });
+
+   $('.replacement-minus').on("click",function(e) {
+             e.preventDefault();
+             $('.return-button-cls').attr('disabled', true);
+             var fvalue = []
+             $(".return-qty-check").each(function (index) {
+                  if($(this).val()==0) {
+                     $('.return-minus-btn'+index).prop('disabled', true);
+                  }
+                  if($(this).val()!=0) {
+                    $('.return-button-cls').attr('disabled', false);
+                  }
+             }) ;
+          });
+
+      $('.replacement-plus').on("click",function(e) {
+          e.preventDefault();
+          $('.return-button-cls').attr('disabled', false);
+          var fvalue = []
+          $(".return-qty-check").each(function (index) {
+               if($(this).val()==$('#originalQty'+index).val()) {
+                  $('.return-plus-btn'+index).prop('disabled', true);
+               }
+          }) ;
+       });
