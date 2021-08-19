@@ -38,6 +38,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		populateDamageWaiverValues(source, target);
 		populateOptionsValues(source, target);
 		populateGiftCartPurcahseValues(source, target);
+		target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
 	}
 
 	/**

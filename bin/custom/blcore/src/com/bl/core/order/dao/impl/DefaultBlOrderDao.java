@@ -15,7 +15,18 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import com.bl.core.utils.BlDateTimeUtils;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -40,14 +51,53 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> ordersToAuthorizePayment = result.getResult();
+		final List<AbstractOrderModel> ordersToAuthPayment = new ArrayList<>();
 		if (CollectionUtils.isEmpty(ordersToAuthorizePayment))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No orders found to authorize the payment");
 			return Collections.emptyList();
+		} else {
+			ordersToAuthorizePayment.stream().forEach(order -> {
+				if(checkDifferenceBetweenShippingAndCurrentDate(order)) {
+					ordersToAuthPayment.add(order);
+				}
+			});
 		}
-		return ordersToAuthorizePayment;
+		return ordersToAuthPayment;
+		
 	}
 
+	/**
+	 * It checks the difference between shipping date and current date
+	 * @param order
+	 * @return true if difference between shipping date and current date is 0 or 1
+	 */
+	private boolean checkDifferenceBetweenShippingAndCurrentDate(final AbstractOrderModel order) {
+		final Set<ConsignmentModel> consignments = order.getConsignments();
+		final LocalDateTime currentDate = BlDateTimeUtils.getFormattedDateTime(Date
+				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		final Optional<ConsignmentModel> orderToAuthPayment = consignments.stream().filter(consignmentModel ->
+				isEligibleForPaymentAuthorization(consignmentModel.getOptimizedShippingStartDate(), currentDate)).findFirst();
+				if(orderToAuthPayment.isPresent()) {
+					return true;
+				}
+		return false;
+	}
+
+	/**
+	 * It checks the difference between shipping date and current date
+	 * @param shippingStartDate
+	 * @param currentDate
+	 * @return true if difference between shipping date and current date is 0 or 1
+	 */
+	private boolean isEligibleForPaymentAuthorization(final Date shippingStartDate, final LocalDateTime currentDate) {
+		if(null != shippingStartDate) {
+			final LocalDateTime optimizedShippingStartDate =BlDateTimeUtils.getFormattedDateTime(shippingStartDate);
+			final long DifferenceInDays = ChronoUnit.DAYS.between(currentDate, optimizedShippingStartDate);
+			return DifferenceInDays ==0 || DifferenceInDays == 1;
+		}
+		return false;
+	}
 	/**
 	 * {@inheritDoc}
 	 */
