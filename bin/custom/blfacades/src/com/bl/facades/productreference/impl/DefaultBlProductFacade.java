@@ -1,5 +1,6 @@
 package com.bl.facades.productreference.impl;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.facades.productreference.BlCommerceProductReferenceService;
 import com.bl.facades.productreference.BlProductFacade;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
@@ -54,6 +55,17 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
   public void setBlCommerceProductReferenceService(
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
+  }
+
+  /**
+   * This method is used to get product modal.
+   * {@inheritDoc}
+   * @param  code
+   * @return productModel
+   */
+  @Override
+  public BlProductModel getProductForCode(final String code){
+  return (BlProductModel)getProductService().getProductForCode(code);
   }
 }
 

@@ -6,7 +6,10 @@
     hideShippingForm();
     hideErrorForInputValidation();
     emptyAddressFormAttributes();
+    var isNewGearShipping= $('.js-new-gear-shipping-page').val();
+    if(isNewGearShipping == undefined || isNewGearShipping == 'false'){
     shipToHomeShippingMethods();
+    }
     $('#ship-it-savedAddresses option').each(function() {
         var optionText = this.text;
         var newOption = optionText.substring(0,52);
@@ -1389,6 +1392,18 @@ function reverseTraverseOnShipping() {
         addressType = 'UNKNOWN';
     }
 
+    if(line2 == null) {
+        line2 = '';
+    }
+
+    if(companyName == null) {
+        companyName = '';
+    }
+
+    if(email == null) {
+        email = '';
+    }
+
     let addressForm = {
         firstName : firstName.trim(),
         lastName : lastName.trim(),
@@ -1840,6 +1855,7 @@ function reverseTraverseOnShipping() {
   function calculateCartTotal() {
     let total = checkNaN(parseFloat($('#cart-shipping-subTotal').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-options').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1])) -
                 checkNaN(parseFloat($('#cart-shipping-discount').text().split('$')[1]));

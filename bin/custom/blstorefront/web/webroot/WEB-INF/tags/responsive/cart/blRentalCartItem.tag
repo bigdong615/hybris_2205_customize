@@ -107,7 +107,27 @@
              </div>
          </div>
      </div>
-     <%-- It will be handled in BL-463 --%>
+     <c:if test="${not empty entry.option}">
+	<div id="damageOptions" class="row mt-3">
+		<div class="col-md-10 offset-md-2 rental-bl-options">
+			<p class="body14 mb-1"><spring:theme code="text.cart.rental.options"/></p>
+			<div class="dropdown">
+				<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
+                 ${entry.option.optionName} <c:if test="${not empty entry.option.optionPrice}"><span class="float-end"><format:price
+								priceData="${entry.option.optionPrice}" /></span></c:if></a>
+				<ul class="dropdown-menu damage-wavier bl-options-update"
+					aria-labelledby="coverageOptions1">
+					<c:forEach items="${entry.option.subOptions}" var="subOptions">
+						<li><a class="dropdown-item" href="#" href="#" data-id="${subOptions.optionCode}" data-entry="${entry.entryNumber}" data-product-code="${entry.product.code}">${subOptions.optionName} </a><span class="float-end"><format:price
+								priceData="${subOptions.optionPrice}" /></span></li>
+					</c:forEach>
+				</ul>
+			</div>
+		</div>
+	</div>
+</c:if>
+
+	<%-- It will be handled in BL-463 --%>
      <%--<div id="productOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.options"/></p>

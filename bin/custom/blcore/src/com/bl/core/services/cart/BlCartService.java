@@ -43,6 +43,14 @@ public interface BlCartService extends CartService {
     void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
 
     /**
+     * Update cart entry with the selected option
+     *
+     * @param entryNumber the entry number
+     * @param optionCode the optionCode
+     */
+    void updateCartEntrySelectedOption(final long entryNumber, final String optionCode);
+
+    /**
      * Sets the rental dates on cart.
      *
      * @param rentalStartDate the rental start date
@@ -105,4 +113,10 @@ public interface BlCartService extends CartService {
      * This method will update the order types like VIP order, FD/SHIPPING order
      */
     void updateOrderTypes();
+
+    /**
+     * Change new gear purchase status when remove from cart.
+     * @param cartModel
+     */
+     void updateNewGearPurchaseStatus(final CartModel cartModel);
 }

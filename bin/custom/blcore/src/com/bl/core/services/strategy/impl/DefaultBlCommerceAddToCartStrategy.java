@@ -62,6 +62,9 @@ public class DefaultBlCommerceAddToCartStrategy extends
       	  entryModel.setRecipientName(parameter.getRecipientName());
       	  entryModel.setRecipientMessage(parameter.getRecipientMessage());
         }
+        if(BooleanUtils.isTrue(parameter.getRetailGear())){
+          entryModel.getOrder().setIsNewGearOrder(true);
+        }
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,

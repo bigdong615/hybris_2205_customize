@@ -108,6 +108,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
   }
 
   
@@ -210,6 +213,10 @@ private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final St
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
+    if(source.getTotalOptionsCost() != null){
+      target.setTotalOptionsCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalOptionsCost() ,
+          BlFacadesConstants.OPTION_FIELD), source));
+    }
 
   }
 

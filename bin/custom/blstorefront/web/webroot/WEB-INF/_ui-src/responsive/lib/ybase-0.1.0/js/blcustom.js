@@ -68,6 +68,18 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
  	damageWaiverUpdateForm.submit();
  });
+ 
+//Script to apply the selected bl-options from the dropdown on the cart page
+ $('ul.bl-options-update').on('click','li',function(e){
+ 	e.preventDefault();
+ 	var entryNumber = $(this).find("a").data('entry');
+ 	var blOptions = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+ 	var blOptionsUpdateForm = $('#updateBlOptionsForm');
+ 	blOptionsUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
+ 	blOptionsUpdateForm.find('input[name=bloptions]:hidden').val(blOptions);
+ 	blOptionsUpdateForm.submit();
+ });
 
  //BL-454 add to cart
  $('.js-add-to-cart').on("click",function(e) {
@@ -106,7 +118,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                        var productName = $('#productName').val();
-                                       var productCode = $('#productCode').val();
                                        var productBrand =$('#productBrand').val();
                                        var productType = $('#productType').val();
                                        var productCategory = $('#productCategory').val()

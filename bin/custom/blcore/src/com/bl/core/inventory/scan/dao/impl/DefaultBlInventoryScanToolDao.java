@@ -117,7 +117,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO,"DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
 
@@ -129,11 +129,11 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	{
  		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
  				+ "{ConsignmentStatus as cs} where {c:status} = {cs:pk} and {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
- 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED')";
+ 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED', 'DELIVERY_COMPLETED')";
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("serial", serial);
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : null;
  	}
 
@@ -154,7 +154,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		query.addQueryParameter("currentDate",
  				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
- 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
     public FlexibleSearchService getFlexibleSearchService() {

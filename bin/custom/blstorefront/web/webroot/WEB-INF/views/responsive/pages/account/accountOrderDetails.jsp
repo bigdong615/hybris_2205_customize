@@ -294,12 +294,19 @@
                                     <tbody>
                                         <tr>
                                             <td class="gray80">
-                                              <c:if test="${orderData.isRentalCart}">
-                                            <spring:theme code="text.myaccount.order.rental.cost"/>
-                                             </c:if>
-                                              <c:if test="${!orderData.isRentalCart}">
-                                                               Item Cost
-                                              </c:if>
+                                            <c:choose>
+                                             <c:when  test="${orderData.isNewGearOrder eq true}">
+                                                <spring:theme code="text.checkout.multi.newgear.order.summary.cost"/>
+                                             </c:when>
+                                             <c:when test="${orderData.isRentalCart}">
+                                               <spring:theme code="text.myaccount.order.rental.cost"/>
+                                              </c:when>
+                                             <c:when  test="${!orderData.isRentalCart}">
+                                                 Item Cost
+                                              </c:when>
+                                              <c:otherwise>
+                                              </c:otherwise>
+                                              </c:choose>
                                             </td>
                                             <td class="text-end"> <format:price priceData="${orderData.subTotal}"/></td>
                                         </tr>
@@ -308,7 +315,15 @@
                                             <td class="gray80"><spring:theme code="text.myaccount.order.rental.damege.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                             <td class="text-end"><format:price priceData="${orderData.totalDamageWaiverCost}"/></td>
                                         </tr>
-                                        </c:if>
+                                        <c:if test="${orderData.totalOptionsCost.value gt 0}">
+				<tr>
+					<td class="gray80"><spring:theme
+							code="text.cart.rental.options" /> </td>
+					<td class="text-end"><format:blPrice
+							priceData="${orderData.totalOptionsCost}" /></td>
+				</tr>
+				</c:if>
+                                            </c:if>
                                         <tr>
                                             <td class="gray80"><spring:theme code="text.myaccount.order.shipping.text"/></td>
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
