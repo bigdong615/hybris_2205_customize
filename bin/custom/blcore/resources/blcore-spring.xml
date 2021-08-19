@@ -1254,7 +1254,6 @@
 	</bean>
 	
 	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
-	
 
 	<alias name="defaultBlReturnOrderService" alias="blReturnOrderService"/>
     <bean id="defaultBlReturnOrderService" parent="returnService" class="com.bl.core.order.impl.DefaultBlReturnOrderService" />

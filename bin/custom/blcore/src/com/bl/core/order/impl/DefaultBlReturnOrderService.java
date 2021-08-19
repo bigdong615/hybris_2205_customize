@@ -30,7 +30,7 @@ import com.bl.core.model.BlReturnEntryModel;
 import com.bl.core.order.BlReturnOrderService;
 
 /**
- * Return order class
+ * Class for order replacement
  */
 public class DefaultBlReturnOrderService extends DefaultReturnService implements BlReturnOrderService
 {
@@ -44,12 +44,14 @@ public class DefaultBlReturnOrderService extends DefaultReturnService implements
 
 	@Override
 	public ReturnRequestModel createReturnRequest(final OrderModel orderModel, final String productList) {
+
 		final ReturnRequestModel returnRequest = createReturnRequest(orderModel);
 		createRMA(returnRequest);
 		returnRequest.setIsReplacementOrder(true);
 		returnRequest.setReplacementRequestStatus(ReplacementRequestStatus.PROCESSING);
-
 		final List<String> products = new ArrayList();
+
+		//Set the required products after validation
 		setProducts(products, productList);
 
 		final List<ReturnEntryModel> returnEntries = new ArrayList();
@@ -57,7 +59,11 @@ public class DefaultBlReturnOrderService extends DefaultReturnService implements
 			setReturnEntry(orderModel, productData, returnEntries, returnRequest);
 		}
 		getModelService().save(returnRequest);
+
+		// add return request in session
 		addReturnRequestInSession(returnRequest);
+
+		//start return process
 		startReturnProcess(returnRequest);
 		return returnRequest;
 	}
