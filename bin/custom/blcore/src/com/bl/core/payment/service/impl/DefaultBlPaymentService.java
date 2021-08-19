@@ -45,7 +45,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 		ordersToAuthorizePayment.forEach(order -> {
 			if(order.getTotalPrice() > 0) {
 				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
-						BigDecimal.valueOf(order.getTotalPrice().doubleValue()), Boolean.FALSE, null);
+						BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
 				if (isSuccessAuth) {
 					order.setIsAuthorised(Boolean.TRUE);
 					getModelService().save(order);
@@ -70,19 +70,11 @@ public class DefaultBlPaymentService implements BlPaymentService
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
 			if(authEntry != null) {
-				final boolean isSuccessCapture = getBrainTreeTransactionService()
-						.captureAuthorizationTransaction(order, authEntry.getAmount(),
-								authEntry.getRequestId());
-				if(isSuccessCapture) {
-					order.setIsCaptured(Boolean.TRUE);
-					getModelService().save(order);
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
-					return true;
-				} else {
-					order.setStatus(OrderStatus.PAYMENT_DECLINED);
-					modelService.save(order);
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
-				}
+				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
+						order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
+			} else {
+				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
+						order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null), Boolean.FALSE);
 			}
 		} catch(final BraintreeErrorException ex) {
 			order.setStatus(OrderStatus.PAYMENT_DECLINED);
@@ -92,6 +84,33 @@ public class DefaultBlPaymentService implements BlPaymentService
 		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Exception occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
+		}
+		return false;
+	}
+
+	/**
+	 * This method will return true is auth and capture success!!
+	 *
+	 * @param order order
+	 * @param isSuccessCapture status for auth/capture
+	 * @param status for order status
+	 * @return true if success in capture
+	 */
+	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture, final boolean status) {
+		if(isSuccessCapture) {
+			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			order.setIsCaptured(Boolean.TRUE);
+			getModelService().save(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
+			return true;
+		} else {
+			if(status) {
+				order.setStatus(OrderStatus.PAYMENT_DECLINED);
+			} else {
+				order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
+			}
+			modelService.save(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
 		}
 		return false;
 	}
