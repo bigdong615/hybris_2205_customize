@@ -18,4 +18,11 @@ public interface BlAssignSerialService {
    */
   boolean assignSerialsFromLocation(final SourcingContext context,
       final SourcingLocation sourcingLocation)  throws BlSourcingException;
+
+  /**
+   * It checks whether all entries are fulfilled or not in context.
+   *
+   * @param context, the SourcingContext
+   */
+  boolean isAllQuantityFulfilled(final SourcingContext context);
 }

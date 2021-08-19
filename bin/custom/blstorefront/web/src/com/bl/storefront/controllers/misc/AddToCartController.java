@@ -141,7 +141,7 @@ public class AddToCartController extends AbstractController {
             }
         }
 
-        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC,ProductOption.CATEGORIES)));
+        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC,ProductOption.CATEGORIES,ProductOption.REQUIRED_DATA)));
         final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
                 ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK,ProductOption.REQUIRED_WISHLIST);
         final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));

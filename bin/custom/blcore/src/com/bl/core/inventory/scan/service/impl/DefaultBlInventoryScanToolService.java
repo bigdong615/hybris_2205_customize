@@ -23,7 +23,6 @@ import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -80,6 +79,20 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode) {
         return getBlInventoryScanToolDao().getSerialProductsByBarcode(barcode);
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkLastBarcodeIsLocationOrNot(final List<String> barcodes, final String maxSequenceScan, final boolean status) {
+		final String lastScanBarcode = barcodes.get(barcodes.size() - 1);
+		if(barcodes.size() == Integer.parseInt(maxSequenceScan) || status) {
+			final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+			return defaultLocations.stream().anyMatch(loc -> lastScanBarcode.startsWith(loc));
+		} else {
+			return true;
+		}
+	}
 
     /**
      * {@inheritDoc}
@@ -577,8 +590,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * This method is used to validate serial on consignment against scanned serial 
 	 * @param barcodes
 	 * @param selectedConsignment
-	 * @param failedBarcodeList
-	 * @param blScannedProduct
 	 * @param filteredSerialProduct
 	 * @param filteredSubPartProduct
 	 * @param scannedSerialProduct
@@ -664,7 +675,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param scannedSerialProduct
 	 * @param scannedSubpartProduct
 	 * @param consignmentEntry
-	 * @param updatedItemMap
 	 */
 	private void doScan(final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
 			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct,
@@ -690,11 +700,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	/**
 	 * This method is used to validate scanned sub part product
-	 * @param failedBarcodeList
-	 * @param filteredSubPartProduct
 	 * @param scannedSubpartProduct
-	 * @param consignmentEntry
-	 * @param updatedItemMap
+	 * @param itemsMap
 	 * @param serialProductsList
 	 */
 	private void validateScannedSubpart(final List<BlSerialProductModel> scannedSubpartProduct,
@@ -705,8 +712,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	/**
 	 * This method is used to validate scanned serial product
-	 * @param failedBarcodeList
-	 * @param filteredSerialProduct
 	 * @param scannedSerialProduct
 	 * @param updatedItemMap
 	 */
@@ -718,9 +723,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	
 	/**
 	 * This method is used to update Item Map based on sub part scanned
-	 * @param validSerialList
-	 * @param consignmentEntry
-	 * @param updatedItemMap
 	 * @param serialProductsList
 	 * @param subpartProduct
 	 * @param itemsMap
@@ -737,7 +739,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.remove(subPartName);
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
 			subpartProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, subpartProduct);
 			modelService.save(subpartProduct);
 			
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", subPartName,subpartProduct.getCode());
@@ -774,7 +776,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.remove(keyList.get(0));
 			itemsMap.put(subpartProduct.getCode(), ItemStatusEnum.INCLUDED);
 			subpartProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", subpartProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, subpartProduct);
 			modelService.save(subpartProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Replaced the subpart name {} with subpart serial product code {} in Items Map ", keyList.get(0) ,subpartProduct.getCode());
 		}
@@ -782,9 +784,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	/**
 	 * This method is used to update Item Map based on the serial scanned
-	 * @param validSerialList
-	 * @param consignmentEntry
-	 * @param updatedItemMap
 	 * @param serialProduct
 	 */
 	private void updateSerialProductMap(final Map<String, ItemStatusEnum> itemsMap,
@@ -795,7 +794,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial {} is hard assigned to true ", serialProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, serialProduct);
 			modelService.save(serialProduct);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ", serialProduct.getCode());
 		}
@@ -1145,8 +1144,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 *           list
 	 * @param dirtyProductSerialModels
 	 *           serials
-	 * @param blSerialProducts
-	 *           model
 	 */
 	private void getResultMapForUnboxAtWorkstation(final Map<Integer, Collection<String>> result,
 			final List<String> failedBarcodeList, final Collection<String> dirtyProductSerialModels,
@@ -1298,7 +1295,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * Perform location update on serial.
 	 *
 	 * @param blInventoryLocationModel the bl inventory location model
-	 * @param serialList the serial list
+	 * @param dirtyPrioritySerialList the serial list
 	 * @param serialProductModel the serial product model
 	 */
 	private void performLocationUpdateOnSerial(final BlInventoryLocationModel blInventoryLocationModel, final Collection<String> dirtyPrioritySerialList,
@@ -1400,6 +1397,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public void flagAllDirtyPrioritySerialsOfConsignment()
 	{
 		final Collection<ConsignmentModel> todaysShippingOrders = this.getTodaysShippingOrders();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolService : Consignments found : {} size is : {}"
+				, todaysShippingOrders.toString(), todaysShippingOrders.size());
 		if (CollectionUtils.isNotEmpty(todaysShippingOrders))
 		{
 			for (final ConsignmentModel consignment : todaysShippingOrders)
@@ -1584,5 +1583,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory());
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getSuccessString(final List<String> barcodes) {
+		final List<String> resultList = new ArrayList<>();
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		if(CollectionUtils.isNotEmpty(blSerialProducts)) {
+			for (String barcode: subList) {
+				blSerialProducts.stream().filter(prod -> barcode.equals(prod.getBarcode())).findFirst()
+						.ifPresent(blSerialProductModel -> resultList.add(blSerialProductModel.getBarcode() +
+								BlInventoryScanLoggingConstants.FOR + blSerialProductModel.getCode()));
+			}
+		}
+		return resultList;
 	}
 }

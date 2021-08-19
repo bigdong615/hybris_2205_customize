@@ -149,7 +149,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	{
 		final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize >= BlInventoryScanLoggingConstants.TWO)
+		if (barcodeSize >= BlInventoryScanLoggingConstants.ONE)
 		{
 			final Map<String, List<String>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 					selectedConsignment);

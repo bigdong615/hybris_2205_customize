@@ -109,13 +109,15 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	@Override
  	public Collection<ConsignmentModel> getTodaysShippingOrders()
  	{
+ 		BlLogger.logMessage(LOG, Level.INFO, "DefaultBlInventoryScanToolDao : getTodaysShippingOrders");
  		final StringBuilder barcodeList = new StringBuilder();
  		barcodeList.append("select distinct({c:pk}) from {Consignment as c} where ");
  		barcodeList.append(Config.isSQLServerUsed() ? "CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = ?currentDate" 
  				: "to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = ?currentDate");
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
- 		query.addQueryParameter("currentDate",
- 				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
+ 		final String currentDateUsingCalendar = BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date());
+ 		query.addQueryParameter("currentDate",currentDateUsingCalendar);
+ 		BlLogger.logFormatMessageInfo(LOG, Level.INFO,"DefaultBlInventoryScanToolDao : PST date : {}", currentDateUsingCalendar);
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
  		BlLogger.logFormatMessageInfo(LOG, Level.INFO,"DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
@@ -127,6 +129,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	@Override
  	public Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial)
  	{
+ 		BlLogger.logMessage(LOG, Level.INFO, "DefaultBlInventoryScanToolDao : getAllConsignmentForSerial");
  		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
  				+ "{ConsignmentStatus as cs} where {c:status} = {cs:pk} and {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
  				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED', 'DELIVERY_COMPLETED')";
@@ -143,6 +146,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	@Override
  	public Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial)
  	{
+ 		BlLogger.logMessage(LOG, Level.INFO, "DefaultBlInventoryScanToolDao : getTodaysShippingConsignments");
  		final StringBuilder barcodeList = new StringBuilder();
  		barcodeList.append("select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {ConsignmentStatus as cs} ");
  		barcodeList.append("where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) ");
