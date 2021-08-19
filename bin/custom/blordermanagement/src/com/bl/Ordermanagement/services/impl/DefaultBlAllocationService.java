@@ -299,8 +299,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Serial product with code {} added to the products list on consignment entry.",
-          serial.getCode());
+          "Serial product with code {} added to the products list on consignment entry with consignment code {}",
+          serial.getCode(), entry.getConsignment().getCode());
 
       allSerialSubPartProducts.addAll(getSessionService()
           .executeInLocalView(new SessionExecutionBody() {
@@ -382,8 +382,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
     consignmentEntry.getSerialProducts().add(subPartProduct);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-        "Sub part with name {} added to the products list on consignment entry.",
-        subPartProduct.getName());
+        "Sub part with name {} added to the products list on consignment entry with consignment code {}",
+        subPartProduct.getName(), consignmentEntry.getConsignment().getCode());
   }
 
   /**
@@ -432,14 +432,14 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     consignmentEntry.setOptions(productOptionsToAdd);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-        "Product option with name {} added to the options list on consignment entry.",
-        optionsModel.getName());
+        "Product option with name {} added to the options list on consignment entry with consignment code {}",
+        optionsModel.getName(), consignmentEntry.getConsignment().getCode());
   }
   
   /**
    * Sets the serial codes to billing charges.
    *
-   * @param entry
+   * @param consignmentEntry
    *           the entry
    * @param serialProductModels
    *           the serial product models

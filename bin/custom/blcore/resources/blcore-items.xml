@@ -2745,7 +2745,7 @@
         <attribute qualifier="options" type="optionsList">
           <persistence type="property"/>
           <modifiers read="true" write="true" optional="true"/>
-          <description>Option Associated to the Product</description>
+          <description>Associating product option with consignment entry.</description>
         </attribute>
         <attribute type="BillingChargesMap" qualifier="billingCharges">
             <description>Created Map to add charges for items which are missing or need to repair to the consignment.</description>
