@@ -14,6 +14,7 @@
 
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
+<c:url value="/cart/updateBlOptions" var="cartUpdatelOptionsFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
 <c:url value="/" var="homePageUrl" />
 <c:url value="/cart/reviewPrint" var="printQuoteUrl" />
@@ -22,10 +23,18 @@
           <div class="container">
               <div id="cartSteps" class="row justify-content-center">
                   <div class="col-xl-10">
-                      <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                      <a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+                        <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                      </a>
                       <span class="step2"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
-                      <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
-                      <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                      <c:choose>
+                         <c:when test="${isReplacementOrderCart eq true}">
+                         </c:when>
+                         <c:otherwise>
+                           <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
+                           <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
+                          </c:otherwise>
+                      </c:choose>
                   </div>
               </div>
               <div class="row justify-content-center">
@@ -46,6 +55,11 @@
 					                      <input type="hidden" name="entryNumber" value="" />
 					                      <input type="hidden" name="damageWaiverType" value="" />
            						        </form:form>
+           						  <!-- Form to update the cart total on the selection of options from the dropdown -->
+								     <form:form id="updateBlOptionsForm" action="${cartUpdatelOptionsFormAction}" method="post" >
+					                      <input type="hidden" name="entryNumber" value="" />
+					                      <input type="hidden" name="bloptions" value="" />
+           						        </form:form>        
                               <div class="cart-actions">
                                   <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
@@ -89,7 +103,14 @@
                                   </c:if>
                                   </c:forEach>
                               </c:if>
+                               <c:choose>
+                                                                                    <c:when test="${isReplacementOrderCart eq true}">
+
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
                               <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+                              </c:otherwise>
+                              </c:choose>
                               <div class="order-actions my-4">
                                   <a href="${printQuoteUrl}" id="printCartQuote" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"><i class="icon-print"></i></a>
                                    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">

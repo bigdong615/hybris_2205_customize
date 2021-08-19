@@ -4,9 +4,9 @@ public class BlControllerConstants
 {
 
 	public static final String FORM_GLOBAL_ERROR = "form.global.error";
-	public static final String VALIDATE_CHECKPWD_EQUALS = "validation.checkPwd.equals";
-	public static final String REGISTER_CHECKPWD_INVALID = "register.checkPwd.invalid";
-	public static final String REGISTER_PWD_INVALID = "register.pwd.invalid";
+	public static final String VALIDATE_CHECKPASSWORD_EQUALS = "validation.checkPwd.equals";
+	public static final String REGISTER_CHECKPASSWORD_INVALID = "register.checkPwd.invalid";
+	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
 	public static final int PASSWORD_MIN_LENGTH = 6;
 	public static final int PASSWORD_MAX_LENGTH = 255;
@@ -65,6 +65,9 @@ public class BlControllerConstants
 	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
+	public static final String ACCOUNT_DEACTIVATED = "login.error.account.deactivate.title";
+	public static final String ACCOUNT_DEACTIVATED_MSG ="Account deactivated for user {}";
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG =  "Login email or password is invalid for user {}";
 
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
@@ -167,8 +170,15 @@ public class BlControllerConstants
 	public static final String RENAMED_CART_CODE = "renamed_cart_code";
 	public static final String SAVED_CART_MESSAGE = "text.saved.cart.success";
 
+	public static final String RETURN_REQUEST = "returnRequest";
+
 	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
 	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
+
+	public static final String EXTEND = "extendOrder";
+	public static final String EMPTY = "";
+	public static final String PAY_BILL = "payBill";
+	public static final String REDIRECT_TO_HOME_URL ="redirect:/";
 
 
 	private BlControllerConstants()

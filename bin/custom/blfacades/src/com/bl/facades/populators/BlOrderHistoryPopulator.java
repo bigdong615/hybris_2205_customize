@@ -20,6 +20,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
+import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+
 
 /**
  * This Populator Overridden to add Rental Dates
@@ -49,6 +52,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     {
    	target.setIsGiftCard(Boolean.TRUE);
     }
+   if(BooleanUtils.isTrue(source.getIsNewGearOrder()))
+    {
+   	target.setNewGearOrder(Boolean.TRUE);
+    }
 
    if(null != source.getRentalStartDate()){
     target.setRentalStartDate(convertDateToString(source.getRentalStartDate()));
@@ -58,11 +65,14 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
    target.setRentalCart(source.getIsRentalCart());
    target.setOrderDate(convertDateToString(source.getDate()));
-   if(BooleanUtils.isFalse(source.getIsRentalCart())) {
+   if(source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalCart())) {
      final List<String> productQtyAndName = new ArrayList<>();
      for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
        final ProductModel product = abstractOrderEntryModel.getProduct();
-       if(product instanceof BlSerialProductModel) {
+       if(source.isGiftCardOrder()){
+      	 target.setProductCode(product.getCode());
+       }
+       else if(product instanceof BlSerialProductModel) {
          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
          productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK + BlFacadesConstants.PRODUCT_SEPERATOR +
              BlFacadesConstants.BLANK + productModel.getName());
@@ -78,6 +88,16 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalActive(isRentalCartAcive(source));
      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
+   target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
+	  final AtomicDouble totalAmt = new AtomicDouble(0.0);
+	  source.getConsignments()
+			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+						  totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+					  }))));
+
+	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+
   }
 
   /**
@@ -133,6 +153,13 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
   private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
     return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
+  }
+
+  /**
+   * This method converts double to price data
+   */
+  private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
+    return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
   }
 
 }

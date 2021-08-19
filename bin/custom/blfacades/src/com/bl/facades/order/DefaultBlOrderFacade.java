@@ -128,7 +128,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       BlLogger.logMessage(LOG, Level.ERROR , "Error while adding products from rent again" + blProductModel.getCode() , exception);
     }
 
@@ -274,14 +274,25 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     extendOrderModel.setExtendStartEndDate(extendStartDate.getTime());
     extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
     extendOrderModel.setActualRentalEndDate(stockEndDate);
+
+
+    // To set extend startDate and Extend end date on order model .
+    extendOrderModel.setExtendRentalStartDate(startDate);
+    extendOrderModel.setExtendRentalEndDate(endDate);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
+        extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
     try {
       getDefaultBlCalculationService()
           .recalculateForExtendOrder(extendOrderModel, (int) defaultAddedTimeForExtendRental);
       getPromotionsService()
           .updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
-    } catch (CalculationException e) {
-      e.printStackTrace();
+    } catch (final CalculationException e) {
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR ,
+          "Error while Calculating promotion for Order with code {} extended from extended rental start date {} to extended rental end date {}."
+          , extendOrderModel.getCode() ,  extendOrderModel.getExtendRentalStartDate() , extendOrderModel.getExtendRentalEndDate());
     }
 
     orderData.setSubTotalTaxForExtendRental(
@@ -437,6 +448,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getDefaultBlExtendOrderService().savePoPayment(poNumber , poNotes , getExtendedOrderModelFromCode(orderCode));
   }
 
+  /**
+   * This method created to store the po number to payBill order
+   */
+  @Override
+  public boolean savePoPaymentForPayBillOrder(final String poNumber , final String poNotes, final String orderCode) {
+	  final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+	    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+	        baseStoreModel);
+    return getBlCartService().savePoPaymentDetailsForPayBill(poNumber , poNotes , orderModel);
+  }
 
   /**
    * This method created to get order model from order code

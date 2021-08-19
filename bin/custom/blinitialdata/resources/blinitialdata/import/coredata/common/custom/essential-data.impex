@@ -198,6 +198,17 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;WalthamMorningPullCronJob; 0 0 6 * * ?
                      ;SanCarlosMorningPullCronJob; 0 0 6 * * ?
 
+
+#BL-827 Inventory clean complete/in-complete order queue
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
+                             ;markConsignmentsCleanJob;markConsignmentsCleanJob
+
+INSERT_UPDATE MarkReadyToShipConsignmentsCleanJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active
+                                                 ;markReadyToShipConsignmentsCleanJob;markConsignmentsCleanJob; ;true
+
+INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
+                     ;markReadyToShipConsignmentsCleanJob; 0 0/30 * * * ?
+
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]
 ;12;	8;	6;	0.48;
@@ -300,7 +311,12 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CHECKED_GEAR_WORKSTATION          ; VIP Checked Gear Workstation                     
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
-                                              
+                                              ; REPAIR_SHELF                          ; Repair Shelf                                     
+                                              ; REPAIR_CLEAN_MOBILE_CART              ; Repair Clean Mobile Cart                         
+                                              ; REPAIR                                ; Repair                                           
+                                              ; REPAIR_CABINET                        ; Repair Cabinet                                   
+                                              ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
+                                              ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                         
 
 INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;COMPACT;COMPACT
@@ -334,3 +350,84 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 
 INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
                                 ; GIFTCARD                        ; Gift Card                     
+
+# BL-799 Enum values for Vendors Enum
+INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]     
+                          ; ARRI              ; Arri              
+                          ; ABELCINE          ; AbelCine          
+                          ; APUTURE           ; Aputure           
+                          ; ANTON_BAUER       ; Anton Bauer       
+                          ; ATOMOS            ; Atomos            
+                          ; BLACKMAGIC        ; Blackmagic        
+                          ; CRIS              ; CRIS              
+                          ; CANON             ; Canon             
+                          ; CELESTRON         ; Celestron         
+                          ; CONVERGENT_DESIGN ; Convergent Design 
+                          ; CORE_SWX          ; Core SWX          
+                          ; DJI               ; DJI               
+                          ; DENECKE           ; Denecke           
+                          ; DIGITAL_SPUTNIK   ; Digital Sputnik   
+                          ; DIGITRON          ; Digitron          
+                          ; EARTEC            ; Eartec            
+                          ; EDELKRONE         ; Edelkrone         
+                          ; ESPSON            ; Espson            
+                          ; ELITE_ROKINON     ; Elite-Rokinon     
+                          ; FIILEX            ; Fiilex            
+                          ; FREEFLY           ; Freefly           
+                          ; FUJIFILM          ; Fujifilm          
+                          ; GLIDECAM          ; Glidecam          
+                          ; GOPRO             ; GoPro             
+                          ; GIGAPAN           ; Gigapan           
+                          ; HASSELBLAD        ; Hasselblad        
+                          ; HIVE_LIGHTING     ; Hive Lighting     
+                          ; IKAN              ; Ikan              
+                          ; INTELLYTECH       ; Intellytech       
+                          ; K_TEK             ; K-Tek             
+                          ; KESSLER_CRANE     ; Kessler Crane     
+                          ; KINOFLO           ; KinoFlo           
+                          ; LECTROSONICS      ; Lectrosonics      
+                          ; LITEPANELS        ; Litepanels        
+                          ; LOWEL             ; Lowel             
+                          ; LPADESIGNS        ; LPADesigns        
+                          ; LEICA             ; Leica             
+                          ; MANFROTTO         ; Manfrotto         
+                          ; MARSHALL          ; Marshall          
+                          ; MCR               ; MCR               
+                          ; MICRON            ; Micron            
+                          ; MILLER            ; Miller            
+                          ; NIKON             ; Nikon             
+                          ; NIVIE             ; Nivie             
+                          ; PAUL_C_BUFF       ; Paul C. Buff      
+                          ; PANASONIC         ; Panasonic         
+                          ; PHOTOVILLAGE      ; PhotoVillage      
+                          ; PROFOTO           ; Profoto           
+                          ; QUASAR_SCIENCE    ; Quasar Science    
+                          ; RED               ; Red               
+                          ; REDROCK           ; Redrock           
+                          ; RHINO             ; Rhino             
+                          ; SENNHEISER        ; Sennheiser        
+                          ; SMH_ELECTRONICS   ; SMH Electronics   
+                          ; SONY              ; Sony              
+                          ; SACHTLER          ; Sachtler          
+                          ; SAMSON            ; Samson            
+                          ; SCHNEIDER         ; Schneider         
+                          ; SHURE             ; Shure             
+                          ; SMALLHD           ; SmallHD           
+                          ; SOUND_DEVICES     ; Sound Devices     
+                          ; SYRP              ; Syrp              
+                          ; TAMRON            ; Tamron            
+                          ; TIFFEN_STEADICAM  ; Tiffen Steadicam  
+                          ; TASCAM            ; Tascam            
+                          ; TERADEK           ; Teradek           
+                          ; TILTA             ; Tilta             
+                          ; VITEC             ; Vitec             
+                          ; WESTCOTT          ; Westcott          
+                          ; WOODEN_CAMERA     ; Wooden Camera     
+                          ; ZEISS             ; Zeiss             
+                          ; ZACUTO            ; Zacuto            
+                          ; ZHIYUN            ; Zhiyun            
+                          
+INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] ; name[lang=en]  
+                                        ; MISSING_CHARGE    ; MISSING CHARGE 
+                                        ; LATE_CHARGE       ; LATE CHARGE    
+                                        ; REPAIR_CHARGE     ; REPAIR CHARGE 

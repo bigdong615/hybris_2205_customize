@@ -21,47 +21,79 @@
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
-	<hr>
-	<c:choose>
-		<c:when test="${cartData.isRentalCart}">
-			<p>
-				<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
-					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
-					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-			</p>
-		</c:when>
-		<c:otherwise>
-			<b><spring:theme code="text.used.Gear.cart.timer" /> <span
-				id="usedTimer"></span></b>
-		</c:otherwise>
-	</c:choose>
-	<hr>
+	<c:if test="${cartData.isNewGearOrder eq false}">
+    <hr>
+    <c:choose>
+      <c:when test="${cartData.isRentalCart}">
+        <p>
+          <b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
+            type="text" class="form-control cart-picker"
+            id="summary-litepicker"
+            placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+        </p>
+      </c:when>
+      <c:otherwise>
+        <b><spring:theme code="text.used.Gear.cart.timer" /> <span
+          id="usedTimer"></span></b>
+      </c:otherwise>
+    </c:choose>
+    <hr>
+	</c:if>
 	<table id="costSummary">
 		<tbody>
 			<tr>
-				<td class="gray80"><c:choose>
-						<c:when test="${cartData.isRentalCart}">
-							<spring:theme code="text.checkout.multi.order.summary.cost" />
-						</c:when>
-						<c:otherwise>
-							<spring:theme
-								code="text.checkout.multi.order.summary.cost.usedGear" />
-						</c:otherwise>
-					</c:choose></td>
-				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
-						priceData="${cartData.subTotal}" /></td>
+				<td class="gray80">
+				<c:choose>
+          <c:when test="${cartData.isNewGearOrder eq true}">
+            <spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
+          </c:when>
+          <c:when test="${cartData.isRentalCart}">
+            <spring:theme code="text.checkout.multi.order.summary.cost" />
+          </c:when>
+          <c:otherwise>
+            <spring:theme
+              code="text.checkout.multi.order.summary.cost.usedGear" />
+          </c:otherwise>
+				</c:choose>
+				</td>
+
+				<td class="text-end" id="cart-shipping-subTotal">
+				<c:choose>
+				 <c:when test="${isReplacementOrderCart eq true}">
+				  <format:price priceData="${cartData.subTotal}" />
+				 </c:when>
+				 <c:otherwise>
+				 	 <format:blPrice priceData="${cartData.subTotal}" />
+				 </c:otherwise>
+				</c:choose>
+				</td>
 			</tr>
-			<c:if test="${cartData.isRentalCart}">
+			<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.damage.waiver" /> <a href="#"
 						data-bs-toggle="modal" data-bs-target="#damageWaivers"> <i
 							class="icon-support"></i>
 					</a></td>
-					<td class="text-end" id="cart-shipping-waiver"><format:blPrice
-							priceData="${cartData.totalDamageWaiverCost}" /></td>
+					<td class="text-end" id="cart-shipping-waiver">
+						<c:choose>
+          				 <c:when test="${isReplacementOrderCart eq true}">
+					           <format:price priceData="${cartData.totalDamageWaiverCost}" />
+	                 </c:when>
+	                 <c:otherwise>
+	                   <format:blPrice priceData="${cartData.totalDamageWaiverCost}" />
+	                 </c:otherwise>
+	          </c:choose>
+					</td>
 				</tr>
+				<c:if test="${cartData.totalOptionsCost.value gt 0}">
+				<tr>
+					<td class="gray80"><spring:theme
+							code="text.cart.rental.options" /> </td>
+					<td class="text-end" id="cart-shipping-options"><format:blPrice
+							priceData="${cartData.totalOptionsCost}" /></td>
+				</tr>
+				</c:if>
 			</c:if>
 			<tr>
 				<td class="gray80"><spring:theme
@@ -114,10 +146,15 @@
 			</form:form>
 		</div>
 	</c:if>
+
+<c:choose>
+	 <c:when test="${isReplacementOrderCart eq true}">
+	 </c:when>
+	 <c:otherwise>
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
-	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view'}">
+	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isNewGearOrder eq false}">
 		<c:url value="/cart/voucher/apply" var="voucherUrl" />
 		<form:form action="${voucherUrl}" modelAttribute="voucherForm"
 			method="POST" id="applyVoucherForm">
@@ -162,6 +199,8 @@
           </p>
         </form:form>
       </c:forEach>
+    </c:otherwise>
+</c:choose>
 
 	<c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
 		<form:form id="removeGiftCardForm${loop.index}"

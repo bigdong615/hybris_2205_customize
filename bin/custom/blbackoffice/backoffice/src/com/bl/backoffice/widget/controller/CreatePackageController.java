@@ -4,16 +4,21 @@
 package com.bl.backoffice.widget.controller;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
+import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.WarehouseService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
@@ -24,9 +29,12 @@ import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
@@ -40,6 +48,8 @@ import org.zkoss.zul.Textbox;
 
 public class CreatePackageController extends DefaultWidgetController
 {
+	 private static final Logger LOG = Logger.getLogger(CreatePackageController.class);
+	
 	private static final long serialVersionUID = 1L;
 	protected static final String IN_SOCKET = "consignmentInput";
 	protected static final String OUT_CONFIRM = "confirmOutput";
@@ -96,7 +106,7 @@ public class CreatePackageController extends DefaultWidgetController
 	@Wire
 	private Combobox boxes;
 
-	public ListModelList<PackagingInfoData> packages = null;
+	public ListModelList<PackagingInfoData> packages = null; //NOSONAR
 	private List<PackagingInfoData> packingInfo = null;
 
 	double weight = 0.0;
@@ -110,6 +120,8 @@ public class CreatePackageController extends DefaultWidgetController
 	public void initReallocationConsignmentForm(final ConsignmentModel consignment)
 	{
 		setConsignment(consignment);
+		if (!ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(consignment.getStatus()))
+		{
 		this.consignmentCode.setValue(consignment.getCode());
 		this.customerName.setValue(consignment.getOrder().getUser().getUid());
 		this.serialEntry.setChecked(false);
@@ -119,22 +131,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 			if (CollectionUtils.isNotEmpty(this.allSerialProducts))
 			{
-				setWidgetTitle("Create Package");
-				final List<SerialProductDTO> serials = new ArrayList<SerialProductDTO>();
-				for (final BlProductModel blProductModel : allSerialProducts)
-				{
-					final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-					final SerialProductDTO serialProduct = new SerialProductDTO();
-					serialProduct.setSerialProduct(blSerialProductModel);
-					this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
-					serials.add(serialProduct);
-				}
-				this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
-				final ListModelList<PackagingInfoData> packageBox = new ListModelList<PackagingInfoData>(createPackageCombobox());
-				final PackagingInfoData packagingInfoData = packageBox.get(0);
-				packageBox.addToSelection(packagingInfoData);
-				this.boxes.setModel(packageBox);
-				this.totalWeight.setValue(calculateTotalWeight(this.weight));
+				createShipmentPackage();
 			}
 			else
 			{
@@ -143,6 +140,31 @@ public class CreatePackageController extends DefaultWidgetController
 						"icon");
 			}
 		}
+		}
+	}
+
+
+	/**
+	 * This method is used to create shipment packages
+	 */
+	private void createShipmentPackage()
+	{
+		setWidgetTitle("Create Package");
+		final List<SerialProductDTO> serials = new ArrayList<>();
+		for (final BlProductModel blProductModel : allSerialProducts)
+		{
+			final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+			final SerialProductDTO serialProduct = new SerialProductDTO();
+			serialProduct.setSerialProduct(blSerialProductModel);
+			this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
+			serials.add(serialProduct);
+		}
+		this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
+		final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
+		final PackagingInfoData packagingInfoData = packageBox.get(0);
+		packageBox.addToSelection(packagingInfoData);
+		this.boxes.setModel(packageBox);
+		this.totalWeight.setValue(calculateTotalWeight(this.weight));
 	}
 
 
@@ -155,7 +177,10 @@ public class CreatePackageController extends DefaultWidgetController
 		getModelService().refresh(consignment);
 		for (final ConsignmentEntryModel consignmentEntryModel : consignment.getConsignmentEntries())
 		{
-			allSerialProducts.addAll(consignmentEntryModel.getSerialProducts());
+			final Map<String, ItemStatusEnum> itemsMap = consignmentEntryModel.getItems();
+
+			consignmentEntryModel.getSerialProducts().stream().filter(serialProduct -> itemsMap.containsKey(serialProduct.getCode())
+					&& ItemStatusEnum.INCLUDED.equals(itemsMap.get(serialProduct.getCode()))).forEach(allSerialProducts::add);
 		}
 		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
 
@@ -198,26 +223,42 @@ public class CreatePackageController extends DefaultWidgetController
 			final String[] selctedCheckBoxArray = this.selectedProduct.getValue().split("_");
 			for (final BlProductModel serialProduct : this.allSerialProducts)
 			{
-				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) serialProduct;
+				BlLogger.logMessage(LOG, Level.INFO, "************ Selected Serial Product ***********" + serialProduct);
+
 				if (serialProduct.getCode().equals(selctedCheckBoxArray[0]))
 				{
-					if (selctedCheckBoxArray[1].equals("true"))
-					{
-						this.selectedSerialProducts.add(serialProduct);
-					}
-					else
-					{
-						this.selectedSerialProducts.remove(serialProduct);
-					}
+					BlLogger.logMessage(LOG, Level.INFO, "************ Inside if Condition ***********" + serialProduct);
+					
+					addOrRemoveSelectedSerialProduct(selctedCheckBoxArray, serialProduct);
 					break;
 				}
 			}
 		}
 	}
 
+
+	/**
+	 * method will use to add or remove selected serial product
+	 * @param selctedCheckBoxArray
+	 * @param serialProduct
+	 */
+	private void addOrRemoveSelectedSerialProduct(final String[] selctedCheckBoxArray, final BlProductModel serialProduct)
+	{
+		if (BlInventoryScanLoggingConstants.TRUE_STRING.equals(selctedCheckBoxArray[1]))
+		{
+			this.selectedSerialProducts.add(serialProduct);
+			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Added***********" + serialProduct);
+		}
+		else
+		{
+			this.selectedSerialProducts.remove(serialProduct);
+			BlLogger.logMessage(LOG, Level.INFO, "************ Serial Product Removed***********" + serialProduct);
+		}
+	}
+
 	private List<PackagingInfoData> createPackageCombobox()
 	{
-		this.packages = new ListModelList<PackagingInfoData>();
+		this.packages = new ListModelList<>();
 		this.packingInfo = getBlWarehousingConsignmentFacade().getAllPackagingDimensions();
 		this.packageHeight.setValue(packingInfo.get(0).getHeight());
 		this.packageWeight.setValue(packingInfo.get(0).getGrossWeight());

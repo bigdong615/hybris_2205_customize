@@ -29,6 +29,7 @@ $productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/gift-card.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/options.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/newgear.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/affiliate-page.impex"), "utf-8", 0, 0);
 
 #Mention here catlog permission on user related custom impex in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCatalogPermissionPath/user-permission.impex"), "utf-8", 0, 0);
@@ -45,5 +46,8 @@ $productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/rush-delivery-mode.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-cost.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/base-store.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/paypal-default-address.impex"), "utf-8", 0, 0);
 ##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-optimization.impex"), "utf-8", 0, 0);
 
+# Point of Service Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/points-of-service.impex"), "utf-8", 0, 0);

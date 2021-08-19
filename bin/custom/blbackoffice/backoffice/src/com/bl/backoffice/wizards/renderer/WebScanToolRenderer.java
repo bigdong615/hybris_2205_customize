@@ -10,11 +10,14 @@ import com.hybris.cockpitng.dataaccess.facades.type.DataType;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.renderer.DefaultCustomViewRenderer;
+import de.hybris.platform.core.Registry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.impl.InputElement;
 
 import java.util.Map;
 
@@ -29,6 +32,9 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
 
     private NotificationService notificationService;
     private WebScanToolUtil webScanToolUtil;
+
+    private InputElement newPwdInput;
+
 
     /**
      * javadoc
@@ -51,18 +57,62 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
                     StringUtils.EMPTY);
         } else {
+            
             final Textbox barcodeInputField = new Textbox();
-            barcodeInputField.setRows(BlInventoryScanLoggingConstants.SEVEN);
+            barcodeInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
             barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
             barcodeInputField.setMultiline(true);
             barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
             barcodeInputField.setWidth(BlInventoryScanLoggingConstants.HUN_PER);
+            barcodeInputField.setStyle("resize:none;display:block");
 
-            barcodeInputField.addEventListener("onChange", event ->
-                    this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData));
-
+            barcodeInputField.addEventListener("onChange", event -> {
+                this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData);
+                this.setNewPwdInput(barcodeInputField);
+            });
             component.appendChild(barcodeInputField);
+
+            final Button clear = new Button();
+            clear.setLabel("Clear");
+            clear.setVisible(Boolean.FALSE);
+            clear.setTabindex(BlInventoryScanLoggingConstants.TWO);
+            clear.setStyle("margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;");
+
+            clear.addEventListener("onClick", event -> {
+                barcodeInputField.setValue(StringUtils.EMPTY);
+                this.getWebScanToolUtil().onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData);
+            });
+            //component.appendChild(clear);
         }
+    }
+
+    /**
+     * javadoc
+     *
+     * This method will clear text box contents and set updated list to the WebScanToolData
+     *
+     * @param webScanToolData data
+     * @param webScanToolUtil util
+     */
+    public void triggerClear(final WebScanToolData webScanToolData, final WebScanToolUtil webScanToolUtil) {
+        final WebScanToolRenderer webScanToolRenderer = Registry.getApplicationContext().getBean("defaultWebScanToolRenderer",
+                WebScanToolRenderer.class);
+        if(webScanToolRenderer != null) {
+            final InputElement barcodeInput = webScanToolRenderer.getNewPwdInput();
+            if(barcodeInput != null) {
+                barcodeInput.setText(StringUtils.EMPTY);
+                webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInput, webScanToolData);
+                webScanToolRenderer.setNewPwdInput(barcodeInput);
+            }
+        }
+    }
+
+    public InputElement getNewPwdInput() {
+        return newPwdInput;
+    }
+
+    public void setNewPwdInput(InputElement newPwdInput) {
+        this.newPwdInput = newPwdInput;
     }
 
     public NotificationService getNotificationService() {

@@ -83,6 +83,8 @@
             
 			<zscript><![CDATA[
             void doChecked() {
+            alert(self.getId());
+            alert(self.isChecked());
 				selectedProduct.setValue(self.getId()+"_"+self.isChecked());
 				Events.postEvent("onChange", selectedProduct, null);
             }

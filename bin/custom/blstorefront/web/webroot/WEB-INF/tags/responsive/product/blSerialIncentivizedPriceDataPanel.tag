@@ -34,7 +34,7 @@
 	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="get">
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
-		
+   <c:if test="${serialProduct.serialSoftAssignedOrHardAssigned eq 'true'}">
 		<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true  and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
 			<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
 			<tr class=" ${loop.index >= 3 ? 'hide-product-row ' : ''} <c:if test="${hasPromotion}"> noborder</c:if>">
@@ -104,6 +104,7 @@
           </tr>
         </c:if>
 		</c:if>
+	</c:if>
 		</c:forEach>
 	</form:form>
 </tbody>

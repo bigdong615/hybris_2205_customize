@@ -1,17 +1,20 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.util.Config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
@@ -46,9 +49,6 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	private transient WebScanToolData shippingScanToolData;
 
-	@Value("${blbackoffice.max.product.scan}")
-	private int maxProductScan;
-
 	@Resource(name = "blInventoryScanToolService")
 	private BlInventoryScanToolService blInventoryScanToolService;
 
@@ -64,7 +64,7 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		selectedConsignment = inputObject;
 		this.getWidgetInstanceManager()
-				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.shipping.scan.heading")));
+				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.order.scan.heading")));
 		shippingScanToolData = new WebScanToolData();
 	}
 
@@ -95,13 +95,12 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
 		}
 		else
 		{
-			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			createResponseForPackageScan(barcodes);
+			validatePackageBinLocation();
 		}
 	}
 
@@ -114,22 +113,23 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
 		}
 		else
 		{
 			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 			final int barcodeSize = barcodes.size();
-			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
+			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO
+					&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 			{
-				final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
-				createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
+				validatePackageScan(barcodes);
+
 			}
 			else
 			{
-				notifyInvalidScan(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR);
 			}
 		}
 
@@ -143,23 +143,94 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY);
 		}
 		else
 		{
 			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 			if (CollectionUtils.isEmpty(barcodes))
 			{
-				notifyInvalidScan(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR);
 			}
 			else
 			{
-				createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
-						BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
-						barcodes);
+				scanToUpsOutBoundCart(barcodes);
 			}
+		}
+	}
+
+	/**
+	 * method will used to scan serial to ups out bound cart
+	 *
+	 * @param barcodes
+	 */
+	private void scanToUpsOutBoundCart(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
+					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
+					barcodes);
+		}
+
+	}
+
+	/**
+	 * method will use to validate package bin location
+	 */
+	private void validatePackageBinLocation()
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+			createResponseForPackageScan(barcodes);
+		}
+	}
+
+	/**
+	 * method will used to validate package scan
+	 *
+	 * @param barcodes
+	 */
+	private void validatePackageScan(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+
+		else
+		{
+			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 		}
 	}
 
@@ -171,11 +242,17 @@ public class BlPackageScanController extends DefaultWidgetController
 	private void createResponseForPackageScan(final List<String> barcodes)
 	{
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize == BlInventoryScanLoggingConstants.TWO)
+		if (barcodeSize == BlInventoryScanLoggingConstants.TWO
+				&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 		{
 			createResponseMsgForPackageScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
 					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
 					barcodes);
+		}
+		else
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.TWO_BARCODE_SCAN_ERROR_MSG,
+					BlInventoryScanLoggingConstants.TWO_BARCODE_SCAN_ERROR_KEY);
 		}
 	}
 
@@ -190,23 +267,24 @@ public class BlPackageScanController extends DefaultWidgetController
 		switch (result)
 		{
 			case BlInventoryScanLoggingConstants.ONE:
-				final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBinBarcodeList(barcodes);
-				createSuccessResponse(failedBinBarcodeList);
+				final Map<Integer, List<String>> failedBinBarcodeMap = getBlInventoryScanToolService()
+						.getFailedBinBarcodeList(barcodes);
+				createSuccessResponse(failedBinBarcodeMap);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_KEY);
 				break;
 
 			case BlInventoryScanLoggingConstants.THREE:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_INVALID_LOCATION_ERROR, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_LOCATION_ERROR_FAILURE_KEY);
 				break;
 
 			default:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_KEY);
 		}
 	}
 
@@ -221,21 +299,23 @@ public class BlPackageScanController extends DefaultWidgetController
 		switch (result)
 		{
 			case BlInventoryScanLoggingConstants.ONE:
-				final List<String> failedPackageBarcodeList = getBlInventoryScanToolService().getFailedPackageBarcodeList(barcodes);
-				createSuccessResponse(failedPackageBarcodeList);
+				final Map<Integer, List<String>> failedPackageBarcodeList = getBlInventoryScanToolService()
+						.getFailedPackageBarcodeList(barcodes);
+				if (MapUtils.isNotEmpty(failedPackageBarcodeList))
+				{
+					createSuccessResponse(failedPackageBarcodeList);
+				}
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_LOCATION_VALID_TRACKING_FAILURE);
 				break;
 
 			default:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				throw new WrongValueException(this.scanningArea, this.getLabel(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR));
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_KEY);
 		}
-
 	}
 
 	/**
@@ -243,18 +323,31 @@ public class BlPackageScanController extends DefaultWidgetController
 	 *
 	 * @param failedBinBarcodeList
 	 */
-	private void createSuccessResponse(final List<String> failedBinBarcodeList)
+	private void createSuccessResponse(final Map<Integer, List<String>> failedBinBarcodeMap)
 	{
-		if (CollectionUtils.isEmpty(failedBinBarcodeList))
+		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ZERO))
 		{
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
-		else
+
+		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ONE))
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.INVALID_LOCATION_ERROR, failedBinBarcodeList);
+			notifyInvalidScan(BlInventoryScanLoggingConstants.INVALID_BARCODE_SCANNED_MSG,
+					BlInventoryScanLoggingConstants.INVALID_BARCODE_SCANNED_ERROR, failedBinBarcodeMap);
+		}
+
+		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.TWO))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_MSG,
+					BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_ERROR);
+		}
+
+		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.THREE))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.INVALID_SCAN_MSG,
+					BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR_KEY);
 		}
 	}
 
@@ -281,18 +374,18 @@ public class BlPackageScanController extends DefaultWidgetController
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_KEY);
 				break;
 
 			case BlInventoryScanLoggingConstants.THREE:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_INVALID_LOCATION_ERROR, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_LOCATION_ERROR_FAILURE_KEY);
 				break;
 
 			default:
-				notifyInvalidScan(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR, StringUtils.EMPTY);
+				notifyErrorMessage(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_KEY);
 		}
 	}
 
@@ -300,13 +393,31 @@ public class BlPackageScanController extends DefaultWidgetController
 	 * This method is used to notify user for invalid scan
 	 *
 	 * @param logMsg
+	 *           as log message
 	 * @param exceptionLabel
+	 *           as exception label
 	 * @param logParam
+	 *           as log param
 	 * @throws WrongValueException
+	 *            as wrong value exception
 	 */
 	private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, logMsg, logParam);
+		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
+	}
+
+	/**
+	 * method will use to notify error message for failure
+	 *
+	 * @param logMsg
+	 *           as log message
+	 * @param exceptionLabel
+	 *           as exception label
+	 */
+	private void notifyErrorMessage(final String logMsg, final String exceptionLabel)
+	{
+		BlLogger.logMessage(LOG, Level.DEBUG, logMsg);
 		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
 	}
 
