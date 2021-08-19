@@ -180,6 +180,8 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
           ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
           ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue        ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
