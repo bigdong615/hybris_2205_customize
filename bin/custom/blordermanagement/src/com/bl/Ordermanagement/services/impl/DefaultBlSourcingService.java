@@ -9,8 +9,10 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -89,8 +91,19 @@ public class DefaultBlSourcingService implements BlSourcingService {
       updateShippingDatesForInternalTransfers(order, context.getResult());
 
       return context.getResult();
+    } catch (final BlSourcingException blse) {
+
+      throw new BlSourcingException("Error while doing the order sourcing.", blse);
     } catch (final Exception e) {
-      throw new BlSourcingException("Error while doing the order sourcing.", e);
+
+      if (null != order) {
+        order.setStatus(OrderStatus.SUSPENDED);
+        modelService.save(order);
+      }
+      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(),
+          "Error occurred while creating SourcingResults. Changing order status to SUSPENDED", e);
+
+      return null;
     }
 
   }

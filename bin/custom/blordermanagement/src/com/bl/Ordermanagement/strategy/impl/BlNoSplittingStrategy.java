@@ -157,8 +157,8 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     if (MapUtils.isNotEmpty(sourcingLocation.getAvailabilityMap())
         && sourcingLocation.getAvailabilityMap().get(productModel.getCode()) != null) {
      List<StockLevelModel> stockLevelList = sourcingLocation.getAvailabilityMap().get(productModel.getCode());
-      Set<String> serialProductCodes = stockLevelList.stream().map(stock -> stock.getSerialProductCode()).collect(
-          Collectors.toSet());
+      final Set<String> serialProductCodes = stockLevelList.stream()
+          .map(StockLevelModel::getSerialProductCode).collect(Collectors.toSet());
 
       stockLevel = Long.valueOf(serialProductCodes.size());
 

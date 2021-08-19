@@ -72,6 +72,12 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       setOrderToManualReviewStatus(order);
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
           ex.getMessage() + " Changing order status to MANUAL_REVIEW", ex);
+    } catch (final Exception e) {
+
+      isSourcingSuccessful = false;
+      setOrderSuspendedStatus(order);
+      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(),
+          e.getMessage() + " Changing order status to SUSPENDED", e);
     }
 
     if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
@@ -99,9 +105,15 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             ex.getMessage() + " Changing order status to MANUAL_REVIEW due to allocation error", ex);
       } catch (final BlShippingOptimizationException soe) {
 
-        setOrderToManualReviewStatus(order);
+        setOrderSuspendedStatus(order);
         BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe.getMessage() +
-                " Changing order status to MANUAL_REVIEW due to shipping optimization", soe);
+                " Changing order status to SUSPENDED due to shipping optimization", soe);
+      }
+      catch (final Exception e) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e.getMessage() +
+            " Changing order status to SUSPENDED due to error", e);
       }
     }
 
