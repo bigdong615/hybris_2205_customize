@@ -76,23 +76,50 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         final int barcodeSize = barcodes.size();
         final String maxSequenceScan = getBlInventoryScanToolService().getConfigKeyFromScanConfiguration(BlInventoryScanLoggingConstants.MAX_SEQUENCE_LIMIT_KEY);
         if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= Integer.parseInt(maxSequenceScan)) {
-            if(getBlInventoryScanToolService().checkBINOrSerialScan(barcodes)) {
-                createResponseMegForBINScan(getBlInventoryScanToolService().doBINScanFromWebScanTool(barcodes), barcodes);
-            } else {
-                createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes,
-                        Lists.newArrayList("ALLOW_SCAN")), barcodes);
-            }
+            itemScanSuccess(barcodes, maxSequenceScan);
         } else {
-            if (barcodeSize < BlInventoryScanLoggingConstants.TWO) {
+            if(barcodeSize == BlInventoryScanLoggingConstants.ZERO) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
                         BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
                 this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                         BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
                         BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
+            } else if (barcodeSize == BlInventoryScanLoggingConstants.ONE) {
+                if(getBlInventoryScanToolService().checkLastBarcodeIsLocationOrNot(barcodes, maxSequenceScan, true)) {
+                    this.displayNotificationForString(BlInventoryScanLoggingConstants.ONE_ITEM_SCAN_ERROR_FAILURE_MSG,
+                            BlInventoryScanLoggingConstants.ONE_ITEM_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                } else {
+                    BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+                            BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
+                    this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
+                            BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                            BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
+                }
             } else {
                 this.displayNotificationForString(BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG,
                         BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR_FAILURE, NotificationEvent.Level.FAILURE, maxSequenceScan);
             }
+        }
+    }
+
+    /**
+     * This method will check item scan success or failure
+     *
+     * @param barcodes list
+     * @param maxSequenceScan size
+     */
+    private void itemScanSuccess(final List<String> barcodes, final String maxSequenceScan) {
+        if(getBlInventoryScanToolService().checkLastBarcodeIsLocationOrNot(barcodes, maxSequenceScan, false)) {
+            if(getBlInventoryScanToolService().checkBINOrSerialScan(barcodes)) {
+                createResponseMegForBINScan(getBlInventoryScanToolService().doBINScanFromWebScanTool(barcodes), barcodes);
+            } else {
+                createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes,
+                        Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN)), barcodes);
+            }
+        } else {
+            this.displayNotificationForInt(BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE_MSG,
+                    BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                    Integer.parseInt(maxSequenceScan)-1);
         }
     }
 
@@ -110,7 +137,8 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
 
             case BlInventoryScanLoggingConstants.TWO:
                 this.displayNotificationForString(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-                        BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                        BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                        barcodes.get(barcodes.size() - 1));
                 break;
 
             case BlInventoryScanLoggingConstants.THREE:
@@ -137,11 +165,12 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
                     failedBarcodeList);
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
-                    BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.WARNING,
+                    BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
                     failedBarcodeList);
         } else {
-            this.displayNotificationForInt(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-                    BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS, barcodes.size());
+            this.displayNotificationForString(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+                    BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS,
+                    (barcodes.size() - 1) + StringUtils.EMPTY + getBlInventoryScanToolService().getSuccessString(barcodes));
         }
     }
 
@@ -156,17 +185,19 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         switch (result) {
             case BlInventoryScanLoggingConstants.ONE:
                 this.displayNotificationForInt(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-                        BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS, barcodes.size());
+                        BlInventoryScanLoggingConstants.SCAN_BIN_SUCCESS, NotificationEvent.Level.SUCCESS, (barcodes.size() - 1));
                 break;
 
             case BlInventoryScanLoggingConstants.TWO:
                 this.displayNotificationForString(BlInventoryScanLoggingConstants.VALID_BIN_LOCATION_ERROR_FAILURE_MSG,
-                        BlInventoryScanLoggingConstants.VALID_BIN_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                        BlInventoryScanLoggingConstants.VALID_BIN_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                        barcodes.get(BlInventoryScanLoggingConstants.ZERO));
                 break;
 
             case BlInventoryScanLoggingConstants.THREE:
                 this.displayNotificationForString(BlInventoryScanLoggingConstants.VALID_PARENT_LOCATION_ERROR_FAILURE_MSG,
-                        BlInventoryScanLoggingConstants.VALID_PARENT_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                        BlInventoryScanLoggingConstants.VALID_PARENT_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                        barcodes.get(BlInventoryScanLoggingConstants.ONE));
                 break;
 
             case BlInventoryScanLoggingConstants.FOUR:
@@ -175,8 +206,8 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                 break;
 
             default:
-                this.displayNotificationForInt(BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG,
-                        BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+                this.displayNotificationForInt(BlInventoryScanLoggingConstants.MAX_BIN_LIMIT_ERROR_FAILURE_MSG,
+                        BlInventoryScanLoggingConstants.MAX_BIN_LIMIT_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
                         BlInventoryScanLoggingConstants.TWO);
                 break;
         }
@@ -222,8 +253,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
      * @param webScanToolData data
      */
     public void triggerClear(final WebScanToolData webScanToolData) {
-        final WebScanToolRenderer webScanToolRenderer = new WebScanToolRenderer();
-        webScanToolRenderer.triggerClear(webScanToolData, this.getWebScanToolUtil());
+        new WebScanToolRenderer().triggerClear(webScanToolData, this.getWebScanToolUtil());
     }
 
     public NotificationService getNotificationService() {
