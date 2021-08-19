@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<groups xmlns="http://www.isdc.ro/wro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+   <group name="addons_responsive">
+      <js>/_ui/addons/blconfigurablebundleaddon/responsive/common/js/blconfigurablebundleaddon.js</js>
+      <css>/_ui/addons/blconfigurablebundleaddon/responsive/common/css/blconfigurablebundleaddon.css</css>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/blorderselfserviceaddon.js</js>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/cancelorderaction.js</js>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/returnorderaction.js</js>
+      <css>/_ui/addons/blorderselfserviceaddon/responsive/common/css/blorderselfserviceaddon.css</css>
+      <js>/_ui/addons/blstocknotificationaddon/responsive/common/js/blstocknotificationaddon.js</js>
+      <css>/_ui/addons/blstocknotificationaddon/responsive/common/css/blstocknotificationaddon.css</css>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/urlsearchparamspolyfill.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/blassistedservicestorefront.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/jquery.tablesorter.pager.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/jquery.tablesorter.min.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/Chart.min.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/asm.storefinder.js</js>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/blassistedservicestorefront.css</css>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/storeFinder.css</css>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/customer360.css</css>
+      <js>/_ui/addons/blcustomerticketingaddon/responsive/common/js/blcustomerticketingaddon.js</js>
+      <css>/_ui/addons/blcustomerticketingaddon/responsive/common/css/blcustomerticketingaddon.css</css>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/webApplicationInjector.js</js>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/reprocessPage.js</js>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/adjustComponentRenderingToSE.js</js>
+      <js>/_ui/addons/smarteditaddon/responsive/common/js/smarteditaddon.js</js>
+      <css>/_ui/addons/smarteditaddon/responsive/common/css/smarteditaddon.css</css>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/braintreeConstants.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/braintreeaddon_3_0.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/util/braintreeUtil.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/util/generalUtil.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/applePay.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/googlePay.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/creditCard.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/payPalButton.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/localPayment.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/venmo.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/method/creditMessages.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/expressCheckoutPage.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/billingPage.js</js>
+      <js>/_ui/addons/braintreeaddon/responsive/common/js/pages/myAccountPage.js</js>
+      <css>/_ui/addons/braintreeaddon/responsive/common/css/braintreeaddon.css</css>
+   </group>
+</groups>
+
