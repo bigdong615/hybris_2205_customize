@@ -326,8 +326,19 @@
         <value code="RESOLVED" />
     </enumtype>
 
-</enumtypes>
+      <!-- BL-772 : Adding Verification Document enum -->
+      <enumtype generate="true" code="DocumentType" autocreate="true">
+        <value code="DRIVING_LICENSE"/>
+        <value code="UTILITY_BILL"/>
+        <value code="INSURANCE_CERTIFICATE"/>
+        <value code="EXTRA_DOCUMENT1"/>
+        <value code="EXTRA_DOCUMENT2"/>
+        <value code="EXTRA_DOCUMENT3"/>
+        <value code="EXTRA_DOCUMENT4"/>
+        <value code="EXTRA_DOCUMENT5"/>
+      </enumtype>
 
+	  </enumtypes>
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
@@ -484,7 +495,13 @@
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
-      
+	  <relation code="Customer2VerificationDocuments" generate="true"
+		localized="false" autocreate="true">
+		<sourceElement qualifier="customer" type="Customer"
+			cardinality="one" />
+		<targetElement qualifier="verificationDocuments"
+			type="VerificationDocumentMedia" cardinality="many" collectiontype="list" />
+	  </relation>
       <relation code="RepairLog2BlSerialProduct" generate="true" localized="false"
         autocreate="true">
         <sourceElement qualifier="serialRepairLogs" type="BlRepairLog"
@@ -492,7 +509,6 @@
         <targetElement qualifier="serialProduct" type="BlSerialProduct"
           cardinality="one" />
       </relation>
-      
       <relation code="BlTestingGearNeeded2BlSerialProduct" generate="true" localized="false"
         autocreate="true">
         <sourceElement qualifier="testingGearNeededHistory" type="BlTestingGearNeeded"
@@ -500,7 +516,6 @@
         <targetElement qualifier="serialProduct" type="BlSerialProduct"
           cardinality="one" />
       </relation>
-
     </relations>
 
 
@@ -1833,6 +1848,18 @@
             </attributes>
           </itemtype>
           <!--Gift Card End-->
+          <!--Verification Document-->
+          <itemtype code="VerificationDocumentMedia" extends="CatalogUnawareMedia" jaloclass="com.bl.core.jalo.VerificationDocumentMedia" autocreate="true" generate="true">
+            <description>Extending OOTB CatalogUnawareMedia type for additional attributes</description>
+            <attributes>
+              <attribute type="DocumentType" qualifier="documentType">
+                <persistence type="property" />
+              </attribute>
+              <attribute type="java.util.Date" qualifier="expiryDate">
+                <persistence type="property" />
+              </attribute>
+            </attributes>
+          </itemtype>
 
           <itemtype code="BlStoredEmailSubscription" autocreate="true" generate="true"
             jaloclass="com.bl.core.jalo.BlStoredEmailSubscription">

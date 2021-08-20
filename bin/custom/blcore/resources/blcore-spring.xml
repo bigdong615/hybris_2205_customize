@@ -1182,6 +1182,10 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">

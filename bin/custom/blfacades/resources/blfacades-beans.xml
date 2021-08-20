@@ -649,6 +649,12 @@
     <property name="entryPk" type="Long"/>
   </bean>
 
+	<!--BL-772 For Verification Document -->
+	<bean class="com.bl.facades.product.data.VerificationDocumentData">
+		<property name="document" type="org.springframework.web.multipart.MultipartFile"/>
+		<property name="documentType" type="String"/>
+	</bean>
+
 </beans>
 
 
