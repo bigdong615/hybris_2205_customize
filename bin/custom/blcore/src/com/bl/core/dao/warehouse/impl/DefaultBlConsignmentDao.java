@@ -10,6 +10,7 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +30,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
   private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS =
       "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})"
-          + "AND {con:OPTIMIZEDSHIPPINGSTARTDATE} = ?startDate ";
+          + " AND CAST({con:OPTIMIZEDSHIPPINGSTARTDATE} AS DATE) = CAST(?startDate AS DATE) ";
 
   /**
    * Get consignments
@@ -73,8 +74,8 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.FLEXIBLE_DATE_FORMAT);
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
+    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
+    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }
 
