@@ -2,7 +2,6 @@ package com.bl.core.dao.warehouse.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
-import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -11,7 +10,6 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -61,7 +59,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
     }
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Consignments size {} available to ship for date {}", consignmentModels.size(), shipDate);
+        "No of consignments available = {} to ship for date {}", consignmentModels.size(), shipDate);
 
     return consignmentModels;
   }
@@ -75,7 +73,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, "yyyy-MM-dd");
+    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.FLEXIBLE_DATE_FORMAT);
     fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }

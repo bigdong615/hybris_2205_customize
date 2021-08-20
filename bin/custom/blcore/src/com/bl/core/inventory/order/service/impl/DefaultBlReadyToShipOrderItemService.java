@@ -13,7 +13,6 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
