@@ -8,7 +8,7 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
-
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -282,7 +282,7 @@
                         <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                        <%-- <c:set var="total" value="" /> --%>
                        
-                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.extensionBillingCost.value}">
+                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.orderTotalWithTaxForPayBill.value}">
                         <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
                         <input type="hidden" id="paymentId" name="paymentId" value=""/>
                         <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
@@ -302,6 +302,7 @@
                     <div id="orderSummary" class="card">
                         <h5>Bill Summary</h5>
                         <hr>
+                        
                         <table id="costSummary">
                             <tbody>
                             <!--Commented below code as of now  -->
@@ -312,18 +313,20 @@
                              <%--    <tr>
                                     <td class="gray80">Damage Waiver <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                     <td class="text-end">$4.00</td>
-                                </tr>
+                                </tr> --%>
                                 <tr>
                                     <td class="gray80">Taxes</td>
-                                    <td class="text-end">$8.00</td>
-                                </tr> --%>
+                                    <td class="text-end"><format:price priceData="${orderData.totalPayBillTax}" displayFreeForZero="false"/></td>
+                                </tr> 
                                 <%-- <tr>
                                     <td class="gray80">Subtotal</td>
                                     <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
                                 </tr> --%>
                                 <tr class="total">
                                     <td>Total</td>
-                                    <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
+                                    <td class="text-end"><format:price priceData="${orderData.orderTotalWithTaxForPayBill}" displayFreeForZero="false"/></td>
+                                    
+						                            
                                 </tr>
                             </tbody>
                         </table>
@@ -333,7 +336,7 @@
                         <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                        <%-- <c:set var="total" value="" /> --%>
                        
-                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.extensionBillingCost.value}">
+                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.orderTotalWithTaxForPayBill.value}">
                         <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
                         <input type="hidden" id="paymentId" name="paymentId" value=""/>
                         <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>

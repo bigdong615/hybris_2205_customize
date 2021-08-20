@@ -2487,6 +2487,12 @@
                     <modifiers read="true" write="true" optional="true" />
                     <description>Start date of a for extend order</description>
                   </attribute>
+                  
+                  <attribute qualifier="unPaidBillPresent" type="java.lang.Boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>This flag use to check unpaid bill for a customer</description>
+                  </attribute>
 
                 </attributes>
             </itemtype>
@@ -2917,7 +2923,7 @@
                 <defaultvalue>Boolean.FALSE</defaultvalue>
                 <description>It enables/disables PO payment option for a customer</description>
             </attribute>
-            </attributes>
+           </attributes>
             </itemtype>
           <itemtype code="UserGroup" autocreate="false" generate="false">
             <description>Extending Employee type with Organization Roles</description>
