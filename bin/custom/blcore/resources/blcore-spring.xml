@@ -1257,5 +1257,21 @@
 	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
 	
 	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
+	
+	<bean id="blSerialProductValidateInterceptor" class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor">
+	<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+	
+	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
+		<property name="typeCode" value="BlSerialProduct"/>
+	</bean>
+	
+	<bean id="blBufferInventoryService" class="com.bl.core.bufferinventory.service.impl.DefaultBlBufferInventoryService" >
+	</bean>
+	
+	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
+	</bean>
 
 </beans>

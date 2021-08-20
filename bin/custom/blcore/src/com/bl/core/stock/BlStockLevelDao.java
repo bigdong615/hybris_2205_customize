@@ -40,6 +40,17 @@ public interface BlStockLevelDao {
 			final Date startDate, final Date endDate);
 
 	/**
+	 * It finds the stock for the given sku and serial from start date to end date
+	 *
+	 * @param serialProductCode
+	 * @param startDate         the rental start date
+	 * @param endDate           the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findSerialStockLevelForDateFromNonBufferInv(final String serialProductCode,
+			final Date startDate, final Date endDate);
+
+	/**
 	 * It finds the stock for the used gear serial
 	 *
 	 * @param serialProductCode the serial product code

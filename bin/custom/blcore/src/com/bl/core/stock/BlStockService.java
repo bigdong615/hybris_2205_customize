@@ -79,4 +79,10 @@ public interface BlStockService
 	 * This method created to find the stock level for same serial from existing rental for extend order
 	 */
 	void findStockLevelForExtendOrderSerialProducts(final String serialCode , final Date startDate , final Date endDate);
+
+	/**
+	 * This method created to find the stock level for the serial and update buffer inventory flag
+	 * @param blSerialProduct the serial product model
+	 */
+	void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct);
 }

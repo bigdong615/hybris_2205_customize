@@ -286,7 +286,8 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void createStockForActiveSerials(final LocalDate formattedStartDate, final LocalDate formattedEndDate,
 			final BlSerialProductModel serial) {
-		if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
+		if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
+				&& null != serial.getWarehouseLocation())
 		{
 			if (Boolean.FALSE.equals(serial.getForRent()))
 			{
@@ -313,7 +314,8 @@ public class DefaultBlStockService implements BlStockService
 		{
 			for (final BlSerialProductModel serial : skuProduct.getSerialProducts())
 			{
-				if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
+				if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
+						&& null != serial.getWarehouseLocation())
 				{
 					final Date stockDate = Boolean.FALSE.equals(serial.getForRent()) ? null : date;
 					createStockLevelForSerial(serial, stockDate);
@@ -381,6 +383,9 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
+		if(null != serial.getIsBufferedInventory()) {
+			stockLevel.setBufferedInventory(serial.getIsBufferedInventory());
+		}
 		try
 		{
 			getModelService().save(stockLevel);
@@ -395,12 +400,59 @@ public class DefaultBlStockService implements BlStockService
 
 	/**
 	 * This method created to get stock level for serial products
-	 * @param serialCode
-	 * @param startDate
-	 * @param endDate
+	 * @param serialCode the serial product code
+	 * @param startDate the rental start date
+	 * @param endDate the rental end date
 	 */
 	public void findStockLevelForExtendOrderSerialProducts(final String serialCode , final Date startDate , final Date endDate){
-		getBlStockLevelDao().findSerialStockLevelForDate(serialCode, startDate, endDate);
+		getBlStockLevelDao().findSerialStockLevelForDateFromNonBufferInv(serialCode, startDate, endDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @param blSerialProduct serial product
+	 */
+	public void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct) {
+		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
+		stockLevels.forEach(stockLevel -> {
+			stockLevel.setBufferedInventory(blSerialProduct.getIsBufferedInventory());
+			getModelService().save(stockLevel);
+		});
+		updateSkuBufferInventoryPercentage(blSerialProduct);
+	}
+
+	/**
+	 * It calculates buffer inventory percentage and updates it at SKU product level
+	 * @param blSerialProduct
+	 */
+	private void updateSkuBufferInventoryPercentage(final BlSerialProductModel blSerialProduct) {
+		final BlProductModel blProductModel = blSerialProduct.getBlProduct();
+		final int totalActiveProducts = blProductModel.getSerialProducts().stream()
+				.filter(blSerialProductModel -> null != blSerialProductModel.getSerialStatus() && blSerialProductModel
+						.getSerialStatus().equals(SerialStatusEnum.ACTIVE)).collect(Collectors.toList()).size();
+		final int totalBufferProducts = blProductModel.getSerialProducts().stream()
+				.filter(blSerialProductModel -> isBufferInvProduct(blSerialProductModel, blSerialProduct)).collect(Collectors.toList()).size();
+		if(totalBufferProducts > 0  && totalActiveProducts > 0) {
+			final double bufferInventoryPercentage = ((double) totalBufferProducts / (double) totalActiveProducts) * BlCoreConstants
+					.DIVIDE_BY_HUNDRED;
+			blProductModel.setBufferedInventoryPercentage(bufferInventoryPercentage);
+		} else {
+			blProductModel.setBufferedInventoryPercentage(0.0);
+		}
+		getModelService().save(blProductModel);
+	}
+
+	/**
+	 * It checks whether the product is buffer inventory or not
+	 * @param serialProductModel
+	 * @param blSerialProductModel
+	 * @return true if the product is buffer inventory
+	 */
+	private boolean isBufferInvProduct(final BlSerialProductModel serialProductModel,
+			final BlSerialProductModel blSerialProductModel) {
+		return blSerialProductModel.getCode().equals(serialProductModel.getCode()) ? (null != blSerialProductModel
+				.getIsBufferedInventory() && blSerialProductModel.getIsBufferedInventory()) : (null != serialProductModel
+				.getIsBufferedInventory() && serialProductModel.getIsBufferedInventory());
 	}
 
 
