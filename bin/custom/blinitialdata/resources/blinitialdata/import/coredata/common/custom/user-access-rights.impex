@@ -307,7 +307,9 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; TestingNeededItemsQueue       ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingVipOrderItems        ; +                       ; +        ; -      ; -      ;             
-                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;   
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +          
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
 #Access right for repairmemberusergroup
@@ -347,7 +349,9 @@ Usergroup              ; repairmemberusergroup   ;                    ;         
                        ;                         ;                    ; RepairReasonsEnum             ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingRepairItems          ; +                       ; +        ; +      ; +      ;             
-                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
 #Access right for unboxingmemberusergroup
@@ -387,6 +391,8 @@ Usergroup              ; unboxingmemberusergroup ;                    ;         
                        ;                         ;                    ; RepairReasonsEnum             ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; ExportAllDirtyPrioritySerials ; +                       ; +        ; +      ; +      ;             
-                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
