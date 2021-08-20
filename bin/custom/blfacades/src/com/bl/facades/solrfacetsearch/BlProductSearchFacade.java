@@ -7,8 +7,8 @@ import de.hybris.platform.commerceservices.enums.SearchQueryContext;
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 
 /**
- * @author Manikandan
  * This interface created for adding custom parameter for method
+ *  @author Manikandan
  */
 
 public interface BlProductSearchFacade<ITEM extends ProductData> extends ProductSearchFacade<ITEM> {

@@ -10,8 +10,8 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageDat
 import de.hybris.platform.commerceservices.threadcontext.ThreadContextService;
 
 /**
- * @author Manikandan
  * This class created for adding custom parameter for auto sugesstion
+ * @author Manikandan
  */
 public class DefaultBlSolrProductSearchFacade<ITEM extends ProductData> extends DefaultSolrProductSearchFacade<ITEM> implements
     BlProductSearchFacade<ITEM> {
