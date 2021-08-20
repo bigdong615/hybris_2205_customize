@@ -91,10 +91,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
 
     final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    double priviousTax = source.getTotalTax();
+    final double priviousTax = source.getTotalTax();
     source.setUnPaidBillPresent(true);
     getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
-    double currentTax = source.getTotalTax();
+    final double currentTax = source.getTotalTax();
 
      source.setTotalTax(priviousTax);
     source.setUnPaidBillPresent(false);

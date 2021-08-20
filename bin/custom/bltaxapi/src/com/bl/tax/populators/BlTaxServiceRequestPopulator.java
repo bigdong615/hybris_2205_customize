@@ -103,7 +103,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         taxLine.setTaxCode(setProductTaxCode(entry));
         taxLines.add(taxLine);
       }
-    } else{
+    } else {
       abstractOrder.getConsignments()
               .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
                       .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
@@ -127,7 +127,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
                         }
                       }))));
 
-      }
+    }
     return taxLines;
   }
 

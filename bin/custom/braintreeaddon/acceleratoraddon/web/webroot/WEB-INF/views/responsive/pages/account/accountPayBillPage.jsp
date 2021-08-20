@@ -310,18 +310,12 @@
                                     <td class="gray80">Bill Cost</td>
                                     <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
                                 </tr>
-                             <%--    <tr>
-                                    <td class="gray80">Damage Waiver <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-                                    <td class="text-end">$4.00</td>
-                                </tr> --%>
+                             
                                 <tr>
                                     <td class="gray80">Taxes</td>
                                     <td class="text-end"><format:price priceData="${orderData.totalPayBillTax}" displayFreeForZero="false"/></td>
                                 </tr> 
-                                <%-- <tr>
-                                    <td class="gray80">Subtotal</td>
-                                    <td class="text-end"><format:price priceData="${orderData.extensionBillingCost}" displayFreeForZero="false"/></td>
-                                </tr> --%>
+                               
                                 <tr class="total">
                                     <td>Total</td>
                                     <td class="text-end"><format:price priceData="${orderData.orderTotalWithTaxForPayBill}" displayFreeForZero="false"/></td>
