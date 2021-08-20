@@ -53,19 +53,19 @@ ACC.product = {
         addToCartForm.ajaxForm({
         	beforeSubmit:ACC.product.showRequest,
         	success: ACC.product.displayAddToCartPopup
-         });
+         });    
         setTimeout(function(){
         	$ajaxCallEvent  = true;
          }, 2000);
      },
-     showRequest: function(arr, $form, options) {
+     showRequest: function(arr, $form, options) {  
     	 if($ajaxCallEvent)
     		{
     		 $ajaxCallEvent = false;
     		 return true;
-    		}
+    		}   	
     	 return false;
-
+ 
     },
 
     bindToAddToCartStorePickUpForm: function () {
@@ -84,8 +84,11 @@ ACC.product = {
             ACC.minicart.updateMiniCartDisplay();
         }
         var titleHeader = $('#addToCartTitle').html();
-        //BL-454 show modal
-        $('#addToCartModalDialog').html(cartResult.addToCartLayer);
+
+        ACC.colorbox.open(titleHeader, {
+            html: cartResult.addToCartLayer,
+            width: "460px"
+        });
 
         var productCode = $('[name=productCodePost]', formElement).val();
         var quantityField = $('[name=qty]', formElement).val();
@@ -104,8 +107,7 @@ ACC.product = {
             "productName": cartAnalyticsData.productName
         };
         ACC.track.trackAddToCart(productCode, quantity, cartData);
-    },
-
+    }
 };
 
 $(document).ready(function () {
