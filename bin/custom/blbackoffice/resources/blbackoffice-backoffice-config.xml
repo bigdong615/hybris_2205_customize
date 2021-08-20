@@ -2282,7 +2282,51 @@
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>
-	
+
+	<context type="MorningPullOrdersQueue" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderNumber"/>
+			<list-view:column qualifier="orderType"/>
+			<list-view:column qualifier="isVIPOrder"/>
+			<list-view:column qualifier="isUsedGearOrder"/>
+			<list-view:column qualifier="orderNotes"/>
+			<list-view:column qualifier="productId"/>
+			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="warehouseCode"/>
+			<list-view:column qualifier="parentLocation"/>
+			<list-view:column qualifier="childLocation"/>
+			<list-view:column qualifier="shippingMethod"/>
+			<list-view:column qualifier="shipDate"/>
+			<list-view:column qualifier="employeeName"/>
+		</list-view:list-view>
+	</context>
+
+	<context component="create-wizard" type="CustomerNotes" principal="customersupportagentrole">
+		<wz:flow id="cs-CustomerNotes-create-wizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="csCustomerNotesPrepare">
+				<wz:initialize property="newCSCustomerNotes" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newCSCustomerNotes.order" value="ctx.parentObject"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.notes.essential.label">
+				<wz:content id="step1.content">
+					<wz:property-list root="newCSCustomerNotes">
+						<wz:property qualifier="customerNoteType"/>
+						<wz:property qualifier="fraud"/>
+						<wz:property qualifier="userID"/>
+						<wz:property qualifier="note"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newCSCustomerNotes"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
 </config>
 
 

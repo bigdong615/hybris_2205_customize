@@ -79,20 +79,17 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
   /**
    * This method will remove all  ReadyToShipOrderItems for specified shipdate and warehouse.
    *
-   * @param shipDate  the shipDate
    * @param warehouse the warehouse
    */
   @Override
-  public void removeReadyToShipOrderItemsForDateAndWareshouse(final Date shipDate,
-      final WarehouseModel warehouse) {
+  public void removeReadyToShipOrderItemsForWarehouse(final WarehouseModel warehouse) {
 
     final List<ReadyToShipOrderItemModel> orderItemModels = blReadyToShipOrderItemDao
-        .getReadyToShipOrderItemsForDate(shipDate, warehouse);
+        .getReadyToShipOrderItemsForWarehouse(warehouse);
 
     if (CollectionUtils.isEmpty(orderItemModels)) {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "No order items available to remove for ship date {} and with warehouse code {}.",
-          shipDate, warehouse.getCode());
+          "No order items available to remove for warehouse with code {}.", warehouse.getCode());
     } else {
       modelService.removeAll(orderItemModels);
     }
