@@ -213,6 +213,59 @@ Usergroup ; shippingteamuserrole ;                ;                ;      ;     
           ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+$END_USERRIGHTS; ; ; ;
+
+#Access for verification team members
+INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];backOfficeLoginDisabled;authorities
+;verificationdocagentrole;Bl Verification Document Access Agent Role;Bl Verification Document Access Agent Role;FALSE;verificationdocagentrole
+
+
+INSERT_UPDATE Usergroup;uid[unique=true];groups(uid)
+;verificationdocusergroup;employeegroup,verificationdocagentrole
+
+INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
+  ;verificationdocusergroup;verificationdocagentrole
+  
+INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
+;verificationAgent;Verification Agent;verificationdocusergroup;1234
+
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;verificationdocusergroup;;;;;;;
+
+# Access Rights for Warehousing agent group;;;;;;;;
+;;;Customer;+;+;-;-
+;;;Customer.verificationDocuments;+;+;+;+
+;;;VerificationDocumentMedia;+;+;+;+
+;;;VerificationDocumentMedia.documentType;+;+;+;+
+;;;VerificationDocumentMedia.expiryDate;+;+;+;+
+;;;VerificationDocumentMedia.customer;+;+;+;+
+;;;VerificationDocumentMedia.folder;+;+;+;+
+;;;VerificationDocumentMedia.url;+;+;+;+
+;;;VerificationDocumentMedia.downloadURL;+;+;+;+
+;;;Customer.verificationDocuments;+;+;+;+
+;;;Media;+;+;+;+
+;;;Media.folder;+;+;+;+
+
+
+$END_USERRIGHTS;;;;
+
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;verificationdocagentrole;;;;;;;
+
+# Access Rights for Warehousing agent group;;;;;;;;
+;;;Customer;+;+;-;-
+;;;Customer.verificationDocuments;+;+;+;+
+;;;VerificationDocumentMedia;+;+;+;+
+;;;VerificationDocumentMedia.documentType;+;+;+;+
+;;;VerificationDocumentMedia.expiryDate;+;+;+;+
+;;;VerificationDocumentMedia.customer;+;+;+;+
+;;;VerificationDocumentMedia.folder;+;+;+;+
+;;;VerificationDocumentMedia.url;+;+;+;+
+;;;VerificationDocumentMedia.downloadURL;+;+;+;+
+;;;Media;+;+;+;+
+;;;Media.folder;+;+;+;+
           ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
@@ -241,6 +294,10 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
 ;;;StockLevel;+;-;-;-
+;;;BlTestingGearNeeded;+;+;+;+;
+;;;Product;+;-;-;-;
+;;;BlProduct;+;-;-;-;
+;;;BlSerialProduct;+;-;-;-;
 
 $END_USERRIGHTS;;;;
 
@@ -309,7 +366,8 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; RemainingVipOrderItems        ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;   
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
-                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +          
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +          
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
 #Access right for repairmemberusergroup
@@ -395,4 +453,4 @@ Usergroup              ; unboxingmemberusergroup ;                    ;         
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
                        ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
-                       
+

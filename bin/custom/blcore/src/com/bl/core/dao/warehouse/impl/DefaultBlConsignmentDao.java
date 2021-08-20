@@ -28,10 +28,9 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
   private FlexibleSearchService flexibleSearchService;
 
-  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE =
-      "SELECT {pk} FROM {" + ConsignmentModel._TYPECODE + "} WHERE {"
-          + ConsignmentModel.STATUS + "} NOT IN (?status) AND  {"
-          + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate ";
+  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS =
+      "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})"
+          + " AND CAST({con:OPTIMIZEDSHIPPINGSTARTDATE} AS DATE) = CAST(?startDate AS DATE) ";
 
   /**
    * Get consignments
@@ -41,7 +40,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   @Override
   public List<ConsignmentModel> getReadyToShipConsignmentsForDate(final Date shipDate) {
 
-    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE);
+    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS);
 
     final List<ConsignmentStatus> statusList = new ArrayList<>();
     statusList.add(ConsignmentStatus.CANCELLED);
@@ -51,12 +50,17 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
     final SearchResult<ConsignmentModel> result = getFlexibleSearchService().search(fQuery);
     final List<ConsignmentModel> consignmentModels = result.getResult();
+
+
     if (CollectionUtils.isEmpty(consignmentModels))
     {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "No Consignments available to ship for date {}", shipDate);
       return Collections.emptyList();
     }
+
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "No of consignments available = {} to ship for date {}", consignmentModels.size(), shipDate);
 
     return consignmentModels;
   }
@@ -71,9 +75,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
       final FlexibleSearchQuery fQuery) {
 
     final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
-    final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
     fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
-    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }
 
