@@ -270,7 +270,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
 	public static final String AQUATECH_BRAND_ID ="9";
-	public static final String FLEXIBLE_DATE_FORMAT = "yyyy-MM-dd";
 
 
   private BlCoreConstants()
