@@ -28,8 +28,8 @@
                    <input type="text" id="js-site-search-input"  class="d-none d-md-inline-block form-control js-site-search-input" placeholder="<spring:theme code="text.used.gear.desktop.search.placeholder"/>"
                      name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                    <input type="text" id="js-site-search-input-mob" class="d-inline-block d-md-none form-control js-site-search-input-mobile" placeholder="<spring:theme code="text.used.gear.search.placeholder"/>"
-					name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
-                     <input type = "hidden" value="usedGear" name="blPageType"/>
+					              name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
+                     <input type = "hidden" value="usedGear" name="blPageType" id="js-page-type"/>
                   </ycommerce:testId>
                   <div class="input-group-append  d-md-block input-button-search">
                      <button class="btn btn-search btn-link js_search_button js-search-track" type="submit"><spring:theme code="text.used.gear.search"/></button>
