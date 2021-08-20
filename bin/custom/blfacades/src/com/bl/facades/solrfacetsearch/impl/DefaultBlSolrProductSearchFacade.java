@@ -9,14 +9,20 @@ import de.hybris.platform.commerceservices.enums.SearchQueryContext;
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 import de.hybris.platform.commerceservices.threadcontext.ThreadContextService;
 
+/**
+ * @author Manikandan
+ * This class created for adding custom parameter for auto sugesstion
+ */
 public class DefaultBlSolrProductSearchFacade<ITEM extends ProductData> extends DefaultSolrProductSearchFacade<ITEM> implements
     BlProductSearchFacade<ITEM> {
 
   private BlProductSearchService blProductSearchService;
 
+  /**
+   * This method created to add the custom parameter for auto sugesstion search
+   */
   @Override
-  public ProductSearchPageData textSearch(final String text, final SearchQueryContext searchQueryContext,
-      final String blPageType) {
+  public ProductSearchPageData textSearch(final String text, final SearchQueryContext searchQueryContext, final String blPageType) { // NOSONAR
       return getThreadContextService().executeInContext(
           new ThreadContextService.Executor<ProductSearchPageData<SearchStateData, ITEM>, ThreadContextService.Nothing>()
           {

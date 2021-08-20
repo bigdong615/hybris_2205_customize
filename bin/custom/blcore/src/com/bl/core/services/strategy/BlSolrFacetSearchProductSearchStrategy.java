@@ -18,6 +18,6 @@ public interface BlSolrFacetSearchProductSearchStrategy<ITEM> extends
    * This Method created to set the custom value to searchQueryData
    */
   ProductCategorySearchPageData<SolrSearchQueryData, ITEM, CategoryModel> textSearch(final String text, final SearchQueryContext searchQueryContext,
-      final PageableData pageableData , final String blPageType);
+      final PageableData pageableData , final String blPageType); //NOSONAR
 
 }

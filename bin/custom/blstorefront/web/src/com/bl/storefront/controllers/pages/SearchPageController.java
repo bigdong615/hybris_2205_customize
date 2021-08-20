@@ -20,7 +20,6 @@ import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.commercefacades.search.ProductSearchFacade;
 import de.hybris.platform.commercefacades.search.data.AutocompleteResultData;
 import de.hybris.platform.commercefacades.search.data.SearchQueryData;
 import de.hybris.platform.commercefacades.search.data.SearchStateData;
@@ -39,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +65,6 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@Resource(name = "productSearchFacade")
 	private BlProductSearchFacade<ProductData> productSearchFacade;
-//	private ProductSearchFacade<ProductData> productSearchFacade;
 
 	@Resource(name = "searchBreadcrumbBuilder")
 	private SearchBreadcrumbBuilder searchBreadcrumbBuilder;
@@ -87,14 +86,14 @@ public class SearchPageController extends AbstractSearchPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "!q")
+	@GetMapping(params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
+			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page); //NOSONAR
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
@@ -207,7 +206,7 @@ public class SearchPageController extends AbstractSearchPageController
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
 			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
 	{
-		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
+		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode); // NOSONAR
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
@@ -220,7 +219,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/results", method = RequestMethod.GET)
+	@GetMapping(value = "/results")
 	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -235,7 +234,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/facets", method = RequestMethod.GET)
+	@GetMapping(value = "/facets")
 	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -258,7 +257,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@GetMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN)
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
 			@RequestParam("term") final String term ,	@RequestParam(value="blPageType" ,required = false) final String blPageType) throws CMSItemNotFoundException
 	{

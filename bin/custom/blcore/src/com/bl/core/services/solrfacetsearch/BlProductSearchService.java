@@ -17,5 +17,6 @@ public interface BlProductSearchService<ITEM> extends
   /**
    * This method created to set custom parameter
    */
-  ProductCategorySearchPageData<SolrSearchQueryData, ITEM, CategoryModel> textSearch(final String text, final SearchQueryContext searchQueryContext, final PageableData pageableData , final String blPageType); //NOSONAR
+  ProductCategorySearchPageData<SolrSearchQueryData, ITEM, CategoryModel> textSearch(final String text, final SearchQueryContext searchQueryContext,
+      final PageableData pageableData , final String blPageType); //NOSONAR
 }
