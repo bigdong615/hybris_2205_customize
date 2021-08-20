@@ -1642,6 +1642,11 @@
 					<editorArea:attribute qualifier="serialRepairLogs"/>
 				</editorArea:section>
 			</editorArea:tab>
+			<editorArea:tab name="hmc.tab.blSerial.request.testing.gear" position="3">
+                <editorArea:section name="hmc.section.blSerial.attributes">
+                    <editorArea:attribute qualifier="testingGearNeededHistory"/>
+                </editorArea:section>
+            </editorArea:tab>
 		</editorArea:editorArea>
 	</context>
 
@@ -2107,6 +2112,7 @@
 			<n:navigation-node id="StockLevel">
 				<n:type-node code="StockLevel" id="StockLevel"/>
 			</n:navigation-node>
+			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 		</n:explorer-tree>
 	</context>
 	
@@ -2465,6 +2471,55 @@
 		</wz:flow>
 	</context>
 
+	<context type="BlTestingGearNeeded" component="create-wizard">
+		<wz:flow id="testingGearNeededCreateWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="testingGearNeededPrepare">
+				<wz:initialize property="newTestingGearNeeded" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step0" label="hmc.essential">
+				<wz:content>
+					<wz:property-list root="newTestingGearNeeded">
+						<wz:property qualifier="nameOrDescription"  />
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step0.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newTestingGearNeeded"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	
+	<context merge-by="type" type="BlTestingGearNeeded" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.testing.needed.log.tab" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="nameOrDescription"/>
+					<editorArea:attribute qualifier="requestStatus"/>
+					<editorArea:attribute qualifier="serialProduct"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+	
+	<context type="BlTestingGearNeeded" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
+			<advanced-search:field-list>
+				<advanced-search:field mandatory="false" name="requestStatus" selected="true"/>
+                <advanced-search:field mandatory="false" name="serialProduct" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlTestingGearNeeded" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="nameOrDescription"/>
+            <list-view:column qualifier="requestStatus"/>
+            <list-view:column qualifier="serialProduct"/>
+		</list-view:list-view>
+	</context>
 </config>
 
 

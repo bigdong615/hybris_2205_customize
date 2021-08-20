@@ -320,6 +320,11 @@
         <value code="WAIVED" />
         <value code="INSTALLMENT_PLAN" />
     </enumtype>
+    
+    <enumtype generate="true" code="TestingGearNeededStatusEnum" autocreate="true" dynamic="true">
+        <value code="OPEN" />
+        <value code="RESOLVED" />
+    </enumtype>
 
       <!-- BL-772 : Adding Verification Document enum -->
       <enumtype generate="true" code="DocumentType" autocreate="true">
@@ -500,6 +505,13 @@
       <relation code="RepairLog2BlSerialProduct" generate="true" localized="false"
         autocreate="true">
         <sourceElement qualifier="serialRepairLogs" type="BlRepairLog"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="serialProduct" type="BlSerialProduct"
+          cardinality="one" />
+      </relation>
+      <relation code="BlTestingGearNeeded2BlSerialProduct" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="testingGearNeededHistory" type="BlTestingGearNeeded"
           cardinality="many" collectiontype="list" />
         <targetElement qualifier="serialProduct" type="BlSerialProduct"
           cardinality="one" />
@@ -3451,6 +3463,27 @@
                   </attribute>
        			</attributes>
        		</itemtype>
+		</typegroup>
+		
+		<!-- BL-957 Testing Gear Needed -->
+		<typegroup name="TestingGear">
+			<itemtype code="BlTestingGearNeeded" autocreate="true" generate="true">
+				<description>Bl Testing Gear Needed</description>
+				<deployment table="testingGearNeeded" typecode="12233"/>
+				<attributes>
+					<attribute qualifier="nameOrDescription" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="false" />
+                         <description>Tech Eng. Team member can specify name or description of the required gear for testing</description>
+                     </attribute>
+                     <attribute qualifier="requestStatus" type="TestingGearNeededStatusEnum">
+	            	  	<modifiers read="true" write="true" optional="false" />
+	            	  	<defaultvalue>em().getEnumerationValue("TestingGearNeededStatusEnum", "OPEN")</defaultvalue>
+	                    <description>Testing Gear Needed Status</description>
+	                    <persistence type="property" />
+                  	</attribute>
+				</attributes>
+			</itemtype>
 		</typegroup>
       
 <typegroup name="BlReportDefinition">
