@@ -8,5 +8,5 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageDat
 
 public interface BlProductSearchFacade<ITEM extends ProductData> extends ProductSearchFacade<ITEM> {
 
-  ProductSearchPageData<SearchStateData, ITEM> textSearch(String text, SearchQueryContext searchQueryContext , String blPageType);
+  ProductSearchPageData<SearchStateData, ITEM> textSearch(final String text, final SearchQueryContext searchQueryContext , final String blPageType);
 }

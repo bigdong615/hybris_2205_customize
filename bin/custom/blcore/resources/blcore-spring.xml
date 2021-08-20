@@ -1290,11 +1290,6 @@
 	</bean>
 
 
-	<alias name="defaultBlSolrAutoSuggestService" alias="solrAutoSuggestService" />
-	<bean id="defaultBlSolrAutoSuggestService"
-		class="com.bl.core.search.solrfacetsearch.services.DefaultBlSolrAutoSuggestService" parent="defaultSolrAutoSuggestService">
-	</bean>
-
 	<!-- Added for creating custom method to set custom parameter -->
 
 </beans>

@@ -15,8 +15,8 @@ public class DefaultBlSolrProductSearchFacade<ITEM extends ProductData> extends 
   private BlProductSearchService blProductSearchService;
 
   @Override
-  public ProductSearchPageData textSearch(String text, SearchQueryContext searchQueryContext,
-      String blPageType) {
+  public ProductSearchPageData textSearch(final String text, final SearchQueryContext searchQueryContext,
+      final String blPageType) {
       return getThreadContextService().executeInContext(
           new ThreadContextService.Executor<ProductSearchPageData<SearchStateData, ITEM>, ThreadContextService.Nothing>()
           {
