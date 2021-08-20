@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -290,52 +292,154 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       final Set<BlSerialProductModel> serialProductModels) {
 
     final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
+    final List<BlProductModel> allSerialSubPartProducts = new ArrayList<>();
+
     serialProductModels.forEach(serial -> {
 
       itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Serial product with code {} added to the products list on consignment entry.",
-          serial.getCode());
+          "Serial product with code {} added to the products list on consignment entry with consignment code {}",
+          serial.getCode(), entry.getConsignment().getCode());
 
-      final List<BlProductModel> subPartProducts = getSessionService()
+      allSerialSubPartProducts.addAll(getSessionService()
           .executeInLocalView(new SessionExecutionBody() {
             @Override
             public List<BlProductModel> execute() {
               getSearchRestrictionService().disableSearchRestrictions();
-              if (null != serial.getBlProduct()) {
+              if (null != serial.getBlProduct() && CollectionUtils
+                  .isNotEmpty(serial.getBlProduct().getSubParts())) {
 
                 return (List<BlProductModel>) serial.getBlProduct().getSubParts();
               }
               return new ArrayList<>();
             }
-          });
-
-      subPartProducts.forEach(product -> {
-
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-            "Sub part with code {} and quantity {} added to the products list on consignment entry.",
-            product.getCode(), product.getSubpartQuantity());
-
-        for (int i = 1; i <= product.getSubpartQuantity(); i++) {
-          entry.getSerialProducts().add(product);
-          itemsMap.put(product.getName() + BlCoreConstants.HYPHEN + i, ItemStatusEnum.NOT_INCLUDED);
-
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-              "Sub part with name {} added to the products list on consignment entry.",
-              product.getName());
-        }
-      });
-
+          }));
     });
 
+    putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
+
+    putProductOptionsInToItemsMap(entry, itemsMap);
+
     entry.setItems(itemsMap);
+  }
+
+  /**
+   * Add subpart product to items map of consignment entry.
+   * @param consignmentEntry
+   * @param itemsMap
+   * @param allSerialSubPartProducts
+   */
+  private void putSubPartProductsInToItemsMap(final ConsignmentEntryModel consignmentEntry,
+      final Map<String, ItemStatusEnum> itemsMap,
+      final List<BlProductModel> allSerialSubPartProducts) {
+
+    final Map<BlProductModel, Integer> allSerialSubPartProductMap = new HashMap<>();
+    for (BlProductModel productModel : allSerialSubPartProducts) {
+
+      if (null != allSerialSubPartProductMap.get(productModel)) {
+
+        allSerialSubPartProductMap.put(productModel,
+            allSerialSubPartProductMap.get(productModel) + productModel.getSubpartQuantity());
+      } else {
+
+        allSerialSubPartProductMap.put(productModel, productModel.getSubpartQuantity());
+      }
+    }
+
+    allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
+
+      final BlProductModel subPartProduct = mapEntry.getKey();
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "Sub part with code {} and quantity {} added to the products list on consignment entry.",
+          subPartProduct.getCode(), mapEntry.getValue());
+
+      if (mapEntry.getValue() == 1) {
+
+        itemsMap.put(subPartProduct.getName(), ItemStatusEnum.NOT_INCLUDED);
+
+        addSubPartToConsignmentEntry(consignmentEntry, subPartProduct);
+      } else {
+        for (int i = 1; i <= mapEntry.getValue(); i++) {
+
+          itemsMap.put(subPartProduct.getName() + BlCoreConstants.DOUBLE_HYPHEN + i,
+              ItemStatusEnum.NOT_INCLUDED);
+
+          addSubPartToConsignmentEntry(consignmentEntry, subPartProduct);
+        }
+      }
+
+    });
+  }
+
+  /**
+   * Add subpart product to consignment entry.
+   * @param consignmentEntry
+   * @param subPartProduct
+   */
+  private void addSubPartToConsignmentEntry(final ConsignmentEntryModel consignmentEntry,
+      final BlProductModel subPartProduct) {
+
+    consignmentEntry.getSerialProducts().add(subPartProduct);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "Sub part with name {} added to the products list on consignment entry with consignment code {}",
+        subPartProduct.getName(), consignmentEntry.getConsignment().getCode());
+  }
+
+  /**
+   * Update consignment entry with product options.
+   * @param consignmentEntry
+   * @param itemsMap
+   */
+  private void putProductOptionsInToItemsMap(final ConsignmentEntryModel consignmentEntry,
+      final Map<String, ItemStatusEnum> itemsMap) {
+
+    final AbstractOrderEntryModel orderEntry = consignmentEntry.getOrderEntry();
+
+    if (CollectionUtils.isNotEmpty(orderEntry.getOptions())) {
+
+      final BlOptionsModel optionsModel = orderEntry.getOptions().get(0);
+      if (consignmentEntry.getQuantity() == 1) {
+
+        itemsMap.put(optionsModel.getName(), ItemStatusEnum.NOT_INCLUDED);
+
+        addProductOptionsToConsignmentEntry(consignmentEntry, optionsModel);
+      } else {
+        for (int i = 1; i <= consignmentEntry.getQuantity(); i++) {
+
+          itemsMap.put(optionsModel.getName() + BlCoreConstants.DOUBLE_HYPHEN + i,
+              ItemStatusEnum.NOT_INCLUDED);
+
+          addProductOptionsToConsignmentEntry(consignmentEntry, optionsModel);
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Add product options to consignment entry.
+   * @param consignmentEntry
+   * @param optionsModel
+   */
+  private void addProductOptionsToConsignmentEntry(final ConsignmentEntryModel consignmentEntry,
+      final BlOptionsModel optionsModel) {
+
+    final List<BlOptionsModel> productOptionsToAdd =
+        CollectionUtils.isNotEmpty(consignmentEntry.getOptions()) ? new ArrayList<>(
+            consignmentEntry.getOptions()) : new ArrayList<>();
+    productOptionsToAdd.add(optionsModel);
+    consignmentEntry.setOptions(productOptionsToAdd);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "Product option with name {} added to the options list on consignment entry with consignment code {}",
+        optionsModel.getName(), consignmentEntry.getConsignment().getCode());
   }
   
   /**
    * Sets the serial codes to billing charges.
    *
-   * @param entry
+   * @param consignmentEntry
    *           the entry
    * @param serialProductModels
    *           the serial product models

@@ -7,13 +7,13 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-   <c:choose>
+     <c:choose>
         <c:when test="${galleryImages == null || galleryImages.size() == 0}">
              <div id="product-slider" class="splide" >
                  <div class="splide__track" >
                       <ul class="splide__list">
                            <spring:theme code="img.missingProductImage.responsive.product" var="imagePath" htmlEscape="false"/>
-                        <c:choose>
+                           <c:choose>
                             <c:when test="${originalContextPath ne null}">
 							              	<c:choose>
 									                <c:when test='${fn:startsWith(imagePath, originalContextPath)}'>
@@ -38,6 +38,7 @@
             <div class="splide__track" >
                    <ul class="splide__list">
                          <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
+
                                  <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
                          </c:forEach>
                    </ul>

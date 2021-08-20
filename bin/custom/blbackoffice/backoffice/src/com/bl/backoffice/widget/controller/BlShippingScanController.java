@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.util.Config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
@@ -43,9 +43,6 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	private static final Logger LOG = Logger.getLogger(BlShippingScanController.class);
 
-	@Value("${blbackoffice.max.product.scan}")
-	private int maxProductScan;
-
 	@Wire
 	Textbox scanningArea;
 
@@ -73,7 +70,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	/**
 	 * This method is used to update the barcode values on change event
 	 */
-	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeScan()
 	{
 		shippingScanToolData
@@ -152,7 +149,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	{
 		final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize >= BlInventoryScanLoggingConstants.TWO)
+		if (barcodeSize >= BlInventoryScanLoggingConstants.ONE)
 		{
 			final Map<String, List<String>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 					selectedConsignment);
@@ -204,13 +201,15 @@ public class BlShippingScanController extends DefaultWidgetController
 			{
 				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT))
 				{
-					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG, BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY,
+					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG,
+							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY,
 							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT));
 				}
 
 				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_IN_SCAN))
 				{
-					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_SCAN_MSG, BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_SCAN_KEY,
+					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_SCAN_MSG,
+							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_SCAN_KEY,
 							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_SCAN));
 				}
 			}
@@ -225,7 +224,9 @@ public class BlShippingScanController extends DefaultWidgetController
 	private void createResponseForShippingScan(final List<String> barcodes)
 	{
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize == BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
+
+		if (barcodeSize == BlInventoryScanLoggingConstants.TWO
+				&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 		{
 			createResponseMegForShippingScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
 					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),

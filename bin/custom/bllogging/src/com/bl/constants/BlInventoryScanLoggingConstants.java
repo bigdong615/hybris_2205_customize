@@ -25,6 +25,7 @@ public class BlInventoryScanLoggingConstants {
     public static final int ELEVEN = 11;
     public static final int FIFTEEN = 15;
     public static final int FORTY = 40;
+    public static final int HUNDERED = 100;
 
     public static final String HUN_PER = "100%";
     public static final String SAVING = "Saving ";
@@ -52,10 +53,14 @@ public class BlInventoryScanLoggingConstants {
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
     public static final String NOTIFICATION_HANDLER = "webSanToolNotification";
+    public static final String ONE_ITEM_SCAN_ERROR_FAILURE = "oneBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE = "maxBarcodeLimitErrorFailure";
+    public static final String MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE = "maxBarcodeLimitEQErrorFailure";
+    public static final String MAX_BIN_LIMIT_ERROR_FAILURE = "maxBinLimitErrorFailure";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE = "mustTwoBarcodeErrorFailure";
     public static final String SCAN_BATCH_ERROR_FAILURE = "scanBatchErrorFailure";
     public static final String SCAN_BARCODE_SUCCESS = "scanBarcodeSuccess";
+    public static final String SCAN_BIN_SUCCESS = "scanBINSuccess";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE = "lastScanInvalidErrorFailure";
     public static final String LAST_SCAN_ERROR_FAILURE = "lastScanErrorFailure";
     public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
@@ -64,7 +69,10 @@ public class BlInventoryScanLoggingConstants {
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
 
+    public static final String ONE_ITEM_SCAN_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
+    public static final String MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE_MSG = "Maximum number of item scans reached without a location scan: {}";
+    public static final String MAX_BIN_LIMIT_ERROR_FAILURE_MSG = "If the first scan is a BIN, only 2 scans are allowed and the second must be a location";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
     public static final String TWO_BARCODE_SCAN_ERROR_MSG = "Must have two barcode to scans";
     public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
@@ -137,7 +145,8 @@ public class BlInventoryScanLoggingConstants {
  	public static final String TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.order.scan.item.error";
 	public static final String PACKAGE_MANUAL_REVIEW_FAILURE = "blbackoffice.order.manual.review.error.messge";
 	public static final String PACKAGE_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.order.error.messge";
-
+	public static final String LAST_LOCATION_VALID_TRACKING_FAILURE = "blbackoffice.order.last.location.tracking.id.error.messge";
+	
  	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
  	public static final String SHIPPING_INVALID_SCAN_ERROR = "blbackoffice.shipping.scan.invalid.scan.error";
  	public static final String SHIPPING_TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.shipping.scan.item.error";
@@ -184,6 +193,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
     public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
     public static final String TRUE_STRING = "true";
+    public static final String SPLIT_STRING = "##";
 
  	public static final String MISSING_IN_CONSIGNMENT = "MISSING_IN_CONSIGNMENT";
  	public static final String MISSING_IN_SCAN = "MISSING_IN_SCAN";
@@ -192,6 +202,14 @@ public class BlInventoryScanLoggingConstants {
     public static final String CUSTOMER_SUPPORT_AGENT_GROUP = "customersupportagentgroup";
     public static final String ERROR_EXIST = "ERROR_EXIST";
     public static final String ALLOW_SCAN = "ALLOW_SCAN";
+    public static final String REPAIR_CLEAN_MOBILE_CART = "REPAIR_CLEAN_MOBILE_CART";
+    public static final String REPAIR = "REPAIR";                   
+    public static final String REPAIR_CABINET = "REPAIR_CABINET";           
+    public static final String REPAIR_MOBILE_SHELF = "REPAIR_MOBILE_SHELF";      
+    public static final String REPAIR_MOBILE_LAUNDRY_BIN = "REPAIR_MOBILE_LAUNDRY_BIN";
+
+    public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
+    public static final String FOR = " for ";
 
 
     private BlInventoryScanLoggingConstants() { }
