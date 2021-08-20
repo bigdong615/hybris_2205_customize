@@ -69,7 +69,15 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 }
    	 target.setIsRentalCart(Boolean.FALSE);
    	 target.setHasGiftCart(Boolean.TRUE);
-   	
+
+   	 if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue()))
+     {
+       target.setIsReplacementOrder(true);
+     }
+   	 if(null != source.getReturnRequestForOrder())
+     {
+       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
+     }
     }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
@@ -110,6 +118,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax , source));
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
   }
 
   

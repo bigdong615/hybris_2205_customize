@@ -40,7 +40,7 @@ public class BlReplaceMentOrderUtils {
       for (final OrderModel orderModel : abstractOrderModel.getUser().getOrders()) {
         if (CollectionUtils.isNotEmpty(orderModel.getReturnRequests())) {
           // needs to remove this code , after merging  , complete flow of return request .
-          getSessionService().setAttribute(BlCoreConstants.RETURN_REQUEST, orderModel.getReturnRequests().iterator().next());
+          getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 
 
           for (final ReturnRequestModel returnRequestModel : orderModel.getReturnRequests()) {

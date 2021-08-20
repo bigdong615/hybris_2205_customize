@@ -113,4 +113,10 @@ public interface BlCartService extends CartService {
      * This method will update the order types like VIP order, FD/SHIPPING order
      */
     void updateOrderTypes();
+
+    /**
+     * Change new gear purchase status when remove from cart.
+     * @param cartModel
+     */
+     void updateNewGearPurchaseStatus(final CartModel cartModel);
 }

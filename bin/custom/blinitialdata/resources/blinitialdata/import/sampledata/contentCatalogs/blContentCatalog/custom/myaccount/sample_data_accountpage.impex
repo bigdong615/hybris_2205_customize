@@ -17,6 +17,7 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
                                  ;;UpdateEmailComponent;Update Email Component;accountProfileEmailEditPage.jsp;;UpdateEmailComponent
                                  ;;BlAccountOrderDetailsComponent; Account Order Details;accountOrderDetails.jsp;;BlAccountOrderDetailsComponent
+                                 ;;BlReturnOrderDetailsComponent; Return Order Details;returnOrderPage.jsp;;BlReturnOrderDetailsComponent
                                  ;;BlAccountRentalOrderExtendDetailsComponent; Account Rental Order Extend Details;accountRentalExtendOrderDetails.jsp;;BlAccountRentalOrderExtendDetailsComponent
                                  ;;BlAccountRentalOrderExtendConfirmationComponent; Account Rental Order Extend Confirmation;extendOrderConfirmation.jsp;;BlAccountRentalOrderExtendConfirmationComponent
 
@@ -37,6 +38,7 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
                          ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
                          ;;BodyContent-update-email;Body Content Slot for Update Email;true;UpdateEmailComponent;;;
                          ;;BodyContent-orderdetail;Body Content Slot for Order Details;true;BlAccountOrderDetailsComponent;;;
+                         ;;BodyContent-returnorderdetail;Body Content Slot for Return Order Details;true;BlReturnOrderDetailsComponent;;;
                          ;;BodyContent-rentalOrderExtendDetails;Body Content Slot for extend Order Details;true;BlAccountRentalOrderExtendDetailsComponent;
                          ;;BodyContent-rentalOrderExtendConfirmation;Body Content Slot for extend Order confirmation;true;BlAccountRentalOrderExtendConfirmationComponent;
 
@@ -56,6 +58,10 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
 # ContentSlotForPage for order details page
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='order'];contentSlot(uid,$contentCV)[unique=true];;;
                                 ;;BodyContent-orderdetail;BodyContent;;BodyContent-orderdetail;;;
+                                
+# ContentSlotForPage for return order page
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='returnOrder'];contentSlot(uid,$contentCV)[unique=true];;;
+								;;BodyContent-returnorderdetail;BodyContent;;BodyContent-returnorderdetail;;;
 
 # ContentSlotForPage for extend order details page
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderDetails'];contentSlot(uid,$contentCV)[unique=true];;;

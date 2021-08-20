@@ -8,6 +8,7 @@
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
 <%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
+<spring:url value="/my-account/order" var="orderDetailsUrl" htmlEscape="false"/>
 
 <c:choose>
 <c:when test="${!orderData.hasGiftCart}">
@@ -58,6 +59,10 @@
                                         <spring:theme code="text.account.orderHistory.orderStatus"/> <br>
                                         <spring:theme code="text.account.orderHistory.datePlaced"/> <br>
                                         <spring:theme code="text.myaccount.order"/><br>
+                                        
+                                        <c:if test="${orderData.isReplacementOrder eq true}">
+                                        	<spring:theme code="text.myaccount.order.replacementFor"/><br>
+                                        </c:if>
                                         <spring:theme code="text.myaccount.order.tracking"/>
                                         </p>
                                     </div>
@@ -66,6 +71,10 @@
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
+                                            
+                                            <c:if test="${orderData.isReplacementOrder eq true}">
+                                            	${fn:escapeXml(orderData.replacementFor)}<br>
+                                            </c:if>
                                             N/A
                                         </p>
                                     </div>
@@ -196,6 +205,7 @@
                             							</c:choose>
                             						</div>
 
+                            <c:if test="${orderData.isReplacementOrder ne true}">
                             <div class="reviewCart">
                             <c:choose>
                              <c:when test="${not empty orderData.paymentInfo}">
@@ -245,12 +255,16 @@
                                   </c:otherwise>
                                 </c:choose>
                             </div>
+                            </c:if>
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
-                               <c:if test="${orderData.isRentalCart}">
+                                                          
+                             
+                             
+                            <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
-
+                            
                             <c:choose>
                             <c:when test="${isUsedGearCartActive eq true}">
                                      <a href="#" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#rentAgainPopUp">
@@ -263,6 +277,13 @@
 
                             </c:otherwise>
                            </c:choose>
+                           
+                           <c:if test="${asmUser}"> 
+                             	<c:set var="orderAction" value="/returnOrder" ></c:set>
+							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary" data-order-id="${orderData.code}">
+							 		<spring:theme code="text.myaccount.order.return.request"/>
+							 	</a>
+							</c:if>
                           </div>
                             </c:if>
 
@@ -279,12 +300,19 @@
                                     <tbody>
                                         <tr>
                                             <td class="gray80">
-                                              <c:if test="${orderData.isRentalCart}">
-                                            <spring:theme code="text.myaccount.order.rental.cost"/>
-                                             </c:if>
-                                              <c:if test="${!orderData.isRentalCart}">
-                                                               Item Cost
-                                              </c:if>
+                                            <c:choose>
+                                             <c:when  test="${orderData.isNewGearOrder eq true}">
+                                                <spring:theme code="text.checkout.multi.newgear.order.summary.cost"/>
+                                             </c:when>
+                                             <c:when test="${orderData.isRentalCart}">
+                                               <spring:theme code="text.myaccount.order.rental.cost"/>
+                                              </c:when>
+                                             <c:when  test="${!orderData.isRentalCart}">
+                                                 Item Cost
+                                              </c:when>
+                                              <c:otherwise>
+                                              </c:otherwise>
+                                              </c:choose>
                                             </td>
                                             <td class="text-end"> <format:price priceData="${orderData.subTotal}"/></td>
                                         </tr>
