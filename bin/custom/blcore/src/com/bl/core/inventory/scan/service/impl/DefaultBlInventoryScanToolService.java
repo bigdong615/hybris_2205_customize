@@ -1397,6 +1397,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public void flagAllDirtyPrioritySerialsOfConsignment()
 	{
 		final Collection<ConsignmentModel> todaysShippingOrders = this.getTodaysShippingOrders();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolService : Consignments found : {} size is : {}"
+				, todaysShippingOrders.toString(), todaysShippingOrders.size());
 		if (CollectionUtils.isNotEmpty(todaysShippingOrders))
 		{
 			for (final ConsignmentModel consignment : todaysShippingOrders)

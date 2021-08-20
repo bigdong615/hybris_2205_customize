@@ -38,7 +38,7 @@ public class BraintreeBackofficeAuthorizeFacadeImpl implements BraintreeBackoffi
         }
         LOG.info("isAuthorizePossible, order.getTotalPrice: " + order.getTotalPrice());
 
-        modelService.refresh(order);
+        //modelService.refresh(order);
         boolean isAuthorizePossible = false;
 
         String paymentProvider = ((BrainTreePaymentInfoModel) order.getPaymentInfo()).getPaymentProvider();

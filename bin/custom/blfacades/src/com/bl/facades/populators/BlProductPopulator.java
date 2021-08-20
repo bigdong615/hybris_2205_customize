@@ -61,7 +61,9 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setBrandName(StringUtils.isNotEmpty(source.getManufacturerName()) ? source.getManufacturerName() : StringUtils.EMPTY);
         target.setRetailGear(BooleanUtils.toBoolean(source.getRetailGear()));
         target.setIsNewGearInStock(BooleanUtils.toBoolean(source.isNewGearInStock()));
-        target.setRetailGearPrice(getProductPriceData(source.getRetailGearPrice()));
+        if(null != source.getRetailGearPrice()) {
+            target.setRetailGearPrice(getProductPriceData(source.getRetailGearPrice()));
+        }
         getBlProductTagPopulator().populate(source, target);
     }
 

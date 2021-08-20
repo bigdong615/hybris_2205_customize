@@ -36,8 +36,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.annotation.Resource;
-
 /**
  * It is used to assign serial products to sourcing results in context.
  *
@@ -58,13 +56,20 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   public boolean assignSerialsFromLocation(final SourcingContext context,
       SourcingLocation sourcingLocation) throws BlSourcingException {
 
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Assigning serials from warehouse {}",
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Assigning serials from warehouse {}",
         sourcingLocation.getWarehouse().getCode());
+
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Allocation map before shipping optimization:- {}",
+        sourcingLocation.getAllocatedMap().toString());
 
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
     final SourcingLocation finalSourcingLocation = getBlShippingOptimizationStrategy().getProductAvailabilityForThreeDayGround(
               context, sourcingLocation);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Allocation map after shipping optimization:- {}",
+        finalSourcingLocation.getAllocatedMap().toString());
+
       context.getOrderEntries().forEach(entry -> {
 
       final List<StockLevelModel> stocks = finalSourcingLocation.getAvailabilityMap()
@@ -87,7 +92,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
   }
 
-  private boolean isAllQuantityFulfilled(final SourcingContext context) {
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isAllQuantityFulfilled(final SourcingContext context) {
     final List<AtomicBoolean> allEntryQuantityFulfilled = new ArrayList<>();
     context.getOrderEntries().stream().forEach(entry -> {
       Long allResultQuantityAllocated = 0l;
@@ -122,7 +130,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     final List<String> serialProductCodes = stocks.stream().map(StockLevelModel::getSerialProductCode)
         .collect(Collectors.toList());
 
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} for product code {}",
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stock size {} for product code {}",
         stocks.size(), entry.getProduct().getCode());
 
     Collection<BlSerialProductModel> allSerialProducts = getSessionService()
@@ -323,7 +331,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     } else {
 
       final AbstractOrderModel orderModel = entry.getOrder();
-      orderModel.setStatus(OrderStatus.SUSPENDED);
+      orderModel.setStatus(OrderStatus.MANUAL_REVIEW);
       modelService.save(orderModel);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced.");
       throw new BlSourcingException("All products can not be sourced.");
@@ -386,7 +394,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
             : new HashMap<>();
     serialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
 
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Serial products {} are assigned for product code {}",
         serialProductMap.get(entry.getEntryNumber()), entry.getProduct().getCode());
 
@@ -459,7 +467,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       }
     });
     serialProducts.sort(Comparator.comparing(BlSerialProductModel::getNoDaysRented));
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Sorted serial products with oldest no of days rented {}",
         serialProducts.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
     return serialProducts;

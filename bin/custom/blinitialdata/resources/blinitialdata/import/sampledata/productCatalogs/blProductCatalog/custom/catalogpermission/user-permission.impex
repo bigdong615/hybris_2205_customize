@@ -12,3 +12,37 @@ INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; r
                             ; blProductCatalog; Online              ; backofficeproductmanagergroup   ; backofficeproductmanagergroup
                             ; blClassification; 1.0                 ;backofficeproductmanagergroup    ; backofficeproductmanagergroup
                             ; blClassification; 1.0                 ;blproductmanager       ; blproductmanager
+
+                            
+
+INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; readPrincipals(uid)[mode=append]; writePrincipals(uid)[mode=append]
+                            ; blProductCatalog; Staged              ; customersupportagentgroup   ; customersupportagentgroup
+                            ; blProductCatalog; Online              ; customersupportagentgroup   ; customersupportagentgroup
+                            ; blClassification; 1.0                 ;customersupportagentgroup    ; customersupportagentgroup
+                            ; blClassification; 1.0                 ;CustomerSupportAgent       ; CustomerSupportAgent
+                            
+
+####### Tech eng access ############                     
+INSERT_UPDATE CatalogVersion ; catalog(id)[unique=true] ; version[unique=true] ; readPrincipals(uid)[mode=append] ; writePrincipals(uid)[mode=append] 
+                             ; blProductCatalog         ; Staged               ; techEngusergroup                 ; techEngusergroup                  
+                             ; blProductCatalog         ; Online               ; techEngusergroup                 ; techEngusergroup                  
+                             ; blClassification         ; 1.0                  ; techEngusergroup                 ; techEngusergroup                  
+                             ; blClassification         ; 1.0                  ; techEngteamuser                  ; techEngteamuser                   
+                             
+                             
+####### Repair user access ############                     
+INSERT_UPDATE CatalogVersion ; catalog(id)[unique=true] ; version[unique=true] ; readPrincipals(uid)[mode=append] ; writePrincipals(uid)[mode=append] 
+                             ; blProductCatalog         ; Staged               ; repairmemberusergroup            ; repairmemberusergroup             
+                             ; blProductCatalog         ; Online               ; repairmemberusergroup            ; repairmemberusergroup             
+                             ; blClassification         ; 1.0                  ; repairmemberusergroup            ; repairmemberusergroup             
+                             ; blClassification         ; 1.0                  ; repairteamuser                   ; repairteamuser                    
+                             
+                             
+                             
+####### Unboxing user access ############                     
+INSERT_UPDATE CatalogVersion ; catalog(id)[unique=true] ; version[unique=true] ; readPrincipals(uid)[mode=append] ; writePrincipals(uid)[mode=append] 
+                             ; blProductCatalog         ; Staged               ; unboxingmemberusergroup          ; unboxingmemberusergroup           
+                             ; blProductCatalog         ; Online               ; unboxingmemberusergroup          ; unboxingmemberusergroup           
+                             ; blClassification         ; 1.0                  ; unboxingmemberusergroup          ; unboxingmemberusergroup           
+                             ; blClassification         ; 1.0                  ; unboxingteamuser                 ; unboxingteamuser                  
+                             
