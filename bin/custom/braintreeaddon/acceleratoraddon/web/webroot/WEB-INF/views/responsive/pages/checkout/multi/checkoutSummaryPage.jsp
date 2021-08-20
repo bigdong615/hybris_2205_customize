@@ -15,10 +15,13 @@
   <input type="hidden" value="${ycommerce:sanitizeHTML(errorMessages)}" class="js-reviewPage-error"/>
    </c:forEach>
 </c:if>
-        <c:choose>
+<c:choose>
 		<c:when test="${cartData.hasGiftCart}">
 			<checkout:blGiftCardPurchaseCheckoutSummary />
 		</c:when>
+		 <c:when test="${cartData.isNewGearOrder eq true}">
+      <checkout:blNewGearCheckoutSummaryPage />
+    </c:when>
 		<c:when test="${cartData.isRentalCart}">
 			<checkout:blRentalCheckoutSummaryPage />
 		</c:when>

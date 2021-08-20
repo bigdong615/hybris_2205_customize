@@ -1,0 +1,112 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+#
+# Import the CMS content for the Borrow Lenses site
+#
+ 
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$lang=en
+
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+$jarResourceCms=$config-jarResourceCmsValue                                                                
+                                                                                                           
+###  Page Template For Borrow Lenses Affiliate Page  ###                                                        
+                                                                                                           
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
+                           ;                         ; affiliatePageTemplate ; Affiliate Page Template ; affiliate/affiliatePage ; $jarResourceCms/structure-view/structure_affiliatePageTemplate.vm                                      ; CategoryPage,ContentPage  
+                           
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; Section1Slot     ; Section1 Slot              ; true
+                         ;                          ; Section2Slot     ; Section2 Slot              ; true
+                         ;                          ; Section3Slot     ; Section3 Slot              ; true
+                         ;                          ; Section4Slot     ; Section4 Slot              ; true
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
+                              ; Section2Slot                  ;                                             ;                           ; wide
+                              ; Section3Slot                  ;                                             ;                           ; wide
+                              ; Section4Slot                  ;                                             ;                          ;wide
+                                                
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
+                                     ;                         ; PromoBannerSlot-AffiliatePage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
+                                     ;                         ; SiteLogoHeaderSlot-AffiliatePage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
+                                     ;                         ; NavigationPromoSlot-AffiliatePage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
+                                     ;                         ; NavigationBarSlot-AffiliatePage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
+                                     ;                         ; NavigationBarMobileSlot-AffiliatePage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
+                                     ;                         ; HeaderLinkForSupportSlot-AffiliatePage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true           
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-AffiliatePage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true           
+                                     ;                         ; MiniCartSlot-AffiliatePage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true           
+                                     ;                         ; FooterSlot-AffiliatePage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
+                                     ;                         ; FooterSubscriptionSlot-AffiliatePage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
+                                     ;                         ; FooterCopyRightslot-AffiliatePage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-AffiliatePage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-AffiliatePage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-AffiliatePage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-AffiliatePage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                     ;                         ; MobileMiniCartSlot-AffiliatePage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
+                                     ;                         ; SocialMediaSectionSlot-AffiliatePage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-AffiliatePage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
+									 ;                         ; Sectiont1Slot-AffiliatePage              ; Section1Slot        ;                                                                           ; Section1Slot                   ; true
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='affiliatePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; Section1Slot-AffiliatePage             ; Section1Slot            ;                                                       ; Section1Slot                   ; true
+                                 ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; Section2Slot                   ; true
+                                 ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; Section3Slot                   ; true
+                                 ;                         ; Section4Slot-AffiliatePage             ; Section4Slot            ;                                                       ; Section4Slot                   ; true
+
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; affiliatePage ; Affiliate Page ; affiliatePageTemplate           ; /affiliatePage
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSParagraphComponent   ; Affiliate Page Component        ; affiliateCMSParagraphComponent      ; "BorrowLenses' mission is to advance the photographic and cinematic dreams of our customers by delivering superior, cutting-edge gear and providing exceptional customer service. Rent, shoot, return - it's as easy as that. You choose what you want, when you want to receive it, and for how long you want to rent it for. We ship the gear directly to you, or to one of our many convenient pick-up locations. Your specially-packaged gear comes with a prepaid return label for ship-back ease. Our entire rental process is done completely through our website but if you ever have a special request you can call us and talk to a real person working at one of our two main headquarters in California and Massachusetts."
+
+INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]              ; name                  ; &componentRef                ;
+                                          ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#"
+
+
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
+                              ;                         ; affiliateBannerComponent ; Affiliate Section Component ; affiliateBannerComponent ; /images/theme/affiliate.jpg
+
+###  Assign Components to the Slots  ###
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                   ;                    ; Section1Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; Section2Slot        ; affiliateBannerComponent
+                   ;                    ; Section3Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; Section4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns

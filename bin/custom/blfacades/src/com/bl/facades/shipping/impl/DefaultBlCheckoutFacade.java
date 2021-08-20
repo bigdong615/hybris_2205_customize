@@ -154,9 +154,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                                                                             final boolean payByCustomer) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
+            if (BooleanUtils.isFalse(cartModel.getIsNewGearOrder()) && BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) || BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
                 return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
             } else {
                 return Collections.emptyList();
@@ -692,10 +692,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * @return true if same
      */
     private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
-        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
-            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+        if(addressRequestData.getLine1().trim().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().trim().equalsIgnoreCase(addressResponseData.getTown()) &&
             addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
-            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+            checkNumberEquality(addressRequestData.getPostalCode().trim(), addressResponseData.getPostalCode())) {
                         return Boolean.TRUE;
         }
         return Boolean.FALSE;

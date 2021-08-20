@@ -591,3 +591,14 @@ ul.ui-autocomplete.active {
 
 /**BL-82 Ends**/
 
+.extend-price p{
+  margin: 0 0 1px 0;
+}
+.rental-bl-options .dropdown .dropdown-menu li {
+    border-bottom: 1px solid #d4d3d3;
+    display: flex;
+}
+.rental-bl-options .dropdown .dropdown-menu li span{
+    float: right!important;
+    margin: 14px 15px 0 0;
+} 

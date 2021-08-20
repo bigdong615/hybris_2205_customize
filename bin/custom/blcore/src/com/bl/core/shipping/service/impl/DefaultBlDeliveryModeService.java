@@ -531,12 +531,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 
                     totalWeight = getBigDecimal(totalWeight, entry);
                     if(blSerialProduct instanceof BlSerialProductModel) {
-                        final BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+                        final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
 
-                        sumWidth = getSumWidth(sumWidth, ((serialProduct.getWidth() != null ? serialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                        sumWidth = getSumWidth(sumWidth, ((blProduct.getWidth() != null ? blProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
                                 * entry.getQuantity().intValue()));
-                        maxHeight = getMaxHeight(maxHeight, serialProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, serialProduct.getLength());
+                        maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blProduct.getLength());
                     }else if(null != blSerialProduct) {
                         sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
                                 * entry.getQuantity().intValue()));

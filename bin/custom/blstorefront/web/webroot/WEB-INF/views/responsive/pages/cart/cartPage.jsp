@@ -15,21 +15,22 @@
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
+
 <c:choose>
-<c:when test="${cartData.hasGiftCart}">
- <cart:blGiftCardPurchaseCartPage/>
-</c:when>
-<c:otherwise>
-<c:choose>
-      <c:when test="${cartData.isRentalCart}">
-            <cart:blRentalCartPage/>
-      </c:when>
-      <c:otherwise>
-            <cart:blUsedGearCartPage/>
-      </c:otherwise>
-  </c:choose>
-</c:otherwise>
+   <c:when test="${cartData.hasGiftCart}">
+      <cart:blGiftCardPurchaseCartPage/>
+   </c:when>
+   <c:when test="${cartData.isNewGearOrder eq true}">
+      <cart:blNewGearCartPage/>
+   </c:when>
+   <c:when test="${cartData.isRentalCart}">
+      <cart:blRentalCartPage/>
+   </c:when>
+   <c:otherwise>
+      <cart:blUsedGearCartPage/>
+   </c:otherwise>
 </c:choose>
+
   
 
 </template:page>

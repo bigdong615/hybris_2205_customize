@@ -1,6 +1,9 @@
 package com.bl.backoffice.widget.controller;
 
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.util.Config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
@@ -47,9 +49,6 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	private transient WebScanToolData shippingScanToolData;
 
-	@Value("${blbackoffice.max.product.scan}")
-	private int maxProductScan;
-
 	@Resource(name = "blInventoryScanToolService")
 	private BlInventoryScanToolService blInventoryScanToolService;
 
@@ -65,7 +64,7 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		selectedConsignment = inputObject;
 		this.getWidgetInstanceManager()
-				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.shipping.scan.heading")));
+				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.order.scan.heading")));
 		shippingScanToolData = new WebScanToolData();
 	}
 
@@ -101,8 +100,7 @@ public class BlPackageScanController extends DefaultWidgetController
 		}
 		else
 		{
-			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			createResponseForPackageScan(barcodes);
+			validatePackageBinLocation();
 		}
 	}
 
@@ -122,10 +120,11 @@ public class BlPackageScanController extends DefaultWidgetController
 		{
 			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 			final int barcodeSize = barcodes.size();
-			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
+			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO
+					&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 			{
-				final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
-				createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
+				validatePackageScan(barcodes);
+
 			}
 			else
 			{
@@ -157,10 +156,81 @@ public class BlPackageScanController extends DefaultWidgetController
 			}
 			else
 			{
-				createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
-						BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
-						barcodes);
+				scanToUpsOutBoundCart(barcodes);
 			}
+		}
+	}
+
+	/**
+	 * method will used to scan serial to ups out bound cart
+	 *
+	 * @param barcodes
+	 */
+	private void scanToUpsOutBoundCart(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
+					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
+					barcodes);
+		}
+
+	}
+
+	/**
+	 * method will use to validate package bin location
+	 */
+	private void validatePackageBinLocation()
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+		else
+		{
+			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+			createResponseForPackageScan(barcodes);
+		}
+	}
+
+	/**
+	 * method will used to validate package scan
+	 *
+	 * @param barcodes
+	 */
+	private void validatePackageScan(final List<String> barcodes)
+	{
+		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+		}
+		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
+		{
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+		}
+
+		else
+		{
+			final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+			createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 		}
 	}
 
@@ -172,7 +242,8 @@ public class BlPackageScanController extends DefaultWidgetController
 	private void createResponseForPackageScan(final List<String> barcodes)
 	{
 		final int barcodeSize = barcodes.size();
-		if (barcodeSize == BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
+		if (barcodeSize == BlInventoryScanLoggingConstants.TWO
+				&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 		{
 			createResponseMsgForPackageScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
 					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
@@ -238,7 +309,7 @@ public class BlPackageScanController extends DefaultWidgetController
 
 			case BlInventoryScanLoggingConstants.TWO:
 				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						"Last Location Must be a valid trackning Id ");
+						BlInventoryScanLoggingConstants.LAST_LOCATION_VALID_TRACKING_FAILURE);
 				break;
 
 			default:

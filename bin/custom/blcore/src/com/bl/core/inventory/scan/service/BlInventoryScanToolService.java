@@ -17,6 +17,16 @@ import java.util.Map;
  */
 public interface BlInventoryScanToolService {
 
+	/**
+	 * This method will check list and return true if location exist and agent can do scan without error
+	 *
+	 * @param barcode barcode
+	 * @param maxSequenceScan size
+	 * @param b status
+	 * @return true if scan success
+	 */
+    boolean checkLastBarcodeIsLocationOrNot(List<String> barcode, String maxSequenceScan, boolean b);
+
     /**
      * method will check the valid Location provided in barcode list and return int with appropriate notification
      * number to notify employee
@@ -92,9 +102,9 @@ public interface BlInventoryScanToolService {
  	 * 
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
- 	 * @return List<String>
+ 	 * @return Map<String, List<String>>
  	 */
- 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
@@ -114,7 +124,6 @@ public interface BlInventoryScanToolService {
 
 	/**
 	 * This method will verify loction and update items to new working desk location
-	 * @param lastScannedItem
 	 */
 	public void updateToUpsBound();
 
@@ -199,4 +208,35 @@ public interface BlInventoryScanToolService {
  	 *           newly placed order
  	 */
  	void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel order);
+
+	/**
+	 *This method will return true if BIN
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	boolean checkBINOrSerialScan(final List<String> barcodeList);
+
+	/**
+	 * This method will perform scan for BIN location
+	 *
+	 * @param barcodeList list
+	 * @return true if BIN update parent location
+	 */
+	int doBINScanFromWebScanTool(final List<String> barcodeList);
+	
+	/**
+	 * Gets the status of location Dirty cart.
+	 *
+	 * @return the status of location DC
+	 */
+	boolean getStatusOfLocationDC();
+
+	/**
+	 * On Successful scan this method will return result string need to display
+	 *
+	 * @param barcodeList list
+	 * @return List of scanned barcodes with products
+	 */
+	List<String> getSuccessString(final List<String> barcodeList);
 }
