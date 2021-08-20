@@ -580,6 +580,7 @@
 		class="com.bl.facades.populators.BlOrderDetailsPopulator">
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="blAddressPopulator" ref="addressPopulator"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
 
   <!--Added for extend rental order-->
