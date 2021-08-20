@@ -241,6 +241,10 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
 ;;;StockLevel;+;-;-;-
+;;;BlTestingGearNeeded;+;+;+;+;
+;;;Product;+;-;-;-;
+;;;BlProduct;+;-;-;-;
+;;;BlSerialProduct;+;-;-;-;
 
 $END_USERRIGHTS;;;;
 
@@ -309,7 +313,8 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; RemainingVipOrderItems        ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;   
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
-                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +          
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +          
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
 #Access right for repairmemberusergroup
