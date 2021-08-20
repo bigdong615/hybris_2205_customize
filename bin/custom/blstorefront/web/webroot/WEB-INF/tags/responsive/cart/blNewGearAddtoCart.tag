@@ -20,14 +20,14 @@
 		<spring:param name="configuratorType" value="${configuratorType}" />
 	</spring:url>
         <c:choose>
-				  <c:when test="${allowAddToCart || isRentalCart}">
+				  <c:when test="${allowAddToCart || isNewGearCart}">
                 <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
                 </div>
           </c:when>
           <c:otherwise>
                 <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                     <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
                 </div>
           </c:otherwise>
         </c:choose>

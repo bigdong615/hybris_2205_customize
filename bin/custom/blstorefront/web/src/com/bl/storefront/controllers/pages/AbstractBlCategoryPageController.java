@@ -7,6 +7,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -154,7 +155,14 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
 
-        if(category.isRentalCategory()){
+        if(BlCoreConstants.NEW_GEAR.equals(category.getCode())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
+            final String currentCartType = blCartFacade.identifyCartType();
+            if(StringUtils.isNotEmpty(currentCartType)){
+                model.addAttribute(currentCartType,true);
+            }
+        }
+        else if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
