@@ -706,4 +706,16 @@
 	</bean>
 
 
+	<!-- BL-82 Added to override OOB Method for AutoSuggestion -->
+
+		<alias name="defaultBlSolrProductSearchFacade" alias="productSearchFacade"/>
+		<bean id="defaultBlSolrProductSearchFacade"
+			class="com.bl.facades.solrfacetsearch.impl.DefaultBlSolrProductSearchFacade" parent="defaultSolrProductSearchFacade">
+			<property name="blProductSearchService" ref="commerceProductSearchService"/>
+		</bean>
+
+
+	<alias name="defaultBlReturnOrderFacade" alias="blReturnOrderFacade" />
+    <bean id="defaultBlReturnOrderFacade" class="com.bl.facades.order.DefaultBlReturnOrderFacade" />
+
 </beans>

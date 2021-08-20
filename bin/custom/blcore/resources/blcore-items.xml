@@ -309,6 +309,11 @@
         <value code="UNKNOWN" />      
     </enumtype>
     
+    <enumtype generate="true" code="ReplacementRequestStatus" autocreate="true" dynamic="true">
+    	<value code="PROCESSING"/>
+        <value code="COMPLETED"/>
+    </enumtype>
+
     <enumtype generate="true" code="CustomerChargedEnum" autocreate="true" dynamic="true">
         <value code="YES" />
         <value code="NO" />
@@ -316,7 +321,7 @@
         <value code="INSTALLMENT_PLAN" />
     </enumtype>
 
-	  </enumtypes>
+</enumtypes>
 
 
     <maptypes>
@@ -2513,8 +2518,19 @@
                 <modifiers read="true" write="true" search="true" optional="true" initial="true" />
                 <persistence type="property" />
               </attribute>
+              <attribute qualifier="isReplacementOrder" type="boolean">
+              	<description>It describes whether this request is for replacement order</description>
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="replacementRequestStatus" type="ReplacementRequestStatus">
+              	<description>To identify the replacement request status</description>
+                <persistence type="property" />
+              </attribute>
             </attributes>
           </itemtype>
+          
+          <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
         </typegroup>
 
