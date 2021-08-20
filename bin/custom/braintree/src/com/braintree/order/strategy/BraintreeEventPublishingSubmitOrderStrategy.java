@@ -1,6 +1,7 @@
 package com.braintree.order.strategy;
 
 
+import com.bl.core.enums.ReplacementRequestStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.strategies.SubmitOrderStrategy;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
@@ -24,6 +25,7 @@ public class BraintreeEventPublishingSubmitOrderStrategy extends EventPublishing
 			final ReturnRequestModel returnRequestModel = getSessionService()
 					.getAttribute(RETURN_REQUEST);
 			returnRequestModel.setOrderForReplacement(order);
+			returnRequestModel.setReplacementRequestStatus(ReplacementRequestStatus.COMPLETED);
 			getModelService().save(returnRequestModel);
 			getModelService().refresh(returnRequestModel);
 		}
