@@ -2,10 +2,8 @@ package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -13,23 +11,20 @@ import com.bl.tax.AddressesData;
 import com.bl.tax.TaxLine;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.constants.BltaxapiConstants;
-import com.google.common.collect.Lists;
-
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -71,9 +66,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
-    if(BooleanUtils.isFalse(abstractOrder.getUnPaidBillPresent())) {
       setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
-    }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
   }
 
@@ -219,7 +212,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * Validate and set tax excemption details to request
    */
   private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
-        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt())) {
+        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt()) && isTaxExemptValid(abstractOrder)) {
            String addressState = BltaxapiConstants.EMPTY_STRING;
           if(null != abstractOrder.getDeliveryAddress().getRegion()) {
             addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
@@ -288,6 +281,30 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    */
   private boolean isTaxExemptDateValid(final AbstractOrderModel abstractOrder , final Date endDay) {
     return endDay.before(abstractOrder.getUser().getTaxExemptExpiry()) || DateUtils.isSameDay(abstractOrder.getUser().getTaxExemptExpiry() ,endDay);
+  }
+
+
+  /**
+   * This method created to check whether the payment is captured
+   */
+
+  private boolean isTaxExemptValid(final AbstractOrderModel abstractOrderModel) {
+
+    if(CollectionUtils.isEmpty(abstractOrderModel.getPaymentTransactions())) {
+      return true;
+    }
+    else {
+      for (final PaymentTransactionModel paymentTransactionModel : abstractOrderModel
+          .getPaymentTransactions()) {
+        for(final PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(BltaxapiConstants.CAPTURE)){
+            return false;
+          }
+        }
+
+      }
+    }
+    return true;
   }
 
   public BlDatePickerService getBlDatePickerService() {

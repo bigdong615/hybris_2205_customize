@@ -2,6 +2,7 @@ package com.bl.core.price.service;
 
 import de.hybris.platform.commerceservices.price.CommercePriceService;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 import java.math.BigDecimal;
@@ -47,5 +48,7 @@ public interface BlCommercePriceService extends CommercePriceService
 	 * @return the dynamic price data for product
 	 */
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays);
+
+	PriceInformation getWebPriceForTax(final ProductModel product , final AbstractOrderModel abstractOrderModel);
 
 }
