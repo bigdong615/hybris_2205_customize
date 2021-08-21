@@ -454,8 +454,9 @@
                              return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                         maxDays: 90,
+                      //Limit days selection to 91 days
+                         maxDays: 91,
+                         minDays: 2,
                       //Disable dates after one year from today
                          maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -491,6 +492,10 @@
     				});
     				return btn;
     				},
+             tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
+
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
@@ -521,8 +526,9 @@
                                return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                         maxDays: 90,
+                      //Limit days selection to 91 days
+                         maxDays: 91,
+                         minDays: 2,
                       //Disable dates after one year from today
                          maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -711,6 +717,9 @@
 												});
 												return btn;
 												},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
                                            			trackDateSelection(date1,date2);
@@ -729,8 +738,8 @@
                                            			});
                                            			},
                                            			 tooltipNumber: (totalDays) => {
-                                                                                              return totalDays - 1;
-                                                                                            },
+                                                              return totalDays - 1;
+                                                            },
 
                                            	//BL-520 - disable weekends in the calendar
                                                     lockDaysFilter: (day) => {
@@ -738,8 +747,9 @@
                                                          return [6, 0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
-                                            //Limit days selection to 90 days
-                                                    maxDays: 90,
+                                            //Limit days selection to 91 days
+                                                    maxDays: 91,
+                                                    minDays: 2,
                                             //Disable dates after one year from today
                                                     maxDate: disableDatesOneYearFomNow,
                                             //Set Sunday to be the first day in the calendar's header
@@ -777,6 +787,9 @@
                                      				});
                                      				return btn;
                                      				},
+                                             tooltipNumber: (totalDays) => {
+                                              return totalDays - 1;
+                                            },
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
                                            			trackDateSelection(date1,date2);
@@ -800,8 +813,9 @@
                                                          return [6, 0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
-                                          //Limit days selection to 90 days
-                                                    maxDays: 90,
+                                          //Limit days selection to 91 days
+                                                    maxDays: 91,
+                                                    minDays: 2,
                                           //Disable dates after one year from today
                                                     maxDate: disableDatesOneYearFomNow,
                                           //Set Sunday to be the first day in the calendar's header
@@ -1268,6 +1282,9 @@
                 				});
                 				return btn;
                 				},
+                				     tooltipNumber: (totalDays) => {
+                                return totalDays - 1;
+                              },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                                   //var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1298,8 +1315,9 @@
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
-                             //Limit days selection to 90 days
-                                maxDays: 90,
+                             //Limit days selection to 91 days
+                                maxDays: 91,
+                                minDays: 2,
                             //Disable dates after one year from today
                                 maxDate: disableDatesOneYearFomNow,
                            //Set Sunday to be the first day in the calendar's header
@@ -1336,6 +1354,9 @@
                 				});
                 				return btn;
                 				},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                       			// var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1366,8 +1387,9 @@
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                              maxDays: 90,
+                      //Limit days selection to 91 days
+                              maxDays: 91,
+                              minDays: 2,
                       //Disable dates after one year from today
                               maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1458,6 +1480,9 @@
                 				});
                 				return btn;
                 				},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                                   //var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1488,8 +1513,9 @@
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
-                             //Limit days selection to 90 days
-                                maxDays: 90,
+                             //Limit days selection to 91 days
+                                maxDays: 91,
+                                minDays: 2,
                             //Disable dates after one year from today
                                 maxDate: disableDatesOneYearFomNow,
                            //Set Sunday to be the first day in the calendar's header
@@ -1526,6 +1552,9 @@
                 				});
                 				return btn;
                 				},
+                				tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                       			// var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1556,8 +1585,9 @@
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                              maxDays: 90,
+                      //Limit days selection to 91 days
+                              maxDays: 91,
+                              minDays: 2,
                       //Disable dates after one year from today
                               maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1708,6 +1738,9 @@
 							});
 							return btn;
 						},
+						 tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
                         setup: (picker) => {
                       		picker.on('button:apply', (date1, date2) => {
 							 //	var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1742,8 +1775,9 @@
                             return [6, 0].includes(d);
                         },
                         lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                        maxDays: 90,
+                      //Limit days selection to 91 days
+                        maxDays: 91,
+                        minDays: 2,
                       //Disable dates after one year from today
                         maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1792,6 +1826,9 @@
                                   });
                           				return btn;
                           				},
+                          				 tooltipNumber: (totalDays) => {
+                                    return totalDays - 1;
+                                  },
                                       setup: (picker) => {
                                 			picker.on('button:apply', (newEndDate) => {
                                 				$.ajax({
