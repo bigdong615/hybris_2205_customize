@@ -154,9 +154,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                                                                             final boolean payByCustomer) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            if (BooleanUtils.isFalse(cartModel.getIsNewGearOrder()) && BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
+            if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+                return getDeliveryModeDataForNewGear(shippingGroup, partnerZone, payByCustomer);
+            }
+            else if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) || BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
                 return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
             } else {
                 return Collections.emptyList();
@@ -166,14 +169,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     /**
-	 * @param shippingGroup
-	 * @param partnerZone
-	 * @param payByCustomer
-	 * @return
-	 */
+     * @param shippingGroup
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
     private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(final String shippingGroup,
-                                                                                  final String partnerZone,
-                                                                                  final boolean payByCustomer){
+        final String partnerZone,
+        final boolean payByCustomer){
         final List modifiableZoneList = new ArrayList<>();
         if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
@@ -235,6 +238,29 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         }
         return modifiableZoneList;
     }
+
+    /**
+     * Get delivery mode data for new gear.
+     * New Gear needed only pickup option.
+     * @param shippingGroup
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    private Collection<? extends DeliveryModeData> getDeliveryModeDataForNewGear(final String shippingGroup,
+        final String partnerZone,
+        final boolean payByCustomer){
+        final List modifiableZoneList = new ArrayList<>();
+          if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModesForNewGear(partnerZone, payByCustomer), modifiableZoneList);
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
+
 
     /**
      * javadoc
@@ -427,6 +453,28 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return Collections.emptyList();
     }
 
+    /**
+     * Get delivery Zone for new Gear product.
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels;
+        try {
+            blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeService().getPartnerZoneDeliveryModesForNewGear(
+                partnerZone,payByCustomer);
+            if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+                final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
+                for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+                    getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
+                }
+                return resultDeliveryData;
+            }
+        } catch (ParseException e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while parsing dates ", e);
+        }
+        return Collections.emptyList();
+    }
     /**
      * This method will get the partner delivery methods
      *

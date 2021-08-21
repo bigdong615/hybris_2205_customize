@@ -1,13 +1,16 @@
 package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.ExtendOrderData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
@@ -19,6 +22,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,13 +32,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import com.google.common.util.concurrent.AtomicDouble;
-import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.facades.product.data.AvailabilityMessage;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import com.google.common.collect.Lists;
-import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 
 
 /**
@@ -46,7 +43,6 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   private PriceDataFactory priceDataFactory;
   private BlAddressPopulator blAddressPopulator;
-  private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
   /**
    * This method created to populate order details for custom attributes
@@ -88,9 +84,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
 
-
     // As of now commented below code for bill pay tax , since its breaking normal flow of order details page
-    boolean allowed = false;
+   /* boolean allowed = false;
     if(BooleanUtils.isTrue(source.getUnPaidBillPresent()) && allowed) {   // NOSONR
       final AtomicDouble totalAmt = new AtomicDouble(0.0);
       final double priviousTax = source.getTotalTax();
@@ -124,6 +119,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setOrderTotalWithTaxForPayBill(
           convertDoubleToPriceData(totalAmt.get() + currentTax, source));
     }
+*/
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
     if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
@@ -458,23 +454,4 @@ private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final St
   public void setBlAddressPopulator(BlAddressPopulator blAddressPopulator) {
     this.blAddressPopulator = blAddressPopulator;
   }
-
-
-/**
- * @return the defaultBlExternalTaxesService
- */
-public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService()
-{
-	return defaultBlExternalTaxesService;
-}
-
-
-/**
- * @param defaultBlExternalTaxesService the defaultBlExternalTaxesService to set
- */
-public void setDefaultBlExternalTaxesService(DefaultBlExternalTaxesService defaultBlExternalTaxesService)
-{
-	this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
-}
-  
 }
