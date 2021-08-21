@@ -733,7 +733,11 @@ function reverseTraverseOnShipping() {
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
+            	 if($('.js-new-gear-shipping-page').val() == 'true'){
+            	  showErrorNotificationPickUp('Selected shipping option not available for new gear pickup!!');
+            	 }else {
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
+                }
             }
         },
         complete: function(data) {
