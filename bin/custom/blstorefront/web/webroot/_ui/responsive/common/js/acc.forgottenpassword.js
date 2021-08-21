@@ -26,7 +26,7 @@ ACC.forgottenpassword = {
 							{
 								if ($(data).closest('#validEmail').length)
 								{
-									
+
 									if ($('#validEmail').length === 0)
 									{
 										$(".forgotten-password").replaceWith(data);
