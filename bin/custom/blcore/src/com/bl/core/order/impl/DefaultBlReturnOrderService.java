@@ -7,6 +7,7 @@ import de.hybris.platform.basecommerce.enums.ReturnStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.returns.impl.DefaultReturnService;
 import de.hybris.platform.returns.model.ReturnEntryModel;

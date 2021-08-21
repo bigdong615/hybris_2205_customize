@@ -2,11 +2,14 @@ package com.bl.core.price.service.impl;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.core.utils.BlDateTimeUtils;
 import de.hybris.platform.commerceservices.price.impl.DefaultCommercePriceService;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 
 import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -142,6 +145,30 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				final PriceInformation defaultPriceInformation = prices.get(0);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for product {}",
 						defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+				return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+						? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+						defaultPriceInformation, rentalDays)
+						: defaultPriceInformation;
+			}
+			return null;
+		}
+		return super.getWebPriceForProduct(product);
+	}
+
+
+	@Override
+	public PriceInformation getWebPriceForTax(final ProductModel product , final AbstractOrderModel abstractOrderModel)
+	{
+		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		{
+			validateParameterNotNull(product, "Product model cannot be null");
+			final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(product);
+			if (CollectionUtils.isNotEmpty(prices))
+			{
+				final PriceInformation defaultPriceInformation = prices.get(0);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for product {}",
+						defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+				final Long rentalDays = BlDateTimeUtils.getDaysBetweenDates(abstractOrderModel.getRentalStartDate() , abstractOrderModel.getRentalEndDate()) + 1;
 				return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
 						? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 						defaultPriceInformation, rentalDays)

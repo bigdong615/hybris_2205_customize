@@ -191,7 +191,6 @@
         <property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
          <property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
-			<property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	  	<property name="replacementFor" type="java.lang.String" />
 	  	<property name="isReplacementOrder " type="java.lang.Boolean"/>
   </bean>

@@ -36,4 +36,16 @@ public interface BlCalculationService extends CalculationService
   * This method created to get dynamic price based on dates selected for extend rent
   */
  PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , final int defaultAddedTimeForExtendRental);
+
+
+ void recalculateOrderForTax(final AbstractOrderModel order) throws CalculationException;
+
+
+ void calculateEntriesForTax(final AbstractOrderModel order, final boolean forceRecalculate)
+    throws CalculationException;
+
+
+ void resetAllValuesForTax(final AbstractOrderEntryModel entry) throws CalculationException;
+
+ PriceValue getDynamicBasePriceForTax(final PriceValue basePrice, final ProductModel product , final AbstractOrderModel abstractOrder);
 }

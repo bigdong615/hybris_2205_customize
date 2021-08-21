@@ -16,12 +16,16 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -163,7 +167,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * Validate and set tax excemption details to request
    */
   private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
-        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt())) {
+        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt()) && isTaxExemptValid(abstractOrder)) {
            String addressState = BltaxapiConstants.EMPTY_STRING;
           if(null != abstractOrder.getDeliveryAddress().getRegion()) {
             addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
@@ -232,6 +236,28 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    */
   private boolean isTaxExemptDateValid(final AbstractOrderModel abstractOrder , final Date endDay) {
     return endDay.before(abstractOrder.getUser().getTaxExemptExpiry()) || DateUtils.isSameDay(abstractOrder.getUser().getTaxExemptExpiry() ,endDay);
+  }
+
+
+  private boolean isTaxExemptValid(final AbstractOrderModel abstractOrderModel) {
+
+    if(CollectionUtils.isEmpty(abstractOrderModel.getPaymentTransactions())) {
+      return true;
+    }
+    else {
+      for (final PaymentTransactionModel paymentTransactionModel : abstractOrderModel
+          .getPaymentTransactions()) {
+        for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase("Capture")
+              && paymentTransactionEntryModel.getAmount().compareTo(
+              BigDecimal.valueOf(abstractOrderModel.getTotalPrice())) == 0){
+            return false;
+          }
+        }
+
+      }
+    }
+    return false;
   }
 
   public BlDatePickerService getBlDatePickerService() {

@@ -5,9 +5,13 @@ import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.widgets.baseeditorarea.DefaultEditorAreaLogicHandler;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.jalo.order.OrderEntry;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.refund.OrderRefundEntry;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -30,6 +34,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
     if (currentObject instanceof OrderModel) {
       OrderModel orderModel = (OrderModel) currentObject;
         orderModel.setCalculated(false);
+        orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
       try {
         getCalculationService().calculate(orderModel);
       } catch (CalculationException e) {

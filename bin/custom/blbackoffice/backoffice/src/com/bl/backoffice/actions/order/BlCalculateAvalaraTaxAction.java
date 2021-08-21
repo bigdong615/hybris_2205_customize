@@ -1,5 +1,6 @@
 package com.bl.backoffice.actions.order;
 
+import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
@@ -29,6 +30,10 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
   private CalculationService calculationService;
 
 
+  @Resource(name ="defaultBlCalculationService")
+  private DefaultBlCalculationService defaultBlCalculationService;
+
+
   @Resource(name = "modelService")
   private ModelService modelService;
 
@@ -42,8 +47,11 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
         && actionContext.getData() instanceof OrderModel) {
       final OrderModel order = actionContext.getData();
       order.setCalculated(false);
+      order.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
       try {
-        getCalculationService().calculate(order);
+        //getCalculationService().calculate(order);
+
+        getDefaultBlCalculationService().recalculateOrderForTax(order);
         getModelService().save(order);
         getModelService().refresh(order);
         this.sendOutput(SOCKET_OUT_CONTEXT, order);
@@ -82,6 +90,16 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
 
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
+  }
+
+
+  public DefaultBlCalculationService getDefaultBlCalculationService() {
+    return defaultBlCalculationService;
+  }
+
+  public void setDefaultBlCalculationService(
+      DefaultBlCalculationService defaultBlCalculationService) {
+    this.defaultBlCalculationService = defaultBlCalculationService;
   }
 
 }
