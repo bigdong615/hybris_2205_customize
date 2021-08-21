@@ -28,12 +28,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import com.google.common.util.concurrent.AtomicDouble;
-import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.facades.product.data.AvailabilityMessage;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import com.google.common.collect.Lists;
 
 
 /**

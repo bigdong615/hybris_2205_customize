@@ -350,6 +350,30 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
 
     /**
+     * Get delivery Zone for new Gear product.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,
+        final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
+            .getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+            final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>();
+            blPickUpZoneDeliveryModeModels.forEach(blPickUpZoneDeliveryModeModel ->{
+                if(blPickUpZoneDeliveryModeModel.isWarehousePickUp()){
+                    newBlPickUpZoneDeliveryModeModels.add(blPickUpZoneDeliveryModeModel);
+                }
+            });
+            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
+                : Collections.emptyList();
+
+        }
+        return Collections.emptyList();
+    }
+    /**
      * This method will check conditions for partner delivery locations
      *
      * @param blPickUpZoneDeliveryModeModels collection to remove unwanted records

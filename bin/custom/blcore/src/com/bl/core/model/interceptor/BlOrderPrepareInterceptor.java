@@ -1,20 +1,27 @@
 package com.bl.core.model.interceptor;
 
 
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
+
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -41,7 +48,69 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       //Setting consolidated Notes on order which can be used to display order notes in backoffice view
       getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
     }
-       
+    doChangeDirtyPriorityStatus(abstractOrderModel, interceptorContext);  //BL-822 AC.3
+  }
+  
+  /**
+   * Do change dirty priority status on serial if Order is cancelled and shipping date is current date.
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void doChangeDirtyPriorityStatus(final AbstractOrderModel abstractOrderModel,
+	      final InterceptorContext interceptorContext)
+  {
+	  if(!interceptorContext.isNew(abstractOrderModel) && OrderStatus.CANCELLED.equals(abstractOrderModel.getStatus()))
+	  {
+		  final List<ConsignmentModel> consignmentsForCurrentDate = getConsignmentsForCurrentDate(abstractOrderModel);
+		  if(CollectionUtils.isNotEmpty(consignmentsForCurrentDate))
+		  {
+			  consignmentsForCurrentDate.forEach(consignment -> consignment.getConsignmentEntries()
+					  .forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
+							  .forEach(entryItem -> checkAndChangePriorityStatusOnSerial(entryItem, interceptorContext))));
+		  }
+	  }
+  }
+  
+  /**
+   * Gets the consignments for current date.
+   *
+   * @param abstractOrderModel the abstract order model
+   * @return the consignments for current date
+   */
+  private List<ConsignmentModel> getConsignmentsForCurrentDate(final AbstractOrderModel abstractOrderModel)
+  {
+	  final Date currentDate = new Date();
+	  List<ConsignmentModel> filteredConsignment = abstractOrderModel.getConsignments().stream()
+			  .filter(consignment -> {
+				  if(Objects.nonNull(consignment.getOptimizedShippingStartDate()))
+				  {
+					  return DateUtils.isSameDay(consignment.getOptimizedShippingStartDate(), currentDate);
+				  }
+				  return false;
+			  }).collect(Collectors.toList());
+	  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Number of Consignmnets found for current date : {} is : {} on Order with code : {}",
+			  currentDate, filteredConsignment.size(), abstractOrderModel.getCode());
+	  return filteredConsignment;
+  }
+  
+  /**
+   * Check and change priority status on serial.
+   *
+   * @param entryItem the entry item
+   * @param interceptorContext the interceptor context
+   */
+  private void checkAndChangePriorityStatusOnSerial(final BlProductModel entryItem, final InterceptorContext interceptorContext)
+  {
+	  if(entryItem instanceof BlSerialProductModel)
+	  {
+		  final BlSerialProductModel serialItem = ((BlSerialProductModel)entryItem);
+		  if(serialItem.isDirtyPriorityStatus()) {
+			  serialItem.setDirtyPriorityStatus(Boolean.FALSE);
+			  interceptorContext.getModelService().save(serialItem);
+			  interceptorContext.getModelService().refresh(serialItem);
+		  }
+	  }
   }
 
   
