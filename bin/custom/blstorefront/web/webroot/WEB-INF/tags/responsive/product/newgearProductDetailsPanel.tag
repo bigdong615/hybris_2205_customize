@@ -52,10 +52,18 @@
                               <div class="priceSummary">
                                 <strong><format:price	priceData="${product.retailGearPrice}" /></strong>
                               </div>
-                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-                              </div>
-
+                               <c:choose>
+                                 <c:when test="${allowAddToCart || isNewGearCart}">
+                                      <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                         <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                      </div>
+                                 </c:when>
+                                 <c:otherwise>
+                                     <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                     </div>
+                                 </c:otherwise>
+                               </c:choose>
                               <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
                                   <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart"
                                    <c:if test="${product.isNewGearInStock eq false}"> disabled</c:if> data-product-code="${product.code}">

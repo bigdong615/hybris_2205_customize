@@ -44,7 +44,7 @@ public class BraintreeBackofficeMultiCaptureFacadeImpl implements BraintreeBacko
         LOG.info("isMultiCapturePossible, order.getTotalPrice: " + order.getTotalPrice());
 
         boolean isMultiCapturePossible = false;
-        modelService.refresh(order);
+        //modelService.refresh(order);
         Boolean settlementConfigParameter = brainTreeConfigService.getSettlementConfigParameter();
 
         if (order != null && order.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {

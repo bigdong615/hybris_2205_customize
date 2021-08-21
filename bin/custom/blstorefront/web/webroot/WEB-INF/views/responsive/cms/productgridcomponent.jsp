@@ -6,7 +6,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
  <div id="productList" class="col-lg-9">
          <div class="row mb-2">
-         <c:if test="${product.retailGear eq false}">
+         <c:if test="${isNewGearCategory ne true}">
         <nav:blFacetNavAppliedFilters pageData="${searchPageData}"/>
         </c:if>
          </div>

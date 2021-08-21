@@ -209,6 +209,15 @@ public interface BlDeliveryModeService {
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone,final boolean payByCustomer)
             throws ParseException;
 
+    /**
+     * Get delivery mode data for new gear.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     * @throws ParseException
+     */
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,final boolean payByCustomer)
+        throws ParseException;
 
     /**
      * This method will fetch the partner-pickup-zone from DB who has delivery-modes associated to it from dao

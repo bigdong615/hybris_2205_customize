@@ -69,6 +69,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BlCommerceStockService blCommerceStockService;
 
 	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
+	@Resource(name = "i18nService")
+	private I18NService i18nService;
 
   /**
    * {@inheritDoc}
@@ -357,7 +359,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   
   public boolean cartHasRentalOrUsedGearProducts(){
 		CartModel cartModel = blCartService.getSessionCart();
-		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? true : false;
+		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 	/**
@@ -544,7 +546,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
 	public String identifyCartType() {
 		final CartModel cartModel = blCartService.getSessionCart();
-       if (CollectionUtils
+		if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+			return BlFacadesConstants.NEW_GEAR_CART;
+		}
+      else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
@@ -679,8 +685,6 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 		return getCartModificationConverter().convert(modification);
 	}
 
-	@Resource(name = "i18nService")
-	private I18NService i18nService;
 	/**
 	 *  This method used for collecting discontinue entries number form cart.
 	 * @param cartModel
