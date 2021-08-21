@@ -192,20 +192,6 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		return listOfWarehouses;
 	}
 
-	/**
-	 * This method added for keep delivery address for pick up
-	 */
-	@Override
-	protected void validateDelivery(final CartModel cartModel)
-	{
-			if (Objects.nonNull(cartModel.getDeliveryAddress())
-					&& !isGuestUserCart(cartModel) && !getUserService().getCurrentUser().equals(cartModel.getUser()))
-			{
-				cartModel.setDeliveryAddress(null);
-				getModelService().save(cartModel);
-			}
-	}
-
 
 	/**
 	 * @return the blCommerceStockService

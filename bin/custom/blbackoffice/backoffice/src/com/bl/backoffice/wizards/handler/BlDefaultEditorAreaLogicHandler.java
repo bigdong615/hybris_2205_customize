@@ -1,5 +1,6 @@
 package com.bl.backoffice.wizards.handler;
 
+import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
@@ -12,6 +13,7 @@ import de.hybris.platform.jalo.order.OrderEntry;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.refund.OrderRefundEntry;
+import javax.annotation.Resource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -23,8 +25,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 
   private static final Logger LOG = Logger.getLogger(BlDefaultEditorAreaLogicHandler.class);
 
-  private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
-  private CalculationService calculationService;
+  private DefaultBlCalculationService defaultBlCalculationService;
 
   /**
    * This method call when order is saving
@@ -36,7 +37,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
         orderModel.setCalculated(false);
         orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
       try {
-        getCalculationService().calculate(orderModel);
+        getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+      //  getCalculationService().calculate(orderModel);
       } catch (CalculationException e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while BlDefaultEditorAreaLogicHandler" , e);
       }
@@ -46,20 +48,13 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
   }
 
 
-  public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
-    return defaultBlExternalTaxesService;
+  public DefaultBlCalculationService getDefaultBlCalculationService() {
+    return defaultBlCalculationService;
   }
 
-  public void setDefaultBlExternalTaxesService(
-      DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
-    this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
+  public void setDefaultBlCalculationService(
+      DefaultBlCalculationService defaultBlCalculationService) {
+    this.defaultBlCalculationService = defaultBlCalculationService;
   }
 
-  public CalculationService getCalculationService() {
-    return calculationService;
-  }
-
-  public void setCalculationService(CalculationService calculationService) {
-    this.calculationService = calculationService;
-  }
 }

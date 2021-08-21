@@ -22,6 +22,7 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,9 +69,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
-    if(BooleanUtils.isFalse(abstractOrder.getUnPaidBillPresent())) {
       setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
-    }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
   }
 
@@ -297,16 +296,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       for (final PaymentTransactionModel paymentTransactionModel : abstractOrderModel
           .getPaymentTransactions()) {
         for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
-          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase("Capture")
-              && paymentTransactionEntryModel.getAmount().compareTo(
-              BigDecimal.valueOf(abstractOrderModel.getTotalPrice())) == 0){
+          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase("Capture")){
             return false;
           }
         }
 
       }
     }
-    return false;
+    return true;
   }
 
   public BlDatePickerService getBlDatePickerService() {

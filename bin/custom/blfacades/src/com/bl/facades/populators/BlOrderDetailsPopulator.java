@@ -88,32 +88,41 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
 
-    final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    final double priviousTax = source.getTotalTax();
-    source.setUnPaidBillPresent(true);
-    getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
-    final double currentTax = source.getTotalTax();
 
-     source.setTotalTax(priviousTax);
-    source.setUnPaidBillPresent(false);
-    source.getConsignments()
-            .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
-                    .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                      target.getEntries().forEach(entry -> {
-                        if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
-                        {
-                          final AvailabilityMessage messageForBillingType = getMessageForBillingType(billing.getBillChargeType());
-                          final List<AvailabilityMessage> messages = Lists.newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                          messages.add(messageForBillingType);
-                          entry.setMessages(messages);
-                        }
-                      });
-                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                    }))));
+    boolean allowed = false;
+    if(BooleanUtils.isTrue(source.getUnPaidBillPresent()) && allowed) {
+      final AtomicDouble totalAmt = new AtomicDouble(0.0);
+      final double priviousTax = source.getTotalTax();
+      source.setUnPaidBillPresent(true);
+      getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
+      final double currentTax = source.getTotalTax();
 
-    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-    target.setTotalPayBillTax(convertDoubleToPriceData(currentTax, source ));
-    target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax , source));
+      source.setTotalTax(priviousTax);
+      source.setUnPaidBillPresent(false);
+      source.getConsignments()
+          .forEach(consignment -> consignment.getConsignmentEntries()
+              .forEach(consignmentEntry -> consignmentEntry
+                  .getBillingCharges()
+                  .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                    target.getEntries().forEach(entry -> {
+                      if (entry.getProduct().getCode()
+                          .equals(getSkuCode(consignmentEntry, serialCode))) {
+                        final AvailabilityMessage messageForBillingType = getMessageForBillingType(
+                            billing.getBillChargeType());
+                        final List<AvailabilityMessage> messages = Lists
+                            .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                        messages.add(messageForBillingType);
+                        entry.setMessages(messages);
+                      }
+                    });
+                    totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+                  }))));
+
+      target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+      target.setTotalPayBillTax(convertDoubleToPriceData(currentTax, source));
+      target.setOrderTotalWithTaxForPayBill(
+          convertDoubleToPriceData(totalAmt.get() + currentTax, source));
+    }
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
     if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
