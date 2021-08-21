@@ -2546,7 +2546,7 @@
                     <description>Start date of a for extend order</description>
                   </attribute>
                   
-                  <attribute qualifier="unPaidBillPresent" type="java.lang.Boolean">
+                  <attribute qualifier="unPaidBillPresent" type="boolean">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>This flag use to check unpaid bill for a customer</description>
