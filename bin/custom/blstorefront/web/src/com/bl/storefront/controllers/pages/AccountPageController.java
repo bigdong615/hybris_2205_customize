@@ -3,6 +3,30 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlExtendOrderUtils;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
+import com.bl.facades.customer.BlVerificationDocumentFacade;
+import com.bl.facades.order.BlOrderFacade;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.product.data.VerificationDocumentData;
+import com.bl.facades.wishlist.BlWishListFacade;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
+import com.bl.storefront.forms.BlAddressForm;
+import com.bl.storefront.forms.BlVerificationDocumentValidator;
+import com.bl.storefront.forms.VerificationDocumentForm;
+import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.BrainTreeTransactionService;
+
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -23,6 +47,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.Password
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ProfileValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.AddressVerificationResultHandler;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
+import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.assistedservicefacades.AssistedServiceFacade;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
@@ -129,6 +154,7 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 
 
+
 /**
  * Controller for home page
  */
@@ -165,6 +191,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
 	private static final String REDIRECT_TO_ORDER_HISTORY_PAGE = REDIRECT_PREFIX + "/my-account/orders";
 	private static final String REDIRECT_TO_CONSENT_MANAGEMENT = REDIRECT_PREFIX + "/my-account/consents";
+	private static final String REDIRECT_TO_VERIFICATION_IMAGES_PAGE = REDIRECT_PREFIX + "/my-account/verificationImages";
 
 	/**
 	 * We use this suffix pattern because of an issue with Spring 3.1 where a Uri value is incorrectly extracted if it
@@ -269,6 +296,12 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
+
+	@Resource(name = "blVerificationDocumentValidator")
+	private BlVerificationDocumentValidator blVerificationDocumentValidator;
+
+	@Resource(name = "blVerificationDocumentFacade")
+	private BlVerificationDocumentFacade blVerificationDocumentFacade;
 
 	@Resource(name = "configurationService")
 	private ConfigurationService configurationService;
@@ -1173,11 +1206,56 @@ public class AccountPageController extends AbstractSearchPageController
 	@GetMapping(value = "/verificationImages")
 	@RequireHardLogIn
 	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
+
+		model.addAttribute("verificationDocumentForm",  new VerificationDocumentForm());
 		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, varificationImagesPage);
 		setUpMetaDataForContentPage(model, varificationImagesPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
+	}
+
+	/**
+	 * @param verificationDocumentForm
+	 * @param bindingResult
+	 * @param model
+	 * @return
+	 * @throws CMSItemNotFoundException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/uploadDocument", method = RequestMethod.POST)
+	@RequireHardLogIn
+	public String uploadVerificationImages(
+			@ModelAttribute("verificationDocumentForm") final VerificationDocumentForm verificationDocumentForm,
+			final BindingResult bindingResult, final Model model) throws CMSItemNotFoundException {
+		blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult);
+		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
+				VERIFICATION_IMAGES_CMS_PAGE);
+		storeCmsPageInModel(model, verificationImagesPage);
+		setUpMetaDataForContentPage(model, verificationImagesPage);
+
+		if (bindingResult.hasErrors()) {
+			return setErrorMessagesAndCMSPage(model, VERIFICATION_IMAGES_CMS_PAGE);
+		}
+
+		blVerificationDocumentFacade
+				.uploadDocument(getVerificationDocumentData(verificationDocumentForm));
+		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
+	}
+
+	/**
+	 * Method is used for putting VerificationDocumentForm data to VerificationDocumentData object.
+	 *
+	 * @param verificationDocumentForm
+	 * @return VerificationDocumentData
+	 */
+	private VerificationDocumentData getVerificationDocumentData(
+			final VerificationDocumentForm verificationDocumentForm) {
+		final VerificationDocumentData verificationDocumentData = new VerificationDocumentData();
+		verificationDocumentData.setDocument(verificationDocumentForm.getDocument());
+		verificationDocumentData
+				.setDocumentType(XSSFilterUtil.filter(verificationDocumentForm.getDocumentType()));
+		return verificationDocumentData;
 	}
 
 	@GetMapping(value = "/creditCarts")

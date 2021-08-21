@@ -420,6 +420,9 @@
   					});
   					return btn;
   					},
+  					tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
         				var searchText = document.getElementById('js-site-search-input').value;
@@ -725,6 +728,9 @@
                                            			
                                            			});
                                            			},
+                                           			 tooltipNumber: (totalDays) => {
+                                                                                              return totalDays - 1;
+                                                                                            },
 
                                            	//BL-520 - disable weekends in the calendar
                                                     lockDaysFilter: (day) => {

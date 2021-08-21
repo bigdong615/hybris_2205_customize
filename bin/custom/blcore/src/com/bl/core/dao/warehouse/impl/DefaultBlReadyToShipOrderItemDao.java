@@ -23,25 +23,45 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
   private FlexibleSearchService flexibleSearchService;
   private ModelService modelService;
 
-  private static final String FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_DATE =
+  private static final String FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_DATE_AND_WAREHOUSE =
       "SELECT {pk} FROM {" + ReadyToShipOrderItemModel._TYPECODE + "} WHERE {"
           + ReadyToShipOrderItemModel.WAREHOUSE + "} = ?warehouse AND {"
           + ReadyToShipOrderItemModel.SHIPDATE + "} BETWEEN ?startDate AND ?endDate ";
+
+  private static final String FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_WAREHOUSE =
+      "SELECT {pk} FROM {" + ReadyToShipOrderItemModel._TYPECODE + "} WHERE {"
+          + ReadyToShipOrderItemModel.WAREHOUSE + "} = ?warehouse ";
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDate(final Date shipDate, final
+  public List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDateAndWarehouse(final Date shipDate, final
   WarehouseModel warehouse) {
 
-    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_DATE);
+    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_DATE_AND_WAREHOUSE);
 
     addQueryParameter(shipDate, warehouse, fQuery);
 
     final SearchResult<ReadyToShipOrderItemModel> result = getFlexibleSearchService().search(fQuery);
 
    return result.getResult();
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForWarehouse(final WarehouseModel warehouse) {
+
+    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_WAREHOUSE);
+
+    addQueryParameter(null, warehouse, fQuery);
+
+    final SearchResult<ReadyToShipOrderItemModel> result = getFlexibleSearchService().search(fQuery);
+
+    return result.getResult();
 
   }
 
@@ -54,10 +74,14 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
   private void addQueryParameter(final Date shipDate, final
   WarehouseModel warehouse, final FlexibleSearchQuery fQuery) {
 
-    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
-    final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
-    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+    if (null != shipDate) {
+
+      final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
+      final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
+      fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
+      fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+    }
+
     fQuery.addQueryParameter(BlCoreConstants.WAREHOUSE, warehouse);
   }
 
