@@ -1,5 +1,6 @@
 package com.bl.tax.populators;
 
+import com.bl.BlloggingStandalone;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
@@ -297,6 +298,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           .getPaymentTransactions()) {
         for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
           if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase("Capture")){
+            BlLogger.logMessage(LOG , Level.INFO , "*----------------------------------------------------------------------------------------");
             return false;
           }
         }
