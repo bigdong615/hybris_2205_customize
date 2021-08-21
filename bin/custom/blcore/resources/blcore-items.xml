@@ -2552,6 +2552,13 @@
                     <description>This flag use to check unpaid bill for a customer</description>
                   </attribute>
 
+                  <attribute qualifier="isOrderSubmit" type="java.lang.boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether order submitted or not </description>
+                    <defaultvalue>false</defaultvalue>
+                  </attribute>
+
                 </attributes>
             </itemtype>
 

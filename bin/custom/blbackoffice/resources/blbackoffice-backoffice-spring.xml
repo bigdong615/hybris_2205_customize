@@ -41,8 +41,7 @@
 	<alias name="blDefaultEditorAreaLogicHandler" alias="editorAreaLogicHandler"/>
 	<bean id="blDefaultEditorAreaLogicHandler"
 		class="com.bl.backoffice.wizards.handler.BlDefaultEditorAreaLogicHandler" parent="defaultEditorAreaLogicHandler">
-		<property name="calculationService" ref="calculationService"/>
-		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
+		<property name="defaultBlCalculationService" ref="calculationService"/>
 	</bean>
 
 	<!--To render the order-->
