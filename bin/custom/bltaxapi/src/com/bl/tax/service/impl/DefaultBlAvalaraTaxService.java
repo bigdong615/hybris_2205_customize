@@ -29,7 +29,7 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
     responseData = super.process(createHttpEntity(request), TaxResponse.class);
       final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
       if(null != responseData.getResults() && "201".equalsIgnoreCase(responseData.getStatusCode())) {
-        if(BooleanUtils.isTrue(orderModel.getUnPaidBillPresent())) {
+        if(BooleanUtils.isTrue(orderModel.isUnPaidBillPresent())) {
           getBlPayBillTaxResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
         } else {
           getResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);

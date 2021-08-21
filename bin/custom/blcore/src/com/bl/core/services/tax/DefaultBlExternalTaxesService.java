@@ -41,7 +41,7 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
           getSessionService().setAttribute(SESSION_EXTERNAL_TAX_DOCUMENT, exTaxDocument);
           saveOrder(abstractOrder);
           return true;
-        } else if(!exTaxDocument.getAllTaxes().isEmpty() && BooleanUtils.isTrue(abstractOrder.getUnPaidBillPresent())) {
+        } else if(!exTaxDocument.getAllTaxes().isEmpty() && BooleanUtils.isTrue(abstractOrder.isUnPaidBillPresent())) {
           return true;
         }
         else

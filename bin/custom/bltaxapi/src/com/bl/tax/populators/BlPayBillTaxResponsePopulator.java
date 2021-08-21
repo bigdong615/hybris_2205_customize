@@ -44,18 +44,6 @@ public class BlPayBillTaxResponsePopulator implements Populator<TaxResponse, Ext
   }
 
   /**
-   * this method created for taxline
-   */
-  private boolean shouldConvertLine(final List<TaxLineResponse> taxLines, final int index, final boolean shippingIncluded)
-  {
-    if (!shippingIncluded)
-    {
-      return true;
-    }
-    return index < (taxLines.size() - 1);
-  }
-
-  /**
    * this method created for get line item tax values
    */
   private List<TaxValue> getLineTaxValues(final TaxLineResponse taxLine, final String currencyCode)

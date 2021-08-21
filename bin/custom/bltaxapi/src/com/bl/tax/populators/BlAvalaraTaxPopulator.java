@@ -23,7 +23,7 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
 
   @Override
   public void populate(final TaxResponse taxResponse, final AbstractOrderModel abstractOrderModel) {
-    if (BooleanUtils.isFalse(abstractOrderModel.getUnPaidBillPresent())) {
+    if (BooleanUtils.isFalse(abstractOrderModel.isUnPaidBillPresent())) {
       for (int i = 0; i < taxResponse.getTaxLines().size(); i++) {
         final String responseProductCode = taxResponse.getTaxLines().get(i).getItemCode();
         for (int j = 0; j < abstractOrderModel.getEntries().size(); j++) {

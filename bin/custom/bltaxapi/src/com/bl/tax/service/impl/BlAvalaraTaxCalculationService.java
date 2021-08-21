@@ -23,7 +23,7 @@ private ModelService modelService;
    */
   public void calculateTaxWithOrderTotal(final AbstractOrderModel abstractOrderModel , final TaxResponse taxResponse)
   {
-    if(BooleanUtils.isTrue(abstractOrderModel.getUnPaidBillPresent())) {
+    if(BooleanUtils.isTrue(abstractOrderModel.isUnPaidBillPresent())) {
      abstractOrderModel.getConsignments()
          .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
              .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing ->
