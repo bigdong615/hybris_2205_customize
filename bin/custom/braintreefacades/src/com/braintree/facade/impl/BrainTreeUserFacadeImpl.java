@@ -734,7 +734,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 
 		if (CollectionUtils.isNotEmpty(addresses)) {
 			final List<AddressData> addressBook = new ArrayList<>();
-			final AddressData defaultAddress =  getDefaultAddress();
+			final AddressData defaultAddress = getDefaultAddress();
 			final AddressData defaultBillingAddress = getDefaultBillingAddress();
 
 			for (final AddressModel address : addresses)

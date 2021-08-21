@@ -1,25 +1,18 @@
 package com.bl.backoffice.wizards.handler;
 
 import com.bl.core.order.impl.DefaultBlCalculationService;
-import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.widgets.baseeditorarea.DefaultEditorAreaLogicHandler;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.jalo.order.OrderEntry;
-import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
-import de.hybris.platform.refund.OrderRefundEntry;
-import javax.annotation.Resource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * @author Manikandan
  * This class created to call avalara while saving the order from cscockpit
+ *  @author Manikandan
  */
 public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandler {
 
@@ -38,7 +31,6 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
         orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
       try {
         getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
-      //  getCalculationService().calculate(orderModel);
       } catch (CalculationException e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while BlDefaultEditorAreaLogicHandler" , e);
       }

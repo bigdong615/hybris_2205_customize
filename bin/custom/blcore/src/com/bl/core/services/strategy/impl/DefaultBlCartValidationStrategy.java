@@ -192,7 +192,6 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		return listOfWarehouses;
 	}
 
-
 	/**
 	 * @return the blCommerceStockService
 	 */

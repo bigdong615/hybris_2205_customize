@@ -38,14 +38,25 @@ public interface BlCalculationService extends CalculationService
  PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , final int defaultAddedTimeForExtendRental);
 
 
+ /**
+  * This method created to recalculate order from cscockpit
+  */
  void recalculateOrderForTax(final AbstractOrderModel order) throws CalculationException;
 
 
+ /**
+  * This method created to recalculate order entries from cscockpit
+  */
  void calculateEntriesForTax(final AbstractOrderModel order, final boolean forceRecalculate)
     throws CalculationException;
 
-
+ /**
+  * This method created to reset the values while recalculating tax from cscockpit
+  */
  void resetAllValuesForTax(final AbstractOrderEntryModel entry) throws CalculationException;
 
+ /**
+  * This method created to get base price for product which is open or past order while calculating tax from cscockit
+  */
  PriceValue getDynamicBasePriceForTax(final PriceValue basePrice, final ProductModel product , final AbstractOrderModel abstractOrder);
 }

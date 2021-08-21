@@ -89,8 +89,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
 
 
+    // As of now commented below code for bill pay tax , since its breaking normal flow of order details page
     boolean allowed = false;
-    if(BooleanUtils.isTrue(source.getUnPaidBillPresent()) && allowed) {
+    if(BooleanUtils.isTrue(source.getUnPaidBillPresent()) && allowed) {   // NOSONR
       final AtomicDouble totalAmt = new AtomicDouble(0.0);
       final double priviousTax = source.getTotalTax();
       source.setUnPaidBillPresent(true);

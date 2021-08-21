@@ -1,15 +1,14 @@
 package com.bl.core.order.impl;
 
-import com.bl.core.constants.GeneratedBlCoreConstants.Attributes.AbstractOrder;
-import com.bl.core.model.BlOptionsModel;
-import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.constants.BlCoreConstants;
-
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlDamageWaiverPricingModel;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.BlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.logging.BlLogger;
@@ -37,7 +36,6 @@ import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import com.bl.core.enums.ProductTypeEnum;
 
 /**
  * {@inheritDoc}
@@ -624,7 +622,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		order.setDeliveryCost(0.0);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.TOTAL_PRICE, totalPriceWithDamageWaiverCost);
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 

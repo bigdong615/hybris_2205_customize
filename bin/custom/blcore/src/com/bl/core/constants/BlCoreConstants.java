@@ -279,6 +279,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
 	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
 
+	public static final String TOTAL_PRICE = "Total Price : {}";
+
 
   private BlCoreConstants()
 	{

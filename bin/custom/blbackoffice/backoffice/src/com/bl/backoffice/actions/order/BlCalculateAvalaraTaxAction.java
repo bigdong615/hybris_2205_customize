@@ -7,7 +7,6 @@ import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.Objects;
@@ -16,8 +15,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * @author Manikandan
  * This action is created to calculate the avalara tax for cscockpit
+ * @author Manikandan
  */
 public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<OrderModel, OrderModel> {
 
@@ -26,13 +25,8 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
   private static final String SOCKET_OUT_CONTEXT = "blCustomAvalaraCalculationContext";
   private static final String SUCCESS = "success";
 
-  @Resource(name = "calculationService")
-  private CalculationService calculationService;
-
-
   @Resource(name ="defaultBlCalculationService")
   private DefaultBlCalculationService defaultBlCalculationService;
-
 
   @Resource(name = "modelService")
   private ModelService modelService;
@@ -49,8 +43,6 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
       order.setCalculated(false);
       order.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
       try {
-        //getCalculationService().calculate(order);
-
         getDefaultBlCalculationService().recalculateOrderForTax(order);
         getModelService().save(order);
         getModelService().refresh(order);
@@ -59,9 +51,9 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
         BlLogger.logFormattedMessage(LOG, Level.ERROR,
             "Error while Calculating Tax for order with nummber {}", order.getCode());
       }
-    return new ActionResult(SUCCESS);
+    return new ActionResult(SUCCESS); // NOSONAR
       }
-    return new ActionResult(SUCCESS);
+    return new ActionResult(SUCCESS); // NOSONAR
   }
 
 
@@ -72,15 +64,6 @@ public class BlCalculateAvalaraTaxAction extends AbstractComponentWidgetAdapterA
   public boolean canPerform(final ActionContext<OrderModel> actionContext)
   {
     return Objects.nonNull(actionContext.getData()) ;
-  }
-
-
-  public CalculationService getCalculationService() {
-    return calculationService;
-  }
-
-  public void setCalculationService(CalculationService calculationService) {
-    this.calculationService = calculationService;
   }
 
 

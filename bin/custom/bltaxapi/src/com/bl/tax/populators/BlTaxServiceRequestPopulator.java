@@ -1,6 +1,5 @@
 package com.bl.tax.populators;
 
-import com.bl.BlloggingStandalone;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
@@ -22,8 +21,6 @@ import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -288,6 +285,10 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   }
 
 
+  /**
+   * This method created to check whether the payment is captured
+   */
+
   private boolean isTaxExemptValid(final AbstractOrderModel abstractOrderModel) {
 
     if(CollectionUtils.isEmpty(abstractOrderModel.getPaymentTransactions())) {
@@ -296,9 +297,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     else {
       for (final PaymentTransactionModel paymentTransactionModel : abstractOrderModel
           .getPaymentTransactions()) {
-        for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
-          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase("Capture")){
-            BlLogger.logMessage(LOG , Level.INFO , "*----------------------------------------------------------------------------------------");
+        for(final PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(BltaxapiConstants.CAPTURE)){
             return false;
           }
         }
