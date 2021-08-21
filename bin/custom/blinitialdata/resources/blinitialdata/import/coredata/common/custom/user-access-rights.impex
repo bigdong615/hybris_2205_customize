@@ -11,15 +11,33 @@ INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
 #Employee creation for frondesk user rols/group
 INSERT_UPDATE BackofficeRole; UID[unique = true]; locname[lang = de]; locname[lang = en]; backOfficeLoginDisabled; authorities
                             ; frontdeskuserrole ; Bl User Role      ; Bl User Role      ; FALSE                  ; frontdeskuserrole
-
+                            ; shippingteamuserrole ; Bl User Role   ; Bl User Role      ; FALSE                  ; shippingteamuserrole
+	
 INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
                        ; frondeskusergroup ; employeegroup,frontdeskuserrole
+                       ; shippingteamusergroup ; employeegroup,shippingteamuserrole
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
+                                    ; shippingteamkusergroup         ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
                       ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup ; 1234
+                      ; shippingteamuser ; Front desk team user ; Bl User     ; shippingteamkusergroup ; 1234
+
+
+# BL-828, BL-829 Employee creation for inventory team user rols/group
+INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];backOfficeLoginDisabled;authorities
+                            ;blinventoryuserrole;Bl Inventory User Role;Bl Inventory User Role;FALSE;blinventoryuserrole
+
+INSERT_UPDATE Usergroup;uid[unique=true];groups(uid);locname[lang=en];description
+                       ;blinventoryusergroup;employeegroup,blinventoryuserrole;BL Inventory User Group;User group for BL inventory team members
+
+INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
+                                    ;blinventoryusergroup;blinventoryuserrole
+
+INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
+                      ;blinventoryuser;Bl Inventory User;blinventoryusergroup;1234
 
 
 $START_USERRIGHTS;;;;;;;;;
@@ -31,6 +49,8 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;SyncItemJob;+;;;
 ;;;;Type;+;;;
 ;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;+;+;+;+;
+;;;;BlSerialProduct;+;+;+;+;+;
 ;;;;Category;+;+;+;+;+;
 ;;;;VariantType;+;+;+;+;+;
 ;;;;Catalog;+;+;+;+;
@@ -72,6 +92,12 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;Keyword;+;;;;;
 ;;;;Unit;+;;;;;
 ;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
 
 $END_USERRIGHTS;;;;;
 
@@ -88,19 +114,27 @@ UserGroup ; customersupportagentgroup ;                ;                        
           ;                           ;                ;                                ; Notes.note       ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;                                ; Notes.order      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;                                ; NotesEnum        ; +    ; +      ; -      ; -      ; -
-
+#Access Rights of Agent on gift card purchase
+          ;                           ;                ;                                ; GiftCard        ; +    ; +      ; +     ; -      ; -
+          ;                           ;                ;                                ; Order.giftCardCost;+   ; +      ; +     ; -      ; -
+          ;                           ;                ;                                ; GiftCardMovement; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;                                ; GiftCard2Movement; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;                                ; GiftCard2Order        ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;                                ; Order.giftCard 
 # Access Rights for customer notes on cs cockpit;;;;;;;;
-          ;                           ;                ; Customer                       ; +                ; +    ; -      ; -
-          ;                           ;                ; Customer.customerNotes         ; +                ; +    ; +      ; +
-          ;                           ;                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes                  ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.type             ; -                ; -    ; -      ; -
+          ;                           ;                ;                                ; Customer                       ; +                ; +    ; -      ; -
+          ;                           ;                ;                                ; Customer.customerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes                  ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.type             ; -                ; -    ; -      ; -
           ;                           ;                ;                                ; Notes.type       ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
@@ -115,6 +149,13 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes.order      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.status     ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
+
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS;;;;;;;;;
@@ -134,26 +175,282 @@ $END_USERRIGHTS;;;;;;;;;
 
 #Access right for frontdeskusergroup
 $START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
-Usergroup ; frondeskusergroup ;                ;                ;      ;        ;        ;        ;
+Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
+Usergroup ; frondeskusergroup ;                ;                            ;      ;        ;        ;        ;
+# Access Rights for Warehousing agent group;;;;;;;;
+          ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
+          ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
+          ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; Order                      ; +    ; +      ; -      ; -
+          ;                   ;                ; User                       ; +    ; -      ; -      ; -
+          ;                   ;                ; Address                    ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
+$END_USERRIGHTS; ; ; ;
+
+#Access rights for frontdeskuserrole
+$START_USERRIGHTS; ; ; ; ; ; ; ;
+Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
+Usergroup ; frontdeskuserrole ;                ;                            ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
           ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; Order          ; +    ; +      ; -      ; -
+          ;                   ;                ; User           ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
+          ;                   ;                ; Address        ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+$END_USERRIGHTS; ; ; ;
+#Access rights for shippingteamuserrole
+$START_USERRIGHTS; ; ; ; ; ; ; ;
+Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
+Usergroup ; shippingteamuserrole ;                ;                ;      ;        ;        ;        ;
+# Access Rights for Warehousing agent group;;;;;;;;
+          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
           ;                   ;                ; Order          ; +    ; +      ; -      ; -
           ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
 $END_USERRIGHTS; ; ; ;
 
-#Access rights for frontdeskuserrole
-$START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
-Usergroup ; frontdeskuserrole ;                ;                ;      ;        ;        ;        ;
+#Access for verification team members
+INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];backOfficeLoginDisabled;authorities
+;verificationdocagentrole;Bl Verification Document Access Agent Role;Bl Verification Document Access Agent Role;FALSE;verificationdocagentrole
+
+
+INSERT_UPDATE Usergroup;uid[unique=true];groups(uid)
+;verificationdocusergroup;employeegroup,verificationdocagentrole
+
+INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
+  ;verificationdocusergroup;verificationdocagentrole
+  
+INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
+;verificationAgent;Verification Agent;verificationdocusergroup;1234
+
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;verificationdocusergroup;;;;;;;
+
 # Access Rights for Warehousing agent group;;;;;;;;
-          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
-          ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; Order          ; +    ; +      ; -      ; -
-          ;                   ;                ; User           ; +    ; -      ; -      ; -
-          ;                   ;                ; Address        ; +    ; -      ; -      ; -
-          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+;;;Customer;+;+;-;-
+;;;Customer.verificationDocuments;+;+;+;+
+;;;VerificationDocumentMedia;+;+;+;+
+;;;VerificationDocumentMedia.documentType;+;+;+;+
+;;;VerificationDocumentMedia.expiryDate;+;+;+;+
+;;;VerificationDocumentMedia.customer;+;+;+;+
+;;;VerificationDocumentMedia.folder;+;+;+;+
+;;;VerificationDocumentMedia.url;+;+;+;+
+;;;VerificationDocumentMedia.downloadURL;+;+;+;+
+;;;Customer.verificationDocuments;+;+;+;+
+;;;Media;+;+;+;+
+;;;Media.folder;+;+;+;+
+
+
+$END_USERRIGHTS;;;;
+
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;verificationdocagentrole;;;;;;;
+
+# Access Rights for Warehousing agent group;;;;;;;;
+;;;Customer;+;+;-;-
+;;;Customer.verificationDocuments;+;+;+;+
+;;;VerificationDocumentMedia;+;+;+;+
+;;;VerificationDocumentMedia.documentType;+;+;+;+
+;;;VerificationDocumentMedia.expiryDate;+;+;+;+
+;;;VerificationDocumentMedia.customer;+;+;+;+
+;;;VerificationDocumentMedia.folder;+;+;+;+
+;;;VerificationDocumentMedia.url;+;+;+;+
+;;;VerificationDocumentMedia.downloadURL;+;+;+;+
+;;;Media;+;+;+;+
+;;;Media.folder;+;+;+;+
+          ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
+          ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
+          ;                   ;                ; Order                      ; +    ; +      ; -      ; -
+          ;                   ;                ; User                       ; +    ; -      ; -      ; -
+          ;                   ;                ; Address                    ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
+          ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+          ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ;
+
+#Access rights for BL Inventory user group
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;blinventoryusergroup;;;;;;;
+
+;;;InventoryInCompleteOrdersQueue;+;+;-;-
+;;;InventoryCompleteOrdersQueue;+;+;-;-
+;;;ServicelayerJob;+;+;-;-
+;;;PullReadyToShipOrdersCronJob;+;+;-;-
+;;;MorningPullOrdersQueue;+;+;-;-
+;;;MarkReadyToShipConsignmentsCleanJob;+;+;-;-
+;;;WebScanTool;+;+;-;-
+;;;Warehouse;+;+;-;-
+;;;Consignment;+;+;-;-
+;;;Order;+;+;-;-
+;;;StockLevel;+;-;-;-
+;;;BlTestingGearNeeded;+;+;+;+;
+;;;Product;+;-;-;-;
+;;;BlProduct;+;-;-;-;
+;;;BlSerialProduct;+;-;-;-;
+
+$END_USERRIGHTS;;;;
+
+ 
+INSERT_UPDATE BackofficeRole ; UID[unique = true]     ; locname[lang = de] ; locname[lang = en] ; backOfficeLoginDisabled ; authorities            
+                             ; techEnguserrole        ; Bl Tech Eng Role   ; Bl Tech Eng Role   ; FALSE                   ; techEnguserrole        
+                             ; repairmemberuserrole   ; Bl Repair Role     ; Bl Repair Role     ; FALSE                   ; repairmemberuserrole   
+                             ; unboxingmemberuserrole ; Bl Unboxing Role   ; Bl Unboxing Role   ; FALSE                   ; unboxingmemberuserrole 
+                             
+INSERT_UPDATE Usergroup ; uid[unique = true]      ; groups(uid)                          
+                        ; techEngusergroup        ; employeegroup,techEnguserrole        
+                        ; repairmemberusergroup   ; employeegroup,repairmemberuserrole   
+                        ; unboxingmemberusergroup ; employeegroup,unboxingmemberuserrole 
+                        
+INSERT_UPDATE PrincipalGroupRelation ; source(uid)[unique = true] ; target(uid)[unique = true] 
+                                     ; techEngusergroup           ; techEnguserrole            
+                                     ; repairmemberusergroup      ; repairmemberuserrole       
+                                     ; unboxingmemberusergroup    ; unboxingmemberuserrole     
+                                     
+INSERT_UPDATE Employee ; uid[unique = true]      ; name               ; description                   ; groups(uid)             ; password 
+                       ; techEngteamuser         ; Tech Eng team user ; Bl Tech Eng User              ; techEngusergroup        ; 1234     
+                       ; repairteamuser          ; Repair team user   ; Bl Repair User                ; repairmemberusergroup   ; 1234     
+                       ; unboxingteamuser        ; Unboxing team user ; Bl Unboxing User              ; unboxingmemberusergroup ; 1234     
+                       
+                       
+                       
+#Access right for techEngusergroup
+$START_USERRIGHTS      ;                         ;                    ;                               ;                         ;          ;        ;        ;             
+Type                   ; UID                     ; MemberOfGroups     ; Target                        ; read                    ; change   ; create ; remove ; change_perm 
+Usergroup              ; techEngusergroup        ;                    ;                               ;                         ;          ;        ;        ;             
+# Access Rights for Tech eng group;                         ;                    ;                               ;                         ;          ;        ;        ;             
+                       ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RemainingItemsQueue           ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RemainingPriorityItems        ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; InHouseRepairLog              ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; VendorRepairLog               ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CustomerResponsibleRepairLog  ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; PartsNeededRepairLog          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; BlItemsBillingCharge          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogUnawareMedia           ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Media                         ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Product                       ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlProduct                     ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlSerialProduct               ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; Category                      ; +                       ; -        ; -      ; -      ; -           
+                       ;                         ;                    ; VariantType                   ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; Catalog                       ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogVersion                ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; ClassificationAttributeUnit   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttribute       ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassAttributeAssignment      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationClass           ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ProductFeature                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttributeValue  ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Unit                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; User                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlOptions                     ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairTypeEnum                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ItemTestingStatusEnum         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairReasonsEnum             ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; TestingNeededItemsQueue       ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RemainingVipOrderItems        ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;   
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +          
+$END_USERRIGHTS        ;                         ;                    ;                               ;                         
+                       
+#Access right for repairmemberusergroup
+$START_USERRIGHTS      ;                         ;                    ;                               ;                         ;          ;        ;        ;             
+Type                   ; UID                     ; MemberOfGroups     ; Target                        ; read                    ; change   ; create ; remove ; change_perm 
+Usergroup              ; repairmemberusergroup   ;                    ;                               ;                         ;          ;        ;        ;             
+# Access Rights for Repair member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
+                       ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; InHouseRepairLog              ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; VendorRepairLog               ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CustomerResponsibleRepairLog  ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; PartsNeededRepairLog          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; BlItemsBillingCharge          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogUnawareMedia           ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Media                         ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Product                       ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlProduct                     ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlSerialProduct               ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; Category                      ; +                       ; -        ; -      ; -      ; -           
+                       ;                         ;                    ; VariantType                   ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; Catalog                       ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogVersion                ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; ClassificationAttributeUnit   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttribute       ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassAttributeAssignment      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationClass           ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ProductFeature                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttributeValue  ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Unit                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; User                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlOptions                     ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairTypeEnum                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ItemTestingStatusEnum         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairReasonsEnum             ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RemainingRepairItems          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
+$END_USERRIGHTS        ;                         ;                    ;                               ;                         
+                       
+#Access right for unboxingmemberusergroup
+$START_USERRIGHTS      ;                         ;                    ;                               ;                         ;          ;        ;        ;             
+Type                   ; UID                     ; MemberOfGroups     ; Target                        ; read                    ; change   ; create ; remove ; change_perm 
+Usergroup              ; unboxingmemberusergroup ;                    ;                               ;                         ;          ;        ;        ;             
+# Access Rights for Unboxing member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
+                       ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; InHouseRepairLog              ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; VendorRepairLog               ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CustomerResponsibleRepairLog  ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; PartsNeededRepairLog          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; BlItemsBillingCharge          ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogUnawareMedia           ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Media                         ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Product                       ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlProduct                     ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; BlSerialProduct               ; +                       ; +        ; -      ; -      ; -           
+                       ;                         ;                    ; Category                      ; +                       ; -        ; -      ; -      ; -           
+                       ;                         ;                    ; VariantType                   ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; Catalog                       ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; CatalogVersion                ; +                       ; +        ; +      ; +      ; +           
+                       ;                         ;                    ; ClassificationAttributeUnit   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttribute       ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassAttributeAssignment      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationClass           ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ProductFeature                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ClassificationAttributeValue  ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Unit                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; User                          ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; BlOptions                     ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairTypeEnum                ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ItemTestingStatusEnum         ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; RepairReasonsEnum             ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ConditionRatingValueEnum      ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; ExportAllDirtyPrioritySerials ; +                       ; +        ; +      ; +      ;             
+                       ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;
+                       ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
+$END_USERRIGHTS        ;                         ;                    ;                               ;                         
+

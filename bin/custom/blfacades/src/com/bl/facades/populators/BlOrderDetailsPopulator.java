@@ -2,9 +2,12 @@ package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
@@ -12,6 +15,7 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -20,9 +24,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import com.google.common.util.concurrent.AtomicDouble;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.facades.product.data.AvailabilityMessage;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import com.google.common.collect.Lists;
+
 
 /**
  * This Populator created to populate order details
@@ -39,11 +51,30 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-
     target.setIsRentalCart(source.getIsRentalCart());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
-    populateOrderDetailsForRentalOrder(source , target);
+    if(!source.isGiftCardOrder()){	 
+        populateOrderDetailsForRentalOrder(source , target);
+    }
+    //Check gift card purchase order
+    if(source.isGiftCardOrder()){
+   	 final Optional<AbstractOrderEntryModel> giftCardOrder = source.getEntries().stream().findFirst();
+   	 if(giftCardOrder.isPresent()){
+   		 
+   		 target.setRecipientEmail(giftCardOrder.get().getRecipientEmail());
+   		 target.setRecipientName(giftCardOrder.get().getRecipientName());
+   	 }
+   	 target.setIsRentalCart(Boolean.FALSE);
+   	 target.setHasGiftCart(Boolean.TRUE);
+    }
+
+    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+      target.setIsReplacementOrder(true);
+    }
+    if(null != source.getReturnRequestForOrder()) {
+      target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
+    }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
       final AddressData addressData = new AddressData();
@@ -54,7 +85,90 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(source.getUser() instanceof CustomerModel){
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
+
+    final AtomicDouble totalAmt = new AtomicDouble(0.0);
+    source.getConsignments()
+            .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+                    .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                      target.getEntries().forEach(entry -> {
+                        if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
+                        {
+                          final AvailabilityMessage messageForBillingType = getMessageForBillingType(billing.getBillChargeType());
+                          final List<AvailabilityMessage> messages = Lists.newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                          messages.add(messageForBillingType);
+                          entry.setMessages(messages);
+                        }
+                      });
+                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+                    }))));
+
+    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+
+    // To Populate Gift Card Details
+    populateGiftCardDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
   }
+
+  
+/**
+ * This method created pay bill messages separation.
+ * @param billChargeType
+ * @return AvailabilityMessage
+ */
+private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
+  {
+    switch (billChargeType.getCode())
+    {
+      case "MISSING_CHARGE":
+        return getMessage("pay.bill.missing.charge");
+
+      case "LATE_CHARGE":
+        return getMessage("pay.bill.late.charge");
+
+      case "REPAIR_CHARGE":
+        return getMessage("pay.bill.repair.charge");
+
+      default:
+        return null;
+    }
+  }
+
+  
+/**
+ * This method created pay bill messages.
+ * @param messageCode
+ * @return AvailabilityMessage
+ */
+private AvailabilityMessage getMessage(final String messageCode)
+  {
+    final AvailabilityMessage am = new AvailabilityMessage();
+    am.setMessageCode(messageCode);
+    return am;
+
+  }
+
+  
+/**
+  * This method created to get SKU code.
+  * @param consignmentEntry
+  * @param serialCode
+  * @return String
+  */
+private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
+  {
+    final StringBuilder sb = new StringBuilder();
+    consignmentEntry.getSerialProducts().forEach(serial -> {
+      if(serial instanceof BlSerialProductModel && ((BlSerialProductModel)serial).getCode().equals(serialCode))
+      {
+        final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
+        sb.append(serialProduct.getBlProduct().getCode());
+      }
+    });
+    return sb.toString();
+  }
+
 
   /**
    * This method created to populate dates for order details
@@ -97,6 +211,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
+    if(source.getTotalOptionsCost() != null){
+      target.setTotalOptionsCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalOptionsCost() ,
+          BlFacadesConstants.OPTION_FIELD), source));
+    }
 
   }
 
@@ -129,7 +247,11 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
        final ExtendOrderData extendOrderData = new ExtendOrderData();
        extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
        extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
-       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + BlFacadesConstants.DAYS);
+       String suffix = BlFacadesConstants.DAYS;
+       if(extendOrderModel.getTotalExtendDays() <= 1) {
+         suffix = BlFacadesConstants.DAY;
+       }
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + suffix);
        extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
        extendOrderDataList.add(extendOrderData);
       }
@@ -252,6 +374,51 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     final Date date = new Date();
     return date.before(orderModel.getRentalStartDate()) || date.before(updateRentalDatesIfOrderIsExtended(orderModel))
     || DateUtils.isSameDay(updateRentalDatesIfOrderIsExtended(orderModel), date);
+  }
+
+
+  /**
+   * This method created to populate the gift card details for order details
+   */
+
+  private void populateGiftCardDetails(final OrderModel source, final OrderData target)
+  {
+    final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+    if(CollectionUtils.isNotEmpty(source.getGiftCard())) {
+      for(final GiftCardModel giftCardModel : source.getGiftCard()){
+        final BLGiftCardData blGiftCardData = new BLGiftCardData();
+        blGiftCardData.setCode(giftCardModel.getCode());
+        for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
+          if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
+            setGiftCardData(giftCardMovementModel , blGiftCardData , blGiftCardDataList , source);
+          }
+        }
+      }
+
+    }
+    target.setGiftCardData(blGiftCardDataList);
+  }
+
+  /**
+   * This method added for setting gift card details for order details page
+   * @param giftCardMovementModel giftCardMovementModel used for order
+   * @param blGiftCardData blGiftCardData
+   * @param blGiftCardDataList blGiftCardDataList to show on order page
+   * @param source orderModel
+   */
+  private void setGiftCardData(final GiftCardMovementModel giftCardMovementModel , final BLGiftCardData blGiftCardData ,
+      final List<BLGiftCardData> blGiftCardDataList, final OrderModel source ){
+    Double balanceAmount = 0.0;
+    Double amount = 0.0;
+    if(null != giftCardMovementModel.getBalanceAmount()) {
+      balanceAmount = giftCardMovementModel.getBalanceAmount();
+    }
+    if(null != giftCardMovementModel.getAmount()){
+      amount = giftCardMovementModel.getAmount();
+    }
+    blGiftCardData.setBalanceamount(convertDoubleToPriceData(balanceAmount , source));
+    blGiftCardData.setRedeemamount(convertDoubleToPriceData(amount , source));
+    blGiftCardDataList.add(blGiftCardData);
   }
 
 

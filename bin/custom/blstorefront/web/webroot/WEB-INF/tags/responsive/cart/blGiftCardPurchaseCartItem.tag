@@ -15,11 +15,12 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/rent/product/${entry.product.code}" var="productUrl" />
 <c:url value="/cart/update" var="cartUpdateFormAction" />
+<c:url value="/checkout/multi/payment-method/giftCardPaymentAdd" var="paymentPageUrl" />
 
 <div class="cartProduct">
 	<div class="row">
 		<div class="col-md-2 text-center mt-3">
-			<a href="#"><product:productPrimaryImage
+		<a href="#"><product:productPrimaryImage
 					product="${entry.product}" format="thumbnail" /></a>
 		</div>
 		<div class="col-md-6 mt-3">
@@ -51,7 +52,7 @@
 	<div class="row mt-3">
 		<div class="col-md-10 offset-md-2">
 			<form:form method="POST" modelAttribute="giftCardPurchaseForm"
-				id="giftCardPurchaseForm">
+				id="giftCardPurchaseForm" action="${paymentPageUrl}">
 				<div class="gc-pdp-form">
 					<input type="text" class="form-control"
 						id="first-name"
@@ -60,18 +61,11 @@
 						id="email" value="${entry.recipientEmail}"
 						placeholder="<spring:theme code='giftcard.PurchaseForm.email.placeholder' />"
 						name="email">
-					<textarea class="form-control mt-2 mb-4" value="${entry.recipientMessage}"
+					<textarea class="form-control mt-2 mb-4" 
 						placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />"
-						name="message"></textarea>
+						name="message">${entry.recipientMessage}</textarea>
 				</div>
 			</form:form>
-		</div>
-	</div>
-	<div class="productNotifications row hide">
-		<div class="col-12">
-			<div class="notification notification-warning">
-				<spring:theme code="text.giftcard.PurchaseForm.product.warning" />
-			</div>
 		</div>
 	</div>
 </div>

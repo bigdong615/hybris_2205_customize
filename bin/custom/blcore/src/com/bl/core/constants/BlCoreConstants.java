@@ -13,6 +13,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 {
 	public static final String EXTENSIONNAME = "blcore";
 
+
 	// implement here constants used by this extension
 	public static final String QUOTE_BUYER_PROCESS = "quote-buyer-process";
 	public static final String QUOTE_SALES_REP_PROCESS = "quote-salesrep-process";
@@ -22,6 +23,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUOTE_EXPIRED_EMAIL_PROCESS = "quote-expired-email-process";
 	public static final String QUOTE_POST_CANCELLATION_PROCESS = "quote-post-cancellation-process";
 	public static final String EMPTY_STRING = "";
+	public static final int PRECISION = 2;
+
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
 
@@ -175,6 +178,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
+	public static final String DOUBLE_HYPHEN = "--";
 
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
 	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
@@ -199,6 +203,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CURRENCY_ISOCODE = "currencyIsoCode";
 	public static final String FREE_DELIVERY_MODES = "freeDeliveryModes";
 	public static final String GIFT_CARD_CODE = "giftCardCode";
+
+	public static final String SHIP_DATE = "shipDate";
+	public static final String STATUS = "status";
+
+	public static final String WAREHOUSE = "warehouse";
+	public static final String PULL_JOB_ERROR_OCCURRED = "Error occurred while performing PullReadyToShipOrdersJob";
+	public static final String EMPLOYEE = "Employee ";
+	public static final int DEFAULT_MEMBERS_COUNT = 1;
+	public static final String DEFAULT_PRODUCT_QUANTITY = "1";
+
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 
@@ -230,17 +244,43 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMAIL_ADDRESS = "Email Address";
 	public static final String EMAIL_ADDRESSES = "Email Addresses";
 	public static final String HTML_ENABLED = "HTML Enabled";
+
+	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 	
 	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
 	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
-	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
+	public static final String CUSTOMER_RESPONSIBLE_REPAIR = "CUSTOMER_RESPONSIBLE_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
+  public static final String ACCEPTED = "ACCEPTED";
+
+	public static final String HARD_ASSIGNED = "hardAssign";
+	public static final String SOFT_ASSIGNED = "softAssign";
+  public static final String NEW_GEAR = "newgear";
+	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BARCODE = "barcode";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
+
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
+	public static final String MISSING_CHARGE = "MISSING_CHARGE";
+	public static final String AQUATECH_BRAND_ID ="9";
 
 
-	private BlCoreConstants()
+
+	public static final String DRIVING_LICENSE = "drivingLicense";
+	public static final String UTILITY_BILL = "utilityBill";
+	public static final String INSURANCE_CERTIFICATE = "insuranceCertificate";
+	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
+	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
+
+
+  private BlCoreConstants()
 	{
 		//empty
 	}

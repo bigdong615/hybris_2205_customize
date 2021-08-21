@@ -13,7 +13,7 @@
     <sockets>
         <input type="de.hybris.platform.core.model.order.OrderModel" id="inputObject"/>
         <output type="de.hybris.platform.core.model.order.OrderModel" id="modifiedItem"/>
-        <output type="java.lang.String" id="confirm"/>
+        <output type="java.lang.String" id="confirmOutput"/>
     </sockets>
 
     <keywords>

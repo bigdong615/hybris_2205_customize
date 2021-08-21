@@ -68,7 +68,7 @@
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
-												<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
+												<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && product.onSale eq true && serialProduct.onSale eq true}" var="hasPromotion"/>
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
 													<tr class="${(loop.index >= 3 ? 'hide-product-row ' : '')} <c:if test="${hasPromotion}"> noborder</c:if>">
 														<td><a href="#" data-bs-toggle="modal"
@@ -99,8 +99,9 @@
 																	</button>
 																	<button type="button"
 																		class="btn btn-primary js-add-to-used-cart  serial_entry_${loop.index }  ${hidebutton}"
-																		data-product-code="${product.code}"
-																		data-serial="${serialProduct.serialId}">
+																		data-product-code="${product.code}" data-product-name="${product.name}" data-product-brand="${product.manufacturer}"
+                                    data-bs-toggle="modal" data-bs-target="#addToCart" data-product-category="${product.categories[0].name}"
+                                    data-serial="${serialProduct.serialId}">
 																		<spring:theme code="basket.add.to.basket" />
 																	</button>
 																</c:when>
@@ -115,7 +116,7 @@
 																</c:otherwise>
 															</c:choose>
 														</td>
-						                <c:if test="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}">
+						                <c:if test="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && product.onSale eq true && serialProduct.onSale eq true}">
 						                   <tr class=" ${loop.index >= 3 ? 'hide-product-row ' : ''}">
                                   <td colspan="2">
                                      <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>

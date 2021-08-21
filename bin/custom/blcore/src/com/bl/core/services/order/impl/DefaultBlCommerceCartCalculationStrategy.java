@@ -4,10 +4,10 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * It is a custom implementation of OOTB class {@link DefaultCommerceCartCalculationStrategy}
@@ -35,6 +35,11 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     {
    	 setGiftCardAmount(order,parameter);
     }
+    if(BooleanUtils.isTrue(parameter.getRetailGear())){
+      order.setIsNewGearOrder(Boolean.TRUE);
+      getModelService().save(order);
+      getModelService().refresh(order);
+    }
     final boolean result = super.calculateCart(parameter);
 
     if (recalculate) {
@@ -48,6 +53,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
    */
   private void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
   {
+	  order.setGiftCardOrder(true);
 	  order.setGiftCardCost(parameter.getGiftCardAmount());
 	  getModelService().save(order);
 	  getModelService().refresh(order);

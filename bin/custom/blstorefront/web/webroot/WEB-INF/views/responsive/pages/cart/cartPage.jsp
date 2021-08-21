@@ -15,21 +15,22 @@
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
+
 <c:choose>
-<c:when test="${cartData.hasGiftCart}">
- <cart:blGiftCardPurchaseCartPage/>
-</c:when>
-<c:otherwise>
-<c:choose>
-      <c:when test="${cartData.isRentalCart}">
-            <cart:blRentalCartPage/>
-      </c:when>
-      <c:otherwise>
-            <cart:blUsedGearCartPage/>
-      </c:otherwise>
-  </c:choose>
-</c:otherwise>
+   <c:when test="${cartData.hasGiftCart}">
+      <cart:blGiftCardPurchaseCartPage/>
+   </c:when>
+   <c:when test="${cartData.isNewGearOrder eq true}">
+      <cart:blNewGearCartPage/>
+   </c:when>
+   <c:when test="${cartData.isRentalCart}">
+      <cart:blRentalCartPage/>
+   </c:when>
+   <c:otherwise>
+      <cart:blUsedGearCartPage/>
+   </c:otherwise>
 </c:choose>
+
   
 
 </template:page>
@@ -55,7 +56,7 @@
 				<label class="control-label" for="name">
 					<spring:theme code="basket.save.cart.name" />
 				</label>
-                <form:input cssClass="form-control" id="saveCartName" path="name" maxlength="255" />
+                <form:input cssClass="form-control" id="saveCartName" path="name" maxlength="30" />
                  <div class="help-block right-cartName" id="remain">
                 </div>
             </div>
@@ -64,7 +65,7 @@
 	            <div class="modal-actions">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button type="submit" class="btn btn-primary btn-block save-cart-button" id="saveCartButton">
+                            <button type="button" class="btn btn-primary btn-block save-cart-button js-validate-saved-cart" id="saveCartButton">
                                 <spring:theme code="basket.save.cart.action.continue"/>
                             </button>
                             <br>
@@ -74,10 +75,25 @@
 	                </div>
 	            </div>
 	        </div>
+	      							<div class ="notification notification-error d-none" id="errorMessages_savecart"> </div>
               </form:form>
           </div>
         </div>
       </div>
     </div>
+
+<script>
+$(".js-validate-saved-cart").on("click", function(e) {
+   			e.preventDefault();
+   			var cartName = document.getElementById("saveCartName").value;
+        if(cartName !== 'undefined' && cartName !== '' && !cartName.trim().length === false){
+                         $('#saveCartForm').submit();
+        }
+        else{
+          $("#errorMessages_savecart").removeClass("d-none");
+          $("#errorMessages_savecart").html("Whoops, you need to name your saved cart.");
+        }
+   	});
+</script>
 
 

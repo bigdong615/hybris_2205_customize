@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -523,16 +524,27 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             } else {
                 abstractOrderEntryModels = order.getEntries();
             }
-            for (final AbstractOrderEntryModel entry : abstractOrderEntryModels) {
-                final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                if (blSerialProduct != null) {
+            for (Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
+				{
+					final AbstractOrderEntryModel entry = iterator.next();
+					final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                
                     totalWeight = getBigDecimal(totalWeight, entry);
-                    sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
-                            * entry.getQuantity().intValue()));
-                    maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                    maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                }
-            }
+                    if(blSerialProduct instanceof BlSerialProductModel) {
+                        final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+
+                        sumWidth = getSumWidth(sumWidth, ((blProduct.getWidth() != null ? blProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                                * entry.getQuantity().intValue()));
+                        maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blProduct.getLength());
+                    }else if(null != blSerialProduct) {
+                        sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                                * entry.getQuantity().intValue()));
+                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+                    }
+                
+				}
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total weight: {} ", totalWeight.doubleValue());
@@ -555,7 +567,22 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private BigDecimal getBigDecimal(final BigDecimal totalWeight, final AbstractOrderEntryModel entry) {
         final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-        double weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
+        //Added condition to used gear products.
+        double weight = BlInventoryScanLoggingConstants.ZERO;
+
+        if(blSerialProduct instanceof BlSerialProductModel) {
+            BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+            if(null != serialProduct.getWeight()) {
+                weight = serialProduct.getWeight().doubleValue() * entry.getQuantity();
+                weight = totalWeight.doubleValue() + weight;
+            }
+        }else{
+            if(null != blSerialProduct.getWeight()) {
+                weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
+                weight = totalWeight.doubleValue() + weight;
+            }
+        }
+
         weight = totalWeight.doubleValue() + weight;
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);

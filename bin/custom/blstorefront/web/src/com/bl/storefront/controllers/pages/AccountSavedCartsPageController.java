@@ -24,7 +24,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCart
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.CartFacade;
-import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CommerceSaveCartParameterData;
 import de.hybris.platform.commercefacades.order.data.CommerceSaveCartResultData;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -227,35 +227,37 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	public String savedCartEdit(@PathVariable("cartCode") final String cartCode, final SaveCartForm form,
 			final BindingResult bindingResult, final RedirectAttributes redirectModel) throws CommerceSaveCartException
 	{
-		saveCartFormValidator.validate(form, bindingResult);
+		// Convert cart name to title case
+		final  SaveCartForm saveCartForm = new SaveCartForm();
+		convertSavedCartNameToTitleCase(saveCartForm , form);
 		if (bindingResult.hasErrors())
 		{
 			for (final ObjectError error : bindingResult.getAllErrors())
 			{
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, error.getCode());
 			}
-			redirectModel.addFlashAttribute(BlControllerConstants.SAVE_CART_FORM, form);
+			redirectModel.addFlashAttribute(BlControllerConstants.SAVE_CART_FORM, saveCartForm);
 		}
 		else
 		{
 			final CommerceSaveCartParameterData commerceSaveCartParameterData = new CommerceSaveCartParameterData();
 			commerceSaveCartParameterData.setCartId(cartCode);
-			commerceSaveCartParameterData.setName(form.getName());
-			commerceSaveCartParameterData.setDescription(form.getDescription());
+			commerceSaveCartParameterData.setName(saveCartForm.getName());
+			commerceSaveCartParameterData.setDescription(saveCartForm.getDescription());
 			commerceSaveCartParameterData.setEnableHooks(false);
 			try
 			{
-				final CommerceSaveCartResultData saveCartData = saveCartFacade.saveCart(commerceSaveCartParameterData);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"text.account.saveCart.edit.success", new Object[]
-						{ saveCartData.getSavedCartData().getName() });
+				saveCartFacade.saveCart(commerceSaveCartParameterData);
+				redirectModel.addFlashAttribute(BlControllerConstants.SAVED_CART_SUCCESS , getMessageSource().getMessage(BlControllerConstants.SAVED_CART_MESSAGE, null,
+						getI18nService().getCurrentLocale()));
+				redirectModel.addFlashAttribute(BlControllerConstants.RENAMED_CART_CODE , cartCode);
 			}
 			catch (final CommerceSaveCartException csce)
 			{
 				BlLogger.logMessage(LOG , Level.ERROR , csce.getMessage(), csce);
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
 						"text.account.saveCart.edit.error", new Object[]
-						{ form.getName() });
+						{ saveCartForm.getName() });
 			}
 		}
 		return REDIRECT_TO_SAVED_CARTS_PAGE;
@@ -280,16 +282,15 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	}
 
 	@RequireHardLogIn
-	@RequestMapping(value = "/{cartId}/restorCart")
+	@GetMapping(value = "/{cartId}/restorCart")
 	public String postRestoreSaveCartForId(@PathVariable(value = "cartId") final String cartId,
-			final RestoreSaveCartForm restoreSaveCartForm, final BindingResult bindingResult) throws CommerceSaveCartException
-	{
+			final RestoreSaveCartForm restoreSaveCartForm, final BindingResult bindingResult) {
 		try
 		{
 			restoreSaveCartFormValidator.validate(restoreSaveCartForm, bindingResult);
 			if (bindingResult.hasErrors())
 			{
-				return getMessageSource().getMessage(bindingResult.getFieldError().getCode(), null,
+				return getMessageSource().getMessage(bindingResult.getFieldError().getCode(), null, //NOSONAR
 						getI18nService().getCurrentLocale());
 			}
 
@@ -320,7 +321,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		return BlControllerConstants.REDIRECT_CART_URL;
 	}
 
-	@RequestMapping(value = "/{cartId}/delete")
+	@GetMapping(value = "/{cartId}/delete")
 	@RequireHardLogIn
 	public String deleteSaveCartForId(@PathVariable(value = "cartId") final String cartId)
 			throws CommerceSaveCartException
@@ -338,4 +339,15 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		}
 		return REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
+
+	/**
+	 * This method created to convert saved cart name to title case
+	 * @param newForm saveCartForm to be updated
+	 * @param actualForm savedCartForm from storefront
+	 */
+	private void convertSavedCartNameToTitleCase(final SaveCartForm newForm , final SaveCartForm actualForm) {
+      newForm.setName(WordUtils.capitalize(actualForm.getName().trim().toLowerCase()));
+      newForm.setDescription(actualForm.getDescription());
+	}
+	
 }

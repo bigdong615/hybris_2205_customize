@@ -13,8 +13,11 @@ $superCategories=supercategories(code, $catalogVersion)
 $approved=approvalstatus(code)[default='approved']
 $productType=productType(code)[default='PRODUCT']
 $numberSystem=numberSystem(code)[default='NONE']
+$medias=medias(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
 
-INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories         ;retailGear;retailGearPrice ; name[lang=en] ; displayName     ; procurementCost[default=0]  ; procurementSource [default='NA']  ; mpn[default='NA']; upc[default='NA'];$productType  ;$numberSystem          ; forRent[default=false]  ; forSale[default=false]  ; level1Required[default=false] ; level2Required[default=false]  ;scheduled [default=false]; isVideo[default=false] ; manufacturerAID[default='NA'] ; manufacturerName[default='NA'] ; retailPrice[default=0] ;subpartQuantity[default=0];unit(code)[default='pieces']
+
+INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories         ;retailGear;retailGearPrice ; name[lang=en] ; displayName     ; procurementCost[default=0]  ; procurementSource [default='NA']  ; mpn[default='NA']; upc[default='NA'];$productType  ;$numberSystem          ; forRent[default=false]  ; forSale[default=false]  ; level1Required[default=false] ; level2Required[default=false]  ;scheduled [default=false]; isVideo[default=false] ; manufacturerAID[default='NA'] ; manufacturerName[default='Other'] ; retailPrice[default=0] ;subpartQuantity[default=0];unit(code)[default='pieces'];newGearInStock[default=true]
 ;;;sensor_cleaning;newgear;true;45;sensor_cleaning;sensor_cleaning
 ;;;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards;newgear;true;19.38;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards
 ;;;BorrowLenses_com_microfiber_lens_cleaning_cloth;newgear;true;1.85;BorrowLenses_com_microfiber_lens_cleaning_cloth;BorrowLenses_com_microfiber_lens_cleaning_cloth
@@ -42,3 +45,78 @@ INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; code[unique=true] ; $sup
 ;;;Retired-RED-Case;newgear;true;495;Retired-RED-Case;Retired-RED-Case
 ;;;KEH-D610-30120314;newgear;true;1597;KEH-D610-30120314;KEH-D610-30120314
 ;;;Retired-Pelican-1200;newgear;true;45.95;Retired-Pelican-1200;Retired-Pelican-1200
+
+# Create Media
+INSERT_UPDATE Media;code[unique=true];mediaFormat(qualifier);URL;mime[default='image/jpeg'];$catalogVersion;folder(qualifier)
+                   ;Retired-Pelican-iM2075_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG90d18c50-1152-4f35-a2df-1132f56bf9ec.jpg;;;images
+                   ;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Small;96Wx96H;https://cdn.static-bl.com/product/LG50a3b1d7-5bbb-46c2-ae06-5148f210530e.jpg;;;images
+                   ;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Small;96Wx96H;https://cdn.static-bl.com/product/LGeaa4e7bc-1936-4e9c-8ba0-c2199f612998.jpg;;;images
+                   ;Retired-Pelican-1490_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGfdb5c229-1619-4535-aa05-94894470be15.jpg;;;images
+                   ;Retired-Pelican-1120_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LG5f979417-d785-499a-814d-823778d1e7df.jpg;;;images
+                   ;Retired-Pelican-1150_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb0290311-fdf5-4e04-86d6-f928f0dcf3a5.jpg;;;images
+                   ;Retired-HPRC-2400E-Hard-Case_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGc97279bd-49e7-4412-869a-ae9389b22b98.jpg;;;images
+                   ;Retired-Pelican-1400NF_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LG7867ff38-5351-4c8d-96ee-65f037fa2055.jpg;;;images
+                   ;Retired-Pelican-iM2075_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LG90d18c50-1152-4f35-a2df-1132f56bf9ec.jpg;;;images
+                   ;Retired-SKB-Case_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe95f6870-469a-4bbd-ad43-ea6d3d020bdd.jpg;;;images
+                   ;Retired-Pelican-iM2306_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb3c8c4b2-201a-430a-b6ec-558c4c87cd93.jpg;;;images
+                   ;Retired-SKB-1610-10-Case_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe5642ca4-b2fe-4fe2-b9d0-ecd09d0c3aa3.jpg;;;images
+                   ;Retired-SKB-Military-Case_Small;96Wx96H;https://d2ieyhi8galmxj.cloudfront.net/product/LG8a8f401e-2a95-4380-95d9-d3981d308436.jpg;;;images
+                   ;Retired-RED-Case_Small;96Wx96H		;https://d2ieyhi8galmxj.cloudfront.net/product/LG01bba31d-a88f-4106-a02e-f471ef618fe3.jpg;;;images
+                   ;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Medium;300Wx300H;https://cdn.static-bl.com/product/LG50a3b1d7-5bbb-46c2-ae06-5148f210530e.jpg;;;images
+                   ;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Medium;300Wx300H;https://cdn.static-bl.com/product/LGeaa4e7bc-1936-4e9c-8ba0-c2199f612998.jpg;;;images
+                   ;Retired-Pelican-1490_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGfdb5c229-1619-4535-aa05-94894470be15.jpg;;;images
+                   ;Retired-Pelican-1120_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG5f979417-d785-499a-814d-823778d1e7df.jpg;;;images
+                   ;Retired-Pelican-1150_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb0290311-fdf5-4e04-86d6-f928f0dcf3a5.jpg;;;images
+                   ;Retired-HPRC-2400E-Hard-Case_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGc97279bd-49e7-4412-869a-ae9389b22b98.jpg;;;images
+                   ;Retired-Pelican-1400NF_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG7867ff38-5351-4c8d-96ee-65f037fa2055.jpg;;;images
+                   ;Retired-Pelican-iM2075_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG90d18c50-1152-4f35-a2df-1132f56bf9ec.jpg;;;images
+                   ;Retired-SKB-Case_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe95f6870-469a-4bbd-ad43-ea6d3d020bdd.jpg;;;images
+                   ;Retired-Pelican-iM2306_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb3c8c4b2-201a-430a-b6ec-558c4c87cd93.jpg;;;images
+                   ;Retired-SKB-1610-10-Case_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe5642ca4-b2fe-4fe2-b9d0-ecd09d0c3aa3.jpg;;;images
+                   ;Retired-SKB-Military-Case_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG8a8f401e-2a95-4380-95d9-d3981d308436.jpg;;;images
+                   ;Retired-RED-Case_Medium;300Wx300H;https://d2ieyhi8galmxj.cloudfront.net/product/LG01bba31d-a88f-4106-a02e-f471ef618fe3.jpg;;;images
+                   ;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Large;515Wx515H;https://cdn.static-bl.com/product/LG50a3b1d7-5bbb-46c2-ae06-5148f210530e.jpg;;;images
+                   ;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Large;515Wx515H;https://cdn.static-bl.com/product/LGeaa4e7bc-1936-4e9c-8ba0-c2199f612998.jpg;;;images
+                   ;Retired-Pelican-1490_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGfdb5c229-1619-4535-aa05-94894470be15.jpg;;;images
+                   ;Retired-Pelican-1120_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LG5f979417-d785-499a-814d-823778d1e7df.jpg;;;images
+                   ;Retired-Pelican-1150_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb0290311-fdf5-4e04-86d6-f928f0dcf3a5.jpg;;;images
+                   ;Retired-HPRC-2400E-Hard-Case_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGc97279bd-49e7-4412-869a-ae9389b22b98.jpg;;;images
+                   ;Retired-Pelican-1400NF_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LG7867ff38-5351-4c8d-96ee-65f037fa2055.jpg;;;images
+                   ;Retired-Pelican-iM2075_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LG90d18c50-1152-4f35-a2df-1132f56bf9ec.jpg;;;images
+                   ;Retired-SKB-Case_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe95f6870-469a-4bbd-ad43-ea6d3d020bdd.jpg;;;images
+                   ;Retired-Pelican-iM2306_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGb3c8c4b2-201a-430a-b6ec-558c4c87cd93.jpg;;;images
+                   ;Retired-SKB-1610-10-Case_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LGe5642ca4-b2fe-4fe2-b9d0-ecd09d0c3aa3.jpg;;;images
+                   ;Retired-SKB-Military-Case_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LG8a8f401e-2a95-4380-95d9-d3981d308436.jpg;;;images
+                   ;Retired-RED-Case_Large;515Wx515H;https://d2ieyhi8galmxj.cloudfront.net/product/LG01bba31d-a88f-4106-a02e-f471ef618fe3.jpg;;;images
+
+
+
+INSERT_UPDATE MediaContainer;qualifier[unique=true];$medias;$catalogVersion
+                            ;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Container;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Small,Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Medium,Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Large
+                            ;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Container;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Small,Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Medium,Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Large
+                            ;Retired-Pelican-1490_Container;Retired-Pelican-1490_Small,Retired-Pelican-1490_Medium,Retired-Pelican-1490_Large
+                            ;Retired-Pelican-1120_Container;Retired-Pelican-1120_Small,Retired-Pelican-1120_Medium,Retired-Pelican-1120_Large
+                            ;Retired-Pelican-1150_Container;Retired-Pelican-1150_Small,Retired-Pelican-1150_Medium,Retired-Pelican-1150_Large
+                            ;Retired-HPRC-2400E-Hard-Case_Container;Retired-HPRC-2400E-Hard-Case_Small,Retired-HPRC-2400E-Hard-Case_Medium,Retired-HPRC-2400E-Hard-Case_Large
+                            ;Retired-Pelican-1400NF_Container;Retired-Pelican-1400NF_Small,Retired-Pelican-1400NF_Medium,Retired-Pelican-1400NF_Large
+                            ;Retired-Pelican-iM2075_Container;Retired-Pelican-iM2075_Small,Retired-Pelican-iM2075_Medium,Retired-Pelican-iM2075_Large
+                            ;Retired-SKB-Case_Container;Retired-SKB-Case_Small,Retired-SKB-Case_Medium,Retired-SKB-Case_Large
+                            ;Retired-Pelican-iM2306_Container;Retired-Pelican-iM2306_Small,Retired-Pelican-iM2306_Medium,Retired-Pelican-iM2306_Large
+                            ;Retired-SKB-1610-10-Case_Container;Retired-SKB-1610-10-Case_Small,Retired-SKB-1610-10-Case_Medium,Retired-SKB-1610-10-Case_Large
+                            ;Retired-SKB-Military-Case_Container;Retired-SKB-Military-Case_Small,Retired-SKB-Military-Case_Medium,Retired-SKB-Military-Case_Large
+                            ;Retired-RED-Case_Container;Retired-RED-Case_Small,Retired-RED-Case_Medium,Retired-RED-Case_Large
+
+UPDATE Product;code[unique=true];$galleryImages;$catalogVersion
+              ;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas_Container
+              ;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale_Container
+              ;Retired-Pelican-1490;Retired-Pelican-1490_Container
+              ;Retired-Pelican-1120;Retired-Pelican-1120_Container
+              ;Retired-Pelican-1150;Retired-Pelican-1150_Container
+              ;Retired-HPRC-2400E-Hard-Case;Retired-HPRC-2400E-Hard-Case_Container
+              ;Retired-Pelican-1400NF;Retired-Pelican-1400NF_Container
+              ;Retired-Pelican-iM2075;Retired-Pelican-iM2075_Container
+              ;Retired-SKB-Case;Retired-SKB-Case_Container
+              ;Retired-Pelican-iM2306;Retired-Pelican-iM2306_Container
+              ;Retired-SKB-1610-10-Case;Retired-SKB-1610-10-Case_Container
+              ;Retired-SKB-Military-Case;Retired-SKB-Military-Case_Container
+              ;Retired-RED-Case;Retired-RED-Case_Container

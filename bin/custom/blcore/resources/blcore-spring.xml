@@ -431,6 +431,54 @@
     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
     <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BlSampleDataImportService" parent="defaultSampleDataImportService"/>
 
+	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : DefaultBlStandardPricingRatioDao class is used to get the defined Price ratios-->
+
+	<alias name="defaultBLStandardPricingRatioDao" alias="blStandardPricingRatioDao"/>
+	<bean id="defaultBLStandardPricingRatioDao" class="com.bl.core.dao.impl.DefaultBlStandardPricingRatioDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+
+	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : DefaultBlBackOfficePriceService is used to handle price based on selected product in customersupport cockpit -->
+
+	<alias name="defaultBLBackOfficePriceService" alias="blBackOfficePriceService"/>
+	<bean id="defaultBLBackOfficePriceService" class="com.bl.core.service.impl.DefaultBlBackOfficePriceService">
+		<property name="blCustomProductDynamicPriceStrategy" ref="blCustomProductDynamicPriceStrategy"/>
+		<property name="blProductPriceRatioUtil" ref="blProductPriceRatioUtil"/>
+	</bean>
+
+
+	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultProductDynamicPriceStrategy is used to get the dynamic rental price for product -->
+
+	<alias name="defaultBLCustomProductDynamicPriceStrategy" alias="blCustomProductDynamicPriceStrategy"/>
+	<bean id="defaultBLCustomProductDynamicPriceStrategy" class="com.bl.core.strategies.impl.BlDefaultProductDynamicPriceStrategy">
+	</bean>
+
+	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlPriceRatioUtil class used to calculate rental price based on price-ratio and no of days-->
+
+	<alias name="defaultBLProductPriceRatioUtil" alias="blProductPriceRatioUtil"/>
+	<bean id="defaultBLProductPriceRatioUtil" class="com.bl.core.util.BlPriceRatioUtil">
+		<property name="blStandardPricingRatioDao" ref="blStandardPricingRatioDao"/>
+		<property name="enumerationService" ref="enumerationService"/>
+	</bean>
+
+
+ <!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultAbstractOrderDatePopulatePrepareInterceptor
+	class used to update rentalstartdate and rentalreturndate on respective orderentries-->
+
+	<alias name="defaultAbstractOrderDatePopulatePrepareInterceptor" alias="blAbstractOrderDatePopulatePrepareInterceptor"/>
+	<bean id="defaultAbstractOrderDatePopulatePrepareInterceptor"
+		class="com.bl.core.interceptor.BlDefaultAbstractOrderDatePopulatePrepareInterceptor">
+		<property name="blBackOfficePriceService" ref="blBackOfficePriceService"/>
+	</bean>
+
+	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultAbstractOrderDatePopulatePrepareInterceptor mapping
+	 interceptor:blAbstractOrderDatePopulatePrepareInterceptor and type:AbstractOrder-->
+
+	<bean id="abstractOrderDatePopulatePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blAbstractOrderDatePopulatePrepareInterceptor"/>
+		<property name="typeCode" value="AbstractOrder"/>
+	</bean>
 	<!-- BL-90 Category Modeling Related changes in Category Prepare Interceptor to generate CategoryId-->
 	<alias name="blCategoryPrepareInterceptor" alias="blCategoryPrepareInterceptor"/>
 	<bean id="blCategoryPrepareInterceptor" class="com.bl.core.model.interceptor.BlCategoryPrepareInterceptor">
@@ -539,6 +587,9 @@
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="catalogVersionDao" ref="catalogVersionDao" />
+		<property name="productDao" ref="productDao" />
+		<property name="searchRestrictionService" ref="searchRestrictionService" />
 	</bean>
 
 
@@ -583,6 +634,7 @@
 	<bean id="blSerialProductPrepareInterceptor" class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -923,6 +975,8 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+
+
 	<!-- [BL-663]: Custom Actions for used gear products promotion-->
 	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
 	<bean id="defaultRuleUsedGearPercentageDiscountAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
@@ -948,8 +1002,9 @@
 	<bean id="defaultUsedGearSerialStatusChangeHook"
 		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
 		<property name="modelService" ref="modelService" />
+		<property name="blCartService" ref="cartService"/>
 	</bean>
-	
+
 	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
 		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="usedGearSerialStatusChangeHook" />
@@ -984,6 +1039,32 @@
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
+
+	<!-- BL-766 Morning pull orders job start-->
+	<bean id="pullReadyToShipOrdersJob" class="com.bl.blbackoffice.job.PullReadyToShipOrdersJob" parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="blReadyToShipOrderItemService" ref="blReadyToShipOrderItemService"/>
+	</bean>
+
+	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
+	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>
+	<bean id="defaultBlReadyToShipOrderItemDao" class="com.bl.core.dao.warehouse.impl.DefaultBlReadyToShipOrderItemDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+
+	<alias name="defaultBlReadyToShipOrderItemService" alias="blReadyToShipOrderItemService"/>
+	<bean id="defaultBlReadyToShipOrderItemService" class="com.bl.core.inventory.order.service.impl.DefaultBlReadyToShipOrderItemService">
+		<property name="blReadyToShipOrderItemDao" ref="blReadyToShipOrderItemDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<!-- BL-766 Morning pull orders job end -->
 
 	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
@@ -1024,6 +1105,17 @@
 	<bean id="blConsignmentPrepareInterceptorMapping"
 		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
 		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
+	
+	<!-- BL-992:This interceptor is added to validate order status based on the user group. -->
+	
+	<alias name="blConsignmentStatusValidateInterceptor" alias="blConsignmentStatusValidateInterceptor"/>
+	<bean id="blConsignmentStatusValidateInterceptor" class="com.bl.core.model.interceptor.BlConsignmentStatusValidateInterceptor"/>
+	
+	<bean id="blConsignmentStatusValidateInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentStatusValidateInterceptor"/>
 		<property name="typeCode" value="Consignment"/>
 	</bean>
 
@@ -1107,6 +1199,10 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
@@ -1141,5 +1237,104 @@
 	<property name="key" value="defaultBlExtendedFreeRentalDaysRAOAction"/>
 	<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
+
+	<!--BL-828 Marking consignments cleanCompleteFlag start -->
+	<bean id="markConsignmentsCleanJob" class="com.bl.core.job.MarkReadyToShipConsignmentsCleanJob"
+		parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-828 end -->
+	
+	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
+	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
+	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor"/>
+	
+	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
+	<bean id="blConsignmentEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blConsignmentEntryPrepareInterceptor"/>
+		<property name="typeCode" value="ConsignmentEntry"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blRepairLogPrepareInterceptor" alias="blRepairLogPrepareInterceptor"/>
+	<bean id="blRepairLogPrepareInterceptor" class="com.bl.core.model.interceptor.BlRepairLogPrepareInterceptor">
+		<property name="blProductDao" ref="productDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
+	</bean>
+	
+	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blBlRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="BlRepairLog"/>
+	</bean>
+	
+	<!-- Adding InHouseRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blInHouseRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="InHouseRepairLog"/>
+	</bean>
+	
+	<!-- Adding VendorRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blVendorRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="VendorRepairLog"/>
+	</bean>
+	
+	<!-- Adding CustomerResponsibleRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blCustomerResponsibleRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="CustomerResponsibleRepairLog"/>
+	</bean>
+	
+	<!-- Adding PartsNeededRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blPartsNeededRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="PartsNeededRepairLog"/>
+	</bean>
+	
+	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
+
+	<alias name="defaultBlReturnOrderService" alias="blReturnOrderService"/>
+    <bean id="defaultBlReturnOrderService" parent="returnService" class="com.bl.core.order.impl.DefaultBlReturnOrderService" />
+
+	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
+
+	<!-- [BL-983] New gear Related changes-->
+	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
+		parent="abstractValueResolver"/>
+
+	<alias name="defaultNewGearOrderStatusChangeHook" alias="newGearOrderStatusChangeHook" />
+	<bean id="defaultNewGearOrderStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlNewGearOrderStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+
+	<bean id="commerceNewGearOrderStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="newGearOrderStatusChangeHook" />
+	</bean>
+
+
+	<!--BL-82 Added for creating custom method to set custom parameter -->
+
+	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
+	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
+	</bean>
+
+	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
+	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
+		<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
+	</bean>
+
+
+	<!-- Added for creating custom method to set custom parameter -->
 
 </beans>

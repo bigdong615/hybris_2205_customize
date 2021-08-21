@@ -4,16 +4,15 @@
 package com.bl.storefront.controllers.misc;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
-
-import static de.hybris.platform.util.localization.Localization.getLocalizedString;
-
 import de.hybris.platform.acceleratorfacades.product.data.ProductWrapperData;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
@@ -34,20 +33,17 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -60,9 +56,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.bl.facades.constants.BlFacadesConstants;
-import org.apache.log4j.Level;
 
 /**
  * Controller for Add to Cart functionality which is not specific to a certain page.
@@ -148,7 +141,7 @@ public class AddToCartController extends AbstractController {
             }
         }
 
-        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC,ProductOption.CATEGORIES,ProductOption.REQUIRED_DATA)));
         final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
                 ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK,ProductOption.REQUIRED_WISHLIST);
         final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
@@ -179,10 +172,23 @@ public class AddToCartController extends AbstractController {
  				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
  			}
  		}
- 		else if (isGiftCart || blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
+ 		else if(blCartFacade.isNewGearProductAllowToAdd(code,serialCode)){
+      BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
+      return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+    }
+ 		else{
+ 			 if (isGiftCart)
+ 	 		{
+ 				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.GIFTCARDNOTALLOWE);
+ 				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
+ 	 		}
+
+ 		else if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
  		{
  			BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
  			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+ 		}
+
  		}
  		return null;
  	}
