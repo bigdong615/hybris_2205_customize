@@ -5,6 +5,7 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
+import com.braintree.constants.GeneratedBraintreeConstants;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
@@ -76,7 +77,7 @@ public class CapturePaymentController extends DefaultWidgetController {
   public void capturePayment() {
     BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
     if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode())
-        || getOrderModel().getIsCaptured()) {
+        || getOrderModel().getIsCaptured()) { //TODO: Add orderStatus check if order is shipped or not!! Already shipped then notify agent!!
       showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
       return;
     }

@@ -27,6 +27,9 @@ import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.localization.Localization;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +44,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.Locales;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -85,8 +89,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
   private transient Map<AbstractOrderEntryModel, Long> orderCancellableEntries;
   private transient Set<OrderEntryToCancelDto> orderEntriesToCancel;
   private OrderModel orderModel;
-  @Wire
-  private Textbox orderNumber;
+  /*@Wire
+  private Textbox orderNumber;*/
   @Wire
   private Textbox customerName;
   @Wire
@@ -95,6 +99,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
   private Textbox globalCancelComment;
   @Wire
   private Grid orderEntries;
+  @Wire
+  private Textbox transactionId;
+  @Wire
+  private Textbox totalLineItemPrice;
+  @Wire
+  private Textbox totalShippingCost;
+  @Wire
+  private Textbox totalDamageWaiverCost;
+  @Wire
+  private Textbox totalTax;
+  @Wire
+  private Textbox totalRefundedAmount;
+  @Wire
+  private Textbox totalAmount;
   @Wire
   private Checkbox globalCancelEntriesSelection;
   @WireVariable
@@ -138,8 +156,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     this.getWidgetInstanceManager().setTitle(new StringBuilder(this.getWidgetInstanceManager()
         .getLabel("customersupportbackoffice.cancelorder.confirm.title"))
         .append(StringUtils.SPACE).append(this.getOrderModel().getCode()).toString());
-    this.orderNumber.setValue(this.getOrderModel().getCode());
+    //this.orderNumber.setValue(this.getOrderModel().getCode());
     this.customerName.setValue(this.getOrderModel().getUser().getDisplayName());
+    this.setAmountInTextBox();
     final Locale locale = this.getLocale();
     this.getEnumerationService().getEnumerationValues(CancelReason.class).forEach(reason ->
         this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, locale)));
@@ -156,6 +175,41 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesToCancel));
     this.getOrderEntries().renderAll();
     this.addListeners();
+  }
+
+  /**
+   * Sets amount in text box.
+   */
+  private void setAmountInTextBox() {
+    final OrderModel order = this.getOrderModel();
+    this.totalLineItemPrice.setValue(formatAmount(order.getSubtotal()));
+    this.totalTax.setValue(formatAmount(order.getTotalTax()));
+    this.totalDamageWaiverCost.setValue(formatAmount(order.getTotalDamageWaiverCost()));
+    this.totalShippingCost.setValue(formatAmount(order.getDeliveryCost()));
+    this.totalAmount.setValue(formatAmount(order.getTotalPrice()));
+    this.transactionId.setValue(getPaymentTxnId());
+  }
+
+  /**
+   * Format amount string.
+   *
+   * @param amount the amount
+   * @return the string
+   */
+  private String formatAmount(final Double amount) {
+    final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locales.getCurrent());
+    decimalFormat.applyPattern("#0.00");
+    return decimalFormat.format(amount);
+  }
+
+  /**
+   * Method to get the payment transaction Id from the current order.
+   *
+   * @return the requestId of the payment transaction.
+   */
+  private String getPaymentTxnId() {
+    return CollectionUtils.isEmpty(this.getOrderModel().getPaymentTransactions())
+            ? StringUtils.EMPTY : this.getOrderModel().getPaymentTransactions().get(0).getRequestId();
   }
 
   /**
