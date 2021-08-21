@@ -2,4 +2,15 @@
 
 .table-scroll-cancel-popup {
   width: 100% !important;
+  overflow: scroll;
+  height: 100%;
+}
+
+
+
+.z-hlayout-inner {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    white-space: none !important;
 }

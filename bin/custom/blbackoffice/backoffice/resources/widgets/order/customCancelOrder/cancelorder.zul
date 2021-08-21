@@ -72,53 +72,49 @@
 	<hlayout width="100%" sclass="oms-widget-cancelorder-list">
 
         <div sclass="oms-widget-cancelorder-list-container">
-            <grid id="orderEntries" sclass="table-scroll-cancel-popup" mold="paging" pageSize="5" width="100%" height="100%"
-                  hflex="min" style="overflow: scroll">
+            <grid id="orderEntries" sclass="table-scroll-cancel-popup" mold="paging" pageSize="5" hflex="min">
                   <custom-attributes org.zkoss.zul.grid.autoSort="true"/>
                 <columns hflex="min">
-                    <column width="30px" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="30px" sclass="oms-widget-cancelorder-listbox-header">
                         <checkbox id="globalCancelEntriesSelection" class="oms-widget-cancelorder-list-container__checkbox"/>
                     </column>
-                    <column width="15%" sclass="oms-widget-cancelorder-listbox-header" sort="auto" sortDirection="ascending"
-                            style="white-space: break-spaces;line-height: 20px;">
+                    <column width="30%" sclass="oms-widget-cancelorder-listbox-header" sort="auto" sortDirection="ascending">
                         <label value="${labels.customersupportbackoffice.cancelorder.productcode}" width="100%"/>
                     </column>
-                    <column width="12%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.productname}" width="100%"/>
                     </column>
-                     <column width="13%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                     <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.deliverymode}" width="100%"/>
                      </column>
-                    <column width="8%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.productprice}" width="100%"/>
                     </column>
-                    <column width="8%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.producttax}" width="100%"/>
                     </column>
-                    <column width="8%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.productwaiver}" width="100%"/>
                     </column>
-                    <column width="11%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.refundedamount}" width="100%"/>
                     </column>
-                    <column width="5%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancellable}" multiline="true"
                                class="oms-widget-cancelorder--qty-label__centered"/>
                     </column>
-                    <column width="11%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancelled}" width="100%"/>
                     </column>
-                    <column width="19%" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment"
-                            style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
                         <textbox class="oms-widget-cancelorder-listbox-header__comment" id="amount" maxlength="255"
                                  placeholder="${labels.customersupportbackoffice.cancelorder.amount}"/>
                     </column>
-                    <column width="19%" sclass="oms-widget-cancelorder-listbox-header" style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header">
                         <combobox id="globalCancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
                                   readonly="true"/>
                     </column>
-                    <column width="19%" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment"
-                            style="white-space: break-spaces;line-height: 20px;">
+                    <column width="20%" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
                        <textbox class="oms-widget-cancelorder-listbox-header__comment" id="globalCancelComment" maxlength="255"
                                 placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}"/>
                     </column>
@@ -168,5 +164,13 @@
 				label="${labels.customersupportbackoffice.cancelorder.button.confirm}" 
 				sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
     </div>
-	
+    <html visible="false">
+        <![CDATA[
+			<script type="text/javascript">
+			    $('div[ytestid="orderEntries"]').find('table').each(function() {
+                    $(this).css("table-layout", "inherit");
+			    });
+			</script>
+		]]>
+    </html>
 </widget>
