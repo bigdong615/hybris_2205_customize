@@ -1866,6 +1866,7 @@
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<advanced-search:field name="barcode" selected="true" mandatory="false"/>
+				<advanced-search:field name="testingStatus" selected="true" mandatory="false"/>
 				<advanced-search:field name="serialStatus" selected="false" mandatory="false"/>
 				<advanced-search:field name="forSale" selected="false" mandatory="false"/>
 				<advanced-search:field name="productId" selected="false" mandatory="false"/>
@@ -2388,7 +2389,8 @@
 				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
 				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>
 				<n:type-node id="RemainingVipOrderItems" code="RemainingVipOrderItems"/>
-				<n:type-node id="TestingNeededItemsQueue" code="TestingNeededItemsQueue"/>				
+				<n:type-node id="TestingNeededItemsQueue" code="TestingNeededItemsQueue"/>	
+				<n:type-node id="OrdersNotCompletedQueue" code="OrdersNotCompletedQueue"/> 			
 			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node id="RepairLog" code="BlRepairLog"/>            
@@ -2549,6 +2551,27 @@
             <list-view:column qualifier="serialProduct"/>
 		</list-view:list-view>
 	</context>
+	
+	<!-- BL-1001 -->
+    <context type="OrdersNotCompletedQueue" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="OrdersNotCompletedQueue" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="previousOrderStatus"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="ocLocationCode"/>
+			<list-view:column qualifier="itemStatusCode"/>
+			<list-view:column qualifier="unboxedDate"/>
+		</list-view:list-view>
+	</context>
+	
 </config>
 
 
