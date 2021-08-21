@@ -90,9 +90,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
+	public static final int END_MILLI_SECONDS = 999;
 	public static final int START_HOURS = 0;
 	public static final int START_MINUTES = 0;
 	public static final int START_SECONDS = 0;
+	public static final int START_MILLI_SECONDS = 0;
 	public static final long MAX_TOTAL = 20L;
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
