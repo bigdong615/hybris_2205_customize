@@ -61,7 +61,7 @@
                                         <spring:theme code="text.myaccount.order"/><br>
                                         
                                         <c:if test="${orderData.isReplacementOrder eq true}">
-                                        	<spring:theme code="text.myaccount.order.replacementFor"/><br>
+                                        <b>	<spring:theme code="text.myaccount.order.replacementFor"/> </b><br>
                                         </c:if>
                                         <spring:theme code="text.myaccount.order.tracking"/>
                                         </p>
@@ -71,9 +71,9 @@
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
-                                            
+
                                             <c:if test="${orderData.isReplacementOrder eq true}">
-                                            	${fn:escapeXml(orderData.replacementFor)}<br>
+                                            <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
                                             </c:if>
                                             N/A
                                         </p>
@@ -343,7 +343,14 @@
                                             <spring:theme code="text.myaccount.order.tax.used"/>
                                             </c:if>
                                             </td>
+                                            <c:choose>
+                                            <c:when test="${orderData.isReplacementOrder eq true}">
+                                            <td class="text-end"> $0.00 </td>
+                                            </c:when>
+                                            <c:otherwise>
                                             <td class="text-end"><format:blPrice priceData="${orderData.taxAvalaraCalculated}" /></td>
+                                            </c:otherwise>
+                                            </c:choose>
                                         </tr>
                                          <c:if test="${orderData.totalDiscounts.value > 0}">
                                         <tr class="discount">
