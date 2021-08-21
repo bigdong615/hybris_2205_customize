@@ -78,7 +78,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder) {
 
     final List<TaxLine> taxLines = new ArrayList<>();
-    if(abstractOrder.getUnPaidBillPresent() == null || BooleanUtils.isFalse(abstractOrder.getUnPaidBillPresent())) {
+    if(abstractOrder.isUnPaidBillPresent() || BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
 
       for (final AbstractOrderEntryModel entry : abstractOrder.getEntries()) {
         final TaxLine taxLine = new TaxLine();
