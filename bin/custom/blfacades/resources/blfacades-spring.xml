@@ -580,6 +580,7 @@
 		class="com.bl.facades.populators.BlOrderDetailsPopulator">
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="blAddressPopulator" ref="addressPopulator"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
 
   <!--Added for extend rental order-->
@@ -693,6 +694,20 @@
 		<property name="blDefaultExtendOrderConverter" ref="blDefaultExtendOrderConverter"/>
 	</bean>
 
+	<!--BL-772 Added for verification document -->
+	<alias name="verificationDocumentReversePopulator" alias="verificationDocumentPopulator"/>
+	<bean id="verificationDocumentReversePopulator" class="com.bl.facades.populators.BlVerificationDocumentReversePopulator">
+	</bean>
+
+	<alias name="verificationDocumentConverter" alias="verificationDocumentConverter"/>
+	<bean id="verificationDocumentConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.core.model.VerificationDocumentMediaModel" />
+		<property name="populators">
+			<list>
+				<ref bean="verificationDocumentPopulator"/>
+				</list>
+		</property>
+	</bean>
 	<!--Added for extend order coupon promotion -->
 
 	<bean id="blDefaultExtendOrderConverter" parent="abstractPopulatingConverter">
@@ -705,5 +720,23 @@
 		</property>
 	</bean>
 
+	<bean id="blVerificationDocumentFacade" class="com.bl.facades.customer.impl.DefaultBlVerificationDocumentFacade">
+		<property name="blVerificationDocumentService" ref="blVerificationDocumentService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="verificationDocumentConverter" ref="verificationDocumentConverter"/>
+	</bean>
+
+	<!-- BL-82 Added to override OOB Method for AutoSuggestion -->
+
+		<alias name="defaultBlSolrProductSearchFacade" alias="productSearchFacade"/>
+		<bean id="defaultBlSolrProductSearchFacade"
+			class="com.bl.facades.solrfacetsearch.impl.DefaultBlSolrProductSearchFacade" parent="defaultSolrProductSearchFacade">
+			<property name="blProductSearchService" ref="commerceProductSearchService"/>
+		</bean>
+
+
+	<alias name="defaultBlReturnOrderFacade" alias="blReturnOrderFacade" />
+    <bean id="defaultBlReturnOrderFacade" class="com.bl.facades.order.DefaultBlReturnOrderFacade" />
 
 </beans>

@@ -42,7 +42,7 @@
 					class="form-control d-inline-block"
 					placeholder="<spring:theme code="text.hero.banner.searchbox.mobile.datepicker.placeholder" />">
 			</c:if>
-			<input type = "hidden" value="rentalGear" name="blPageType"/>
+			<input type = "hidden" value="rentalGear" name="blPageType" id="js-page-type"/>
 		</ycommerce:testId>
 
 		<div class="input-group-append d-md-block input-button-search">
