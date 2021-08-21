@@ -367,7 +367,8 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;   
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
                        ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +
-                       ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +          
+                       ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; OrdersNotCompletedQueue       ; +                       ; +        ; +      ; +      ; +          
 $END_USERRIGHTS        ;                         ;                    ;                               ;                         
                        
 #Access right for repairmemberusergroup
