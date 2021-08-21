@@ -34,7 +34,6 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.facades.product.data.AvailabilityMessage;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import com.google.common.collect.Lists;
-import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 
 
 /**
@@ -46,7 +45,6 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   private PriceDataFactory priceDataFactory;
   private BlAddressPopulator blAddressPopulator;
-  private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
   /**
    * This method created to populate order details for custom attributes
@@ -69,15 +67,13 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 }
    	 target.setIsRentalCart(Boolean.FALSE);
    	 target.setHasGiftCart(Boolean.TRUE);
+    }
 
-   	 if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue()))
-     {
-       target.setIsReplacementOrder(true);
-     }
-   	 if(null != source.getReturnRequestForOrder())
-     {
-       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
-     }
+    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+      target.setIsReplacementOrder(true);
+    }
+    if(null != source.getReturnRequestForOrder()) {
+      target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
     }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
@@ -91,13 +87,6 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
 
     final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    final double priviousTax = source.getTotalTax();
-    source.setUnPaidBillPresent(true);
-    getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
-    final double currentTax = source.getTotalTax();
-
-     source.setTotalTax(priviousTax);
-    source.setUnPaidBillPresent(false);
     source.getConsignments()
             .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
                     .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
@@ -114,8 +103,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
                     }))));
 
     target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-    target.setTotalPayBillTax(convertDoubleToPriceData(currentTax, source ));
-    target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax , source));
+
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
     if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
@@ -450,23 +438,4 @@ private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final St
   public void setBlAddressPopulator(BlAddressPopulator blAddressPopulator) {
     this.blAddressPopulator = blAddressPopulator;
   }
-
-
-/**
- * @return the defaultBlExternalTaxesService
- */
-public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService()
-{
-	return defaultBlExternalTaxesService;
-}
-
-
-/**
- * @param defaultBlExternalTaxesService the defaultBlExternalTaxesService to set
- */
-public void setDefaultBlExternalTaxesService(DefaultBlExternalTaxesService defaultBlExternalTaxesService)
-{
-	this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
-}
-  
 }
