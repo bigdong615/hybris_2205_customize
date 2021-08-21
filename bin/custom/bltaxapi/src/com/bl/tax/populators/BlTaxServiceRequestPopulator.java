@@ -1,6 +1,7 @@
 package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -25,7 +26,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -67,7 +68,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
-    setShippingAndDiscountLineForRequest(taxRequest , abstractOrder);
+    if(BooleanUtils.isFalse(abstractOrder.getUnPaidBillPresent())) {
+      setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
+    }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
   }
 
@@ -77,23 +80,50 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * @return  List<TaxLine>
    */
   private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder) {
+
     final List<TaxLine> taxLines = new ArrayList<>();
-    for (final AbstractOrderEntryModel entry : abstractOrder.getEntries())
-    {
-      final TaxLine taxLine = new TaxLine();
-      taxLine.setQuantity(entry.getQuantity().intValue());
-      taxLine.setNumber(entry.getEntryNumber());
-      taxLine.setItemCode(entry.getProduct().getCode());
-      Double value = 0.0;
-      if(BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
-         value = entry.getGearGuardProFullWaiverPrice();
-      } else if(BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
-        value = entry.getGearGuardWaiverPrice();
+    if(abstractOrder.getUnPaidBillPresent() == null || BooleanUtils.isFalse(abstractOrder.getUnPaidBillPresent())) {
+
+      for (final AbstractOrderEntryModel entry : abstractOrder.getEntries()) {
+        final TaxLine taxLine = new TaxLine();
+        taxLine.setQuantity(entry.getQuantity().intValue());
+        taxLine.setNumber(entry.getEntryNumber());
+        taxLine.setItemCode(entry.getProduct().getCode());
+        Double value = 0.0;
+        if (BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
+          value = entry.getGearGuardProFullWaiverPrice();
+        } else if (BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
+          value = entry.getGearGuardWaiverPrice();
+        }
+        taxLine.setAmount(entry.getTotalPrice() + value);
+        taxLine.setDescription(entry.getInfo());
+        taxLine.setTaxCode(setProductTaxCode(entry));
+        taxLines.add(taxLine);
       }
-      taxLine.setAmount(entry.getTotalPrice() + value);
-      taxLine.setDescription(entry.getInfo());
-      taxLine.setTaxCode(setProductTaxCode(entry));
-      taxLines.add(taxLine);
+    } else {
+      abstractOrder.getConsignments()
+              .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+                      .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                        if (billing.getChargedAmount().doubleValue() > 0) {
+                          final TaxLine taxLine = new TaxLine();
+                          taxLine.setQuantity(1);
+                          taxLine.setNumber(0 + taxLines.size());
+
+                          consignmentEntry.getSerialProducts().forEach(serial -> {
+                            if (serial instanceof BlSerialProductModel) {
+                              final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
+                              taxLine.setItemCode(serialProduct.getBlProduct().getCode());
+
+                            }
+                          });
+
+                          taxLine.setAmount(billing.getChargedAmount().doubleValue());
+                          taxLine.setDescription(StringUtils.EMPTY);
+                          taxLine.setTaxCode(setPayBillTaxCode(billing.getBillChargeType()));
+                          taxLines.add(taxLine);
+                        }
+                      }))));
+
     }
     return taxLines;
   }
@@ -154,6 +184,25 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       return entry.getProduct() instanceof BlSerialProductModel ? BltaxapiConstants.SALES_TAX_CODE
           : BltaxapiConstants.RENTAL_TAX_CODE;
     }
+
+  /**
+   * To set product tax code as per unpaid bill charge
+   */
+
+  private String setPayBillTaxCode(final ItemBillingChargeTypeEnum billChargeType)
+  {
+    switch (billChargeType.getCode())
+    {
+      case "LATE_CHARGE":
+        return BltaxapiConstants.LATE_FEE_TAX_CODE;
+
+      case "REPAIR_CHARGE":
+        return BltaxapiConstants.REPAIR_TAX_CODE;
+
+      default:
+        return null;
+    }
+  }
 
   /**
    * To set orderDate to request

@@ -159,6 +159,17 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		return Long.valueOf(0);
 	}
 
+	@Override
+	protected void validateDelivery(final CartModel cartModel) {
+		if (cartModel.getDeliveryAddress() != null)
+		{
+			if (!isGuestUserCart(cartModel) && !getUserService().getCurrentUser().equals(cartModel.getUser()))
+			{
+				cartModel.setDeliveryAddress(null);
+				getModelService().save(cartModel);
+			}
+		}
+	}
 	/**
 	 * Gets the list of warehouses from the delivery mode or else from Base Store.
 	 *

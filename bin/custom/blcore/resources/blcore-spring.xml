@@ -958,6 +958,8 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+
+
 	<!-- [BL-663]: Custom Actions for used gear products promotion-->
 	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
 	<bean id="defaultRuleUsedGearPercentageDiscountAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
@@ -1180,6 +1182,10 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
@@ -1280,5 +1286,20 @@
 		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="newGearOrderStatusChangeHook" />
 	</bean>
+
+
+	<!--BL-82 Added for creating custom method to set custom parameter -->
+
+	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
+	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
+	</bean>
+
+	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
+	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
+		<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
+	</bean>
+
+
+	<!-- Added for creating custom method to set custom parameter -->
 
 </beans>
