@@ -2551,6 +2551,40 @@
             <list-view:column qualifier="serialProduct"/>
 		</list-view:list-view>
 	</context>
+
+	<context type="InventoryPulledOrdersView" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="orderType"/>
+			<list-view:column qualifier="isVipOrder"/>
+			<list-view:column qualifier="isUsedGearOrder"/>
+			<list-view:column qualifier="consolidatedOrderNote"/>
+			<list-view:column qualifier="prodCode"/>
+			<list-view:column qualifier="prodName"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="warehouseCode"/>
+			<list-view:column qualifier="parentLocationCode"/>
+			<list-view:column qualifier="locationCode"/>
+			<list-view:column qualifier="shippingMethod"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="InventoryOrdersAwaitingItemsView" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="orderType"/>
+			<list-view:column qualifier="isVipOrder"/>
+			<list-view:column qualifier="isUsedGearOrder"/>
+			<list-view:column qualifier="consolidatedOrderNote"/>
+			<list-view:column qualifier="prodCode"/>
+			<list-view:column qualifier="prodName"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="warehouseCode"/>
+			<list-view:column qualifier="parentLocationCode"/>
+			<list-view:column qualifier="locationCode"/>
+			<list-view:column qualifier="shippingMethod"/>
+		</list-view:list-view>
+	</context>
 	
 	<!-- BL-1001 -->
     <context type="OrdersNotCompletedQueue" component="advanced-search" merge-by="replace">
@@ -2571,7 +2605,7 @@
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>
-	
+
 </config>
 
 
