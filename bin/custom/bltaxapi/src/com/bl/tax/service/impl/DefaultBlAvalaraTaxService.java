@@ -7,6 +7,7 @@ import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import java.net.URISyntaxException;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.web.client.RestClientException;
 
 /**
@@ -28,8 +29,12 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
     responseData = super.process(createHttpEntity(request), TaxResponse.class);
       final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
       if(null != responseData.getResults() && "201".equalsIgnoreCase(responseData.getStatusCode())) {
-        getResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
-        getBlAvalaraTaxPopulator().populate(responseData.getResults() , orderModel);
+        if(BooleanUtils.isTrue(orderModel.getUnPaidBillPresent())) {
+          getBlPayBillTaxResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
+        } else {
+          getResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
+        }
+        getBlAvalaraTaxPopulator().populate(responseData.getResults(), orderModel);
       }
       return lExternalTaxDoc;
   }

@@ -2,10 +2,8 @@ package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -13,15 +11,11 @@ import com.bl.tax.AddressesData;
 import com.bl.tax.TaxLine;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.constants.BltaxapiConstants;
-import com.google.common.collect.Lists;
-
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -29,8 +23,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -107,7 +99,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       abstractOrder.getConsignments()
               .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
                       .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                        if (billing.getChargedAmount().doubleValue() > 0) {
+                        if (BooleanUtils.isFalse(billing.isBillPaid())
+                            && !(("MISSING_CHARGE").equals(billing.getBillChargeType().getCode()))) {
                           final TaxLine taxLine = new TaxLine();
                           taxLine.setQuantity(1);
                           taxLine.setNumber(0 + taxLines.size());
@@ -115,7 +108,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
                           consignmentEntry.getSerialProducts().forEach(serial -> {
                             if (serial instanceof BlSerialProductModel) {
                               final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
-                              taxLine.setItemCode(serialProduct.getBlProduct().getCode());
+                              taxLine.setItemCode(serialProduct.getCode());
 
                             }
                           });

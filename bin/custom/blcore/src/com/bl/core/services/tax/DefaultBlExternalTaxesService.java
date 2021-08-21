@@ -6,6 +6,7 @@ import de.hybris.platform.commerceservices.externaltax.impl.DefaultExternalTaxes
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -39,6 +40,8 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
           getApplyExternalTaxesStrategy().applyExternalTaxes(abstractOrder, exTaxDocument);
           getSessionService().setAttribute(SESSION_EXTERNAL_TAX_DOCUMENT, exTaxDocument);
           saveOrder(abstractOrder);
+          return true;
+        } else if(!exTaxDocument.getAllTaxes().isEmpty() && BooleanUtils.isTrue(abstractOrder.getUnPaidBillPresent())) {
           return true;
         }
         else

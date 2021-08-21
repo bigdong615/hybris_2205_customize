@@ -86,89 +86,12 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
 
-    final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    source.getConsignments()
-            .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
-                    .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                      target.getEntries().forEach(entry -> {
-                        if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
-                        {
-                          final AvailabilityMessage messageForBillingType = getMessageForBillingType(billing.getBillChargeType());
-                          final List<AvailabilityMessage> messages = Lists.newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                          messages.add(messageForBillingType);
-                          entry.setMessages(messages);
-                        }
-                      });
-                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                    }))));
-
-    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
     if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
       target.setIsNewGearOrder(source.getIsNewGearOrder());
     }
   }
-
-  
-/**
- * This method created pay bill messages separation.
- * @param billChargeType
- * @return AvailabilityMessage
- */
-private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
-  {
-    switch (billChargeType.getCode())
-    {
-      case "MISSING_CHARGE":
-        return getMessage("pay.bill.missing.charge");
-
-      case "LATE_CHARGE":
-        return getMessage("pay.bill.late.charge");
-
-      case "REPAIR_CHARGE":
-        return getMessage("pay.bill.repair.charge");
-
-      default:
-        return null;
-    }
-  }
-
-  
-/**
- * This method created pay bill messages.
- * @param messageCode
- * @return AvailabilityMessage
- */
-private AvailabilityMessage getMessage(final String messageCode)
-  {
-    final AvailabilityMessage am = new AvailabilityMessage();
-    am.setMessageCode(messageCode);
-    return am;
-
-  }
-
-  
-/**
-  * This method created to get SKU code.
-  * @param consignmentEntry
-  * @param serialCode
-  * @return String
-  */
-private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
-  {
-    final StringBuilder sb = new StringBuilder();
-    consignmentEntry.getSerialProducts().forEach(serial -> {
-      if(serial instanceof BlSerialProductModel && ((BlSerialProductModel)serial).getCode().equals(serialCode))
-      {
-        final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
-        sb.append(serialProduct.getBlProduct().getCode());
-      }
-    });
-    return sb.toString();
-  }
-
 
   /**
    * This method created to populate dates for order details
