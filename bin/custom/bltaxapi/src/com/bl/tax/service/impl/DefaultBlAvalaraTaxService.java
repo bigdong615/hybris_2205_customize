@@ -33,8 +33,8 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
           getBlPayBillTaxResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
         } else {
           getResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
+          getBlAvalaraTaxPopulator().populate(responseData.getResults(), orderModel);
         }
-        getBlAvalaraTaxPopulator().populate(responseData.getResults(), orderModel);
       }
       return lExternalTaxDoc;
   }

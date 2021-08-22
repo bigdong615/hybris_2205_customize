@@ -61,6 +61,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -480,6 +481,10 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
   }
 
+  /**
+   * {@inheritDoc}
+   * @param target order data
+   */
   @Override
   public void setPayBillAttributes(final OrderData target) {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
@@ -497,7 +502,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
             .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
               if (BooleanUtils.isFalse(billing.isBillPaid())) {
                 target.getEntries().forEach(entry -> {
-                  if (entry.getProduct().getCode().equals(serialCode)) {
+                  if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode))) {
                     final AvailabilityMessage messageForBillingType = getMessageForBillingType(
                         billing.getBillChargeType());
                     final List<AvailabilityMessage> messages = Lists
@@ -517,19 +522,54 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   }
 
   /**
+   * This method created to get SKU product code.
+   * @param consignmentEntry consignment entry
+   * @param serialCode serial product code
+   */
+  private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
+  {
+    final StringBuilder sb = new StringBuilder();
+    consignmentEntry.getSerialProducts().forEach(serial -> {
+      if(serial instanceof BlSerialProductModel && ((BlSerialProductModel)serial).getCode().equals(serialCode))
+      {
+        final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
+        sb.append(serialProduct.getBlProduct().getCode());
+      }
+    });
+    return sb.toString();
+  }
+
+  /**
    * It applies tax on billing charges
    * @param source
    */
   private void applyTaxOnPayBillCharges(OrderModel source) {
+    final AtomicBoolean isTaxBeApplied = new AtomicBoolean(Boolean.FALSE);
+    isTaxApplicableOnPayBillCharges(isTaxBeApplied, source);
+    if(isTaxBeApplied.get()) {
+      source.setUnPaidBillPresent(true);
+      getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
+    }
+  }
+
+  /**
+   * It checks whether tax should be applied on billing charges or not
+   * @param isTaxBeApplied
+   * @param source
+   */
+  private void isTaxApplicableOnPayBillCharges(AtomicBoolean isTaxBeApplied, OrderModel source) {
     source.getConsignments()
-        .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
-            .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-              if (BooleanUtils.isFalse(billing.isBillPaid()) && !(("MISSING_CHARGE").equals(billing
-                  .getBillChargeType().getCode()))) {
-                source.setUnPaidBillPresent(true);
-                getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
-              }
-            }))));
+        .forEach(consignment ->
+          consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+              .getBillingCharges().forEach((serialCode, listOfCharges) -> {
+                final boolean result = listOfCharges.stream().anyMatch(billing ->
+                    BooleanUtils.isFalse(billing.isBillPaid()) && !(("MISSING_CHARGE").equals(billing
+                        .getBillChargeType().getCode())));
+                if(result) {
+                  isTaxBeApplied.set(Boolean.TRUE);
+                  return;
+                }
+              })));
   }
 
   /**
