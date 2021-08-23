@@ -24,7 +24,7 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 
 	private static final Logger LOG = Logger.getLogger(DefaultBlVerificationDocumentDao.class);
 	private FlexibleSearchService flexibleSearchService;
-	private static final String CODE = " code";
+	private static final String CODE = "code";
 
 
 	/**
