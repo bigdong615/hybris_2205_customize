@@ -1,5 +1,6 @@
 package com.bl.facades.customer.impl;
 
+
 import com.bl.core.model.VerificationDocumentMediaModel;
 import com.bl.core.services.documentupload.BlVerificationDocumentService;
 import com.bl.facades.customer.BlVerificationDocumentFacade;
@@ -8,6 +9,12 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
+
 
 /**
  * @author Neeraj Singh
@@ -27,6 +34,47 @@ public class DefaultBlVerificationDocumentFacade implements BlVerificationDocume
     final VerificationDocumentMediaModel verificationDocumentMediaModel = getModelService().create(VerificationDocumentMediaModel.class);
     getVerificationDocumentConverter().convert(verificationDocumentData,verificationDocumentMediaModel);
     getBlVerificationDocumentService().uploadVerificationDocument(customerModel,verificationDocumentMediaModel,verificationDocumentData.getDocument());
+  }
+  /**
+   * This method is used to get List Of Document From Customer
+   *
+   */
+  @Override
+  public Map<String, List<VerificationDocumentMediaModel>> getListOfDocumentFromCustomer(){
+    final CustomerModel customerModel = (CustomerModel) getUserService().getCurrentUser();
+    final List<VerificationDocumentMediaModel> verificationDocuments = customerModel
+        .getVerificationDocuments();
+    Map<String, List<VerificationDocumentMediaModel>> documentMap= new HashMap<>();
+    if(CollectionUtils.isNotEmpty(verificationDocuments)){
+    for(VerificationDocumentMediaModel verificationDocument : verificationDocuments){
+      String type=verificationDocument.getDocumentType().toString();
+      if(documentMap.containsKey(type)) {
+        documentMap.get(type).add(verificationDocument);
+      }
+      else{
+        List<VerificationDocumentMediaModel> listOfDoc=new ArrayList<>();
+        listOfDoc.add(verificationDocument);
+        documentMap.put(type,listOfDoc);
+      }
+    }
+    }
+    return  documentMap;
+  }
+  /**
+   * This method is used to remove document
+   * @param code
+   */
+  @Override
+  public void removeDocument(final String code){
+   final VerificationDocumentMediaModel verificationDocumentMediaModel =getBlVerificationDocumentService().removeVerificationDocument(code);
+   CustomerModel customerModel = (CustomerModel) getUserService().getCurrentUser();
+    if(verificationDocumentMediaModel != null ){
+      List<VerificationDocumentMediaModel> documents=new ArrayList<VerificationDocumentMediaModel> (customerModel.getVerificationDocuments());
+       documents.remove(verificationDocumentMediaModel);
+       customerModel.setVerificationDocuments(documents);
+       modelService.save(customerModel);
+       modelService.refresh(customerModel);
+    }
   }
 
   public BlVerificationDocumentService getBlVerificationDocumentService() {

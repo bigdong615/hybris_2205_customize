@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.VerificationDocumentMediaModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
@@ -221,6 +222,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	private static final String ORDER_RETURN_CMS_PAGE = "returnOrder";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
+	public static final String UPLOADEDDOCUMENT="UploadedDocument";
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
@@ -1206,8 +1208,10 @@ public class AccountPageController extends AbstractSearchPageController
 	@GetMapping(value = "/verificationImages")
 	@RequireHardLogIn
 	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
-
-		model.addAttribute("verificationDocumentForm",  new VerificationDocumentForm());
+		VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
+    model.addAttribute("verificationDocumentForm",verificationDocumentForm);
+		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, varificationImagesPage);
 		setUpMetaDataForContentPage(model, varificationImagesPage);
@@ -1222,24 +1226,55 @@ public class AccountPageController extends AbstractSearchPageController
 	 * @return
 	 * @throws CMSItemNotFoundException
 	 */
-	@ResponseBody
+
 	@RequestMapping(value = "/uploadDocument", method = RequestMethod.POST)
 	@RequireHardLogIn
 	public String uploadVerificationImages(
 			@ModelAttribute("verificationDocumentForm") final VerificationDocumentForm verificationDocumentForm,
-			final BindingResult bindingResult, final Model model) throws CMSItemNotFoundException {
+			final BindingResult bindingResult, final Model model, final RedirectAttributes redirectModel, final HttpServletRequest request) throws CMSItemNotFoundException {
 		blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult);
 		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
 				VERIFICATION_IMAGES_CMS_PAGE);
+		VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
+		model.addAttribute("verificationDocumentForm",verificationDocument);
+
+
 		storeCmsPageInModel(model, verificationImagesPage);
 		setUpMetaDataForContentPage(model, verificationImagesPage);
 
 		if (bindingResult.hasErrors()) {
-			return setErrorMessagesAndCMSPage(model, VERIFICATION_IMAGES_CMS_PAGE);
+			return setErrorMessagesForVerification(model);
 		}
+		final VerificationDocumentData documentData = getVerificationDocumentData(
+				verificationDocumentForm);
+		blVerificationDocumentFacade.uploadDocument(documentData);
+		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+    redirectModel.addFlashAttribute("documentName", documentData.getDocument().getOriginalFilename());
+		redirectModel.addFlashAttribute("type",documentData.getDocumentType());
+		redirectModel.addFlashAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
+		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
+	}
+	/**
+	 * Method is used for set Erro rMessages For Verification
+	 * @param model
+	 */
+	private String setErrorMessagesForVerification(Model model) throws CMSItemNotFoundException {
+		GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
+		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
+		final ContentPageModel cmsPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
+		storeCmsPageInModel(model, cmsPage);
+		setUpMetaDataForContentPage(model, cmsPage);
+		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs(TEXT_ACCOUNT_PROFILE));
+		return getViewForPage(model);
+	}
 
-		blVerificationDocumentFacade
-				.uploadDocument(getVerificationDocumentData(verificationDocumentForm));
+	@RequestMapping(value = "/removeDocumentEntry", method = RequestMethod.GET)
+	public String removeVerificationDocument(@RequestParam("removeDocumentEntry") String code, final Model model,final RedirectAttributes redirectModel, final HttpServletResponse response)
+	{
+		blVerificationDocumentFacade.removeDocument(code);
+		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
+   	model.addAttribute("UploadedDocument",uploadedDocumentFromCustomer);
 		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 	}
 
