@@ -222,6 +222,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	private static final String ORDER_RETURN_CMS_PAGE = "returnOrder";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
+	public static final String UPLOADEDDOCUMENT="UploadedDocument";
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
@@ -1210,7 +1211,7 @@ public class AccountPageController extends AbstractSearchPageController
 		VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
     model.addAttribute("verificationDocumentForm",verificationDocumentForm);
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
-		model.addAttribute("UploadedDocument",uploadedDocumentFromCustomer);
+		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, varificationImagesPage);
 		setUpMetaDataForContentPage(model, varificationImagesPage);
@@ -1250,7 +1251,7 @@ public class AccountPageController extends AbstractSearchPageController
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
     redirectModel.addFlashAttribute("documentName", documentData.getDocument().getOriginalFilename());
 		redirectModel.addFlashAttribute("type",documentData.getDocumentType());
-		redirectModel.addFlashAttribute("UploadedDocument",uploadedDocumentFromCustomer);
+		redirectModel.addFlashAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 	}
 	/**
@@ -1260,7 +1261,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private String setErrorMessagesForVerification(Model model) throws CMSItemNotFoundException {
 		GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
-		model.addAttribute("UploadedDocument",uploadedDocumentFromCustomer);
+		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel cmsPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
 		storeCmsPageInModel(model, cmsPage);
 		setUpMetaDataForContentPage(model, cmsPage);

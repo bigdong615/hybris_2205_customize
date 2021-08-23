@@ -6,22 +6,12 @@ package com.bl.core.services.document.dao.impl;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
-import de.hybris.platform.util.Config;
-
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.model.BlStandardPricingRatioModel;
 import com.bl.core.model.VerificationDocumentMediaModel;
 import com.bl.core.services.document.dao.BlVerificationDocumentDao;
 import com.bl.logging.BlLogger;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 

@@ -1,6 +1,6 @@
 package com.bl.facades.customer.impl;
 
-import com.bl.core.enums.DocumentType;
+
 import com.bl.core.model.VerificationDocumentMediaModel;
 import com.bl.core.services.documentupload.BlVerificationDocumentService;
 import com.bl.facades.customer.BlVerificationDocumentFacade;
@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.bl.core.enums.DocumentType;
+
 /**
  * @author Neeraj Singh
  */
