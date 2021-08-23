@@ -31,7 +31,7 @@
 		test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'payPal')}">
 		<spring:theme code="text.extend.order.paypal" />
 	</c:if>
-	 $${payBillTotal} and sent an confirmation email to: <b>${orderData.user.uid}</b></p>
+	 <format:price priceData="${orderData.orderTotalWithTaxForPayBill}" displayFreeForZero="false"/> and sent an confirmation email to: <b>${orderData.user.uid}</b></p>
                     <div class="confirmation-actions my-5">
                         <a href="${viewOrderAction}" class="btn btn-primary mx-3 mb-4 mb-sm-0">View Order</a>
                         <a href="${homePageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0">Start a New Rental</a>
