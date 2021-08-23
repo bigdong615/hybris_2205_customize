@@ -90,6 +90,9 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.productwaiver}" width="100%"/>
                     </column>
                     <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                        <label value="${labels.customersupportbackoffice.cancelorder.refundedamount}" width="100%"/>
+                    </column>
+                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancellable}" width="100%"
                                class="oms-widget-cancelorder--qty-label__centered"/>
                     </column>
@@ -99,41 +102,49 @@
                     <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.amount}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <combobox id="globalCancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
                                   readonly="true"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
                         <textbox class="oms-widget-cancelorder-listbox-header__comment" id="globalCancelComment" maxlength="255"
                                  placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}"/>
                     </column>
                 </columns>
                 <rows>
                     <template name="model">
-                        <row style="white-space: nowrap">
-                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"/>
-                            <label value="${each.orderEntry.product.code}" width="100px"/>
-                            <label value="${each.orderEntry.product.name}" width="100px"/>
-                            <label value="${each.deliveryModeName}" width="100px"/>
+                        <row style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;white-space: nowrap'
+                                    : 'white-space: nowrap'}">
+                            <checkbox disabled="${each.quantityAvailableToCancel eq 0 ? true : false}" width="30px"
+                                      class="oms-widget-reallocationconsignment-list-container__checkbox"/>
+                            <label value="${each.orderEntry.product.code}" width="200px"/>
+                            <label value="${each.orderEntry.product.name}" width="200px"/>
+                            <label value="${each.deliveryModeName}" width="200px"/>
                             <label value="${each.orderEntry.totalPrice}" width="100px"/>
                             <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="100px"
                                       label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"/>
                             <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="100px"
                                       label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"/>
-                            <label value="${each.quantityAvailableToCancel}" width="100%" class="oms-widget-cancelorder--qty-label"/>
-                            <intbox value="${each.quantityToCancel}" width="100px" style="text-align:center;"
+                            <label value="refund amount" width="100px" class="oms-widget-cancelorder--qty-label"/>
+                            <intbox value="${each.quantityAvailableToCancel}" width="80px" class="oms-widget-cancelorder--qty-label" disabled="true"/>
+                            <intbox value="${each.quantityToCancel}" width="80px" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
+                                    style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;text-align:center;'
+                                    : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                            <textbox value="0" width="120px" style="text-align:center;"
                                     constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
-                            <textbox value="${each.quantityToCancel}" width="100px" style="text-align:center;"
-                                    constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
-                            <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="100px"
+                            <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="160px"
                                         model="${each.cancelReasonsModel}" readonly="true" sclass="oms-widget-cancelorder__template-reason"
-                                        placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}" style="">
+                                        placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
+                                        style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
+                                        disabled="${each.quantityAvailableToCancel eq 0 ? true : false}">
                                 <template name="model">
                                     <comboitem label="${each}"/>
                                 </template>
                             </combobox>
                             <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
-                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="100px"/>
+                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="250px"
+                                     style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
+                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                         </row>
                     </template>
                 </rows>

@@ -19,6 +19,7 @@ public final class BlloggingConstants extends GeneratedBlloggingConstants
   	public static final int NINE = 9;
   	public static final int TEN = 10;
   	public static final int ELEVEN = 11;
+  	public static final int TWELVE = 12;
 	public static final String MSG_CONST = "JustMessage";
 
 	private BlloggingConstants()
