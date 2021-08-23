@@ -6,7 +6,10 @@
     hideShippingForm();
     hideErrorForInputValidation();
     emptyAddressFormAttributes();
+    var isNewGearShipping= $('.js-new-gear-shipping-page').val();
+    if(isNewGearShipping == undefined || isNewGearShipping == 'false'){
     shipToHomeShippingMethods();
+    }
     $('#ship-it-savedAddresses option').each(function() {
         var optionText = this.text;
         var newOption = optionText.substring(0,52);
@@ -730,7 +733,11 @@ function reverseTraverseOnShipping() {
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
+            	 if($('.js-new-gear-shipping-page').val() == 'true'){
+            	  showErrorNotificationPickUp('Selected shipping option not available for new gear pickup!!');
+            	 }else {
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
+                }
             }
         },
         complete: function(data) {
@@ -1395,6 +1402,10 @@ function reverseTraverseOnShipping() {
 
     if(companyName == null) {
         companyName = '';
+    }
+
+    if(email == null) {
+        email = '';
     }
 
     let addressForm = {

@@ -3,6 +3,15 @@ jQuery(document).ready(function () {
 	if($(".hidebutton").length <= 0){
 		$(".hide-after-login").hide();
 	}
+    //BL-917: Replacement order
+	var fvalue = []
+        $(".return-qty-check").each(function (index) {
+            if($(this).val()==0)
+            {
+                $('.return-button-cls').attr('disabled', true);
+                $('.return-minus-btn'+index).attr('disabled', true);
+            }
+        }) ;
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -118,7 +127,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                        var productName = $('#productName').val();
-                                       var productCode = $('#productCode').val();
                                        var productBrand =$('#productBrand').val();
                                        var productType = $('#productType').val();
                                        var productCategory = $('#productCategory').val()
@@ -1073,7 +1081,21 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+$('.remove-doc').on("click",function(e) {
+	
+	e.preventDefault();
+var clickedForm = this.getAttribute("data-code");
+$("#clickedForm").val(clickedForm);
+});
 
+//remove document submit
+$('#remove-doc-submit-button').on("click",function(e) {
+
+	e.preventDefault();
+    var clickedForm = $("#clickedForm").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
 function hideShorting(){ 
     $('.container').on('click', function(){  
 	   $(".product-sort").find(".bootstrap-select").removeClass('open')
@@ -1086,3 +1108,59 @@ function hideShorting(){
 		var submitForm = $("#giftCardPurchaseForm");
 		submitForm.submit();
   });
+
+  //BL-917: Replacement order
+  $('.return-button-cls').on("click",function(e) {
+    e.preventDefault();
+	var label  = [];
+	var fvalue = []
+
+	$(".myLabel").each(function (index) {
+	label.push($(this).text());
+	});
+
+	$(".Myqtynumber").each(function (index) {
+		fvalue.push(label[index]+':'+$(this).val()+'%');
+	}) ;
+
+ 	var productList=fvalue.join("");
+         	var url=ACC.config.encodedContextPath + '/my-account/returnOrderRequest';
+         	var orderCode=$('#order-code').val();
+         		$.ajax({
+                     		url : url,
+                     		type : "POST",
+                     		data: {productList:productList,orderCode:orderCode},
+                     		success : function(data) {
+                     			window.location.href = ACC.config.encodedContextPath + "/";
+                     		},
+                     		error : function(xht, textStatus, ex) {
+                     			console.log("Error while order return");
+                     		}
+                     	});
+	 
+   });
+
+   $('.replacement-minus').on("click",function(e) {
+             e.preventDefault();
+             $('.return-button-cls').attr('disabled', true);
+             var fvalue = []
+             $(".return-qty-check").each(function (index) {
+                  if($(this).val()==0) {
+                     $('.return-minus-btn'+index).prop('disabled', true);
+                  }
+                  if($(this).val()!=0) {
+                    $('.return-button-cls').attr('disabled', false);
+                  }
+             }) ;
+          });
+
+      $('.replacement-plus').on("click",function(e) {
+          e.preventDefault();
+          $('.return-button-cls').attr('disabled', false);
+          var fvalue = []
+          $(".return-qty-check").each(function (index) {
+               if($(this).val()==$('#originalQty'+index).val()) {
+                  $('.return-plus-btn'+index).prop('disabled', true);
+               }
+          }) ;
+       });

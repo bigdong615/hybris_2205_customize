@@ -61,7 +61,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
-	private static final String PAY_BILL2 = ":payBill";
 	private static final String PAY_BILL = "/payBill";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
@@ -70,7 +69,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String REDIRECT_TO_ADD_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/add-payment-method";
 	private static final String REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/edit-payment-method";
 
-	// CMS Pagesb
+	// CMS Page
 	private static final String ADD_EDIT_PAYMENT_METHOD_CMS_PAGE = "add-edit-payment-method";
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
@@ -367,6 +366,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		storeCmsPageInModel(model, payBillPage);
 		setUpMetaDataForContentPage(model, payBillPage);
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.setPayBillAttributes(orderDetails);
 		model.addAttribute("orderData", orderDetails);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setupAdditionalFields(model);
@@ -388,9 +388,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		String poNotes = request.getParameter("extendPoNotes");
 
 		boolean isSuccess = false;
+		AbstractOrderModel order = null;
 		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
 				StringUtils.isNotBlank(paymentMethodNonce) ) {
-			final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
 				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
 						poNotes, order);
@@ -400,6 +401,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 			model.addAttribute("orderData", orderDetails);
+			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 			storeCmsPageInModel(model, payBillSuccessPage);

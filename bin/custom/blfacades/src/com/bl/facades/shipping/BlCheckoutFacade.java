@@ -115,6 +115,14 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone, final boolean payByCustomer);
 
+    /**
+     * Get delivery Zone for new Gear product.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModesForNewGear(final String partnerZone, final boolean payByCustomer);
+
 
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute from service

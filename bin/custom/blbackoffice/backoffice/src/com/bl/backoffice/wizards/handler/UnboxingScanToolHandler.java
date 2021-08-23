@@ -255,7 +255,8 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 						&& !getBlInventoryScanToolService().getStatusOfLocationDP())
 				{
 					addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
-							BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING, errorSerialList);
+							BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING,
+							dirtyPriorityErrorSerialList);
 				}
 			}
 		}

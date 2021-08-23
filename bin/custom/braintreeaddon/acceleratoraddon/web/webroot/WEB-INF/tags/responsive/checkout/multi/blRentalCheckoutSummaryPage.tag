@@ -253,15 +253,17 @@
 						<c:if test="${not empty cartData.giftCardData}">
 							<multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}" />
 						</c:if>
+						 
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
             	modelAttribute="placeOrderForm">
+				<div class="reviewCart">
             	<b><spring:theme code="text.review.page.order.notes" /></b>
             	<input type="text" class="form-control order-notes" name="orderNotes"	id="notes"
             		placeholder="<spring:theme code="text.review.page.order.notes.placeholder"/>"
             		min="1" max="1000" maxlength="1000" value="${cartData.orderNotes}" />
              <input type="checkbox" name="newsLetterSubscriptionOpted" value="true" checked="checked" id="newsletter"/>
             	<label for="newsletter"><span class="gray80"><spring:theme code="text.review.page.newsletter.checkbox.label" /></span></label>
-            	<hr class="mt-5">
+            	</div>
             	<div class="reviewCart">
             		<h5 class="mb-4">
             			<spring:theme code="text.review.page.rental.terms.agreement.title" />
@@ -286,6 +288,7 @@
             		</button>
               </div>
 						</form:form>
+					 
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
 						<cart:blRentalOrderSummaryForReviewPage cartData="${cartData}"

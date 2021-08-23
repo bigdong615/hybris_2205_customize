@@ -53,7 +53,7 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     if (CollectionUtils.isNotEmpty(stockLevels)) {
       final Map<String, List<StockLevelModel>> availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Populating availability map, serial products  size = {} found for product codes {} from date {} to date {} from warehouse {}",
           stockLevels.size(), productCodes, order.getActualRentalStartDate(),
           order.getActualRentalEndDate(), source.getName());

@@ -13,6 +13,7 @@
         <c:when test="${blPageType eq 'usedGear'}">
               <product:blUsedGearProductListerGridItem product="${product}"/>
         </c:when>
+
         <c:otherwise>
               <product:blRentalGearproductListerGridItem product="${product}"/>
         </c:otherwise>
