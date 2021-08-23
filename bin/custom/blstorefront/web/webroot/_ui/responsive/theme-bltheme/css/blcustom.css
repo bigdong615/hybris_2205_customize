@@ -601,4 +601,17 @@ ul.ui-autocomplete.active {
 .rental-bl-options .dropdown .dropdown-menu li span{
     float: right!important;
     margin: 14px 15px 0 0;
-} 
+}
+.uploaded-doc a{
+	background: none;
+    outline: none;
+    border: none;
+    padding: 0;
+    margin: 0 0 0 7px;
+}
+.uploaded-doc{
+    width: 100%;
+    margin: 3px 0 0 0;
+    display: flex;
+    flex-direction: row-reverse;
+}
