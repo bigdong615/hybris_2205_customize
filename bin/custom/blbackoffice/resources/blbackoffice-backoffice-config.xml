@@ -1181,6 +1181,8 @@
 				<y:action
 					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.blCalculateAvalaraTaxAction"
+					property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>
@@ -1860,6 +1862,7 @@
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
 			<advanced-search:field-list>
 				<advanced-search:field name="barcode" selected="true" mandatory="false"/>
+				<advanced-search:field name="testingStatus" selected="true" mandatory="false"/>
 				<advanced-search:field name="serialStatus" selected="false" mandatory="false"/>
 				<advanced-search:field name="forSale" selected="false" mandatory="false"/>
 				<advanced-search:field name="productId" selected="false" mandatory="false"/>
@@ -2304,7 +2307,34 @@
 	</context>
     
     <!--BL-800 Repair Serials Queue End-->
-    
+
+
+	<!-- To get tax related field to customer support Agent on CUstomer Level-->
+
+	<context merge-by="principal" parent="User" type="Customer" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
+			xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+			xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+			xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+			xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.customer.tax.name" position="11">
+				<editorArea:section name="blbackoffice.tax.customer">
+					<editorArea:attribute qualifier="isTaxExempt"/>
+					<editorArea:attribute qualifier="taxExemptNumber"/>
+					<editorArea:attribute qualifier="taxExemptExpiry"/>
+					<editorArea:attribute qualifier="taxExemptState"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+
     <!-- BL-1000 -->
     <context type="RemainingItemsQueue" component="advanced-search" merge-by="replace">
 		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
@@ -2355,7 +2385,8 @@
 				<n:type-node id="RemainingItemsQueue" code="RemainingItemsQueue"/>
 				<n:type-node id="RemainingPriorityItems" code="RemainingPriorityItems"/>
 				<n:type-node id="RemainingVipOrderItems" code="RemainingVipOrderItems"/>
-				<n:type-node id="TestingNeededItemsQueue" code="TestingNeededItemsQueue"/>				
+				<n:type-node id="TestingNeededItemsQueue" code="TestingNeededItemsQueue"/>	
+				<n:type-node id="OrdersNotCompletedQueue" code="OrdersNotCompletedQueue"/> 			
 			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node id="RepairLog" code="BlRepairLog"/>            
@@ -2516,6 +2547,61 @@
             <list-view:column qualifier="serialProduct"/>
 		</list-view:list-view>
 	</context>
+
+	<context type="InventoryPulledOrdersView" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="orderType"/>
+			<list-view:column qualifier="isVipOrder"/>
+			<list-view:column qualifier="isUsedGearOrder"/>
+			<list-view:column qualifier="consolidatedOrderNote"/>
+			<list-view:column qualifier="prodCode"/>
+			<list-view:column qualifier="prodName"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="warehouseCode"/>
+			<list-view:column qualifier="parentLocationCode"/>
+			<list-view:column qualifier="locationCode"/>
+			<list-view:column qualifier="shippingMethod"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="InventoryOrdersAwaitingItemsView" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="orderType"/>
+			<list-view:column qualifier="isVipOrder"/>
+			<list-view:column qualifier="isUsedGearOrder"/>
+			<list-view:column qualifier="consolidatedOrderNote"/>
+			<list-view:column qualifier="prodCode"/>
+			<list-view:column qualifier="prodName"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="warehouseCode"/>
+			<list-view:column qualifier="parentLocationCode"/>
+			<list-view:column qualifier="locationCode"/>
+			<list-view:column qualifier="shippingMethod"/>
+		</list-view:list-view>
+	</context>
+	
+	<!-- BL-1001 -->
+    <context type="OrdersNotCompletedQueue" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="OrdersNotCompletedQueue" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderCode"/>
+			<list-view:column qualifier="previousOrderStatus"/>
+			<list-view:column qualifier="serialCode"/>
+			<list-view:column qualifier="ocLocationCode"/>
+			<list-view:column qualifier="itemStatusCode"/>
+			<list-view:column qualifier="unboxedDate"/>
+		</list-view:list-view>
+	</context>
+
 </config>
 
 

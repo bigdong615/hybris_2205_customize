@@ -30,7 +30,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
   private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS =
       "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})"
-          + " AND CAST({con:OPTIMIZEDSHIPPINGSTARTDATE} AS DATE) = CAST(?startDate AS DATE) ";
+          + " AND ({con:OPTIMIZEDSHIPPINGSTARTDATE} >= ?startDate AND  {con:OPTIMIZEDSHIPPINGSTARTDATE} <= ?endDate ) ";
 
   /**
    * Get consignments
@@ -74,8 +74,14 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
+    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.SQL_DATE_FORMAT);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(shipDate);
+    calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+    final String endDate = BlDateTimeUtils.convertDateToStringDate(calendar.getTime(), BlCoreConstants.SQL_DATE_FORMAT);
+    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
+    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate);
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }
 

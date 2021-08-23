@@ -12,6 +12,7 @@ import de.hybris.platform.util.Config;
 import de.hybris.platform.util.TaxValue;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -42,9 +43,11 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
       if (abstractOrder.getDeliveryAddress().getCountry().getIsocode().equalsIgnoreCase(resolveCountry))
       {
         taxResponse = getDefaultBlAvalaraTaxService().process(abstractOrder);
-        abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
-        getModelService().save(abstractOrder);
-        getModelService().refresh(abstractOrder);
+        if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
+          abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
+          getModelService().save(abstractOrder);
+          getModelService().refresh(abstractOrder);
+        }
       }
     }
     catch (final Exception e)

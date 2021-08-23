@@ -2560,10 +2560,17 @@
                     <description>Start date of a for extend order</description>
                   </attribute>
                   
-                  <attribute qualifier="unPaidBillPresent" type="java.lang.Boolean">
+                  <attribute qualifier="unPaidBillPresent" type="boolean">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>This flag use to check unpaid bill for a customer</description>
+                  </attribute>
+
+                  <attribute qualifier="isOrderSubmit" type="java.lang.boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether order submitted or not </description>
+                    <defaultvalue>false</defaultvalue>
                   </attribute>
 
                 </attributes>
@@ -3248,6 +3255,18 @@
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Determines the required amount to be charged</description>
                      </attribute>
+                <attribute qualifier="taxAmount" type="java.math.BigDecimal">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                         <description>Determines the tax amount to be charged</description>
+                     </attribute>
+                <attribute qualifier="billPaid" type="boolean">
+	            	  	<modifiers read="true" write="true" optional="true"/>
+	                    <description>Unpaid bill already paid or not</description>
+	                    <persistence type="property" />
+	                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>     
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -4438,12 +4457,11 @@ new Integer(8)
 </itemtype>
 
   <!--  BL-827, BL-828, BL-829 invnetory user clean complete / in-complete order queue -->
-
-  <itemtype code="InventoryCompleteOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+  <itemtype code="InventoryPulledOrdersView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {serial:code} as serialCode, {p:code} as prodCode, {p:name} as prodName, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:code} as orderCode, {wh:code} as warehouseCode, {serial:ocLocation} as locationCode, {serial:lastLocationScanParent} as parentLocationCode, {dm:name} as shippingMethod, {order:consolidatedOrderNote} as consolidatedOrderNote FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND {c:optimizedShippingStartDate} = ?shipdate"
+          "SELECT {order:code} as orderCode, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND {c:optimizedShippingStartDate} = ?shipdate"
         </value>
       </property>
     </custom-properties>
@@ -4459,7 +4477,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(11)
+              new Integer(4)
             </value>
           </property>
         </custom-properties>
@@ -4475,7 +4493,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(5)
+              new Integer(3)
             </value>
           </property>
         </custom-properties>
@@ -4491,7 +4509,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(4)
+              new Integer(2)
             </value>
           </property>
         </custom-properties>
@@ -4507,7 +4525,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(8)
+              new Integer(10)
             </value>
           </property>
         </custom-properties>
@@ -4523,7 +4541,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(6)
+              new Integer(0)
             </value>
           </property>
         </custom-properties>
@@ -4539,7 +4557,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(3)
+              new Integer(1)
             </value>
           </property>
         </custom-properties>
@@ -4571,7 +4589,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(1)
+              new Integer(5)
             </value>
           </property>
         </custom-properties>
@@ -4587,7 +4605,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(2)
+              new Integer(6)
             </value>
           </property>
         </custom-properties>
@@ -4603,7 +4621,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(0)
+              new Integer(7)
             </value>
           </property>
         </custom-properties>
@@ -4635,7 +4653,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(10)
+              new Integer(11)
             </value>
           </property>
         </custom-properties>
@@ -4667,19 +4685,18 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(7)
+              new Integer(8)
             </value>
           </property>
         </custom-properties>
       </attribute>
     </attributes>
   </itemtype>
-
-  <itemtype code="InventoryInCompleteOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+  <itemtype code="InventoryOrdersAwaitingItemsView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {serial:code} as serialCode, {p:code} as prodCode, {p:name} as prodName, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:code} as orderCode, {wh:code} as warehouseCode, {serial:ocLocation} as locationCode, {serial:lastLocationScanParent} as parentLocationCode, {dm:name} as shippingMethod, {order:consolidatedOrderNote} as consolidatedOrderNote FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND {c:optimizedShippingStartDate} = ?shipdate"
+          "SELECT {order:code} as orderCode, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND {c:optimizedShippingStartDate} = ?shipdate"
         </value>
       </property>
     </custom-properties>
@@ -4695,7 +4712,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(11)
+              new Integer(4)
             </value>
           </property>
         </custom-properties>
@@ -4711,7 +4728,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(5)
+              new Integer(3)
             </value>
           </property>
         </custom-properties>
@@ -4727,7 +4744,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(4)
+              new Integer(2)
             </value>
           </property>
         </custom-properties>
@@ -4743,7 +4760,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(8)
+              new Integer(10)
             </value>
           </property>
         </custom-properties>
@@ -4759,7 +4776,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(6)
+              new Integer(0)
             </value>
           </property>
         </custom-properties>
@@ -4775,7 +4792,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(3)
+              new Integer(1)
             </value>
           </property>
         </custom-properties>
@@ -4807,7 +4824,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(1)
+              new Integer(5)
             </value>
           </property>
         </custom-properties>
@@ -4823,7 +4840,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(2)
+              new Integer(6)
             </value>
           </property>
         </custom-properties>
@@ -4839,7 +4856,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(0)
+              new Integer(7)
             </value>
           </property>
         </custom-properties>
@@ -4871,7 +4888,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(10)
+              new Integer(11)
             </value>
           </property>
         </custom-properties>
@@ -4903,7 +4920,7 @@ new Integer(8)
           </property>
           <property name="position">
             <value>
-              new Integer(7)
+              new Integer(8)
             </value>
           </property>
         </custom-properties>
@@ -5628,6 +5645,131 @@ Boolean.FALSE
 				<property name="position">
 					<value>
 new Integer(6)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.TRUE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+	</attributes>
+</itemtype>
+
+<!-- BL-1001 -->
+<itemtype code="OrdersNotCompletedQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+	<custom-properties>
+		<property name="query">
+			<value>
+"select {pvo:code} as orderCode,{pvos:code} as previousOrderStatus,{s:code} as serialCode, {s:ocLocation} as ocLocationCode, {sse:code} as itemStatusCode, {s:lastUnboxedOcLocationDate} as unboxedDate from {BlSerialProduct as s},{SerialStatusEnum as sse}, {Order as pvo}, {OrderStatus as pvos},{Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {sse:pk} = {s:serialStatus} and {pvo:pk} = {s:associatedOrder} and {pvos:pk} = {pvo:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse ORDER BY {s:lastUnboxedOcLocationDate} DESC"
+			</value>
+		</property>
+	</custom-properties>
+	<attributes>
+		<attribute generate="false" autocreate="true" qualifier="itemStatusCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(4)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="ocLocationCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(3)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="orderCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="previousOrderStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(1)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="serialCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(2)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="unboxedDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(5)
 					</value>
 				</property>
 			</custom-properties>
