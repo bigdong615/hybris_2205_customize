@@ -18,10 +18,7 @@ import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.omsbackoffice.dto.OrderEntryToCancelDto;
-import de.hybris.platform.ordercancel.OrderCancelEntry;
-import de.hybris.platform.ordercancel.OrderCancelException;
-import de.hybris.platform.ordercancel.OrderCancelRequest;
-import de.hybris.platform.ordercancel.OrderCancelService;
+import de.hybris.platform.ordercancel.*;
 import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
@@ -618,9 +615,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
             this.handleRow((Row) row);
             if (this.globalCancelEntriesSelection.isChecked()) {
-                final int cancellableQuantity = Integer
-                        .parseInt(((Label) row.getChildren().get(BlloggingConstants.EIGHT)).getValue());
-                this.applyToRow(cancellableQuantity, BlloggingConstants.EIGHT, row);
+                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.EIGHT);
+                this.applyToRow(Integer.parseInt(String.valueOf(cancellableQty.getRawValue())), BlloggingConstants.EIGHT, row);
             }
         }
 
