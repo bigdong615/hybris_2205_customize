@@ -74,13 +74,14 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
-    final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
-    startDate.set(Calendar.MILLISECOND, BlCoreConstants.START_MILLI_SECONDS);
-    endDate.set(Calendar.MILLISECOND, BlCoreConstants.END_MILLI_SECONDS);
+    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.SQL_DATE_FORMAT);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(shipDate);
+    calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
-    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+    final String endDate = BlDateTimeUtils.convertDateToStringDate(calendar.getTime(), BlCoreConstants.SQL_DATE_FORMAT);
+    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
+    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate);
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }
 

@@ -66,7 +66,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
+    if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
       setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
+    }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
   }
 
@@ -100,19 +102,12 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       abstractOrder.getConsignments()
               .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
                       .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                        if (billing.getChargedAmount().doubleValue() > 0) {
+                        if (BooleanUtils.isFalse(billing.isBillPaid())
+                            && !(("MISSING_CHARGE").equals(billing.getBillChargeType().getCode()))) {
                           final TaxLine taxLine = new TaxLine();
                           taxLine.setQuantity(1);
                           taxLine.setNumber(0 + taxLines.size());
-
-                          consignmentEntry.getSerialProducts().forEach(serial -> {
-                            if (serial instanceof BlSerialProductModel) {
-                              final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
-                              taxLine.setItemCode(serialProduct.getBlProduct().getCode());
-
-                            }
-                          });
-
+                          taxLine.setItemCode(serialCode);
                           taxLine.setAmount(billing.getChargedAmount().doubleValue());
                           taxLine.setDescription(StringUtils.EMPTY);
                           taxLine.setTaxCode(setPayBillTaxCode(billing.getBillChargeType()));
