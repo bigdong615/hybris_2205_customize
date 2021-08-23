@@ -34,7 +34,9 @@
                                                     <b>${orderData.rentalStartDate}</b>
                                                   </p>
                                            </c:if>
+                                         <c:if test="${orderData.deliveryMode.carrier ne null}"> 
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
+                                        </c:if> 
                                     </div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
@@ -47,7 +49,9 @@
                                         <c:if test="${orderData.isRentalActive eq false}">
                                           <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
                                         </c:if>
+                                       <c:if test="${orderData.deliveryMode.carrier ne null}"> 
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
