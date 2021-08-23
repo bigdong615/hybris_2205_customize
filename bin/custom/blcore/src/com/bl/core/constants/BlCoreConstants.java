@@ -283,8 +283,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String TOTAL_PRICE = "Total Price : {}";
 
+	public static final String COMMON_ERROR_MESSAGE = "unexpected.update.error";
+	public static final String BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR = "BlSerialProductValidateInterceptor";
+	
+	public static final String ZERO = "0";
 
-  private BlCoreConstants()
+
+	private BlCoreConstants()
 	{
 		//empty
 	}
