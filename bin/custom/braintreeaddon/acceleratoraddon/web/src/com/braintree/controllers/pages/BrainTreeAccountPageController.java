@@ -401,6 +401,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 			model.addAttribute("orderData", orderDetails);
+			model.addAttribute("payBillTotal", billPayTotal);
 			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
