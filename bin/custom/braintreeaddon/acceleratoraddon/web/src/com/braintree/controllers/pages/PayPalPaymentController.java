@@ -65,6 +65,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+
 
 
 @Controller
@@ -118,6 +122,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	
 	@Resource(name = "orderFacade")
 	private OrderFacade orderFacade;
+
+	@Resource(name = "priceDataFactory")
+	private PriceDataFactory priceDataFactory;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -321,6 +328,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			}
 			if (isSuccess) {
 				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+				PriceData billPayTotal  = convertDoubleToPriceData(Double.parseDouble(payBillTotal), order);
+				orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
 				model.addAttribute("orderData", orderDetails);
 				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
@@ -514,5 +523,12 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private String getSessionCartUserUid()
 	{
 		return cartService.getSessionCart().getUser().getUid();
+	}
+
+	/**
+	 * This method converts double to price data
+	 */
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
+		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }
