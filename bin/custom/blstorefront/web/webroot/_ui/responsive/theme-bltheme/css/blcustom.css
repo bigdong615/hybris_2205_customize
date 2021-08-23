@@ -149,6 +149,9 @@ text-decoration :none ;
     max-width: fit-content;
   }
   .social{position: static !important;margin-bottom: 3rem;}
+  .uploaded-doc {    
+    flex-direction: inherit !important;
+}
   }
 /* BL-45 */
 
