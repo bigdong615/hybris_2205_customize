@@ -26,6 +26,7 @@ ACC.minicart = {
 	},
 
 	updateMiniCartDisplay: function(){
+<<<<<<< Updated upstream
 		var cartItems = $(".js-mini-cart-link").data("miniCartItemsText");
 		var miniCartRefreshUrl = $(".js-mini-cart-link").data("miniCartRefreshUrl");
 		$.ajax({
