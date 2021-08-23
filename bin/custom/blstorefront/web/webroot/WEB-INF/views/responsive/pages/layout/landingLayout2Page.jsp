@@ -180,7 +180,7 @@
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
 			</div>
-			<div id="stories" class="row justify-content-center">
+			<div id="stories" class="row justify-content-center mt-5">
 				<div class="col-lg-11 col-xl-9">
 					<h5>
 						<cms:pageSlot position="HomePageFeaturedStoriesTitleSlot"
