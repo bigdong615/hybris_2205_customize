@@ -25,19 +25,6 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 	private FlexibleSearchService flexibleSearchService;
 
 	/**
-	 * @return the flexibleSearchService
-	 */
-	public FlexibleSearchService getFlexibleSearchService() {
-		return flexibleSearchService;
-	}
-
-	/**
-	 * @param flexibleSearchService the flexibleSearchService to set
-	 */
-	public void setFlexibleSearchService(final FlexibleSearchService flexibleSearchService) {
-		this.flexibleSearchService = flexibleSearchService;
-	}
-	/**
 	 * Remove Verification Document
 	 *
 	 * @param code
@@ -45,7 +32,7 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 	 */
 	@Override
 	public VerificationDocumentMediaModel removeVerificationDocument(final String code) {
-		try {
+
 			final String getDocumentByCodeQuery = "SELECT {vm.pk} FROM {"+ VerificationDocumentMediaModel._TYPECODE +"  AS vm} WHERE {vm:code} = ?code";
 			final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(
 					getDocumentByCodeQuery);
@@ -58,9 +45,18 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 				return null;
 			}
 			return verificationDocument.get(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	}
+	/**
+	 * @return the flexibleSearchService
+	 */
+	public FlexibleSearchService getFlexibleSearchService() {
+		return flexibleSearchService;
+	}
+
+	/**
+	 * @param flexibleSearchService the flexibleSearchService to set
+	 */
+	public void setFlexibleSearchService(final FlexibleSearchService flexibleSearchService) {
+		this.flexibleSearchService = flexibleSearchService;
 	}
 }
