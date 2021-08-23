@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 
 /**
+ * It is used to fetch the Verification Document
  * @author Avani Patel
  *
  */
@@ -23,6 +24,8 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 
 	private static final Logger LOG = Logger.getLogger(DefaultBlVerificationDocumentDao.class);
 	private FlexibleSearchService flexibleSearchService;
+	private static final String CODE = " code";
+
 
 	/**
 	 * Remove Verification Document
@@ -36,7 +39,7 @@ public class DefaultBlVerificationDocumentDao implements BlVerificationDocumentD
 			final String getDocumentByCodeQuery = "SELECT {vm.pk} FROM {"+ VerificationDocumentMediaModel._TYPECODE +"  AS vm} WHERE {vm:code} = ?code";
 			final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(
 					getDocumentByCodeQuery);
-			flexibleSearchQuery.addQueryParameter("code", code);
+			flexibleSearchQuery.addQueryParameter(CODE, code);
 			final SearchResult<VerificationDocumentMediaModel> result = getFlexibleSearchService()
 					.search(flexibleSearchQuery);
 			final List<VerificationDocumentMediaModel> verificationDocument = result.getResult();

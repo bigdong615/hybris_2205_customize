@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
 
 
 /**
@@ -44,7 +45,7 @@ public class DefaultBlVerificationDocumentFacade implements BlVerificationDocume
     final List<VerificationDocumentMediaModel> verificationDocuments = customerModel
         .getVerificationDocuments();
     Map<String, List<VerificationDocumentMediaModel>> documentMap= new HashMap<>();
-    if(verificationDocuments !=null){
+    if(CollectionUtils.isNotEmpty(verificationDocuments)){
     for(VerificationDocumentMediaModel verificationDocument : verificationDocuments){
       String type=verificationDocument.getDocumentType().toString();
       if(documentMap.containsKey(type)) {

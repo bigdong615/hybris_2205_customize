@@ -7,6 +7,7 @@ import com.bl.core.model.VerificationDocumentMediaModel;
 
 
 /**
+ * It is used to fetch the Verification Document
  * @author Avani Patel
  *
  */

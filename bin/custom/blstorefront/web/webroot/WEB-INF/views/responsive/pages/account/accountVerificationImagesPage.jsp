@@ -46,7 +46,7 @@
 				enctype="multipart/form-data">
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="drivingLicenseUpload" /> Choose File
+					id="drivingLicenseUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="DRIVING_LICENSE" />
 			</form:form>
@@ -120,7 +120,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="utilityBillUpload" /> Choose File
+					id="utilityBillUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="UTILITY_BILL">
 			</form:form>
@@ -177,7 +177,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType"
 					value="INSURANCE_CERTIFICATE">
@@ -233,7 +233,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT1">
 			</form:form>
@@ -280,7 +280,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT2">
 			</form:form>
@@ -330,7 +330,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT3">
 			</form:form>
@@ -375,7 +375,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT4">
 			</form:form>
@@ -422,7 +422,7 @@
 
 				<label class="custom-file-upload"> <input type="file"
 					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> Choose File
+					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT5">
 			</form:form>
