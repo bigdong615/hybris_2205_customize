@@ -1124,6 +1124,9 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+		<bean id="defaultBlVerificationDocumentDao" class="com.bl.core.services.document.dao.impl.DefaultBlVerificationDocumentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 
 	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
 	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
@@ -1185,6 +1188,7 @@
 	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blVerificationDocumentDao" ref="defaultBlVerificationDocumentDao"/>
 	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
