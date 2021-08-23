@@ -1306,4 +1306,12 @@
 
 	<!-- Added for creating custom method to set custom parameter -->
 
+	<alias name="blSerialProductValidateInterceptor" alias="blSerialProductValidateInterceptor"/>
+	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor"/>
+	
+	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
+		<property name="typeCode" value="BlSerialProduct"/>
+	</bean>
+	
 </beans>
