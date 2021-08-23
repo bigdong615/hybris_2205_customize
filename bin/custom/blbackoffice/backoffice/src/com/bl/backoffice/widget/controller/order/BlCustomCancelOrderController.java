@@ -164,6 +164,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)) {
                     logErrorAndThrowException(cancelQty, BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_MISSING_QUANTITY);
                 }
+
+                final Combobox combobox = (Combobox) row.getChildren().get(BlloggingConstants.ELEVEN);
+                if(combobox.getSelectedIndex() == -1 && !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)){
+                    logErrorAndThrowException(combobox, BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_REASON);
+                }
+
                 this.getValidateRefundAmountMessage((InputElement) row.getChildren().get(BlloggingConstants.NINE));
             }
         }
@@ -647,16 +653,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param entry the entry
      */
     private void validateOrderEntry(final OrderEntryToCancelDto entry) {
-        InputElement quantity;
         if (entry.getQuantityToCancel() > this.orderCancellableEntries.get(entry.getOrderEntry())) {
-            quantity = (InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.NINE);
-            logErrorAndThrowException(quantity, BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_QTYCANCELLED_INVALID);
+            logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(),
+                    BlloggingConstants.NINE), BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_QTYCANCELLED_INVALID);
         } else if (entry.getSelectedReason() != null && entry.getQuantityToCancel() == BlCustomCancelRefundConstants.ZERO_LONG) {
-            quantity = (InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.NINE);
-            logErrorAndThrowException(quantity, BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_MISSING_QUANTITY);
-        } else if (entry.getSelectedReason() == null && !entry.getQuantityToCancel().equals(BlCustomCancelRefundConstants.ZERO)) {
-            final Combobox reason = (Combobox) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.ELEVEN);
-            logErrorAndThrowException(reason, BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_REASON);
+            logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.NINE),
+                    BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_MISSING_QUANTITY);
+        } else if (entry.getSelectedReason() == null && entry.getQuantityToCancel() > BlCustomCancelRefundConstants.ZERO_LONG) {
+            logErrorAndThrowException((Combobox) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.ELEVEN)
+                    , BlCustomCancelRefundConstants.CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_REASON);
         }
     }
 
