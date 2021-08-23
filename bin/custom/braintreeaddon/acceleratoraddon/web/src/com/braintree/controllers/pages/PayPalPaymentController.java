@@ -328,7 +328,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			}
 			if (isSuccess) {
 				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-				order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 				PriceData billPayTotal  = convertDoubleToPriceData(Double.parseDouble(payBillTotal), order);
 				orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
 				model.addAttribute("orderData", orderDetails);
