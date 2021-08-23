@@ -1307,6 +1307,12 @@
 
 	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
 
+	<!--Custom  code for place order startegy -->
+	<alias alias="commercePlaceOrderStrategy" name="defaultBlCommercePlaceOrderStrategy"/>
+	<bean id="defaultBlCommercePlaceOrderStrategy"
+		class="com.bl.core.order.strategy.DefaultBlCommercePlaceOrderStrategy" parent="defaultCommercePlaceOrderStrategy">
+	</bean>
+
 	<!-- [BL-983] New gear Related changes-->
 	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
 		parent="abstractValueResolver"/>

@@ -618,6 +618,7 @@
 		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blOrderAppliedVouchersPopulator" ref="blOrderAppliedVouchersPopulator" />
+		<property name="defaultBlExternalTaxesService" ref="defaultBlExternalTaxesService" />
 	</bean>
 
 

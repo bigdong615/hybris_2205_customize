@@ -90,9 +90,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
+	public static final int END_MILLI_SECONDS = 999;
 	public static final int START_HOURS = 0;
 	public static final int START_MINUTES = 0;
 	public static final int START_SECONDS = 0;
+	public static final int START_MILLI_SECONDS = 0;
 	public static final long MAX_TOTAL = 20L;
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
@@ -270,7 +272,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
 	public static final String AQUATECH_BRAND_ID ="9";
-
+	public static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
 
 	public static final String DRIVING_LICENSE = "drivingLicense";
@@ -278,6 +280,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String INSURANCE_CERTIFICATE = "insuranceCertificate";
 	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
 	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
+
+	public static final String TOTAL_PRICE = "Total Price : {}";
 
 
   private BlCoreConstants()

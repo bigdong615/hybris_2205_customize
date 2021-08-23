@@ -19,7 +19,7 @@
 
 <div class="col-md-6 col-lg-4">
 <div class="card">
-<!-- BL-926: Added condition for Gift Card as per requirement --> 
+<!-- BL-926: Added condition for Gift Card as per requirement -->
  <c:if test="${product.productType ne 'GIFTCARD'}">
 		<c:choose>
 			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
@@ -48,20 +48,36 @@
 		</c:if>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
    <c:if test="${product.productType ne 'GIFTCARD'}">
+    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+    		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                    <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                    <c:choose>
+                       <c:when test="${product.isBookMarked}">
+                        <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                         data-bookmark-value="${product.isBookMarked}" data-link="/blstorefront/login/loginpopup"></span>
+                       </c:when>
+                       <c:otherwise>
+                         <span class="bookmark bookmarkicons js-login-popup" data-link="/blstorefront/login/loginpopup" data-bs-target="#signIn"
+                         data-product-code="${product.code}" data-bs-toggle="modal"
+                        data-bookmark-value="${product.isBookMarked}" ></span>
+                       </c:otherwise>
+                    </c:choose>
+        </form>
+    </sec:authorize>
     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
-                <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
-                <c:choose>
-                   <c:when test="${product.isBookMarked}">
-                    <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
-                     data-bookmark-value="${product.isBookMarked}"></span>
-                   </c:when>
-                   <c:otherwise>
-                    <span class="bookmark js-add-to-wishlist bookmarkicons"  data-product-code="${product.code}"
-                    data-bookmark-value="${product.isBookMarked}"></span>
-                   </c:otherwise>
-                </c:choose>
-    </form>
+    		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                    <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                    <c:choose>
+                       <c:when test="${product.isBookMarked}">
+                        <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                         data-bookmark-value="${product.isBookMarked}"></span>
+                       </c:when>
+                       <c:otherwise>
+                        <span class="bookmark js-add-to-wishlist bookmarkicons"  data-product-code="${product.code}"
+                        data-bookmark-value="${product.isBookMarked}"></span>
+                       </c:otherwise>
+                    </c:choose>
+        </form>
     </sec:authorize>
     </c:if>
     <!-- BL-926: Added new file for Gift Card --> 

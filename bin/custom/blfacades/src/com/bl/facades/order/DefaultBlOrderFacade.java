@@ -3,6 +3,7 @@ package com.bl.facades.order;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
@@ -11,6 +12,7 @@ import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlExtendOrderUtils;
@@ -18,12 +20,16 @@ import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator;
 import com.bl.facades.populators.BlOrderAppliedVouchersPopulator;
+import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.impl.DefaultOrderFacade;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
@@ -55,6 +61,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +95,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlExtendRentalOrderDetailsPopulator blExtendRentalOrderDetailsPopulator;
   private BlDatePickerService blDatePickerService;
   private BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator;
+  private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
   /**
    * This method created to add all the products from existing order
@@ -116,6 +124,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
   /**
    * This method created for adding product to cart when user renting again from previous order
+   * @param blProductModel the SKU product
+   * @param quantity quantity
+   * @param abstractOrderEntryModel the order model
+   * @return CartModificationData
+   * @throws CommerceCartModificationException CommerceCartModificationException
    */
   public CartModificationData addToCart(final ProductModel blProductModel, final long quantity ,
       final AbstractOrderEntryModel abstractOrderEntryModel) throws CommerceCartModificationException {
@@ -468,6 +481,138 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
   }
 
+  /**
+   * {@inheritDoc}
+   * @param target order data
+   */
+  @Override
+  public void setPayBillAttributes(final OrderData target) {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    OrderModel source = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService()
+        .getCurrentUser(), target.getCode(), baseStoreModel);
+
+    final AtomicDouble totalAmt = new AtomicDouble(0.0);
+    applyTaxOnPayBillCharges(source);
+    final AtomicDouble currentTax = new AtomicDouble(0.0);
+
+    source.setUnPaidBillPresent(false);
+    getModelService().save(source);
+    source.getConsignments()
+        .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+            .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+              if (BooleanUtils.isFalse(billing.isBillPaid())) {
+                target.getEntries().forEach(entry -> {
+                  if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode))) {
+                    final AvailabilityMessage messageForBillingType = getMessageForBillingType(
+                        billing.getBillChargeType());
+                    final List<AvailabilityMessage> messages = Lists
+                        .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                    messages.add(messageForBillingType);
+                    entry.setMessages(messages);
+                  }
+                });
+                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+                currentTax.addAndGet(billing.getTaxAmount().doubleValue());
+              }
+            }))));
+
+    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+    target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
+    target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get() , source));
+  }
+
+  /**
+   * This method created to get SKU product code.
+   * @param consignmentEntry consignment entry
+   * @param serialCode serial product code
+   */
+  private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
+  {
+    final StringBuilder sb = new StringBuilder();
+    consignmentEntry.getSerialProducts().forEach(serial -> {
+      if(serial instanceof BlSerialProductModel && ((BlSerialProductModel)serial).getCode().equals(serialCode))
+      {
+        final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
+        sb.append(serialProduct.getBlProduct().getCode());
+      }
+    });
+    return sb.toString();
+  }
+
+  /**
+   * It applies tax on billing charges
+   * @param source
+   */
+  private void applyTaxOnPayBillCharges(OrderModel source) {
+    final AtomicBoolean isTaxBeApplied = new AtomicBoolean(Boolean.FALSE);
+    isTaxApplicableOnPayBillCharges(isTaxBeApplied, source);
+    if(isTaxBeApplied.get()) {
+      source.setUnPaidBillPresent(true);
+      getDefaultBlExternalTaxesService().calculateExternalTaxes(source);
+    }
+  }
+
+  /**
+   * It checks whether tax should be applied on billing charges or not
+   * @param isTaxBeApplied
+   * @param source
+   */
+  private void isTaxApplicableOnPayBillCharges(AtomicBoolean isTaxBeApplied, OrderModel source) {
+    source.getConsignments()
+        .forEach(consignment ->
+          consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+              .getBillingCharges().forEach((serialCode, listOfCharges) -> {
+                final boolean result = listOfCharges.stream().anyMatch(billing ->
+                    BooleanUtils.isFalse(billing.isBillPaid()) && !(("MISSING_CHARGE").equals(billing
+                        .getBillChargeType().getCode())));
+                if(result) {
+                  isTaxBeApplied.set(Boolean.TRUE);
+                  return;
+                }
+              })));
+  }
+
+  /**
+   * This method converts double to price data
+   */
+  private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
+    return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
+  }
+
+  /**
+   * This method created pay bill messages separation.
+   * @param billChargeType
+   * @return AvailabilityMessage
+   */
+  private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
+  {
+    switch (billChargeType.getCode())
+    {
+      case "MISSING_CHARGE":
+        return getMessage("pay.bill.missing.charge");
+
+      case "LATE_CHARGE":
+        return getMessage("pay.bill.late.charge");
+
+      case "REPAIR_CHARGE":
+        return getMessage("pay.bill.repair.charge");
+
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * This method created pay bill messages.
+   * @param messageCode
+   * @return AvailabilityMessage
+   */
+  private AvailabilityMessage getMessage(final String messageCode)
+  {
+    final AvailabilityMessage am = new AvailabilityMessage();
+    am.setMessageCode(messageCode);
+    return am;
+  }
 
   public BlCartService getBlCartService() {
     return blCartService;
@@ -624,5 +769,12 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.blOrderAppliedVouchersPopulator = blOrderAppliedVouchersPopulator;
   }
 
+  public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
+    return defaultBlExternalTaxesService;
+  }
 
+  public void setDefaultBlExternalTaxesService(
+      DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
+    this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
+  }
 }

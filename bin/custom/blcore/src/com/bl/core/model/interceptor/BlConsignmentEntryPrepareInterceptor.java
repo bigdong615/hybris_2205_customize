@@ -2,20 +2,26 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+
 import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -25,6 +31,7 @@ import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -46,6 +53,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				"ERROR : BlConsignmentEntryPrepareInterceptor : Parameter ConsignmentEntryModel is NULL");
 		modifySerialCodeOnBillingChargesMap(consignmentEntryModel, interceptorContext);
 		validateBillingCharges(consignmentEntryModel, interceptorContext);
+		doChangePriorityStatus(consignmentEntryModel, interceptorContext); //BL-822 AC.2
 	}
 
 	/**
@@ -127,6 +135,85 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel.getSerialProducts().stream()
 					.collect(Collectors.toMap(BlProductModel::getCode, serial -> new ArrayList<BlItemsBillingChargeModel>()));
 			consignmentEntryModel.setBillingCharges(billingCharges);
+		}
+	}
+	
+	/**
+	 * Do change priority status of serial if modified.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void doChangePriorityStatus(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		if (!interceptorContext.isNew(consignmentEntryModel)
+				&& interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.SERIALPRODUCTS)
+				&& isEligibleToChangeSerialPriorityStatus(consignmentEntryModel))
+		{
+			final List<Object> previousChangedSerialsList = getPreviousChangedSerialsList(consignmentEntryModel);
+			if (CollectionUtils.isNotEmpty(previousChangedSerialsList))
+			{
+				final List<BlProductModel> updatedSerialProducts = consignmentEntryModel.getSerialProducts();
+				previousChangedSerialsList.removeIf(updatedSerialProducts::contains);
+				previousChangedSerialsList.forEach(serial -> checkAndChangePriorityStatusOnSerial(serial, interceptorContext));
+			}
+		}
+	}
+
+	/**
+	 * Checks if is eligible to change serial priority status.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @return true, if is eligible to change serial priority status
+	 */
+	private boolean isEligibleToChangeSerialPriorityStatus(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		final ConsignmentModel consignment = consignmentEntryModel.getConsignment();
+		return Objects.nonNull(consignment) && Objects.nonNull(consignment.getOptimizedShippingStartDate())
+				&& DateUtils.isSameDay(consignment.getOptimizedShippingStartDate(), new Date());
+	}
+
+	/**
+	 * Gets the previous changed serials list.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @return the previous changed serials list
+	 */
+	private List<Object> getPreviousChangedSerialsList(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		final Object previousValue = consignmentEntryModel.getItemModelContext()
+				.getOriginalValue(ConsignmentEntryModel.SERIALPRODUCTS);
+		if (previousValue instanceof List)
+		{
+			return Lists.newArrayList((List) previousValue);
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Check and change priority status on serial.
+	 *
+	 * @param entryItem
+	 *           the entry item
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void checkAndChangePriorityStatusOnSerial(final Object entryItem, final InterceptorContext interceptorContext)
+	{
+		if (entryItem instanceof BlSerialProductModel)
+		{
+			final BlSerialProductModel serialItem = ((BlSerialProductModel) entryItem);
+			if (serialItem.isDirtyPriorityStatus())
+			{
+				serialItem.setDirtyPriorityStatus(Boolean.FALSE);
+				interceptorContext.getModelService().save(serialItem);
+				interceptorContext.getModelService().refresh(serialItem);
+			}
 		}
 	}
 

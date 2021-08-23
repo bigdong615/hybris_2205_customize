@@ -89,11 +89,13 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
-	  final AtomicDouble totalAmt = new AtomicDouble(0.0);
-	  source.getConsignments()
+   final AtomicDouble totalAmt = new AtomicDouble(0.0);
+	 source.getConsignments()
 			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-						  totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+					    if(BooleanUtils.isFalse(billing.isBillPaid())) {
+                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+              }
 					  }))));
 
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));

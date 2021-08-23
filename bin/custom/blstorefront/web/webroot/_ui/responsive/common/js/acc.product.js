@@ -53,19 +53,19 @@ ACC.product = {
         addToCartForm.ajaxForm({
         	beforeSubmit:ACC.product.showRequest,
         	success: ACC.product.displayAddToCartPopup
-         });    
+         });
         setTimeout(function(){
         	$ajaxCallEvent  = true;
          }, 2000);
      },
-     showRequest: function(arr, $form, options) {  
+     showRequest: function(arr, $form, options) {
     	 if($ajaxCallEvent)
     		{
     		 $ajaxCallEvent = false;
     		 return true;
-    		}   	
+    		}
     	 return false;
- 
+
     },
 
     bindToAddToCartStorePickUpForm: function () {
