@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.core.model.interceptor;
 
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
