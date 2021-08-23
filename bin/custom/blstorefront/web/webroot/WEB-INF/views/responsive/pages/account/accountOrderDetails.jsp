@@ -223,7 +223,9 @@
                                    	</div>
                                    	<div class="col-10 col-md-5">
                                    		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
-                                   		<div class="row">
+                                   		
+                                   		<!--Commented below code to resolved BL-1107 -->
+                                   		<%-- <div class="row">
                                    			<div class="col-6">
                                    				<p class="body14">
                                    					<spring:theme code="text.review.page.payment.amount" />
@@ -234,7 +236,7 @@
                                    					<format:price priceData="${orderData.totalPriceWithTax}" />
                                    				</p>
                                    			</div>
-                                   		</div>
+                                   		</div> --%>
                                    	</div>
                                    	<div class="col-12 col-md-5">
                                    	  <div class="po-order-notes">
