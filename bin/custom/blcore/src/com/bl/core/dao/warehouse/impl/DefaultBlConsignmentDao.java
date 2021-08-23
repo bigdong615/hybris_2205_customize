@@ -2,13 +2,14 @@ package com.bl.core.dao.warehouse.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
-import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -30,7 +31,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
   private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS =
       "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})"
-          + " AND ({con:OPTIMIZEDSHIPPINGSTARTDATE} >= ?startDate AND  {con:OPTIMIZEDSHIPPINGSTARTDATE} <= ?endDate ) ";
+          + "  AND ({con:OPTIMIZEDSHIPPINGSTARTDATE} >= TO_DATE(?startDate,'yyyy-MM-dd') AND  {con:OPTIMIZEDSHIPPINGSTARTDATE} < TO_DATE(?endDate,'yyyy-MM-dd') ) ";
 
   /**
    * Get consignments
@@ -74,12 +75,14 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.SQL_DATE_FORMAT);
+    final DateFormat dateFormat = new SimpleDateFormat( BlCoreConstants.SQL_DATE_FORMAT);
+    final String startDate = dateFormat.format(shipDate);
+
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(shipDate);
     calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-    final String endDate = BlDateTimeUtils.convertDateToStringDate(calendar.getTime(), BlCoreConstants.SQL_DATE_FORMAT);
+    final String endDate = dateFormat.format(calendar.getTime());
     fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
     fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate);
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
