@@ -31,7 +31,7 @@
 	</div>
 </section>
 <!-- Featured Stories Section -->
-<div id="stories" class="row justify-content-center">
+<div id="stories" class="row justify-content-center mt-5">
 	<div class="col-lg-11 col-xl-9">
 		<h5>
 			<cms:pageSlot
