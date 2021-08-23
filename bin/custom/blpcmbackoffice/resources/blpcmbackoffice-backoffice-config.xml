@@ -130,6 +130,7 @@
 				<ea:section name="label.pcmbackoffice.rentaldetails">
 					<ea:attribute qualifier="rentalVideosLink" />
 					<ea:attribute qualifier="rentalIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="specifications" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="forRent"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.useddetails">

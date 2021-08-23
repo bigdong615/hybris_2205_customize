@@ -987,6 +987,15 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Customer facing details of what comes with the rental version of the item</description>
                      </attribute>
+                   <attribute qualifier="specifications" type="java.lang.String">
+                         <persistence type="property">
+                             <columntype>
+                                 <value>HYBRIS.LONG_STRING</value>
+                             </columntype>
+                         </persistence>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Customer facing specification of the item</description>
+                     </attribute>
                      <attribute qualifier="numberSystem" type="NumberingSystemEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="false" initial="true"/>

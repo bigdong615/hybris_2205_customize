@@ -5,6 +5,6 @@
 <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
       <h5><spring:theme code = "pdp.specification.section.text"/></h5></a>
            <div class="collapse" id="specs">
-           <product:productDetailsClassifications product="${product}" />
+            <p>${ycommerce:sanitizeHTML(product.specifications)}</p>
            </div>
            <hr>
