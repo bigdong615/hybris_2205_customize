@@ -572,7 +572,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	/**
 	 * This method converts double to price data
 	 */
-	private PriceData convertDoubleToPriceData(final Double price , AbstractOrderModel orderModel) {
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
 		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }
