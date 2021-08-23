@@ -44,6 +44,7 @@ public class DefaultBlVerificationDocumentFacade implements BlVerificationDocume
     final List<VerificationDocumentMediaModel> verificationDocuments = customerModel
         .getVerificationDocuments();
     Map<String, List<VerificationDocumentMediaModel>> documentMap= new HashMap<>();
+    if(verificationDocuments !=null){
     for(VerificationDocumentMediaModel verificationDocument : verificationDocuments){
       String type=verificationDocument.getDocumentType().toString();
       if(documentMap.containsKey(type)) {
@@ -54,6 +55,7 @@ public class DefaultBlVerificationDocumentFacade implements BlVerificationDocume
         listOfDoc.add(verificationDocument);
         documentMap.put(type,listOfDoc);
       }
+    }
     }
     return  documentMap;
   }
