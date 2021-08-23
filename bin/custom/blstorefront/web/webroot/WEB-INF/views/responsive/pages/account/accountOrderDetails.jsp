@@ -34,7 +34,9 @@
                                                     <b>${orderData.rentalStartDate}</b>
                                                   </p>
                                            </c:if>
+                                         <c:if test="${orderData.deliveryMode.carrier ne null}"> 
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
+                                        </c:if> 
                                     </div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
@@ -47,7 +49,9 @@
                                         <c:if test="${orderData.isRentalActive eq false}">
                                           <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
                                         </c:if>
+                                       <c:if test="${orderData.deliveryMode.carrier ne null}"> 
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +227,9 @@
                                    	</div>
                                    	<div class="col-10 col-md-5">
                                    		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
-                                   		<div class="row">
+                                   		
+                                   		<!--Commented below code to resolved BL-1107 -->
+                                   		<%-- <div class="row">
                                    			<div class="col-6">
                                    				<p class="body14">
                                    					<spring:theme code="text.review.page.payment.amount" />
@@ -234,7 +240,7 @@
                                    					<format:price priceData="${orderData.totalPriceWithTax}" />
                                    				</p>
                                    			</div>
-                                   		</div>
+                                   		</div> --%>
                                    	</div>
                                    	<div class="col-12 col-md-5">
                                    	  <div class="po-order-notes">
