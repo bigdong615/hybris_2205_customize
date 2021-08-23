@@ -54,10 +54,10 @@
                     <c:choose>
                        <c:when test="${product.isBookMarked}">
                         <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
-                         data-bookmark-value="${product.isBookMarked}" data-link="/blstorefront/login/loginpopup"></span>
+                         data-bookmark-value="${product.isBookMarked}"></span>
                        </c:when>
                        <c:otherwise>
-                         <span class="bookmark bookmarkicons js-login-popup" data-link="/blstorefront/login/loginpopup" data-bs-target="#signIn"
+                         <span class="bookmark bookmarkicons js-login-popup" data-link="<c:url value='/login/loginpopup'/>" data-bs-target="#signIn"
                          data-product-code="${product.code}" data-bs-toggle="modal"
                         data-bookmark-value="${product.isBookMarked}" ></span>
                        </c:otherwise>
