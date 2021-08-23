@@ -25,7 +25,8 @@ public class BlDeliveryStateSourcingLocationFilter {
    */
   public WarehouseModel applyFilter(final AbstractOrderModel order) {
 
-    if (order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
+    if (order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel
+        && null != ((ZoneDeliveryModeModel) order.getDeliveryMode()).getWarehouse()) {
 
       return ((ZoneDeliveryModeModel) order.getDeliveryMode()).getWarehouse();
     } else if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
