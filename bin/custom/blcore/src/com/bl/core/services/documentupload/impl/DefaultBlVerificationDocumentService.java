@@ -2,6 +2,7 @@ package com.bl.core.services.documentupload.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.VerificationDocumentMediaModel;
+import com.bl.core.services.document.dao.BlVerificationDocumentDao;
 import com.bl.core.services.documentupload.BlVerificationDocumentService;
 import de.hybris.platform.core.model.user.CustomerModel;
 import java.util.ArrayList;
@@ -11,16 +12,20 @@ import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import javax.annotation.Resource;
-
-/**
+import com.bl.logging.BlLogger;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
+ /**
  * Service implementation class is used to save uploaded document.
  * @author Neeraj Singh
  */
 public class DefaultBlVerificationDocumentService implements BlVerificationDocumentService {
-
+   private static final Logger LOGGER = Logger.getLogger(DefaultBlVerificationDocumentService.class);
   private UserService userService;
   private ModelService modelService;
-  @Resource
+  private BlVerificationDocumentDao blVerificationDocumentDao;
+
+@Resource
   private MediaService mediaService;
 
   @Override
@@ -36,9 +41,20 @@ public class DefaultBlVerificationDocumentService implements BlVerificationDocum
       getModelService().save(customerModel);
       getModelService().refresh(customerModel);
     }catch (Exception exception){
-      //need to add logger here.
+      BlLogger.logMessage(LOGGER, Level.ERROR,
+          "Unable upload Verification Document", exception);
     }
   }
+   /**
+    * Remove Verification Document
+    * @param code
+    * @return VerificationDocumentMedia
+    */
+   @Override
+   public VerificationDocumentMediaModel removeVerificationDocument(final String code){
+
+     return getBlVerificationDocumentDao().removeVerificationDocument(code);
+   }
 
   /**
    *
@@ -92,4 +108,19 @@ public class DefaultBlVerificationDocumentService implements BlVerificationDocum
   public void setMediaService(MediaService mediaService) {
     this.mediaService = mediaService;
   }
+
+   /**
+    * @return the blVerificationDocumentDao
+    */
+   public BlVerificationDocumentDao getBlVerificationDocumentDao()
+   {
+     return blVerificationDocumentDao;
+   }
+   /**
+    * @param blVerificationDocumentDao the blVerificationDocumentDao to set
+    */
+   public void setBlVerificationDocumentDao(BlVerificationDocumentDao blVerificationDocumentDao)
+   {
+     this.blVerificationDocumentDao = blVerificationDocumentDao;
+   }
 }
