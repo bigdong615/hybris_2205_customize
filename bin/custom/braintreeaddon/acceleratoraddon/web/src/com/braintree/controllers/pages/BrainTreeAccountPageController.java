@@ -411,7 +411,6 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		    PriceData payBillTotal  = convertDoubleToPriceData(Double.parseDouble(billPayTotal), order);
 			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 			model.addAttribute("orderData", orderDetails);
-			model.addAttribute("payBillTotal", billPayTotal);
 			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
