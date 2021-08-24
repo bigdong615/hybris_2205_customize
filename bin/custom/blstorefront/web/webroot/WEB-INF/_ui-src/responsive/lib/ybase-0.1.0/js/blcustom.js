@@ -1090,7 +1090,7 @@ $("#clickedForm").val(clickedForm);
 
 //remove document submit
 $('#remove-doc-submit-button').on("click",function(e) {
-
+	$('.page-loader-new-layout').show();
 	e.preventDefault();
     var clickedForm = $("#clickedForm").val();
 	var submitForm = $("#" + clickedForm );
