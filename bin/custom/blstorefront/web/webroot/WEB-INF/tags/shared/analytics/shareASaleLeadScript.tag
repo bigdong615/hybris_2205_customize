@@ -11,8 +11,7 @@
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.lead.pixel.value')"	var="pixel" scope="page" />
 
 <c:if test = "${pageType == 'ORDERCONFIRMATION'}">
-<img id='_SHRSL_img_1'
-src='https://www.shareasale.com/sale.cfm?tracking=${orderData.code}&amount=${orderData.subTotal.value}&merchantID=${merchantID}&transtype=${pixel}<c:if test="${order.appliedVouchers}">&couponcode=<c:forEach items="${order.appliedVouchers}" var="voucher" varStatus="status"><c:out value="${voucher}"/><c:if test="${!status.last}">,</c:if></c:forEach></c:if>&skuList=<c:forEach items="${orderData.entries}" var="entry" varStatus="status"><c:out value="${entry.product.name}"/><c:if test="${!status.last}">,</c:if></c:forEach>&pricelist=<c:forEach items="${orderData.entries}" var="entry" varStatus="status"><c:out value="${entry.totalPrice.value}"/><c:if test="${!status.last}">,</c:if></c:forEach>&quantitylist=<c:forEach items="${orderData.entries}" var="entry" varStatus="status"><c:out value="${entry.quantity}"/><c:if test="${!status.last}">,</c:if></c:forEach>' width='1' height='1'>
+<img id='_SHRSL_img_1' src='https://www.shareasale.com/sale.cfm?tracking=${orderData.user.uid}&amount=${orderData.subTotal.value}&merchantID=${merchantID}&transtype=${pixel}' width='1' height='1'>
 <script src='https://www.dwin1.com/19038.js' type='text/javascript' defer='defer'></script>
 </c:if>
 <!-- End sharasale integration code -->
