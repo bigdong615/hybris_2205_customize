@@ -28,9 +28,9 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private static final Logger LOG = Logger.getLogger(DefaultBlConsignmentDao.class);
   private FlexibleSearchService flexibleSearchService;
 
-  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS =
-      "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})"
-          + " AND ({con:OPTIMIZEDSHIPPINGSTARTDATE} >= ?startDate AND  {con:OPTIMIZEDSHIPPINGSTARTDATE} <= ?endDate ) ";
+  private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
+  private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} IN (?status)}})" +
+   " AND {con:optimizedShippingStartDate"+ DATE_PARAM;
 
   /**
    * Get consignments
@@ -40,7 +40,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   @Override
   public List<ConsignmentModel> getReadyToShipConsignmentsForDate(final Date shipDate) {
 
-    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE_AND_STATUS);
+    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE);
 
     final List<ConsignmentStatus> statusList = new ArrayList<>();
     statusList.add(ConsignmentStatus.CANCELLED);
@@ -54,7 +54,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
     if (CollectionUtils.isEmpty(consignmentModels))
     {
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "No Consignments available to ship for date {}", shipDate);
       return Collections.emptyList();
     }
@@ -74,14 +74,12 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private void addQueryParameter(final Date shipDate, final List<ConsignmentStatus> statusList,
       final FlexibleSearchQuery fQuery) {
 
-    final String startDate = BlDateTimeUtils.convertDateToStringDate(shipDate, BlCoreConstants.SQL_DATE_FORMAT);
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(shipDate);
-    calendar.add(Calendar.DAY_OF_MONTH, 1);
+    final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(shipDate);
+    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
-    final String endDate = BlDateTimeUtils.convertDateToStringDate(calendar.getTime(), BlCoreConstants.SQL_DATE_FORMAT);
-    fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate);
-    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate);
+    final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(shipDate);
+    fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+
     fQuery.addQueryParameter(BlCoreConstants.STATUS, statusList);
   }
 

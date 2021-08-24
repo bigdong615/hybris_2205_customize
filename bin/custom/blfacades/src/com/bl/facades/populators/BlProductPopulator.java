@@ -38,6 +38,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setIsVideo(source.getIsVideo());
         target.setDisplayName(source.getDisplayName());
         target.setRentalIncludes(source.getRentalIncludes());
+        target.setSpecifications(source.getSpecifications());
         target.setForRent(BooleanUtils.toBoolean(source.getForRent()));
         target.setShortDescription(source.getShortDescription());
         target.setRentalVideosLink(
