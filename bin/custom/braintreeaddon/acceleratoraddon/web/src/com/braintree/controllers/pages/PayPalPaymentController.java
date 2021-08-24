@@ -79,6 +79,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String DEVICE_DATA = "device_data";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
+	private static final int DECIMAL_PRECISION = 2;
 
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -319,7 +320,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
 					if (null != paymentInfo) {
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(payBillAmount).setScale(2, RoundingMode.HALF_EVEN), true, paymentInfo);
+								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
 					}
 				}
 			} catch (final Exception exception) {

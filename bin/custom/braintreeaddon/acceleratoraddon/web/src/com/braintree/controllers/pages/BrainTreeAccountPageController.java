@@ -79,6 +79,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
+	private static final int DECIMAL_PRECISION = 2;
 
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -437,8 +438,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
      * @return boolean
      *
      */
-	private boolean payBillSuccess(final Model model, String paymentInfoId, String paymentMethodNonce,
-			double billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
+	private boolean payBillSuccess(final Model model, String paymentInfoId, final String paymentMethodNonce,
+			final double billPayTotal, final String poNumber, String poNotes, final AbstractOrderModel order) {
 		boolean isSuccess = false;
 		if (null != order && StringUtils.isNotBlank(poNumber)) {
 			isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, order.getCode());
@@ -453,7 +454,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 				isSuccess = brainTreeTransactionService
 						.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(billPayTotal).setScale(2, RoundingMode.HALF_EVEN), true, paymentInfo);
+								BigDecimal.valueOf(billPayTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
 			}
 			if (BooleanUtils.isTrue(isSuccess)) {
 				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
