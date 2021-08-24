@@ -11,6 +11,7 @@ import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.product.data.AvailabilityMessage;
@@ -37,6 +38,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateQuantityForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCartFormValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
@@ -113,6 +115,7 @@ public class CartPageController extends AbstractCartPageController
 	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	private static final String REDIRECT_QUOTE_EDIT_URL = REDIRECT_PREFIX + "/quote/%s/edit/";
 	private static final String REDIRECT_QUOTE_VIEW_URL = REDIRECT_PREFIX + "/my-account/my-quotes/%s/";
+	private static final String REDIRECT_EMPTY_CART = REDIRECT_PREFIX+"/cart/emptyCart";
 
 
 	private static final Logger LOG = Logger.getLogger(CartPageController.class);
@@ -189,6 +192,17 @@ public class CartPageController extends AbstractCartPageController
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
+		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
+					((AssistedServiceSession) getSessionService()
+							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
+				return REDIRECT_EMPTY_CART;
+			}
+		}
+		if(Objects.nonNull(cartModel)){
+		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel);
+		}
+
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -197,7 +211,16 @@ public class CartPageController extends AbstractCartPageController
 				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
 			}
 		}
-		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		if(Objects.nonNull(cartModel) && BooleanUtils.isTrue(isCartForReplacementOrder(cartModel))){
+			cartModel.setCalculated(Boolean.TRUE);
+			model.addAttribute("isReplacementOrderCart" , true);
+		}
+		else {
+			if(null != getSessionService().getAttribute(BlControllerConstants.RETURN_REQUEST)) {
+				getSessionService().removeAttribute(BlControllerConstants.RETURN_REQUEST);
+			}
+			getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		}
 		if(StringUtils.isNotEmpty(removedEntries)) {
 			GlobalMessages
 					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
@@ -376,6 +399,10 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.updateGiftCardPurchaseStatus(cartModel);
 				  }
+          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          {
+            blCartService.updateNewGearPurchaseStatus(cartModel);
+          }
 					//Added condition to change serial status when entry remove from cart
 					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{
@@ -906,6 +933,36 @@ public class CartPageController extends AbstractCartPageController
 	}
 	
 	/**
+	 * Update cart entry with the selected options on cart page.
+	 *
+	 * @param entryNumber the entry number
+	 * @param bloptions the bloptions
+	 * @param model the model
+	 * @param request the request
+	 * @param redirectModel the redirect model
+	 * @return the string
+	 * @throws CMSItemNotFoundException the CMS item not found exception
+	 */
+	@PostMapping(path="/updateBlOptions")
+	public String updateCartEntryBlOptions(@RequestParam("entryNumber") final long entryNumber, 
+			@RequestParam("bloptions") final String bloptions, final Model model,
+			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	{
+		try
+		{	
+			getBlCartFacade().updateCartEntrySelectedOption(entryNumber, bloptions);
+			return getCartPageRedirectUrl();
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
+					"Error while updating Damage Waiver with the entry number : {}", entryNumber);
+			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.waiver.fail");
+		}
+		return prepareCartUrl(model);
+	}
+	
+	/**
 	 * Update product quantity based on the quantity selected from rental add to cart popup.
 	 *
 	 * @param entryNumber
@@ -1067,6 +1124,11 @@ public class CartPageController extends AbstractCartPageController
 	private String getFormattedDate(final Date date)
 	{
 		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
+	}
+
+	private boolean isCartForReplacementOrder(final CartModel cartModel) {
+		return  BlReplaceMentOrderUtils.isReplaceMentOrder() &&
+				Objects.nonNull(cartModel.getReturnRequestForOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 	}
 
 	/**

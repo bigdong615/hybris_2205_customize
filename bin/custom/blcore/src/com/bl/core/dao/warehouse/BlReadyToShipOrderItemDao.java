@@ -13,13 +13,21 @@ import java.util.List;
 public interface BlReadyToShipOrderItemDao {
 
   /**
-   * Get ReadyToShipOrderItem
+   * Get ReadyToShipOrderItem for date and warehouse
    *
    * @param shipDate
    * @param warehouse
    * @return ReadyToShipOrderItemModels
    */
-  List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDate(final Date shipDate, final
+  List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDateAndWarehouse(final Date shipDate, final
   WarehouseModel warehouse);
 
+  /**
+   * Get ReadyToShipOrderItems for warehouse
+   *
+   * @param warehouse
+   * @return ReadyToShipOrderItemModels
+   */
+  List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForWarehouse(
+      final WarehouseModel warehouse);
 }

@@ -75,9 +75,9 @@
              <div class="d-none d-lg-block">
                 <p>
                    <a href="${baseUrl}/orders"
-                          <c:if test="${fn:startsWith(pageTitle, 'Order History')}">
-                              <c:out value="class=active"/>
-                          </c:if>>
+                   <c:if test="${fn:startsWith(pageTitle, 'Order History') || extendOrderData ne null || cmsPage.uid eq 'pay-bill-success'}">
+                     <c:out value="class=active"/>
+                 </c:if>>
                              <spring:theme code= "text.orders"/>
                    </a>
                 </p>

@@ -20,8 +20,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -44,6 +44,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	{
 		super.populate(source, target);
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
+		target.setTotalOptionsCost(createPrice(source, source.getTotalOptionsCost()));
 //		For now removing I am or someone else option for pick up
 //		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
 //		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
@@ -113,6 +114,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
+		target.setIsNewGearOrder(BooleanUtils.isTrue(source.getIsNewGearOrder()));
 	}
 
 	/**

@@ -54,6 +54,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+
 
 
 
@@ -61,7 +65,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
-	private static final String PAY_BILL2 = ":payBill";
 	private static final String PAY_BILL = "/payBill";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
@@ -70,7 +73,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String REDIRECT_TO_ADD_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/add-payment-method";
 	private static final String REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/edit-payment-method";
 
-	// CMS Pagesb
+	// CMS Page
 	private static final String ADD_EDIT_PAYMENT_METHOD_CMS_PAGE = "add-edit-payment-method";
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
@@ -99,6 +102,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	@Resource(name = "blOrderFacade")
 	private BlOrderFacade blOrderFacade;
+
+	@Resource(name = "priceDataFactory")
+	private PriceDataFactory priceDataFactory;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -154,7 +160,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
                                     @RequestParam(value = "billingAddressId") final String billingAddressId,
                                     @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
                                     @RequestParam(value = "default_Card") final String defaultCard,
-                                    final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+									final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		try
 		{
@@ -186,7 +192,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 			return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
 		}
-
+		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+				getLocalizedString("text.account.profile.paymentCart.editPaymentMethod.success"));
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
@@ -366,6 +373,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		storeCmsPageInModel(model, payBillPage);
 		setUpMetaDataForContentPage(model, payBillPage);
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.setPayBillAttributes(orderDetails);
 		model.addAttribute("orderData", orderDetails);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setupAdditionalFields(model);
@@ -387,9 +395,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		String poNotes = request.getParameter("extendPoNotes");
 
 		boolean isSuccess = false;
+		AbstractOrderModel order = null;
 		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
 				StringUtils.isNotBlank(paymentMethodNonce) ) {
-			final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
 				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
 						poNotes, order);
@@ -398,7 +407,11 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+		    PriceData payBillTotal  = convertDoubleToPriceData(Double.parseDouble(billPayTotal), order);
+			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 			model.addAttribute("orderData", orderDetails);
+			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 			storeCmsPageInModel(model, payBillSuccessPage);
@@ -554,5 +567,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 */
 	private String getRedirectionUrl(final String orderCode) {
 		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.PAY_BILL;
+	}
+
+	/**
+	 * This method converts double to price data
+	 */
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
+		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }

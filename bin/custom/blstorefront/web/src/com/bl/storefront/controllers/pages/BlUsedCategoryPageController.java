@@ -1,6 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
 
+import com.bl.core.constants.BlCoreConstants;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class BlUsedCategoryPageController extends AbstractBlCategoryPageControll
     final Map<Object, Object> requestAndResponseMap = new HashMap<>();
     requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
     requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
+    model.addAttribute(BlControllerConstants.IS_NEW_GEAR_CATEGORY ,request.getRequestURL().toString().contains(
+        BlCoreConstants.NEW_GEAR));
     return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, requestAndResponseMap);
   }
 

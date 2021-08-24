@@ -36,7 +36,7 @@ public class BraintreeBackofficePartialRefundFacadeImpl implements BraintreeBack
         }
         LOG.info("isPartialRefundPossible, order.getTotalPrice: " + order.getTotalPrice());
 
-        modelService.refresh(order);
+       // modelService.refresh(order);
 
         BigDecimal capturedAmount = BigDecimal.ZERO;
         for (PaymentTransactionModel paymentTransaction : order.getPaymentTransactions()) {

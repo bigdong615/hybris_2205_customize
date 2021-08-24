@@ -28,6 +28,8 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String USD = "USD";
 	public static final String RENTAL_TAX_CODE = "PRO60298";
 	public static final String SALES_TAX_CODE = "PH403706";
+	public static final String LATE_FEE_TAX_CODE = "OF040005";
+	public static final String REPAIR_TAX_CODE = "SR060200";
 	public static final String SHIPPING_SALES_TAX_CODE = "FR020100";
 	public static final String DISCOUNT_TAX_CODE = "OD010000";
 	public static final String ORIGIN  = "Origin";
@@ -37,5 +39,6 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String SHIPPING = "shipping";
 	public static final int QTY  = 1;
 	public static final String ISO_CODE = "tax.calcualtion.country.isocode";
+	public static final String CAPTURE = "Capture";
 
 }

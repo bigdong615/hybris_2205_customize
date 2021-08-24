@@ -6,11 +6,13 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
  <div id="productList" class="col-lg-9">
          <div class="row mb-2">
+         <c:if test="${isNewGearCategory ne true}">
         <nav:blFacetNavAppliedFilters pageData="${searchPageData}"/>
+        </c:if>
          </div>
             <div id="matchingProducts" class="row">
                <c:forEach items="${searchPageData.results}" var="product" varStatus="status">
-               <c:if test="${product.productType ne 'GIFTCARD'}">
+                  <c:if test="${product.productType ne 'GIFTCARD'}">
                   <product:productListerGridItem product="${product}" />
                   </c:if>
                </c:forEach>
