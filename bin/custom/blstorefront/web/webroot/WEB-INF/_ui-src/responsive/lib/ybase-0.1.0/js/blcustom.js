@@ -1081,7 +1081,21 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+$('.remove-doc').on("click",function(e) {
+	
+	e.preventDefault();
+var clickedForm = this.getAttribute("data-code");
+$("#clickedForm").val(clickedForm);
+});
 
+//remove document submit
+$('#remove-doc-submit-button').on("click",function(e) {
+
+	e.preventDefault();
+    var clickedForm = $("#clickedForm").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
 function hideShorting(){ 
     $('.container').on('click', function(){  
 	   $(".product-sort").find(".bootstrap-select").removeClass('open')

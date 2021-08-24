@@ -48,7 +48,7 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     // convert String format time to LocalDate type
     final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
         .toLocalDate();
-    final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(1);
 
     final long daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
     BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,

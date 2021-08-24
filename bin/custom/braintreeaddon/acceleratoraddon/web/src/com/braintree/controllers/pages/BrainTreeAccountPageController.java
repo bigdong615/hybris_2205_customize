@@ -54,6 +54,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+
 
 
 
@@ -98,6 +102,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	@Resource(name = "blOrderFacade")
 	private BlOrderFacade blOrderFacade;
+
+	@Resource(name = "priceDataFactory")
+	private PriceDataFactory priceDataFactory;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -400,6 +407,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+		    PriceData payBillTotal  = convertDoubleToPriceData(Double.parseDouble(billPayTotal), order);
+			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 			model.addAttribute("orderData", orderDetails);
 			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
@@ -557,5 +567,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 */
 	private String getRedirectionUrl(final String orderCode) {
 		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.PAY_BILL;
+	}
+
+	/**
+	 * This method converts double to price data
+	 */
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
+		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }

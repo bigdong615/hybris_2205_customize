@@ -16,4 +16,12 @@ public interface BlVerificationDocumentService {
    * @param document
    */
   void uploadVerificationDocument(final CustomerModel customerModel, final VerificationDocumentMediaModel verificationDocumentMediaModel, final MultipartFile document);
+
+  /**
+   * Remove Verification Document
+   * @param code
+   * @return VerificationDocumentMedia
+   */
+  VerificationDocumentMediaModel removeVerificationDocument(final String code);
+
 }
