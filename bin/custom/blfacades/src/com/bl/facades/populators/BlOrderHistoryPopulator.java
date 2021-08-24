@@ -5,23 +5,27 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
-import com.google.common.util.concurrent.AtomicDouble;
-import de.hybris.platform.commercefacades.product.data.PriceData;
 
 
 /**
@@ -100,6 +104,13 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
+	  target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source , target) : setUsedOrderStatus(source));
+
+    if (null != source.getReturnRequestForOrder() && BooleanUtils.isTrue(source.getIsCartUsedForReplacementOrder())) {
+      target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
+      target.setIsReplacementOrder(Boolean.TRUE);
+    }
+
   }
 
   /**
@@ -162,6 +173,63 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
     return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
+  }
+
+
+  private  String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel , final OrderHistoryData orderHistoryData) {
+
+    AtomicReference<String> orderStatus = new AtomicReference<>();
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode())) {
+      orderStatus.set("Received");
+    }
+    if(BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse()) && abstractOrderModel.getStatus().getCode().equalsIgnoreCase(
+        OrderStatus.UNBOXED.getCode())) {
+      orderStatus.set("Returned");
+    }
+    if (BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse())) {
+      abstractOrderModel.getConsignments().forEach(
+          consignmentModel -> consignmentModel.getConsignmentEntries()
+              .forEach(consignmentEntryModel -> {
+                consignmentEntryModel.getBillingCharges()
+                    .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                      if (BooleanUtils.isFalse(billing.isBillPaid())) {
+                        orderStatus.set("Completed");
+                      } else if (BooleanUtils.isTrue(billing.isBillPaid())) {
+                        orderStatus.set("InComplete");
+                      }
+                    }));
+              }));
+    }
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())) {
+      orderStatus.set("Canceled");
+    }
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.LATE.getCode())){
+      orderStatus.set("Late");
+    }
+
+
+    return orderStatus.get();
+  }
+
+
+  private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
+    String orderStatus = StringUtils.EMPTY;
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode())) {
+      orderStatus =  "Sold";
+    }
+
+
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(abstractOrderModel.getDate());
+    calendar.add(Calendar.DAY_OF_MONTH ,30);
+    Date addedDate = calendar.getTime();
+     if(DateUtils.isSameDay(addedDate , new Date()) || new Date().after(addedDate)){
+       orderStatus =  "Completed";
+    }
+    return orderStatus;
   }
 
 }

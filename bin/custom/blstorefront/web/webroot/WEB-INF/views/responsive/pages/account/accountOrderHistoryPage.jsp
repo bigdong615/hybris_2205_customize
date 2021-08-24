@@ -44,7 +44,7 @@
 									code="order.gift.card.myaccount.review.page.gift.certificate" />
 							</p>
 						</div>
-						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end one">
 							<p class="my-2">
 								<spring:theme code="order.gift.card.myaccount.order.completed" />
 							</p>
@@ -97,13 +97,13 @@
                                        </c:forEach>
                                       </p>
                      						</div>
-                                 <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+                                 <div class="col-6 col-md-3 offset-md-1 text-start text-md-end two">
                                   <c:choose>
                                     <c:when test="${order.newGearOrder eq true}">
                                       <p class="my-2"> ${order.status.code}</p>
                                     </c:when>
                                     <c:otherwise>
-                                      <p class="my-2"><spring:theme code="text.myaccount.order.completed" /></p>
+                                               <p class="my-2">${order.orderStatus}</p>
                                     </c:otherwise>
                                   </c:choose>
                                  </div>
@@ -135,15 +135,18 @@
                                            </p>
                                 </c:if>
                 						</div>
-                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
+                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end three">
+                						  <c:choose>
+
+                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
-                					  </c:if>
-                					 <!-- <c:if test="${order.isRentalActive eq false}">
-                                <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
-                             </c:if>-->
+                					  </c:when>
+                           <c:otherwise>
+                					   <p class="my-2">${order.orderStatus}</p>
+                					 </c:otherwise>
+                					   </c:choose>
                             </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">
@@ -170,11 +173,19 @@
                 								<p class="body14">
                 									<c:if test="${order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total"/></c:if>
                 									<c:if test="${!order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total.cost"/></c:if>
-                									<br><spring:theme code="text.myaccount.order"/> </p>
+                									<br><spring:theme code="text.myaccount.order"/>
+                									 <c:if test="${order.isReplacementOrder eq true}">
+                                       <spring:theme code="text.myaccount.order.replacementFor"/>
+                                   </c:if>
+                                </p>
                 							</div>
                 							<div class="col-8 col-md-10">
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
-                									<br> ${fn:escapeXml(order.code)}</p>
+                									<br> ${fn:escapeXml(order.code)}
+                									 <c:if test="${order.isReplacementOrder eq true}">
+                                        <br> ${order.replacementFor}
+                                   </c:if>
+                									</p>
                 							</div>
                 							<c:url value="/my-account/${order.code}/payBill" var="payBillAction" />
                 						  
@@ -188,7 +199,9 @@
                 							<c:otherwise>
                 							      
                 							</c:otherwise>	
-                							</c:choose>	
+                							</c:choose>
+
+
                 						</div>
                 					</div>
                 					</c:otherwise>
