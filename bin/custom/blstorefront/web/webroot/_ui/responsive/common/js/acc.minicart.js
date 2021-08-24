@@ -38,7 +38,7 @@ ACC.minicart = {
 				var $numberItem = $("<span>").addClass("nav-items-total").text(jsonData.miniCartCount).append($cartItems);
 				$(".js-mini-cart-link .js-mini-cart-count").empty();
 				$(".js-mini-cart-link .js-mini-cart-count").append($numberItem);
-				$(".js-mini-cart-link .js-mini-cart-price").text(jsonData.miniCartPrice);	
+				$(".js-mini-cart-link .js-mini-cart-price").text(jsonData.miniCartPrice);
 			}
 		});
 	}

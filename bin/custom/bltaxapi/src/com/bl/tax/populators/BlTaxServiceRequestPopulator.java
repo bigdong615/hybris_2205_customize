@@ -1,6 +1,7 @@
 package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -16,12 +17,15 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -62,7 +66,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
-    setShippingAndDiscountLineForRequest(taxRequest , abstractOrder);
+    if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
+      setShippingAndDiscountLineForRequest(taxRequest, abstractOrder);
+    }
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
   }
 
@@ -72,23 +78,43 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * @return  List<TaxLine>
    */
   private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder) {
+
     final List<TaxLine> taxLines = new ArrayList<>();
-    for (final AbstractOrderEntryModel entry : abstractOrder.getEntries())
-    {
-      final TaxLine taxLine = new TaxLine();
-      taxLine.setQuantity(entry.getQuantity().intValue());
-      taxLine.setNumber(entry.getEntryNumber());
-      taxLine.setItemCode(entry.getProduct().getCode());
-      Double value = 0.0;
-      if(BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
-         value = entry.getGearGuardProFullWaiverPrice();
-      } else if(BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
-        value = entry.getGearGuardWaiverPrice();
+    if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
+
+      for (final AbstractOrderEntryModel entry : abstractOrder.getEntries()) {
+        final TaxLine taxLine = new TaxLine();
+        taxLine.setQuantity(entry.getQuantity().intValue());
+        taxLine.setNumber(entry.getEntryNumber());
+        taxLine.setItemCode(entry.getProduct().getCode());
+        Double value = 0.0;
+        if (BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
+          value = entry.getGearGuardProFullWaiverPrice();
+        } else if (BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
+          value = entry.getGearGuardWaiverPrice();
+        }
+        taxLine.setAmount(entry.getTotalPrice() + value);
+        taxLine.setDescription(entry.getInfo());
+        taxLine.setTaxCode(setProductTaxCode(entry));
+        taxLines.add(taxLine);
       }
-      taxLine.setAmount(entry.getTotalPrice() + value);
-      taxLine.setDescription(entry.getInfo());
-      taxLine.setTaxCode(setProductTaxCode(entry));
-      taxLines.add(taxLine);
+    } else {
+      abstractOrder.getConsignments()
+              .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+                      .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                        if (BooleanUtils.isFalse(billing.isBillPaid())
+                            && !(("MISSING_CHARGE").equals(billing.getBillChargeType().getCode()))) {
+                          final TaxLine taxLine = new TaxLine();
+                          taxLine.setQuantity(1);
+                          taxLine.setNumber(0 + taxLines.size());
+                          taxLine.setItemCode(serialCode);
+                          taxLine.setAmount(billing.getChargedAmount().doubleValue());
+                          taxLine.setDescription(StringUtils.EMPTY);
+                          taxLine.setTaxCode(setPayBillTaxCode(billing.getBillChargeType()));
+                          taxLines.add(taxLine);
+                        }
+                      }))));
+
     }
     return taxLines;
   }
@@ -151,6 +177,25 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
 
   /**
+   * To set product tax code as per unpaid bill charge
+   */
+
+  private String setPayBillTaxCode(final ItemBillingChargeTypeEnum billChargeType)
+  {
+    switch (billChargeType.getCode())
+    {
+      case "LATE_CHARGE":
+        return BltaxapiConstants.LATE_FEE_TAX_CODE;
+
+      case "REPAIR_CHARGE":
+        return BltaxapiConstants.REPAIR_TAX_CODE;
+
+      default:
+        return null;
+    }
+  }
+
+  /**
    * To set orderDate to request
    */
   private void setOrderDateToRequest(final TaxRequestData taxRequest) {
@@ -162,7 +207,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * Validate and set tax excemption details to request
    */
   private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
-        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt())) {
+        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt()) && isTaxExemptValid(abstractOrder)) {
            String addressState = BltaxapiConstants.EMPTY_STRING;
           if(null != abstractOrder.getDeliveryAddress().getRegion()) {
             addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
@@ -231,6 +276,30 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    */
   private boolean isTaxExemptDateValid(final AbstractOrderModel abstractOrder , final Date endDay) {
     return endDay.before(abstractOrder.getUser().getTaxExemptExpiry()) || DateUtils.isSameDay(abstractOrder.getUser().getTaxExemptExpiry() ,endDay);
+  }
+
+
+  /**
+   * This method created to check whether the payment is captured
+   */
+
+  private boolean isTaxExemptValid(final AbstractOrderModel abstractOrderModel) {
+
+    if(CollectionUtils.isEmpty(abstractOrderModel.getPaymentTransactions())) {
+      return true;
+    }
+    else {
+      for (final PaymentTransactionModel paymentTransactionModel : abstractOrderModel
+          .getPaymentTransactions()) {
+        for(final PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries()) {
+          if(paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(BltaxapiConstants.CAPTURE)){
+            return false;
+          }
+        }
+
+      }
+    }
+    return true;
   }
 
   public BlDatePickerService getBlDatePickerService() {

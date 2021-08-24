@@ -4,8 +4,11 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cng="http://www.hybris.com/cockpitng/spring"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd">
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.hybris.com/cockpitng/spring
+           http://www.hybris.com/cockpitng/spring/cng-spring.xsd">
 
 	<bean id="blbackofficeLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator" scope="singleton" init-method="init" lazy-init="false">
   		<property name="location" value="/blbackoffice-backoffice-labels/"/>
@@ -41,8 +44,7 @@
 	<alias name="blDefaultEditorAreaLogicHandler" alias="editorAreaLogicHandler"/>
 	<bean id="blDefaultEditorAreaLogicHandler"
 		class="com.bl.backoffice.wizards.handler.BlDefaultEditorAreaLogicHandler" parent="defaultEditorAreaLogicHandler">
-		<property name="calculationService" ref="calculationService"/>
-		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
+		<property name="defaultBlCalculationService" ref="calculationService"/>
 	</bean>
 
 	<!--To render the order-->
@@ -66,5 +68,25 @@
 		<property name="notificationService" ref="notificationService"/>
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
+
+	<alias name="defaultBlExceptionTranslationService" alias="exceptionTranslationService"/>
+	<bean id="defaultBlExceptionTranslationService"
+		class="com.bl.blbackoffice.core.services.DefaultBlExceptionTranslationService" parent="defaultExceptionTranslationService">
+		<property name="blExceptionHandlers">
+			<list/>
+		</property>
+	</bean>
+
+	<alias name="blModelSavingExceptionTranslationHandler" alias="blExceptionTranslationHandler"/>
+	<bean id="blModelSavingExceptionTranslationHandler" class="com.bl.blbackoffice.services.handlers.BlModelSavingExceptionTranslationHandler"/>
+
+	<alias name="defaultBlBackofficeExceptionTranslationStrategiesExtender"
+		alias="blBackofficeExceptionTranslationStrategiesExtender"/>
+	<cng:list-extender id="defaultBlBackofficeExceptionTranslationStrategiesExtender" property="blExceptionHandlers"
+		bean="exceptionTranslationService">
+		<cng:add value-type="com.hybris.cockpitng.service.ExceptionTranslationHandler">
+			<ref bean="blExceptionTranslationHandler"/>
+		</cng:add>
+	</cng:list-extender>
 
 </beans>

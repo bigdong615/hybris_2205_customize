@@ -85,4 +85,10 @@ public interface BlOrderFacade extends OrderFacade {
    */
   boolean savePoPaymentForPayBillOrder(final String poNumber , final String poNotes , final String orderCode);
 
+  /**
+   * It populated all the fields needed for bill pay
+   * @param target
+   */
+  public void setPayBillAttributes(final OrderData target);
+
 }

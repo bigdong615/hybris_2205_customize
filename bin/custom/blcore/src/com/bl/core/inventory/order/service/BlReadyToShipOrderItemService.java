@@ -2,7 +2,6 @@ package com.bl.core.inventory.order.service;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,12 +21,10 @@ public interface BlReadyToShipOrderItemService {
       final Integer membersCount);
 
   /**
-   * This method will remove all  ReadyToShipOrderItems for specified shipdate and warehouse.
+   * This method will remove all  ReadyToShipOrderItems for specified warehouse.
    *
-   * @param shipDate  the shipDate
    * @param warehouse the warehouse
    */
-  void removeReadyToShipOrderItemsForDateAndWareshouse(final Date shipDate, final
-  WarehouseModel warehouse);
+  void removeReadyToShipOrderItemsForWarehouse(final WarehouseModel warehouse);
 
 }

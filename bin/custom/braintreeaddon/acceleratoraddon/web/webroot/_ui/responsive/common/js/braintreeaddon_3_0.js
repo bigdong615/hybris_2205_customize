@@ -1350,10 +1350,11 @@ $("#submit_silentOrderPostForm").on("click",function(e) {
 		$("#cvv").addClass("crs-error-field");
 		$('.page-loader-new-layout').hide();
 		
-	}else{
+	}
+	if(expMonth != "" && expYear != "" && cvv !="" ){
 	       var expirationDate = createHiddenParameter("expirationDate", (expMonth.concat('/', expYear)));
 	       var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
-           savedCardForm.append($(expirationDate));
+	       savedCardForm.append($(expirationDate));
            savedCardForm.append($(defaultCard));
            savedCardForm.submit();
 	    }

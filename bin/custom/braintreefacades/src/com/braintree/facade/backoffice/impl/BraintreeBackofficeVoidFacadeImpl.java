@@ -56,7 +56,7 @@ public class BraintreeBackofficeVoidFacadeImpl implements BraintreeBackofficeVoi
         }
         LOG.info("isVoidPossible, order.getTotalPrice: " + order.getTotalPrice());
 
-        modelService.refresh(order);
+        //modelService.refresh(order);
         boolean isVoidPossible = false;
         Boolean settlementConfigParameter = brainTreeConfigService.getSettlementConfigParameter();
 

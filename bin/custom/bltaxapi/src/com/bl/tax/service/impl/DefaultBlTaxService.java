@@ -26,6 +26,8 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
   private Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator;
   private Populator<ResponseEntity<SERVICERESPONSE> ,ResponseData> blResponseDetailsAndLoggingPopulator;
 
+  private Populator<SERVICERESPONSE, RESPONSE> blPayBillTaxResponsePopulator;
+
   private String servicePathUrl;
   private String userName;
   private String password;
@@ -141,5 +143,13 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
     this.blResponseDetailsAndLoggingPopulator = blResponseDetailsAndLoggingPopulator;
   }
 
+  public Populator<SERVICERESPONSE, RESPONSE> getBlPayBillTaxResponsePopulator() {
+    return blPayBillTaxResponsePopulator;
+  }
+
+  public void setBlPayBillTaxResponsePopulator(
+      Populator<SERVICERESPONSE, RESPONSE> blPayBillTaxResponsePopulator) {
+    this.blPayBillTaxResponsePopulator = blPayBillTaxResponsePopulator;
+  }
 
 }
