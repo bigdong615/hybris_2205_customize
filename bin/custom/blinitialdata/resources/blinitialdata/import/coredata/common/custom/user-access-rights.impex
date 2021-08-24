@@ -41,14 +41,14 @@ INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
 
 #BL-950 Employee creation of inventory team for the PCM Backoffice
 INSERT_UPDATE BackofficeRole;UID[unique=true]        ;groups(uid)[mode=append]               ;locName               ;name                 ;backOfficeLoginDisabled ;authorities
-                            ;pcminventorymanagergroup;employeegroup,wfl_productManagementGroup;PCM Inventory Manager;PCM Inventory Manager;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
+                            ;pcminventorymanagergroup;employeegroup;PCM Inventory Manager;PCM Inventory Manager;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
 
 INSERT_UPDATE Employee;UID[unique=true]  ;name                    ;groups(uid)                           ;description                              ;password
                       ;blinventorymanager;Bl PCM Inventory Manager;employeegroup,pcminventorymanagergroup;Backoffice BL PCM Inventory Manager User has access to the PCM Backoffice Cockpit.;1234
 
 #BL-950 Employee creation of Buyer team for the PCM Backoffice
 INSERT_UPDATE BackofficeRole;UID[unique=true]     ;groups(uid)[mode=append]                ;locName           ;name              ;backOfficeLoginDisabled ;authorities
-                            ;pcmbuyermanagergroup ;employeegroup,wfl_productManagementGroup;PCM Buyer Manager ;PCM Buyer Manager ;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
+                            ;pcmbuyermanagergroup ;employeegroup;PCM Buyer Manager ;PCM Buyer Manager ;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
 
 INSERT_UPDATE Employee;UID[unique=true]  ;name                  ;groups(uid)                         ;description                              ;password
                       ;blbuyermanager    ;Bl PCM Buyer Manager  ;employeegroup,pcmbuyermanagergroup  ;Backoffice BL PCM Buyer Manager User has access to the PCM Backoffice Cockpit.;1234
@@ -236,7 +236,7 @@ INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];
 
 INSERT_UPDATE Usergroup;uid[unique=true];groups(uid)
 ;verificationdocusergroup;employeegroup,verificationdocagentrole
-
+D
 INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
   ;verificationdocusergroup;verificationdocagentrole
   
@@ -476,12 +476,6 @@ Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
 #UserGroup;productmanagergroup;cockpitgroup;;;;;;;
 BackofficeRole;pcminventorymanagergroup;cockpitgroup;;;;;;;
 
-;;;;AbstractBundleRule;+;+;+;+;+;
-;;;;BundleSelectionCriteria;+;+;+;+;+;
-;;;;BundleTemplate;+;+;+;+;+;
-;;;;BundleTemplateStatus;+;+;+;+;+;
-;;;;ChangeProductPriceBundleRule;+;+;+;+;+;
-;;;;DisableProductBundleRule;+;+;+;+;+;
 ;;;;ClassAttributeAssignment;+;+;+;+;+;
 ;;;;ClassificationClass;+;+;+;+;+;
 ;;;;ClassificationAttribute;+;+;+;+;+;
@@ -496,7 +490,61 @@ $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
 UserGroup;pcminventorymanagergroup;;;;;;;;
 
+;;;;ItemSyncTimestamp;+;;;
+;;;;SyncItemJob;+;;;
+;;;;Type;+;;;
+;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;-;-;-;-;
 ;;;;BlSerialProduct;+;+;+;+;+;
+;;;;Category;+;+;+;+;+;
+;;;;VariantType;+;+;+;+;+;
+;;;;Catalog;+;+;+;+;
+;;;;CatalogVersion;+;+;+;+;+;
+;;;;ClassificationAttributeUnit;+;;;
+;;;;ClassificationAttribute;+;;;
+;;;;ClassAttributeAssignment;+;;;
+;;;;ClassificationClass;+;;;
+;;;;ProductFeature;+;;;
+;;;;ClassificationAttributeValue;+;;;
+;;;;Media;+;+;+;+;+;
+;;;;MediaContainer;+;+;+;+;+;
+;;;;MediaFormat;+;+;+;+;+;
+;;;;MediaFolder;+;+;+;+;+;
+;;;;Vendor;+;+;+;+;+;
+;;;;StockLevel;+;+;+;+;+;
+;;;;Tax;+;+;+;+;+;
+;;;;TaxRow;+;+;+;+;+;
+;;;;PriceRow;+;+;+;+;+;
+;;;;ProductFeature;+;+;+;+;+;
+;;;;ProductReference;+;+;+;+;+;
+;;;;Warehouse;+;+;+;+;+;
+;;;;ProductTaxCode;+;+;+;+;+;
+;;;;ProductOrderLimit;+;+;+;+;+;
+;;;;Job;+;+;+;+;+;
+;;;;CronJob;+;+;+;+;+;
+;;;;JobLog;+;+;+;+;+;
+;;;;CronJobHistory;+;+;+;+;+;
+;;;;AbstractComment;+;+;+;+;+;
+;;;;Comment;+;+;+;+;+;
+;;;;Reply;+;+;+;+;+;
+;;;;Domain;+;+;+;+;+;
+;;;;Component;+;+;+;+;+;
+;;;;CommentType;+;+;+;+;+;
+;;;;CommentUserSetting;+;+;+;+;+;
+;;;;CommentMetadata;+;+;+;+;+;
+;;;;UserGroup;+;;;;;
+;;;;Workflow;+;;+;;;
+;;;;Keyword;+;;;;;
+;;;;Unit;+;;;;;
+;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
+
+$END_USERRIGHTS;;;;;
 
 $END_USERRIGHTS;;;;;
 
@@ -504,32 +552,62 @@ $END_USERRIGHTS;;;;;
 #BL-950 Access rights for BL Buyer user group for the PCM Backoffice Perspective.
 $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
-#UserGroup;productmanagergroup;cockpitgroup;;;;;;;
-BackofficeRole;pcmbuyermanagergroup;cockpitgroup;;;;;;;
-
-;;;;AbstractBundleRule;+;+;+;+;+;
-;;;;BundleSelectionCriteria;+;+;+;+;+;
-;;;;BundleTemplate;+;+;+;+;+;
-;;;;BundleTemplateStatus;+;+;+;+;+;
-;;;;ChangeProductPriceBundleRule;+;+;+;+;+;
-;;;;DisableProductBundleRule;+;+;+;+;+;
-;;;;ClassAttributeAssignment;+;+;+;+;+;
-;;;;ClassificationClass;+;+;+;+;+;
-;;;;ClassificationAttribute;+;+;+;+;+;
-;;;;ClassificationAttributeTypeEnum;+;+;+;+;+;
-;;;;ClassificationAttributeVisibilityEnum;+;+;+;+;+;
-;;;;ClassificationAttributeValueList;+;+;+;+;+;
-;;;;ClassificationAttributeUnit;+;+;+;+;+;
-
-$END_USERRIGHTS;;;;;
-
-
-$START_USERRIGHTS;;;;;;;;;
-Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
 UserGroup;pcmbuyermanagergroup;;;;;;;;
 
 # Access Rights for Products & Catalog for Backoffice Product Manager ;;;;;;;;;
+;;;;ItemSyncTimestamp;+;;;
+;;;;SyncItemJob;+;;;
+;;;;Type;+;;;
+;;;;Product;+;+;+;+;+;
 ;;;;BlProduct;+;+;+;+;+;
 ;;;;BlSerialProduct;+;+;+;+;+;
+;;;;Category;+;+;+;+;+;
+;;;;VariantType;+;+;+;+;+;
+;;;;Catalog;+;+;+;+;
+;;;;CatalogVersion;+;+;+;+;+;
+;;;;ClassificationAttributeUnit;+;;;
+;;;;ClassificationAttribute;+;;;
+;;;;ClassAttributeAssignment;+;;;
+;;;;ClassificationClass;+;;;
+;;;;ProductFeature;+;;;
+;;;;ClassificationAttributeValue;+;;;
+;;;;Media;+;+;+;+;+;
+;;;;MediaContainer;+;+;+;+;+;
+;;;;MediaFormat;+;+;+;+;+;
+;;;;MediaFolder;+;+;+;+;+;
+;;;;Vendor;+;+;+;+;+;
+;;;;StockLevel;+;+;+;+;+;
+;;;;Tax;+;+;+;+;+;
+;;;;TaxRow;+;+;+;+;+;
+;;;;PriceRow;+;+;+;+;+;
+;;;;ProductFeature;+;+;+;+;+;
+;;;;ProductReference;+;+;+;+;+;
+;;;;Warehouse;+;+;+;+;+;
+;;;;ProductTaxCode;+;+;+;+;+;
+;;;;ProductOrderLimit;+;+;+;+;+;
+;;;;Job;+;+;+;+;+;
+;;;;CronJob;+;+;+;+;+;
+;;;;JobLog;+;+;+;+;+;
+;;;;CronJobHistory;+;+;+;+;+;
+;;;;AbstractComment;+;+;+;+;+;
+;;;;Comment;+;+;+;+;+;
+;;;;Reply;+;+;+;+;+;
+;;;;Domain;+;+;+;+;+;
+;;;;Component;+;+;+;+;+;
+;;;;CommentType;+;+;+;+;+;
+;;;;CommentUserSetting;+;+;+;+;+;
+;;;;CommentMetadata;+;+;+;+;+;
+;;;;UserGroup;+;;;;;
+;;;;Workflow;+;;+;;;
+;;;;Keyword;+;;;;;
+;;;;Unit;+;;;;;
+;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
 
+$END_USERRIGHTS;;;;;
 $END_USERRIGHTS;;;;;
