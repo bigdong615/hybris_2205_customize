@@ -57,6 +57,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
+import java.math.RoundingMode;
 
 
 
@@ -395,12 +396,13 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		String poNotes = request.getParameter("extendPoNotes");
 
 		boolean isSuccess = false;
+		double payBillAmount = Double.parseDouble(billPayTotal);
 		AbstractOrderModel order = null;
 		if ((StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
 				StringUtils.isNotBlank(paymentMethodNonce)) || StringUtils.isNotBlank(poNumber) ) {
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
-				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
+				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, payBillAmount, poNumber,
 						poNotes, order);
 
 		}
@@ -408,7 +410,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
-		    PriceData payBillTotal  = convertDoubleToPriceData(Double.parseDouble(billPayTotal), order);
+		    PriceData payBillTotal  = convertDoubleToPriceData(payBillAmount, order);
 			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 			model.addAttribute("orderData", orderDetails);
 			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
@@ -436,7 +438,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
      *
      */
 	private boolean payBillSuccess(final Model model, String paymentInfoId, String paymentMethodNonce,
-			String billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
+			double billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
 		boolean isSuccess = false;
 		if (null != order && StringUtils.isNotBlank(poNumber)) {
 			isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, order.getCode());
@@ -448,9 +450,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 					.getBrainTreePaymentInfoForCode(
 							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
 			if (null != paymentInfo) {
+
 				isSuccess = brainTreeTransactionService
 						.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+								BigDecimal.valueOf(billPayTotal).setScale(2, RoundingMode.HALF_EVEN), true, paymentInfo);
 			}
 			if (BooleanUtils.isTrue(isSuccess)) {
 				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);

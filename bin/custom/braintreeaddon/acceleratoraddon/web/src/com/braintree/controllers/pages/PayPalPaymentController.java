@@ -68,7 +68,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
-
+import java.math.RoundingMode;
 
 
 @Controller
@@ -262,6 +262,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         AddressData hybrisBillingAddress = null;
         final String orderCode = request.getParameter("order_code");
         final String payBillTotal = request.getParameter("payBillTotal");
+		double payBillAmount = Double.parseDouble(payBillTotal);
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
         } catch (final IllegalArgumentException exeption) {
@@ -318,7 +319,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
 					if (null != paymentInfo) {
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(Double.parseDouble(payBillTotal)), true, paymentInfo);
+								BigDecimal.valueOf(payBillAmount).setScale(2, RoundingMode.HALF_EVEN), true, paymentInfo);
 					}
 				}
 			} catch (final Exception exception) {
@@ -328,7 +329,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			}
 			if (isSuccess) {
 				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-				PriceData billPayTotal  = convertDoubleToPriceData(Double.parseDouble(payBillTotal), order);
+				PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
 				orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
 				model.addAttribute("orderData", orderDetails);
 				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
