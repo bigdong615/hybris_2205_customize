@@ -73,7 +73,7 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
-                            <c:if test="${cartData.isNewGearOrder eq false}">
+                            <c:if test="${cartData.isNewGearOrder eq false && cartData.isRentalCart}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>

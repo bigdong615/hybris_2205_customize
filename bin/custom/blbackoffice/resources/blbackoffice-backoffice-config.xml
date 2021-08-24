@@ -1365,6 +1365,8 @@
 				<ea:section name="hmc.product.descriptions" merge-mode="append">
 					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 						qualifier="alternativeProduct"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
+						qualifier="specifications"/>
 				</ea:section>
 			</ea:tab>
 		</editorArea:editorArea>

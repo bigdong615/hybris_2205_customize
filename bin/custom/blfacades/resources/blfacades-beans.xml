@@ -47,6 +47,7 @@
 		<property name="retailGear" type="boolean"/>
 		<property name="isNewGearInStock" type="boolean"/>
 		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="specifications" type="java.lang.String"/>
   </bean>
 
 
