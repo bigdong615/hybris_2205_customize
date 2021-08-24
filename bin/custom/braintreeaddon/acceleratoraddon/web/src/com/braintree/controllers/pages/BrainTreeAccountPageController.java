@@ -396,8 +396,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 		boolean isSuccess = false;
 		AbstractOrderModel order = null;
-		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce) ) {
+		if ((StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
+				StringUtils.isNotBlank(paymentMethodNonce)) || StringUtils.isNotBlank(poNumber) ) {
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
 				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
