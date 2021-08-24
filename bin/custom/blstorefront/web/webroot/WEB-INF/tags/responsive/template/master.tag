@@ -45,6 +45,7 @@
 			<link rel="shortcut icon" type="image/x-icon" media="all" href="${originalContextPath}${favIconPath}" />
 		</c:otherwise>
 	</c:choose>
+	<%-- Tealium sync data --%>
     <tealium:sync/>
 
 	<%-- CSS Files Are Loaded First as they can be downloaded in parallel --%>
@@ -52,6 +53,8 @@
 
 	<%-- Inject any additional CSS required by the page --%>
 	<jsp:invoke fragment="pageCss"/>
+
+	<%-- Google Analytics --%>
 	<analytics:analytics/>
 	<generatedVariables:generatedVariables/>
 </head>
@@ -62,13 +65,12 @@
 
 <!-- ShareASale integration Script -->
 <analytics:shareASaleScript/>
-
+<analytics:shareASaleLeadScript/>
 <%-- Tealium Data --%>
     <tealium:tealium/>
 	<%-- Inject the page body here --%>
+
 	<jsp:doBody/>
-
-
 	<form name="accessiblityForm">
 		<input type="hidden" id="accesibility_refreshScreenReaderBufferField" name="accesibility_refreshScreenReaderBufferField" value=""/>
 	</form>
