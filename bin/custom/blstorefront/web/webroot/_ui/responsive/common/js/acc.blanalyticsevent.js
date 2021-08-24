@@ -3,6 +3,8 @@ ACC.blanalyticsevent = {
 		"bindAnalyticEvent"
 	],
 	bindAnalyticEvent: function () {
+	// calling event for tracking customer location.
+	ACC.track.trackCustomerLocation();
 		$(".js-pdplinkUrl").on("click", function () {
 			var productCode = $(this).attr("data-productCode");
 			var productName = $(this).attr("data-productName");
