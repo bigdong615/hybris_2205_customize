@@ -11,7 +11,9 @@
 <spring:url value="/my-account/uploadDocument" var="uploadDocument" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/my-account/removeDocumentEntry" var="removeDocument" />
-
+        <div class="page-loader-new-layout">
+          <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
+        </div>
 <div id="accountContent" class="col-lg-8 offset-lg-1">
 
 	<h1>
@@ -53,6 +55,7 @@
 
 			<c:forEach items="${UploadedDocument['DRIVING_LICENSE']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<c:set var="doc" value="${uploadedDocument.code}" />
 				${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
 				<%--  ${uploadedDocument.code} --%>
@@ -69,6 +72,7 @@
 					</form>
 
 				</div>
+				</c:if>
 			</c:forEach>
 		</div>
 		<!-- THIS IS THE CODE SNIPPITS -->
@@ -128,6 +132,7 @@
 
 			<c:forEach items="${UploadedDocument['UTILITY_BILL']}"
 				var="uploadedDocument">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<c:set var="doc" value="${uploadedDocument.code}" />
 				${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
 				
@@ -142,7 +147,7 @@
 						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
 					</a>
 				</form>
-
+</c:if>
 			</c:forEach>
 
 		</div>
@@ -186,6 +191,7 @@
 
 			<c:forEach items="${UploadedDocument['INSURANCE_CERTIFICATE']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
@@ -204,6 +210,7 @@
 						data-code="removeDocumentForm_INSURANCE_CERTIFICATE_${loopindex.index}">
 						Remove </a>
 				</form>
+				</c:if>
 			</c:forEach>
 
 
@@ -240,6 +247,7 @@
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT1']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
@@ -257,6 +265,7 @@
 						data-code="removeDocumentForm_EXTRA_DOCUMENT1_${loopindex.index}">
 						Remove </a>
 				</form>
+				</c:if>
 			</c:forEach>
 
 		</div>
@@ -288,6 +297,7 @@
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT2']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
@@ -305,6 +315,7 @@
 						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
 					</a>
 				</form>
+				</c:if>
 			</c:forEach>
 
 
@@ -337,6 +348,7 @@
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT3']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
@@ -352,7 +364,7 @@
 						class="lightteal remove-doc" data-bs-toggle="modal"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT3_${loopindex.index}"
 						data-bs-target="#exampleModal"> Remove </a>
-				</form>
+				</form></c:if>
 			</c:forEach>
 		</div>
 	</div>
@@ -382,6 +394,7 @@
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT4']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
@@ -398,7 +411,7 @@
 						data-code="removeDocumentForm_EXTRA_DOCUMENT4_${loopindex.index}"
 						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
 					</a>
-				</form>
+				</form></c:if>
 			</c:forEach>
 
 		</div>
@@ -429,6 +442,7 @@
 
 			<c:forEach items="${UploadedDocument['EXTRA_DOCUMENT5']}"
 				var="uploadedDocument" varStatus="loopindex">
+				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
 					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
@@ -445,7 +459,7 @@
 						data-code="removeDocumentForm_EXTRA_DOCUMENT5_${loopindex.index}"
 						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
 					</a>
-				</form>
+				</form></c:if>
 			</c:forEach>
 
 		</div>

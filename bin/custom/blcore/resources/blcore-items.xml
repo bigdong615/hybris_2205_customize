@@ -1867,6 +1867,10 @@
               <attribute type="java.util.Date" qualifier="expiryDate">
                 <persistence type="property" />
               </attribute>
+              <attribute type="java.lang.Boolean" qualifier="removedByCustomer">
+              <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <persistence type="property" />
+              </attribute>
             </attributes>
           </itemtype>
 
