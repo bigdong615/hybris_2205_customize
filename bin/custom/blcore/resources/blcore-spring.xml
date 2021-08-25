@@ -1313,5 +1313,13 @@
 		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
 		<property name="typeCode" value="BlSerialProduct"/>
 	</bean>
+
+
+	<!--Added for order history-->
+
+
+	<alias name="defaultBlCustomerAccountDao" alias="customerAccountDao"/>
+	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
+	</bean>
 	
 </beans>

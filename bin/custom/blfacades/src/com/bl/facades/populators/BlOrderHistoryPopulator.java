@@ -94,6 +94,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
    final AtomicDouble totalAmt = new AtomicDouble(0.0);
+
+    if (source.getStatus().getCode().equalsIgnoreCase(OrderStatus.INCOMPLETE.getCode())
+        && BooleanUtils.isTrue(source.isOrderReturnedToWarehouse())) {
 	 source.getConsignments()
 			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
@@ -101,15 +104,16 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
                 totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
               }
 					  }))));
+	 }
 
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
-	  target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source , target) : setUsedOrderStatus(source));
 
     if (null != source.getReturnRequestForOrder() && BooleanUtils.isTrue(source.getIsCartUsedForReplacementOrder())) {
       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
       target.setIsReplacementOrder(Boolean.TRUE);
     }
+    target.setOrderStatus(setRentalOrderStatus(source , target));
 
   }
 
@@ -231,5 +235,16 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     }
     return orderStatus;
   }
+
+  /**
+   * This method created to show order status on order history page
+   *//*
+  private String setRentalOrderStatus(final AtomicDouble atomicDouble) {
+    final AtomicReference<String> orderStatus = new AtomicReference<>();
+    if (Double.compare(atomicDouble.get(), 0.0) > 0) {
+      orderStatus.set(BlFacadesConstants.INCOMPLETE);
+    }
+    return orderStatus.get();
+  }*/
 
 }
