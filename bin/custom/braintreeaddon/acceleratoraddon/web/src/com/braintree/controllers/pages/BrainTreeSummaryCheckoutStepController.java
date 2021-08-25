@@ -206,12 +206,17 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	{
 
 		updateGiftCardPurchaseForm(request);
-		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
-		blCheckoutFacade.saveOrderNotes(orderNotes);
 		final CartModel cartModel = blCartService.getSessionCart();
+		double priceBeforeRecalculateGiftCard = cartModel.getTotalPrice();
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		double priceAfterRecalculateGiftCard = cartModel.getTotalPrice();
+		blCheckoutFacade.saveOrderNotes(orderNotes);
 		final boolean submitForSettlement =true;
 		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
+		}
+		if(Double.compare(priceBeforeRecalculateGiftCard, priceAfterRecalculateGiftCard) < 0.0) {
+			return REDIRECT_PREFIX + BraintreeaddonControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
 
 		blCheckoutFacade.updateOrderTypes();
