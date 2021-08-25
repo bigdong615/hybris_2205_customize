@@ -7,24 +7,13 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.commerceservices.customer.dao.impl.DefaultCustomerAccountDao;
-import de.hybris.platform.commerceservices.search.flexiblesearch.data.SortQueryData;
-import de.hybris.platform.commerceservices.search.pagedata.PageableData;
-import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.PK;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.c2l.CountryModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
-import de.hybris.platform.store.BaseStoreModel;
-import de.hybris.platform.util.Config;
-import java.util.Arrays;
 import java.util.Collection;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -42,27 +31,6 @@ public class BrainTreeCustomerAccountDao extends DefaultCustomerAccountDao
 			+ "} = ?customer AND {address:"
 			+ AddressModel.VISIBLEINADDRESSBOOK + "} = ?visibleInAddressBook AND {address:" + AddressModel.COUNTRY
 			+ "} IN (?deliveryCountries)";
-
-
-
-	private static final String FIND_ORDERS_BY_CUSTOMER_STORE_QUERY = "SELECT {" + OrderModel.PK + "}, {"
-			+ OrderModel.MODIFIEDTIME + "}, {" + OrderModel.CODE + "} FROM {" + OrderModel._TYPECODE + "} WHERE {" + OrderModel.USER
-			+ "} = ?customer AND {" + OrderModel.VERSIONID + "} IS NULL AND {" + OrderModel.STORE + "} = ?store "
-			+ Config.getString("commerceservices.additional.order.status.filter", "");
-
-
-	private static final String FIND_ORDERS_BY_CUSTOMER_STORE_QUERY_AND_STATUS = FIND_ORDERS_BY_CUSTOMER_STORE_QUERY + " AND {"
-		+ OrderModel.STATUS + "} IN (?statusList)";
-
-	private static final String FILTER_ORDER_STATUS = " AND {" + OrderModel.STATUS + "} NOT IN (?filterStatusList)";
-
-	private static final String SORT_ORDERS_BY_DATE = " ORDER BY {" + OrderModel.MODIFIEDTIME + "} DESC, {" + OrderModel.PK + "}";
-
-	private static final String SORT_ORDERS_BY_CODE = " ORDER BY {" + OrderModel.CODE + "},{" + OrderModel.MODIFIEDTIME
-			+ "} DESC, {" + OrderModel.PK + "}";
-
-
-
 
 	public BrainTreePaymentInfoModel findBrainTreePaymentInfoByCustomer(final CustomerModel customerModel, final String code)
 	{
@@ -146,51 +114,4 @@ public class BrainTreeCustomerAccountDao extends DefaultCustomerAccountDao
 				queryParams);
 		return result.getResult();
 	}
-
-
-	/**
-	 * To get the list of order by modified time
-	 */
-	@Override
-	public SearchPageData<OrderModel> findOrdersByCustomerAndStore(final CustomerModel customerModel, final BaseStoreModel store,
-			final OrderStatus[] status, final PageableData pageableData)
-	{
-		validateParameterNotNull(customerModel, "Customer must not be null");
-		validateParameterNotNull(store, "Store must not be null");
-
-		final Map<String, Object> queryParams = new HashMap<String, Object>();
-		queryParams.put("customer", customerModel);
-		queryParams.put("store", store);
-
-		String filterClause = StringUtils.EMPTY;
-		if (CollectionUtils.isNotEmpty(getFilterOrderStatusList()))
-		{
-			queryParams.put("filterStatusList", getFilterOrderStatusList());
-			filterClause = FILTER_ORDER_STATUS;
-		}
-
-		final List<SortQueryData> sortQueries;
-
-		if (ArrayUtils.isNotEmpty(status))
-		{
-			queryParams.put("statusList", Arrays.asList(status));
-			sortQueries = Arrays.asList(
-					createSortQueryData("byDate",
-							createQuery(FIND_ORDERS_BY_CUSTOMER_STORE_QUERY_AND_STATUS, filterClause, SORT_ORDERS_BY_DATE)),
-					createSortQueryData("byOrderNumber",
-							createQuery(FIND_ORDERS_BY_CUSTOMER_STORE_QUERY_AND_STATUS, filterClause, SORT_ORDERS_BY_CODE)));
-		}
-		else
-		{
-			sortQueries = Arrays
-					.asList(
-							createSortQueryData("byDate",
-									createQuery(FIND_ORDERS_BY_CUSTOMER_STORE_QUERY, filterClause, SORT_ORDERS_BY_DATE)),
-							createSortQueryData("byOrderNumber",
-									createQuery(FIND_ORDERS_BY_CUSTOMER_STORE_QUERY, filterClause, SORT_ORDERS_BY_CODE)));
-		}
-
-		return getPagedFlexibleSearchService().search(sortQueries, "byDate", queryParams, pageableData);
-	}
-
 }
