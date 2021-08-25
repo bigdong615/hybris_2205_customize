@@ -397,20 +397,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void validateOrderEnteredQuantityAmountReason() {
         for (final Component row : this.getOrderEntriesGridRows()) {
             if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.EIGHT);
-                final InputElement cancelQty = (InputElement) row.getChildren().get(BlloggingConstants.NINE);
+                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.NINE);
+                final InputElement cancelQty = (InputElement) row.getChildren().get(BlloggingConstants.TEN);
                 if (cancelQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO) &&
                         !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)) {
                     logErrorAndThrowException(cancelQty, BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY);
                 }
 
-                final Combobox combobox = (Combobox) row.getChildren().get(BlloggingConstants.ELEVEN);
+                final Combobox combobox = (Combobox) row.getChildren().get(BlloggingConstants.TWELVE);
                 if (combobox.getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE &&
                         !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)) {
                     logErrorAndThrowException(combobox, BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON);
                 }
 
-                this.getValidateRefundAmountMessage((InputElement) row.getChildren().get(BlloggingConstants.NINE));
+                this.getValidateRefundAmountMessage((InputElement) row.getChildren().get(BlloggingConstants.TEN));
             }
         }
     }
@@ -446,12 +446,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             modelList.forEach(entry -> {
                 if (entry.getQuantityToCancel() > this.orderCancellableEntries.get(entry.getOrderEntry())) {
                     logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(),
-                            BlloggingConstants.NINE), BlCustomCancelRefundConstants.CANCELORDER_ERROR_QTYCANCELLED_INVALID);
+                            BlloggingConstants.TEN), BlCustomCancelRefundConstants.CANCELORDER_ERROR_QTYCANCELLED_INVALID);
                 } else if (entry.getSelectedReason() != null && entry.getQuantityToCancel() == BlCustomCancelRefundConstants.ZERO_LONG) {
-                    logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.NINE),
+                    logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.TEN),
                             BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY);
                 } else if (entry.getSelectedReason() == null && entry.getQuantityToCancel() > BlCustomCancelRefundConstants.ZERO_LONG) {
-                    logErrorAndThrowException((Combobox) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.ELEVEN)
+                    logErrorAndThrowException((Combobox) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(), BlloggingConstants.TWELVE)
                             , BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON);
                 }
             });
@@ -551,15 +551,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void handleRow(final Row row) {
         final OrderEntryToCancelDto myEntry = row.getValue();
         if (!((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-            this.applyToRow(BlCustomCancelRefundConstants.ZERO, BlloggingConstants.NINE, row);
-            this.applyToRow(null, BlloggingConstants.ELEVEN, row);
+            this.applyToRow(BlCustomCancelRefundConstants.ZERO, BlloggingConstants.TEN, row);
             this.applyToRow(null, BlloggingConstants.TWELVE, row);
+            this.applyToRow(null, BlloggingConstants.THIRTEEN, row);
             myEntry.setQuantityToCancel(BlCustomCancelRefundConstants.ZERO_LONG);
             myEntry.setSelectedReason(null);
             myEntry.setCancelOrderEntryComment(null);
         } else {
-            this.applyToRow(this.globalCancelReasons.getSelectedIndex(), BlloggingConstants.ELEVEN, row);
-            this.applyToRow(this.globalCancelComment.getValue(), BlloggingConstants.TWELVE, row);
+            this.applyToRow(this.globalCancelReasons.getSelectedIndex(), BlloggingConstants.TWELVE, row);
+            this.applyToRow(this.globalCancelComment.getValue(), BlloggingConstants.THIRTEEN, row);
             final Optional<CancelReason> reason = this.matchingComboboxCancelReason(
                     this.globalCancelReasons.getSelectedItem() != null ? this.globalCancelReasons.getSelectedItem().getLabel() : null);
             myEntry.setSelectedReason(reason.orElse((CancelReason) null));
@@ -603,9 +603,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                             (a, b) -> b));
         }
         if (!this.orderCancellableEntries.isEmpty()) {
-            this.orderCancellableEntries.forEach((entry, cancellableQty) -> this.orderEntriesToCancel.add(
-                    new OrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
-                            this.determineDeliveryMode(entry))));
+            this.orderCancellableEntries.forEach((entry, cancellableQty) ->
+            {
+                entry.setRefundedAmount(blCustomCancelRefundService.getTotalRefundedAmountOnOrderEntry(
+                        blCustomCancelRefundService.getAllRefundEntriesForOrderEntry(String.valueOf(entry.getEntryNumber()),
+                                this.orderModel.getCode(), Boolean.TRUE)));
+                modelService.save(entry);
+                this.orderEntriesToCancel.add(new OrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
+                        this.determineDeliveryMode(entry)));
+            });
         }
     }
 
@@ -687,7 +693,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         int index = BlCustomCancelRefundConstants.ZERO;
         final String myReason = this.getEnumerationService()
                 .getEnumerationName(cancelReason, this.getCockpitLocaleService().getCurrentLocale());
-        for (Iterator reasonsIterator = this.cancelReasons.iterator(); reasonsIterator.hasNext(); ++index) {
+        for (final Iterator reasonsIterator = this.cancelReasons.iterator(); reasonsIterator.hasNext(); ++index) {
             final String reason = (String) reasonsIterator.next();
             if (myReason.equals(reason)) {
                 break;
@@ -718,7 +724,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param event the event
      */
     private void handleGlobalCancelComment(final Event event) {
-        this.applyToGrid(((InputEvent) event).getValue(), BlloggingConstants.ELEVEN);
+        this.applyToGrid(((InputEvent) event).getValue(), BlloggingConstants.TWELVE);
         this.getOrderEntriesGridRows().stream()
                 .filter(entry -> ((Checkbox) entry.getChildren().iterator().next()).isChecked())
                 .forEach(entry -> {
@@ -735,7 +741,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void handleGlobalCancelReason(final Event event) {
         final Optional<CancelReason> cancelReason = this.getSelectedCancelReason(event);
         if (cancelReason.isPresent()) {
-            this.applyToGrid(this.getReasonIndex(cancelReason.get()), BlloggingConstants.ELEVEN);
+            this.applyToGrid(this.getReasonIndex(cancelReason.get()), BlloggingConstants.TWELVE);
             this.getOrderEntriesGridRows().stream().filter(entry ->
                     ((Checkbox) entry.getChildren().iterator().next()).isChecked()
             ).forEach(entry -> {
@@ -786,8 +792,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             }
             this.handleRow((Row) row);
             if (this.globalCancelEntriesSelection.isChecked()) {
-                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.EIGHT);
-                this.applyToRow(Integer.parseInt(String.valueOf(cancellableQty.getRawValue())), BlloggingConstants.EIGHT, row);
+                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.NINE);
+                this.applyToRow(Integer.parseInt(String.valueOf(cancellableQty.getRawValue())), BlloggingConstants.NINE, row);
             }
         }
         if (this.globalCancelEntriesSelection.isChecked()) {
@@ -815,7 +821,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param row           the row
      */
     private void applyToRow(final Object data, final int childrenIndex, final Component row) {
-        int index = 0;
+        int index = BlInventoryScanLoggingConstants.ZERO;
         for (Component myComponent : row.getChildren()) {
             if (index == childrenIndex) {
                 setValueInRow(data, myComponent);

@@ -1,11 +1,11 @@
 .table-scroll-cancel-popup-orderEntries {
-  width: 2000px !important;
+  width:100% !important;
   overflow: scroll !important;
   height: 100% !important;
 }
 
 .z-hlayout-inner {
-  display: inline-block;
+  display: inherit !important;
   position: relative;
   vertical-align: top;
   white-space: inherit !important;
@@ -17,4 +17,9 @@
 
 .z-grid-body {
     overflow: initial !important;
+}
+
+.z-grid-header {
+    width: 100% !important;
+    display: contents !important;
 }

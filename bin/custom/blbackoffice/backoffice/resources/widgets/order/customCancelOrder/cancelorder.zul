@@ -68,45 +68,53 @@
             <grid id="orderEntries" mold="paging" sclass="table-scroll-cancel-popup-orderEntries" pageSize="5">
                 <custom-attributes org.zkoss.zul.grid.autoSort="true" />
                 <columns>
-                    <column width="30px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="40px" sclass="oms-widget-cancelorder-listbox-header">
                         <checkbox id="globalCancelEntriesSelection" class="oms-widget-cancelorder-list-container__checkbox"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header" sort="auto" sortDirection="ascending">
+                    <column width="205px" sclass="oms-widget-cancelorder-listbox-header" sort="auto" sortDirection="ascending">
                         <label value="${labels.customersupportbackoffice.cancelorder.productcode}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="210px" sclass="oms-widget-cancelorder-listbox-header" style="padding-left:5px">
                         <label value="${labels.customersupportbackoffice.cancelorder.productname}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="205px" sclass="oms-widget-cancelorder-listbox-header" style="padding-left:2px">
                         <label value="${labels.customersupportbackoffice.cancelorder.deliverymode}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="120px" sclass="oms-widget-cancelorder-listbox-header" style="padding-left:2px">
                         <label value="${labels.customersupportbackoffice.cancelorder.productprice}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.producttax}" width="100%"/>
+                    <column width="140px" sclass="oms-widget-cancelorder-listbox-header">
+                        <checkbox class="oms-widget-cancelorder-list-container__checkbox"
+                                  label="${labels.customersupportbackoffice.cancelorder.totalShippingCost}"
+                                  name="globalShipping"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
-                        <label value="${labels.customersupportbackoffice.cancelorder.productwaiver}" width="100%"/>
+                    <column width="140px" sclass="oms-widget-cancelorder-listbox-header">
+                        <checkbox class="oms-widget-cancelorder-list-container__checkbox"
+                                  label="${labels.customersupportbackoffice.cancelorder.producttax}"
+                                  name="globalTax"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
+                        <checkbox class="oms-widget-cancelorder-list-container__checkbox"
+                                  label="${labels.customersupportbackoffice.cancelorder.productwaiver}"
+                                  name="globalWaiver"/>
+                    </column>
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.refundedamount}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancellable}" width="100%"
                                class="oms-widget-cancelorder--qty-label__centered"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancelled}" width="100%"/>
                     </column>
-                    <column width="100px" sclass="oms-widget-cancelorder-listbox-header">
+                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.amount}" width="100%"/>
                     </column>
-                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <combobox id="globalCancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
-                                  readonly="true"/>
+                    <column width="180px" sclass="oms-widget-cancelorder-listbox-header">
+                        <combobox id="globalCancelReasons" placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"/>
                     </column>
-                    <column width="160px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
+                    <column width="200px" sclass="oms-widget-cancelorder-listbox-header oms-widget-cancelorder-listbox-header__comment">
                         <textbox class="oms-widget-cancelorder-listbox-header__comment" id="globalCancelComment" maxlength="255"
                                  placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}"/>
                     </column>
@@ -115,37 +123,49 @@
                     <template name="model">
                         <row style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;white-space: nowrap'
                                     : 'white-space: nowrap'}">
-                            <checkbox disabled="${each.quantityAvailableToCancel eq 0 ? true : false}" width="30px"
-                                      class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                      id="cancel_entry_${each.orderEntry.product.code}" onCheck='Clients.evalJavaScript("onEntrySelect()")'/>
-                            <label value="${each.orderEntry.product.code}" width="200px"/>
-                            <label value="${each.orderEntry.product.name}" width="200px"/>
-                            <label value="${each.deliveryModeName}" width="200px"/>
-                            <label value="${each.orderEntry.totalPrice}" width="100px"/>
-                            <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="100px"
-                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"/>
-                            <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="100px"
-                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"/>
-                            <label value="refund amount" width="100px" class="oms-widget-cancelorder--qty-label"/>
-                            <intbox value="${each.quantityAvailableToCancel}" width="80px" class="oms-widget-cancelorder--qty-label" disabled="true"/>
-                            <intbox value="${each.quantityToCancel}" width="80px" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
+                            <checkbox disabled="${each.quantityAvailableToCancel eq 0 and each.orderEntry.refundedAmount gt each.orderEntry.totalPrice ? true : false}"
+                                      width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                      name="cancel_entry_${each.orderEntry.product.code}" onCheck='Clients.evalJavaScript("onEntrySelect()")'/>
+                            <textbox value="${each.orderEntry.product.code}" width="200px" name="code_${each.orderEntry.product.code}" readonly="true"/>
+                            <textbox value="${each.orderEntry.product.name}" width="200px" name="name_${each.orderEntry.product.code}" readonly="true"/>
+                            <textbox value="${each.deliveryModeName}" width="200px" name="delivery_${each.orderEntry.product.code}" readonly="true"/>
+                            <textbox value="${each.orderEntry.totalPrice}" width="110px" name="price_${each.orderEntry.product.code}" readonly="true"/>
+                            <textbox value="${totalShippingCost.rawValue}" width="132px" name="shipping_${each.orderEntry.product.code}" readonly="true"/>
+                            <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="130px"
+                                      name="avalaraLineTax_${each.orderEntry.product.code}"
+                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"
+                                      disabled="${each.orderEntry.refundedAmount gt each.orderEntry.totalPrice ? true : false}"/>
+                            <checkbox class="oms-widget-cancelorder-list-container__checkbox" width="153px"
+                                      name="waiver_${each.orderEntry.product.code}"
+                                      label="${each.orderEntry.gearGuardWaiverSelected ? each.orderEntry.gearGuardWaiverPrice :
+                                            each.orderEntry.gearGuardProFullWaiverPrice}"
+                                      disabled="${each.orderEntry.refundedAmount gt each.orderEntry.totalPrice ? true : false}"/>
+                            <textbox value="${each.orderEntry.refundedAmount}" width="152px" class="oms-widget-cancelorder--qty-label"
+                                     name="refundedAmount_${each.orderEntry.product.code}" readonly="true"
+                                     disabled="${each.orderEntry.refundedAmount gt each.orderEntry.totalPrice ? true : false}"/>
+                            <intbox value="${each.quantityAvailableToCancel}" width="152px" class="oms-widget-cancelorder--qty-label"
+                                    disabled="true" name="quantityAvailableToCancel_${each.orderEntry.product.code}"/>
+                            <intbox value="${each.quantityToCancel}" width="152px" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
                                     style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;text-align:center;'
-                                    : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
-                            <textbox value="0" width="120px" style="text-align:center;"
+                                    : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
+                                    name="quantityToCancel_${each.orderEntry.product.code}"/>
+                            <intbox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}"
                                     constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
-                            <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="160px"
+                            <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="172px"
                                         model="${each.cancelReasonsModel}" readonly="true" sclass="oms-widget-cancelorder__template-reason"
                                         placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
                                         style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                        disabled="${each.quantityAvailableToCancel eq 0 ? true : false}">
+                                        disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
+                                        name="cancelReasonsModel_${each.orderEntry.product.code}">
                                 <template name="model">
                                     <comboitem label="${each}"/>
                                 </template>
                             </combobox>
                             <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
-                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="250px"
+                                     placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
                                      style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
+                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
+                                     name="cancelOrderEntryComment_${each.orderEntry.product.code}"/>
                         </row>
                     </template>
                 </rows>
@@ -163,17 +183,32 @@
     <html><![CDATA[
 		<script type="text/javascript">
 			function onEntrySelect() {
-                if($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]').length ==
-                    $('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:checked').length) {
-                    $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", true);
+                if($('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked")) {
+                    $('input[name*="avalaraLineTax_"]').attr('disabled','true');
+                    $('input[name*="waiver_"]').attr('disabled','true');
+                    $('input[name*="quantityToCancel_"]').attr('disabled','true');
+                    $('input[name*="amount_"]').attr('disabled','true');
+                    $('input[name*="cancelReasonsModel_"]').attr('disabled','true');
+                    $('input[name*="cancelOrderEntryComment_"]').attr('disabled','true');
+
+                    $('input[ytestid="globalShipping"]').attr('disabled','false');
+                    $('input[ytestid="globalTax"]').attr('disabled','false');
+                    $('input[ytestid="globalWaiver"]').attr('disabled','false');
+                    $('input[ytestid="globalCancelComment"]').attr('disabled','false');
+                    $('span[ytestid="globalCancelReasons"]').attr('disabled','false');
                 } else {
-                    var totalEntries = ($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:disabled').length) +
-                                        ($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:checked').length);
-                    if($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]').length == totalEntries) {
-                        $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", true);
-                    } else {
-                        $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", false);
-                    }
+                    $('input[name*="avalaraLineTax_"]').attr('disabled','false');
+                    $('input[name*="waiver_"]').attr('disabled','false');
+                    $('input[name*="quantityToCancel_"]').attr('disabled','false');
+                    $('input[name*="amount_"]').attr('disabled','false');
+                    $('input[name*="cancelReasonsModel_"]').attr('disabled','false');
+                    $('input[name*="cancelOrderEntryComment_"]').attr('disabled','false');
+
+                    $('input[ytestid="globalShipping"]').attr('disabled','true');
+                    $('input[ytestid="globalTax"]').attr('disabled','true');
+                    $('input[ytestid="globalWaiver"]').attr('disabled','true');
+                    $('input[ytestid="globalCancelComment"]').attr('disabled','true');
+                    $('span[ytestid="globalCancelReasons"]').attr('disabled','true');
                 }
             }
 		</script>
@@ -185,6 +220,13 @@
     			<script type="text/javascript">
     			    $('div[ytestid="orderEntries"]').find('table').last().find('tbody').css("display","table");
     			    $('div[ytestid="orderEntries"]').find('table').last().find('tbody').css("width","100%");
+    			    jq('.z-window-shadow').css("width", "1800px");
+
+    			    $('input[ytestid="globalShipping"]').attr('disabled','true');
+                    $('input[ytestid="globalTax"]').attr('disabled','true');
+                    $('input[ytestid="globalWaiver"]').attr('disabled','true');
+                    $('input[ytestid="globalCancelComment"]').attr('disabled','true');
+                    $('span[ytestid="globalCancelReasons"]').attr('disabled','true');
     			</script>
     		]]>
     </html>
