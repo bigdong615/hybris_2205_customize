@@ -7,6 +7,7 @@ import com.bl.core.subscription.models.ContactRequest;
 import com.bl.core.subscription.service.BlEmailSubscriptionService;
 import com.bl.facades.populators.BlEmailSubscriptionRequestPopulator;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -24,11 +25,12 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	 */
 	@Override
 	public void subscribe(final String emailId) {
-
+		if (StringUtils.isNotEmpty(emailId)) {
 		final ContactRequest contactRequest = new ContactRequest();
 		blEmailSubscriptionRequestPopulator.populate(emailId, contactRequest);
 		// call API to create contact
 		blEmailSubscriptionService.subscribe(contactRequest);
+		}
 	}
 
 
