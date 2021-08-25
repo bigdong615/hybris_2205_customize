@@ -67,13 +67,11 @@ public class DefaultBlVerificationDocumentFacade implements BlVerificationDocume
   @Override
   public void removeDocument(final String code){
    final VerificationDocumentMediaModel verificationDocumentMediaModel =getBlVerificationDocumentService().removeVerificationDocument(code);
-   CustomerModel customerModel = (CustomerModel) getUserService().getCurrentUser();
-    if(verificationDocumentMediaModel != null ){
-      List<VerificationDocumentMediaModel> documents=new ArrayList<VerificationDocumentMediaModel> (customerModel.getVerificationDocuments());
-       documents.remove(verificationDocumentMediaModel);
-       customerModel.setVerificationDocuments(documents);
-       modelService.save(customerModel);
-       modelService.refresh(customerModel);
+   if(verificationDocumentMediaModel != null ){
+      verificationDocumentMediaModel.setRemovedByCustomer(Boolean.TRUE);
+      modelService.save(verificationDocumentMediaModel);
+      modelService.refresh(verificationDocumentMediaModel);
+
     }
   }
 

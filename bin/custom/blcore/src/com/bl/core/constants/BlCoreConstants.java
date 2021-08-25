@@ -272,7 +272,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
 	public static final String AQUATECH_BRAND_ID ="9";
-	public static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+	public static final String SQL_DATE_FORMAT = "MM-dd-yyyy";
 
 
 	public static final String DRIVING_LICENSE = "drivingLicense";
@@ -287,6 +287,15 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR = "BlSerialProductValidateInterceptor";
 	
 	public static final String ZERO = "0";
+
+	public static final String BY_DATE = "byDate";
+	public static final String BY_ORDER_NUMBER = "byOrderNumber";
+	public static final String CUSTOMER = "customer";
+	public static final String STORE = "store";
+	public static final String FILTER_STATUS_LIST = "filterStatusList";
+	public static final String STATUS_LIST = "statusList";
+
+
 
 
 	private BlCoreConstants()

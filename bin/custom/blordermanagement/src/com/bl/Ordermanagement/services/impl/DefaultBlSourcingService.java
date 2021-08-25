@@ -105,7 +105,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
    * @param order the order
    * @param result the result
    */
-  private void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
+  public void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
       final SourcingResults result) {
 
     if (CollectionUtils.isNotEmpty(result.getResults())) {
