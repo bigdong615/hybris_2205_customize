@@ -36,7 +36,8 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    * This Method Populate Rental Dates to target to display on storefront
    */
   @Override
-  public void populate(final OrderModel source, final OrderHistoryData target) {
+  public void populate(final OrderModel source, final OrderHistoryData target)
+  {
     Assert.notNull(source, "Parameter source cannot be null.");
     Assert.notNull(target, "Parameter target cannot be null.");
 
@@ -45,43 +46,45 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     target.setPlaced(source.getDate());
     target.setStatus(source.getStatus());
     target.setStatusDisplay(source.getStatusDisplay());
-    if (source.getTotalPrice() != null) {
-      target.setTotal(getPriceDataFactory()
-          .create(PriceDataType.BUY, updateTotalIfOrderExtended(source), source.getCurrency()));
+    if (source.getTotalPrice() != null)
+    {
+      target.setTotal(getPriceDataFactory().create(PriceDataType.BUY, updateTotalIfOrderExtended(source), source.getCurrency()));
     }
-    if (source.isGiftCardOrder()) {
-      target.setIsGiftCard(Boolean.TRUE);
+   if(source.isGiftCardOrder())
+    {
+   	target.setIsGiftCard(Boolean.TRUE);
     }
-    if (BooleanUtils.isTrue(source.getIsNewGearOrder())) {
-      target.setNewGearOrder(Boolean.TRUE);
+   if(BooleanUtils.isTrue(source.getIsNewGearOrder()))
+    {
+   	target.setNewGearOrder(Boolean.TRUE);
     }
 
-    if (null != source.getRentalStartDate()) {
-      target.setRentalStartDate(convertDateToString(source.getRentalStartDate()));
-    }
-    if (null != source.getRentalEndDate()) {
-      target.setRentalEndDate(convertDateToString(source.getRentalEndDate()));
-    }
-    target.setRentalCart(source.getIsRentalCart());
-    target.setOrderDate(convertDateToString(source.getDate()));
-    if (source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalCart())) {
-      final List<String> productQtyAndName = new ArrayList<>();
-      for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
-        final ProductModel product = abstractOrderEntryModel.getProduct();
-        if (source.isGiftCardOrder()) {
-          target.setProductCode(product.getCode());
-        } else if (product instanceof BlSerialProductModel) {
-          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
-          productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK
-              + BlFacadesConstants.PRODUCT_SEPERATOR +
-              BlFacadesConstants.BLANK + productModel.getName());
-        }
-      }
-      target.setProductNameAndQuantity(productQtyAndName);
-    }
-    if (CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
-      updateRentalDetailsIfExtendOrderExist(source, target);
-    }
+   if(null != source.getRentalStartDate()){
+    target.setRentalStartDate(convertDateToString(source.getRentalStartDate()));
+  }
+   if(null != source.getRentalEndDate()) {
+     target.setRentalEndDate(convertDateToString(source.getRentalEndDate()));
+   }
+   target.setRentalCart(source.getIsRentalCart());
+   target.setOrderDate(convertDateToString(source.getDate()));
+   if(source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalCart())) {
+     final List<String> productQtyAndName = new ArrayList<>();
+     for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
+       final ProductModel product = abstractOrderEntryModel.getProduct();
+       if(source.isGiftCardOrder()){
+      	 target.setProductCode(product.getCode());
+       }
+       else if(product instanceof BlSerialProductModel) {
+         final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
+         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK + BlFacadesConstants.PRODUCT_SEPERATOR +
+             BlFacadesConstants.BLANK + productModel.getName());
+       }
+     }
+     target.setProductNameAndQuantity(productQtyAndName);
+   }
+   if(CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
+     updateRentalDetailsIfExtendOrderExist(source, target);
+   }
 
     if (null != source.getRentalStartDate() && null != source.getRentalEndDate()) {
       target.setIsRentalActive(isRentalCartAcive(source));
@@ -102,7 +105,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
                   }))));
     }
 
-    target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
     target.setOrderStatus(setRentalOrderStatus(totalAmt));
 
@@ -114,12 +117,11 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   private BigDecimal updateTotalIfOrderExtended(final OrderModel orderModel) {
 
     BigDecimal price = BigDecimal.valueOf(orderModel.getTotalPrice());
-    if (CollectionUtils.isNotEmpty(orderModel.getExtendedOrderCopyList())) {
+    if(CollectionUtils.isNotEmpty(orderModel.getExtendedOrderCopyList())) {
 
-      for (final AbstractOrderModel extendOrder : orderModel.getExtendedOrderCopyList()) {
-        if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) &&
-            extendOrder.getExtendOrderStatus().getCode()
-                .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())) {
+      for(final AbstractOrderModel extendOrder : orderModel.getExtendedOrderCopyList()){
+        if(BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) &&
+            extendOrder.getExtendOrderStatus().getCode().equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())){
           price = price.add(BigDecimal.valueOf(extendOrder.getTotalPrice()));
         }
       }
@@ -138,11 +140,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   /**
    * This method created to update rental details if order already contains extend order
    */
-  private void updateRentalDetailsIfExtendOrderExist(final OrderModel orderModel,
-      final OrderHistoryData orderData) {
+  private void updateRentalDetailsIfExtendOrderExist(final OrderModel orderModel , final OrderHistoryData orderData){
     final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
     final int size = orderModelList.size();
-    for (final AbstractOrderModel extendOrder : orderModelList) {
+    for (final AbstractOrderModel extendOrder :orderModelList) {
       if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
           .getExtendOrderStatus().getCode()
           .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
@@ -156,25 +157,21 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   /**
    * This method created to check whether rental order is active or not
    */
-  private boolean isRentalCartAcive(final OrderModel orderModel) {
+  private boolean isRentalCartAcive(final OrderModel orderModel){
     final Date date = new Date();
-    return (date.before(orderModel.getRentalStartDate()) || DateUtils
-        .isSameDay(orderModel.getRentalStartDate(), date)) || (
-        date.before(orderModel.getRentalEndDate())
-            || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
+    return (date.before(orderModel.getRentalStartDate()) || DateUtils.isSameDay(orderModel.getRentalStartDate(), date)) || (date.before(orderModel.getRentalEndDate())
+        || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
   }
 
-  private boolean isExtendOrderButtonEnable(final OrderModel orderModel) {
-    return DateUtils.isSameDay(orderModel.getRentalStartDate(), new Date()) || new Date()
-        .after(orderModel.getRentalStartDate());
+  private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
+    return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
   }
 
   /**
    * This method converts double to price data
    */
-  private PriceData convertDoubleToPriceData(final Double price, OrderModel orderModel) {
-    return getPriceDataFactory()
-        .create(PriceDataType.BUY, BigDecimal.valueOf(price), orderModel.getCurrency());
+  private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
+    return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
   }
 
 
