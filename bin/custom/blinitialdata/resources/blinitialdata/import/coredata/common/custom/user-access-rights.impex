@@ -22,7 +22,7 @@ INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[un
                                     ; shippingteamkusergroup         ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
-                      ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup ; 1234
+                      ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup,customersupportagentgroup,warehouseagentgroup ; 1234
                       ; shippingteamuser ; Shipping team user ; Bl User     ; shippingteamkusergroup ; 1234
 					  ; transactionalteamuser; Transactional team user; Bl Transactional User; customersupportagentgroup;1234
 
