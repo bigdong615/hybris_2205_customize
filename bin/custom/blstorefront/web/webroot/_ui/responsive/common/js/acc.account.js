@@ -9,6 +9,7 @@ ACC.account = {
 		$(document).on("click", ".js-login-popup", function (e) {
 			e.preventDefault();
 			var serialClick = $(this).data('click');
+			var productCode = $(this).attr('data-product-code');
 			$('#signIn').html("");
 			$.ajax({
 				url: $(this).data("link"),
@@ -16,6 +17,8 @@ ACC.account = {
 					$('#signIn').html(result);
 					$('#serialClick').val(serialClick);
 					$('#serialSignUp').attr("data-serial", serialClick);
+					$('.js-selected-product').val(productCode);
+					$('#serialSignUp').attr("data-product-code", productCode);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -25,6 +28,7 @@ ACC.account = {
 		$(document).on("click", ".js-signUp-popup", function (e) {
 			e.preventDefault();
 			var serialClick = $(this).data('serial');
+			var productCode = $(this).data('product-code');
 			$('#signUp').html("");
 			$.ajax({
 				url: $(this).data("link"),
@@ -32,6 +36,8 @@ ACC.account = {
 					$('#signUp').html(result);
 					$('#serialClickSignUP').val(serialClick);
 					$('#serialSignInInstead').attr("data-click", serialClick);
+					$('#bookmarkClickSignUP').val(productCode);
+         	$('#serialSignInInstead').attr("data-product-code", productCode);
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
@@ -176,7 +182,8 @@ ACC.account = {
 						}
 						else {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
-							if(serialId == "" || serialId  == undefined)
+							var productCode = $('#login-popup-validation').find('input[name="js-selected-product"]').val();
+							if((serialId == "" || serialId  == undefined) && (productCode == "" || productCode == undefined))
 							{
 							var pageType=$('.js-page-type').val();
                if(pageType == null || pageType == undefined){
@@ -193,6 +200,7 @@ ACC.account = {
 					},
 					complete: function(){
 						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+						var productCode = $('#login-popup-validation').find('input[name="js-selected-product"]').val();
 						if(serialId == "" || serialId  == undefined)
 						{
 							/*do nothing*/
@@ -201,6 +209,13 @@ ACC.account = {
 							$('.' + serialId).click();
 							$("#signIn").hide();
 						}
+						if(productCode == "" || productCode  == undefined)
+            	{
+            	/*do nothing*/
+            	}else{
+            	addingProductToBookMark(productCode);
+            	$("#signIn").hide();
+            	}
 					},					
 					error: function (e) {
 						// do nothing
