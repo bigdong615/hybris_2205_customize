@@ -136,7 +136,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			if (CollectionUtils.isEmpty(result.getResult()))
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders for current user with incomplted status");
-				return null;
+				
 			}
 			return result.getResult();
 	}
