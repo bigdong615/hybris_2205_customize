@@ -110,6 +110,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		
+		final boolean isCustomerHasUnPaidBillOrders =  brainTreeCheckoutFacade.isCustomerHasUnPaidBillOrders();
+		model.addAttribute("isCustomerHasUnPaidBillOrders", isCustomerHasUnPaidBillOrders);
 		model.addAttribute("pageType", REVIEW_SUMMARY_PAGE);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
@@ -205,6 +208,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 
+		
 		updateGiftCardPurchaseForm(request);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		blCheckoutFacade.saveOrderNotes(orderNotes);

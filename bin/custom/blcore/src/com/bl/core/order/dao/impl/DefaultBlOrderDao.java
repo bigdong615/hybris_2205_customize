@@ -27,6 +27,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import com.bl.core.utils.BlDateTimeUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.servicelayer.user.UserService;
+import com.google.common.collect.Lists;
+import de.hybris.platform.core.enums.OrderStatus;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -34,6 +41,7 @@ import com.bl.core.utils.BlDateTimeUtils;
  */
 public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
+	private UserService userService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ISAUTHORISED + "} = ?isAuthorized ";
@@ -41,6 +49,9 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String GET_ORDERS_BY_CODE_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.CODE + "} = ?code ";
 
+	private static final String GET_ORDERS_BY_CUSTOMER_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.USER + "} = ?user and {o:status} IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses) }})";
+	
 	/**
  	* {@inheritDoc}
  	*/
@@ -117,5 +128,49 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		}
 		return orders.get(0);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getUnPaidBillOrderByCustomer()
+	{
+		
+	    final Map<String, Object> queryParams = new HashMap<String, Object>();
+	    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_BY_CUSTOMER_QUERY);
+			fQuery.addQueryParameter("user", getUserService().getCurrentUser());
+			fQuery.addQueryParameter("orderStatuses", getOrderStatuses());
+			final SearchResult result = getFlexibleSearchService().search(fQuery);
+			final List<AbstractOrderModel> orders = result.getResult();
+			
+			return orders;
+	}
+	
+	/**
+	 * @return list of order statuses
+	 */
+	private List<String> getOrderStatuses(){
+		return Lists.newArrayList(OrderStatus.INCOMPLETE.getCode(),OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR.getCode(),
+				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS.getCode(),OrderStatus.INCOMPLETE_MISSING_ITEMS.getCode());
+		
+	}
+
+	/**
+	 * @return the userService
+	 */
+	public UserService getUserService()
+	{
+		return userService;
+	}
+
+	/**
+	 * @param userService the userService to set
+	 */
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
+	}
+	
+	
 
 }

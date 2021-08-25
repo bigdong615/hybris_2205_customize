@@ -279,13 +279,26 @@
             		<b><spring:theme code="text.review.page.terms.check" /></b>
             	</div>
             	<div class="cart-actions">
+          
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
-            		<button id="placeOrder" type="button"
+			<c:choose>
+				<c:when test="${isCustomerHasUnPaidBillOrders}">
+					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
+						data-bs-target="#unpaidBill" 
+						class="btn btn-sm btn-primary float-end"> <spring:theme
+							code="checkout.summary.placeOrder" text="Place Your Order" />
+					</a>
+				</c:when>
+				<c:otherwise>
+					<button id="placeOrder" type="button"
             			class="btn btn-sm btn-primary float-end">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
             		</button>
+				</c:otherwise>
+			</c:choose>          			
+            		
               </div>
 						</form:form>
 					 
@@ -387,3 +400,31 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="modal fade" id="unpaidBill" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="text.message.summary.place.attention"/></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+          
+           
+           It looks like you have an outstanding bill. Please head to your Account to view & pay this bill before renting again. <br>
+
+             Have a question or concern? Contact <a href="#">customer support</a> and we'll figure it out.
+              
+                 <c:url value="/my-account/orders" var="orderPageUrl" />
+                <a href="${orderPageUrl}" class="btn btn-block btn-primary mt-4"><spring:theme code="text.extend.order.credi.continue"/></a>
+               <br>
+            <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
+                 <spring:theme code="basket.save.cart.action.cancel"/> </a></p>
+          
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
