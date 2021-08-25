@@ -15,5 +15,11 @@ import org.springframework.validation.Errors;
  */
 public interface BlValidator
 {
+	/**
+	 * Validate document format and size
+	 * @param Object the Object
+	 * @param Errors the errors
+	 * @param Model the model
+	 */
 	public void validate(final Object object, final Errors errors, final Model model);
 }

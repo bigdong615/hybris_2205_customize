@@ -483,9 +483,9 @@
 						<input type="hidden" value="" id="clickedFormDocument">
 					
 					  
-							<a href="#" class="btn btn-primary btn-block my-4" id="remove-document-submit-button" data-bs-dismiss="modal">Continue</a>
+							<a href="#" class="btn btn-primary btn-block my-4" id="remove-document-submit-button" data-bs-dismiss="modal"><spring:theme code="bl.verification.documents.popup.continue"/></a>
 							
-					<p class="text-center mb-0"><a href="#"  class="lightteal" aria-label="Close" data-bs-dismiss="modal">Cancel</a></p>		
+					<p class="text-center mb-0"><a href="#"  class="lightteal" aria-label="Close" data-bs-dismiss="modal"><spring:theme code="bl.verification.documents.popup.cancel"/></a></p>		
 					</div> 
 				</div>
 			</div>
