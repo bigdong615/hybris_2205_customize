@@ -51,8 +51,25 @@ ACC.track = {
           window.mediator.publish('continuePaymentClick',{
           paymentType:paymentType
          });
+    },
+
+    trackCustomerLocation: function(){
+     var geoIpApiKey = '3a10665f133962faeb0a1d62d6ffdc34d253c8a6056e4a8d744be679';
+                 var url= 'https://api.ipdata.co?api-key=' + geoIpApiKey;
+                 var ccpaState = 'California';
+                 	$.ajax({
+                 				url:url,
+                 				success: function (response) {
+                          ccpaState = response.region;
+                         utag.link({
+                         "tealium_event"    : "user_location_track",
+                          "user_location"     : '"'+ccpaState+'"'
+                           });
+                 				},
+                        	error: function (e) {
+                           console.log('No API key found or the number of requests exceeded for ipdata');
+                          return false;
+                         }
+                 			})
     }
-
-
-
 };
