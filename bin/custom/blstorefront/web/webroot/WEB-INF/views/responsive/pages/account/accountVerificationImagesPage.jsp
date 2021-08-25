@@ -47,8 +47,8 @@
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="drivingLicenseUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="drivingLicenseUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="DRIVING_LICENSE" />
 			</form:form>
@@ -123,8 +123,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="utilityBillUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="utilityBillUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="UTILITY_BILL">
 			</form:form>
@@ -181,8 +181,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType"
 					value="INSURANCE_CERTIFICATE">
@@ -239,8 +239,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT1">
 			</form:form>
@@ -288,8 +288,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT2">
 			</form:form>
@@ -340,8 +340,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT3">
 			</form:form>
@@ -386,8 +386,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT4">
 			</form:form>
@@ -434,8 +434,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT5">
 			</form:form>
