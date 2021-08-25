@@ -491,6 +491,47 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		return message;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void checkAquatechRentalDates(final CartData cartData)
+	{
+		try
+		{
+			final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
+			if (BooleanUtils.isTrue(cartData.getIsRentalCart()) && Objects.nonNull(rentalDatesFromSession)
+					&& CollectionUtils.isNotEmpty(cartData.getEntries()) && containsAquatechProducts(cartData))
+			{
+
+				final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(), BlCoreConstants.RENTAL_DATE_FORMAT); // need to check the date format
+				final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString, rentalDatesFromSession.getSelectedFromDate());
+				if (daysDifference < BlCoreConstants.TWO_DAYS) {
+					setAvailableMessageToCartEntry(cartData);
+				}
+
+
+			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while checking aquatech product rental dates for cart - {}", cartData.getCode());
+			final AvailabilityMessage aquatechRentalMessage = getMessage("text.stock.not.available", Lists.emptyList());
+			cartData.getEntries().forEach(cartEntry -> cartEntry.setAvailabilityMessage(aquatechRentalMessage));
+		}
+	}
+
+	private void setAvailableMessageToCartEntry(final CartData cartData) {
+		//todo
+	}
+
+	private boolean containsAquatechProducts(final CartData cartData) {
+		//	return cartData.getEntries().stream().anyMatch(entry -> );
+		return true;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
