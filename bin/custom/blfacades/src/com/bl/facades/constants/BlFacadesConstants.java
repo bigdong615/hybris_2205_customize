@@ -60,6 +60,8 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
 
   public static final String DAY = "day";
 
+  public static final String INCOMPLETE = "Incomplete";
+
 
   private BlFacadesConstants() {
     //empty
