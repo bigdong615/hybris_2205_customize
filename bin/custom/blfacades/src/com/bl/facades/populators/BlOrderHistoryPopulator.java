@@ -5,10 +5,8 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
-import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -24,6 +22,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
+import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 
 
 /**
@@ -86,24 +86,23 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      updateRentalDetailsIfExtendOrderExist(source, target);
    }
 
-    if (null != source.getRentalStartDate() && null != source.getRentalEndDate()) {
-      target.setIsRentalActive(isRentalCartAcive(source));
-      target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
-    }
-    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
-    final AtomicDouble totalAmt = new AtomicDouble(0.0);
+   if(null != source.getRentalStartDate() && null != source.getRentalEndDate()){
+     target.setIsRentalActive(isRentalCartAcive(source));
+     target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
+   }
+   target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
+   final AtomicDouble totalAmt = new AtomicDouble(0.0);
+
     if (source.getStatus().getCode().equalsIgnoreCase(OrderStatus.INCOMPLETE.getCode())
         && BooleanUtils.isTrue(source.isOrderReturnedToWarehouse())) {
-      source.getConsignments()
-          .forEach(consignment -> consignment.getConsignmentEntries()
-              .forEach(consignmentEntry -> consignmentEntry
-                  .getBillingCharges()
-                  .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                    if (BooleanUtils.isFalse(billing.isBillPaid())) {
-                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                    }
-                  }))));
-    }
+	 source.getConsignments()
+			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+					    if(BooleanUtils.isFalse(billing.isBillPaid())) {
+                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+              }
+					  }))));
+	 }
 
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
@@ -133,8 +132,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    * This Method converts rental startDate and rental endDate to String
    */
   private String convertDateToString(final Date rentalDate) {
-    return BlDateTimeUtils
-        .convertDateToStringDate(rentalDate, BlFacadesConstants.RENTAL_DATE_FORMAT);
+    return BlDateTimeUtils.convertDateToStringDate(rentalDate, BlFacadesConstants.RENTAL_DATE_FORMAT);
   }
 
   /**
