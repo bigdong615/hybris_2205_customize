@@ -6,7 +6,6 @@ import de.hybris.platform.util.Config;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -34,8 +33,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
     }
 
     if (document != null && !isFileSizeMatch(document)) {
-      GlobalMessages.addErrorMessage(model, "bl.verification.document.size");
-      errors.rejectValue("file", "bl.verification.document.size");
+      GlobalMessages.addErrorMessage(model, "bl.verification.document.size.large");
+      errors.rejectValue("file", "bl.verification.document.size.large");
     }
   }
 
@@ -73,7 +72,7 @@ public class BlVerificationDocumentValidator implements BlValidator {
     }
     if (Boolean.FALSE.equals(isFileFormatMatch)) {
       GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
-      errors.rejectValue("file", "bl.verification.document.format");
+      errors.rejectValue("file", "bl.verification.document.format.not.support");
     }
   }
 }
