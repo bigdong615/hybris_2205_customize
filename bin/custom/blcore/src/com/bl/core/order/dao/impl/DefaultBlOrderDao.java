@@ -17,20 +17,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import com.bl.core.utils.BlDateTimeUtils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -135,15 +129,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	@Override
 	public List<AbstractOrderModel> getUnPaidBillOrderByCustomer()
 	{
-		
-	    final Map<String, Object> queryParams = new HashMap<String, Object>();
-	    final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_BY_CUSTOMER_QUERY);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_BY_CUSTOMER_QUERY);
 			fQuery.addQueryParameter("user", getUserService().getCurrentUser());
 			fQuery.addQueryParameter("orderStatuses", getOrderStatuses());
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
-			final List<AbstractOrderModel> orders = result.getResult();
-			
-			return orders;
+			return result.getResult();
 	}
 	
 	/**
