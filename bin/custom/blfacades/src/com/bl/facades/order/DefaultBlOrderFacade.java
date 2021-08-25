@@ -487,38 +487,42 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    */
   @Override
   public void setPayBillAttributes(final OrderData target) {
-    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-    OrderModel source = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService()
-        .getCurrentUser(), target.getCode(), baseStoreModel);
+      final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+      OrderModel source = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService()
+              .getCurrentUser(), target.getCode(), baseStoreModel);
 
-    final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    applyTaxOnPayBillCharges(source);
-    final AtomicDouble currentTax = new AtomicDouble(0.0);
+      final AtomicDouble totalAmt = new AtomicDouble(0.0);
+      applyTaxOnPayBillCharges(source);
+      final AtomicDouble currentTax = new AtomicDouble(0.0);
 
-    source.setUnPaidBillPresent(false);
-    getModelService().save(source);
-    source.getConsignments()
-        .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
-            .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-              if (BooleanUtils.isFalse(billing.isBillPaid())) {
-                target.getEntries().forEach(entry -> {
-                  if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode))) {
-                    final AvailabilityMessage messageForBillingType = getMessageForBillingType(
-                        billing.getBillChargeType());
-                    final List<AvailabilityMessage> messages = Lists
-                        .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                    messages.add(messageForBillingType);
-                    entry.setMessages(messages);
-                  }
-                });
-                totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                currentTax.addAndGet(billing.getTaxAmount().doubleValue());
-              }
-            }))));
+      source.setUnPaidBillPresent(false);
+      getModelService().save(source);
+      source.getConsignments()
+              .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+                      .getBillingCharges().forEach((serialCode, listOfCharges) -> {
+                          final List<AvailabilityMessage> messages = Lists.newArrayList();
+                          listOfCharges.forEach(billing -> {
+                              if (BooleanUtils.isFalse(billing.isBillPaid()))
+                              {
+                                  final AvailabilityMessage messageForBillingType = getMessage(billing.getUnPaidBillNotes());
+                                  messages.add(messageForBillingType);
+                                  totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+                                  currentTax.addAndGet(billing.getTaxAmount().doubleValue());
+                              }
+                          });
+                          target.getEntries().forEach(entry -> {
+                              if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
+                              {
+                                  final List<AvailabilityMessage> entryMessages = Lists
+                                          .newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
+                                  entryMessages.addAll(messages);
+                                  entry.setMessages(entryMessages);
+                              }
+                          });})));
 
-    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-    target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
-    target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get() , source));
+      target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+      target.setTotalPayBillTax(convertDoubleToPriceData(currentTax.get(), source ));
+      target.setOrderTotalWithTaxForPayBill(convertDoubleToPriceData(totalAmt.get() + currentTax.get() , source));
   }
 
   /**
