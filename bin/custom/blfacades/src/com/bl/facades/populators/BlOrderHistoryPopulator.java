@@ -8,6 +8,7 @@ import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -90,6 +92,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
    final AtomicDouble totalAmt = new AtomicDouble(0.0);
+
+    if (source.getStatus().getCode().equalsIgnoreCase(OrderStatus.INCOMPLETE.getCode())
+        && BooleanUtils.isTrue(source.isOrderReturnedToWarehouse())) {
 	 source.getConsignments()
 			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 					  .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
@@ -97,8 +102,11 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
                 totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
               }
 					  }))));
+	 }
 
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
+
+    target.setOrderStatus(setRentalOrderStatus(totalAmt));
 
   }
 
@@ -162,6 +170,18 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
     return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
+  }
+
+
+  /**
+   * This method created to show order status on order history page
+   */
+  private String setRentalOrderStatus(final AtomicDouble atomicDouble) {
+    final AtomicReference<String> orderStatus = new AtomicReference<>();
+    if (Double.compare(atomicDouble.get(), 0.0) > 0) {
+      orderStatus.set(BlFacadesConstants.INCOMPLETE);
+    }
+    return orderStatus.get();
   }
 
 }
