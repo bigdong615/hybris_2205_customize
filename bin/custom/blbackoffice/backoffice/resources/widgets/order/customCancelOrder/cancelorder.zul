@@ -116,7 +116,8 @@
                         <row style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;white-space: nowrap'
                                     : 'white-space: nowrap'}">
                             <checkbox disabled="${each.quantityAvailableToCancel eq 0 ? true : false}" width="30px"
-                                      class="oms-widget-reallocationconsignment-list-container__checkbox"/>
+                                      class="oms-widget-reallocationconsignment-list-container__checkbox"
+                                      id="cancel_entry_${each.orderEntry.product.code}" onCheck='Clients.evalJavaScript("onEntrySelect()")'/>
                             <label value="${each.orderEntry.product.code}" width="200px"/>
                             <label value="${each.orderEntry.product.name}" width="200px"/>
                             <label value="${each.deliveryModeName}" width="200px"/>
@@ -158,6 +159,26 @@
         <button id="confirmcancellation" label="${labels.customersupportbackoffice.cancelorder.button.confirm}"
                 sclass="y-btn-primary oms-widget-cancelorder-configuration-button oms-widget-cancelorder-configuration-save-button" />
     </div>
+
+    <html><![CDATA[
+		<script type="text/javascript">
+			function onEntrySelect() {
+                if($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]').length ==
+                    $('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:checked').length) {
+                    $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", true);
+                } else {
+                    var totalEntries = ($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:disabled').length) +
+                                        ($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]:checked').length);
+                    if($('span[ytestid*="cancel_entry_"]').find('input[type="checkbox"]').length == totalEntries) {
+                        $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", true);
+                    } else {
+                        $('span[ytestid="globalCancelEntriesSelection"]').find('input[type="checkbox"]').prop("checked", false);
+                    }
+                }
+            }
+		</script>
+	]]>
+    </html>
 
     <html visible="false">
         <![CDATA[

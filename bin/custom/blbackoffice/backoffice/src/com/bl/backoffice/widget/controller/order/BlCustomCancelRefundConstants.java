@@ -34,18 +34,23 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String OMS_WIDGET_CANCELORDER_CONFIRM_ICON = "oms-widget-cancelorder-confirm-icon";
     public static final String CANCEL_CONFIRM_TITLE = "customersupportbackoffice.cancelorder.confirm.title";
     public static final String CANCEL_CONFIRM_MISSING_SELECT_LINE = "customersupportbackoffice.cancelorder.missing.selectedLine";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_CONFIRM_MSG = "customersupportbackoffice.cancelorder.confirm.msg";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_CONFIRM_TITLE = "customersupportbackoffice.cancelorder.confirm.title";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_REASON = "customersupportbackoffice.cancelorder.error.reason";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_CONFIRM_ERROR = "customersupportbackoffice.cancelorder.confirm.error";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_CONFIRM_SUCCESS = "customersupportbackoffice.cancelorder.confirm.success";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_MISSING_QUANTITY = "customersupportbackoffice.cancelorder.missing.quantity";
+    public static final String CANCELORDER_CONFIRM_MSG = "customersupportbackoffice.cancelorder.confirm.msg";
+    public static final String CANCELORDER_CONFIRM_TITLE = "customersupportbackoffice.cancelorder.confirm.title";
+    public static final String CANCELORDER_ERROR_REASON = "customersupportbackoffice.cancelorder.error.reason";
+    public static final String CANCELORDER_CONFIRM_ERROR = "customersupportbackoffice.cancelorder.confirm.error";
+    public static final String CANCELORDER_CONFIRM_SUCCESS = "customersupportbackoffice.cancelorder.confirm.success";
+    public static final String CANCELORDER_MISSING_QUANTITY = "customersupportbackoffice.cancelorder.missing.quantity";
     public static final String ERROR_OCCURRED_WHILE_PROCESSING_CANCELLATION_OF_ORDER_WITH_NUMBER = "Error occurred while processing cancellation of order with number : {} ";
-    public static final String CUSTOMERSUPPORTBACKOFFICE_CANCELORDER_ERROR_QTYCANCELLED_INVALID = "customersupportbackoffice.cancelorder.error.qtycancelled.invalid";
+    public static final String CANCELORDER_ERROR_QTYCANCELLED_INVALID = "customersupportbackoffice.cancelorder.error.qtycancelled.invalid";
 
     public static final String EMPTY_AMOUNT = "customersupportbackoffice.cancelorder.empty.amount";
     public static final String INVALID_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.higheramount";
     public static final String ZERO_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.zero.amount";
+    public static final String REFUND_STATUS_TITLE = "customersupportbackoffice.cancelorder.refund.status";
+    public static final String REFUND_ERROR_MSG = "customersupportbackoffice.cancelorder.error.mesg";
+    public static final String REFUND_COMPLETE_MSG = "customersupportbackoffice.cancelorder.successfull.mesg";
+    public static final String NOTES = "Refund Notes while full refund";
+    public static final String OUT_CONFIRM = "confirmRefund";
 
     private BlCustomCancelRefundConstants() {}
 }
