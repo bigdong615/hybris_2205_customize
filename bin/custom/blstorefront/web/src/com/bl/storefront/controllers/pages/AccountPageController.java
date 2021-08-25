@@ -1273,7 +1273,7 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		blVerificationDocumentFacade.removeDocument(code);
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
-   	model.addAttribute("UploadedDocument",uploadedDocumentFromCustomer);
+   	model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 	}
 
