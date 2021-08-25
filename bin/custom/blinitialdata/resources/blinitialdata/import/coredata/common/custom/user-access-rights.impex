@@ -25,6 +25,8 @@ INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; 
                       ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup,customersupportagentgroup,warehouseagentgroup ; 1234
                       ; shippingteamuser ; Shipping team user ; Bl User     ; shippingteamkusergroup ; 1234
 					  ; transactionalteamuser; Transactional team user; Bl Transactional User; customersupportagentgroup;1234
+                      ; frontdeskasmuser ; Front desk ASM user ; Bl User    ; customermanagergroup,asagentsalesmanagergroup ; 1234
+                      ; transactionalteamasmuser ; Transactional team ASM user ; Bl User    ; customermanagergroup,asagentsalesmanagergroup ; 1234
 
 
 # BL-828, BL-829 Employee creation for inventory team user rols/group
