@@ -96,7 +96,8 @@ ACC.account = {
 							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
 							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
-							if(serialId == "" || serialId  == undefined)
+							var productCode = $('#signUppopup-validation').find('input[name="bookmarkClickSignUP"]').val();
+							if((serialId == "" || serialId  == undefined) && (productCode == "" || productCode  == undefined))
 							{
 							var pageType=$('.js-page-type').val();
               if(pageType == null || pageType == undefined){
@@ -114,7 +115,11 @@ ACC.account = {
                    pageType:pageType
                  });
 								location.reload();
+							}else if(!(productCode == "" || productCode  == undefined)){
+							addingProductToBookMark(productCode);
+              $("#signUp").hide();
 							}else{
+
 								$("#doReload").val("true");
 								$('.' + serialId).click();
 							}	
