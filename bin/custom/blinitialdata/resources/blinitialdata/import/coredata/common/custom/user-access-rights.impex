@@ -236,7 +236,7 @@ INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];
 
 INSERT_UPDATE Usergroup;uid[unique=true];groups(uid)
 ;verificationdocusergroup;employeegroup,verificationdocagentrole
-D
+
 INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
   ;verificationdocusergroup;verificationdocagentrole
   
