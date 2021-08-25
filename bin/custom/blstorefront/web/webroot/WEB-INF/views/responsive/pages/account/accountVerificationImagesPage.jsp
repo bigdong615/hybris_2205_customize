@@ -47,8 +47,8 @@
 				method="post" modelAttribute="verificationDocumentForm"
 				enctype="multipart/form-data">
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="drivingLicenseUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="drivingLicenseUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC" /> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="DRIVING_LICENSE" />
 			</form:form>
@@ -123,8 +123,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="utilityBillUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="utilityBillUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="UTILITY_BILL">
 			</form:form>
@@ -181,8 +181,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType"
 					value="INSURANCE_CERTIFICATE">
@@ -239,8 +239,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT1">
 			</form:form>
@@ -260,8 +260,8 @@
 						value="${_csrf.token}" /> <input type="hidden"
 						name="removeDocumentEntry" value="${uploadedDocument.code}"
 						id="removeDocumentEntry_${loopindex.index}" /> <a href="#"
-						class="lightteal remove-doc" data-bs-toggle="modal"
-						data-bs-target="#exampleModal"
+						class="lightteal remove-document" data-bs-toggle="modal"
+						data-bs-target="#exampleModalDocument"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT1_${loopindex.index}">
 						Remove </a>
 				</form>
@@ -288,8 +288,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT2">
 			</form:form>
@@ -310,9 +310,9 @@
 						value="${_csrf.token}" /> <input type="hidden"
 						name="removeDocumentEntry" value="${uploadedDocument.code}"
 						id="removeDocumentEntry_${loopindex.index}" /> <a href="#"
-						class="lightteal remove-doc"
+						class="lightteal remove-document"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT2_${loopindex.index}"
-						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
+						data-bs-toggle="modal" data-bs-target="#exampleModalDocument"> Remove
 					</a>
 				</form>
 				</c:if>
@@ -340,8 +340,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT3">
 			</form:form>
@@ -361,9 +361,9 @@
 						value="${_csrf.token}" /> <input type="hidden"
 						name="removeDocumentEntry" value="${uploadedDocument.code}"
 						id="removeDocumentEntry_${loopindex.index}" /> <a href="#"
-						class="lightteal remove-doc" data-bs-toggle="modal"
+						class="lightteal remove-document" data-bs-toggle="modal"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT3_${loopindex.index}"
-						data-bs-target="#exampleModal"> Remove </a>
+						data-bs-target="#exampleModalDocument"> Remove </a>
 				</form></c:if>
 			</c:forEach>
 		</div>
@@ -386,8 +386,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT4">
 			</form:form>
@@ -407,9 +407,9 @@
 						value="${_csrf.token}" /> <input type="hidden"
 						name="removeDocumentEntry" value="${uploadedDocument.code}"
 						id="removeDocumentEntry_${loopindex.index}" /> <a href="#"
-						class="lightteal remove-doc"
+						class="lightteal remove-document"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT4_${loopindex.index}"
-						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
+						data-bs-toggle="modal" data-bs-target="#exampleModalDocument"> Remove
 					</a>
 				</form></c:if>
 			</c:forEach>
@@ -434,8 +434,8 @@
 				enctype="multipart/form-data">
 
 				<label class="custom-file-upload"> <input type="file"
-					name="document" onchange="this.form.submit();"
-					id="insuranceCertificateUpload" /> <spring:theme code="bl.verification.documents.choose.file"/>
+					name="document" onchange="$('.page-loader-new-layout').show();this.form.submit();"
+					id="insuranceCertificateUpload" accept=".PDF,.JPG,.JPEG,.PNG,.HEIC"/> <spring:theme code="bl.verification.documents.choose.file"/>
 				</label>
 				<input type="hidden" name="documentType" value="EXTRA_DOCUMENT5">
 			</form:form>
@@ -455,12 +455,40 @@
 						value="${_csrf.token}" /> <input type="hidden"
 						name="removeDocumentEntry" value="${uploadedDocument.code}"
 						id="removeDocumentEntry_${loopindex.index}" /> <a href="#"
-						class="lightteal remove-doc"
+						class="lightteal remove-document"
 						data-code="removeDocumentForm_EXTRA_DOCUMENT5_${loopindex.index}"
-						data-bs-toggle="modal" data-bs-target="#exampleModal"> Remove
+						data-bs-toggle="modal" data-bs-target="#exampleModalDocument"> Remove
 					</a>
 				</form></c:if>
 			</c:forEach>
 
 		</div>
 	</div>
+	
+	<!-- THIS IS THE CODE SNIPPITS -->
+		<!-- modal for remove -->
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModalDocument" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel"><spring:theme code="bl.verification.documents.popup.title" /></h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body"><spring:theme code="bl.verification.documents.popup.additional" />
+						<p></p>
+						<input type="hidden" value="" id="clickedFormDocument">
+					
+					  
+							<a href="#" class="btn btn-primary btn-block my-4" id="remove-document-submit-button" data-bs-dismiss="modal"><spring:theme code="bl.verification.documents.popup.continue"/></a>
+							
+					<p class="text-center mb-0"><a href="#"  class="lightteal" aria-label="Close" data-bs-dismiss="modal"><spring:theme code="bl.verification.documents.popup.cancel"/></a></p>		
+					</div> 
+				</div>
+			</div>
+		</div>
+
+		<!-- modal for remove -->
