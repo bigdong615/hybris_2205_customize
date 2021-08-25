@@ -3268,7 +3268,7 @@
                   </attribute>
                   <attribute qualifier="unPaidBillNotes" type="java.lang.String">
                          <modifiers read="true" write="true" search="true" optional="true" />
-                         <description>This attribute use to add notes for unpaid bill.</description>
+                         <description>This attribute is used to add notes for unpaid bill.</description>
                          <persistence type="property"/>
                   </attribute>   
 			</attributes>

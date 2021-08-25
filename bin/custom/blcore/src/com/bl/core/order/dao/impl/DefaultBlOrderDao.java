@@ -133,6 +133,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			fQuery.addQueryParameter("user", getUserService().getCurrentUser());
 			fQuery.addQueryParameter("orderStatuses", getOrderStatuses());
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
+			if (CollectionUtils.isEmpty(result.getResult()))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders for current user with incomplted status");
+				return null;
+			}
 			return result.getResult();
 	}
 	
