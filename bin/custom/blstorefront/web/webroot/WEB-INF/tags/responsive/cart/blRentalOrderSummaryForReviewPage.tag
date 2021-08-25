@@ -94,11 +94,27 @@
 		<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 			modelAttribute="placeOrderForm">
 
-			<button id="placeOrderSummary" type="button"
-				class="btn btn-block btn-primary mt-4">
-				<spring:theme code="checkout.summary.placeOrder"
-					text="Place Your Order" />
-			</button>
+			<c:choose>
+				<c:when test="${isCustomerHasUnPaidBillOrders}">
+					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
+						data-bs-target="#unpaidBill" 
+						class="btn btn-block btn-primary mt-4"> <spring:theme
+							code="checkout.summary.placeOrder" text="Place Your Order" />
+					</a>
+				</c:when>
+				<c:otherwise>
+					<button id="placeOrderSummary" type="button"
+						class="btn btn-block btn-primary mt-4">
+						<spring:theme code="checkout.summary.placeOrder"
+							text="Place Your Order" />
+					</button>
+				</c:otherwise>
+			</c:choose>
+
+
+
 		</form:form>
 	</div>
 </div>
+
+

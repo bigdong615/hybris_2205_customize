@@ -22,4 +22,10 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public AbstractOrderModel getOrderByCode(final String orderNumber);
+	
+	/**
+	 * It gets the order by customer
+	 * @return list of orders
+	 */
+	public List<AbstractOrderModel> getUnPaidBillOrderByCustomer();
 }

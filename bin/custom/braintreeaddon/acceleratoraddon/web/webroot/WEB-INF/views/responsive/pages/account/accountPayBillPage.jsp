@@ -125,7 +125,7 @@
                                     </div>
                                     <div class="col-12 ">
                                     <c:forEach items="${cartEntry.messages}" var="message" >
-                                        <div class="notification notification-warning"><spring:theme code="${message.messageCode}"/></div>
+                                        <div class="notification notification-warning">${message.messageCode}</div>
                                         </c:forEach>
                                     </div>
                                 </div>
