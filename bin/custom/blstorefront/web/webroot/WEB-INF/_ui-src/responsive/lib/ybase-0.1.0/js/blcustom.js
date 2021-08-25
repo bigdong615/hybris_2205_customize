@@ -1096,6 +1096,20 @@ $('#remove-doc-submit-button').on("click",function(e) {
 	var submitForm = $("#" + clickedForm );
 	submitForm.submit();
 });
+
+$('.remove-document').on("click",function(e) {
+	e.preventDefault();
+var clickedFormDocument = this.getAttribute("data-code");
+$("#clickedFormDocument").val(clickedFormDocument);
+});
+
+$('#remove-document-submit-button').on("click",function(e) {
+	$('.page-loader-new-layout').show();
+	e.preventDefault();
+    var clickedForm = $("#clickedFormDocument").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
 function hideShorting(){ 
     $('.container').on('click', function(){  
 	   $(".product-sort").find(".bootstrap-select").removeClass('open')
