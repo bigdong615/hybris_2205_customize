@@ -509,6 +509,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  		return isGivenDateIsBlackoutDate.get();
  	}
 
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void removeEmptyCart(final CartModel cartModel){
+        getModelService().remove(cartModel);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Removing empty cart with code:{} ", cartModel.getCode());
+    }
+
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;
     }

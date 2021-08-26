@@ -2477,7 +2477,6 @@
 			<list-view:column qualifier="currentOcLocation"/>
 			<list-view:column qualifier="serialStatus"/>
 			<list-view:column qualifier="shippingDate"/>
-			<list-view:column qualifier="previousOrderStatus"/>
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>

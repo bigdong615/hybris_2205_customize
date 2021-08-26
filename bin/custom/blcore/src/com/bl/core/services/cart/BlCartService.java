@@ -120,13 +120,19 @@ public interface BlCartService extends CartService {
      * @param cartModel
      */
      void updateNewGearPurchaseStatus(final CartModel cartModel);
-     
-     /**
-      * Checks if is selected date is blackout date.
-      *
-      * @param dateToCheck the date to check
-      * @param blackoutDateType the blackout date type
-      * @return true, if is selected date is blackout date
-      */
-     boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType);
+
+    /**
+     * This method used for remove cart from DB.
+     * @param cartModel
+     */
+    public void removeEmptyCart(final CartModel cartModel);
+    
+    /**
+     * Checks if is selected date is blackout date.
+     *
+     * @param dateToCheck the date to check
+     * @param blackoutDateType the blackout date type
+     * @return true, if is selected date is blackout date
+     */
+    boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType);
 }

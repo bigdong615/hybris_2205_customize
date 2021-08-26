@@ -414,10 +414,10 @@ public class CartPageController extends AbstractCartPageController
 		else if (getCartFacade().hasEntries())
 		{
 			try
-			{				
+			{
+				final CartModel cartModel = blCartService.getSessionCart();
 				if (removeEntry)
 				{
-					final CartModel cartModel = blCartService.getSessionCart();
 					Optional<AbstractOrderEntryModel> findEntry = cartModel.getEntries().stream().filter(entry -> entry.getEntryNumber() == entryNumber).findFirst();
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 					//Added condition to update gift card purchase status when remove from cart
@@ -434,6 +434,8 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
+				}else if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
 				{
