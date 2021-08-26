@@ -152,6 +152,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);
 					((BlSerialProductModel) serial).setHardAssigned(false); // NOSONAR
+					modelService.save(stockLevel);
+					modelService.save(serial);
 				});
 			}
 		}
