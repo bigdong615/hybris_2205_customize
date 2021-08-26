@@ -68,23 +68,23 @@
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="sku52678-title">Pickup/Delivery Options</h5>
+            <h5 class="modal-title" id="sku52678-title"><spring:theme code="text.pickup.delivery.modal.title"/></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="row">
                 <div class="col-12">
-                    <p class="overline lightteal">FAST</p>
-                    <h6><b>Ship It</b></h6>
-                    <p class="gray80">We'll send it to an address or UPS location</p>
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.fast"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.ship.it"/> </b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line1"/></p>
                     <hr>
-                    <p class="overline lightteal">FASTER</p>
-                    <h6><b>Pickup</b></h6>
-                    <p class="gray80">Grab your gear at a BL or partner location</p>
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.faster"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.pickup"/></b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line2"/></p>
                     <hr>
-                    <p class="overline lightteal">FASTEST</p>
-                    <h6><b>Same Day Delivery</b></h6>
-                    <p class="gray80">SF & NYC by courrier</p>
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.fastest"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.same.day"/></b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line3"/></p>
                 </div>
             </div>
           </div>
