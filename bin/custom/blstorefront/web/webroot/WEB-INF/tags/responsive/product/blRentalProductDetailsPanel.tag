@@ -40,6 +40,9 @@
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                     <c:choose>
+                                    <c:when test="${not empty disableButton and disableButton == true}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
+                                      </c:when>
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
                                         <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
@@ -87,6 +90,9 @@
                                  <p>
 	                                 <c:choose>
 	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
+	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate and not empty disableButton and disableButton == true}">
 	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
