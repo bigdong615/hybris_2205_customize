@@ -1214,12 +1214,13 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
 	  $('.page-loader-new-layout').hide();
-    var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
+    var validationDiv = $('<div class="notification notification-error mb-4" />').text(ACC.ccError.poNumber);
+    $('#poNumber').addClass('error'); 
     $('#validationMessage').append(validationDiv);
   }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
     ACC.track.trackPaymentSelection('PO Payment');
       savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
-      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);     
       savedPoForm.submit();
   }
 	else
