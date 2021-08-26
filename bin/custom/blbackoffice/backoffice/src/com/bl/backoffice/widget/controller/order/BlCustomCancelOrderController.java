@@ -233,8 +233,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             case FULL:
             case PARTIAL:
                 this.refund(this.getOrderModel(), this.globalCancelEntriesSelection.isChecked(),
-                        this.collectSelectionCheckboxAndCreateMap(this.globalTaxSelection.getValue(),
-                                this.globalWaiverSelection.getValue(), this.globalShippingSelection.getValue(), null));
+                        this.collectSelectionCheckboxAndCreateMap((this.globalTaxSelection== null || this.globalTaxSelection.getValue() == null)
+                                ? Boolean.FALSE : this.globalTaxSelection.getValue(), (this.globalWaiverSelection == null
+                                || this.globalWaiverSelection.getValue() == null) ? Boolean.FALSE : this.globalWaiverSelection.getValue(),
+                                (this.globalShippingSelection == null || this.globalShippingSelection.getValue() == null) ? Boolean.FALSE
+                                : this.globalShippingSelection.getValue(), null));
                 this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, Level.SUCCESS,
                         this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_SUCCESS));
                 break;
@@ -369,9 +372,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private OrderCancelRequest buildCancelRequest() {
         if (this.getOrderModel() != null) {
             final List<OrderCancelEntry> orderCancelEntries = new ArrayList<>();
-            this.getOrderEntriesGridRows().stream().filter(entry -> ((Checkbox) entry.getFirstChild()).isChecked()).forEach(
+            this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).forEach(
                     entry -> {
-                        final BlOrderEntryToCancelDto orderEntry = (BlOrderEntryToCancelDto) entry;
+                        final BlOrderEntryToCancelDto orderEntry = ((Row) entry).getValue();
                         if (orderEntry.getQuantityAvailableToCancel() > BlCustomCancelRefundConstants.ZERO) {
                             cancelAndRefundEntries.add(orderEntry);
                             this.createOrderCancelEntry(orderCancelEntries, ((Row) entry).getValue());
