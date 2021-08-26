@@ -423,7 +423,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		final Object isRentalPage = model.getAttribute(BlControllerConstants.IS_RENTAL_PAGE);
-		if(isRentalPage !=null && BooleanUtils.isFalse((Boolean)isRentalPage)){
+		if(isRentalPage !=null && BooleanUtils.isFalse((Boolean)isRentalPage) && BooleanUtils.isFalse(productData.isRetailGear())){
 			final List<Breadcrumb> breadList =productBreadcrumbBuilder.getBreadcrumbs(productCode);
 			if(CollectionUtils.isNotEmpty(breadList)){
 			final CategoryModel category =	commerceCategoryService.getCategoryForCode(BlControllerConstants.USED_CATEGORY_CODE);
