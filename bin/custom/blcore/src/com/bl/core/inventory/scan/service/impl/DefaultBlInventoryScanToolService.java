@@ -668,17 +668,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (item.getProductType().equals(ProductTypeEnum.SUBPARTS))
 			{
 				skuNames.add(item.getName());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "SubPart products List {}",
-						skuNames);
-
 			}
 		});
 		scannedSubpartProduct.forEach(subpart -> {
 			if (Objects.nonNull(subpart) && !skuNames.contains(subpart.getName()))
 			{
 				lErrorSubParts.add(subpart);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "SubPart product error list {}",
-						lErrorSubParts);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned subParts {} are not available on consignment",lErrorSubParts);
 			}
 		});
 
@@ -876,11 +872,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> stockLevel.setHardAssigned(true));
 			}
-
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SERIAL_HARD_ASSIGN, serialProduct);
 			modelService.save(serialProduct);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Update the serial product {} status to INCLUDED in Items Map ",
-					serialProduct.getCode());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial product with code {} is scanned successfully and marked as included and hard assigned to true.", serialProduct.getCode());
 		}
 	}
 
