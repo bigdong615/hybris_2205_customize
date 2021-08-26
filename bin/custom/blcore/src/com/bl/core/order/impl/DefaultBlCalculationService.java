@@ -105,7 +105,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					totalOptionCost += getTotalOptionPrice(e);
 				}
 			}
-			if(BooleanUtils.isFalse(order.isGiftCardOrder()) || BooleanUtils.isFalse(order.getIsNewGearOrder())){
+			if(BooleanUtils.isFalse(order.isGiftCardOrder()) && BooleanUtils.isFalse(order.getIsNewGearOrder())){
 			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
 				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
@@ -317,7 +317,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		
 		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product) 
 				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && BooleanUtils.isFalse(
-						ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())))
+						ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())) && BooleanUtils.isFalse(
+				((BlProductModel) product).getRetailGear()))
 		{
 			final BlProductModel blProductModel = (BlProductModel) product;
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
