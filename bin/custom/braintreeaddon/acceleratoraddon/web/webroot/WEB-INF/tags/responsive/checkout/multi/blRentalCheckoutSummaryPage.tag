@@ -418,7 +418,7 @@
              Have a question or concern? Contact <a href="#">customer support</a> and we'll figure it out.
               
                  <c:url value="/my-account/orders" var="orderPageUrl" />
-                <a href="${orderPageUrl}" class="btn btn-block btn-primary mt-4"><spring:theme code="text.extend.order.credi.continue"/></a>
+                <a href="${orderPageUrl}" class="btn btn-block btn-primary mt-4"><spring:theme code="text.message.summary.place.button"/></a>
                <br>
             <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
                  <spring:theme code="basket.save.cart.action.cancel"/> </a></p>
