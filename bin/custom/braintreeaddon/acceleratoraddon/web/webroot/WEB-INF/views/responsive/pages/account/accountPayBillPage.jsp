@@ -125,7 +125,9 @@
                                     </div>
                                     <div class="col-12 ">
                                     <c:forEach items="${cartEntry.messages}" var="message" >
+                                    <c:if test="${not empty message.messageCode and  message.messageCode ne ''}">
                                         <div class="notification notification-warning">${message.messageCode}</div>
+                                    </c:if>    
                                         </c:forEach>
                                     </div>
                                 </div>
