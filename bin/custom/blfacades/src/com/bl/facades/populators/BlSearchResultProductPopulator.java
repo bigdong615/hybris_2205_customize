@@ -264,7 +264,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
 			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
-			if (blProductModel != null)
+			if (blProductModel != null && !blProductModel.getManufacturerAID().equalsIgnoreCase("9"))
 			{
 				target.setStock(getStockConverter().convert(blProductModel));
 			}
