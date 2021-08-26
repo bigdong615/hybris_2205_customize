@@ -690,6 +690,7 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 
@@ -1321,6 +1322,11 @@
 
 	<alias name="defaultBlCustomerAccountDao" alias="customerAccountDao"/>
 	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
+	</bean>
+	
+	<alias name="defaultBlBlackoutDatesDao" alias="blBlackoutDatesDao"/>
+	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 	
 </beans>

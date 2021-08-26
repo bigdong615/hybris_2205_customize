@@ -2,6 +2,7 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
@@ -38,10 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -277,7 +280,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
                 .collect(Collectors.toList());
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-        final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+        final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
@@ -483,6 +486,28 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
             .contains(deliveryModeModel.getCode()));
     }
+    
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
+ 	{
+ 		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
+ 		final List<Date> allBlackoutDatesForGivenType = getBlDatePickerService().getAllBlackoutDatesForGivenType(blackoutDateType);
+ 		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
+ 		{
+ 			return isGivenDateIsBlackoutDate.get();
+ 		}
+ 		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
+ 			if (DateUtils.isSameDay(dateToCheck, blackoutDate))
+ 			{
+ 				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
+ 			}
+ 		});
+
+ 		return isGivenDateIsBlackoutDate.get();
+ 	}
 
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;

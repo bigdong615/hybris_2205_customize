@@ -12,7 +12,6 @@
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="list"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
-        <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
 
         <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
 
@@ -336,6 +335,17 @@
         <value code="EXTRA_DOCUMENT3"/>
         <value code="EXTRA_DOCUMENT4"/>
         <value code="EXTRA_DOCUMENT5"/>
+      </enumtype>
+      
+      <enumtype generate="true" code="BlackoutDateShippingMethodEnum" autocreate="true" dynamic="true">
+      	<value code="NONE" />
+      	<value code="ALL" />
+      </enumtype>
+      
+      <enumtype generate="true" code="BlackoutDateTypeEnum" autocreate="true" dynamic="true">
+      	<value code="RENTAL_START_DATE" />
+      	<value code="RENTAL_END_DATE" />
+      	<value code="HOLIDAY" />
       </enumtype>
 
 	  </enumtypes>
@@ -2964,11 +2974,6 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute type="BlackOutDates" qualifier="blackOutDates">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" search="true" initial="true" />
-                        <description>List of BlackOut Dates</description>
-                    </attribute>
                     <attribute qualifier="usedGearCartTimer" type="java.lang.String">
 						<persistence type="property" />
 						<modifiers optional="true" read="true" write="true" />
@@ -3519,6 +3524,32 @@
 	                    <description>Testing Gear Needed Status</description>
 	                    <persistence type="property" />
                   	</attribute>
+				</attributes>
+			</itemtype>
+		</typegroup>
+		
+		<!-- BL-1087 BL-1088 BL-1089 -->
+		<typegroup name="BlackoutDate">
+			<itemtype code="BlBlackoutDate" autocreate="true" generate="true">
+				<description>Bl Blackout Dates</description>
+				<deployment table="blackoutDate" typecode="12234"/>
+				<attributes>
+					<attribute qualifier="blackoutDate" type="java.util.Date">
+						<modifiers read="true" write="true" optional="false"/>
+						<description>Blackout Date</description>
+						<persistence type="property" />
+					</attribute>
+					<attribute qualifier="blockedShippingMethod" type="BlackoutDateShippingMethodEnum">
+						<modifiers read="true" write="true" optional="true" />
+						<defaultvalue>em().getEnumerationValue("BlackoutDateShippingMethodEnum", "NONE")</defaultvalue>
+						<description>Blocked Shipping Method for Blackout date</description>
+						<persistence type="property" />
+					</attribute>
+					<attribute qualifier="blackoutDateType" type="BlackoutDateTypeEnum">
+						<modifiers read="true" write="true" optional="false" />
+						<description>Blackout Date Type</description>
+						<persistence type="property" />
+					</attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>

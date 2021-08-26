@@ -1,5 +1,6 @@
 package com.bl.core.datepicker;
 
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.facades.product.data.RentalDateDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -65,5 +66,5 @@ public interface BlDatePickerService
 	 *
 	 * @return the list of black out dates
 	 */
-	public List<Date> getListOfBlackOutDates();
+	public List<Date> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType);
 }

@@ -43,7 +43,7 @@
                 <n:type-node id="CleanCompleteOrderQueue" code="CleanCompleteOrderQueue"/>
                 <n:type-node id="IncompleteOrdersQueue" code="IncompleteOrdersQueue"/>
              </n:navigation-node>
-            
+            <n:type-node id="BlBlackoutDate" code="BlBlackoutDate"/>
         </n:explorer-tree>
     </context>
 
@@ -2627,6 +2627,47 @@
 			<list-view:column qualifier="ocLocationCode"/>
 			<list-view:column qualifier="itemStatusCode"/>
 			<list-view:column qualifier="unboxedDate"/>
+		</list-view:list-view>
+	</context>
+	
+	<context type="BlBlackoutDate" component="create-wizard">
+		<wz:flow id="blBlackoutDateCreateWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="blBlackoutDatePrepare">
+				<wz:initialize property="newBlBlackoutDate" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step0" label="hmc.essential">
+				<wz:content>
+					<wz:property-list root="newBlBlackoutDate">
+						<wz:property qualifier="blackoutDate"/>
+						<wz:property qualifier="blockedShippingMethod"/>
+						<wz:property qualifier="blackoutDateType"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step0.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlBlackoutDate"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	
+	<context type="BlBlackoutDate" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
+			<advanced-search:field-list>
+				<advanced-search:field mandatory="false" name="blackoutDate" selected="true"/>
+                <advanced-search:field mandatory="false" name="blockedShippingMethod" selected="true"/>
+                <advanced-search:field mandatory="false" name="blackoutDateType" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+	
+	<context type="BlBlackoutDate" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="blackoutDate"/>
+			<list-view:column qualifier="blockedShippingMethod"/>
+			<list-view:column qualifier="blackoutDateType"/>
 		</list-view:list-view>
 	</context>
 
