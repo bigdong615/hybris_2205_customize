@@ -29,6 +29,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String GIFT_CART = "isGiftCart";
   public static final String NEW_GEAR_CART="isNewGearCart";
   public static final String RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED = "allowAddToCart";
+  public static final String GIFTCARDADDTOCART = "allowGiftCardAddToCart";
 
   public static final String ON_SALE = "onSale";
   public static final String ON_SALE_TAG_VALUE = "ON SALE";
