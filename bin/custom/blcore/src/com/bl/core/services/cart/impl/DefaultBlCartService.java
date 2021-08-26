@@ -485,12 +485,12 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
-     * This method used for remove cart from DB.
-     * @param cartModel
+     * @inheritDoc
      */
     @Override
-    public void removeEmptyCart(CartModel cartModel){
-      getModelService().remove(cartModel);
+    public void removeEmptyCart(final CartModel cartModel){
+        getModelService().remove(cartModel);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Removing empty cart with code:{} ", cartModel.getCode());
     }
 
     public CommerceCartService getCommerceCartService() {

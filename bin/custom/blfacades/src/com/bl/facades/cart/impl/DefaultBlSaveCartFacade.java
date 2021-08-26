@@ -6,7 +6,6 @@ import com.bl.facades.cart.BlSaveCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.impl.DefaultSaveCartFacade;
-import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.converters.Converters;
@@ -15,6 +14,7 @@ import de.hybris.platform.core.model.order.CartModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,24 +45,23 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
     final SearchPageData<CartModel> savedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
         getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
     // remove discontinue entry from cart.
-    StringBuilder removedBufferEntries = new StringBuilder();
-    List<String> emptyCartCodeList = new ArrayList<>();
+   final StringBuilder removedBufferEntries = new StringBuilder();
+   final AtomicBoolean isRemovedCart = new AtomicBoolean(false);
     if(CollectionUtils.isNotEmpty(savedCartModels.getResults())) {
       savedCartModels.getResults().forEach(cartModel -> {
-        String removedEntry =  blCartFacade.removeDiscontinueProductFromCart(cartModel, Boolean.FALSE);
+      final String removedEntry =  blCartFacade.removeDiscontinueProductFromCart(cartModel, Boolean.FALSE);
             if(StringUtils.isNotEmpty(removedEntry)) {
               removedBufferEntries.append(BlFacadesConstants.COMMA_SEPERATER).append(removedEntry);
             }
             /** Collecting all cart code which don't have entry*/
         if (CollectionUtils.isEmpty(cartModel.getEntries())) {
           blCartService.removeEmptyCart(cartModel);
-          emptyCartCodeList.add(cartModel.getCode());
+          isRemovedCart.set(true);
         }
       });
     }
     SearchPageData<CartModel> updatedSavedCartModels = savedCartModels;
-
-    if(CollectionUtils.isNotEmpty(emptyCartCodeList)){
+    if(isRemovedCart.get()){
       /** pick updated saved cart data which show on saved cart page.*/
       updatedSavedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
           getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
