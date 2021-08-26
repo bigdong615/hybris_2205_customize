@@ -184,7 +184,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     @ViewEvent(componentID = BlCustomCancelRefundConstants.CONFIRM_CANCELLATION, eventName = BlCustomCancelRefundConstants.ON_CLICK)
     public void confirmCancellation() {
         if(!validateOrderEnteredQuantityAmountReason()) {
-            //validateOrderCancellableEntries();
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_MSG),
                     this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE) + StringUtils.SPACE
                             + this.getOrderModel().getCode(), new Button[]{Button.NO, Button.YES},
@@ -393,25 +392,38 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * This method will validate input events of cancel and refund popup
      */
     private boolean validateOrderEnteredQuantityAmountReason() {
+        final Optional<Component> checkedEntry = this.getOrderEntriesGridRows().stream().filter(row -> Boolean.TRUE.equals(((Checkbox) row.getChildren().iterator()
+                .next()).isChecked())).findFirst();
+        if(!checkedEntry.isPresent()) {
+            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE),
+                    this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE_SELECTION), Messagebox.OK, Messagebox.ERROR);
+            return Boolean.TRUE;
+        }
+
         for (final Component row : this.getOrderEntriesGridRows()) {
             if (((Checkbox) row.getChildren().iterator().next()).isChecked()) {
-                final InputElement cancellableQty = (InputElement) row.getChildren().get(BlloggingConstants.NINE);
-                final InputElement cancelQty = (InputElement) row.getChildren().get(BlloggingConstants.TEN);
-                if (cancelQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO) &&
-                        !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)) {
-                    Messagebox.show("Quantity to cancel can not ne zero!!",
-                            this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY), Messagebox.OK, Messagebox.ERROR);
+                final int cancelQty = Integer.parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.TEN)).getRawValue()));
+                final int cancellableQty = Integer.parseInt(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.NINE)).getRawValue()));
+                if (cancelQty == BlCustomCancelRefundConstants.ZERO && cancellableQty != BlCustomCancelRefundConstants.ZERO) {
+                    Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY),
+                            this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY_HEADER), Messagebox.OK, Messagebox.ERROR);
+                    return Boolean.TRUE;
+                } else if(cancelQty > cancellableQty) {
+                    Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY_HIGHER),
+                            this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY_HEADER), Messagebox.OK, Messagebox.ERROR);
                     return Boolean.TRUE;
                 }
-                final Combobox combobox = (Combobox) row.getChildren().get(BlloggingConstants.TWELVE);
-                if (combobox.getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE &&
-                        !cancellableQty.getRawValue().equals(BlCustomCancelRefundConstants.ZERO)) {
-                    Messagebox.show("Choose reason to cancel",
-                            this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON), Messagebox.OK, Messagebox.ERROR);
+
+                if(this.getValidateRefundAmountMessage(row)) {
                     return Boolean.TRUE;
                 }
-                return this.getValidateRefundAmountMessage((InputElement) row.getChildren().get(BlloggingConstants.TEN),
-                        (InputElement) row.getChildren().get(BlloggingConstants.SEVEN));
+
+                if (((Combobox) row.getChildren().get(BlloggingConstants.TWELVE)).getSelectedIndex() == -BlInventoryScanLoggingConstants.ONE &&
+                        cancellableQty != BlCustomCancelRefundConstants.ZERO) {
+                    Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON),
+                            this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON_HEADER), Messagebox.OK, Messagebox.ERROR);
+                    return Boolean.TRUE;
+                }
             }
         }
         return Boolean.FALSE;
@@ -422,50 +434,26 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      *
      * @return the validate order message
      */
-    private boolean getValidateRefundAmountMessage(final InputElement refundAmount, final InputElement refundedAmount) {
-        if (refundAmount.getRawValue() == null) {
-            Messagebox.show("Please enter amount to refund for cancellation",
-                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT), Messagebox.OK, Messagebox.ERROR);
-            return Boolean.TRUE;
-        } else {
-            final double amount = Double.parseDouble(String.valueOf(refundAmount.getRawValue()));
-            final double amountAlreadyRefunded = Double.parseDouble(String.valueOf(refundedAmount.getRawValue()));
-            if (amount <= BlCustomCancelRefundConstants.ZERO) {
-                Messagebox.show("Amount to refund can not be zero or negative",
-                        this.getLabel(BlCustomCancelRefundConstants.ZERO_ORDER_AMOUNT), Messagebox.OK, Messagebox.ERROR);
-                return Boolean.TRUE;
-            } else if (amount > Double.parseDouble(this.totalAmount.getValue()) || (amount + amountAlreadyRefunded) >
-                    Double.parseDouble(this.totalAmount.getValue())) {
-                Messagebox.show("Invalid amount to refund, please enter correct quantity!!",
-                        this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT), Messagebox.OK, Messagebox.ERROR);
-                return Boolean.TRUE;
-            }
-        }
-        return Boolean.FALSE;
-    }
+    private boolean getValidateRefundAmountMessage(final Component row) {
+        final double amount = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.ELEVEN)).getRawValue()));
+        final double amountAlreadyRefunded = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.EIGHT)).getRawValue()));
 
-    /**
-     * This method will validate order cancellable entries of cancel and refund popup
-     */
-    private boolean validateOrderCancellableEntries() {
-        final ListModelList<BlOrderEntryToCancelDto> modelList = (ListModelList) this.getOrderEntries().getModel();
-        if (modelList.stream().allMatch(entry -> entry.getQuantityToCancel() == BlCustomCancelRefundConstants.ZERO_LONG)) {
-            BlLogger.logMessage(LOGGER, org.apache.log4j.Level.DEBUG, this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE));
-            throw new WrongValueException(this.globalCancelEntriesSelection, this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE));
-        } else {
-            modelList.forEach(entry -> {
-                if (entry.getQuantityToCancel() > entry.getQuantityAvailableToCancel()) {
-                    logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(),
-                            BlloggingConstants.TEN), BlCustomCancelRefundConstants.CANCELORDER_ERROR_QTYCANCELLED_INVALID);
-                } else if (entry.getSelectedReason() != null && entry.getQuantityToCancel() == BlCustomCancelRefundConstants.ZERO_LONG) {
-                    logErrorAndThrowException((InputElement) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(),
-                            BlloggingConstants.TEN), BlCustomCancelRefundConstants.CANCELORDER_MISSING_QUANTITY);
-                } else if (entry.getSelectedReason() == null && entry.getQuantityToCancel() > BlCustomCancelRefundConstants.ZERO_LONG) {
-                    logErrorAndThrowException((Combobox) this.targetFieldToApplyValidation(entry.getOrderEntry().getProduct().getCode(),
-                            BlloggingConstants.TWELVE), BlCustomCancelRefundConstants.CANCELORDER_ERROR_REASON);
-                }
-            });
+        final double productPrice = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue()));
+        final Checkbox tax = ((Checkbox) row.getChildren().get(BlloggingConstants.SIX));
+        final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
+        final double totalProductPrice = productPrice - ((tax.isChecked() ? Double.parseDouble(waiver.getLabel()) :
+                BlInventoryScanLoggingConstants.ZERO) + (waiver.isChecked() ? Double.parseDouble(waiver.getLabel()) :
+                BlInventoryScanLoggingConstants.ZERO));
+        if (amount <= BlCustomCancelRefundConstants.ZERO) {
+            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.ZERO_ORDER_AMOUNT),
+                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
+            return Boolean.TRUE;
+        } else if (amount > totalProductPrice || (amount + amountAlreadyRefunded) > totalProductPrice) {
+            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
+                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
+            return Boolean.TRUE;
         }
+
         return Boolean.FALSE;
     }
 
