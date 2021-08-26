@@ -99,7 +99,7 @@
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 </c:choose>
-	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+	                                 <a href="#" class="pickupDeliveryLink" data-bs-toggle="modal" data-bs-target="#pickup-delivery-options"><spring:theme code="pdp.pickup.section.text"/></a>
                                  </p>
                                   </div>
                                   </c:otherwise>
