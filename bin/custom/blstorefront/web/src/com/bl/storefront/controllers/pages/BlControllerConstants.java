@@ -78,6 +78,7 @@ public class BlControllerConstants
 	
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
+	public static final String DISABLE_BUTTON = "disableButton";
 
 	public static final int SKIP_TWO_DAYS = 2;
 	public static final String TRUE_STRING = "true";

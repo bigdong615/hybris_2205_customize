@@ -23,6 +23,7 @@ import org.zkoss.zul.Textbox;
 import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -151,7 +152,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		final int barcodeSize = barcodes.size();
 		if (barcodeSize >= BlInventoryScanLoggingConstants.ONE)
 		{
-			final Map<String, List<String>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
+			final Map<String, List<BlProductModel>> scannedBarcodeMap = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 					selectedConsignment);
 			createResponseMsgForShippingScan(scannedBarcodeMap);
 		}
@@ -187,7 +188,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	/**
 	 * @param scannedBarcodeList
 	 */
-	private void createResponseMsgForShippingScan(final Map<String, List<String>> scannedBarcodeMap)
+	private void createResponseMsgForShippingScan(final Map<String, List<BlProductModel>> scannedBarcodeMap)
 	{
 		if (MapUtils.isNotEmpty(scannedBarcodeMap))
 		{
@@ -211,6 +212,12 @@ public class BlShippingScanController extends DefaultWidgetController
 					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_SCAN_MSG,
 							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_SCAN_KEY,
 							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_SCAN));
+				}
+				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_SCAN_BARCODE))
+				{
+					notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG,
+							BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY,
+							scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT));
 				}
 			}
 		}
