@@ -1,5 +1,6 @@
 package com.bl.facades.cart.impl;
 
+import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.cart.BlSaveCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -28,6 +29,8 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
 
   @Resource(name ="cartFacade")
   private BlCartFacade blCartFacade;
+  @Resource(name = "cartService")
+  private BlCartService blCartService;
 
   /**
    *  This method overload to customize saved cart.
@@ -52,20 +55,14 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
             }
             /** Collecting all cart code which don't have entry*/
         if (CollectionUtils.isEmpty(cartModel.getEntries())) {
+          blCartService.removeEmptyCart(cartModel);
           emptyCartCodeList.add(cartModel.getCode());
         }
       });
     }
     SearchPageData<CartModel> updatedSavedCartModels = savedCartModels;
-    /** Removing all cart which don't have entry*/
+
     if(CollectionUtils.isNotEmpty(emptyCartCodeList)){
-      emptyCartCodeList.forEach(cartCode ->{
-        try {
-          flagForDeletion(cartCode);
-        } catch (CommerceSaveCartException e) {
-          e.printStackTrace();
-        }
-      });
       /** pick updated saved cart data which show on saved cart page.*/
       updatedSavedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
           getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);

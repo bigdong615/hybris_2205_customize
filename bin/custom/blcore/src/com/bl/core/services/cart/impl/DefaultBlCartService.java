@@ -484,6 +484,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             .contains(deliveryModeModel.getCode()));
     }
 
+    /**
+     * This method used for remove cart from DB.
+     * @param cartModel
+     */
+    @Override
+    public void removeEmptyCart(CartModel cartModel){
+      getModelService().remove(cartModel);
+    }
+
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;
     }
