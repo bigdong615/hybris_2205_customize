@@ -55,6 +55,7 @@ import org.zkoss.zul.impl.InputElement;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
@@ -414,7 +415,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     return Boolean.TRUE;
                 }
 
-                if(this.getValidateRefundAmountMessage(row)) {
+                if(this.getValidateRefundAmountMessage(row, cancelQty, cancellableQty)) {
                     return Boolean.TRUE;
                 }
 
@@ -434,16 +435,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      *
      * @return the validate order message
      */
-    private boolean getValidateRefundAmountMessage(final Component row) {
+    private boolean getValidateRefundAmountMessage(final Component row, final int cancelQty, final int cancellableQty) {
         final double amount = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.ELEVEN)).getRawValue()));
         final double amountAlreadyRefunded = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.EIGHT)).getRawValue()));
 
-        final double productPrice = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue()));
-        final Checkbox tax = ((Checkbox) row.getChildren().get(BlloggingConstants.SIX));
-        final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
-        final double totalProductPrice = productPrice - ((tax.isChecked() ? Double.parseDouble(waiver.getLabel()) :
-                BlInventoryScanLoggingConstants.ZERO) + (waiver.isChecked() ? Double.parseDouble(waiver.getLabel()) :
-                BlInventoryScanLoggingConstants.ZERO));
+        final double totalProductPrice = this.getTotalProductPriceForCancelQuantity(row, cancelQty, cancellableQty);
         if (amount <= BlCustomCancelRefundConstants.ZERO) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.ZERO_ORDER_AMOUNT),
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
@@ -455,6 +451,30 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         }
 
         return Boolean.FALSE;
+    }
+
+    /**
+     * This method will calculate total price for line item based on enter cancel quantity
+     *
+     * @param row line
+     * @param cancelQty quantity
+     * @param cancellableQty quantity
+     * @return final price
+     */
+    private double getTotalProductPriceForCancelQuantity(final Component row, final int cancelQty, final int cancellableQty) {
+        final double productPrice = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue()));
+        final Checkbox tax = ((Checkbox) row.getChildren().get(BlloggingConstants.SIX));
+        final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
+
+        final double perEntryPrice = (productPrice/cancellableQty);
+        final double perEntryTax = Double.parseDouble(tax.getLabel())/cancellableQty;
+        final double perEntryWaiver = Double.parseDouble(waiver.getLabel())/cancellableQty;
+
+        final double totalProductPrice = (perEntryPrice * cancelQty) + ((tax.isChecked() ? (perEntryTax * cancelQty) :
+                BlInventoryScanLoggingConstants.ZERO) + (waiver.isChecked() ? (perEntryWaiver * cancelQty) :
+                BlInventoryScanLoggingConstants.ZERO));
+
+        return BigDecimal.valueOf(totalProductPrice).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
     }
 
     /**
