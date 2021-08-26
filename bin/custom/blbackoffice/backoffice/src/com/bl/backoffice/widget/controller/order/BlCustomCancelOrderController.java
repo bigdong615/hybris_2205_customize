@@ -466,11 +466,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         final Checkbox tax = ((Checkbox) row.getChildren().get(BlloggingConstants.SIX));
         final Checkbox waiver = ((Checkbox) row.getChildren().get(BlloggingConstants.SEVEN));
 
-        final double perEntryPrice = (productPrice/cancellableQty);
         final double perEntryTax = Double.parseDouble(tax.getLabel())/cancellableQty;
         final double perEntryWaiver = Double.parseDouble(waiver.getLabel())/cancellableQty;
 
-        final double totalProductPrice = (perEntryPrice * cancelQty) + ((tax.isChecked() ? (perEntryTax * cancelQty) :
+        final double totalProductPrice = (productPrice * cancelQty) + ((tax.isChecked() ? (perEntryTax * cancelQty) :
                 BlInventoryScanLoggingConstants.ZERO) + (waiver.isChecked() ? (perEntryWaiver * cancelQty) :
                 BlInventoryScanLoggingConstants.ZERO));
 

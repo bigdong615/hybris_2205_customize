@@ -135,7 +135,7 @@
                                      id="name_${each.orderEntry.product.code}" readonly="true"/>
                             <textbox value="${each.deliveryModeName}" width="200px" name="delivery_${each.orderEntry.product.code}"
                                      id="delivery_${each.orderEntry.product.code}" readonly="true"/>
-                            <textbox value="${each.orderEntry.totalPrice}" width="110px" name="price_${each.orderEntry.product.code}"
+                            <textbox value="${each.orderEntry.basePrice}" width="110px" name="price_${each.orderEntry.product.code}"
                                      id="price_${each.orderEntry.product.code}" readonly="true"/>
                             <textbox value="NA" width="132px" name="shipping_${each.orderEntry.product.code}"
                                      id="shipping_${each.orderEntry.product.code}" readonly="true"/>
