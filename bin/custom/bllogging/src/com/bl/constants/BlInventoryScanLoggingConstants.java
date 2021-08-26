@@ -204,6 +204,7 @@ public class BlInventoryScanLoggingConstants {
 
  	public static final String MISSING_IN_CONSIGNMENT = "MISSING_IN_CONSIGNMENT";
  	public static final String MISSING_IN_SCAN = "MISSING_IN_SCAN";
+ 	public static final String MISSING_SCAN_BARCODE = "MISSING_SCAN_BARCODE";
  	public static final String SUCCESS_SCAN = "SUCCESS_SCAN";
     public static final String IS_PAYMENT_PAGE_VISITED = "isPaymentPageVisited";
     public static final String CUSTOMER_SUPPORT_AGENT_GROUP = "customersupportagentgroup";

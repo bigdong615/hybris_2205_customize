@@ -110,6 +110,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		
+		final boolean isCustomerHasUnPaidBillOrders =  brainTreeCheckoutFacade.isCustomerHasUnPaidBillOrders();
+		model.addAttribute("isCustomerHasUnPaidBillOrders", isCustomerHasUnPaidBillOrders);
 		model.addAttribute("pageType", REVIEW_SUMMARY_PAGE);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
@@ -205,6 +208,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 
+		
 		updateGiftCardPurchaseForm(request);
 		final CartModel cartModel = blCartService.getSessionCart();
 		double priceBeforeRecalculateGiftCard = cartModel.getTotalPrice();
@@ -275,9 +279,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
-			if(paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
-				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
-			}
+
+			subscribeEmailForNewsLetters(placeOrderForm, paymentInfo, orderData);
+
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}
@@ -290,6 +294,25 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 		return redirectToOrderConfirmationPage(orderData);
 	}
+
+	/**
+	 * It subscribes customer email id for news letters
+	 * @param placeOrderForm the placeOrderForm
+	 * @param paymentInfo the paymentInfo
+	 * @param orderData the orderData
+	 */
+	private void subscribeEmailForNewsLetters(
+			@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm,
+			final CCPaymentInfoData paymentInfo, final OrderData orderData) {
+		if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+			if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
+				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+			} else {
+				blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+			}
+		}
+	}
+
  	/**
 	 * It saves Gift Card Purchase Form
 	 * @param HttpServletRequest the request

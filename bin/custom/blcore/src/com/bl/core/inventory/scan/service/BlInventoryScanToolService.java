@@ -1,6 +1,7 @@
 package com.bl.core.inventory.scan.service;
 
 import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -122,9 +123,9 @@ public interface BlInventoryScanToolService {
  	 * 
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
- 	 * @return Map<String, List<String>>
+ 	 * @return Map<String, List<BlProductModel>>
  	 */
- 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	public Map<String, List<BlProductModel>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
