@@ -3265,7 +3265,12 @@
 	                    <description>Unpaid bill already paid or not</description>
 	                    <persistence type="property" />
 	                    <defaultvalue>Boolean.FALSE</defaultvalue>
-                  </attribute>     
+                  </attribute>
+                  <attribute qualifier="unPaidBillNotes" type="java.lang.String">
+                         <modifiers read="true" write="true" search="true" optional="true" />
+                         <description>This attribute is used to add notes for unpaid bill.</description>
+                         <persistence type="property"/>
+                  </attribute>   
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -3695,6 +3700,22 @@
 				<property name="position">
 					<value>
 						new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="status" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+						Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+						new Integer(3)
 					</value>
 				</property>
 			</custom-properties>

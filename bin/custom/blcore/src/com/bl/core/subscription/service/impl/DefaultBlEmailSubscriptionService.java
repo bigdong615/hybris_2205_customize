@@ -3,6 +3,7 @@
  */
 package com.bl.core.subscription.service.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.subscription.models.ContactResponseWrapper;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -51,7 +52,8 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 
 		final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
 				.create(BlStoredEmailSubscriptionModel.class);
-		emailSubscriptionModel.setContactId(String.valueOf(contactResponseWrapper.getContactID()));
+		emailSubscriptionModel.setContactId(null != contactResponseWrapper.getContactID() ? String
+				.valueOf(contactResponseWrapper.getContactID()) : BlCoreConstants.EMPTY_STRING);
 		emailSubscriptionModel.setContactKey(contactResponseWrapper.getContactKey());
 		emailSubscriptionModel.setStatusCode(contactResponseWrapper.getOperationStatus());
 		emailSubscriptionModel.setRequestString(contactResponseWrapper.getRequestString());

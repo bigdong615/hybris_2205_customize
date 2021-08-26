@@ -472,6 +472,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 							Arrays.asList(String.valueOf(cartEntryQty), nextAvailabilityDate))
 					: getMessage("cart.entry.item.availability.no.stock.available.till", Arrays.asList(nextAvailabilityDate)));
 		}
+		else
+		{
+			entry.setAvailabilityMessage(getMessage("text.stock.not.available",Lists.newArrayList()));
+		}
 	}
 
 	/**
