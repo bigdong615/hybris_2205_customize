@@ -38,9 +38,6 @@
 					<div id="productInfo" class="col-lg-5 offset-lg-1">
 
 						<h1 class="mb-4">${product.displayName}</h1>
-						<!-- <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                                   <div class="modal-dialog modal-dialog-centered modal-sm " id="addToCartModalDialog"></div>
-                                              </div>  -->
                       <c:choose>
                                         <c:when test="${allowAddToCart}">
                                               <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
