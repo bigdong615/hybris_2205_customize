@@ -21,4 +21,13 @@ public interface BlBlackoutDatesDao
 	 * @return all blackout dates for given Blackout Date Type.
 	 */
 	public List<BlBlackoutDateModel> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType);
+
+	/**
+	 * Gets the all blackout dates for shipping methods.
+	 *
+	 * @param deliveryModeCodes
+	 *           the delivery mode codes
+	 * @return the all blackout dates for shipping methods
+	 */
+	public List<BlBlackoutDateModel> getAllBlackoutDatesForShippingMethods(final List<String> deliveryModeCodes);
 }

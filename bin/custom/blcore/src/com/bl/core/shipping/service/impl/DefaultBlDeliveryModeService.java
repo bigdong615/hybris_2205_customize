@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -35,16 +36,19 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
@@ -55,6 +59,7 @@ import com.bl.facades.fexEx.data.SameDayCityReqData;
 import com.bl.facades.fexEx.data.SameDayCityResData;
 import com.bl.integration.services.BlFedExSameDayService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
@@ -81,6 +86,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private BlCartService blCartService;
 
     private BaseStoreService baseStoreService;
+    
+    private BlBlackoutDatesDao blBlackoutDatesDao;
 
     @Value("${shipping.sf.zip.code}")
     private String sf;
@@ -148,9 +155,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if (CollectionUtils.isNotEmpty(fedexZoneDeliveryModes)) {
             allDeliveryModes.addAll(fedexZoneDeliveryModes);
         }
-        return allDeliveryModes;
+        return (Collection<ZoneDeliveryModeModel>) excludeBlockedShippingMethods(Lists.newArrayList(allDeliveryModes), rentalStart);
     }
-
 
     /**
      * {@inheritDoc}
@@ -285,8 +291,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(final String rentalStart,
                                                                                                                 final String rentalEnd,
                                                                                                                 final boolean payByCustomer) {
-        return getPartnerPickUpDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer).stream()
+   	 Collection<BlPickUpZoneDeliveryModeModel> partnerPickUpDeliveryModesWithRentalDates = getPartnerPickUpDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer).stream()
                 .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
+   	 return (Collection<BlPickUpZoneDeliveryModeModel>) excludeBlockedShippingMethods(Lists.newArrayList(partnerPickUpDeliveryModesWithRentalDates), rentalStart);
     }
 
 
@@ -324,8 +331,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             for (BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 checkDeliveryModeValidityOfTypePartner(newBlPickUpZoneDeliveryModeModels, result, pickUpZoneDeliveryModeModel);
             }
-            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels.stream()
+            Collection<BlPickUpZoneDeliveryModeModel> partnerZoneDeliveryModes = CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels.stream()
                     .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList()) : Collections.emptyList();
+            return (Collection<BlPickUpZoneDeliveryModeModel>) excludeBlockedShippingMethods(Lists.newArrayList(partnerZoneDeliveryModes), rentalStart);
         }
         return Collections.emptyList();
     }
@@ -411,8 +419,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                       final String rentalStart, final String rentalEnd,
                                                                       final boolean payByCustomer) {
 
-        return getBlZoneDeliveryModeDao().getBlRushDeliveryModes(deliveryMode, pstCutOffTime, payByCustomer).stream()
+   	 Collection<BlRushDeliveryModeModel> blRushDeliveryModes = getBlZoneDeliveryModeDao().getBlRushDeliveryModes(deliveryMode, pstCutOffTime, payByCustomer).stream()
                 .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
+   	 return (Collection<BlRushDeliveryModeModel>) excludeBlockedShippingMethods(Lists.newArrayList(blRushDeliveryModes), rentalStart);
     }
 
     /**
@@ -867,6 +876,64 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes() {
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
+    
+    /**
+ 	 * Exclude blocked shipping methods.
+ 	 *
+ 	 * @param deliveryModeModels
+ 	 *           the delivery mode models
+ 	 * @param rentalStart
+ 	 *           the rental start
+ 	 * @return the collection<? extends zone delivery mode model>
+ 	 */
+ 	private Collection<? extends ZoneDeliveryModeModel> excludeBlockedShippingMethods(
+ 			final List<? extends ZoneDeliveryModeModel> deliveryModeModels, final String rentalStart)
+ 	{
+ 		final List<ZoneDeliveryModeModel> updatedList = Lists.newArrayList();
+ 		final Date rentalStartDate = BlDateTimeUtils.getDate(rentalStart, BlCoreConstants.DATE_FORMAT);
+ 		final List<String> deliveryModeCodes = deliveryModeModels.stream().map(deliveryMode -> deliveryMode.getCode())
+ 				.collect(Collectors.toList());
+ 		final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlBlackoutDatesDao()
+ 				.getAllBlackoutDatesForShippingMethods(deliveryModeCodes);
+ 		if (CollectionUtils.isNotEmpty(allBlackoutDatesForShippingMethods))
+ 		{
+ 			final Map<String, List<BlBlackoutDateModel>> groupedDeliveryMethods = allBlackoutDatesForShippingMethods.stream()
+ 					.collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
+ 			deliveryModeModels.forEach(deliveryMode -> {
+ 				final List<BlBlackoutDateModel> deliveryBlackOutList = Lists
+ 						.newArrayList(CollectionUtils.emptyIfNull(groupedDeliveryMethods.get(deliveryMode.getCode())));
+ 				deliveryBlackOutList
+ 						.removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
+ 				final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
+ 				final AtomicBoolean isDateIsBlocked = new AtomicBoolean(Boolean.FALSE);
+ 				lBlackoutDate.forEach(bDate -> {
+ 					if (DateUtils.isSameDay(rentalStartDate, bDate))
+ 					{
+ 						isDateIsBlocked.set(Boolean.TRUE);
+ 						return;
+ 					}
+ 				});
+ 				if (!isDateIsBlocked.get())
+ 				{
+ 					updatedList.add(deliveryMode);
+ 				}
+ 			});
+ 			return updatedList;
+ 		}
+ 		return deliveryModeModels;
+ 	}
+
+ 	/**
+ 	 * Gets the list of dates.
+ 	 *
+ 	 * @param blackoutDates
+ 	 *           the blackout dates
+ 	 * @return the list of dates
+ 	 */
+ 	private List<Date> getListOfDates(final List<BlBlackoutDateModel> blackoutDates)
+ 	{
+ 		return blackoutDates.stream().map(blackoutDate -> blackoutDate.getBlackoutDate()).collect(Collectors.toList());
+ 	}
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
@@ -933,4 +1000,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public void setBaseStoreService(final BaseStoreService baseStoreService) {
         this.baseStoreService = baseStoreService;
     }
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
 }

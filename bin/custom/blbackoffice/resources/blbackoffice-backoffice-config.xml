@@ -2669,6 +2669,18 @@
 			<list-view:column qualifier="blackoutDateType"/>
 		</list-view:list-view>
 	</context>
+	
+	<context merge-by="type" type="BlBlackoutDate" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blackout.date.tab" position="1">
+				<editorArea:section name="hmc.section.blackout.date.attributes">
+					<editorArea:attribute qualifier="blackoutDate"/>
+					<editorArea:attribute qualifier="blockedShippingMethod"/>
+					<editorArea:attribute qualifier="blackoutDateType"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
 
 </config>
 

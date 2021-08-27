@@ -590,6 +590,7 @@
 		<property name="catalogVersionDao" ref="catalogVersionDao" />
 		<property name="productDao" ref="productDao" />
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 
@@ -781,6 +782,7 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="blCartService" ref="cartService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->

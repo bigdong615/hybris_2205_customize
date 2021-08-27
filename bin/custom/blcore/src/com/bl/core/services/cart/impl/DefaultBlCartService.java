@@ -1,10 +1,13 @@
 package com.bl.core.services.cart.impl;
 
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateShippingMethodEnum;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlBlackoutDateModel;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
@@ -41,6 +44,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +70,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private CatalogVersionDao catalogVersionDao;
     private ProductDao productDao;
     private SearchRestrictionService searchRestrictionService;
+    private BlBlackoutDatesDao blBlackoutDatesDao;
 
     /**
      * {@inheritDoc}
@@ -494,15 +499,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
  	{
  		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
- 		final List<Date> allBlackoutDatesForGivenType = getBlDatePickerService().getAllBlackoutDatesForGivenType(blackoutDateType);
+ 		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
+				.getAllBlackoutDatesForGivenType(blackoutDateType);
+ 		final boolean isRentalStartDate = Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE.equals(blackoutDateType);
  		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
  		{
  			return isGivenDateIsBlackoutDate.get();
  		}
+ 		if(isRentalStartDate)
+ 		{
+ 			allBlackoutDatesForGivenType.removeIf(blackoutDate -> !BlackoutDateShippingMethodEnum.ALL.equals(blackoutDate.getBlockedShippingMethod()));
+ 		}
  		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
- 			if (DateUtils.isSameDay(dateToCheck, blackoutDate))
+ 			if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate()))
  			{
  				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
+ 				return;
  			}
  		});
 
@@ -613,5 +625,21 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
        SearchRestrictionService searchRestrictionService) {
        this.searchRestrictionService = searchRestrictionService;
    }
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
 
 }

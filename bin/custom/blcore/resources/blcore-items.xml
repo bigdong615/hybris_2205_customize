@@ -338,7 +338,6 @@
       </enumtype>
       
       <enumtype generate="true" code="BlackoutDateShippingMethodEnum" autocreate="true" dynamic="true">
-      	<value code="NONE" />
       	<value code="ALL" />
       </enumtype>
       
@@ -3002,6 +3001,12 @@
                       greater than this threshold amount
                     </description>
                   </attribute>
+                  <attribute qualifier="enableSaturdays" type="boolean">
+	            	  	<modifiers read="true" write="true" optional="false"/>
+	                    <description>Flag to enable and disable Saturdays on datepicker</description>
+	                     <persistence type="property" />
+	                     <defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>
                 </attributes>                
             </itemtype>
         </typegroup>
@@ -3540,8 +3545,8 @@
 						<persistence type="property" />
 					</attribute>
 					<attribute qualifier="blockedShippingMethod" type="BlackoutDateShippingMethodEnum">
-						<modifiers read="true" write="true" optional="true" />
-						<defaultvalue>em().getEnumerationValue("BlackoutDateShippingMethodEnum", "NONE")</defaultvalue>
+						<modifiers read="true" write="true" optional="false" />
+						<defaultvalue>em().getEnumerationValue("BlackoutDateShippingMethodEnum", "ALL")</defaultvalue>
 						<description>Blocked Shipping Method for Blackout date</description>
 						<persistence type="property" />
 					</attribute>

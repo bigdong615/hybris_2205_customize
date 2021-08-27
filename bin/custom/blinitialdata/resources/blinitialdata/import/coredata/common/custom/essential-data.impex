@@ -435,3 +435,49 @@ INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] ; name[lang=en]
                                         ; MISSING_CHARGE    ; MISSING CHARGE 
                                         ; LATE_CHARGE       ; LATE CHARGE    
                                         ; REPAIR_CHARGE     ; REPAIR CHARGE 
+
+ 
+INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]                                       
+                                             ; FEDEX_SAT_DELIVERY_BL                   ; FedEx Saturday Delivery on BL                       
+                                             ; FEDEX_STANDARD_ROUND_TRIP               ; FedEx Standard Round Trip                           
+                                             ; FEDEX_OVERNIGHT_ROUND_TRIP              ; FedEx Overnight Round Trip                          
+                                             ; UPS_STANDARD_ROUND_TRIP                 ; UPS Standard Round Trip                             
+                                             ; UPS_STANDARD_AM_ROUND_TRIP              ; UPS Standard Am Round Trip                          
+                                             ; UPS_OVERNIGHT_SAVER_ROUND_TRIP          ; Test UPS Overnight Saver Round Trip                 
+                                             ; UPS_OVERNIGHT_ROUND_TRIP                ; UPS Overnight Round Trip                            
+                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP          ; Ups Store Overnight Round Trip                      
+                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP        ; Ups Store Standard Am Round Trip                    
+                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP    ; Ups Store Overnight Saver Round Trip                
+                                             ; UPS_STORE_STANDARD_ROUND_TRIP           ; Ups Store Standard Round Trip                       
+                                             ; BL_SAN_CARLOS                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office) 
+                                             ; COLORTEK                                ; Pick-up in Boston, MA (Colortek)                    
+                                             ; FOTO_EXPRESS                            ; Pick-up in San Jose, CA (Foto Express)              
+                                             ; WEBCAM                                  ; Pick-up in Philadelphia, PA (WEBBCAM)               
+                                             ; BL_WALTHAM                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)    
+                                             ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)             
+                                             ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)          
+                                             ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)          
+                                             ; RUSH_NYC_NEXT_DAY_4_30_To_7_30          ; 04:30 PM - 07:30 PM EST_Order by                    
+                                             ; RUSH_NYC_NEXT_DAY_3_To_6                ; 03:00 PM - 06:00 PM EST_Order by                    
+                                             ; RUSH_SAN_CARLOS_3_To_6_BL               ; 03:00 PM - 06:00 PM PST_Order by 01:20 PM           
+                                             ; RUSH_SAN_CARLOS_4_30_To_7_30            ; 04:30 PM - 07:30 PM PST_Order by 02:50 PM           
+                                             ; RUSH_SAN_CARLOS_3_To_6                  ; 03:00 PM - 06:00 PM PST_Order by 01:20 PM           
+                                             ; RUSH_NYC_NEXT_DAY_9_To_12               ; 09:00 AM - 12:00 PM EST_Order by                    
+                                             ; RUSH_NYC_NEXT_DAY_12_To_3               ; 12:00 PM - 03:00 PM EST_Order by                    
+                                             ; RUSH_SAN_CARLOS_12_To_3_BL              ; 12:00 PM - 03:00 PM PST_Order by 10:20 AM           
+                                             ; RUSH_SAN_CARLOS_12_To_3                 ; 12:00 PM - 03:00 PM PST_Order by 10:20 AM           
+                                             ; RUSH_SAN_CARLOS_9_To_12                 ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM           
+                                             ; RUSH_SAN_CARLOS_9_To_12_BL              ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM           
+                                             ; RUSH_SAN_CARLOS_4_30_To_7_30_BL         ; 04:30 PM - 07:30 PM PST_Order by 02:50 PM           
+                                             ; RUSH_NYC_NEXT_DAY_9_To_12_BL            ; 09:00 AM - 12:00 PM EST_Order by                    
+                                             ; RUSH_NYC_NEXT_DAY_3_To_6_BL             ; 03:00 PM - 06:00 PM EST_Order by                    
+                                             ; RUSH_NYC_NEXT_DAY_12_To_3_BL            ; 12:00 PM - 03:00 PM EST_Order by                    
+                                             ; RUSH_NYC_NEXT_DAY_4_30_To_7_30_BL       ; 04:30 PM - 07:30 PM EST_Order by                    
+                                             ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL                       
+                                             ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL                        
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL                              
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_SAT_BL   ; FEDEX Overnight AM Saturday on BL                   
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_SAT_BL     ; Ups Overnight AM Saturday on BL                     
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL                            
+                                             ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL                      
+                                             ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL                         
