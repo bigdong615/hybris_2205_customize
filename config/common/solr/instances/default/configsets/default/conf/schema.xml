@@ -5,7 +5,7 @@
 -->
 
 <schema name="hybris" version="7.5">
-	<types>
+	<types>	
 		<!-- Basic Types -->
 
 		<fieldType name="boolean" class="solr.BoolField" docValues="true" sortMissingLast="true" />
@@ -51,7 +51,7 @@
 		</fieldType>
 
 		<!-- Text English (en) -->
-
+    <!--Stop words is commented for indexing-->
 		<fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
@@ -84,6 +84,7 @@
 			</analyzer>
 		</fieldType>
 
+		<!--Stop words is commented for indexing-->
 		<fieldType name="text_spell_en" class="solr.TextField" positionIncrementGap="100">
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
