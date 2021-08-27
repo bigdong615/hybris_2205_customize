@@ -1026,7 +1026,7 @@ function onUsedCloseModal()
 }
 
 //BL-625 place order with order notes.
-$('#placeOrderSummary').on("click", function(e) {
+$('#placeOrderSummary').one("click", function(e) {
 	$('#placeOrder').click();
 });
 
@@ -1041,7 +1041,7 @@ $('#placeOrderSummary').on("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
- $('#placeOrder').on(
+ $('#placeOrder').one(
 			"click",
 			function(e) {
 				var submitForm = $("#placeOrderForm1");
@@ -1181,3 +1181,10 @@ function hideShorting(){
                }
           }) ;
        });
+      
+ $('.gift-card-add-t-cart-popup').on('click', function(){      	   
+  	$(".modal").hide();  
+  	$("body").removeClass("modal-open");     	   
+  	$("body").removeAttr("style");         
+    $(".modal-backdrop").remove();
+  }); 
