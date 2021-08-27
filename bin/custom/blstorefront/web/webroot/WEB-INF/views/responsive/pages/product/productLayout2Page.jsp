@@ -63,4 +63,33 @@
            </div>
          </div>
        </div>
+       
+       <div class="modal fade" id="pickup-delivery-options" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="sku52678-title"><spring:theme code="text.pickup.delivery.modal.title"/></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.fast"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.ship.it"/> </b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line1"/></p>
+                    <hr>
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.faster"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.pickup"/></b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line2"/></p>
+                    <hr>
+                    <p class="overline lightteal"><spring:theme code="text.pickup.delivery.modal.fastest"/></p>
+                    <h6><b><spring:theme code="text.pickup.delivery.modal.same.day"/></b></h6>
+                    <p class="gray80"><spring:theme code="text.pickup.delivery.modal.line3"/></p>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 </template:page>
