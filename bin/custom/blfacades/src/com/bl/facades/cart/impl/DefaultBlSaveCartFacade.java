@@ -1,5 +1,6 @@
 package com.bl.facades.cart.impl;
 
+import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.cart.BlSaveCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -12,6 +13,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.CartModel;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,8 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
 
   @Resource(name ="cartFacade")
   private BlCartFacade blCartFacade;
+  @Resource(name = "cartService")
+  private BlCartService blCartService;
 
   /**
    *  This method overload to customize saved cart.
@@ -40,21 +44,33 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
     final SearchPageData<CartModel> savedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
         getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
     // remove discontinue entry from cart.
-    StringBuilder removedBufferEntries = new StringBuilder();
+   final StringBuilder removedBufferEntries = new StringBuilder();
+   final AtomicBoolean isRemovedCart = new AtomicBoolean(false);
     if(CollectionUtils.isNotEmpty(savedCartModels.getResults())) {
       savedCartModels.getResults().forEach(cartModel -> {
-        String removedEntry =  blCartFacade.removeDiscontinueProductFromCart(cartModel, Boolean.FALSE);
+      final String removedEntry =  blCartFacade.removeDiscontinueProductFromCart(cartModel, Boolean.FALSE);
             if(StringUtils.isNotEmpty(removedEntry)) {
               removedBufferEntries.append(BlFacadesConstants.COMMA_SEPERATER).append(removedEntry);
             }
+            /** Collecting all cart code which don't have entry*/
+        if (CollectionUtils.isEmpty(cartModel.getEntries())) {
+          blCartService.removeEmptyCart(cartModel);
+          isRemovedCart.set(true);
+        }
       });
     }
+    SearchPageData<CartModel> updatedSavedCartModels = savedCartModels;
+    if(isRemovedCart.get()){
+      /** pick updated saved cart data which show on saved cart page.*/
+      updatedSavedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
+          getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
+    }
     model.addAttribute(BlFacadesConstants.REMOVE_ENTRIES,removedBufferEntries.toString());
-    result.setPagination(savedCartModels.getPagination());
-    result.setSorts(savedCartModels.getSorts());
+    result.setPagination(updatedSavedCartModels.getPagination());
+    result.setSorts(updatedSavedCartModels.getSorts());
 
     final List<CartData> savedCartDatas = Converters
-        .convertAll(savedCartModels.getResults(), getCartConverter());
+        .convertAll(updatedSavedCartModels.getResults(), getCartConverter());
 
     result.setResults(savedCartDatas);
     return result;
