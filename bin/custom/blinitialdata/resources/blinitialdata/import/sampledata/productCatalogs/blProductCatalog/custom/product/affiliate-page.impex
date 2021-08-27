@@ -102,11 +102,67 @@ INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique
 
 
 INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
-                              ;                         ; affiliateBannerComponent ; Affiliate Section Component ; affiliateBannerComponent ; /images/theme/affiliate.jpg
+#                              ;                         ; affiliateBannerComponent ; Affiliate Section Component ; affiliateBannerComponent ; /images/theme/affiliate.jpg
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
                    ;                    ; Section1Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; Section2Slot        ; affiliateBannerComponent
+#                   ;                    ; Section2Slot        ; affiliateBannerComponent
                    ;                    ; Section3Slot        ; affiliateCMSParagraphComponent
                    ;                    ; Section4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
+
+#### ContactUs page
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; contactUsSection1Slot     ; contactUs Section1 Slot              ; true
+                         ;                          ; contactUsSection2Slot     ; contactUs Section2 Slot              ; true
+                         ;                          ; contactUsSection3Slot     ; contactUs Section3 Slot              ; true
+                         ;                          ; contactUsSection4Slot     ; contactUs Section4 Slot              ; true
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; contactUsPage ; Contact Us Page ; affiliatePageTemplate           ; /contactus
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='contactUsPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; Section1Slot-contactUsPage             ; Section1Slot            ;                                                       ; contactUsSection1Slot                   ; true
+                                 ;                         ; Section2Slot-contactUsPage             ; Section2Slot            ;                                                       ; contactUsSection2Slot                   ; true
+                                 ;                         ; Section3Slot-contactUsPage             ; Section3Slot            ;                                                       ; contactUsSection3Slot                   ; true
+                                 ;                         ; Section4Slot-contactUsPage             ; Section4Slot            ;                                                       ; contactUsSection4Slot                   ; true
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; contactUsCMSParagraphComponent   ; Contact Us Page Component        ; contactUsCMSParagraphComponent   ;""   ; "<a style="" text-decoration:none;"" id=""liveagent_button_online_5731I0000005Sk4"" href=""#"" onclick=""liveagent.startChat('5731I0000005Sk4')"" name=""&amp;lid=GlobalHeader_live-chat clickGA""><span class=""expertHelpIcon"">Live Chat</span></a>"
+
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
+                              ;                         ; contactUsBannerComponent ; Contact Us  Section Component ; contactUsBannerComponent ;
+
+###  Assign Components to the Slots  ###
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; contactUsSection1Slot        ; contactUsCMSParagraphComponent
+                          ;                    ; contactUsSection2Slot        ; contactUsBannerComponent
+                          ;                    ; contactUsSection3Slot        ;
+                          ;                    ; contactUsSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
+
+### Share sale page. ###
+
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; shareASaleSection1Slot     ; shareASale Section1 Slot              ; true
+                         ;                          ; shareASaleSection2Slot     ; shareASale Section2 Slot              ; true
+                         ;                          ; shareASaleSection3Slot     ; shareASale Section3 Slot              ; true
+                         ;                          ; shareASaleSection4Slot     ; shareASale Section4 Slot              ; true
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; shareASalePage ; Share A SalePage ; affiliatePageTemplate           ; /shareASale
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='shareASalePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                          ;                         ; Section1Slot-shareASalePage             ; Section1Slot            ;                                                       ; shareASaleSection1Slot                   ; true
+                          ;                         ; Section2Slot-shareASalePage             ; Section2Slot            ;                                                       ; shareASaleSection2Slot                   ; true
+                          ;                         ; Section3Slot-shareASalePage             ; Section3Slot            ;                                                       ; shareASaleSection3Slot                   ; true
+                          ;                         ; Section4Slot-shareASalePage             ; Section4Slot            ;                                                       ; shareASaleSection4Slot                   ; true
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; shareASaleCMSParagraphComponent   ; Share A Sale Us paragraph Component        ; shareASaleCMSParagraphComponent      ; ""
+
+
+###  Assign Components to the Slots  ###
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                   ;                    ; shareASaleSection1Slot        ; shareASaleCMSParagraphComponent

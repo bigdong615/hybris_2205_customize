@@ -1373,6 +1373,19 @@
 			</ea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<context parent="CMSParagraphComponent" merge-by="type" type="CustomBLParagraphComponent" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" name="">
+			<ea:tab name="hmc.properties" position="2">
+				<ea:section name="hmc.product.descriptions" merge-mode="append">
+					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+						qualifier="htmlDescription"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
+						qualifier="specifications"/>
+				</ea:section>
+			</ea:tab>
+		</editorArea:editorArea>
+	</context>
 	
 	 <context merge-by="type" parent="GenericItem" type="Packaginginfo" component="editor-area">
         <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
