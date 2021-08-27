@@ -17,6 +17,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String ON_CLICK = "onClick";
     public static final String ON_SELECT = "onSelect";
     public static final String ON_CHANGE = "onChange";
+    public static final String INPUT_CHANGE = "onInputChange";
     public static final Object COMPLETED = "completed";
     public static final String ON_CHANGING = "onChanging";
     public static final String INPUT_OBJECT = "inputObject";

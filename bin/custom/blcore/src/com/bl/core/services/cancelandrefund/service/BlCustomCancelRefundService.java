@@ -111,7 +111,8 @@ public interface BlCustomCancelRefundService {
      * @param orderModel order
      * @return amount on checkbox status
      */
-    double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel orderModel);
+    double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel orderModel,
+                                               final double amount);
 
     /**
      * This method will calculate amount on checkbox status on popup on entry
@@ -135,4 +136,19 @@ public interface BlCustomCancelRefundService {
      * @return values in map
      */
     Map<String, Object> collectSelectionCheckboxAndCreateMap(final boolean tax, final boolean waiver, final Boolean shipping, final Double amount);
+
+    /**
+     * This will calculate amount on input and it will return
+     *
+     * @param cancelQty qty
+     * @param cancellableQty available qty
+     * @param productPrice basePrice
+     * @param tax taxStatus
+     * @param taxLabel tax value
+     * @param waiver waiverStatus
+     * @param waiverLabel waiver value
+     * @return calculated amount
+     */
+    double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final boolean tax, final double taxLabel,
+                                  final boolean waiver, final double waiverLabel);
 }

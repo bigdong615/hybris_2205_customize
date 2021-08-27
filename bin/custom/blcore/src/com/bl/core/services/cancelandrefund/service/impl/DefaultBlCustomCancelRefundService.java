@@ -23,11 +23,13 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Custom cancel and refund service implementer
@@ -114,10 +116,10 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     @Override
     public double getTotalRefundedAmountOnOrder(final OrderModel orderModel) {
         double refundedAmount = BlInventoryScanLoggingConstants.ZERO;
-        final Map<String, Collection<RefundEntryModel>> refundEntryModels = this.getAllRefundEntriesForOrder(orderModel, Boolean.TRUE);
-        if (MapUtils.isNotEmpty(refundEntryModels)) {
-            for (Map.Entry<String, Collection<RefundEntryModel>> entry : refundEntryModels.entrySet()) {
-                refundedAmount = this.getTotalRefundedAmountOnOrderEntry(entry.getValue());
+        for(final PaymentTransactionEntryModel transactionModel : orderModel.getPaymentTransactions().get(0).getEntries()) {
+            if(BlCoreConstants.ACCEPTED.equalsIgnoreCase(transactionModel.getTransactionStatus()) && transactionModel.getType().getCode()
+                .startsWith("REFUND")) {
+                refundedAmount = refundedAmount + transactionModel.getAmount().doubleValue();
             }
         }
         return refundedAmount;
@@ -127,9 +129,8 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      * {@inheritDoc}
      */
     @Override
-    public void createRefundTransaction(final PaymentTransactionModel transaction,
-                                                                final BrainTreeRefundTransactionResult result,
-                                                                final PaymentTransactionType transactionType) {
+    public void createRefundTransaction(final PaymentTransactionModel transaction, final BrainTreeRefundTransactionResult result,
+                                        final PaymentTransactionType transactionType) {
         final String newEntryCode = getPaymentService().getNewPaymentTransactionEntryCode(transaction, transactionType);
         final PaymentTransactionEntryModel entry = getModelService().create(PaymentTransactionEntryModel.class);
         entry.setType(transactionType);
@@ -166,10 +167,12 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      * {@inheritDoc}
      */
     @Override
-    public double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel order) {
-        return order.getTotalPrice() - ((Boolean.FALSE.equals(shipping) ? order.getDeliveryCost() : BlInventoryScanLoggingConstants.ZERO)
-                + (Boolean.FALSE.equals(tax) ? order.getTotalTax() : BlInventoryScanLoggingConstants.ZERO)
-                + (Boolean.FALSE.equals(waiver) ? order.getTotalDamageWaiverCost() : BlInventoryScanLoggingConstants.ZERO));
+    public double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel order,
+                                                      final double amount) {
+        final double totalSelectionAmount = order.getSubtotal() + ((Boolean.TRUE.equals(shipping) ? order.getDeliveryCost() : BlInventoryScanLoggingConstants.ZERO)
+                - (Boolean.TRUE.equals(tax) ? order.getTotalTax() : BlInventoryScanLoggingConstants.ZERO)
+                - (Boolean.TRUE.equals(waiver) ? order.getTotalDamageWaiverCost() : BlInventoryScanLoggingConstants.ZERO));
+        return totalSelectionAmount > amount ? totalSelectionAmount : amount;
     }
 
     /**
@@ -184,9 +187,18 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         if(CollectionUtils.isNotEmpty(refundEntryModels)) {
             totalOrderRefundedAmount = this.getTotalRefundedAmountOnOrderEntry(refundEntryModels);
         }
-        return (totalOrderRefundedAmount + ((double) collectionMap.get("Amount"))) - (Boolean.FALSE.equals(collectionMap.get("Tax")) ?
-                (order.getAvalaraLineTax() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO) + (Boolean.FALSE.equals(collectionMap.get("Waiver")) ?
-                (order.getGearGuardWaiverPrice() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO);
+        final double entryTotal = order.getBasePrice() + order.getAvalaraLineTax() + (order.getGearGuardWaiverSelected()
+                ? order.getGearGuardWaiverPrice() : order.getGearGuardProFullWaiverPrice());
+
+        final double currentEntryTotal = (order.getBasePrice() * qtyToCancel) + (Boolean.TRUE.equals(collectionMap.get("Tax"))
+                ? (order.getAvalaraLineTax() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO) + (Boolean.TRUE.equals(collectionMap.get("Waiver"))
+                ? (order.getGearGuardWaiverPrice() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO);
+
+        if(((Double) collectionMap.get("Amount")) + totalOrderRefundedAmount <= entryTotal) {
+            return BigDecimal.valueOf(currentEntryTotal).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
+        } else {
+            return BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
+        }
     }
 
     /**
@@ -206,6 +218,18 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         }
 
         return selectionAttributeMap;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final boolean tax,
+                                         final double taxLabel, final boolean waiver, final double waiverLabel) {
+        final double totalProductPrice = (productPrice * cancelQty) + ((taxLabel/cancellableQty) * cancelQty) + (waiverLabel);
+        /*final double totalProductPrice = (productPrice * cancelQty) + (tax ? (perEntryTax * cancelQty) : BlInventoryScanLoggingConstants.ZERO)
+                + (waiver ? waiverLabel : BlInventoryScanLoggingConstants.ZERO);*/
+        return BigDecimal.valueOf(totalProductPrice).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
     }
 
     protected CurrencyModel resolveCurrency(final String currencyIsoCode) {

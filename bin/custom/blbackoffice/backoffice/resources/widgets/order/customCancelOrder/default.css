@@ -4,7 +4,7 @@
   height: 100% !important;
 }
 
-.z-hlayout-inner {
+.oms-widget-cancelorder-list.z-hlayout-inner {
   display: inherit !important;
   position: relative;
   vertical-align: top;

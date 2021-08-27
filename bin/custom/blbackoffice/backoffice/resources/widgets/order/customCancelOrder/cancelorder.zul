@@ -110,7 +110,7 @@
                         <label value="${labels.customersupportbackoffice.cancelorder.qtycancelled}" width="100%"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
-                        <intbox id="globalTotalRefundAmount" width="100%" readonly="true"
+                        <textbox id="globalTotalRefundAmount" value="${globalTotalRefundAmount.rawValue}" width="100%"
                                 constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
                     </column>
                     <column width="180px" sclass="oms-widget-cancelorder-listbox-header">
