@@ -607,7 +607,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
 
-        weight = totalWeight.doubleValue() + weight;
+        if(!(blSerialProduct instanceof BlSerialProductModel)) {
+            weight = totalWeight.doubleValue() + weight;
+        }
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);
         } else {
