@@ -433,7 +433,7 @@ public class CheckoutController extends AbstractCheckoutController
 		}
 		return BlControllerConstants.ERROR;
 	}
-
+// Check end date for gift card
 	private boolean checkGcEndDate(Locale locale, GiftCardModel giftCardModel) {
 		if (giftCardModel != null) {
 			int endDate = giftCardModel.getEndDate().compareTo(new Date());
