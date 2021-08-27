@@ -34,7 +34,7 @@
 			</c:when>
 			<c:otherwise>
 				<c:if test="${product.productTagValues ne null}">
-					<span class="badge badge-new">${product.productTagValues}</span>
+				  <span class="badge badge-new">${product.productTagValues}</span>
 				</c:if>
 			</c:otherwise>
 		</c:choose>

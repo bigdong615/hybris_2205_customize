@@ -20,7 +20,9 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;BlReturnOrderDetailsComponent; Return Order Details;returnOrderPage.jsp;;BlReturnOrderDetailsComponent
                                  ;;BlAccountRentalOrderExtendDetailsComponent; Account Rental Order Extend Details;accountRentalExtendOrderDetails.jsp;;BlAccountRentalOrderExtendDetailsComponent
                                  ;;BlAccountRentalOrderExtendConfirmationComponent; Account Rental Order Extend Confirmation;extendOrderConfirmation.jsp;;BlAccountRentalOrderExtendConfirmationComponent
-
+								 ;;PayBillComponent;Bill Pay Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillPage.jsp;;PayBillComponent
+								 ;;PayBillSuccessComponent;Bill Pay Success Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillSuccessPage.jsp;;PayBillSuccessComponent
+								
 # CMS View Order Action
 INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
                              ;;ViewOrderAction;/my-account/order/{orderCode};View Order Action;ViewOrderAction
@@ -41,7 +43,9 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
                          ;;BodyContent-returnorderdetail;Body Content Slot for Return Order Details;true;BlReturnOrderDetailsComponent;;;
                          ;;BodyContent-rentalOrderExtendDetails;Body Content Slot for extend Order Details;true;BlAccountRentalOrderExtendDetailsComponent;
                          ;;BodyContent-rentalOrderExtendConfirmation;Body Content Slot for extend Order confirmation;true;BlAccountRentalOrderExtendConfirmationComponent;
-
+						 ;;BodyContentSlot-bill-pay;Body Content Slot for Bill Payment;true;PayBillComponent;;;
+						 ;;BodyContentSlot-bill-pay-success;Body Content Slot for Bill Payment Success;true;PayBillSuccessComponent;;;
+						 
 # ContentSlotForPage
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
                                 ;;BodyContent-address-book   ;BodyContent;address-book;BodyContent-address-book;;;
@@ -53,7 +57,8 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
                                 ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
                                 ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;
                                 ;;BodyContent-update-email;BodyContent;update-email;BodyContent-update-email;;;
-
+                                ;;BodyContentSlot-bill-pay;BodyContent;pay-bill;BodyContentSlot-bill-pay;;;
+								;;BodyContentSlot-bill-pay-success;BodyContent;pay-bill-success;BodyContentSlot-bill-pay-success;;;
 
 # ContentSlotForPage for order details page
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='order'];contentSlot(uid,$contentCV)[unique=true];;;

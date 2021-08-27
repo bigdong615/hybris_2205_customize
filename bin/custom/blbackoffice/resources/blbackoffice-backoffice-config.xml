@@ -1883,6 +1883,28 @@
 			</y:labels>
 		</y:base>
 	</context>
+	<context type="BlItemsBillingCharge" component="create-wizard">
+		<wz:flow id="itemsBillingChargeCreateWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="itemsBillingChargePrepare">
+				<wz:initialize property="newItemsBillingCharge" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step0" label="hmc.essential">
+				<wz:content>
+					<wz:property-list root="newItemsBillingCharge">
+						<wz:property qualifier="billChargeType"/>
+						<wz:property qualifier="chargedAmount"/>
+						<wz:property qualifier="unPaidBillNotes"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step0.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newItemsBillingCharge"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
 	<context type="GiftCard" component="base">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
@@ -2455,7 +2477,6 @@
 			<list-view:column qualifier="currentOcLocation"/>
 			<list-view:column qualifier="serialStatus"/>
 			<list-view:column qualifier="shippingDate"/>
-			<list-view:column qualifier="previousOrderStatus"/>
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>

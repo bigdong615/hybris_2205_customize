@@ -37,7 +37,7 @@
                                         else{
                                        $.ajax({
                                           url: targetAddUrl,
-                                          type: 'POST',
+                                          type: 'GET',
                                           data: {productwishlistCode: productCode},
                                           success: function (response) {
                                           if(response === 'Success'){
@@ -53,3 +53,20 @@
                                        });
                                      }
                 });
+
+function addingProductToBookMark(productCode) {
+	var targetAddUrl = ACC.config.encodedContextPath + "/wishlist/add"
+	$.ajax({
+		url: targetAddUrl,
+		type: 'GET',
+		data: {
+			productwishlistCode: productCode
+		},
+		success: function (response) {
+				location.reload();
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
+		}
+	});
+}
