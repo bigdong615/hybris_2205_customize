@@ -34,14 +34,7 @@
 			</c:when>
 			<c:otherwise>
 				<c:if test="${product.productTagValues ne null}">
-				<c:choose>
-				<c:when test="${fn:containsIgnoreCase(product.productTagValues, 'New') || fn:containsIgnoreCase(product.productTagValues, 'Staff Pick') ||  fn:containsIgnoreCase(product.productTagValues, 'Great Value')}">
-					<span class="badge badge-new">${product.productTagValues}</span>
-				</c:when>
-				<c:otherwise>
-				  <span class="badge badge-limited-stock">${product.productTagValues}</span>
-				</c:otherwise>
-				</c:choose>
+				  <span class="badge badge-new">${product.productTagValues}</span>
 				</c:if>
 			</c:otherwise>
 		</c:choose>
