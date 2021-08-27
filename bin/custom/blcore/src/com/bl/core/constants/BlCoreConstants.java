@@ -294,8 +294,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String STORE = "store";
 	public static final String FILTER_STATUS_LIST = "filterStatusList";
 	public static final String STATUS_LIST = "statusList";
+
 	public static final int TWO_DAYS = 2;
 
+	public static final String STATUS1 = "status1";
+	public static final String STATUS2 = "status2";
 
 
 
