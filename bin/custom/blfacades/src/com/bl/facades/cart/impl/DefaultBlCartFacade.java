@@ -472,6 +472,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 							Arrays.asList(String.valueOf(cartEntryQty), nextAvailabilityDate))
 					: getMessage("cart.entry.item.availability.no.stock.available.till", Arrays.asList(nextAvailabilityDate)));
 		}
+		else
+		{
+			entry.setAvailabilityMessage(getMessage("text.stock.not.available",Lists.newArrayList()));
+		}
 	}
 
 	/**
@@ -638,8 +642,8 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 */
   @Override
   public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
-    StringBuilder removedEntry = new StringBuilder();
-    List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
+    final StringBuilder removedEntry = new StringBuilder();
+    final List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
     if (CollectionUtils.isNotEmpty(entryList)) {
       Collections.reverse(entryList);
       entryList.forEach(entryNumber -> {
@@ -649,9 +653,9 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
           } else {
             updateCartEntry(entryNumber, 0, cartModel);
           }
-        } catch (CommerceCartModificationException ex) {
-          BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-              "Couldn't update product with the entry number: {0} . {1}", entryNumber, ex);
+        } catch (final CommerceCartModificationException ex) {
+        	BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
+							"Couldn't update product with the entry number: {}",entryNumber);
         }
       });
     }
@@ -691,8 +695,8 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 * @param removedEntry
 	 */
 	@Override
-	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry){
-		List<Integer> entryList = new ArrayList<>();
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, final StringBuilder removedEntry){
+	final	List<Integer> entryList = new ArrayList<>();
 		cartModel.getEntries().forEach(entry -> {
 			if (entry.getProduct() != null) {
 				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();

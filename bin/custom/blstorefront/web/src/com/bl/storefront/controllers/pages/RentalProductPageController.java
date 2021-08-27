@@ -74,6 +74,12 @@ public class RentalProductPageController extends AbstractBlProductPageController
    	 if(StringUtils.isNotBlank(nextAvailableDate))
    	 {
    		 model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
+   		 final RentalDateDto rentalDuration = getRentalDuration();
+   		 if(Objects.nonNull(rentalDuration) && StringUtils.isNotBlank(rentalDuration.getSelectedFromDate())
+   				 && !nextAvailableDate.equalsIgnoreCase(rentalDuration.getSelectedFromDate()))
+   		 {
+   			 model.addAttribute(BlControllerConstants.DISABLE_BUTTON, Boolean.TRUE);
+   		 }
    	 }
     }
       final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
