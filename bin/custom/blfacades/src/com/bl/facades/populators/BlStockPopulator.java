@@ -1,20 +1,19 @@
 package com.bl.facades.populators;
 
-import de.hybris.platform.basecommerce.enums.StockLevelStatus;
-import de.hybris.platform.commercefacades.product.data.StockData;
-import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.store.BaseStoreModel;
-import de.hybris.platform.store.services.BaseStoreService;
-
-import java.util.Date;
-
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.RentalDateDto;
+import de.hybris.platform.basecommerce.enums.StockLevelStatus;
+import de.hybris.platform.commercefacades.product.data.StockData;
+import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
+import java.util.Date;
 
 
 /**
@@ -49,9 +48,16 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 					.convertStringDateToDate(endDate, BlFacadesConstants.DATE_FORMAT);
 			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
 					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
-			final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
-			stockData.setStockLevelStatus(stockLevelStatus);
-			stockData.setStockLevel(stockResult.getAvailableCount());
+
+			if (BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())) {
+
+				stockData.setStockLevelStatus(StockLevelStatus.INSTOCK);
+				stockData.setStockLevel((long) 999);
+			} else {
+				final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
+				stockData.setStockLevelStatus(stockLevelStatus);
+				stockData.setStockLevel(stockResult.getAvailableCount());
+			}
 		}
 	}
 
