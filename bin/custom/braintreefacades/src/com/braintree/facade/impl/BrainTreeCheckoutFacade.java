@@ -23,6 +23,8 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.google.common.util.concurrent.AtomicDouble;
+
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.CompanyModel;
@@ -58,6 +60,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 
 /**
  * Checkout facade for Braintree
@@ -521,6 +524,24 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		}
 	}
 
+	/**
+	 * This method return true if any unpaid bill present on customer
+	 * 
+	 */
+	public boolean isCustomerHasUnPaidBillOrders()
+	{   
+		final AtomicDouble totalAmt = new AtomicDouble(0.0);
+		List<AbstractOrderModel> unPaidBillOrders = getOrderDao().getUnPaidBillOrderByCustomer();
+	      unPaidBillOrders.forEach(orders -> orders.getConsignments()
+	      .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+	      .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+	        if(BooleanUtils.isFalse(billing.isBillPaid())) {
+	          totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+	        }
+	      })))));
+	    
+		 return Double.compare(totalAmt.get(), 0.0) > 0 ;
+	}
 	private boolean isCreditCard()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();

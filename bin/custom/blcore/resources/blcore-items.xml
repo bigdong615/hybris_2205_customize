@@ -987,6 +987,15 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Customer facing details of what comes with the rental version of the item</description>
                      </attribute>
+                   <attribute qualifier="specifications" type="java.lang.String">
+                         <persistence type="property">
+                             <columntype>
+                                 <value>HYBRIS.LONG_STRING</value>
+                             </columntype>
+                         </persistence>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Customer facing specification of the item</description>
+                     </attribute>
                      <attribute qualifier="numberSystem" type="NumberingSystemEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="false" initial="true"/>
@@ -1856,6 +1865,10 @@
                 <persistence type="property" />
               </attribute>
               <attribute type="java.util.Date" qualifier="expiryDate">
+                <persistence type="property" />
+              </attribute>
+              <attribute type="boolean" qualifier="removedByCustomer">
+              <defaultvalue>Boolean.FALSE</defaultvalue>
                 <persistence type="property" />
               </attribute>
             </attributes>
@@ -3252,7 +3265,12 @@
 	                    <description>Unpaid bill already paid or not</description>
 	                    <persistence type="property" />
 	                    <defaultvalue>Boolean.FALSE</defaultvalue>
-                  </attribute>     
+                  </attribute>
+                  <attribute qualifier="unPaidBillNotes" type="java.lang.String">
+                         <modifiers read="true" write="true" search="true" optional="true" />
+                         <description>This attribute is used to add notes for unpaid bill.</description>
+                         <persistence type="property"/>
+                  </attribute>   
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -3682,6 +3700,22 @@
 				<property name="position">
 					<value>
 						new Integer(0)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
+		<attribute generate="false" autocreate="true" qualifier="status" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+						Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+						new Integer(3)
 					</value>
 				</property>
 			</custom-properties>
@@ -5502,7 +5536,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
+"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
 			</value>
 		</property>
 	</custom-properties>
@@ -5551,22 +5585,6 @@ Boolean.FALSE
 				<property name="position">
 					<value>
 new Integer(1)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="previousOrderStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-new Integer(5)
 					</value>
 				</property>
 			</custom-properties>
@@ -5630,7 +5648,7 @@ Boolean.FALSE
 				</property>
 				<property name="position">
 					<value>
-new Integer(6)
+new Integer(5)
 					</value>
 				</property>
 			</custom-properties>
@@ -5659,7 +5677,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {pvo:code} as orderCode,{pvos:code} as previousOrderStatus,{s:code} as serialCode, {s:ocLocation} as ocLocationCode, {sse:code} as itemStatusCode, {s:lastUnboxedOcLocationDate} as unboxedDate from {BlSerialProduct as s},{SerialStatusEnum as sse}, {Order as pvo}, {OrderStatus as pvos},{Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {sse:pk} = {s:serialStatus} and {pvo:pk} = {s:associatedOrder} and {pvos:pk} = {pvo:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse ORDER BY {s:lastUnboxedOcLocationDate} DESC"
+"select {pvo:code} as orderCode,{pvos:code} as previousOrderStatus,{s:code} as serialCode, {s:ocLocation} as ocLocationCode, {sse:code} as itemStatusCode, {s:lastUnboxedOcLocationDate} as unboxedDate from {BlSerialProduct as s},{SerialStatusEnum as sse}, {Order as pvo}, {OrderStatus as pvos},{Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} IN ('UNBOXED','REPAIR_NEEDED','PARTS_NEEDED')}}) and {sse:pk} = {s:serialStatus} and {pvo:pk} = {s:associatedOrder} and {pvos:pk} = {pvo:status} and {pvos:code} IN ('UNBOXED','PARTIALLY_UNBOXED','INCOMPLETE','INCOMPLETE_ITEMS_IN_REPAIR','INCOMPLETE_MISSING_AND_BROKEN_ITEMS','INCOMPLETE_MISSING_ITEMS') and {sse:pk} = {s:serialStatus} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse ORDER BY {s:lastUnboxedOcLocationDate} DESC"
 			</value>
 		</property>
 	</custom-properties>

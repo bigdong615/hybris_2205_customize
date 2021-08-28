@@ -54,6 +54,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+import java.math.RoundingMode;
+
 
 
 
@@ -74,6 +79,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String EDIT_PAYMENT_METHOD_CMS_PAGE = "edit-payment-method";
 	
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
+	private static final int DECIMAL_PRECISION = 2;
 
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -98,6 +104,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	@Resource(name = "blOrderFacade")
 	private BlOrderFacade blOrderFacade;
+
+	@Resource(name = "priceDataFactory")
+	private PriceDataFactory priceDataFactory;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -388,18 +397,22 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		String poNotes = request.getParameter("extendPoNotes");
 
 		boolean isSuccess = false;
+		double payBillAmount = Double.parseDouble(billPayTotal);
 		AbstractOrderModel order = null;
-		if (StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce) ) {
+		if ((StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
+				StringUtils.isNotBlank(paymentMethodNonce)) || StringUtils.isNotBlank(poNumber) ) {
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 
-				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, billPayTotal, poNumber,
+				isSuccess = payBillSuccess(model, paymentInfoId, paymentMethodNonce, payBillAmount, poNumber,
 						poNotes, order);
 
 		}
 
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+		    PriceData payBillTotal  = convertDoubleToPriceData(payBillAmount, order);
+			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 			model.addAttribute("orderData", orderDetails);
 			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
@@ -425,8 +438,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
      * @return boolean
      *
      */
-	private boolean payBillSuccess(final Model model, String paymentInfoId, String paymentMethodNonce,
-			String billPayTotal, String poNumber, String poNotes,  final AbstractOrderModel order) {
+	private boolean payBillSuccess(final Model model, String paymentInfoId, final String paymentMethodNonce,
+			final double billPayTotal, final String poNumber, String poNotes, final AbstractOrderModel order) {
 		boolean isSuccess = false;
 		if (null != order && StringUtils.isNotBlank(poNumber)) {
 			isSuccess = blOrderFacade.savePoPaymentForPayBillOrder(poNumber, poNotes, order.getCode());
@@ -438,9 +451,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 					.getBrainTreePaymentInfoForCode(
 							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
 			if (null != paymentInfo) {
+
 				isSuccess = brainTreeTransactionService
 						.createAuthorizationTransactionOfOrder(order,
-								BigDecimal.valueOf(Double.parseDouble(billPayTotal)), true, paymentInfo);
+								BigDecimal.valueOf(billPayTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
 			}
 			if (BooleanUtils.isTrue(isSuccess)) {
 				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.CREDIT_CARD);
@@ -557,5 +571,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 */
 	private String getRedirectionUrl(final String orderCode) {
 		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.PAY_BILL;
+	}
+
+	/**
+	 * This method converts double to price data
+	 */
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
+		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }

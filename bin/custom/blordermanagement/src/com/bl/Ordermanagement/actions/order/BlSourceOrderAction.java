@@ -23,7 +23,9 @@ import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -162,6 +164,12 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     }
 
     results.setResults(resultSet);
+
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    calendar.add(Calendar.DATE, 2);
+    order.setActualRentalStartDate(calendar.getTime());
+    blSourcingService.updateShippingDatesForInternalTransfers(order, results);
 
     return results;
   }

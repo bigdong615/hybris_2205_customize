@@ -918,6 +918,7 @@
 	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
+	<property name="userService" ref="userService"/>
 	</bean>
 	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
@@ -1124,6 +1125,9 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+		<bean id="defaultBlVerificationDocumentDao" class="com.bl.core.services.document.dao.impl.DefaultBlVerificationDocumentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 
 	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
 	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
@@ -1185,6 +1189,7 @@
 	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blVerificationDocumentDao" ref="defaultBlVerificationDocumentDao"/>
 	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
@@ -1302,4 +1307,20 @@
 
 	<!-- Added for creating custom method to set custom parameter -->
 
+	<alias name="blSerialProductValidateInterceptor" alias="blSerialProductValidateInterceptor"/>
+	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor"/>
+	
+	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
+		<property name="typeCode" value="BlSerialProduct"/>
+	</bean>
+
+
+	<!--Added for order history-->
+
+
+	<alias name="defaultBlCustomerAccountDao" alias="customerAccountDao"/>
+	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
+	</bean>
+	
 </beans>

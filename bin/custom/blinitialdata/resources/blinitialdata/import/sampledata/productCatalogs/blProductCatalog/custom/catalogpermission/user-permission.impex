@@ -13,7 +13,18 @@ INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; r
                             ; blClassification; 1.0                 ;backofficeproductmanagergroup    ; backofficeproductmanagergroup
                             ; blClassification; 1.0                 ;blproductmanager       ; blproductmanager
 
-                            
+INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; readPrincipals(uid)[mode=append]; writePrincipals(uid)[mode=append]
+                            ; blProductCatalog; Staged              ; pcminventorymanagergroup   ; pcminventorymanagergroup
+                            ; blProductCatalog; Online              ; pcminventorymanagergroup   ; pcminventorymanagergroup
+                            ; blClassification; 1.0                 ;pcminventorymanagergroup    ; pcminventorymanagergroup
+                            ; blClassification; 1.0                 ;blinventorymanager       ; blinventorymanager
+
+INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; readPrincipals(uid)[mode=append]; writePrincipals(uid)[mode=append]
+                            ; blProductCatalog; Staged              ; pcmbuyermanagergroup   ; pcmbuyermanagergroup
+                            ; blProductCatalog; Online              ; pcmbuyermanagergroup   ; pcmbuyermanagergroup
+                            ; blClassification; 1.0                 ;pcmbuyermanagergroup    ; pcmbuyermanagergroup
+                            ; blClassification; 1.0                 ;blbuyermanager       ; blbuyermanager
+
 
 INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; readPrincipals(uid)[mode=append]; writePrincipals(uid)[mode=append]
                             ; blProductCatalog; Staged              ; customersupportagentgroup   ; customersupportagentgroup

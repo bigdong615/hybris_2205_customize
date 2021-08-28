@@ -15,8 +15,8 @@
 		<c:choose>
 			<c:when test="${status.last}">
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
-      <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
       <c:if test="${product.productType ne 'GIFTCARD' && product.retailGear ne true}">
+      <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
              <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
              <c:choose>
@@ -30,8 +30,12 @@
              </c:otherwise>
             </c:choose>
       </form>
-      </c:if>
       </sec:authorize>
+      <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+       <span class="bookmark js-login-popup" id="card-${status.index}" data-product-code="${product.code}"
+          data-bs-target="#signIn" data-bs-toggle="modal" data-link="/blstorefront/login/loginpopup"   data-bookmark-value="${product.isBookMarked}"></span>
+       </sec:authorize>
+      </c:if>
 			</c:when>
 			<c:when test="${breadcrumb.url eq '#'}">
 					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;

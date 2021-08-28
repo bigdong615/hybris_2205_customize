@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
+import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
@@ -16,6 +17,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ReviewVa
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.variants.VariantSortStrategy;
+import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSPageService;
@@ -28,6 +30,7 @@ import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ImageDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.product.data.ReviewData;
+import de.hybris.platform.commerceservices.category.CommerceCategoryService;
 import de.hybris.platform.commerceservices.url.UrlResolver;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
@@ -52,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
@@ -121,6 +125,9 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
+
+	@Resource(name = "commerceCategoryService")
+	private CommerceCategoryService commerceCategoryService;
 
 	/*
 	 * This method is used for render pdp.
@@ -415,7 +422,19 @@ public class AbstractBlProductPageController extends AbstractPageController
 		sortVariantOptionData(productData);
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
-		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
+		final Object isRentalPage = model.getAttribute(BlControllerConstants.IS_RENTAL_PAGE);
+		if(isRentalPage !=null && BooleanUtils.isFalse((Boolean)isRentalPage) && BooleanUtils.isFalse(productData.isRetailGear())){
+			final List<Breadcrumb> breadList =productBreadcrumbBuilder.getBreadcrumbs(productCode);
+			if(CollectionUtils.isNotEmpty(breadList)){
+			final CategoryModel category =	commerceCategoryService.getCategoryForCode(BlControllerConstants.USED_CATEGORY_CODE);
+				breadList.get(0).setUrl(BlControllerConstants.USED_CATEGORY_PREFIX_URL+category.getCode());
+				breadList.get(0).setName(category.getName());
+				model.addAttribute(WebConstants.BREADCRUMBS_KEY, breadList);
+			}
+		}else {
+			model.addAttribute(WebConstants.BREADCRUMBS_KEY,
+					productBreadcrumbBuilder.getBreadcrumbs(productCode));
+		}
     final String currentCartType = blCartFacade.identifyCartType();
     if(StringUtils.isNotEmpty(currentCartType)){
       model.addAttribute(currentCartType,true);
