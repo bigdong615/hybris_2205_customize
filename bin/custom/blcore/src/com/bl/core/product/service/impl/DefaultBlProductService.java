@@ -1,5 +1,6 @@
 package com.bl.core.product.service.impl;
 
+import com.bl.core.enums.SerialStatusEnum;
 import de.hybris.platform.product.impl.DefaultProductService;
 
 import java.util.Objects;
@@ -49,4 +50,13 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     return isEligible;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isActiveSerialProduct(final SerialStatusEnum serialStatusEnum) {
+    return null != serialStatusEnum && ("ACTIVE".equals(serialStatusEnum.getCode()) ||
+        "UNBOXED".equals(serialStatusEnum.getCode()) ||
+        "RECEIVED_OR_RETURNED".equals(serialStatusEnum.getCode()));
+  }
 }

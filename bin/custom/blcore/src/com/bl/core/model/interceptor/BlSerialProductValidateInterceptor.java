@@ -1,14 +1,12 @@
 package com.bl.core.model.interceptor;
 
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
-import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
-
-import java.util.Objects;
-
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
+import de.hybris.platform.servicelayer.interceptor.InterceptorException;
+import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
+import java.util.Objects;
 
 
 /**
@@ -98,5 +96,4 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 	{
 		return interceptorContext.isModified(blSerialProductModel, attributeName) && value.getCode().equals(BlCoreConstants.ZERO);
 	}
-
 }

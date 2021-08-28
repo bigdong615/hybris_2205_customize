@@ -618,6 +618,6 @@ ul.ui-autocomplete.active {
     display: flex;
     flex-direction: row-reverse;
 }
-#billing-address-saved .dropdown-menu>li>a{
+.for-credit-card .dropdown-menu>li>a{
   line-height:1px;
 }  
