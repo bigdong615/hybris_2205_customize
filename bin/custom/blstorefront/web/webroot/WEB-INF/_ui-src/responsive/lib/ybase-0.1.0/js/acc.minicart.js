@@ -34,8 +34,8 @@ ACC.minicart = {
   			dataType: 'json',
   			success: function(jsonData){
   				var $numberItem = $("<span>").addClass("nav-items-total").text(jsonData.miniCartCount);
-  					$(".bak_js-mini-cart-link .cart-count").empty();
-            $(".bak_js-mini-cart-link .cart-count").append($numberItem);
+  				$(".bak_js-mini-cart-link .cart-count").empty();
+  				$(".bak_js-mini-cart-link .cart-count").append($numberItem);
   			 }
   		});
   }
