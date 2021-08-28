@@ -85,10 +85,10 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='affiliatePage'] ; contentSlot(uid,$contentCV)[unique=true]
-                                 ;                         ; Section1Slot-AffiliatePage             ; Section1Slot            ;                                                       ; Section1Slot                   ; true
-                                 ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; Section2Slot                   ; true
-                                 ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; Section3Slot                   ; true
-                                 ;                         ; Section4Slot-AffiliatePage             ; Section4Slot            ;                                                       ; Section4Slot                   ; true
+                                 ;                         ; Section1Slot-AffiliatePage             ; Section1Slot            ;                                                       ; affiliateSection1Slot                   ; true
+                                 ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; affiliateSection2Slot                   ; true
+                                 ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; affiliateSection3Slot                   ; true
+                                 ;                         ; Section4Slot-AffiliatePage             ; Section4Slot            ;                                                       ; affiliateSection4Slot                   ; true
 
 
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
