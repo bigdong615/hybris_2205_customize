@@ -85,6 +85,13 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 
+	/**
+	 * It updates stock records when buffer inventory flag is changed
+	 * @param blSerialProduct serial product
+	 * @param ctx interceptor context
+	 * @throws InterceptorException interceptor exception when the serial
+	 * product can not be marked as buffer inventory
+	 */
 	private void updateStockRecordsForBufferInventoryFlag(BlSerialProductModel blSerialProduct, InterceptorContext ctx)
 			throws InterceptorException {
 		final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.ISBUFFEREDINVENTORY);
@@ -108,6 +115,13 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 
+	/**
+	 * It updates the stock records for buffer inventory flag if the SKU
+	 * product is eligible to have buffer inventory
+	 * @param minQtyForBufferInventory
+	 * @param blSerialProduct
+	 * @throws InterceptorException
+	 */
 	private void updateBufferInvInStockRecords(final Integer minQtyForBufferInventory,
 			final BlSerialProductModel blSerialProduct) throws InterceptorException {
 		if(getBlBufferInventoryService().minQtyEligibleForBufferInv(minQtyForBufferInventory,
