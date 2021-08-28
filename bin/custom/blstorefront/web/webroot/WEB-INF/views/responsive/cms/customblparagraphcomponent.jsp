@@ -9,3 +9,6 @@
 <c:if test="${positionAttribute == 'MobileHeaderBottomInfo'}">
 ${component.content }
 </c:if>
+<c:if test="${not empty component.htmlDescription}">
+${component.htmlDescription}
+</c:if>
