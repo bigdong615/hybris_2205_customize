@@ -29,10 +29,10 @@ INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; na
                            ;                         ; affiliatePageTemplate ; Affiliate Page Template ; affiliate/affiliatePage ; $jarResourceCms/structure-view/structure_affiliatePageTemplate.vm                                      ; CategoryPage,ContentPage  
                            
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
-                         ;                          ; Section1Slot     ; Section1 Slot              ; true
-                         ;                          ; Section2Slot     ; Section2 Slot              ; true
-                         ;                          ; Section3Slot     ; Section3 Slot              ; true
-                         ;                          ; Section4Slot     ; Section4 Slot              ; true
+                        ;                          ; affiliateSection1Slot     ; affiliate Section1 Slot              ; true
+                        ;                          ; affiliateSection2Slot     ; affiliate Section2 Slot              ; true
+                        ;                          ; affiliateSection3Slot     ; affiliate Section3 Slot              ; true
+                        ;                          ; affiliateSection4Slot     ; affiliate Section4 Slot              ; true
 
 ###  Define Content SlotNames  ###
 INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
@@ -101,15 +101,11 @@ INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique
                                           ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#"
 
 
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
-#                              ;                         ; affiliateBannerComponent ; Affiliate Section Component ; affiliateBannerComponent ; /images/theme/affiliate.jpg
-
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                   ;                    ; Section1Slot        ; affiliateCMSParagraphComponent
-#                   ;                    ; Section2Slot        ; affiliateBannerComponent
-                   ;                    ; Section3Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; Section4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
+                   ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; affiliateSection3Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; affiliateSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
 
 #### ContactUs page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
@@ -140,29 +136,3 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponen
                           ;                    ; contactUsSection2Slot        ; contactUsBannerComponent
                           ;                    ; contactUsSection3Slot        ;
                           ;                    ; contactUsSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
-
-### Share sale page. ###
-
-INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
-                         ;                          ; shareASaleSection1Slot     ; shareASale Section1 Slot              ; true
-                         ;                          ; shareASaleSection2Slot     ; shareASale Section2 Slot              ; true
-                         ;                          ; shareASaleSection3Slot     ; shareASale Section3 Slot              ; true
-                         ;                          ; shareASaleSection4Slot     ; shareASale Section4 Slot              ; true
-
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; shareASalePage ; Share A SalePage ; affiliatePageTemplate           ; /shareASale
-
-########################### Define Content slots for page######################
-INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='shareASalePage'] ; contentSlot(uid,$contentCV)[unique=true]
-                          ;                         ; Section1Slot-shareASalePage             ; Section1Slot            ;                                                       ; shareASaleSection1Slot                   ; true
-                          ;                         ; Section2Slot-shareASalePage             ; Section2Slot            ;                                                       ; shareASaleSection2Slot                   ; true
-                          ;                         ; Section3Slot-shareASalePage             ; Section3Slot            ;                                                       ; shareASaleSection3Slot                   ; true
-                          ;                         ; Section4Slot-shareASalePage             ; Section4Slot            ;                                                       ; shareASaleSection4Slot                   ; true
-
-INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]   ; htmlDescription[lang=$lang]
-                                    ;                    ; shareASaleCMSParagraphComponent   ; Share A Sale Us paragraph Component        ; shareASaleCMSParagraphComponent      ; "" ;""
-
-
-###  Assign Components to the Slots  ###
-UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                   ;                    ; shareASaleSection1Slot        ; shareASaleCMSParagraphComponent
