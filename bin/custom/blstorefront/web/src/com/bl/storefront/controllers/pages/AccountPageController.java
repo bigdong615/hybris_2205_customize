@@ -811,8 +811,6 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		final CustomerData currentCustomerData = customerFacade.getCurrentCustomer();
 		final BlAddressForm addressForm = new BlAddressForm();
-		addressForm.setFirstName(currentCustomerData.getFirstName());
-		addressForm.setLastName(currentCustomerData.getLastName());
 		addressForm.setCountryIso(Locale.US.getCountry());
 		return addressForm;
 	}
