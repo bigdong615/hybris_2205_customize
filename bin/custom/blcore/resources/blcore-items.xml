@@ -561,10 +561,7 @@
                 <value>"thefield"</value>
               </property>
             </custom-properties>
-            <description>Message to show for discontinued items</description>
-            <!--<persistence type="property"/>
-            <modifiers read="true" write="true" optional="true" />
-            <description>Localized title of the paragraph. </description>-->
+            <description>It is message to show html content</description>
           </attribute>
 				</attributes>				
 			</itemtype>
