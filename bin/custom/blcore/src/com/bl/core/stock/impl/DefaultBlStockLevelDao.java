@@ -51,6 +51,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode";
 
+	private static final String SERIAL_AVAILABLE_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
+			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND + StockLevelModel
+			.RESERVEDSTATUS + "} = ?reservedStatus " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
+
 	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY_FROM_NON_BUFFER_INV = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
@@ -183,6 +188,30 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		addQueryParameter(startDay, endDay, fQuery);
 
 		final SearchResult result = getFlexibleSearchService().search(fQuery); // NOSONAR
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial product {} with date between : {} and {}",
+					serialProductCode, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<StockLevelModel> checkProductAvailabilityForCurrentDate(final String serialProductCode,
+			final Date startDay, final Date endDay) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_AVAILABLE_STOCK_LEVEL_FOR_DATE_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+		fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<StockLevelModel> stockLevels = result.getResult();
 		if (CollectionUtils.isEmpty(stockLevels))
 		{

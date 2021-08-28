@@ -505,7 +505,6 @@
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
-		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -636,6 +635,8 @@
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
 		<property name="blRepairLogService" ref="blRepairLogService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1271,16 +1272,12 @@
 
 	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
 	
-	<bean id="blSerialProductValidateInterceptor" class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor">
-	<property name="baseStoreService" ref="baseStoreService"/>
-	</bean>
-	
-	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
-		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
-		<property name="typeCode" value="BlSerialProduct"/>
-	</bean>
-	
 	<bean id="blBufferInventoryService" class="com.bl.core.bufferinventory.service.impl.DefaultBlBufferInventoryService" >
+		<property name="productDao" ref="productDao" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="modelService" ref="modelService" />
+		<property name="blStockLevelDao" ref="blStockLevelDao" />
+		<property name="productService" ref="productService" />
 	</bean>
 	
 	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">

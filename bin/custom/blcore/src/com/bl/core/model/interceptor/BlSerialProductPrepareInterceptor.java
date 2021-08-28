@@ -1,5 +1,6 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.bufferinventory.service.BlBufferInventoryService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.RepairTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
@@ -25,6 +26,8 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,6 +51,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BlPricingService blPricingService;
 	private BlStockService blStockService;
 	private BlRepairLogService blRepairLogService;
+	private BaseStoreService baseStoreService;
+	private BlBufferInventoryService blBufferInventoryService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -80,10 +85,37 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 
-	private void updateStockRecordsForBufferInventoryFlag(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
+	private void updateStockRecordsForBufferInventoryFlag(BlSerialProductModel blSerialProduct, InterceptorContext ctx)
+			throws InterceptorException {
 		final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.ISBUFFEREDINVENTORY);
-		if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.ISBUFFEREDINVENTORY)) {
+		if (null != initialValue && ctx.isModified(blSerialProduct,
+				BlSerialProductModel.ISBUFFEREDINVENTORY)) {
+			if(initialValue.equals(Boolean.FALSE)) {
+				final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
+						BlCoreConstants.BASE_STORE_ID);
+				if (null != baseStore) {
+					final Integer minQtyForBufferInv = baseStore.getMinQtyForBufferInventory();
+					final Integer minQtyForBufferInventory = (null != minQtyForBufferInv &&
+							minQtyForBufferInv > 0) ? minQtyForBufferInv : 0;
+					updateBufferInvInStockRecords(minQtyForBufferInventory, blSerialProduct);
+				} else {
+					throw new InterceptorException(
+							"Can't mark this serial product as buffer inventory");
+				}
+			} else {
+				getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
+			}
+		}
+	}
+
+	private void updateBufferInvInStockRecords(final Integer minQtyForBufferInventory,
+			final BlSerialProductModel blSerialProduct) throws InterceptorException {
+		if(getBlBufferInventoryService().minQtyEligibleForBufferInv(minQtyForBufferInventory,
+				blSerialProduct.getBlProduct())) {
 			getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
+		} else {
+			throw new InterceptorException(
+					"Can't mark this serial product as buffer inventory");
 		}
 	}
 
@@ -662,4 +694,20 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		this.blRepairLogService = blRepairLogService;
 	}
 
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	public BlBufferInventoryService getBlBufferInventoryService() {
+		return blBufferInventoryService;
+	}
+
+	public void setBlBufferInventoryService(
+			BlBufferInventoryService blBufferInventoryService) {
+		this.blBufferInventoryService = blBufferInventoryService;
+	}
 }

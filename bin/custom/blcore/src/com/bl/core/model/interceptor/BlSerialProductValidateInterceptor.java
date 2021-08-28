@@ -1,18 +1,12 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.enums.SerialStatusEnum;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
-import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
-
-import de.hybris.platform.store.BaseStoreModel;
-import de.hybris.platform.store.services.BaseStoreService;
-import java.util.Objects;
-
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.model.BlSerialProductModel;
-import java.util.stream.Collectors;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
+import de.hybris.platform.servicelayer.interceptor.InterceptorException;
+import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
+import java.util.Objects;
 
 
 /**
@@ -24,7 +18,6 @@ import java.util.stream.Collectors;
 public class BlSerialProductValidateInterceptor implements ValidateInterceptor<BlSerialProductModel>
 {
 
-	private BaseStoreService baseStoreService;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -35,22 +28,6 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 		if (Objects.nonNull(blSerialProductModel) && !interceptorContext.isNew(blSerialProductModel))
 		{
 			validateConditionalRatings(blSerialProductModel, interceptorContext);
-			if (blSerialProductModel.getIsBufferedInventory().booleanValue()) {
-				final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
-						BlCoreConstants.BASE_STORE_ID);
-				if (null != baseStore && null != baseStore.getMinQtyForBufferInventory() &&
-						baseStore.getMinQtyForBufferInventory() > 0) {
-					final int minQtyForBufferInv = baseStore.getMinQtyForBufferInventory();
-					final int totalSerialProducts = blSerialProductModel.getBlProduct().getSerialProducts()
-							.stream().filter(serialProduct -> null != serialProduct.getSerialStatus()
-									&& serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
-							.collect(Collectors.toList()).size();
-					if (minQtyForBufferInv > totalSerialProducts) {
-						throw new InterceptorException(
-								"Can't mark this serial product as buffer inventory");
-					}
-				}
-			}
 		}
 	}
 
@@ -118,13 +95,5 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 			final ConditionRatingValueEnum value, final InterceptorContext interceptorContext)
 	{
 		return interceptorContext.isModified(blSerialProductModel, attributeName) && value.getCode().equals(BlCoreConstants.ZERO);
-	}
-
-	public BaseStoreService getBaseStoreService() {
-		return baseStoreService;
-	}
-
-	public void setBaseStoreService(BaseStoreService baseStoreService) {
-		this.baseStoreService = baseStoreService;
 	}
 }

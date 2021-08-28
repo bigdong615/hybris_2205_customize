@@ -14,9 +14,6 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
-import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-import de.hybris.platform.store.BaseStoreModel;
-import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +37,6 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   private EnumerationService enumerationService;
   private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
-  private BaseStoreService baseStoreService;
 
   @Override
   public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
@@ -61,27 +57,6 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
       if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)) {
         calculateIncentivizedPriceForSerialProducts(blProductModel, serialProducts,
             interceptorContext);
-      }
-    }
-      setBufferInventoryPercentage(blProductModel);
-  }
-
-  /**
-   * It sets the buffer inventory percentage while creating the SKU product as configured in base store
-   * @param blProductModel
-   */
-  private void setBufferInventoryPercentage(final BlProductModel blProductModel) {
-    final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) blProductModel
-        .getItemModelContext();
-    if(!(itemModelCtx.exists())) {
-      final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
-          BlCoreConstants.BASE_STORE_ID);
-      if(null != baseStore) {
-        final Double bufferInventoryPercentage = baseStore.getBufferInventoryPercentage();
-        if (null != bufferInventoryPercentage && bufferInventoryPercentage > 0 &&
-              Double.compare(blProductModel.getBufferedInventoryPercentage(), 0.0) == 0) {
-          blProductModel.setBufferedInventoryPercentage(baseStore.getBufferInventoryPercentage());
-        }
       }
     }
   }
@@ -199,13 +174,4 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
       CatalogVersionService catalogVersionService) {
     this.catalogVersionService = catalogVersionService;
   }
-
-  public BaseStoreService getBaseStoreService() {
-    return baseStoreService;
-  }
-
-  public void setBaseStoreService(BaseStoreService baseStoreService) {
-    this.baseStoreService = baseStoreService;
-  }
-
 }

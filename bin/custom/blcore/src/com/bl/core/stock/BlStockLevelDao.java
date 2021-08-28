@@ -111,4 +111,13 @@ public interface BlStockLevelDao {
 	Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
 			final Date startDay, final Date endDay);
 
+	/**
+	 * It checks whether the product is available in present date to be marked as buffer inventory
+	 * @param serialProductCode
+	 * @param startDay
+	 * @param endDay
+	 * @return Collection<StockLevelModel> list of stock level model
+	 */
+	public Collection<StockLevelModel> checkProductAvailabilityForCurrentDate(final String serialProductCode,
+			final Date startDay, final Date endDay);
 }
