@@ -12,13 +12,13 @@ import java.util.List;
  */
 public class BlOrderEntryToCancelDto extends OrderEntryToCancelDto {
 
-    private Long amount;
+    private double amount;
     private boolean tax;
     private boolean waiver;
     private Long refundedAmount;
 
     public BlOrderEntryToCancelDto(final AbstractOrderEntryModel orderEntry, final List<String> reasons, final Long quantityAvailableToCancel,
-                                   final String deliveryModeName, final Long amount, final boolean tax, final boolean waiver, final Long refundedAmount) {
+                                   final String deliveryModeName, final double amount, final boolean tax, final boolean waiver, final Long refundedAmount) {
         super(orderEntry, reasons, quantityAvailableToCancel, deliveryModeName);
         this.amount = amount;
         this.tax = tax;
@@ -26,11 +26,11 @@ public class BlOrderEntryToCancelDto extends OrderEntryToCancelDto {
         this.refundedAmount = refundedAmount;
     }
 
-    public Long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

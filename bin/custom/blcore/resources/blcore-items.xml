@@ -20,6 +20,8 @@
         
         <collectiontype code="CatalogUnawareMediaList" elementtype="CatalogUnawareMedia" type="list"/>
 
+        <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -2149,7 +2151,6 @@
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
-
             <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
               <persistence type="property" />
               <modifiers read="true" write="true" search="true" optional="true"/>
@@ -2454,6 +2455,16 @@
                       <modifiers read="true" write="true" search="false"
                       optional="true" />
                       <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="giftCardAvailableAmount" type="java.lang.Double">
+                        <description>Gift Card Available Amount</description>
+                        <modifiers read="true" write="true" search="false" optional="true" />
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="giftCardAmountTransactions" type="OrderGiftCardTransactions">
+                        <description>Gift Card Amount Transactions</description>
+                        <modifiers read="true" write="true" search="false" optional="true" />
+                        <persistence type="property" />
                     </attribute>
                     <attribute qualifier="grandTotal" type="java.lang.Double">
                       <description>Grand Total</description>

@@ -108,10 +108,10 @@ public interface BlCustomCancelRefundService {
      * @param tax amount
      * @param waiver cost
      * @param shipping cost
-     * @param orderModel order
+     * @param subTotal order
      * @return amount on checkbox status
      */
-    double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel orderModel,
+    double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
                                                final double amount);
 
     /**
@@ -143,12 +143,9 @@ public interface BlCustomCancelRefundService {
      * @param cancelQty qty
      * @param cancellableQty available qty
      * @param productPrice basePrice
-     * @param tax taxStatus
      * @param taxLabel tax value
-     * @param waiver waiverStatus
      * @param waiverLabel waiver value
      * @return calculated amount
      */
-    double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final boolean tax, final double taxLabel,
-                                  final boolean waiver, final double waiverLabel);
+    double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final double taxLabel, final double waiverLabel);
 }

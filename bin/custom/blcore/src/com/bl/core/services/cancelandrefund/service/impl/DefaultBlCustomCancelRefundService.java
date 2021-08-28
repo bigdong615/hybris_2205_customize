@@ -167,11 +167,9 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      * {@inheritDoc}
      */
     @Override
-    public double calculateAmountOnCheckboxStatusFull(final boolean tax, final boolean waiver, final boolean shipping, final OrderModel order,
+    public double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
                                                       final double amount) {
-        final double totalSelectionAmount = order.getSubtotal() + ((Boolean.TRUE.equals(shipping) ? order.getDeliveryCost() : BlInventoryScanLoggingConstants.ZERO)
-                - (Boolean.TRUE.equals(tax) ? order.getTotalTax() : BlInventoryScanLoggingConstants.ZERO)
-                - (Boolean.TRUE.equals(waiver) ? order.getTotalDamageWaiverCost() : BlInventoryScanLoggingConstants.ZERO));
+        final double totalSelectionAmount = (subTotal + shipping + tax + waiver);
         return totalSelectionAmount > amount ? totalSelectionAmount : amount;
     }
 
@@ -224,11 +222,9 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      * {@inheritDoc}
      */
     @Override
-    public double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final boolean tax,
-                                         final double taxLabel, final boolean waiver, final double waiverLabel) {
-        final double totalProductPrice = (productPrice * cancelQty) + ((taxLabel/cancellableQty) * cancelQty) + (waiverLabel);
-        /*final double totalProductPrice = (productPrice * cancelQty) + (tax ? (perEntryTax * cancelQty) : BlInventoryScanLoggingConstants.ZERO)
-                + (waiver ? waiverLabel : BlInventoryScanLoggingConstants.ZERO);*/
+    public double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final double taxLabel,
+                                         final double waiverLabel) {
+        final double totalProductPrice = (productPrice * cancelQty) + (taxLabel * cancelQty) + (waiverLabel * cancelQty);
         return BigDecimal.valueOf(totalProductPrice).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
     }
 

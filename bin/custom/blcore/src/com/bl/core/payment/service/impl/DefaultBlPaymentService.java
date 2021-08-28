@@ -1,5 +1,6 @@
 package com.bl.core.payment.service.impl;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -69,7 +70,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public boolean capturePaymentForOrder(final OrderModel order) {
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
-			if(authEntry != null) {
+			if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
 				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
 						order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
 			} else {
