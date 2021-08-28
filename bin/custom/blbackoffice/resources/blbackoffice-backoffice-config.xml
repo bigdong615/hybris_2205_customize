@@ -2124,8 +2124,8 @@
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:navigation-node id="blinventoryscan_pick_path">
 				<n:type-node code="MarkReadyToShipConsignmentsCleanJob" id="blnventoryscan_mark_consignment_clean_job"/>
-				<n:type-node code="InventoryInCompleteOrdersQueue" id="blinventory_incomplete_orders"/>
-				<n:type-node code="InventoryCompleteOrdersQueue" id="blinventory_complete_orders"/>
+				<n:type-node code="InventoryOrdersAwaitingItemsView" id="blinventory_incomplete_orders"/>
+				<n:type-node code="InventoryPulledOrdersView" id="blinventory_complete_orders"/>
 			</n:navigation-node>
 			<n:navigation-node id="blnventoryscan_morning_pull">
 				<n:type-node code="PullReadyToShipOrdersCronJob" id="blnventoryscan_morning_pull_job"/>
