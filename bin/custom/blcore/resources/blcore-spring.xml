@@ -634,6 +634,9 @@
 	<bean id="blSerialProductPrepareInterceptor" class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -917,6 +920,7 @@
 	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
+	<property name="userService" ref="userService"/>
 	</bean>
 	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
@@ -957,6 +961,8 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+
+
 	<!-- [BL-663]: Custom Actions for used gear products promotion-->
 	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
 	<bean id="defaultRuleUsedGearPercentageDiscountAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
@@ -984,7 +990,7 @@
 		<property name="modelService" ref="modelService" />
 		<property name="blCartService" ref="cartService"/>
 	</bean>
-	
+
 	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
 		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="usedGearSerialStatusChangeHook" />
@@ -1087,6 +1093,17 @@
 		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
 		<property name="typeCode" value="Consignment"/>
 	</bean>
+	
+	<!-- BL-992:This interceptor is added to validate order status based on the user group. -->
+	
+	<alias name="blConsignmentStatusValidateInterceptor" alias="blConsignmentStatusValidateInterceptor"/>
+	<bean id="blConsignmentStatusValidateInterceptor" class="com.bl.core.model.interceptor.BlConsignmentStatusValidateInterceptor"/>
+	
+	<bean id="blConsignmentStatusValidateInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentStatusValidateInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
 
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
@@ -1109,6 +1126,9 @@
 	<bean id="defaultBlWishlistDao" class="com.bl.core.wishlist.impl.DefaultBlWishlistDao" parent="defaultWishlistDao">
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
+	</bean>
+		<bean id="defaultBlVerificationDocumentDao" class="com.bl.core.services.document.dao.impl.DefaultBlVerificationDocumentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
 	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
@@ -1168,6 +1188,11 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="blVerificationDocumentDao" ref="defaultBlVerificationDocumentDao"/>
+	</bean>
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
@@ -1187,5 +1212,129 @@
 	</bean>
 
 	<!--BL-828 end -->
+	
+	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
+	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
+	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor"/>
+	
+	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
+	<bean id="blConsignmentEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blConsignmentEntryPrepareInterceptor"/>
+		<property name="typeCode" value="ConsignmentEntry"/>
+	</bean>
+	
+	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
+	<alias name="blRepairLogPrepareInterceptor" alias="blRepairLogPrepareInterceptor"/>
+	<bean id="blRepairLogPrepareInterceptor" class="com.bl.core.model.interceptor.BlRepairLogPrepareInterceptor">
+		<property name="blProductDao" ref="productDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="blRepairLogService" ref="blRepairLogService"/>
+	</bean>
+	
+	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blBlRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="BlRepairLog"/>
+	</bean>
+	
+	<!-- Adding InHouseRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blInHouseRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="InHouseRepairLog"/>
+	</bean>
+	
+	<!-- Adding VendorRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blVendorRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="VendorRepairLog"/>
+	</bean>
+	
+	<!-- Adding CustomerResponsibleRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blCustomerResponsibleRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="CustomerResponsibleRepairLog"/>
+	</bean>
+	
+	<!-- Adding PartsNeededRepairLogModel interceptor to Interceptor mapping list -->
+	<bean id="blPartsNeededRepairLogPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blRepairLogPrepareInterceptor"/>
+		<property name="typeCode" value="PartsNeededRepairLog"/>
+	</bean>
+	
+	<bean id="blDamageWaiverForRepairLogHandler" class="com.bl.core.model.handler.BlDamageWaiverForRepairLogHandler"/>
 
+	<alias name="defaultBlReturnOrderService" alias="blReturnOrderService"/>
+    <bean id="defaultBlReturnOrderService" parent="returnService" class="com.bl.core.order.impl.DefaultBlReturnOrderService" />
+
+	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
+	
+	<bean id="blBufferInventoryService" class="com.bl.core.bufferinventory.service.impl.DefaultBlBufferInventoryService" >
+		<property name="productDao" ref="productDao" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="modelService" ref="modelService" />
+		<property name="blStockLevelDao" ref="blStockLevelDao" />
+		<property name="productService" ref="productService" />
+	</bean>
+	
+	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
+	</bean>
+
+	<!--Custom  code for place order startegy -->
+	<alias alias="commercePlaceOrderStrategy" name="defaultBlCommercePlaceOrderStrategy"/>
+	<bean id="defaultBlCommercePlaceOrderStrategy"
+		class="com.bl.core.order.strategy.DefaultBlCommercePlaceOrderStrategy" parent="defaultCommercePlaceOrderStrategy">
+	</bean>
+
+	<!-- [BL-983] New gear Related changes-->
+	<bean id="blRetailGearPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRetailGearPriceValueResolver"
+		parent="abstractValueResolver"/>
+
+	<alias name="defaultNewGearOrderStatusChangeHook" alias="newGearOrderStatusChangeHook" />
+	<bean id="defaultNewGearOrderStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlNewGearOrderStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+
+	<bean id="commerceNewGearOrderStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="newGearOrderStatusChangeHook" />
+	</bean>
+
+
+	<!--BL-82 Added for creating custom method to set custom parameter -->
+
+	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
+	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
+	</bean>
+
+	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
+	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
+		<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
+	</bean>
+
+
+	<!-- Added for creating custom method to set custom parameter -->
+
+	<alias name="blSerialProductValidateInterceptor" alias="blSerialProductValidateInterceptor"/>
+	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor"/>
+	
+	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
+		<property name="typeCode" value="BlSerialProduct"/>
+	</bean>
+
+
+	<!--Added for order history-->
+
+
+	<alias name="defaultBlCustomerAccountDao" alias="customerAccountDao"/>
+	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
+	</bean>
+	
 </beans>

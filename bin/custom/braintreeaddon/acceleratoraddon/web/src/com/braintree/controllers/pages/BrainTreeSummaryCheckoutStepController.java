@@ -1,12 +1,16 @@
 package com.braintree.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.ControllerConstants;
@@ -106,6 +110,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		
+		final boolean isCustomerHasUnPaidBillOrders =  brainTreeCheckoutFacade.isCustomerHasUnPaidBillOrders();
+		model.addAttribute("isCustomerHasUnPaidBillOrders", isCustomerHasUnPaidBillOrders);
 		model.addAttribute("pageType", REVIEW_SUMMARY_PAGE);
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
@@ -200,12 +207,20 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
-		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
-		blCheckoutFacade.saveOrderNotes(orderNotes);
+
+		
+		updateGiftCardPurchaseForm(request);
 		final CartModel cartModel = blCartService.getSessionCart();
+		double priceBeforeRecalculateGiftCard = cartModel.getTotalPrice();
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		double priceAfterRecalculateGiftCard = cartModel.getTotalPrice();
+		blCheckoutFacade.saveOrderNotes(orderNotes);
 		final boolean submitForSettlement =true;
 		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
+		}
+		if(Double.compare(priceBeforeRecalculateGiftCard, priceAfterRecalculateGiftCard) < 0.0) {
+			return REDIRECT_PREFIX + BraintreeaddonControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
 
 		blCheckoutFacade.updateOrderTypes();
@@ -226,7 +241,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
 
-    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()) && !cartModel.isGiftCardOrder())
+    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()) && !cartModel.isGiftCardOrder() && !cartModel.getIsNewGearOrder())
     {
       try
       {
@@ -246,7 +261,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
         return enterStep(model, redirectModel);
       }
     }
-    else{
+    else if(cartModel.isGiftCardOrder()){
 		final BrainTreePaymentInfoModel brainTreePaymentInfo =null;
     boolean isSuccess= blCheckoutFacade.createAuthorizationTransactionOfOrderForGiftCardPurchase(cartModel, BigDecimal.valueOf(cartModel.getTotalPrice()), submitForSettlement, brainTreePaymentInfo);
     BlLogger.logMessage(LOG, Level.DEBUG,String.valueOf(isSuccess));
@@ -264,9 +279,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
-			if(paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
-				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
-			}
+
+			subscribeEmailForNewsLetters(placeOrderForm, paymentInfo, orderData);
+
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}
@@ -279,6 +294,37 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 		return redirectToOrderConfirmationPage(orderData);
 	}
+
+	/**
+	 * It subscribes customer email id for news letters
+	 * @param placeOrderForm the placeOrderForm
+	 * @param paymentInfo the paymentInfo
+	 * @param orderData the orderData
+	 */
+	private void subscribeEmailForNewsLetters(
+			@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm,
+			final CCPaymentInfoData paymentInfo, final OrderData orderData) {
+		if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+			if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
+				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+			} else {
+				blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+			}
+		}
+	}
+
+ 	/**
+	 * It saves Gift Card Purchase Form
+	 * @param HttpServletRequest the request
+	 */
+	private void updateGiftCardPurchaseForm(final HttpServletRequest request) {
+		final GiftCardPurchaseForm giftCardPurchaseForm = new GiftCardPurchaseForm();
+		giftCardPurchaseForm.setName(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASENAME)));
+		giftCardPurchaseForm.setEmail(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASEEMAIL)));
+		giftCardPurchaseForm.setMessage(StringUtils.stripToEmpty(request.getParameter(BraintreeaddonControllerConstants.GIFTCARDPURCHASEMESSAGE)));
+		blCheckoutFacade.updateGiftCardPurchaseForm(giftCardPurchaseForm);
+	}
+
 
 	private Map<String, String> getMergedCustomFields (Map<String, String> customFieldsFromUI)
 	{
@@ -407,6 +453,38 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_INFO, cartData.getPaymentInfo());
 		}
 	}
+
+
+	@PostMapping(value = "/placeReplacementOrder")
+	@RequireHardLogIn
+	public String placeReplacementOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm , final Model model,
+			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel) {
+		final CartModel cartModel = blCartService.getSessionCart();
+		final OrderData orderData;
+		try
+		{
+			BlReplaceMentOrderUtils.setIsCartUsedForReplacementOrder(cartModel);
+			orderData = getCheckoutFacade().placeOrder();
+			BlLogger.logMessage(LOG , Level.INFO , "Replacement Order has been placed, number/code: " +
+					orderData.getCode() + "for -> original order number" + cartModel.getReturnRequestForOrder().getOrder().getCode());
+
+			blRentalDateCookieGenerator.removeCookie(response);
+			blDatePickerService.removeRentalDatesFromSession();
+		}
+		catch (final Exception e)
+		{
+			LOG.error("Failed to place Order, message: " + e.getMessage(), e);
+			GlobalMessages.addErrorMessage(model, "checkout.placeOrder.failed");
+			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
+		}
+
+		if(null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
+			getSessionService().removeAttribute(BlCoreConstants.RETURN_REQUEST);
+		}
+
+		return redirectToOrderConfirmationPage(orderData);
+	}
+
 
 	public CustomFieldsService getCustomFieldsService() {
 		return customFieldsService;

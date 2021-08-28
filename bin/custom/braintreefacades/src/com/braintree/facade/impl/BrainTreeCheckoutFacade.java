@@ -1,5 +1,10 @@
 package com.braintree.facade.impl;
 
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
@@ -18,11 +23,15 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.google.common.util.concurrent.AtomicDouble;
+
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.CompanyModel;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.c2l.RegionModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -30,7 +39,6 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
@@ -39,22 +47,20 @@ import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
-
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Objects;
-
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 /**
  * Checkout facade for Braintree
@@ -487,6 +493,55 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
 
+	/**
+	 * It sets the order and consignment status and payBill flag as true on successful payment
+	 * @param order the order
+	 */
+	public void setPayBillFlagTrue(final AbstractOrderModel order) {
+		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
+		order.getConsignments()
+				.forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+						.getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+							if(BooleanUtils.isFalse(billing.isBillPaid())) {
+								billing.setBillPaid(true);
+								getModelService().save(billing);
+							}
+						}))));
+		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
+				.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serial -> {
+						if(((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
+								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.UNBOXED)) {
+							isOrderComplete.set(false);
+					}
+					})));
+		if(isOrderComplete.get()) {
+			order.setStatus(OrderStatus.COMPLETED);
+			getModelService().save(order);
+			order.getConsignments().forEach(consignmentModel -> {
+				consignmentModel.setStatus(ConsignmentStatus.COMPLETED);
+				getModelService().save(consignmentModel);
+			});
+		}
+	}
+
+	/**
+	 * This method return true if any unpaid bill present on customer
+	 * 
+	 */
+	public boolean isCustomerHasUnPaidBillOrders()
+	{   
+		final AtomicDouble totalAmt = new AtomicDouble(0.0);
+		List<AbstractOrderModel> unPaidBillOrders = getOrderDao().getUnPaidBillOrderByCustomer();
+	      unPaidBillOrders.forEach(orders -> orders.getConsignments()
+	      .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
+	      .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+	        if(BooleanUtils.isFalse(billing.isBillPaid())) {
+	          totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
+	        }
+	      })))));
+	    
+		 return Double.compare(totalAmt.get(), 0.0) > 0 ;
+	}
 	private boolean isCreditCard()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();

@@ -55,7 +55,12 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
           " as c} WHERE {c:id} = ?catalog}})}})";
-
+  
+  private static final String GET_BLSERIALPRODUCTS_FOR_BARCODE_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
+			+ " as p} WHERE {p:" + BlSerialProductModel.BARCODE + "} = ?barcode" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
+			+ "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
+			+ "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
+			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
   /**
    * @param typecode
@@ -107,5 +112,26 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
     }
 
     return serialProducts;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public BlSerialProductModel getSerialByBarcode(final String serialBarcode)
+  {
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_BLSERIALPRODUCTS_FOR_BARCODE_QUERY);
+	  fQuery.addQueryParameter(BlCoreConstants.BARCODE, serialBarcode);
+	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
+	  fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
+	  final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
+	  final List<BlSerialProductModel> serialProducts = result.getResult();
+	  if (CollectionUtils.isEmpty(serialProducts))
+	  {
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial product found for barcode: {}",
+				  serialBarcode);
+		  return null;
+	  }
+	  return serialProducts.get(0);
   }
 }

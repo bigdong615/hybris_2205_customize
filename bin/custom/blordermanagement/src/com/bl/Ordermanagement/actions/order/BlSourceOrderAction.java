@@ -23,7 +23,9 @@ import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -64,14 +66,21 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
       isSourcingSuccessful = false;
       setOrderSuspendedStatus(order);
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
-          "Could not create SourcingResults. Changing order status to SUSPENDED", e);
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), e,
+          "Could not create SourcingResults. Changing order status to SUSPENDED for order code {}", order.getCode());
+
     } catch (final BlSourcingException ex) {
 
       isSourcingSuccessful = false;
+      setOrderToManualReviewStatus(order);
+      BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), ex,
+          " Changing order status to MANUAL_REVIEW for order code {}", order.getCode());
+    } catch (final Exception e) {
+
+      isSourcingSuccessful = false;
       setOrderSuspendedStatus(order);
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
-          ex.getMessage() + " Changing order status to SUSPENDED", ex);
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e,
+          " Changing order status to SUSPENDED for order code {}", order.getCode());
     }
 
     if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
@@ -88,20 +97,26 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       } catch (final AmbiguousIdentifierException ex) {
 
         setOrderSuspendedStatus(order);
-        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-            LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
-            "Cancelling consignment since only one fulfillment system configuration is allowed per consignment.",
-            ex);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR,
+            LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
+            "Cancelling consignment since only one fulfillment system configuration is allowed per consignment. Order code {}",
+            order.getCode());
       } catch (final BlSourcingException ex) {
 
-        setOrderSuspendedStatus(order);
-        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
-            ex.getMessage() + " Changing order status to SUSPENDED", ex);
+        setOrderToManualReviewStatus(order);
+        BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
+            " Changing order status to MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
       } catch (final BlShippingOptimizationException soe) {
 
         setOrderSuspendedStatus(order);
-        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe.getMessage() +
-                " Changing order status to SUSPENDED due to shipping optimization", soe);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe,
+                " Changing order status to SUSPENDED due to shipping optimization for order code {}", order.getCode());
+      }
+      catch (final Exception e) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e,
+            " Changing order status to SUSPENDED due to error for order code {}", order.getCode());
       }
     }
 
@@ -150,6 +165,12 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     results.setResults(resultSet);
 
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    calendar.add(Calendar.DATE, 2);
+    order.setActualRentalStartDate(calendar.getTime());
+    blSourcingService.updateShippingDatesForInternalTransfers(order, results);
+
     return results;
   }
 
@@ -184,11 +205,26 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     resultSet.add(sourcingResult);
   }
 
+  /**
+   * Set order status to SUSPENDED.
+   *
+   * @param order - order
+   */
   private void setOrderSuspendedStatus(final OrderModel order) {
 
     order.setStatus(OrderStatus.SUSPENDED);
     getModelService().save(order);
+  }
 
+  /**
+   * Set order status to MANUAL_REVIEW.
+   *
+   * @param order - order
+   */
+  private void setOrderToManualReviewStatus(final OrderModel order) {
+
+    order.setStatus(OrderStatus.MANUAL_REVIEW);
+    getModelService().save(order);
   }
 
   /**

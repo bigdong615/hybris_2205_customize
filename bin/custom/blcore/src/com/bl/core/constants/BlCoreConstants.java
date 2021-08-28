@@ -87,12 +87,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
 	public static final String RESERVED_STATUS = "reservedStatus";
+	public static final String BUFFER_INVENTORY = "bufferInventory";
+	public static final String BASE_STORE_ID = "bl";
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
+	public static final int END_MILLI_SECONDS = 999;
 	public static final int START_HOURS = 0;
 	public static final int START_MINUTES = 0;
 	public static final int START_SECONDS = 0;
+	public static final int START_MILLI_SECONDS = 0;
 	public static final long MAX_TOTAL = 20L;
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
@@ -178,6 +182,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
+	public static final String DOUBLE_HYPHEN = "--";
 
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
 	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
@@ -250,15 +255,53 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
 	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
-	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
+	public static final String CUSTOMER_RESPONSIBLE_REPAIR = "CUSTOMER_RESPONSIBLE_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
   public static final String ACCEPTED = "ACCEPTED";
 
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";
+  public static final String NEW_GEAR = "newgear";
+	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BARCODE = "barcode";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 
-  private BlCoreConstants()
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
+	public static final String MISSING_CHARGE = "MISSING_CHARGE";
+	public static final String AQUATECH_BRAND_ID ="9";
+	public static final String SQL_DATE_FORMAT = "MM-dd-yyyy";
+
+
+	public static final String DRIVING_LICENSE = "drivingLicense";
+	public static final String UTILITY_BILL = "utilityBill";
+	public static final String INSURANCE_CERTIFICATE = "insuranceCertificate";
+	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
+	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
+
+	public static final String TOTAL_PRICE = "Total Price : {}";
+
+	public static final String COMMON_ERROR_MESSAGE = "unexpected.update.error";
+	public static final String BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR = "BlSerialProductValidateInterceptor";
+	
+	public static final String ZERO = "0";
+
+	public static final String BY_DATE = "byDate";
+	public static final String BY_ORDER_NUMBER = "byOrderNumber";
+	public static final String CUSTOMER = "customer";
+	public static final String STORE = "store";
+	public static final String FILTER_STATUS_LIST = "filterStatusList";
+	public static final String STATUS_LIST = "statusList";
+	public static final String STATUS1 = "status1";
+	public static final String STATUS2 = "status2";
+
+
+
+	private BlCoreConstants()
 	{
 		//empty
 	}

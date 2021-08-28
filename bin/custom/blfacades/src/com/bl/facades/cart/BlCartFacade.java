@@ -37,14 +37,23 @@ public interface BlCartFacade extends CartFacade {
   void recalculateCartIfRequired();
   
   /**
-   * Update cart entry with the selected damage Waiver type.
-   *
-   * @param entryNumber the entry number
-   * @param damageWaiverType the damage Waiver type
-   */
-  void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
-  
-  /**
+	 * Update cart entry with the selected damage Waiver type.
+	 *
+	 * @param entryNumber the entry number
+	 * @param damageWaiverType the damage Waiver type
+	 */
+	void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
+
+	/**
+	 * Update cart entry with the selected option
+	 *
+	 * @param entryNumber the entry number
+	 * @param optionCode the optionCode
+	 */
+	void updateCartEntrySelectedOption(final long entryNumber, final String optionCode);
+
+
+	/**
    * Sets the rental dates on cart.
    *
    * @param rentalStartDate the rental start date
@@ -174,4 +183,12 @@ public interface BlCartFacade extends CartFacade {
 	 * If credit card or paypal payment method selected then remove po number from cartModel.
 	 */
 	void removePoNumber();
+
+	/**
+	 * To check new gear product is allowed to add to cart.
+	 * @param productCode
+	 * @param serialCode
+	 * @return
+	 */
+	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode);
 }

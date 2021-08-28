@@ -38,11 +38,18 @@
 					<div id="productInfo" class="col-lg-5 offset-lg-1">
 
 						<h1 class="mb-4">${product.displayName}</h1>
-						<!-- <div class="modal-dialog modal-dialog-centered modal-sm"
-												id="addToCartModalDialog"></div> -->
-<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                                   <div class="modal-dialog modal-dialog-centered modal-lg " id="addToCartModalDialog"></div>
+                      <c:choose>
+                                        <c:when test="${allowAddToCart}">
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
                                               </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                              </div>
+                                        </c:otherwise>
+                                      </c:choose>     
 						<form:form method="POST" modelAttribute="giftCardPurchaseForm"
 							id="giftCardPurchaseForm">
 							

@@ -89,8 +89,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
       updateShippingDatesForInternalTransfers(order, context.getResult());
 
       return context.getResult();
-    } catch (final Exception e) {
-      throw new BlSourcingException("Error while doing the order sourcing.", e);
+    } catch (final BlSourcingException blSourcingException) {
+
+      throw blSourcingException;
+    } catch (final Exception exception) {
+
+      throw exception;
     }
 
   }
@@ -101,7 +105,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
    * @param order the order
    * @param result the result
    */
-  private void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
+  public void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
       final SourcingResults result) {
 
     if (CollectionUtils.isNotEmpty(result.getResults())) {

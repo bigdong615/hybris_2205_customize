@@ -420,6 +420,9 @@
   					});
   					return btn;
   					},
+  					tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
         				var searchText = document.getElementById('js-site-search-input').value;
@@ -451,8 +454,9 @@
                              return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                         maxDays: 90,
+                      //Limit days selection to 91 days
+                         maxDays: 91,
+                         minDays: 2,
                       //Disable dates after one year from today
                          maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -488,6 +492,10 @@
     				});
     				return btn;
     				},
+             tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
+
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
@@ -518,8 +526,9 @@
                                return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                         maxDays: 90,
+                      //Limit days selection to 91 days
+                         maxDays: 91,
+                         minDays: 2,
                       //Disable dates after one year from today
                          maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -708,6 +717,9 @@
 												});
 												return btn;
 												},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
                                            			trackDateSelection(date1,date2);
@@ -725,6 +737,9 @@
                                            			
                                            			});
                                            			},
+                                           			 tooltipNumber: (totalDays) => {
+                                                              return totalDays - 1;
+                                                            },
 
                                            	//BL-520 - disable weekends in the calendar
                                                     lockDaysFilter: (day) => {
@@ -732,8 +747,9 @@
                                                          return [6, 0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
-                                            //Limit days selection to 90 days
-                                                    maxDays: 90,
+                                            //Limit days selection to 91 days
+                                                    maxDays: 91,
+                                                    minDays: 2,
                                             //Disable dates after one year from today
                                                     maxDate: disableDatesOneYearFomNow,
                                             //Set Sunday to be the first day in the calendar's header
@@ -771,6 +787,9 @@
                                      				});
                                      				return btn;
                                      				},
+                                             tooltipNumber: (totalDays) => {
+                                              return totalDays - 1;
+                                            },
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
                                            			trackDateSelection(date1,date2);
@@ -794,8 +813,9 @@
                                                          return [6, 0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
-                                          //Limit days selection to 90 days
-                                                    maxDays: 90,
+                                          //Limit days selection to 91 days
+                                                    maxDays: 91,
+                                                    minDays: 2,
                                           //Disable dates after one year from today
                                                     maxDate: disableDatesOneYearFomNow,
                                           //Set Sunday to be the first day in the calendar's header
@@ -979,6 +999,105 @@
 
 		</c:if>
 
+<!-- This js will load on new gear PDP  and it is required for all new gear pdp component to make it work -->
+<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'false' && product.retailGear eq true}">
+		 <script>
+             // Mobile Menu styles - #my-menu is required for ALL pages
+             document.addEventListener(
+                 "DOMContentLoaded", () => {
+                    new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],
+                } );
+                 }
+             );
+             // Initialize Mega menu rollover - required for ALL pages
+             $('.menu-large').hover(
+                 function(){ $('.screen').addClass('show') },
+                 function(){ $('.screen').removeClass('show') }
+             );
+             // Create and mount the product thumbnail slider - Required for Single Product Page
+           // BL-574 : product thumbnail center code start here
+
+             var secondarySlider = new Splide( '#product-thumbnails', {
+                 rewind      : true,
+                 fixedWidth  : 115,
+                 fixedHeight : 115,
+                 isNavigation: true,
+                 gap         : 10,
+                 pagination  : false,
+                 cover       : true,
+                 arrows      : false,
+                 breakpoints : {
+                     '600': {
+                         fixedWidth  : 80,
+                         fixedHeight : 80,
+                         arrows: false,
+                     }
+                 },
+                 keyboard: false,
+             } ).mount();
+             // Create the product slider - Required for Single Product Page
+             var primarySlider = new Splide( '#product-slider', {
+                 type       : 'fade',
+                 pagination : false,
+                 arrows     : false,
+                 keyboard   : false,
+                 fixedHeight : 380,
+             } );
+             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+             primarySlider.sync( secondarySlider ).mount();
+
+              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+
+              if(image_qty>4){
+                         var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard   : false,
+                                                 fixedHeight : 380,
+                                             } );
+                                             primarySlider.sync( secondarySlider ).mount();
+                                              }
+         // BL:574 code ends here part2
+// Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 1,
+            drag   : false,
+            breakpoints: {
+                '991': {
+                    pagination: false,
+                },
+            },
+            keyboard: false,
+        } ).mount());
+         </script>
+		</c:if>
 
 		<%-- BL-457 added JS for rental cart page --%>
 		<c:if test="${cmsPage.uid eq 'cartpage'}">
@@ -1163,6 +1282,9 @@
                 				});
                 				return btn;
                 				},
+                				     tooltipNumber: (totalDays) => {
+                                return totalDays - 1;
+                              },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                                   //var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1193,8 +1315,9 @@
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
-                             //Limit days selection to 90 days
-                                maxDays: 90,
+                             //Limit days selection to 91 days
+                                maxDays: 91,
+                                minDays: 2,
                             //Disable dates after one year from today
                                 maxDate: disableDatesOneYearFomNow,
                            //Set Sunday to be the first day in the calendar's header
@@ -1231,6 +1354,9 @@
                 				});
                 				return btn;
                 				},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                       			// var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1261,8 +1387,9 @@
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                              maxDays: 90,
+                      //Limit days selection to 91 days
+                              maxDays: 91,
+                              minDays: 2,
                       //Disable dates after one year from today
                               maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1353,6 +1480,9 @@
                 				});
                 				return btn;
                 				},
+                         tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                                   //var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1383,8 +1513,9 @@
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
-                             //Limit days selection to 90 days
-                                maxDays: 90,
+                             //Limit days selection to 91 days
+                                maxDays: 91,
+                                minDays: 2,
                             //Disable dates after one year from today
                                 maxDate: disableDatesOneYearFomNow,
                            //Set Sunday to be the first day in the calendar's header
@@ -1421,6 +1552,9 @@
                 				});
                 				return btn;
                 				},
+                				tooltipNumber: (totalDays) => {
+                          return totalDays - 1;
+                        },
                             setup: (picker) => {
                       			picker.on('button:apply', (date1, date2) => {
                       			// var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1451,8 +1585,9 @@
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                              maxDays: 90,
+                      //Limit days selection to 91 days
+                              maxDays: 91,
+                              minDays: 2,
                       //Disable dates after one year from today
                               maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1603,6 +1738,9 @@
 							});
 							return btn;
 						},
+						 tooltipNumber: (totalDays) => {
+              return totalDays - 1;
+            },
                         setup: (picker) => {
                       		picker.on('button:apply', (date1, date2) => {
 							 //	var isFromSummaryPage = $("#isFromSummaryPage").val();
@@ -1637,8 +1775,9 @@
                             return [6, 0].includes(d);
                         },
                         lockDays: disallowedDates,
-                      //Limit days selection to 90 days
-                        maxDays: 90,
+                      //Limit days selection to 91 days
+                        maxDays: 91,
+                        minDays: 2,
                       //Disable dates after one year from today
                         maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
@@ -1687,6 +1826,9 @@
                                   });
                           				return btn;
                           				},
+                          				 tooltipNumber: (totalDays) => {
+                                    return totalDays - 1;
+                                  },
                                       setup: (picker) => {
                                 			picker.on('button:apply', (newEndDate) => {
                                 				$.ajax({
@@ -1696,7 +1838,14 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
-                            	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
+                            	                    var dayOrDays = "";
+                            	                    if(($('#js-totalExtendDays').val() == 1)) {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Day';
+                            	                    }
+                            	                    else {
+                            	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Days';
+                            	                    }
+                            	                    $('#js-totaldays-update').html(dayOrDays);
                             	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
                             	                    if($('#js-isAllProductExtendabe').val() !== '') {
                             	                    if($("#add-error-message").hasClass("d-none")){

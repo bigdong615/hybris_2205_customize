@@ -373,6 +373,7 @@
 	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
 	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil" parent="defaultAddressDataUtil"/>
 
-
-
+	<!--BL-772 multipartResolver to use with FileUpload-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	
 </beans>

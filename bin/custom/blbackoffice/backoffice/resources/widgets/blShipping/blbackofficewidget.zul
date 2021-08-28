@@ -115,37 +115,6 @@
                 </row>
             	</rows>
             	</grid>
-        
-         <label style="margin-left:50px;position:relative;top:4%;font-size:15px;font-weight:600">Pickup Person Details </label>   
-         <grid style="margin-left:50px;margin-top:40px">
-            <rows>
-                <row>
-                  <label value="${labels.blbackoffice.updateshipping.customer.pickupPersonFName}" width="140px"/>
-                    <hlayout>
-                        <textbox sclass="custom-popup" id="pickupPersonFName" width="240px" />
-                    </hlayout>
-                    
-                    <label value="${labels.blbackoffice.updateshipping.customer.pickupPersonLName}" width="100%" />
-                    <hlayout>
-                       <textbox sclass="oms-widget-updateorder-input-text-box" id="pickupPersonLName" width="240px" />
-                    </hlayout>
-                </row>
-                
-                  <row>
-                  <label value="${labels.blbackoffice.updateshipping.customer.pickUpPersonEmail}" width="140px"/>
-                    <hlayout>
-                        <textbox sclass="custom-popup" id="pickUpPersonEmail" width="240px" />
-                    </hlayout>
-                    
-                    <label value="${labels.blbackoffice.updateshipping.customer.pickUpPersonPhone}" width="100%" />
-                    <hlayout>
-                       <textbox sclass="oms-widget-updateorder-input-text-box" id="pickUpPersonPhone" width="240px" />
-                    </hlayout>
-                </row>
-                </rows>
-                </grid>
-            	
-            	
 		
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
         <button id="undochanges"

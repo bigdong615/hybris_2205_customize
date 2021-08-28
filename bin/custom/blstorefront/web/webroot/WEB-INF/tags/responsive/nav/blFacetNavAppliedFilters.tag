@@ -33,13 +33,19 @@
 		<c:if test ="${displayText eq 'rentalgear'}">
 		   <spring:theme code="text.rental.gear.slp" var="rentalText"/>
 			<c:set var="displayText" value="${rentalText}"/>
+			&quot;${displayText}&quot;<span class="search-count">
+      				&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 		</c:if>
 		<c:if test ="${displayText eq 'usedgear'}">
 		      <spring:theme code="text.used.gear.slp" var="usedText"/>
     			<c:set var="displayText" value="${usedText}"/>
+    			&quot;${displayText}&quot;<span class="search-count">
+          				&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
     		</c:if>
-			&quot;${displayText}&quot;<span class="search-count">
+    	<c:if test="${searchPageData.categoryCode ne 'usedgear' && searchPageData.categoryCode ne 'rentalgear'}">
+			&quot;${categoryName}&quot;<span class="search-count">
 				&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
+			</c:if>
 		</h6>
 		</c:otherwise>	
 		</c:choose>			

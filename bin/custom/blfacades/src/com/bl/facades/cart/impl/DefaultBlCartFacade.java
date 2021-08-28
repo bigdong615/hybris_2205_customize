@@ -1,7 +1,9 @@
 package com.bl.facades.cart.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -67,13 +69,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BlCommerceStockService blCommerceStockService;
 
 	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
+	@Resource(name = "i18nService")
+	private I18NService i18nService;
 
   /**
    * {@inheritDoc}
    */
   @Override
   public void removeCartEntries() {
-
     getBlCartService().clearCartEntries();
   }
   
@@ -103,6 +106,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   {
 	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
   }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode)
+	{
+		getBlCartService().updateCartEntrySelectedOption(entryNumber, optionCode);
+	}
   
   /**
    * {@inheritDoc}
@@ -155,6 +167,12 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
+        if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+        	parameter.setRetailGear(blProductModel.getRetailGear());
+				}
+				if(BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())){
+					parameter.setAqautechProduct(Boolean.TRUE);
+				}
       }
     } catch (final RuntimeException exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
@@ -167,12 +185,31 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     final CommerceCartModification commerceCartModification = getCommerceCartService()
         .addToCart(parameter);
-    setCartType(blSerialProductModel, cartModel, commerceCartModification);
+    setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
+		updateCartOptionEntry(commerceCartModification.getEntry(),cartModel);
 
-    return getCartModificationConverter().convert(commerceCartModification);
+		return getCartModificationConverter().convert(commerceCartModification);
   }
-
-  
+	/**
+	 * Update cart options on entry
+	 * @param AbstractOrderEntryModel
+	 *           the orderEntry
+	 * @param CartModel
+	 *           the cartModel
+	 */
+  private void updateCartOptionEntry(final AbstractOrderEntryModel orderEntry, final CartModel cartModel ){
+	  	if(cartModel.getIsRentalCart() &&CollectionUtils.isNotEmpty(orderEntry.getOptions())){
+				final BlOptionsModel optionsModel = orderEntry.getOptions().iterator().next();
+				final Integer quantity = Integer.parseInt(orderEntry.getQuantity().toString());
+				List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+				for(int i = 0 ; i < quantity ; i++){
+					selectOptionList.add(optionsModel);
+				}
+				orderEntry.setOptions(selectOptionList);
+				getModelService().save(orderEntry);
+				getModelService().refresh(orderEntry);
+			}
+		}
   /**
 	 * It performs add to cart operation based on gift card.
 	 *
@@ -229,7 +266,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 
 		final CommerceCartModification commerceCartModification = getCommerceCartService().addToCart(parameter);
-		setCartType(blSerialProductModel, cartModel, commerceCartModification);
+		setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 
 		return getCartModificationConverter().convert(commerceCartModification);
 
@@ -243,10 +280,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    */
   private void setCartType(final BlSerialProductModel blSerialProductModel,
       final CartModel cartModel,
-      final CommerceCartModification commerceCartModification) {
+      final CommerceCartModification commerceCartModification,final CommerceCartParameter parameter) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
         .equals(BlFacadesConstants.SUCCESS)) {
-      if (blSerialProductModel == null) {
+
+    	if(Boolean.TRUE.equals(parameter.getRetailGear())){
+    		cartModel.setIsNewGearOrder(Boolean.TRUE);
+			}
+    	else if (blSerialProductModel == null) {
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
@@ -272,6 +313,12 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
 
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+
+			if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+				return BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
+			}else if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				return true;
+			}
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
       if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel != null) {
@@ -288,13 +335,31 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   }
 
 	/**
+	 * To check new gear product is allowed to add to cart.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode) {
+
+		final CartModel cartModel = blCartService.getSessionCart();
+    BlProductModel blProductModel = (BlProductModel) getProductService()
+        .getProductForCode(productCode);
+    if( BooleanUtils.isTrue(blProductModel.getRetailGear())) {
+      if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+        return cartModel.getIsNewGearOrder() != null && BooleanUtils
+            .isFalse(cartModel.getIsNewGearOrder()) ;
+      }
+    }
+  return false;
+	}
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
   
   public boolean cartHasRentalOrUsedGearProducts(){
 		CartModel cartModel = blCartService.getSessionCart();
-		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? true : false;
+		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 	/**
@@ -407,6 +472,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 							Arrays.asList(String.valueOf(cartEntryQty), nextAvailabilityDate))
 					: getMessage("cart.entry.item.availability.no.stock.available.till", Arrays.asList(nextAvailabilityDate)));
 		}
+		else
+		{
+			entry.setAvailabilityMessage(getMessage("text.stock.not.available",Lists.newArrayList()));
+		}
 	}
 
 	/**
@@ -481,7 +550,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
 	public String identifyCartType() {
 		final CartModel cartModel = blCartService.getSessionCart();
-       if (CollectionUtils
+		if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+			return BlFacadesConstants.NEW_GEAR_CART;
+		}
+      else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
@@ -569,8 +642,8 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 */
   @Override
   public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
-    StringBuilder removedEntry = new StringBuilder();
-    List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
+    final StringBuilder removedEntry = new StringBuilder();
+    final List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
     if (CollectionUtils.isNotEmpty(entryList)) {
       Collections.reverse(entryList);
       entryList.forEach(entryNumber -> {
@@ -580,9 +653,9 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
           } else {
             updateCartEntry(entryNumber, 0, cartModel);
           }
-        } catch (CommerceCartModificationException ex) {
-          BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-              "Couldn't update product with the entry number: {0} . {1}", entryNumber, ex);
+        } catch (final CommerceCartModificationException ex) {
+        	BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
+							"Couldn't update product with the entry number: {}",entryNumber);
         }
       });
     }
@@ -616,16 +689,14 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 		return getCartModificationConverter().convert(modification);
 	}
 
-	@Resource(name = "i18nService")
-	private I18NService i18nService;
 	/**
 	 *  This method used for collecting discontinue entries number form cart.
 	 * @param cartModel
 	 * @param removedEntry
 	 */
 	@Override
-	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry){
-		List<Integer> entryList = new ArrayList<>();
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, final StringBuilder removedEntry){
+	final	List<Integer> entryList = new ArrayList<>();
 		cartModel.getEntries().forEach(entry -> {
 			if (entry.getProduct() != null) {
 				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();

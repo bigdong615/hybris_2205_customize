@@ -40,6 +40,9 @@
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                     <c:choose>
+                                    <c:when test="${not empty disableButton and disableButton == true}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
+                                      </c:when>
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
                                         <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
@@ -89,11 +92,14 @@
 	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
 	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate and not empty disableButton and disableButton == true}">
+	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 </c:choose>
-	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+	                                 <a href="#" class="pickupDeliveryLink" data-bs-toggle="modal" data-bs-target="#pickup-delivery-options"><spring:theme code="pdp.pickup.section.text"/></a>
                                  </p>
                                   </div>
                                   </c:otherwise>
@@ -101,7 +107,7 @@
                                    <c:if test = "${product.isDiscontinued ne 'true'}">
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
-                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
+                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<c:choose><c:when test="${rentalDate.numberOfDays eq 1}"><spring:theme code="pdp.rental.product.recommendation.section.day.rental.text"/></c:when><c:otherwise><spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></c:otherwise></c:choose></span>
                                 </div>
                                 </c:if>
                                 <!--BL-628: Notify Me-->

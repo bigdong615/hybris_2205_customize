@@ -59,7 +59,6 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             interceptorContext);
       }
     }
-
   }
 
 
@@ -175,5 +174,4 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
       CatalogVersionService catalogVersionService) {
     this.catalogVersionService = catalogVersionService;
   }
-
 }

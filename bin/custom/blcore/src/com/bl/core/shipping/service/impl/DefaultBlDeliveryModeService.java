@@ -350,6 +350,30 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
 
     /**
+     * Get delivery Zone for new Gear product.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,
+        final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
+            .getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+            final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>();
+            blPickUpZoneDeliveryModeModels.forEach(blPickUpZoneDeliveryModeModel ->{
+                if(blPickUpZoneDeliveryModeModel.isWarehousePickUp()){
+                    newBlPickUpZoneDeliveryModeModels.add(blPickUpZoneDeliveryModeModel);
+                }
+            });
+            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
+                : Collections.emptyList();
+
+        }
+        return Collections.emptyList();
+    }
+    /**
      * This method will check conditions for partner delivery locations
      *
      * @param blPickUpZoneDeliveryModeModels collection to remove unwanted records
@@ -531,12 +555,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 
                     totalWeight = getBigDecimal(totalWeight, entry);
                     if(blSerialProduct instanceof BlSerialProductModel) {
-                        final BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+                        final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
 
-                        sumWidth = getSumWidth(sumWidth, ((serialProduct.getWidth() != null ? serialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                        sumWidth = getSumWidth(sumWidth, ((blProduct.getWidth() != null ? blProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
                                 * entry.getQuantity().intValue()));
-                        maxHeight = getMaxHeight(maxHeight, serialProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, serialProduct.getLength());
+                        maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blProduct.getLength());
                     }else if(null != blSerialProduct) {
                         sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
                                 * entry.getQuantity().intValue()));
@@ -583,7 +607,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
 
-        weight = totalWeight.doubleValue() + weight;
+        if(!(blSerialProduct instanceof BlSerialProductModel)) {
+            weight = totalWeight.doubleValue() + weight;
+        }
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);
         } else {

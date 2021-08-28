@@ -53,7 +53,7 @@ public class BlWishlistController extends AbstractSearchPageController {
    * Method to add Product to Wishlist from the Product Cards.
    */
   @RequireHardLogIn
-  @RequestMapping(value = "/wishlist/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/wishlist/add", method = RequestMethod.GET)
   @ResponseBody
   public String addToWishlist(@RequestParam("productwishlistCode") final String code) {
     try {
@@ -108,7 +108,7 @@ public class BlWishlistController extends AbstractSearchPageController {
     try {
       final CartModificationData cartModification = blCartFacade.addToCart(code, 1, null);
     } catch (CommerceCartModificationException e) {
-      e.printStackTrace();
+      BlLogger.logMessage(LOG, Level.ERROR, "Product with {} could not be added to cart", code); 
     }
     return REDIRECT_TO_BOOKMARKS_PAGE;
   }

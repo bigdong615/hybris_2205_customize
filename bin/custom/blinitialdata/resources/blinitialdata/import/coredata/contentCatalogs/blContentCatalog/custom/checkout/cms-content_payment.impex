@@ -20,7 +20,8 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; FooterSlot               ;                                                                                       	;                          ; footer
                              ; FooterSubscriptionSlot   ;                                                                                       	;                          ; wide
                              ; FooterCopyRightslot      ;                                                                                       	;                          ; wide
-                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide                               ; MyAccountSlot                  ;                                                                                       ;                           ; navigation
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; MyAccountSlot                  ;                                                                                       ;                           ; navigation
                              ; MobileHeaderLinkForSupportSlot ;                                                                                       ;                           ; headerlink
                              ; MobileHeaderLinkForAccountSlot ;                                                                                       ;                           ; headerlink
                              ; MobileHeaderBottomInfo         ;                                                                                       ;                           ; wide

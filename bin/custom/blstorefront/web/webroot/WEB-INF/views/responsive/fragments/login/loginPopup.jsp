@@ -22,6 +22,7 @@
         <formElement:formPasswordBox idKey="j_password"
           path="j_password" inputCSS="form-control mb-2"  placeholder="Password" />
            <input type="hidden" id="serialClick" name="serialClick" value=""/>
+           <input type="hidden" class="js-selected-product" name="js-selected-product" value=""/>
         <input type="checkbox" name="remember-me" id="_spring_security_remember_me">
         <label for="_spring_security_remember_me">
           <small>
@@ -48,7 +49,7 @@
         <div class ="notification notification-error d-none" id="errorMessages_login"> </div>
         <p class="body14 text-center mb-0 mt-4">
           <a class="js-signUp-popup" id="serialSignUp" data-serial="" data-link="<c:url value='/login/register'/>"
-            href="#signUp" data-bs-dismiss="modal">
+           data-product-code="" href="#signUp" data-bs-dismiss="modal">
             <spring:theme code="register.new.customer"/>
           </a>
         </p>

@@ -28,12 +28,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import com.google.common.util.concurrent.AtomicDouble;
-import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.facades.product.data.AvailabilityMessage;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import com.google.common.collect.Lists;
 
 
 /**
@@ -67,7 +61,13 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 }
    	 target.setIsRentalCart(Boolean.FALSE);
    	 target.setHasGiftCart(Boolean.TRUE);
-   	
+    }
+
+    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+      target.setIsReplacementOrder(true);
+    }
+    if(null != source.getReturnRequestForOrder()) {
+      target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
     }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
@@ -80,86 +80,12 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
 
-    final AtomicDouble totalAmt = new AtomicDouble(0.0);
-    source.getConsignments()
-            .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
-                    .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                      target.getEntries().forEach(entry -> {
-                        if (entry.getProduct().getCode().equals(getSkuCode(consignmentEntry, serialCode)))
-                        {
-                          final AvailabilityMessage messageForBillingType = getMessageForBillingType(billing.getBillChargeType());
-                          final List<AvailabilityMessage> messages = Lists.newArrayList(CollectionUtils.emptyIfNull(entry.getMessages()));
-                          messages.add(messageForBillingType);
-                          entry.setMessages(messages);
-                        }
-                      });
-                      totalAmt.addAndGet(billing.getChargedAmount().doubleValue());
-                    }))));
-
-    target.setExtensionBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
-
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
-  }
-
-  
-/**
- * This method created pay bill messages separation.
- * @param billChargeType
- * @return AvailabilityMessage
- */
-private AvailabilityMessage getMessageForBillingType(final ItemBillingChargeTypeEnum billChargeType)
-  {
-    switch (billChargeType.getCode())
-    {
-      case "MISSING_CHARGE":
-        return getMessage("pay.bill.missing.charge");
-
-      case "LATE_CHARGE":
-        return getMessage("pay.bill.late.charge");
-
-      case "REPAIR_CHARGE":
-        return getMessage("pay.bill.repair.charge");
-
-      default:
-        return null;
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
     }
   }
-
-  
-/**
- * This method created pay bill messages.
- * @param messageCode
- * @return AvailabilityMessage
- */
-private AvailabilityMessage getMessage(final String messageCode)
-  {
-    final AvailabilityMessage am = new AvailabilityMessage();
-    am.setMessageCode(messageCode);
-    return am;
-
-  }
-
-  
-/**
-  * This method created to get SKU code.
-  * @param consignmentEntry
-  * @param serialCode
-  * @return String
-  */
-private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final String serialCode)
-  {
-    final StringBuilder sb = new StringBuilder();
-    consignmentEntry.getSerialProducts().forEach(serial -> {
-      if(serial instanceof BlSerialProductModel && ((BlSerialProductModel)serial).getCode().equals(serialCode))
-      {
-        final BlSerialProductModel serialProduct = ((BlSerialProductModel) serial);
-        sb.append(serialProduct.getBlProduct().getCode());
-      }
-    });
-    return sb.toString();
-  }
-
 
   /**
    * This method created to populate dates for order details
@@ -202,6 +128,10 @@ private String getSkuCode(final ConsignmentEntryModel consignmentEntry, final St
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
+    if(source.getTotalOptionsCost() != null){
+      target.setTotalOptionsCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalOptionsCost() ,
+          BlFacadesConstants.OPTION_FIELD), source));
+    }
 
   }
 

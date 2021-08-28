@@ -98,7 +98,14 @@
                                       </p>
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                                   <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
+                                  <c:choose>
+                                    <c:when test="${order.newGearOrder eq true}">
+                                      <p class="my-2"> ${order.status.code}</p>
+                                    </c:when>
+                                    <c:otherwise>
+                                      <p class="my-2"><spring:theme code="text.myaccount.order.completed" /></p>
+                                    </c:otherwise>
+                                  </c:choose>
                                  </div>
                         </c:if>
                 					<c:if test="${order.rentalCart}">
@@ -128,15 +135,18 @@
                                            </p>
                                 </c:if>
                 						</div>
-                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                							<c:if test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
+                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end three">
+                						  <c:choose>
+
+                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
-                					  </c:if>
-                					 <!-- <c:if test="${order.isRentalActive eq false}">
-                                <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
-                             </c:if>-->
+                					  </c:when>
+                           <c:otherwise>
+                					   <p class="my-2">${order.orderStatus}</p>
+                					 </c:otherwise>
+                					   </c:choose>
                             </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">

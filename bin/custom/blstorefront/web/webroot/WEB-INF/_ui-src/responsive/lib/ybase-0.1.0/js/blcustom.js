@@ -3,6 +3,15 @@ jQuery(document).ready(function () {
 	if($(".hidebutton").length <= 0){
 		$(".hide-after-login").hide();
 	}
+    //BL-917: Replacement order
+	var fvalue = []
+        $(".return-qty-check").each(function (index) {
+            if($(this).val()==0)
+            {
+                $('.return-button-cls').attr('disabled', true);
+                $('.return-minus-btn'+index).attr('disabled', true);
+            }
+        }) ;
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -68,6 +77,18 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
  	damageWaiverUpdateForm.submit();
  });
+ 
+//Script to apply the selected bl-options from the dropdown on the cart page
+ $('ul.bl-options-update').on('click','li',function(e){
+ 	e.preventDefault();
+ 	var entryNumber = $(this).find("a").data('entry');
+ 	var blOptions = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+ 	var blOptionsUpdateForm = $('#updateBlOptionsForm');
+ 	blOptionsUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
+ 	blOptionsUpdateForm.find('input[name=bloptions]:hidden').val(blOptions);
+ 	blOptionsUpdateForm.submit();
+ });
 
  //BL-454 add to cart
  $('.js-add-to-cart').on("click",function(e) {
@@ -106,7 +127,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                        var productName = $('#productName').val();
-                                       var productCode = $('#productCode').val();
                                        var productBrand =$('#productBrand').val();
                                        var productType = $('#productType').val();
                                        var productCategory = $('#productCategory').val()
@@ -389,7 +409,7 @@ $(".js-hr-tag").last().hide();
 
 //BL-688 changes
 
-if($("#addToCartButton").hasClass("js-disable-btn"))
+if($(".js-add-to-cart").hasClass("js-disable-btn"))
 {
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
@@ -397,11 +417,14 @@ if($("#addToCartButton").hasClass("js-disable-btn"))
     $(" #productDates .input-group").addClass("red-border");
 }
 
-if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("js-disable-btn")){
+if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js-disable-btn")){
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
     $(" #productDates .input-group").addClass("red-border");
     $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
+    if($(".js-add-to-cart").length == 1){
+    	$(".js-add-to-cart").attr("disabled", true);
+    }
 }
 
  //BL-455  Changes for Add To Cart POP Up
@@ -706,6 +729,7 @@ $('.emailSubscr_btn').click(function (e){
 					}
 				}
 			});
+			$("#emailSubscr_txt").val("");
 });
 
 //Added code for used gear addToCart 
@@ -1017,17 +1041,27 @@ $('#placeOrderSummary').on("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
-
-$('#placeOrder').on(
-		"click",
-		function(e) {
-			var submitForm = $("#placeOrderForm1");
-			var csrfTokan = createHiddenParameter("CSRFToken",
-					$(ACC.config.CSRFToken));
-			submitForm.append($(csrfTokan));
-			submitForm.submit();
-		});
-
+ $('#placeOrder').on(
+			"click",
+			function(e) {
+				var submitForm = $("#placeOrderForm1");
+				
+				var csrfTokan = createHiddenParameter("CSRFToken",
+						$(ACC.config.CSRFToken));
+				if($("#giftCardPurchaseForm").length > 0)
+				{
+					var giftCardForm = $("#giftCardPurchaseForm");
+					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
+					var email = createHiddenParameter("email",giftCardForm.find('input[name="email"]').val());
+					var message = createHiddenParameter("message",giftCardForm.find('textarea[name="message"]').val());
+					submitForm.append($(name));
+					submitForm.append($(email));
+					submitForm.append($(message));
+				}			
+				submitForm.append($(csrfTokan));			
+				submitForm.submit();
+});
+   
 //Handled min and max character for order notes.
 var inputQuantity = [];
 $(function() {
@@ -1050,10 +1084,100 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+$('.remove-doc').on("click",function(e) {
+	
+	e.preventDefault();
+var clickedForm = this.getAttribute("data-code");
+$("#clickedForm").val(clickedForm);
+});
 
+//remove document submit
+$('#remove-doc-submit-button').on("click",function(e) {
+	$('.page-loader-new-layout').show();
+	e.preventDefault();
+    var clickedForm = $("#clickedForm").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
+
+$('.remove-document').on("click",function(e) {
+	e.preventDefault();
+var clickedFormDocument = this.getAttribute("data-code");
+$("#clickedFormDocument").val(clickedFormDocument);
+});
+
+$('#remove-document-submit-button').on("click",function(e) {
+	$('.page-loader-new-layout').show();
+	e.preventDefault();
+    var clickedForm = $("#clickedFormDocument").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
 function hideShorting(){ 
     $('.container').on('click', function(){  
 	   $(".product-sort").find(".bootstrap-select").removeClass('open')
    });
   }; 
   hideShorting();
+  
+  $("#submitCard").on("click",function(e) {
+	  e.preventDefault();
+		var submitForm = $("#giftCardPurchaseForm");
+		submitForm.submit();
+  });
+
+  //BL-917: Replacement order
+  $('.return-button-cls').on("click",function(e) {
+    e.preventDefault();
+	var label  = [];
+	var fvalue = []
+
+	$(".myLabel").each(function (index) {
+	label.push($(this).text());
+	});
+
+	$(".Myqtynumber").each(function (index) {
+		fvalue.push(label[index]+':'+$(this).val()+'%');
+	}) ;
+
+ 	var productList=fvalue.join("");
+         	var url=ACC.config.encodedContextPath + '/my-account/returnOrderRequest';
+         	var orderCode=$('#order-code').val();
+         		$.ajax({
+                     		url : url,
+                     		type : "POST",
+                     		data: {productList:productList,orderCode:orderCode},
+                     		success : function(data) {
+                     			window.location.href = ACC.config.encodedContextPath + "/";
+                     		},
+                     		error : function(xht, textStatus, ex) {
+                     			console.log("Error while order return");
+                     		}
+                     	});
+	 
+   });
+
+   $('.replacement-minus').on("click",function(e) {
+             e.preventDefault();
+             $('.return-button-cls').attr('disabled', true);
+             var fvalue = []
+             $(".return-qty-check").each(function (index) {
+                  if($(this).val()==0) {
+                     $('.return-minus-btn'+index).prop('disabled', true);
+                  }
+                  if($(this).val()!=0) {
+                    $('.return-button-cls').attr('disabled', false);
+                  }
+             }) ;
+          });
+
+      $('.replacement-plus').on("click",function(e) {
+          e.preventDefault();
+          $('.return-button-cls').attr('disabled', false);
+          var fvalue = []
+          $(".return-qty-check").each(function (index) {
+               if($(this).val()==$('#originalQty'+index).val()) {
+                  $('.return-plus-btn'+index).prop('disabled', true);
+               }
+          }) ;
+       });

@@ -44,6 +44,10 @@
 		<property name="productId" type="java.lang.String"/>
 	<property name="productType" type="java.lang.String"/>
 		<property name="isVideo" type="boolean"/>
+		<property name="retailGear" type="boolean"/>
+		<property name="isNewGearInStock" type="boolean"/>
+		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="specifications" type="java.lang.String"/>
   </bean>
 
 
@@ -92,12 +96,21 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
+    <property name="serialSoftAssignedOrHardAssigned" type="boolean"/>
  </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
   	<property name="messageCode" type="String"/>
   	<property name="arguments" type="java.util.List&lt;String>"/>
   </bean>
+  <bean class="com.bl.facades.product.data.BlOptionData">
+  	<property name="optionCode" type="String"/>
+  	<property name="active" type="boolean"/>
+  	<property name="optionName" type="String"/>
+  	<property name="optionPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+  	<property name="subOptions" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
+  </bean>
+
   
   <!-- Adding custom attributes in existing DTO of OrderEntryData -->
   <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">
@@ -111,6 +124,8 @@
     <property name="recipientName" type="java.lang.String" />
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
+	<property name="option" type="com.bl.facades.product.data.BlOptionData"/>
+		<property name="aqautechProduct" type="boolean"/>
 	
   </bean>
   
@@ -118,6 +133,7 @@
   <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
   	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="pickUpByMe" type="java.lang.Boolean"/>
+      <property name="totalOptionsCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="pickUpPersonFirstName" type="java.lang.String"/>
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
@@ -167,6 +183,7 @@
 		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
 		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
 		<property name="isRentalActive" type="java.lang.Boolean"/>
+		<property name="isNewGearOrder" type="java.lang.Boolean"/>
 
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
@@ -174,6 +191,12 @@
         <property name="recipientName" type="java.lang.String" />
         <property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
          <property name="extensionBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="orderStatus" type="java.lang.String"/>
+	  	<property name="replacementFor" type="java.lang.String" />
+	  	<property name="isReplacementOrder " type="java.lang.Boolean"/>
+	  	<property name="isUnPaidBillPresent" type="java.lang.Boolean"/>
+        <property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+        <property name="orderTotalWithTaxForPayBill" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -316,8 +339,11 @@
             <property name="recipientEmail" type="java.lang.String"/>
             <property name="recipientName" type="java.lang.String" />
             <property name="recipientMessage" type="java.lang.String"/>
-            
+      <property name="retailGear" type="java.lang.Boolean"/>
+		<property name="aqautechProduct" type="boolean"/>
 	</bean>
+
+
 
   <!--BL-563 Gift Card-->
   <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
@@ -600,6 +626,7 @@
 		<property name="orderDate" type="String"/>
 		<property name="rentalCart" type="Boolean"/>
 		<property name="isGiftCard" type="java.lang.Boolean"/>
+		<property name="newGearOrder" type="java.lang.Boolean"/>
 		<property name="productDetails" type="java.util.List&lt;String>"/>
 		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
 		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>
@@ -609,6 +636,7 @@
 		<property name="orderReturnedToWarehouse" type="java.lang.Boolean" />
 		<property name="productCode" type="String"/>
 		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="orderStatus" type="java.lang.String"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->
@@ -623,6 +651,12 @@
     <property name="product" type="de.hybris.platform.commercefacades.product.data.ProductData"/>
     <property name="entryPk" type="Long"/>
   </bean>
+
+	<!--BL-772 For Verification Document -->
+	<bean class="com.bl.facades.product.data.VerificationDocumentData">
+		<property name="document" type="org.springframework.web.multipart.MultipartFile"/>
+		<property name="documentType" type="String"/>
+	</bean>
 
 </beans>
 
