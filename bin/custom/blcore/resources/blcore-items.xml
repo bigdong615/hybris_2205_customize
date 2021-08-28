@@ -543,6 +543,26 @@
 						<modifiers read="true" write="true" optional="true" />
 						<description>Localized title of the paragraph. </description>						
 					</attribute>
+          <attribute qualifier="htmlDescription" type="localized:java.lang.String" >
+            <modifiers read="true" write="true" optional="true" search="true"/>
+            <persistence type="property">
+              <columntype database="oracle">
+                <value>CLOB</value>
+              </columntype>
+              <columntype database="sap">
+                <value>NCLOB</value>
+              </columntype>
+              <columntype>
+                <value>HYBRIS.LONG_STRING</value>
+              </columntype>
+            </persistence>
+            <custom-properties>
+              <property name="hmcIndexField">
+                <value>"thefield"</value>
+              </property>
+            </custom-properties>
+            <description>It is message to show html content</description>
+          </attribute>
 				</attributes>				
 			</itemtype>
 			
