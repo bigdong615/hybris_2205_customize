@@ -18,7 +18,7 @@
 				<wz:initialize property="orderEntry" type="ctx.TYPE_CODE"/>
 				<wz:assign property="orderEntry.order" value="ctx.parentObject"/>
 				<wz:assign property="orderEntry.rentalStartDate" value="ctx.parentObject.rentalStartDate"/>
-				<wz:assign property="orderEntry.rentalReturnDate" value="ctx.parentObject.rentalReturnDate"/>
+				<wz:assign property="orderEntry.rentalReturnDate" value="ctx.parentObject.rentalEndDate"/>
 			</wz:prepare>
 			<wz:step id="orderEntryStep1" label="create.discountrow.essential.label">
 				<wz:content id="step1.content">
@@ -47,5 +47,7 @@
 			<df:attribute id="setBasePrice" disabledIf="product==null" qualifier="basePrice" triggeredOn="product" computedValue="@blBackOfficePriceService.getProductPrice(product,rentalStartDate,rentalReturnDate)"/>
 		</df:dynamicForms>
 	</context>
+
+
 
 </config>
