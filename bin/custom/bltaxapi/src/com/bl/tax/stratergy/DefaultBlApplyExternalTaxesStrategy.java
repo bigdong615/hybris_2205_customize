@@ -53,9 +53,7 @@ public class DefaultBlApplyExternalTaxesStrategy extends DefaultApplyExternalTax
             .forEach(consignmentEntry -> consignmentEntry
                 .getBillingCharges()
                 .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                  if (BooleanUtils.isFalse(billing.isBillPaid()) && !(("MISSING_CHARGE")
-                      .equals(billing
-                          .getBillChargeType().getCode()))) {
+                  if (BooleanUtils.isFalse(billing.isBillPaid())) {
                     final List<TaxValue> taxesForOrderEntry = taxDoc.getTaxesForOrderEntry(i.get());
                     billing.setTaxAmount(BigDecimal.valueOf(taxesForOrderEntry.get(0).getValue()));
                     getModelService().save(billing);

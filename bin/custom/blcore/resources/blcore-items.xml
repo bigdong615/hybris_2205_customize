@@ -543,6 +543,26 @@
 						<modifiers read="true" write="true" optional="true" />
 						<description>Localized title of the paragraph. </description>						
 					</attribute>
+          <attribute qualifier="htmlDescription" type="localized:java.lang.String" >
+            <modifiers read="true" write="true" optional="true" search="true"/>
+            <persistence type="property">
+              <columntype database="oracle">
+                <value>CLOB</value>
+              </columntype>
+              <columntype database="sap">
+                <value>NCLOB</value>
+              </columntype>
+              <columntype>
+                <value>HYBRIS.LONG_STRING</value>
+              </columntype>
+            </persistence>
+            <custom-properties>
+              <property name="hmcIndexField">
+                <value>"thefield"</value>
+              </property>
+            </custom-properties>
+            <description>It is message to show html content</description>
+          </attribute>
 				</attributes>				
 			</itemtype>
 			
@@ -1167,6 +1187,12 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether the new gear product is in Stock or not</description>
+                   </attribute>
+                   <attribute qualifier="bufferInvPercChangedManually" type="boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>false</defaultvalue>
+                     <description>To identify whether buffer inventory percentage changed manually or not</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -2997,6 +3023,21 @@
                       greater than this threshold amount
                     </description>
                   </attribute>
+                  <attribute qualifier="minQtyForBufferInventory" type="java.lang.Integer">
+                    <persistence type="property"/>
+                    <modifiers optional="true" read="true" write="true"/>
+                    <defaultvalue>Integer.valueOf(0)</defaultvalue>
+                    <description>To decide the minimum quantity needed to have for a SKU, so that any associated 
+                    	serial product can be part of buffer inventory 
+                    </description>
+                  </attribute>
+                  <attribute qualifier="bufferInventoryPercentage" autocreate="true"
+                     type="java.lang.Double">
+                     <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                     <description>It defines the buffered inventory percentage at Global level</description>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <persistence type="property"/>
+                   </attribute>
                 </attributes>                
             </itemtype>
         </typegroup>
