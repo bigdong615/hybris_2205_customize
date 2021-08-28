@@ -495,14 +495,14 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 
 .expertHelpIcon {
      background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
-     background-repeat: no-repeat;
-     display: flex;
-     margin-top: 10px;
-     padding: 0px 0px 0px 31px;
-     height: 20px !important;
-     margin-right: 10px;
-     margin-bottom: 0;
-     background-size: contain;
+         background-repeat: no-repeat;
+         display: inline-block;
+         margin-top: 10px;
+         width: 20px;
+         height: 20px !important;
+         margin-right: 10px;
+         margin-bottom: -5px;
+         background-size: contain;
 }
 .livechat{
   display: block !important;
