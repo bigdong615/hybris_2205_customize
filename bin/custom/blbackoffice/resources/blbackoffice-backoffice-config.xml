@@ -2640,6 +2640,20 @@
 		</list-view:list-view>
 	</context>
 
+
+	<!-- Added for modify order tab on order entry-->
+	<context merge-by="type" parent="GenericItem" type="AbstractOrderEntry" component="editor-area">
+		<ea:editorArea name="">
+			<ea:tab name="ModifyOrder">
+				<ea:section name="ModifyOrder">
+					<ea:attribute qualifier="warehouse"/>
+					<ea:attribute qualifier="serialProduct"/>
+					<ea:attribute qualifier="isModifiedOrder"/>
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
+	</context>
+
 </config>
 
 
