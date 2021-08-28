@@ -1371,6 +1371,17 @@
 			</ea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<context parent="CMSParagraphComponent" merge-by="type" type="CustomBLParagraphComponent" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" name="">
+			<ea:tab name="hmc.properties" position="2">
+				<ea:section name="hmc.product.descriptions" merge-mode="append">
+					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+						qualifier="htmlDescription"/>
+				</ea:section>
+			</ea:tab>
+		</editorArea:editorArea>
+	</context>
 	
 	<context merge-by="type" parent="GenericItem" type="Packaginginfo" component="editor-area">
         <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
@@ -2120,8 +2131,8 @@
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:navigation-node id="blinventoryscan_pick_path">
 				<n:type-node code="MarkReadyToShipConsignmentsCleanJob" id="blnventoryscan_mark_consignment_clean_job"/>
-				<n:type-node code="InventoryInCompleteOrdersQueue" id="blinventory_incomplete_orders"/>
-				<n:type-node code="InventoryCompleteOrdersQueue" id="blinventory_complete_orders"/>
+				<n:type-node code="InventoryOrdersAwaitingItemsView" id="blinventory_incomplete_orders"/>
+				<n:type-node code="InventoryPulledOrdersView" id="blinventory_complete_orders"/>
 			</n:navigation-node>
 			<n:navigation-node id="blnventoryscan_morning_pull">
 				<n:type-node code="PullReadyToShipOrdersCronJob" id="blnventoryscan_morning_pull_job"/>
@@ -2473,7 +2484,6 @@
 			<list-view:column qualifier="currentOcLocation"/>
 			<list-view:column qualifier="serialStatus"/>
 			<list-view:column qualifier="shippingDate"/>
-			<list-view:column qualifier="previousOrderStatus"/>
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>
@@ -2624,6 +2634,20 @@
 			<list-view:column qualifier="itemStatusCode"/>
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
+	</context>
+
+
+	<!-- Added for modify order tab on order entry-->
+	<context merge-by="type" parent="GenericItem" type="AbstractOrderEntry" component="editor-area">
+		<ea:editorArea name="">
+			<ea:tab name="ModifyOrder">
+				<ea:section name="ModifyOrder">
+					<ea:attribute qualifier="warehouse"/>
+					<ea:attribute qualifier="serialProduct"/>
+					<ea:attribute qualifier="isModifiedOrder"/>
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
 	</context>
 
 </config>

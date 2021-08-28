@@ -137,39 +137,43 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
           ;                           ;                ;          ; GiftCard2Order                 ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Order.giftCard
 # Access Rights for customer notes on cs cockpit;;;;;;;;
-          ;                           ;                ;          ; Customer                       ; +    ; +      ; -      ; -
-          ;                           ;                ;          ; Customer.customerNotes         ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; Customer2CustomerNotes         ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotesEnum              ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotes                  ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotes.customerNoteType ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotes.fraud            ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotes.customer         ; +    ; +      ; +      ; +
-          ;                           ;                ;          ; CustomerNotes.type             ; -    ; -      ; -      ; -
-          ;                           ;                ;          ; Notes.type                     ; +    ; +      ; +      ; +      ; -
-          ;                           ;                ;          ; Notes.userID                   ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;          ; Consignment                    ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;          ; ConsignmentEntry               ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;                                ; Customer                       ; +                ; +    ; -      ; -
+          ;                           ;                ;                                ; Customer.customerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes                  ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.type             ; -                ; -    ; -      ; -
+          ;                           ;                ;                                ; Notes.type       ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Unit             ; +    ; -      ; -      ; -      ; -
+          ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS; ; ; ; ; ; ; ; ;
 Type      ; UID                      ; MemberOfGroups ; Password ; Target             ; read ; change ; create ; remove ; change_perm
 # Access Rights for Customer Support group cockpit
-UserGroup ; customersupportagentrole ;                ;          ;                    ;      ;        ;        ;        ;
+UserGroup ; customersupportagentrole  ;                ;          ;                  ;      ;        ;        ;        ;
 
-          ;                          ;                ;          ; Order              ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; Order.orderNotes   ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; Notes              ; +    ; +      ; +      ; -      ; -
-          ;                          ;                ;          ; Notes.note         ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; Notes.order        ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; NotesEnum          ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; Consignment        ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; ConsignmentEntry   ; +    ; +      ; -      ; -      ; -
-          ;                          ;                ;          ; Order.status       ; +    ; +      ; +      ; +      ; -
-          ;                          ;                ;          ; Order.isVipOrder   ; +    ; +      ; +      ; +      ; -
-          ;                          ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
-          ;                          ;                ;          ; Order.orderType    ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order            ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes            ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes.order      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.status     ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Unit             ; +     ; -     ; -      ; -       ; -
+          ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
