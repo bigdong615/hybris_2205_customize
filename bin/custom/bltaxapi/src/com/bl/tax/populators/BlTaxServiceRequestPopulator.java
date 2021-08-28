@@ -102,8 +102,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       abstractOrder.getConsignments()
               .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
                       .getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
-                        if (BooleanUtils.isFalse(billing.isBillPaid())
-                            && !(("MISSING_CHARGE").equals(billing.getBillChargeType().getCode()))) {
+                        if (BooleanUtils.isFalse(billing.isBillPaid())){
                           final TaxLine taxLine = new TaxLine();
                           taxLine.setQuantity(1);
                           taxLine.setNumber(0 + taxLines.size());
@@ -189,6 +188,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 
       case "REPAIR_CHARGE":
         return BltaxapiConstants.REPAIR_TAX_CODE;
+
+      case "MISSING_CHARGE":
+        return BltaxapiConstants.MISSING_TAX_CODE;
 
       default:
         return null;

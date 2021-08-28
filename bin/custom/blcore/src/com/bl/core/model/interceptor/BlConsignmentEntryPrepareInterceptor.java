@@ -81,10 +81,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 							serialCode);
 					final List<BlItemsBillingChargeModel> updatedCharge = new ArrayList<>();
 					listOfBillingCharges.forEach(charge -> {
-						if (!ItemBillingChargeTypeEnum.valueOf(BlCoreConstants.MISSING_CHARGE).equals(charge.getBillChargeType()))
-						{
-							updatedCharge.add(charge);
-						}
+						updatedCharge.add(charge);
 					});
 
 					validatedBillingCharges.put(serialCode, updatedCharge);
