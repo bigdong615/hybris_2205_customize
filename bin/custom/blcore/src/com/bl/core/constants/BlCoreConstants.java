@@ -290,6 +290,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO = "0";
 
+	public static final String BY_DATE = "byDate";
+	public static final String BY_ORDER_NUMBER = "byOrderNumber";
+	public static final String CUSTOMER = "customer";
+	public static final String STORE = "store";
+	public static final String FILTER_STATUS_LIST = "filterStatusList";
+	public static final String STATUS_LIST = "statusList";
+	public static final String STATUS1 = "status1";
+	public static final String STATUS2 = "status2";
+
+
 
 	private BlCoreConstants()
 	{

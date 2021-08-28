@@ -11,36 +11,7 @@
 	<!--<context component="component-code" module="blcustomersupportbackoffice">-->
 		<!--Please check documentation for code snippets for specific components-->
 	<!--</context>-->
-	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area" >
-      <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" name="Order editor area">
-         <editorArea:tab name="customersupportbackoffice.order.tab.details">
-                <editorArea:section name="customersupportbackoffice.section.order.hierarchy.linedetails">
-                    <editorArea:panel name="customersupport_backoffice_lineDetails_panel">
-                        <editorArea:attribute
-                                editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
-                                qualifier="entries">
-                            <editorArea:editor-parameter>
-                                <editorArea:name>listConfigContext</editorArea:name>
-                                <editorArea:value>referenceListViewOrderEntries</editorArea:value>
-                            </editorArea:editor-parameter>
-                            <editorArea:editor-parameter>
-                                <editorArea:name>disableDisplayingDetails</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
-                            </editorArea:editor-parameter>
-                            <editorArea:editor-parameter>
-                                <editorArea:name>disableRemoveReference</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
-                            </editorArea:editor-parameter>
-                            <editorArea:editor-parameter>
-                                <editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
-                                <editorArea:value>true</editorArea:value>
-                            </editorArea:editor-parameter>
-                        </editorArea:attribute>
-                    </editorArea:panel>
-                </editorArea:section>
-               </editorArea:tab>
-      </editorArea:editorArea>
-  </context>
+
 	<context merge-by="type" type="OrderEntry" component="create-wizard">
 		<wz:flow id="orderEntryWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="orderEntryPrepare">

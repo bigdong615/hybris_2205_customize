@@ -1,5 +1,6 @@
 package com.bl.facades.wishlist.impl;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.core.services.wishlist.BlWishlistService;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
@@ -15,9 +16,10 @@ import de.hybris.platform.wishlist2.impl.DefaultWishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
 import de.hybris.platform.converters.Converters;
+import java.util.Objects;
 
-/*
- *This class has implementation of methods related to Wishlist
+/**
+ * This class has implementation of methods related to Wishlist
  * @author Sahana SB
  */
 public class DefaultBlWishListFacade implements BlWishListFacade {
@@ -39,10 +41,36 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
       getDefaultWishlistService()
           .addWishlistEntry(fetchUser(), product, 1, Wishlist2EntryPriority.MEDIUM, "Product ");
     } else {
-      getDefaultWishlistService()
-          .addWishlistEntry(fetchUser(), product, 1, Wishlist2EntryPriority.MEDIUM, "Product");
+      final boolean isAlreadyBookMarked = checkProductBookMarkStatus((BlProductModel) product);
+      if(!isAlreadyBookMarked) {
+        getDefaultWishlistService()
+            .addWishlistEntry(fetchUser(), product, 1, Wishlist2EntryPriority.MEDIUM, "Product");
+      }
     }
 
+  }
+
+  /**
+   * This used to check product already register for wishlist.
+   * @param product
+   * @return
+   */
+  private boolean checkProductBookMarkStatus(BlProductModel product){
+      final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
+      final Wishlist2Model wishlist = getDefaultWishlistService().getDefaultWishlist(user);
+      if (Objects.nonNull(wishlist)) {
+        try {
+          final Wishlist2EntryModel wishlist2Entry = getDefaultWishlistService()
+              .getWishlistEntryForProduct(product, wishlist);
+          if (Objects.nonNull(wishlist2Entry)) {
+           return Boolean.TRUE;
+          }
+        } catch ( Exception e) {
+          return Boolean.FALSE;
+        }
+      }
+
+    return Boolean.FALSE;
   }
 
   /**

@@ -32,9 +32,17 @@
 							<spring:theme code="text.myaccount.order.tracking" />
 						</p>
 					</div>
+					<c:choose>
+					<c:when test="${orderData.status eq 'INVERIFICATION'}">
+					<spring:theme code="type.orderstatus.${orderData.status}.name" var="orderStatus"/>
+					</c:when>
+					<c:otherwise>
+					<c:set var="orderStatus" value="${orderData.status}"/>"
+					</c:otherwise>
+					</c:choose>
 					<div class="col-6">
 						<p class="gray80 body14">
-							${orderData.status}<br> ${orderData.orderedFormatDate}<br>
+							${orderStatus}<br> ${orderData.orderedFormatDate}<br>
 							${fn:escapeXml(orderData.code)}<br><spring:theme code="order.gift.card.myaccount.review.page.sent.email" />
 						</p>
 					</div>
