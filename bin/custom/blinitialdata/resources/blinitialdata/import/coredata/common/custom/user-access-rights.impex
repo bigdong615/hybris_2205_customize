@@ -152,6 +152,7 @@ UserGroup ; customersupportagentgroup ;                ;                        
           ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+;                           ;                ;                                ; Unit            ; +    ; -      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
@@ -172,6 +173,7 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
+; ; ; ; Unit ; + ; - ; - ; - ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
