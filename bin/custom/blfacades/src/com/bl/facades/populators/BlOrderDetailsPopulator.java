@@ -101,7 +101,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setRentalFormattedEndDate(
           convertDateToString(updateRentalDatesIfOrderIsExtended(source), BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
-          .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
+          .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source))));
 
       target.setIsRentalStartDateActive(new Date().before(source.getRentalStartDate()));
       target.setIsRentalEndDateActive(new Date().before(updateRentalDatesIfOrderIsExtended(source)));
