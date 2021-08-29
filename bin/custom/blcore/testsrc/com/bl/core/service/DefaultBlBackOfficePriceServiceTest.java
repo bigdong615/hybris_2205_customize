@@ -56,7 +56,7 @@ public class DefaultBlBackOfficePriceServiceTest
      Date returnDate = new Date(2021,03,05);
 
     when(defaultBlBackOfficePriceService.getBlProductPriceRatioUtil().getPriceRatios(productModel)).thenReturn(getPriceList());
-    defaultBlBackOfficePriceService.getProductPrice(productModel,startDate,returnDate);
+    defaultBlBackOfficePriceService.getProductPrice(productModel,startDate,returnDate , false);
 
   }
 
@@ -67,7 +67,7 @@ public class DefaultBlBackOfficePriceServiceTest
     final ProductModel productModel =null ;
     Date startDate = new Date(2021,03,01);
     Date returnDate = new Date(2021,03,05);
-    defaultBlBackOfficePriceService.getProductPrice(productModel,startDate,returnDate);
+    defaultBlBackOfficePriceService.getProductPrice(productModel,startDate,returnDate , false);
   }
 
 
