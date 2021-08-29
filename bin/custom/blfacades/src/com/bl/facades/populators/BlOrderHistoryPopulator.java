@@ -6,6 +6,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.acceleratorservices.payment.cybersource.enums.PaymentOptionEnum;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -15,6 +16,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.payment.constants.GeneratedPaymentConstants.Enumerations.PaymentTransactionType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,7 +115,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
       target.setIsReplacementOrder(Boolean.TRUE);
     }
-    target.setOrderStatus(setRentalOrderStatus(source , target));
+    target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source , target) : setUsedOrderStatus(source));
 
   }
 
@@ -184,9 +186,20 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
     AtomicReference<String> orderStatus = new AtomicReference<>();
 
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode())) {
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) ||
+        abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
+            paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+            PaymentTransactionType.CAPTURE)))) {
       orderStatus.set("Received");
     }
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
+        paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+            PaymentTransactionType.CAPTURE)))) {
+      orderStatus.set("Shipped");
+    }
+
+
     if(BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse()) && abstractOrderModel.getStatus().getCode().equalsIgnoreCase(
         OrderStatus.UNBOXED.getCode())) {
       orderStatus.set("Returned");
@@ -214,16 +227,15 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       orderStatus.set("Late");
     }
 
-
-
-
     return orderStatus.get();
   }
 
 
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode())) {
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
+        paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+            PaymentTransactionType.CAPTURE)))) {
       orderStatus =  "Sold";
     }
 
@@ -235,6 +247,15 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      if(DateUtils.isSameDay(addedDate , new Date()) || new Date().after(addedDate)){
        orderStatus =  "Completed";
     }
+
+     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())) {
+       orderStatus = "Canceled";
+     }
+
+     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RETURNED.getCode())){
+       orderStatus = "Returned ";
+     }
+
     return orderStatus;
   }
 
