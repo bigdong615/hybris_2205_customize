@@ -30,6 +30,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String SALES_TAX_CODE = "PH403706";
 	public static final String LATE_FEE_TAX_CODE = "OF040005";
 	public static final String REPAIR_TAX_CODE = "SR060200";
+	public static final String MISSING_TAX_CODE = "P0000000";
 	public static final String SHIPPING_SALES_TAX_CODE = "FR020100";
 	public static final String DISCOUNT_TAX_CODE = "OD010000";
 	public static final String ORIGIN  = "Origin";

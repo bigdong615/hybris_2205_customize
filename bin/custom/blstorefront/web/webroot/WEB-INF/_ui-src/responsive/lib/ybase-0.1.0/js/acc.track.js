@@ -61,9 +61,14 @@ ACC.track = {
                  				url:url,
                  				success: function (response) {
                           ccpaState = response.region;
+                          var isRemarketingEnable ='1';
+                           if(ccpaState.toLowerCase() == 'california'){
+                           isRemarketingEnable='0';
+                           }
                          utag.link({
                          "tealium_event"    : "user_location_track",
-                          "user_location"     : '"'+ccpaState+'"'
+                          "user_location"     : '"'+ccpaState+'"',
+                          "enable_remarketing" :'"'+isRemarketingEnable+'"'
                            });
                  				},
                         	error: function (e) {

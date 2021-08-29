@@ -2135,6 +2135,23 @@
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
+
+            <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
+              <persistence type="property" />
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <description>Allocated warehouse , by CSAgent to modify order.</description>
+            </attribute>
+            <attribute qualifier="serialProduct" type="BLSerialProduct">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true" initial="true"/>
+              <description>Allocated serialProduct , by CSAgent to modify order.</description>
+            </attribute>
+            <attribute qualifier="isModifiedOrder" type="boolean">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+              <description>flag to identify if the order is modified by cs agent</description>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>
