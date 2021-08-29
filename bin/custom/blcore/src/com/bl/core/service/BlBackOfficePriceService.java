@@ -22,5 +22,5 @@ public interface BlBackOfficePriceService {
    * @throws ParseException it can throw parse exception while converting dates
    */
   BigDecimal getProductPrice(final ProductModel productModel, final Date arrivalDate,
-      final Date returnDate) throws ParseException;
+      final Date returnDate , final boolean isExtendOrder) throws ParseException;
 }
