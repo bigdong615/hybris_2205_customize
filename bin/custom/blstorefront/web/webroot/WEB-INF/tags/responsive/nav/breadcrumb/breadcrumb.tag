@@ -33,7 +33,7 @@
       </sec:authorize>
       <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
        <span class="bookmark js-login-popup" id="card-${status.index}" data-product-code="${product.code}"
-          data-bs-target="#signIn" data-bs-toggle="modal" data-link="/blstorefront/login/loginpopup"   data-bookmark-value="${product.isBookMarked}"></span>
+          data-bs-target="#signIn" data-bs-toggle="modal" data-link="/login/loginpopup"   data-bookmark-value="${product.isBookMarked}"></span>
        </sec:authorize>
       </c:if>
 			</c:when>

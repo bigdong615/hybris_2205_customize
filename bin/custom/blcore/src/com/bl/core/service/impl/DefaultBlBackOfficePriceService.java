@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -35,7 +36,7 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
    */
   @Override
   public BigDecimal getProductPrice(final ProductModel productModel, final Date arrivalDate,
-      final Date returnDate) throws ParseException {
+      final Date returnDate , final boolean isExtendOrder) throws ParseException {
     Preconditions.checkNotNull(productModel);
     // Prepare map for BL described Price info
     final Map<Integer, BigDecimal> priceList = getBlProductPriceRatioUtil()
@@ -48,7 +49,8 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     // convert String format time to LocalDate type
     final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
         .toLocalDate();
-    final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(1);
+    final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(
+        BooleanUtils.isTrue(isExtendOrder) ? 1 : 0);
 
     final long daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
     BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,
