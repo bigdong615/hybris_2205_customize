@@ -61,9 +61,8 @@ public class BraintreePartialRefundServiceImpl implements BraintreePartialRefund
 	public boolean eligibleForPartialRefund(PaymentTransactionEntryModel paymentEntry)
 	{
 		return (PaymentTransactionType.CAPTURE.equals(paymentEntry.getType()) || PaymentTransactionType.PARTIAL_CAPTURE
-				.equals(paymentEntry.getType()))
-				&& TransactionStatus.ACCEPTED.name().equals(paymentEntry.getTransactionStatus())
-				&& TransactionStatusDetails.SUCCESFULL.name().equals(paymentEntry.getTransactionStatusDetails());
+				.equals(paymentEntry.getType())) && TransactionStatus.ACCEPTED.name().equals(paymentEntry.getTransactionStatus())
+				&& paymentEntry.getTransactionStatusDetails().startsWith(TransactionStatusDetails.SUCCESFULL.name());
 	}
 
 	protected BrainTreeRefundTransactionResult createPartialRefundTransaction(final PaymentTransactionEntryModel paymentEntry,
