@@ -6,6 +6,21 @@
 	  xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
 		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 
+
+	<context component="perspective-view-switcher" principal="pcminventorymanagergroup,pcmbuyermanagergroup">
+		<y:view-switcher xmlns:y="http://www.hybris.com/cockpitng/config/viewSwitcher">
+			<y:authority name="backofficeproductmanager">
+				<y:view id="pcmbackoffice"/>
+			</y:authority>
+		</y:view-switcher>
+	</context>
+
+	<context component="perspective-chooser" principal="pcminventorymanagergroup,pcmbuyermanagergroup">
+		<y:perspective-chooser xmlns:y="http://www.hybris.com/cockpitng/config/perspectiveChooser">
+			<y:defaultPerspective name="pcmbackoffice"/>
+		</y:perspective-chooser>
+	</context>
+
 	<!--Category editor Area Specific to Blpcmbackoffice -->
 <context merge-by="type" parent="GenericItem" type="Category" component="editor-area" module="blpcmbackoffice">
 		<ea:editorArea name="">
@@ -105,7 +120,7 @@
 
 	<!--BlProduct editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="Product" type="BlProduct" component="editor-area" module="pcmbackoffice"
-		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcmbuyermanagergroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="hmc.essential">

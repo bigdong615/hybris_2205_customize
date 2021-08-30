@@ -1,17 +1,16 @@
-
-
 #% impex.info("=============================== Importing content from BLInitialData coredata/common user-access-rights.impex =========================");
 
-INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
-                      ;blproductmanager;Bl Product Manager;employeegroup,backofficeproductmanagergroup;Backoffice BL Product Manager User has access to the PCM Backoffice Cockpit.;1234
+INSERT_UPDATE Employee; UID[unique = true]; name               ; groups(uid)                                 ; description                                                                  ; password
+                      ; blproductmanager  ; Bl Product Manager ; employeegroup,backofficeproductmanagergroup ; Backoffice BL Product Manager User has access to the PCM Backoffice Cockpit. ; 1234
 
-INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
-                      ;CustomerSupportAgent;Customer Support Agent;customersupportagentgroup;This generic Customer Support Agent is assigned and has access to the Backoffice Customer Support Agent Group views and ASM - to provide restricted Backoffice and ASM customer sales and service manager support.;1234
+INSERT_UPDATE Employee; UID[unique = true]   ; name                   ; groups(uid)               ; description                                                                                                                                                                                                        ; password
+                      ; CustomerSupportAgent ; Customer Support Agent ; customersupportagentgroup ; This generic Customer Support Agent is assigned and has access to the Backoffice Customer Support Agent Group views and ASM - to provide restricted Backoffice and ASM customer sales and service manager support. ; 1234
 
 #Employee creation for frondesk user rols/group
+
 INSERT_UPDATE BackofficeRole; UID[unique = true]; locname[lang = de]; locname[lang = en]; backOfficeLoginDisabled; authorities
-                            ; frontdeskuserrole ; Bl User Role      ; Bl User Role      ; FALSE                  ; frontdeskuserrole
-                            ; shippingteamuserrole ; Bl User Role   ; Bl User Role      ; FALSE                  ; shippingteamuserrole
+                            ; frontdeskuserrole ; Front Desk User Role      ; Front Desk User Role      ; FALSE                  ; frontdeskuserrole
+                            ; shippingteamuserrole ; Shipping Team User Role   ; Shipping Team User Role   ; FALSE                  ; shippingteamuserrole
 	
 INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
                        ; frondeskusergroup ; employeegroup,frontdeskuserrole
@@ -19,108 +18,124 @@ INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
-                                    ; shippingteamkusergroup         ; shippingteamuserrole
+                                    ; shippingteamkusergroup    ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
-                      ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup ; 1234
-                      ; shippingteamuser ; Front desk team user ; Bl User     ; shippingteamkusergroup ; 1234
+                      ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup,customersupportagentgroup,warehouseagentgroup ; 1234
+                      ; shippingteamuser ; Shipping team user ; Bl User     ; shippingteamkusergroup ; 1234
+					  ; transactionalteamuser; Transactional team user; Bl Transactional User; customersupportagentgroup;1234
+                      ; frontdeskasmuser ; Front desk ASM user ; Bl User    ; customermanagergroup,asagentsalesmanagergroup ; 1234
+                      ; transactionalteamasmuser ; Transactional team ASM user ; Bl User    ; customermanagergroup,asagentsalesmanagergroup ; 1234
 
 
 # BL-828, BL-829 Employee creation for inventory team user rols/group
-INSERT_UPDATE BackofficeRole;UID[unique=true];locname[lang=de];locname[lang=en];backOfficeLoginDisabled;authorities
-                            ;blinventoryuserrole;Bl Inventory User Role;Bl Inventory User Role;FALSE;blinventoryuserrole
+INSERT_UPDATE BackofficeRole; UID[unique = true]  ; locname[lang = de]     ; locname[lang = en]     ; backOfficeLoginDisabled; authorities
+                            ; blinventoryuserrole ; Bl Inventory User Role ; Bl Inventory User Role ; FALSE                  ; blinventoryuserrole
 
-INSERT_UPDATE Usergroup;uid[unique=true];groups(uid);locname[lang=en];description
-                       ;blinventoryusergroup;employeegroup,blinventoryuserrole;BL Inventory User Group;User group for BL inventory team members
+INSERT_UPDATE Usergroup; uid[unique = true]   ; groups(uid)                       ; locname[lang = en]      ; description
+                       ; blinventoryusergroup ; employeegroup,blinventoryuserrole ; BL Inventory User Group ; User group for BL inventory team members
 
-INSERT_UPDATE PrincipalGroupRelation;source(uid)[unique=true];target(uid)[unique=true]
-                                    ;blinventoryusergroup;blinventoryuserrole
+INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
+                                    ; blinventoryusergroup      ; blinventoryuserrole
 
-INSERT_UPDATE Employee;uid[unique=true];name;groups(uid);password
-                      ;blinventoryuser;Bl Inventory User;blinventoryusergroup;1234
+INSERT_UPDATE Employee; uid[unique = true]; name              ; groups(uid)          ; password
+                      ; blinventoryuser   ; Bl Inventory User ; blinventoryusergroup ; 1234
 
+#BL-950 Employee creation of inventory team for the PCM Backoffice
+INSERT_UPDATE BackofficeRole;UID[unique=true]        ;groups(uid)[mode=append]               ;locName               ;name                 ;backOfficeLoginDisabled ;authorities
+                            ;pcminventorymanagergroup;employeegroup;PCM Inventory Manager;PCM Inventory Manager;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
 
-$START_USERRIGHTS;;;;;;;;;
-Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
-UserGroup;backofficeproductmanagergroup;;;;;;;;
+INSERT_UPDATE Employee;UID[unique=true]  ;name                    ;groups(uid)                           ;description                              ;password
+                      ;blinventorymanager;Bl PCM Inventory Manager;employeegroup,pcminventorymanagergroup;Backoffice BL PCM Inventory Manager User has access to the PCM Backoffice Cockpit.;1234
+
+#BL-950 Employee creation of Buyer team for the PCM Backoffice
+INSERT_UPDATE BackofficeRole;UID[unique=true]     ;groups(uid)[mode=append]                ;locName           ;name              ;backOfficeLoginDisabled ;authorities
+                            ;pcmbuyermanagergroup ;employeegroup;PCM Buyer Manager ;PCM Buyer Manager ;FALSE                   ;backofficeproductmanager,backofficeworkflowuser,backofficeworkflowadmin
+
+INSERT_UPDATE Employee;UID[unique=true]  ;name                  ;groups(uid)                         ;description                              ;password
+                      ;blbuyermanager    ;Bl PCM Buyer Manager  ;employeegroup,pcmbuyermanagergroup  ;Backoffice BL PCM Buyer Manager User has access to the PCM Backoffice Cockpit.;1234
+
+$START_USERRIGHTS; ; ; ; ; ; ; ; ;
+Type      ; UID                           ; MemberOfGroups ; Password ; Target                       ; read ; change ; create ; remove ; change_perm
+UserGroup ; backofficeproductmanagergroup ;                ;          ;                              ;      ;        ;        ;        ;
 
 # Access Rights for Products & Catalog for Backoffice Product Manager ;;;;;;;;;
-;;;;ItemSyncTimestamp;+;;;
-;;;;SyncItemJob;+;;;
-;;;;Type;+;;;
-;;;;Product;+;+;+;+;+;
-;;;;BlProduct;+;+;+;+;+;
-;;;;BlSerialProduct;+;+;+;+;+;
-;;;;Category;+;+;+;+;+;
-;;;;VariantType;+;+;+;+;+;
-;;;;Catalog;+;+;+;+;
-;;;;CatalogVersion;+;+;+;+;+;
-;;;;ClassificationAttributeUnit;+;;;
-;;;;ClassificationAttribute;+;;;
-;;;;ClassAttributeAssignment;+;;;
-;;;;ClassificationClass;+;;;
-;;;;ProductFeature;+;;;
-;;;;ClassificationAttributeValue;+;;;
-;;;;Media;+;+;+;+;+;
-;;;;MediaContainer;+;+;+;+;+;
-;;;;MediaFormat;+;+;+;+;+;
-;;;;MediaFolder;+;+;+;+;+;
-;;;;Vendor;+;+;+;+;+;
-;;;;StockLevel;+;+;+;+;+;
-;;;;Tax;+;+;+;+;+;
-;;;;TaxRow;+;+;+;+;+;
-;;;;PriceRow;+;+;+;+;+;
-;;;;ProductFeature;+;+;+;+;+;
-;;;;ProductReference;+;+;+;+;+;
-;;;;Warehouse;+;+;+;+;+;
-;;;;ProductTaxCode;+;+;+;+;+;
-;;;;ProductOrderLimit;+;+;+;+;+;
-;;;;Job;+;+;+;+;+;
-;;;;CronJob;+;+;+;+;+;
-;;;;JobLog;+;+;+;+;+;
-;;;;CronJobHistory;+;+;+;+;+;
-;;;;AbstractComment;+;+;+;+;+;
-;;;;Comment;+;+;+;+;+;
-;;;;Reply;+;+;+;+;+;
-;;;;Domain;+;+;+;+;+;
-;;;;Component;+;+;+;+;+;
-;;;;CommentType;+;+;+;+;+;
-;;;;CommentUserSetting;+;+;+;+;+;
-;;;;CommentMetadata;+;+;+;+;+;
-;;;;UserGroup;+;;;;;
-;;;;Workflow;+;;+;;;
-;;;;Keyword;+;;;;;
-;;;;Unit;+;;;;;
-;;;;User;+;;;;;
-;;;;BlOptions;+;;;;;
-;;;;ProductVideo;+;;;;;
-;;;;RepairTypeEnum;+;;;;;
-;;;;ItemTestingStatusEnum;+;;;;;
-;;;;RepairReasonsEnum;+;;;;;
-;;;;ConditionRatingValueEnum;+;;;;;
+          ;                               ;                ;          ; ItemSyncTimestamp            ; +    ;        ;        ;
+          ;                               ;                ;          ; SyncItemJob                  ; +    ;        ;        ;
+          ;                               ;                ;          ; Type                         ; +    ;        ;        ;
+          ;                               ;                ;          ; Product                      ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; BlProduct                    ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; BlSerialProduct              ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Category                     ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; VariantType                  ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Catalog                      ; +    ; +      ; +      ; +      ;
+          ;                               ;                ;          ; CatalogVersion               ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; ClassificationAttributeUnit  ; +    ;        ;        ;
+          ;                               ;                ;          ; ClassificationAttribute      ; +    ;        ;        ;
+          ;                               ;                ;          ; ClassAttributeAssignment     ; +    ;        ;        ;
+          ;                               ;                ;          ; ClassificationClass          ; +    ;        ;        ;
+          ;                               ;                ;          ; ProductFeature               ; +    ;        ;        ;
+          ;                               ;                ;          ; ClassificationAttributeValue ; +    ;        ;        ;
+          ;                               ;                ;          ; Media                        ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; MediaContainer               ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; MediaFormat                  ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; MediaFolder                  ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Vendor                       ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; StockLevel                   ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Tax                          ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; TaxRow                       ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; PriceRow                     ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; ProductFeature               ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; ProductReference             ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Warehouse                    ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; ProductTaxCode               ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; ProductOrderLimit            ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Job                          ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; CronJob                      ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; JobLog                       ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; CronJobHistory               ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; AbstractComment              ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Comment                      ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Reply                        ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Domain                       ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; Component                    ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; CommentType                  ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; CommentUserSetting           ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; CommentMetadata              ; +    ; +      ; +      ; +      ; + ;
+          ;                               ;                ;          ; UserGroup                    ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; Workflow                     ; +    ;        ; +      ;        ;   ;
+          ;                               ;                ;          ; Keyword                      ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; Unit                         ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; User                         ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; BlOptions                    ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; ProductVideo                 ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; RepairTypeEnum               ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; ItemTestingStatusEnum        ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; RepairReasonsEnum            ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; ConditionRatingValueEnum     ; +    ;        ;        ;        ;   ;
 
-$END_USERRIGHTS;;;;;
+$END_USERRIGHTS; ; ; ; ;
 
 
 $START_USERRIGHTS; ; ; ; ; ; ; ; ;
-Type      ; UID                       ; MemberOfGroups ; Password                       ; Target           ; read ; change ; create ; remove ; change_perm
+Type      ; UID                       ; MemberOfGroups ; Password ; Target                         ; read ; change ; create ; remove ; change_perm
 # Access Rights for Customer Support cockpit
-UserGroup ; customersupportagentgroup ;                ;                                ;                  ;      ;        ;        ;        ;
+UserGroup ; customersupportagentgroup ;                ;          ;                                ;      ;        ;        ;        ;
 
 
-          ;                           ;                ;                                ; Order            ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;                                ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;                                ; Notes            ; +    ; +      ; +      ; -      ; -
-          ;                           ;                ;                                ; Notes.note       ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;                                ; Notes.order      ; +    ; +      ; -      ; -      ; -
-          ;                           ;                ;                                ; NotesEnum        ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order                          ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.orderNotes               ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes                          ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; Notes.note                     ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes.order                    ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; NotesEnum                      ; +    ; +      ; -      ; -      ; -
 #Access Rights of Agent on gift card purchase
-          ;                           ;                ;                                ; GiftCard        ; +    ; +      ; +     ; -      ; -
-          ;                           ;                ;                                ; Order.giftCardCost;+   ; +      ; +     ; -      ; -
-          ;                           ;                ;                                ; GiftCardMovement; +    ; +      ; +      ; -      ; -
-          ;                           ;                ;                                ; GiftCard2Movement; +    ; +      ; +      ; -      ; -
-          ;                           ;                ;                                ; GiftCard2Order        ; +    ; +      ; +      ; -      ; -
-          ;                           ;                ;                                ; Order.giftCard 
+          ;                           ;                ;          ; GiftCard                       ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; Order.giftCardCost             ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; GiftCardMovement               ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; GiftCard2Movement              ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; GiftCard2Order                 ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; Order.giftCard
 # Access Rights for customer notes on cs cockpit;;;;;;;;
           ;                           ;                ;                                ; Customer                       ; +                ; +    ; -      ; -
           ;                           ;                ;                                ; Customer.customerNotes         ; +                ; +    ; +      ; +
@@ -135,11 +150,13 @@ UserGroup ; customersupportagentgroup ;                ;                        
           ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Consignment      ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Unit             ; +    ; -      ; -      ; -      ; -
+          ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS; ; ; ; ; ; ; ; ;
-Type      ; UID                       ; MemberOfGroups ; Password ; Target           ; read ; change ; create ; remove ; change_perm
+Type      ; UID                      ; MemberOfGroups ; Password ; Target             ; read ; change ; create ; remove ; change_perm
 # Access Rights for Customer Support group cockpit
 UserGroup ; customersupportagentrole  ;                ;          ;                  ;      ;        ;        ;        ;
 
@@ -155,23 +172,25 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
           ;                           ;                ;          ; Order.isVipOrder ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;          ; Order.isRentalCart ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;          ; Order.orderType  ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;          ; Unit             ; +     ; -     ; -      ; -       ; -
+          ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
 
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
-$START_USERRIGHTS;;;;;;;;;
-Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+$START_USERRIGHTS; ; ; ; ; ; ; ; ;
+Type      ; UID                 ; MemberOfGroups ; Password ; Target                 ; read ; change ; create ; remove ; change_perm
 # Access Rights for order fulfillment cockpit, WarehouseAgentGroup group
-UserGroup;warehouseagentgroup;;;;;;;;
+UserGroup ; warehouseagentgroup ;                ;          ;                        ;      ;        ;        ;        ;
 
-;;;;Consignment;+;+;-;-;-
-;;;;Consignment.orderNotes;+;+;-;-;-
-;;;;Notes;+;+;+;+;-
-;;;;Notes.note;+;+;-;-;-
-;;;;Notes.consignment;+;+;-;-;-
-;;;;NotesEnum;+;+;+;+;-
-;;;;Consignment2OrderNotes;+;+;+;+;-
+          ;                     ;                ;          ; Consignment            ; +    ; +      ; -      ; -      ; -
+          ;                     ;                ;          ; Consignment.orderNotes ; +    ; +      ; -      ; -      ; -
+          ;                     ;                ;          ; Notes                  ; +    ; +      ; +      ; +      ; -
+          ;                     ;                ;          ; Notes.note             ; +    ; +      ; -      ; -      ; -
+          ;                     ;                ;          ; Notes.consignment      ; +    ; +      ; -      ; -      ; -
+          ;                     ;                ;          ; NotesEnum              ; +    ; +      ; +      ; +      ; -
+          ;                     ;                ;          ; Consignment2OrderNotes ; +    ; +      ; +      ; +      ; -
 
-$END_USERRIGHTS;;;;;;;;;
+$END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 #Access right for frontdeskusergroup
 $START_USERRIGHTS; ; ; ; ; ; ; ;
@@ -181,8 +200,10 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
-          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -
+          ;                   ;                ; CleanCompleteOrderQueue    ; +    ; +      ; -      ; -
+          ;                   ;                ; OrdersAwaitingQueue        ; +    ; +      ; -      ; -
+          ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
@@ -192,8 +213,8 @@ $END_USERRIGHTS; ; ; ;
 
 #Access rights for frontdeskuserrole
 $START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
-Usergroup ; frontdeskuserrole ;                ;                            ;      ;        ;        ;        ;
+Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
+Usergroup ; frontdeskuserrole ;                ;                ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
           ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
@@ -205,14 +226,25 @@ Usergroup ; frontdeskuserrole ;                ;                            ;   
 $END_USERRIGHTS; ; ; ;
 #Access rights for shippingteamuserrole
 $START_USERRIGHTS; ; ; ; ; ; ; ;
-Type      ; UID               ; MemberOfGroups ; Target         ; read ; change ; create ; remove ; change_perm
-Usergroup ; shippingteamuserrole ;                ;                ;      ;        ;        ;        ;
+Type      ; UID                  ; MemberOfGroups ; Target                     ; read ; change ; create ; remove ; change_perm
+Usergroup ; shippingteamuserrole ;                ;                            ;      ;        ;        ;        ;
 # Access Rights for Warehousing agent group;;;;;;;;
-          ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
-          ;                   ;                ; Order          ; +    ; +      ; -      ; -
-          ;                   ;                ; User           ; +    ; -      ; -      ; -
-          ;                   ;                ; Address        ; +    ; -      ; -      ; -
-          ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+;                   ;                ; Consignment    ; +    ; +      ; -      ; -
+;                   ;                ; Order          ; +    ; +      ; -      ; -
+;                   ;                ; User           ; +    ; -      ; -      ; -
+;                   ;                ; Address        ; +    ; -      ; -      ; -
+;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
+;                   ;                ; Consignment                ; +    ; +      ; -      ; -
+;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
+;                   ;                ; Order                      ; +    ; +      ; -      ; -
+;                   ;                ; User                       ; +    ; -      ; -      ; -
+;                   ;                ; Address                    ; +    ; -      ; -      ; -
+;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
+;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
+;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
+;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
+
 $END_USERRIGHTS; ; ; ;
 
 #Access for verification team members
@@ -266,16 +298,6 @@ Usergroup;verificationdocagentrole;;;;;;;
 ;;;VerificationDocumentMedia.downloadURL;+;+;+;+
 ;;;Media;+;+;+;+
 ;;;Media.folder;+;+;+;+
-          ;                   ;                ; Consignment                ; +    ; +      ; -      ; -
-          ;                   ;                ; FrontDeskQueue             ; +    ; +      ; -      ; -
-          ;                   ;                ; Order                      ; +    ; +      ; -      ; -
-          ;                   ;                ; User                       ; +    ; -      ; -      ; -
-          ;                   ;                ; Address                    ; +    ; -      ; -      ; -
-          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
-          ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
-          ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
-          ;                   ;                ; OrdersAwaitingQueue      ; +    ; +      ; -      ; -
-          ;                   ;                ; PulledOrdersQueue    ; +    ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ;
 
 #Access rights for BL Inventory user group
@@ -302,26 +324,26 @@ Usergroup;blinventoryusergroup;;;;;;;
 $END_USERRIGHTS;;;;
 
  
-INSERT_UPDATE BackofficeRole ; UID[unique = true]     ; locname[lang = de] ; locname[lang = en] ; backOfficeLoginDisabled ; authorities            
-                             ; techEnguserrole        ; Bl Tech Eng Role   ; Bl Tech Eng Role   ; FALSE                   ; techEnguserrole        
-                             ; repairmemberuserrole   ; Bl Repair Role     ; Bl Repair Role     ; FALSE                   ; repairmemberuserrole   
-                             ; unboxingmemberuserrole ; Bl Unboxing Role   ; Bl Unboxing Role   ; FALSE                   ; unboxingmemberuserrole 
-                             
-INSERT_UPDATE Usergroup ; uid[unique = true]      ; groups(uid)                          
-                        ; techEngusergroup        ; employeegroup,techEnguserrole        
-                        ; repairmemberusergroup   ; employeegroup,repairmemberuserrole   
-                        ; unboxingmemberusergroup ; employeegroup,unboxingmemberuserrole 
-                        
-INSERT_UPDATE PrincipalGroupRelation ; source(uid)[unique = true] ; target(uid)[unique = true] 
-                                     ; techEngusergroup           ; techEnguserrole            
-                                     ; repairmemberusergroup      ; repairmemberuserrole       
-                                     ; unboxingmemberusergroup    ; unboxingmemberuserrole     
-                                     
-INSERT_UPDATE Employee ; uid[unique = true]      ; name               ; description                   ; groups(uid)             ; password 
-                       ; techEngteamuser         ; Tech Eng team user ; Bl Tech Eng User              ; techEngusergroup        ; 1234     
-                       ; repairteamuser          ; Repair team user   ; Bl Repair User                ; repairmemberusergroup   ; 1234     
-                       ; unboxingteamuser        ; Unboxing team user ; Bl Unboxing User              ; unboxingmemberusergroup ; 1234     
-                       
+INSERT_UPDATE BackofficeRole ; UID[unique = true]     ; locname[lang = de] ; locname[lang = en] ; backOfficeLoginDisabled ; authorities
+                             ; techEnguserrole        ; Bl Tech Eng Role   ; Bl Tech Eng Role   ; FALSE                   ; techEnguserrole
+                             ; repairmemberuserrole   ; Bl Repair Role     ; Bl Repair Role     ; FALSE                   ; repairmemberuserrole
+                             ; unboxingmemberuserrole ; Bl Unboxing Role   ; Bl Unboxing Role   ; FALSE                   ; unboxingmemberuserrole
+
+INSERT_UPDATE Usergroup ; uid[unique = true]      ; groups(uid)
+                        ; techEngusergroup        ; employeegroup,techEnguserrole
+                        ; repairmemberusergroup   ; employeegroup,repairmemberuserrole
+                        ; unboxingmemberusergroup ; employeegroup,unboxingmemberuserrole
+
+INSERT_UPDATE PrincipalGroupRelation ; source(uid)[unique = true] ; target(uid)[unique = true]
+                                     ; techEngusergroup           ; techEnguserrole
+                                     ; repairmemberusergroup      ; repairmemberuserrole
+                                     ; unboxingmemberusergroup    ; unboxingmemberuserrole
+
+INSERT_UPDATE Employee ; uid[unique = true]      ; name               ; description                   ; groups(uid)             ; password
+                       ; techEngteamuser         ; Tech Eng team user ; Bl Tech Eng User              ; techEngusergroup        ; 1234
+                       ; repairteamuser          ; Repair team user   ; Bl Repair User                ; repairmemberusergroup   ; 1234
+                       ; unboxingteamuser        ; Unboxing team user ; Bl Unboxing User              ; unboxingmemberusergroup ; 1234
+
                        
                        
 #Access right for techEngusergroup
@@ -453,5 +475,145 @@ Usergroup              ; unboxingmemberusergroup ;                    ;         
                        ;                         ;                    ; Warehouse                     ; +                       ; +        ; +      ; +      ;
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
                        ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +             
-$END_USERRIGHTS        ;                         ;                    ;                               ;                         
+$END_USERRIGHTS        ;                         ;                    ;                               ;
 
+
+#BL-950 Access rights for BL Inventory user group for the PCM Backoffice Perspective.
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+#UserGroup;productmanagergroup;cockpitgroup;;;;;;;
+BackofficeRole;pcminventorymanagergroup;cockpitgroup;;;;;;;
+
+;;;;ClassAttributeAssignment;+;+;+;+;+;
+;;;;ClassificationClass;+;+;+;+;+;
+;;;;ClassificationAttribute;+;+;+;+;+;
+;;;;ClassificationAttributeTypeEnum;+;+;+;+;+;
+;;;;ClassificationAttributeVisibilityEnum;+;+;+;+;+;
+;;;;ClassificationAttributeValueList;+;+;+;+;+;
+;;;;ClassificationAttributeUnit;+;+;+;+;+;
+
+$END_USERRIGHTS;;;;;
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+UserGroup;pcminventorymanagergroup;;;;;;;;
+
+;;;;ItemSyncTimestamp;+;;;
+;;;;SyncItemJob;+;;;
+;;;;Type;+;;;
+;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;-;-;-;-;
+;;;;BlSerialProduct;+;+;+;+;+;
+;;;;Category;+;+;+;+;+;
+;;;;VariantType;+;+;+;+;+;
+;;;;Catalog;+;+;+;+;
+;;;;CatalogVersion;+;+;+;+;+;
+;;;;ClassificationAttributeUnit;+;;;
+;;;;ClassificationAttribute;+;;;
+;;;;ClassAttributeAssignment;+;;;
+;;;;ClassificationClass;+;;;
+;;;;ProductFeature;+;;;
+;;;;ClassificationAttributeValue;+;;;
+;;;;Media;+;+;+;+;+;
+;;;;MediaContainer;+;+;+;+;+;
+;;;;MediaFormat;+;+;+;+;+;
+;;;;MediaFolder;+;+;+;+;+;
+;;;;Vendor;+;+;+;+;+;
+;;;;StockLevel;+;+;+;+;+;
+;;;;Tax;+;+;+;+;+;
+;;;;TaxRow;+;+;+;+;+;
+;;;;PriceRow;+;+;+;+;+;
+;;;;ProductFeature;+;+;+;+;+;
+;;;;ProductReference;+;+;+;+;+;
+;;;;Warehouse;+;+;+;+;+;
+;;;;ProductTaxCode;+;+;+;+;+;
+;;;;ProductOrderLimit;+;+;+;+;+;
+;;;;Job;+;+;+;+;+;
+;;;;CronJob;+;+;+;+;+;
+;;;;JobLog;+;+;+;+;+;
+;;;;CronJobHistory;+;+;+;+;+;
+;;;;AbstractComment;+;+;+;+;+;
+;;;;Comment;+;+;+;+;+;
+;;;;Reply;+;+;+;+;+;
+;;;;Domain;+;+;+;+;+;
+;;;;Component;+;+;+;+;+;
+;;;;CommentType;+;+;+;+;+;
+;;;;CommentUserSetting;+;+;+;+;+;
+;;;;CommentMetadata;+;+;+;+;+;
+;;;;UserGroup;+;;;;;
+;;;;Workflow;+;;+;;;
+;;;;Keyword;+;;;;;
+;;;;Unit;+;;;;;
+;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
+
+$END_USERRIGHTS;;;;;
+
+
+
+#BL-950 Access rights for BL Buyer user group for the PCM Backoffice Perspective.
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+UserGroup;pcmbuyermanagergroup;;;;;;;;
+
+# Access Rights for Products & Catalog for Backoffice Product Manager ;;;;;;;;;
+;;;;ItemSyncTimestamp;+;;;
+;;;;SyncItemJob;+;;;
+;;;;Type;+;;;
+;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;+;+;+;+;
+;;;;BlSerialProduct;+;+;+;+;+;
+;;;;Category;+;+;+;+;+;
+;;;;VariantType;+;+;+;+;+;
+;;;;Catalog;+;+;+;+;
+;;;;CatalogVersion;+;+;+;+;+;
+;;;;ClassificationAttributeUnit;+;;;
+;;;;ClassificationAttribute;+;;;
+;;;;ClassAttributeAssignment;+;;;
+;;;;ClassificationClass;+;;;
+;;;;ProductFeature;+;;;
+;;;;ClassificationAttributeValue;+;;;
+;;;;Media;+;+;+;+;+;
+;;;;MediaContainer;+;+;+;+;+;
+;;;;MediaFormat;+;+;+;+;+;
+;;;;MediaFolder;+;+;+;+;+;
+;;;;Vendor;+;+;+;+;+;
+;;;;StockLevel;+;+;+;+;+;
+;;;;Tax;+;+;+;+;+;
+;;;;TaxRow;+;+;+;+;+;
+;;;;PriceRow;+;+;+;+;+;
+;;;;ProductFeature;+;+;+;+;+;
+;;;;ProductReference;+;+;+;+;+;
+;;;;Warehouse;+;+;+;+;+;
+;;;;ProductTaxCode;+;+;+;+;+;
+;;;;ProductOrderLimit;+;+;+;+;+;
+;;;;Job;+;+;+;+;+;
+;;;;CronJob;+;+;+;+;+;
+;;;;JobLog;+;+;+;+;+;
+;;;;CronJobHistory;+;+;+;+;+;
+;;;;AbstractComment;+;+;+;+;+;
+;;;;Comment;+;+;+;+;+;
+;;;;Reply;+;+;+;+;+;
+;;;;Domain;+;+;+;+;+;
+;;;;Component;+;+;+;+;+;
+;;;;CommentType;+;+;+;+;+;
+;;;;CommentUserSetting;+;+;+;+;+;
+;;;;CommentMetadata;+;+;+;+;+;
+;;;;UserGroup;+;;;;;
+;;;;Workflow;+;;+;;;
+;;;;Keyword;+;;;;;
+;;;;Unit;+;;;;;
+;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
+
+$END_USERRIGHTS;;;;;

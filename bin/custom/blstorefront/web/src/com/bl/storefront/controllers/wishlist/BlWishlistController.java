@@ -53,7 +53,7 @@ public class BlWishlistController extends AbstractSearchPageController {
    * Method to add Product to Wishlist from the Product Cards.
    */
   @RequireHardLogIn
-  @RequestMapping(value = "/wishlist/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/wishlist/add", method = RequestMethod.GET)
   @ResponseBody
   public String addToWishlist(@RequestParam("productwishlistCode") final String code) {
     try {

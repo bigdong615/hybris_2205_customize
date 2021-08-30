@@ -161,7 +161,7 @@ text-decoration :none ;
 #addToCart-gear-sliders > .splide__arrows .splide__arrow--next, #blog-slider > .splide__arrows .splide__arrow--next, #gear-slider-cart > .splide__arrows .splide__arrow--next { margin-right: -30px; }
 
 input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
-
+input.error::placeholder { color:#e64b4f;  }
 @media(max-width:767px){#addToCart-gear-sliders > .splide__arrows{display: none;} }
 
 #addToCart-gear-sliders .card li {display: flex; align-items: center;}
@@ -494,15 +494,15 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 
 .expertHelpIcon {
-    background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
-    background-repeat: no-repeat;
-    display: inline-block;
-    margin-top: 10px;
-    width: 20px;
-    height: 20px !important;
-    margin-right: 10px;
-    margin-bottom: -5px;
-    background-size: contain;
+     background-image: url(../assets/chat_bubble_outline_black_24dp.svg);
+         background-repeat: no-repeat;
+         display: inline-block;
+         margin-top: 10px;
+         width: 20px;
+         height: 20px !important;
+         margin-right: 10px;
+         margin-bottom: -5px;
+         background-size: contain;
 }
 .livechat{
   display: block !important;
@@ -618,3 +618,6 @@ ul.ui-autocomplete.active {
     display: flex;
     flex-direction: row-reverse;
 }
+.for-credit-card .dropdown-menu>li>a{
+  line-height:1px;
+}  

@@ -34,20 +34,13 @@
 			</c:when>
 			<c:otherwise>
 				<c:if test="${product.productTagValues ne null}">
-				<c:choose>
-				<c:when test="${fn:containsIgnoreCase(product.productTagValues, 'New') || fn:containsIgnoreCase(product.productTagValues, 'Staff Pick') ||  fn:containsIgnoreCase(product.productTagValues, 'Great Value')}">
-					<span class="badge badge-new">${product.productTagValues}</span>
-				</c:when>
-				<c:otherwise>
-				  <span class="badge badge-limited-stock">${product.productTagValues}</span>
-				</c:otherwise>
-				</c:choose>
+				  <span class="badge badge-new">${product.productTagValues}</span>
 				</c:if>
 			</c:otherwise>
 		</c:choose>
 		</c:if>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
-   <c:if test="${product.productType ne 'GIFTCARD'}">
+   <c:if test="${product.productType ne 'GIFTCARD' && product.isDiscontinued ne 'true'}">
     <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
     		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                     <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">

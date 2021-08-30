@@ -20,6 +20,7 @@ import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
+import com.bl.storefront.file.validate.BlValidator;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlVerificationDocumentValidator;
 import com.bl.storefront.forms.VerificationDocumentForm;
@@ -300,7 +301,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private BlCartService blCartService;
 
 	@Resource(name = "blVerificationDocumentValidator")
-	private BlVerificationDocumentValidator blVerificationDocumentValidator;
+	private BlValidator blVerificationDocumentValidator;
 
 	@Resource(name = "blVerificationDocumentFacade")
 	private BlVerificationDocumentFacade blVerificationDocumentFacade;
@@ -810,8 +811,6 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		final CustomerData currentCustomerData = customerFacade.getCurrentCustomer();
 		final BlAddressForm addressForm = new BlAddressForm();
-		addressForm.setFirstName(currentCustomerData.getFirstName());
-		addressForm.setLastName(currentCustomerData.getLastName());
 		addressForm.setCountryIso(Locale.US.getCountry());
 		return addressForm;
 	}
@@ -1232,12 +1231,11 @@ public class AccountPageController extends AbstractSearchPageController
 	public String uploadVerificationImages(
 			@ModelAttribute("verificationDocumentForm") final VerificationDocumentForm verificationDocumentForm,
 			final BindingResult bindingResult, final Model model, final RedirectAttributes redirectModel, final HttpServletRequest request) throws CMSItemNotFoundException {
-		blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult);
+	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model);
 		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
 				VERIFICATION_IMAGES_CMS_PAGE);
 		VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
 		model.addAttribute("verificationDocumentForm",verificationDocument);
-
 
 		storeCmsPageInModel(model, verificationImagesPage);
 		setUpMetaDataForContentPage(model, verificationImagesPage);
@@ -1259,7 +1257,6 @@ public class AccountPageController extends AbstractSearchPageController
 	 * @param model
 	 */
 	private String setErrorMessagesForVerification(Model model) throws CMSItemNotFoundException {
-		GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		final ContentPageModel cmsPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
@@ -1274,7 +1271,7 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		blVerificationDocumentFacade.removeDocument(code);
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
-   	model.addAttribute("UploadedDocument",uploadedDocumentFromCustomer);
+   	model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
 		return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 	}
 

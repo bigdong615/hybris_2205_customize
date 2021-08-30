@@ -15,7 +15,7 @@
 		<fieldType name="double" class="solr.DoublePointField" docValues="true" sortMissingLast="true" />
 		<fieldType name="date" class="solr.DatePointField" docValues="true" sortMissingLast="true" />
 		<fieldType name="string" class="solr.StrField" docValues="true" sortMissingLast="true" />
-		
+
 		<!-- Text -->
 
 		<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
@@ -72,7 +72,7 @@
 				<filter class="solr.EnglishPossessiveFilterFactory" />
 				<filter class="solr.ManagedSynonymGraphFilterFactory" managed="en" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				 <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<!-- <filter class="solr.KeywordRepeatFilterFactory" /> -->
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
@@ -97,7 +97,7 @@
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.ManagedSynonymGraphFilterFactory" managed="en" />
 				<filter class="solr.ManagedStopFilterFactory" managed="en" />
-				<filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />
+				<!-- <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" /> -->
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
@@ -146,7 +146,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-	
+
 		<!-- Text German (de) -->
 
 		<fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
@@ -202,7 +202,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Spanish (es) -->
 
 		<fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
@@ -250,7 +250,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Latin-American Spanish (es_CO) -->
 
 		<fieldType name="text_es_co" class="solr.TextField" positionIncrementGap="100">
@@ -350,7 +350,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-	
+
 		<!-- Text Hindi (hi) -->
 
 		<fieldType name="text_hi" class="solr.TextField" positionIncrementGap="100">
@@ -398,7 +398,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Hungarian (hu) -->
 
 		<fieldType name="text_hu" class="solr.TextField" positionIncrementGap="100">
@@ -586,7 +586,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Korean (ko) -->
 
 		<fieldType name="text_ko" class="solr.TextField" positionIncrementGap="100">
@@ -628,7 +628,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Polish (pl) -->
 
 		<fieldType name="text_pl" class="solr.TextField" positionIncrementGap="100">
@@ -821,7 +821,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Text Traditional Chinese (zh_TW) -->
 
 		<fieldType name="text_zh_tw" class="solr.TextField" positionIncrementGap="100">
@@ -869,7 +869,7 @@
 				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
 			</analyzer>
 		</fieldType>
-		
+
 		<!-- Sortable Text -->
 
 		<fieldType name="sortabletext" class="solr.TextField" sortMissingLast="true" positionIncrementGap="100">

@@ -21,6 +21,7 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
 {
   private static final String SOCKET_OUT_CONTEXT = "blCapturePaymentContext";
   private static final String LOCATION_PATH = "actions/blFrontCapturePayment";
+  //private static final String LOCATION_PATH = "/widgetClasspathResource/widgets/actions/blFrontCapturePayment";
   private static final String FRONT_SOCKET_OUT_CTX = "blFrontCapturePaymentContext";
 
   /**
@@ -34,6 +35,7 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
   {
     final ConsignmentModel consignmentModel = actionContext.getData();
     return consignmentModel != null && consignmentModel.getOrder() != null;
+        //&& BooleanUtils.isFalse(contextData.getOrder().getIsCaptured());
   }
 
   /**

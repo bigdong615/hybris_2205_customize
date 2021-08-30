@@ -132,4 +132,10 @@ public interface BlCartService extends CartService {
      * @param cartModel
      */
      void updateNewGearPurchaseStatus(final CartModel cartModel);
+
+    /**
+     * This method used for remove cart from DB.
+     * @param cartModel
+     */
+    public void removeEmptyCart(final CartModel cartModel);
 }

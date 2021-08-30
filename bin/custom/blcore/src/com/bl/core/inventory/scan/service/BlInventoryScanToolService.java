@@ -1,6 +1,7 @@
 package com.bl.core.inventory.scan.service;
 
 import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -39,6 +40,17 @@ public interface BlInventoryScanToolService {
 
     /**
      * javadoc
+     *
+     * @param barcodes from input list
+	 * @param memberAllowedLocationList the member allowed location list
+	 *
+     * @return int method will check the valid Location provided in barcode list for bin and return
+     * int with appropriate notification number to notify employee
+     */
+    int checkValidLocationInBarcodeListForBin(final List<String> barcodes, final List<String> memberAllowedLocationList);
+
+    /**
+     * javadoc
      * @param locationId for BlInventoryLocation
      * @return BlInventoryLocation
      * method will fetch InventoryLocation by its Id from dao
@@ -61,6 +73,15 @@ public interface BlInventoryScanToolService {
      * its location in db
      */
     List<String> getFailedBarcodeList(final List<String> barcodes);
+
+    /**
+     * javadoc
+     * @param barcodes for BlSerialProduct
+     * @return List<String>
+     * method will verify the list of barcodes and result into list of failed barcodes
+     * that has been failed to update its location in db for Bin.
+     */
+    List<String> getFailedBarcodeListForBin(final List<String> barcodes);
 
     /**
      * javadoc
@@ -102,9 +123,9 @@ public interface BlInventoryScanToolService {
  	 * 
  	 * @param barcodes for SerialProducts
  	 * @param selectedConsignment for ConsignmentModel
- 	 * @return Map<String, List<String>>
+ 	 * @return Map<String, List<BlProductModel>>
  	 */
- 	public Map<String, List<String>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	public Map<String, List<BlProductModel>> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification

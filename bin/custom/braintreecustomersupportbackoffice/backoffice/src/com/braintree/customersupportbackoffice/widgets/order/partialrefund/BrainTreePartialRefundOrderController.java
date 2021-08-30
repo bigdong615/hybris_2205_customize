@@ -114,6 +114,15 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
           this.getLabel("customersupportbackoffice.partial.refundorder.empty.entries"));
       return;
     }
+    for (int index = 0; index < this.getOrderEntries().getModel().getSize(); index ++) {
+      Double totalRefundAmount = 0.0;
+      final List<Component> componentChildren = getOrderEntriesGridRows().get(index).getChildren();
+      final BlOrderPartialRefundDto dtoRequest = (BlOrderPartialRefundDto) this.getOrderEntries().getModel().getElementAt(index);
+      addTotalRefund(totalRefundAmount, dtoRequest.getLineItemTax());
+      addTotalRefund(totalRefundAmount, dtoRequest.getLineItemShippingPrice());
+      addTotalRefund(totalRefundAmount, dtoRequest.getLineItemDamageWaiverCost());
+      dtoRequest.setLineItemRefundAmount(totalRefundAmount);
+    }
     for (final Component component : listComponent) {
       if (component instanceof Doublebox) {
         component.addEventListener(Events.ON_CHANGE, event -> {
@@ -123,6 +132,10 @@ public class BrainTreePartialRefundOrderController extends DefaultWidgetControll
         });
       }
     }
+  }
+
+  private void addTotalRefund(Double totalRefundAmount, final Double refundAmount) {
+    totalRefundAmount += refundAmount != null && refundAmount > 0 ? refundAmount : 0.0;
   }
 
   /**

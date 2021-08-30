@@ -409,7 +409,7 @@ $(".js-hr-tag").last().hide();
 
 //BL-688 changes
 
-if($("#addToCartButton").hasClass("js-disable-btn"))
+if($(".js-add-to-cart").hasClass("js-disable-btn"))
 {
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
@@ -417,11 +417,14 @@ if($("#addToCartButton").hasClass("js-disable-btn"))
     $(" #productDates .input-group").addClass("red-border");
 }
 
-if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("js-disable-btn")){
+if($(".arrival").hasClass("nextAvailDate") && !$(".js-add-to-cart").hasClass("js-disable-btn")){
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
     $(" #productDates .input-group").addClass("red-border");
     $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
+    if($(".js-add-to-cart").length == 1){
+    	$(".js-add-to-cart").attr("disabled", true);
+    }
 }
 
  //BL-455  Changes for Add To Cart POP Up
@@ -1090,9 +1093,23 @@ $("#clickedForm").val(clickedForm);
 
 //remove document submit
 $('#remove-doc-submit-button').on("click",function(e) {
-
+	$('.page-loader-new-layout').show();
 	e.preventDefault();
     var clickedForm = $("#clickedForm").val();
+	var submitForm = $("#" + clickedForm );
+	submitForm.submit();
+});
+
+$('.remove-document').on("click",function(e) {
+	e.preventDefault();
+var clickedFormDocument = this.getAttribute("data-code");
+$("#clickedFormDocument").val(clickedFormDocument);
+});
+
+$('#remove-document-submit-button').on("click",function(e) {
+	$('.page-loader-new-layout').show();
+	e.preventDefault();
+    var clickedForm = $("#clickedFormDocument").val();
 	var submitForm = $("#" + clickedForm );
 	submitForm.submit();
 });
