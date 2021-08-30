@@ -20,6 +20,8 @@
         
         <collectiontype code="CatalogUnawareMediaList" elementtype="CatalogUnawareMedia" type="list"/>
 
+        <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -326,6 +328,11 @@
         <value code="RESOLVED" />
     </enumtype>
 
+      <enumtype code="OrderReturnType" autocreate="true" dynamic="true">
+        <value code="REPLACEMENT"/>
+        <value code="REFUND"/>
+      </enumtype>
+
       <!-- BL-772 : Adding Verification Document enum -->
       <enumtype generate="true" code="DocumentType" autocreate="true">
         <value code="DRIVING_LICENSE"/>
@@ -586,7 +593,16 @@
 					</attribute>
 				</attributes>
 			</itemtype>
-		
+
+      <itemtype code="Order" autocreate="false" generate="false">
+      <attributes>
+        <attribute qualifier="orderReturnType" type="OrderReturnType">
+          <persistence type="property"/>
+          <description>Order Return Type For example : Replacement, Refund</description>
+        </attribute>
+      </attributes>
+      </itemtype>
+
 			<itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
 				<description>Custom Simple Banner Component type that contains additional attribute to display Promotion Image under category navigation.</description>
 			</itemtype>
@@ -2135,7 +2151,6 @@
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
-
             <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
               <persistence type="property" />
               <modifiers read="true" write="true" search="true" optional="true"/>
@@ -2440,6 +2455,16 @@
                       <modifiers read="true" write="true" search="false"
                       optional="true" />
                       <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="giftCardAvailableAmount" type="java.lang.Double">
+                        <description>Gift Card Available Amount</description>
+                        <modifiers read="true" write="true" search="false" optional="true" />
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="giftCardAmountTransactions" type="OrderGiftCardTransactions">
+                        <description>Gift Card Amount Transactions</description>
+                        <modifiers read="true" write="true" search="false" optional="true" />
+                        <persistence type="property" />
                     </attribute>
                     <attribute qualifier="grandTotal" type="java.lang.Double">
                       <description>Grand Total</description>
@@ -3796,161 +3821,161 @@
 		</attribute>
 	</attributes>
 </itemtype>
-<itemtype code="FrontDeskQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
-	<custom-properties>
-		<property name="query">
-			<value>
-				"SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
-			</value>
-		</property>
-	</custom-properties>
-	<attributes>
-		<attribute generate="false" autocreate="true" qualifier="consignmentCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="consignmentStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(5)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="ocLocation" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(3)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.TRUE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="orderNote" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(6)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(1)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="rentalEndDate" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(2)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="serialProductCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.FALSE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(4)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-		<attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
-			<persistence type="jalo" qualifier=""/>
-			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
-			<custom-properties>
-				<property name="param">
-					<value>
-						Boolean.TRUE
-					</value>
-				</property>
-				<property name="position">
-					<value>
-						new Integer(0)
-					</value>
-				</property>
-			</custom-properties>
-		</attribute>
-	</attributes>
-</itemtype>
+    <itemtype code="FrontDeskQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+        <custom-properties>
+            <property name="query">
+                <value>
+                    "SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
+                </value>
+            </property>
+        </custom-properties>
+        <attributes>
+            <attribute generate="false" autocreate="true" qualifier="consignmentCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(0)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="consignmentStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(5)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="ocLocation" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(3)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="optimizedShippingStartDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.TRUE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(0)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="orderNote" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(6)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(1)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="rentalEndDate" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(2)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="serialProductCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.FALSE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(4)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+            <attribute generate="false" autocreate="true" qualifier="warehouse" type="Warehouse" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.TRUE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(0)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
+        </attributes>
+    </itemtype>
 <itemtype code="ShippingCompleteOrderQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
 	<custom-properties>
 		<property name="query">
