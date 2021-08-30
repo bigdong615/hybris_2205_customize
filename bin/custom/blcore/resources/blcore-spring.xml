@@ -1337,4 +1337,19 @@
 	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
 	</bean>
 	
+	<!--Cancel and Refund-->
+	<alias alias="blCustomCancelRefundDao" name="defaultBlCustomCancelRefundDao"/>
+	<bean id="defaultBlCustomCancelRefundDao" class="com.bl.core.services.cancelandrefund.dao.impl.DefaultBlCustomCancelRefundDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias alias="blCustomCancelRefundService" name="defaultBlCustomCancelRefundService"/>
+	<bean id="defaultBlCustomCancelRefundService" class="com.bl.core.services.cancelandrefund.service.impl.DefaultBlCustomCancelRefundService" >
+		<property name="blCustomCancelRefundDao" ref="blCustomCancelRefundDao"/>
+		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="paymentService" ref="paymentService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="returnService" ref="returnService"/>
+	</bean>
 </beans>
