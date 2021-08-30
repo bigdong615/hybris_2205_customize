@@ -34,9 +34,15 @@
                                                     <b>${orderData.rentalStartDate}</b>
                                                   </p>
                                            </c:if>
-                                         <c:if test="${orderData.deliveryMode.carrier ne null}"> 
+                                         <c:choose>
+                                         <c:when test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+                                        <p class="body14"><spring:theme
+													code="text.review.page.date.start.delivery.pickup.order.history" /></p>
+                                       </c:when>
+                                       <c:otherwise>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
-                                        </c:if> 
+                                       </c:otherwise>
+                                        </c:choose>
                                     </div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
@@ -49,9 +55,16 @@
                                         <c:if test="${orderData.isRentalActive eq false}">
                                           <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
                                         </c:if>
-                                       <c:if test="${orderData.deliveryMode.carrier ne null}"> 
-                                        <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
-                                        </c:if>
+                                       
+                                       <c:choose>
+                                       <c:when test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+                                            <p class="body14"><spring:theme
+													code="text.review.page.date.end.delivery.pickup.order.history" /></p>
+                                        </c:when>
+                                        <c:otherwise>
+                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
+                                        </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>
