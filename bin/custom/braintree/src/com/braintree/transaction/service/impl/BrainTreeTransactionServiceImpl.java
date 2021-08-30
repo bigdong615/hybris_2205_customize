@@ -133,7 +133,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		try {
 			final BrainTreeAuthorizationResult result = brainTreeAuthorize(orderModel, getCustomFields(),
 					amountToAuthorize, submitForSettlement, paymentInfo);
-			if(submitForSettlement && paymentInfo != null) {
+			if(submitForSettlement) {
 				createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
 				return result.isSuccess();
 			} else {
