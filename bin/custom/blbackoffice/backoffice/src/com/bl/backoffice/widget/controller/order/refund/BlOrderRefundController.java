@@ -11,14 +11,23 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
+import de.hybris.platform.basecommerce.enums.RefundReason;
+import de.hybris.platform.basecommerce.enums.ReturnAction;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.returns.ReturnService;
+import de.hybris.platform.returns.model.RefundEntryModel;
+import de.hybris.platform.returns.model.ReturnRequestModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -55,9 +64,16 @@ public class BlOrderRefundController extends DefaultWidgetController {
   private static final String NO_PAYMENT_TRANSACTION = "customersupportbackoffice.refundorder.empty.transactionId";
   private static final String INVALID_ORDER_AMOUNT = "customersupportbackoffice.refundorder.higheramount";
   private static final String CANCEL_BUTTON = "cancelChanges";
+  private static final String NOTES = "Refund Notes while full refund";
 
   @Resource
   private BrainTreePaymentService brainTreePaymentService;
+
+  @Resource
+  private ReturnService returnService;
+
+  @Resource
+  private ModelService modelService;
 
   private OrderModel orderModel;
 
@@ -138,6 +154,20 @@ public class BlOrderRefundController extends DefaultWidgetController {
       final BrainTreeRefundTransactionResult result =
           brainTreePaymentService.refundTransaction(request);
       if (result.isSuccess()) {
+        final Map<AbstractOrderEntryModel, Long> returnableEntries = returnService.getAllReturnableEntries(this.getOrderModel());
+        if (MapUtils.isNotEmpty(returnableEntries)) {
+          final ReturnRequestModel returnRequestModel = returnService.createReturnRequest(this.getOrderModel());
+          returnableEntries.forEach((orderEntry, qty) -> {
+            final RefundEntryModel refundEntry = returnService.createRefund(returnRequestModel,
+                orderEntry, NOTES, qty, ReturnAction.IMMEDIATE, RefundReason.WRONGDESCRIPTION); //TODO - Change this later
+            refundEntry.setAmount(BigDecimal.valueOf(orderEntry.getTotalPrice()));
+            modelService.save(refundEntry);
+            returnRequestModel.setSubtotal(
+                returnRequestModel.getReturnEntries().stream().filter(entry -> entry instanceof RefundEntryModel)
+                    .map(refund -> ((RefundEntryModel) refund).getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add));
+            modelService.save(request);
+          });
+        }
         BlLogger.logMessage(LOG, Level.DEBUG, "Refund Txn has been initiated successfully.");
         showMessageBox(this.getLabel(REFUND_COMPLETE_MSG));
         return;

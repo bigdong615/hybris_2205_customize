@@ -15,7 +15,7 @@
 		<c:choose>
 			<c:when test="${status.last}">
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
-      <c:if test="${product.productType ne 'GIFTCARD' && product.retailGear ne true}">
+      <c:if test="${product.productType ne 'GIFTCARD' && product.retailGear ne true && product.isDiscontinued ne true}">
       <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
              <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
