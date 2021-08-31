@@ -164,7 +164,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel inputObject) {
         modelService.refresh(inputObject);
-        if(inputObject.getOriginalOrderTotalAmount() == null) {
+        if(inputObject.getOriginalOrderTotalAmount() == null || inputObject.getOriginalOrderTotalAmount() ==
+                BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
             inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
             modelService.save(inputObject);
             modelService.refresh(inputObject);
@@ -256,11 +257,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 responseMap = this.executeVoidOnTransactions(allVoidTransactionModels.stream().filter(voidEntry ->
                         (voidEntry.getAmount().doubleValue()) > BlInventoryScanLoggingConstants.ONE).collect(Collectors.toList()));
             }
-            if(MapUtils.isNotEmpty(responseMap)) {
-                this.voidAuthorizedPaymentAndRefundGiftCard();
-            } else {
+            if(Boolean.TRUE.equals(responseMap.containsKey("FAILED"))) {
                 BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Failed to cancel due to payment gateway error!!");
                 Messagebox.show("Failed to cancel due to payment gateway error!!", "FAILURE!!", Messagebox.OK, Messagebox.ERROR);
+            } else {
+                this.voidAuthorizedPaymentAndRefundGiftCard();
             }
         }
     }
@@ -346,7 +347,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             }
         }
         return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
-                this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund), Boolean.TRUE, null);
+                this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund).setScale(BlInventoryScanLoggingConstants.TWO,
+                RoundingMode.HALF_EVEN), Boolean.FALSE, null);
     }
 
     /**
