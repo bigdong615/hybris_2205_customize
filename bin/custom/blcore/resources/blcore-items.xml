@@ -91,6 +91,7 @@
             <value code="STABLIZERS"/>
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
+            <value code="PACKAGE"/>
         </enumtype>
 
         <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">
@@ -866,6 +867,12 @@
                          <modifiers read="true" write="false" optional="true" unique="true" initial="true"/>
                          <description>Auto generated Product ID</description>
                      </attribute>
+                    <attribute qualifier="bundleProduct" type="boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether the product is bundle Product</description>
+                   </attribute>
                      <attribute qualifier="displayName" type="java.lang.String">
                          <persistence type="property" />
                          <modifiers read="true" search="true" write="true" optional="true"/>
@@ -3038,6 +3045,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                   <attribute qualifier="bundleDiscount" type="java.lang.Double">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Redeclaring attribute to set optional true for Serial Products</description>
+                   </attribute>
                     <attribute type="BlackOutDates" qualifier="blackOutDates">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
