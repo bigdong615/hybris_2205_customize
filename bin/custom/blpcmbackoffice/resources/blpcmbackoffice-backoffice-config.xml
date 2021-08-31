@@ -154,6 +154,8 @@
 					<ea:attribute qualifier="usedGearVideosLink" />
 					<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="onSale"/>
+					<ea:attribute qualifier="bufferedInventoryPercentage"/>
+					<ea:attribute qualifier="bufferInvPercChangedManually"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -522,6 +524,7 @@
 					<ea:attribute qualifier="dirtyPriorityStatus"/>
 					<ea:attribute qualifier="testingStatus"/>
 					<ea:attribute qualifier="repairLogType"/>
+					<ea:attribute qualifier="isBufferedInventory"/>
 				</ea:section>
 				<ea:section name="hmc.product.order.invoice">
 					<ea:attribute qualifier="dateOfSale"/>
