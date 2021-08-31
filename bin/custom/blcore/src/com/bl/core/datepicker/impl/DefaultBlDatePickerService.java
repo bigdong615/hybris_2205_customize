@@ -146,7 +146,8 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		{
 			final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
 					.getAllBlackoutDatesForGivenType(blackoutDateType);
-			final List<Date> blackoutDates = allBlackoutDatesForGivenType.stream().map(date -> date.getBlackoutDate())
+			final List<Date> blackoutDates = allBlackoutDatesForGivenType.stream().map(
+					BlBlackoutDateModel::getBlackoutDate)
 					.collect(Collectors.toList()).stream().map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime())
 					.collect(Collectors.toList());
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Blackout dates found for type {} is {}", blackoutDateType.toString(),

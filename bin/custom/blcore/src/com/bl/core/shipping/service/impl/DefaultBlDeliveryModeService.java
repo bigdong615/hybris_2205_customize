@@ -895,7 +895,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  		}
  		final List<ZoneDeliveryModeModel> updatedList = Lists.newArrayList();
  		final Date rentalStartDate = BlDateTimeUtils.getDate(rentalStart, BlCoreConstants.DATE_FORMAT);
- 		final List<String> deliveryModeCodes = deliveryModeModels.stream().map(deliveryMode -> deliveryMode.getCode())
+ 		final List<String> deliveryModeCodes = deliveryModeModels.stream().map(
+        DeliveryModeModel::getCode)
  				.collect(Collectors.toList());
  		final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlBlackoutDatesDao()
  				.getAllBlackoutDatesForShippingMethods(deliveryModeCodes);
@@ -936,7 +937,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  	 */
  	private List<Date> getListOfDates(final List<BlBlackoutDateModel> blackoutDates)
  	{
- 		return blackoutDates.stream().map(blackoutDate -> blackoutDate.getBlackoutDate()).collect(Collectors.toList());
+ 		return blackoutDates.stream().map(BlBlackoutDateModel::getBlackoutDate).collect(Collectors.toList());
  	}
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
