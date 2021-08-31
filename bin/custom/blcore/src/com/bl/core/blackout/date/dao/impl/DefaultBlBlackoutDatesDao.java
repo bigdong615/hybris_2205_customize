@@ -22,6 +22,8 @@ import com.bl.logging.BlLogger;
 
 
 /**
+ * This is an Implementaion of Dao Class contains the logic to get list of blackout dates.
+ *
  * @author Ravikumar
  *
  */

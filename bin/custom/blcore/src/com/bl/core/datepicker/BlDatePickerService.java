@@ -64,7 +64,8 @@ public interface BlDatePickerService
 	/**
 	 * Gets the list of black out dates with time as 00:00:00 am from current base store.
 	 *
-	 * @return the list of black out dates
+	 * @param blackoutDateType the blackout date type
+	 * @return the all blackout dates for given type
 	 */
 	public List<Date> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType);
 }

@@ -7,6 +7,8 @@ import com.bl.core.model.BlBlackoutDateModel;
 
 
 /**
+ * This Dao Class is used to get list of blackout dates.
+ *
  * @author Ravikumar
  *
  */
