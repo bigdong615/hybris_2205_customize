@@ -61,7 +61,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
         try {
           final BigDecimal calculatedBasePrice = getBlBackOfficePriceService()
               .getProductPrice(orderEntry.getProduct(), rentalStartDate,
-                  rentalReturnDate);
+                  rentalReturnDate , BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
           if (calculatedBasePrice != null) {
             orderEntry.setBasePrice(calculatedBasePrice.doubleValue());
           }

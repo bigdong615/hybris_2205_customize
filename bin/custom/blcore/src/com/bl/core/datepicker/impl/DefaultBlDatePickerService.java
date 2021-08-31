@@ -129,7 +129,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				date.setSelectedToDate(endDate);
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
-								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT).plusDays(1))));
+								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
 				return date;
 			}
 		}

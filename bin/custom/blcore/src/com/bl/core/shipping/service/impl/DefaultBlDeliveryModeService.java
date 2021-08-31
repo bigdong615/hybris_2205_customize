@@ -889,6 +889,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  	private Collection<? extends ZoneDeliveryModeModel> excludeBlockedShippingMethods(
  			final List<? extends ZoneDeliveryModeModel> deliveryModeModels, final String rentalStart)
  	{
+ 		if(CollectionUtils.isEmpty(deliveryModeModels))
+ 		{
+ 			return deliveryModeModels;
+ 		}
  		final List<ZoneDeliveryModeModel> updatedList = Lists.newArrayList();
  		final Date rentalStartDate = BlDateTimeUtils.getDate(rentalStart, BlCoreConstants.DATE_FORMAT);
  		final List<String> deliveryModeCodes = deliveryModeModels.stream().map(deliveryMode -> deliveryMode.getCode())

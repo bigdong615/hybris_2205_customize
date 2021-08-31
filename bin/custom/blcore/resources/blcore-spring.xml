@@ -636,6 +636,8 @@
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
 		<property name="blRepairLogService" ref="blRepairLogService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1273,6 +1275,18 @@
     <bean id="defaultBlReturnOrderService" parent="returnService" class="com.bl.core.order.impl.DefaultBlReturnOrderService" />
 
 	<bean id="blTotalForPartsAndLabourChargeHandler" class="com.bl.core.model.handler.BlTotalForPartsAndLabourChargeHandler"/>
+	
+	<bean id="blBufferInventoryService" class="com.bl.core.bufferinventory.service.impl.DefaultBlBufferInventoryService" >
+		<property name="productDao" ref="productDao" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="modelService" ref="modelService" />
+		<property name="blStockLevelDao" ref="blStockLevelDao" />
+		<property name="productService" ref="productService" />
+	</bean>
+	
+	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
+		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
+	</bean>
 
 	<!--Custom  code for place order startegy -->
 	<alias alias="commercePlaceOrderStrategy" name="defaultBlCommercePlaceOrderStrategy"/>
@@ -1326,9 +1340,24 @@
 	<bean id="defaultBlCustomerAccountDao" class="com.bl.core.order.dao.impl.DefaultBlCustomerAccountDao" parent="defaultCustomerAccountDao">
 	</bean>
 	
+	<!--Cancel and Refund-->
+	<alias alias="blCustomCancelRefundDao" name="defaultBlCustomCancelRefundDao"/>
+	<bean id="defaultBlCustomCancelRefundDao" class="com.bl.core.services.cancelandrefund.dao.impl.DefaultBlCustomCancelRefundDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias alias="blCustomCancelRefundService" name="defaultBlCustomCancelRefundService"/>
+	<bean id="defaultBlCustomCancelRefundService" class="com.bl.core.services.cancelandrefund.service.impl.DefaultBlCustomCancelRefundService" >
+		<property name="blCustomCancelRefundDao" ref="blCustomCancelRefundDao"/>
+		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="paymentService" ref="paymentService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="returnService" ref="returnService"/>
+	</bean>
+	
 	<alias name="defaultBlBlackoutDatesDao" alias="blBlackoutDatesDao"/>
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
-	
 </beans>
