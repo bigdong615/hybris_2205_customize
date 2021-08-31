@@ -772,7 +772,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             cartModel.getEntries().forEach(cartEntry -> {
                 final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
                         cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
-                if (stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+                final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntry.getProduct().getManufacturerAID());
+
+                if ( !isAquatechProduct && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
                     isAvailable.set(Boolean.FALSE);
                     return;
                 }

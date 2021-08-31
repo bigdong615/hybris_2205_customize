@@ -2,6 +2,7 @@ package com.bl.facades.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
@@ -15,7 +16,6 @@ import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
-
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -49,7 +49,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.ProductTypeEnum;
 
 
 /**
@@ -599,7 +598,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			cartModel.getEntries().forEach(cartEntry -> {
 				final int cartQuantity = cartEntry.getQuantity().intValue();
 				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
-				if (availableStockQuantity < cartQuantity)
+				final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntry.getProduct().getManufacturerAID());
+
+				if ( !isAquatechProduct && availableStockQuantity < cartQuantity)
 				{
 					isAvailable.set(Boolean.FALSE);
 					return;

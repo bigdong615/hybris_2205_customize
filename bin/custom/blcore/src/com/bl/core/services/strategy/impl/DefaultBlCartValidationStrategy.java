@@ -100,7 +100,9 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		// Overall stock quantity in the cart
 		final long cartLevel = getCartLevel(cartEntryModel, cartModel);
 
-		if (Objects.isNull(stockLevel) || stockLevel.intValue() < cartLevel)
+		final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntryModel.getProduct().getManufacturerAID());
+
+		if (!isAquatechProduct && (Objects.isNull(stockLevel) || stockLevel.intValue() < cartLevel))
 		{
 			final CommerceCartModification modification = new CommerceCartModification();
 			modification.setStatusCode(CommerceCartModificationStatus.NO_STOCK);
