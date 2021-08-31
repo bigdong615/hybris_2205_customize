@@ -40,7 +40,7 @@
 		</c:choose>
 		</c:if>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
-   <c:if test="${product.productType ne 'GIFTCARD'}">
+   <c:if test="${product.productType ne 'GIFTCARD' && product.isDiscontinued ne 'true'}">
     <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
     		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                     <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">

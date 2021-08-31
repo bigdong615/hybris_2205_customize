@@ -567,8 +567,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
               .getBillingCharges().forEach((serialCode, listOfCharges) -> {
                 final boolean result = listOfCharges.stream().anyMatch(billing ->
-                    BooleanUtils.isFalse(billing.isBillPaid()) && !(("MISSING_CHARGE").equals(billing
-                        .getBillChargeType().getCode())));
+                    BooleanUtils.isFalse(billing.isBillPaid()));
                 if(result) {
                   isTaxBeApplied.set(Boolean.TRUE);
                   return;

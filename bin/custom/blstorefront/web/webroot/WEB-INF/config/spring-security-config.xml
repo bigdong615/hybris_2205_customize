@@ -285,7 +285,7 @@
  		<constructor-arg name="logoutSuccessHandler" ref="logoutSuccessHandler" />
  		<constructor-arg name="handlers">
  			<list>
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+				<bean class="com.bl.storefront.security.BlSecurityContextLogoutHandler" />
  				<ref bean="rememberMeServices" />
  			</list>
  		</constructor-arg>

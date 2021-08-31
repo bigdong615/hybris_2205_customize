@@ -45,17 +45,26 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			AND + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE +
 			" as sse} WHERE {sse:CODE} = (?active)}}) " +
-			AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
+			AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
 
 	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode";
 
+	private static final String SERIAL_AVAILABLE_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
+			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND + StockLevelModel
+			.RESERVEDSTATUS + "} = ?reservedStatus " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
+
+	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY_FROM_NON_BUFFER_INV = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
+			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
+
   private static final String SERIAL_STOCK_LEVELS_FOR_DATE_AND_CODES_QUERY =
       SELECT + ItemModel.PK + FROM
           + StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
           AND + StockLevelModel.SERIALPRODUCTCODE + "} IN (?serialProductCodes) " +
-          AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
+          AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
 
 	private static final String USED_GEAR_SERIAL_STOCK_LEVEL = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.SERIALPRODUCTCODE
@@ -69,13 +78,14 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
-			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) ";
+			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND
+			+ StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
 
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
 			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " +
-			AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
+			AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
 
 	/**
 	 * {@inheritDoc}
@@ -94,6 +104,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			final Set<WarehouseModel> warehouses = new HashSet<>(warehouseModels);
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
 
+			fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 			addQueryParameter(startDay, endDay, fQuery);
 
@@ -136,6 +147,31 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<StockLevelModel> findSerialStockLevelForDateFromNonBufferInv(final String serialProductCode,
+			final Date startDay, final Date endDay)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY_FROM_NON_BUFFER_INV);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+		fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
+
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial product {} with date between : {} and {}",
+					serialProductCode, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
+
+	/**
 	 * This method created to find the stock level for same serial from existing order to extending rental
 	 */
 	@Override
@@ -152,6 +188,30 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		addQueryParameter(startDay, endDay, fQuery);
 
 		final SearchResult result = getFlexibleSearchService().search(fQuery); // NOSONAR
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial product {} with date between : {} and {}",
+					serialProductCode, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<StockLevelModel> checkProductAvailabilityForCurrentDate(final String serialProductCode,
+			final Date startDay, final Date endDay) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_AVAILABLE_STOCK_LEVEL_FOR_DATE_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+		fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<StockLevelModel> stockLevels = result.getResult();
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
@@ -243,6 +303,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			addQueryParameter(startDate, endDate, fQuery);
 			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
 			fQuery.addQueryParameter("warehouses", warehouse);
+			fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
 			final List<StockLevelModel> stockLevels = result.getResult();
@@ -280,6 +341,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
       fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
       fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
       fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouse);
+			fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
 
       final List<StockLevelModel> stockLevels = (List<StockLevelModel>)(List<?>)getFlexibleSearchService().search(fQuery).getResult();
       if (CollectionUtils.isEmpty(stockLevels)) {
@@ -304,6 +366,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
     fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODES, serialProductCodes);
     addQueryParameter(startDay, endDay, fQuery);
     fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
 
     final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
     final List<StockLevelModel> stockLevels = result.getResult();
