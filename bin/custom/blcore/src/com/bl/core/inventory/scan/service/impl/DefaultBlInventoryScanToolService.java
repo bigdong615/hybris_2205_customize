@@ -802,7 +802,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
-
+			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
+				serialProduct.setIsBufferedInventory(Boolean.FALSE);
+			}
 			final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao.findSerialStockLevelForDate(
 					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
