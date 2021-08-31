@@ -502,7 +502,7 @@ UserGroup;pcminventorymanagergroup;;;;;;;;
 ;;;;SyncItemJob;+;;;
 ;;;;Type;+;;;
 ;;;;Product;+;+;+;+;+;
-;;;;BlProduct;+;-;-;-;-;
+;;;;BlProduct;+;+;+;+;+;
 ;;;;BlSerialProduct;+;+;+;+;+;
 ;;;;Category;+;+;+;+;+;
 ;;;;VariantType;+;+;+;+;+;

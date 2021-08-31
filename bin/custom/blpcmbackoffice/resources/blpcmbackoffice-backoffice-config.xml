@@ -120,7 +120,7 @@
 
 	<!--BlProduct editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="Product" type="BlProduct" component="editor-area" module="pcmbackoffice"
-		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcmbuyermanagergroup">
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcminventorymanagergroup,pcmbuyermanagergroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="hmc.essential">
@@ -154,6 +154,8 @@
 					<ea:attribute qualifier="usedGearVideosLink" />
 					<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="onSale"/>
+					<ea:attribute qualifier="bufferedInventoryPercentage"/>
+					<ea:attribute qualifier="bufferInvPercChangedManually"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -407,7 +409,7 @@
 
 	<!--BlSerial Product editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="pcmbackoffice"
-		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcminventorymanagergroup,pcmbuyermanagergroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="hmc.essential">
@@ -522,6 +524,7 @@
 					<ea:attribute qualifier="dirtyPriorityStatus"/>
 					<ea:attribute qualifier="testingStatus"/>
 					<ea:attribute qualifier="repairLogType"/>
+					<ea:attribute qualifier="isBufferedInventory"/>
 				</ea:section>
 				<ea:section name="hmc.product.order.invoice">
 					<ea:attribute qualifier="dateOfSale"/>
