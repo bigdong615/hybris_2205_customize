@@ -16,7 +16,7 @@
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 <c:set value="image coming soon" var="altText"/>
-<div class="page-loader-new-layout rental-lader">
+<div class="page-loader-new-layout rental-loader">
 	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
 		title="Loading.." id="new_loading_Img" />
 </div>
