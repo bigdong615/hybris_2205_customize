@@ -120,7 +120,7 @@
 
 	<!--BlProduct editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="Product" type="BlProduct" component="editor-area" module="pcmbackoffice"
-		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcmbuyermanagergroup">
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcminventorymanagergroup,pcmbuyermanagergroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="hmc.essential">
@@ -407,7 +407,7 @@
 
 	<!--BlSerial Product editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="pcmbackoffice"
-		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup,pcminventorymanagergroup,pcmbuyermanagergroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="hmc.essential">
