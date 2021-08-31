@@ -40,6 +40,17 @@ public interface BlStockLevelDao {
 			final Date startDate, final Date endDate);
 
 	/**
+	 * It finds the stock for the given sku and serial from start date to end date
+	 *
+	 * @param serialProductCode
+	 * @param startDate         the rental start date
+	 * @param endDate           the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findSerialStockLevelForDateFromNonBufferInv(final String serialProductCode,
+			final Date startDate, final Date endDate);
+
+	/**
 	 * It finds the stock for the used gear serial
 	 *
 	 * @param serialProductCode the serial product code
@@ -100,4 +111,13 @@ public interface BlStockLevelDao {
 	Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
 			final Date startDay, final Date endDay);
 
+	/**
+	 * It checks whether the product is available in present date to be marked as buffer inventory
+	 * @param serialProductCode
+	 * @param startDay
+	 * @param endDay
+	 * @return Collection<StockLevelModel> list of stock level model
+	 */
+	public Collection<StockLevelModel> checkProductAvailabilityForCurrentDate(final String serialProductCode,
+			final Date startDay, final Date endDay);
 }

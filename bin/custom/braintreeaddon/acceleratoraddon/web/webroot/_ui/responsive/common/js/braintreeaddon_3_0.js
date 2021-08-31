@@ -147,6 +147,27 @@ jQuery(document).ready(function ($) {
 	if($("#isAddressPresent") != '' && $("#isAddressPresent").val() != '' && $("#isAddressPresent").val() === 'true')
 	{
 		$("#billing-address-saved").addClass("show");
+        $('#billing-address-saved a').each(function() {            
+            var optionText = this.text;
+            var newOption = optionText.substring(0,58);
+            if(screen.width<600){
+                var newOption = optionText.substring(0,35);
+            }
+            if(optionText > optionText.substring(0,64)){
+                jQuery(this).text(newOption + '..');
+            }
+        }); 
+        
+        $('.for-credit-card a').each(function() {            
+            var optionText = this.text;
+            var newOption = optionText.substring(0,51);
+            if(screen.width<600){
+                var newOption = optionText.substring(0,35);
+            }
+            if(optionText > optionText.substring(0,59)){
+                jQuery(this).text(newOption + '..');
+            }
+        });
 	}
 	if($("#savePaymentInfo").length == 1)
 	{
@@ -1085,6 +1106,16 @@ $('ul.selectSavedBillingAddress').on('click','li',function(e){
 	var selectedBillingAddressId = $(this).find("a").data('id');
 	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
 	$("#savedAddresses").html(selectedBillingAddressFormattedData);
+    $('#savedAddresses').each(function() {            
+        var optionText = this.text;
+        var newOption = optionText.substring(0,42);
+        if(screen.width<600){
+            var newOption = optionText.substring(0,35);
+        }
+        if(optionText > optionText.substring(0,42)){
+            jQuery(this).text(newOption + '..');
+        }
+    });
 	$("#savedBillingAddressId").val(selectedBillingAddressId);
 	$("#billing-address-form-expand").removeClass("show");
 	$("#paymentAddNewAddress").show();
@@ -1100,10 +1131,11 @@ $('#submit_silentOrderPostForm').click(function () {
 	var savedPoForm = $("#submitSavedPoForm");
   var poNumber = savedPoForm.find('input[id="poNumber"]').val();
   var poNotes = savedPoForm.find('input[id="poNotes"]').val();
-  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {
+  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {     
   	var validationDiv = $(
-  			'<div class="notification notification-warning mb-4" />').text(
+  			'<div class="notification notification-error mb-4" />').text(
   			ACC.ccError.poNumber);
+    $('#poNumber').addClass('error');       
   	$('#validationMessage').append(validationDiv);
   } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
   	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
@@ -1213,7 +1245,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
     ACC.track.trackPaymentSelection('PayPal Payment');
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
-	  $('.page-loader-new-layout').hide();
+	  $('.page-loader-new-layout').hide();     
     var validationDiv = $('<div class="notification notification-error mb-4" />').text(ACC.ccError.poNumber);
     $('#poNumber').addClass('error'); 
     $('#validationMessage').append(validationDiv);

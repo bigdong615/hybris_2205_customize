@@ -261,7 +261,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
         return enterStep(model, redirectModel);
       }
     }
-    else{
+    else if(cartModel.isGiftCardOrder()){
 		final BrainTreePaymentInfoModel brainTreePaymentInfo =null;
     boolean isSuccess= blCheckoutFacade.createAuthorizationTransactionOfOrderForGiftCardPurchase(cartModel, BigDecimal.valueOf(cartModel.getTotalPrice()), submitForSettlement, brainTreePaymentInfo);
     BlLogger.logMessage(LOG, Level.DEBUG,String.valueOf(isSuccess));

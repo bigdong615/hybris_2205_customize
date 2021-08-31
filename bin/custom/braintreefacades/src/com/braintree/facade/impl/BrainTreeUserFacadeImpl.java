@@ -103,6 +103,9 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		final AddressModel newAddress = getModelService().create(AddressModel.class);
 		getAddressReversePopulator().populate(addressData, newAddress);
 
+		if(CollectionUtils.isEmpty(currentCustomer.getAddresses())){
+			currentCustomer.setName(newAddress.getFirstname());
+		}
 		// Store the address against the user
 		getCustomerAccountService().saveAddressEntry(currentCustomer, newAddress);
 
