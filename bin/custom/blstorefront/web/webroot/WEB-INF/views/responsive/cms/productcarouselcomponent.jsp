@@ -39,6 +39,7 @@
 										</c:if>
 									</c:otherwise>
 								</c:choose>
+								 <c:if test="${product.isDiscontinued ne 'true' }">
 							<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 							    <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                          <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
@@ -54,6 +55,7 @@
                          </c:choose>
                   </form>
                </sec:authorize>
+               </c:if>
 								<div class="card-slider splide">
 									<div class="splide__track">
 										<ul class="splide__list">
