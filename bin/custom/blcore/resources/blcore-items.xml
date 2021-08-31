@@ -2365,6 +2365,12 @@
             <itemtype code="AbstractOrder" autocreate="false" generate="false">
                 <description>Extending AbstractOrder type with additional attributes.</description>
                 <attributes>
+                    <attribute qualifier="originalOrderTotalAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total cost of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                     <attribute qualifier="totalWeight" type="java.lang.Double">
                         <description>The address where the order is to be shipped from.</description>
                         <persistence type="property" />
