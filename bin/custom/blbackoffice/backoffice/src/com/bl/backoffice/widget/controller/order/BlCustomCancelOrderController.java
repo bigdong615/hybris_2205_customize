@@ -293,12 +293,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void voidAuthorizedPaymentAndRefundGiftCard() {
         StringBuilder resultBuilder = new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED);
         if (this.globalCancelEntriesSelection.isChecked()) {
-            if(null != this.cancelOrder()) {
-                this.cancelFUllOrderByLoggingGiftCardTransactions(resultBuilder);
-            } else {
+            if(null == this.cancelOrder()) {
                 BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER);
                 Messagebox.show(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, BlCustomCancelRefundConstants.FAILURE,
                         Messagebox.OK, Messagebox.ERROR);
+            } else {
+                this.cancelFUllOrderByLoggingGiftCardTransactions(resultBuilder);
             }
         } else {
             if (this.partiallyFullOrderRefund() && null != this.cancelOrder()) {
