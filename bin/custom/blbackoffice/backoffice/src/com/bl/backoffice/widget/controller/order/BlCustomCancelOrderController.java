@@ -77,8 +77,6 @@ import static org.apache.log4j.Level.*;
  */
 public class BlCustomCancelOrderController extends DefaultWidgetController {
     private static final Logger LOGGER = Logger.getLogger(BlCustomCancelOrderController.class);
-    public static final String FOR_ORDER = " for order: {}";
-    public static final String FULL_ORDER_REFUND_AMOUNT_FOR_ORDER = "Full order refund amount: {} for order: {}";
 
     private OrderModel orderModel;
     private final List<String> cancelReasons = new ArrayList<>();
@@ -335,7 +333,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     this.getOrderModel().getGiftCardAmount()));
         }
 
-        BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, resultBuilder.toString() + FOR_ORDER, this.getOrderModel().getCode());
+        BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, resultBuilder.toString() + BlCustomCancelRefundConstants.FOR_ORDER,
+                this.getOrderModel().getCode());
         Messagebox.show(resultBuilder.toString(), BlCustomCancelRefundConstants.SUCCESS, Messagebox.OK, Messagebox.INFORMATION);
     }
 
@@ -422,7 +421,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                                           final double refundedAmount, final double otherPayment) {
         if ((totalAmt + refundedAmount) > otherPayment) {
             final double refundAmount = (totalAmt - (otherPayment - refundedAmount));
-            BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, FULL_ORDER_REFUND_AMOUNT_FOR_ORDER,
+            BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FULL_ORDER_REFUND_AMOUNT_FOR_ORDER,
                     refundAmount, this.getOrderModel().getCode());
             this.doFullRefund(refundAmount, captureEntry);
             if(this.getOrderModel().isGiftCardOrder()) {

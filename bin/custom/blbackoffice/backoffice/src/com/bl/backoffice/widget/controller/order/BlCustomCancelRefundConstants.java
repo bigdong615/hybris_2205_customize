@@ -72,6 +72,8 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String TOTAL_REFUND_AMOUNT_FOR_FULL_ORDER_REFUND_AFTER_PART_REFUND = "Total refund amount for full order refund after part refund for authorization for amount: {} for order: {} ";
     public static final String PART_TOTAL_REFUND_AMOUNT = "Part total refund amount: {} for order: {}";
     public static final String CREATE_RETURN_REQUEST_AND_REFUND_ENTRY = "Create ReturnRequest and RefundEntry for order: {}";
+    public static final String FOR_ORDER = " for order: {}";
+    public static final String FULL_ORDER_REFUND_AMOUNT_FOR_ORDER = "Full order refund amount: {} for order: {}";
 
     private BlCustomCancelRefundConstants() {}
 }
