@@ -1682,7 +1682,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (serial instanceof BlSerialProductModel)	{
 				final BlSerialProductModel blSerial = ((BlSerialProductModel) serial); // NOSONAR
 				blSerial.setOcLocation(getBlInventoryLocation().getCode());
-				blSerial.setSerialStatus(SerialStatusEnum.BOXED);
 				modelService.save(blSerial);
 			}
 		});
