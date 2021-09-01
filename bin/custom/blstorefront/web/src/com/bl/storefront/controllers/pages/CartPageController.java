@@ -556,10 +556,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		super.prepareDataForPage(model);
 
-		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
-		{
-			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
-		}
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 
 		// Because DefaultSiteConfigService.getProperty() doesn't set default boolean value for undefined property,
 		// this property key was generated to use Config.getBoolean() method

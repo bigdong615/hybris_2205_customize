@@ -40,8 +40,8 @@
 						<h1 class="mb-4">${product.displayName}</h1>
                       <c:choose>
                                         <c:when test="${allowAddToCart}">
-                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                              <div class="modal fade gift-card-add-t-cart-popup" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
                                               </div>
                                         </c:when>
                                         <c:otherwise>

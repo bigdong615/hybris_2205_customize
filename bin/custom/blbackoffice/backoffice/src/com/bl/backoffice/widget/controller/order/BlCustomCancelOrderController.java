@@ -63,11 +63,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
-import static com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent.Level.FAILURE;
-import static com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent.Level.SUCCESS;
 import static org.apache.log4j.Level.ERROR;
 import static org.apache.log4j.Level.INFO;
 
@@ -167,13 +164,34 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel inputObject) {
         modelService.refresh(inputObject);
+        if(inputObject.getOriginalOrderTotalAmount() == null || inputObject.getOriginalOrderTotalAmount() ==
+                BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
+            inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
+            modelService.save(inputObject);
+            modelService.refresh(inputObject);
+        }
 
         this.setOrderModel(inputObject);
         this.setAmountInTextBox(this.getOrderModel());
 
-        populateOrderCancelReasons(this.getLocale());
+        this.getEnumerationService().getEnumerationValues(CancelReason.class).forEach(reason ->
+                this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
+        this.globalCancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
+
         this.orderEntriesToCancel = new HashSet<>();
-        populateOrderCancellableEntries();
+        if (CollectionUtils.isNotEmpty(this.orderModel.getEntries())) {
+            this.orderCancellableEntries = this.orderModel.getEntries().stream().collect(
+                    Collectors.toMap(entryModel -> entryModel, entryModel -> ((OrderEntryModel) entryModel).getQuantityPending(),
+                            (a, b) -> b));
+        }
+        if (!this.orderCancellableEntries.isEmpty()) {
+            this.orderCancellableEntries.forEach((entry, cancellableQty) ->
+                    this.orderEntriesToCancel.add(new BlOrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
+                            this.determineDeliveryMode(entry), 0L, false, false,
+                            (long) blCustomCancelRefundService.getTotalRefundedAmountOnOrderEntry(blCustomCancelRefundService
+                                    .getAllRefundEntriesForOrderEntry(String.valueOf(entry.getEntryNumber()), this.orderModel.getCode(),
+                                            Boolean.TRUE)))));
+        }
 
         this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesToCancel));
         this.getOrderEntries().renderAll();
@@ -195,7 +213,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     @ViewEvent(componentID = BlCustomCancelRefundConstants.CONFIRM_CANCELLATION, eventName = BlCustomCancelRefundConstants.ON_CLICK)
     public void confirmCancellation() {
-        if (!validateOrderEnteredQuantityAmountReason()) {
+        if (Boolean.FALSE.equals(validateOrderEnteredQuantityAmountReason())) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_MSG),
                     this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_TITLE) + StringUtils.SPACE
                             + this.getOrderModel().getCode(), new Button[]{Button.NO, Button.YES},
@@ -209,19 +227,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param obj event
      */
     private void processCancelAndRefund(final Event obj) {
-        BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELLING_THE_ORDER_FOR_CODE,
-                this.getOrderModel().getCode());
         if (Button.YES.event.equals(obj.getName())) {
-            try {
-                final OrderCancelRequest orderCancelRequest = this.buildCancelRequest();
-                if (CollectionUtils.isNotEmpty(this.cancelAndRefundEntries)) {
-                    this.populateAndRefundOnCancelResult(this.getOrderCancelService().requestOrderCancel(orderCancelRequest,
-                            this.getUserService().getCurrentUser()));
-                }
-            } catch (final CancellationException | IllegalArgumentException | OrderCancelException e) {
-                BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Error while cancelling the order!!" + e.getMessage());
-                Messagebox.show("Error while cancelling the order!!" + e.getMessage(),
-                        "Order cancel error!!", Messagebox.OK, Messagebox.ERROR);
+            BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELLING_THE_ORDER_FOR_CODE,
+                    this.getOrderModel().getCode());
+            if (this.buildCancelRequest() != null) {
+                this.refundProcess(blCustomCancelRefundService.getCapturedPaymentTransaction(this.getOrderModel()));
             }
 
             final OrderModel order = this.getModelService().get(this.getOrderModel().getPk());
@@ -232,76 +242,96 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
 
     /**
-     * This method will populate the reponse of cancel result and do refund accordingly
+     * process the refund
      *
-     * @param orderCancelRecordEntry entry
+     * @param captureEntry capture transaction details
      */
-    private void populateAndRefundOnCancelResult(final OrderCancelRecordEntryModel orderCancelRecordEntry) {
-        switch (orderCancelRecordEntry.getCancelResult()) {
-            case FULL:
-            case PARTIAL:
-                this.refundProcess();
-                this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, SUCCESS,
-                        this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_SUCCESS));
-                break;
-
-            case DENIED:
-                this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, FAILURE,
-                        this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR));
-                BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR));
-                Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR),
-                        "Something went wrong!!", Messagebox.OK, Messagebox.ERROR);
+    private void refundProcess(final Optional<PaymentTransactionEntryModel> captureEntry) {
+        if (BooleanUtils.isTrue(this.getOrderModel().getIsCaptured()) && captureEntry.isPresent()) {
+            this.doRefund(this.globalCancelEntriesSelection.isChecked(), captureEntry.get());
+        } else {
+            Map<String, String> responseMap = new HashMap<>();
+            final Collection<PaymentTransactionEntryModel> allVoidTransactionModels = braintreeBackofficeOrderFacade
+                    .getVoidableTransactions(this.getOrderModel());
+            if (CollectionUtils.isNotEmpty(allVoidTransactionModels)) {
+                responseMap = this.executeVoidOnTransactions(allVoidTransactionModels.stream().filter(voidEntry ->
+                        (voidEntry.getAmount().doubleValue()) > BlInventoryScanLoggingConstants.ONE).collect(Collectors.toList()));
+            }
+            if(Boolean.TRUE.equals(responseMap.containsKey("FAILED"))) {
+                BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Failed to cancel due to payment gateway error!!");
+                Messagebox.show("Failed to cancel due to payment gateway error!!", "FAILURE!!", Messagebox.OK, Messagebox.ERROR);
+            } else {
+                this.voidAuthorizedPaymentAndRefundGiftCard();
+            }
         }
     }
 
     /**
-     * process the refund
+     * execute void
+     *
+     * @param allVoidTransactionModels entries
+     * @return responseMap
      */
-    private void refundProcess() {
-        if (BooleanUtils.isTrue(this.getOrderModel().getIsCaptured())) {
-            final Optional<PaymentTransactionEntryModel> captureEntry = blCustomCancelRefundService
-                    .getCapturedPaymentTransaction(this.getOrderModel());
-            if (captureEntry.isPresent()) {
-                this.doRefund(this.globalCancelEntriesSelection.isChecked(), captureEntry.get());
-            } else {
-                this.voidAuthorizedPaymentAndRefundGiftCard();
-            }
-        } else {
-            this.voidAuthorizedPaymentAndRefundGiftCard();
+    private Map<String, String> executeVoidOnTransactions(final Collection<PaymentTransactionEntryModel> allVoidTransactionModels) {
+        final Map<String, String> responseMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(allVoidTransactionModels)) {
+            allVoidTransactionModels.forEach(voidTransaction -> {
+                try {
+                    braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
+                } catch (final BraintreeErrorException e) {
+                    responseMap.put("FAILED", e.getMessage());
+                }
+            });
         }
+        return responseMap;
     }
 
     /**
      * This method will do void and calculate gift card amount
+     *
      */
     private void voidAuthorizedPaymentAndRefundGiftCard() {
-        StringBuilder stringBuilder = new StringBuilder("Successfully cancelled");
-        final Collection<PaymentTransactionEntryModel> allVoidTransactionModels = braintreeBackofficeOrderFacade
-                .getVoidableTransactions(this.getOrderModel());
-        final boolean[] status = {Boolean.FALSE};
-        if (CollectionUtils.isNotEmpty(allVoidTransactionModels)) {
-            executeVoidOnTransactions(stringBuilder, allVoidTransactionModels, status);
-        }
+        StringBuilder resultBuilder = new StringBuilder("Successfully cancelled");
         if (this.globalCancelEntriesSelection.isChecked()) {
             final double giftCardAmount = this.deductGiftCartAmount(BlInventoryScanLoggingConstants.ZERO);
             if (giftCardAmount > BlInventoryScanLoggingConstants.ZERO) {
-                this.logAmountForGiftCardTransactions((double) BlInventoryScanLoggingConstants.ZERO, String.valueOf(
-                        this.getOrderModel().getGiftCardAmount()));
-                stringBuilder.append("!! Please create gift card with: " + this.getOrderModel().getGiftCardAmount());
+                this.cancelFUllOrderByLoggingGiftCardTransactions(resultBuilder);
             }
         } else {
-            partiallyFullOrderRefund(stringBuilder);
+            if (this.partiallyFullOrderRefund()) {
+                resultBuilder.append(" and captured payment with remaining amount!!");
+                BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, resultBuilder.toString());
+                Messagebox.show(resultBuilder.toString(), BlCustomCancelRefundConstants.SUCCESS, Messagebox.OK, Messagebox.INFORMATION);
+            } else {
+                BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Failed to cancel order as error occurred during authorization");
+                Messagebox.show("Failed to cancel order as error occurred during authorization", BlCustomCancelRefundConstants.FAILURE,
+                        Messagebox.OK, Messagebox.ERROR);
+            }
         }
-        BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, stringBuilder.toString());
-        Messagebox.show(stringBuilder.toString(), "Success!!", Messagebox.OK, Messagebox.INFORMATION);
+
     }
 
     /**
-     * refund for full order
+     * cancel full order with void any existing auth entry and log gift card transactions if any
      *
-     * @param stringBuilder result
+     * @param resultBuilder message string
      */
-    private void partiallyFullOrderRefund(final StringBuilder stringBuilder) {
+    private void cancelFUllOrderByLoggingGiftCardTransactions(StringBuilder resultBuilder) {
+        if(this.cancelOrder() != null) {
+            this.logAmountForGiftCardTransactions(BlInventoryScanLoggingConstants.ZERO, String.valueOf(
+                    this.getOrderModel().getGiftCardAmount()));
+            resultBuilder.append("!! Please create gift card with: " + this.getOrderModel().getGiftCardAmount());
+            BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, resultBuilder.toString());
+            Messagebox.show(resultBuilder.toString(), "Success!!", Messagebox.OK, Messagebox.INFORMATION);
+        }
+    }
+
+    /**
+     * refund for full order which is not captured
+     *
+     * @return new auth and capture status
+     */
+    private boolean partiallyFullOrderRefund() {
         double totalAmountToRefund = BlInventoryScanLoggingConstants.ZERO;
         if (CollectionUtils.isNotEmpty(this.cancelAndRefundEntries)) {
             for (final BlOrderEntryToCancelDto orderEntryToCancelDto : this.cancelAndRefundEntries) {
@@ -311,60 +341,29 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
                     .getQuantityAvailableToCancel()))), (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
                     ? orderEntryModel.getGearGuardWaiverPrice() : orderEntryModel.getGearGuardProFullWaiverPrice()));
-                if (((double) orderEntryToCancelDto.getAmount()) <= totAmount) {
-                    totalAmountToRefund = totalAmountToRefund + ((double) orderEntryToCancelDto.getAmount());
+                if (orderEntryToCancelDto.getAmount() <= totAmount) {
+                    totalAmountToRefund = totalAmountToRefund + orderEntryToCancelDto.getAmount();
                 }
             }
         }
-        if (brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
-                this.getOrderModel().getTotalPrice() - totalAmountToRefund), Boolean.TRUE, null)) {
-            stringBuilder.append(" and captured payment with remaining amount!!");
-        } else {
-            stringBuilder.append(" but error occurred during captured payment with remaining amount!!");
-        }
+        return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
+                this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund).setScale(BlInventoryScanLoggingConstants.TWO,
+                RoundingMode.HALF_EVEN), Boolean.FALSE, null);
     }
 
     /**
      * track og gift card transactions
      *
-     * @param zero value
-     * @param s string
+     * @param amountAvailable value
+     * @param amountUsedFromGC string
      */
-    private void logAmountForGiftCardTransactions(final double zero, final String s) {
-        this.getOrderModel().setGiftCardAvailableAmount(zero);
+    private void logAmountForGiftCardTransactions(final double amountAvailable, final String amountUsedFromGC) {
+        this.getOrderModel().setGiftCardAvailableAmount(amountAvailable);
         final List<String> gcTransactions = new ArrayList<>();
-        gcTransactions.add(s);
+        gcTransactions.add(amountUsedFromGC);
         this.getOrderModel().setGiftCardAmountTransactions(gcTransactions);
         modelService.save(this.getOrderModel());
-    }
-
-    /**
-     * execute void
-     *
-     * @param stringBuilder string
-     * @param allVoidTransactionModels entries
-     * @param status result
-     */
-    private void executeVoidOnTransactions(final StringBuilder stringBuilder, final Collection<PaymentTransactionEntryModel> allVoidTransactionModels,
-                                           final boolean[] status) {
-        final Collection<PaymentTransactionEntryModel> voidTransactionModels = allVoidTransactionModels.stream()
-                .filter(voidEntry -> (voidEntry.getAmount().doubleValue()) > BlInventoryScanLoggingConstants.ONE)
-                .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(voidTransactionModels)) {
-            voidTransactionModels.forEach(voidTransaction -> {
-                try {
-                    braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
-                } catch (BraintreeErrorException e) {
-                    status[0] = Boolean.TRUE;
-                    BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Error while void the transaction", e.getMessage());
-                    Messagebox.show("Error while void the transaction: " + e.getMessage(), "Void transaction Error!!", Messagebox.OK,
-                            Messagebox.ERROR);
-                }
-            });
-            if (!status[0]) {
-                stringBuilder.append(" and voided order");
-            }
-        }
+        modelService.refresh(this.getOrderModel());
     }
 
     /**
@@ -375,20 +374,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void doRefund(final boolean fullRefund, final PaymentTransactionEntryModel captureEntry) {
         if (Boolean.TRUE.equals(fullRefund)) {
-            final double globalTax = this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() :
-                    BlInventoryScanLoggingConstants.ZERO;
-            final double globalWaiver = this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost() :
-                    BlInventoryScanLoggingConstants.ZERO;
-            final double globalShipping = this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
-                    BlInventoryScanLoggingConstants.ZERO;
-            final double totalRefundAmount = blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(this.getOrderModel()
-                    .getSubtotal(), globalTax, globalWaiver, globalShipping, Double.parseDouble(this.globalTotalRefundAmount.getValue()));
-            double totalOrderRefundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
-            if (totalOrderRefundedAmount == BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
-                doFullRefund(totalRefundAmount);
-            } else {
-                this.doFullRefundWithPart(captureEntry, totalRefundAmount, (totalRefundAmount + totalOrderRefundedAmount),
-                        this.getOrderModel().getTotalPrice());
+            final double totalAmt = this.getTotalRefundAmount();
+            final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
+            final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - (this.getOrderModel().isGiftCardOrder()
+                    ? this.getOrderModel().getGiftCardAmount() : BlInventoryScanLoggingConstants.ZERO);
+            if (refundedAmount < otherPayment) {
+                this.doFullRefundCalculations(captureEntry, totalAmt, refundedAmount, otherPayment);
             }
         } else {
             this.partialRefund(this.cancelAndRefundEntries, captureEntry);
@@ -396,76 +387,76 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
 
     /**
-     * perform part refund
+     * calculations for full refund
      *
      * @param captureEntry entry
-     * @param totalRefundAmount amount
-     * @param v status
-     * @param totalPrice price
+     * @param totalAmt amt
+     * @param refundedAmount amt
+     * @param otherPayment amt
      */
-    private void doFullRefundWithPart(final PaymentTransactionEntryModel captureEntry, final double totalRefundAmount,
-                                      final double v, final Double totalPrice) {
-        if ((v) <= totalPrice) {
-            this.doPartRefund(totalRefundAmount, captureEntry);
-        } else {
-            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
-                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
-        }
-    }
-
-    /**
-     * full refund
-     *
-     * @param totalRefundAmount amount
-     */
-    private void doFullRefund(final double totalRefundAmount) {
-        if (totalRefundAmount <= this.getOrderModel().getTotalPrice()) {
-            this.fullRefund(this.deductGiftCartAmount(totalRefundAmount));
+    private void doFullRefundCalculations(final PaymentTransactionEntryModel captureEntry, final double totalAmt,
+                                          final double refundedAmount, final double otherPayment) {
+        if ((totalAmt + refundedAmount) > otherPayment) {
+            final double refundAmount = (totalAmt - (otherPayment - refundedAmount));
+            this.doFullRefund(refundAmount, captureEntry);
             if(this.getOrderModel().isGiftCardOrder()) {
-                logAmountForGiftCardTransactions(Double.parseDouble(String.valueOf(BlInventoryScanLoggingConstants.ZERO)),
-                        String.valueOf(this.getOrderModel().getGiftCardAmount()));
+                this.logAmountForGiftCardTransactions((this.getOrderModel().getGiftCardAmount() - (totalAmt - refundAmount)),
+                        String.valueOf((totalAmt - refundAmount)));
             }
         } else {
-            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
-                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
+            this.doFullRefund(totalAmt, captureEntry);
         }
     }
 
     /**
      * full refund
      *
-     * @param refundAmount amount
+     * @param totalRefundAmount amount
      */
-    private void fullRefund(final double refundAmount) {
-        try {
-            final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(
-                    transactionId.getValue());
-            request.setAmount(BigDecimal.valueOf(refundAmount));
-            request.setOrderId(this.getOrderModel().getCode());
-            request.setTransactionId(transactionId.getValue());
-            final BrainTreeRefundTransactionResult result =
-                    brainTreePaymentService.refundTransaction(request);
-            if (result.isSuccess()) {
-                final Map<AbstractOrderEntryModel, Long> returnableEntries = returnService.getAllReturnableEntries(this.getOrderModel());
-                if (MapUtils.isNotEmpty(returnableEntries)) {
-                    final ReturnRequestModel returnRequestModel = returnService.createReturnRequest(this.getOrderModel());
-                    returnableEntries.forEach((orderEntry, qty) -> {
-                        final RefundEntryModel refundEntry = returnService.createRefund(returnRequestModel, orderEntry,
-                                "Refund Notes while full refund", qty, ReturnAction.IMMEDIATE, RefundReason.WRONGDESCRIPTION);
-                        refundEntry.setAmount(BigDecimal.valueOf(orderEntry.getTotalPrice()));
-                        modelService.save(refundEntry);
-                        returnRequestModel.setSubtotal(
-                                returnRequestModel.getReturnEntries().stream().filter(entry -> entry instanceof RefundEntryModel)
-                                        .map(refund -> ((RefundEntryModel) refund).getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add));
-                        modelService.save(request);
-                    });
+    private void doFullRefund(final double totalRefundAmount, final PaymentTransactionEntryModel captureEntry) {
+        if (totalRefundAmount <= this.getOrderModel().getOriginalOrderTotalAmount()) {
+            try {
+                final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(transactionId.getValue());
+                request.setAmount(BigDecimal.valueOf(this.deductGiftCartAmount(totalRefundAmount) < BlCustomCancelRefundConstants.ZERO
+                        ? -this.deductGiftCartAmount(totalRefundAmount) : this.deductGiftCartAmount(totalRefundAmount))
+                        .setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
+                request.setOrderId(this.getOrderModel().getCode());
+                request.setTransactionId(captureEntry.getRequestId());
+                final BrainTreeRefundTransactionResult result = brainTreePaymentService.refundTransaction(request);
+                if (result.isSuccess()) {
+                    final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.cancelOrder();
+                    this.fullOrderCancelAndLogReturnEntries(orderCancelRecordEntryModel);
+
+                    BlLogger.logMessage(LOGGER, Level.DEBUG, "Cancel and Refund Txn has been initiated successfully.");
+                    Messagebox.show("Order cancelled and Refund Amount has been initiated successfully");
                 }
-                BlLogger.logMessage(LOGGER, Level.DEBUG, "Refund Txn has been initiated successfully.");
-                Messagebox.show("Order cancelled and Refund Amount has been initiated");
+            }  catch (final AdapterException e) {
+                BlLogger.logMessage(LOGGER, Level.DEBUG, "Order can not be cancel as failed to initiate refund.");
+                Messagebox.show("Order can not be cancel as failed to initiate refund.", "Failure!!", Messagebox.OK, Messagebox.ERROR);
             }
-        } catch (final AdapterException e) {
-            BlLogger.logMessage(LOGGER, Level.DEBUG, "Failed to initiate refund.");
-            Messagebox.show("Order cancelled and Refund Amount has been initiated");
+        }
+    }
+
+    /**
+     * full cancel and refund logs
+     *
+     * @param orderCancelRecordEntryModel cancelModel
+     */
+    private void fullOrderCancelAndLogReturnEntries(final OrderCancelRecordEntryModel orderCancelRecordEntryModel) {
+        if(orderCancelRecordEntryModel != null) {
+            final Map<AbstractOrderEntryModel, Long> returnableEntries = returnService.getAllReturnableEntries(this.getOrderModel());
+            if (MapUtils.isNotEmpty(returnableEntries)) {
+                final ReturnRequestModel returnRequestModel = returnService.createReturnRequest(this.getOrderModel());
+                returnableEntries.forEach((orderEntry, qty) -> {
+                    final RefundEntryModel refundEntry = returnService.createRefund(returnRequestModel, orderEntry,
+                            "Refund Notes while full refund", qty, ReturnAction.IMMEDIATE, RefundReason.WRONGDESCRIPTION);
+                    refundEntry.setAmount(BigDecimal.valueOf(orderEntry.getTotalPrice()));
+                    modelService.save(refundEntry);
+                    returnRequestModel.setSubtotal(returnRequestModel.getReturnEntries().stream().filter(entry ->
+                            entry instanceof RefundEntryModel).map(refund -> ((RefundEntryModel) refund).getAmount())
+                            .reduce(BigDecimal.ZERO, BigDecimal::add));
+                });
+            }
         }
     }
 
@@ -480,13 +471,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (CollectionUtils.isNotEmpty(orderEntryToCancelDtos)) {
             for (final BlOrderEntryToCancelDto orderEntryToCancelDto : orderEntryToCancelDtos) {
                 final AbstractOrderEntryModel orderEntryModel = orderEntryToCancelDto.getOrderEntry();
-                final double csAmount = (double) orderEntryToCancelDto.getAmount();
                 final double totAmount = blCustomCancelRefundService.getTotalAmountPerEntry(Math.toIntExact(orderEntryToCancelDto
-                                .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
+                        .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
                         orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
-                                .getQuantityAvailableToCancel()))), (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
-                                ? orderEntryModel.getGearGuardWaiverPrice() : orderEntryModel.getGearGuardProFullWaiverPrice()));
-                this.doFullRefundWithPart(captureEntry, csAmount, csAmount, totAmount);
+                        .getQuantityAvailableToCancel()))), (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
+                        ? orderEntryModel.getGearGuardWaiverPrice() : orderEntryModel.getGearGuardProFullWaiverPrice()));
+                this.doPartRefundCalculation(Math.min(orderEntryToCancelDto.getAmount(), totAmount), captureEntry, orderEntryModel);
             }
         }
     }
@@ -497,55 +487,89 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param captureEntry model
      * @param totalAmt     refund amount
      */
-    private void doPartRefund(final double totalAmt, final PaymentTransactionEntryModel captureEntry) {
-        if (totalAmt > BlInventoryScanLoggingConstants.ZERO) {
-            StringBuilder stringSuccess = new StringBuilder("Successfully cancelled");
-            final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
-            final double otherPayment = this.getOrderModel().getTotalPrice() - (this.getOrderModel().isGiftCardOrder()
-                    ? this.getOrderModel().getGiftCardAmount() : BlInventoryScanLoggingConstants.ZERO);
-            if (refundedAmount < otherPayment && (totalAmt + refundedAmount) > otherPayment) {
-                partRefundAndLogResponse((totalAmt - ((otherPayment - refundedAmount) - totalAmt)), captureEntry, stringSuccess);
-            } else if(refundedAmount > otherPayment){
-                    partRefundAndLogResponse(totalAmt, captureEntry, stringSuccess);
+    private void doPartRefundCalculation(final double totalAmt, final PaymentTransactionEntryModel captureEntry,
+                              final AbstractOrderEntryModel orderEntryModel) {
+        final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
+        final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - (this.getOrderModel().isGiftCardOrder()
+                ? this.getOrderModel().getGiftCardAmount() : BlInventoryScanLoggingConstants.ZERO);
+        if (refundedAmount < otherPayment) {
+            if ((totalAmt + refundedAmount) > otherPayment) {
+                final double refundAmount = (totalAmt - (otherPayment - refundedAmount));
+                this.partRefundAndLogResponse(refundAmount, captureEntry, orderEntryModel);
+                if(this.getOrderModel().isGiftCardOrder()) {
+                    this.logAmountForGiftCardTransactions((this.getOrderModel().getGiftCardAmount() - (totalAmt - refundAmount)),
+                            String.valueOf((totalAmt - refundAmount)));
+                }
             } else {
-                this.logAmountForGiftCardTransactions((this.getOrderModel().getGiftCardAmount() - totalAmt), String.valueOf(totalAmt));
+                this.partRefundAndLogResponse(totalAmt, captureEntry, orderEntryModel);
             }
         }
     }
 
     /**
-     * log response
+     * cancel order/entry and return result
      *
-     * @param totalAmt amount
+     * @return true if cancellation success
+     */
+    private OrderCancelRecordEntryModel cancelOrder() {
+        try {
+            final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.getOrderCancelService().requestOrderCancel(
+                    this.buildCancelRequest(), this.getUserService().getCurrentUser());
+            if(orderCancelRecordEntryModel != null && (orderCancelRecordEntryModel.getCancelResult().getCode().equals(
+                    BlCustomCancelRefundConstants.FULL) || orderCancelRecordEntryModel.getCancelResult().getCode().equals(
+                    BlCustomCancelRefundConstants.PARTIAL))) {
+                return orderCancelRecordEntryModel;
+            }
+        } catch (final OrderCancelException e) {
+            BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR);
+            Messagebox.show(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR, BlCustomCancelRefundConstants.FAILURE,
+                    Messagebox.OK, Messagebox.ERROR);
+        }
+        return null;
+    }
+
+    /**
+     * refund and log response
+     *
+     *  @param totalAmt amount
      * @param captureEntry entry
-     * @param stringSuccess success
+     * @param orderEntry orderEntry
      */
     private void partRefundAndLogResponse(final double totalAmt, final PaymentTransactionEntryModel captureEntry,
-                                          final StringBuilder stringSuccess) {
+                                          final AbstractOrderEntryModel orderEntry) {
         try {
-            if (this.partRefund(totalAmt, captureEntry)) {
-                stringSuccess.append(" and refunded!! Please create gift card with amount: " + totalAmt);
+            final BrainTreeResponseResultData refundResult = braintreeBackofficePartialRefundFacade.partialRefundTransaction(
+                    this.getOrderModel(), captureEntry, BigDecimal.valueOf((totalAmt < BlInventoryScanLoggingConstants.ZERO) ? -totalAmt
+                            : totalAmt).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
+            if (refundResult.isSuccess() && this.cancelOrder() != null) {
+                StringBuilder stringSuccess = new StringBuilder("Successfully cancelled");
+                //this.partialCancelAndRefundEntryLog(orderEntry);
+                stringSuccess.append(" and refunded!!");
+                BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, stringSuccess.toString());
+                Messagebox.show(stringSuccess.toString(), BlCustomCancelRefundConstants.SUCCESS, Messagebox.OK, Messagebox.INFORMATION);
             }
         } catch (final BraintreeErrorException e) {
-            stringSuccess.append(" but failed to refund!! Please create gift card with amount: " + totalAmt);
+            BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, "Order can not be cancel as failed to refund!!");
+            Messagebox.show("Order can not be cancel as failed to refund!!", BlCustomCancelRefundConstants.FAILURE,
+                    Messagebox.OK, Messagebox.ERROR);
         }
-        BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, stringSuccess.toString());
-        Messagebox.show(stringSuccess.toString(), "Success!!", Messagebox.OK, Messagebox.INFORMATION);
     }
 
     /**
-     * This method will refund amount in part
+     * create refund entry and return request
      *
-     * @param totalAmt     amount
-     * @param captureEntry entry
-     * @return result
-     * @throws BraintreeErrorException if failed
+     * @param orderEntry entry
      */
-    private boolean partRefund(final double totalAmt, final PaymentTransactionEntryModel captureEntry) throws BraintreeErrorException {
-        final BrainTreeResponseResultData refundResult = braintreeBackofficePartialRefundFacade.
-                partialRefundTransaction(this.getOrderModel(), captureEntry, BigDecimal.valueOf(totalAmt)
-                        .setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
-        return refundResult.isSuccess();
+    private void partialCancelAndRefundEntryLog(final AbstractOrderEntryModel orderEntry) {
+        //TODO: This is returning false everytime
+        final ReturnRequestModel returnRequestModel = returnService.createReturnRequest(this.getOrderModel());
+        final RefundEntryModel refundEntry = returnService.createRefund(returnRequestModel, orderEntry,
+                "Refund Notes while full refund", orderEntry.getQuantity(), ReturnAction.IMMEDIATE, RefundReason.WRONGDESCRIPTION);
+        refundEntry.setAmount(BigDecimal.valueOf(orderEntry.getTotalPrice()));
+        modelService.save(refundEntry);
+        returnRequestModel.setSubtotal(returnRequestModel.getReturnEntries().stream().filter(entry ->
+                entry instanceof RefundEntryModel).map(refund -> ((RefundEntryModel) refund).getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     /**
@@ -559,6 +583,22 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
 
     /**
+     * calculate total refund amount
+     *
+     * @return
+     */
+    private double getTotalRefundAmount() {
+        final double globalTax = this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() :
+                BlInventoryScanLoggingConstants.ZERO;
+        final double globalWaiver = this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost() :
+                BlInventoryScanLoggingConstants.ZERO;
+        final double globalShipping = this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
+                BlInventoryScanLoggingConstants.ZERO;
+        return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(this.getOrderModel()
+                .getSubtotal(), globalTax, globalWaiver, globalShipping, Double.parseDouble(this.globalTotalRefundAmount.getValue()));
+    }
+
+    /**
      * Build cancel request order cancel request.
      *
      * @return the order cancel request
@@ -569,15 +609,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             refundEntries = new ArrayList<>();
             final List<OrderCancelEntry> orderCancelEntries = new ArrayList<>();
             this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).forEach(
-                    entry -> {
-                        final BlOrderEntryToCancelDto orderEntry = ((Row) entry).getValue();
-                        if (orderEntry.getQuantityAvailableToCancel() > BlCustomCancelRefundConstants.ZERO) {
-                            cancelAndRefundEntries.add(orderEntry);
-                            this.createOrderCancelEntry(orderCancelEntries, ((Row) entry).getValue());
-                        } else {
-                            refundEntries.add(orderEntry);
-                        }
-                    });
+                entry -> {
+                    final BlOrderEntryToCancelDto orderEntry = ((Row) entry).getValue();
+                    if (orderEntry.getQuantityAvailableToCancel() > BlCustomCancelRefundConstants.ZERO) {
+                        cancelAndRefundEntries.add(orderEntry);
+                        this.createOrderCancelEntry(orderCancelEntries, ((Row) entry).getValue());
+                    } else {
+                        refundEntries.add(orderEntry);
+                    }
+                });
             if (CollectionUtils.isNotEmpty(orderCancelEntries)) {
                 final OrderCancelRequest orderCancelRequest = new OrderCancelRequest(this.getOrderModel(), orderCancelEntries);
                 orderCancelRequest.setCancelReason(this.matchingComboboxCancelReason(this.globalCancelReasons.getValue()).orElse(null));
@@ -608,16 +648,21 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private boolean validateOrderEnteredQuantityAmountReason() {
         if (this.globalCancelEntriesSelection.isChecked()) {
-            this.validateGlobalSelection();
-        } else {
-            final Optional<Component> checkedEntry = this.getOrderEntriesGridRows().stream().filter(row -> Boolean.TRUE.equals(((Checkbox) row.getChildren().iterator()
-                    .next()).isChecked())).findFirst();
-            if (!checkedEntry.isPresent()) {
-                Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE),
-                        this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE_SELECTION), Messagebox.OK, Messagebox.ERROR);
+            if(Boolean.TRUE.equals(this.validateGlobalSelection())) {
                 return Boolean.TRUE;
             }
-            this.validateEntries();
+        } else {
+            final Optional<Component> checkedEntry = this.getOrderEntriesGridRows().stream().filter(row -> Boolean.TRUE
+                    .equals(((Checkbox) row.getChildren().iterator().next()).isChecked())).findFirst();
+            if (!checkedEntry.isPresent()) {
+                Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE),
+                        this.getLabel(BlCustomCancelRefundConstants.CANCEL_CONFIRM_MISSING_SELECT_LINE_SELECTION),
+                        Messagebox.OK, Messagebox.ERROR);
+                return Boolean.TRUE;
+            }
+            if(Boolean.TRUE.equals(this.validateEntries())) {
+                return Boolean.TRUE;
+            }
         }
         return Boolean.FALSE;
     }
@@ -664,9 +709,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private boolean validateGlobalSelection() {
         final double amount = Double.parseDouble(this.globalTotalRefundAmount.getValue());
-        final double orderTotal = this.getOrderModel().getTotalPrice();
+        final double orderTotal = this.getOrderModel().getOriginalOrderTotalAmount();
         final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
-        if ((amount + refundedAmount) > orderTotal) {
+        if (amount > orderTotal) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
             return Boolean.TRUE;
@@ -691,16 +736,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private boolean getValidateRefundAmountMessage(final Component row, final int cancelQty, final int cancellableQty) {
         final double amount = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.ELEVEN)).getRawValue()));
-        final double amountAlreadyRefunded = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.EIGHT)).getRawValue()));
+        //final double amountAlreadyRefunded = Double.parseDouble(String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.EIGHT)).getRawValue()));
 
         final double totalProductPrice = this.getTotalProductPriceForCancelQuantity(row, cancelQty, cancellableQty);
         if (amount <= BlCustomCancelRefundConstants.ZERO) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.ZERO_ORDER_AMOUNT),
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
             return Boolean.TRUE;
-        } else if (amount > totalProductPrice || (amount + amountAlreadyRefunded) > totalProductPrice ||
-                (amount + BigDecimal.valueOf(Double.parseDouble(this.totalRefundedAmount.getValue())).setScale(
-                        BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()) > this.getOrderModel().getTotalPrice()) {
+        } else if (amount > totalProductPrice || (amount + BigDecimal.valueOf(Double.parseDouble(this.totalRefundedAmount.getValue()))
+                .setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()) > this.getOrderModel().getOriginalOrderTotalAmount()) {
             Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
                     this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
             return Boolean.TRUE;
@@ -723,23 +767,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         return blCustomCancelRefundService.getTotalAmountPerEntry(cancelQty, cancellableQty, Double.parseDouble(
                 String.valueOf(((InputElement) row.getChildren().get(BlloggingConstants.FOUR)).getRawValue())),
                 (Double.parseDouble(tax.getLabel()) / cancellableQty), Double.parseDouble(waiver.getLabel()));
-    }
-
-    /**
-     * Target field to apply validation component.
-     *
-     * @param stringToValidate     the string to validate
-     * @param indexTargetComponent the index target component
-     * @return the component
-     */
-    private Component targetFieldToApplyValidation(final String stringToValidate, final int indexTargetComponent) {
-        for (Component component : this.getOrderEntriesGridRows()) {
-            final Label label = (Label) component.getChildren().get(BlloggingConstants.ONE);
-            if (label.getValue().equals(stringToValidate)) {
-                return component.getChildren().get(indexTargetComponent);
-            }
-        }
-        return null;
     }
 
     /**
@@ -854,11 +881,13 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (myEntry.getQuantityToCancel() > BlInventoryScanLoggingConstants.ZERO && myEntry.getQuantityToCancel() <=
                 myEntry.getQuantityAvailableToCancel()) {
             final Checkbox tax = (Checkbox) row.getChildren().get(BlInventoryScanLoggingConstants.SIX);
+            final double taxAmount = (tax.isChecked()) ? ((myEntry.getOrderEntry().getAvalaraLineTax()
+                    /myEntry.getQuantityAvailableToCancel()) * myEntry.getQuantityToCancel()) : BlInventoryScanLoggingConstants.ZERO;
             final Checkbox waiver = (Checkbox) row.getChildren().get(BlInventoryScanLoggingConstants.SEVEN);
             final double waiverAmount = (myEntry.getOrderEntry().getGearGuardWaiverSelected()
                     ? myEntry.getOrderEntry().getGearGuardWaiverPrice() : myEntry.getOrderEntry().getGearGuardProFullWaiverPrice());
-            double refundAmount = myEntry.getOrderEntry().getBasePrice() + (tax.isChecked() ? myEntry.getOrderEntry().getAvalaraLineTax()
-                    : BlInventoryScanLoggingConstants.ZERO) + (waiver.isChecked() ? waiverAmount : BlInventoryScanLoggingConstants.ZERO);
+            double refundAmount = myEntry.getOrderEntry().getBasePrice() + taxAmount + (waiver.isChecked() ? waiverAmount
+                    : BlInventoryScanLoggingConstants.ZERO);
             final double finalAmount = BigDecimal.valueOf(refundAmount * myEntry.getQuantityToCancel()).setScale(BlInventoryScanLoggingConstants.TWO,
                     RoundingMode.HALF_EVEN).doubleValue();
             myEntry.setAmount(finalAmount);
@@ -877,36 +906,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.autoSelect(event);
             ((BlOrderEntryToCancelDto) ((Row) event.getTarget().getParent()).getValue())
                     .setSelectedReason(cancelReason.get());
-        }
-    }
-
-    /**
-     * This method will populate reasons
-     *
-     * @param locale local
-     */
-    private void populateOrderCancelReasons(final Locale locale) {
-        this.getEnumerationService().getEnumerationValues(CancelReason.class).forEach(reason ->
-                this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, locale)));
-        this.globalCancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
-    }
-
-    /**
-     * This method will populate cancellable Entries
-     */
-    private void populateOrderCancellableEntries() {
-        if (CollectionUtils.isNotEmpty(this.orderModel.getEntries())) {
-            this.orderCancellableEntries = this.orderModel.getEntries().stream().collect(
-                    Collectors.toMap(entryModel -> entryModel, entryModel -> ((OrderEntryModel) entryModel).getQuantityPending(),
-                            (a, b) -> b));
-        }
-        if (!this.orderCancellableEntries.isEmpty()) {
-            this.orderCancellableEntries.forEach((entry, cancellableQty) ->
-                    this.orderEntriesToCancel.add(new BlOrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
-                            this.determineDeliveryMode(entry), 0L, false, false,
-                            (long) blCustomCancelRefundService.getTotalRefundedAmountOnOrderEntry(blCustomCancelRefundService
-                                    .getAllRefundEntriesForOrderEntry(String.valueOf(entry.getEntryNumber()), this.orderModel.getCode(),
-                                            Boolean.TRUE)))));
         }
     }
 
@@ -949,7 +948,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         this.totalTax.setValue(formatAmount(order.getTotalTax()));
         this.totalDamageWaiverCost.setValue(formatAmount(order.getTotalDamageWaiverCost()));
         this.totalShippingCost.setValue(formatAmount(order.getDeliveryCost()));
-        this.totalAmount.setValue(formatAmount(order.getTotalPrice()));
+        this.totalAmount.setValue(formatAmount(order.getOriginalOrderTotalAmount()));
         this.transactionId.setValue(CollectionUtils.isEmpty(order.getPaymentTransactions()) ? StringUtils.EMPTY
                 : order.getPaymentTransactions().get(BlCustomCancelRefundConstants.ZERO).getRequestId());
         this.totalRefundedAmount.setValue(String.valueOf(blCustomCancelRefundService.getTotalRefundedAmountOnOrder(order)));
@@ -1064,7 +1063,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.getEnumerationService().getEnumerationName(reason, this.getLocale()).equals(cancelReasonLabel)).findFirst();
     }
 
-
     /**
      * Select all entries.
      */
@@ -1125,7 +1123,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (myComponent instanceof Checkbox && data != null) {
             ((Checkbox) myComponent).setChecked((Boolean) data);
         }
-
         if (myComponent instanceof Combobox) {
             if (data == null) {
                 ((Combobox) myComponent).setSelectedItem(null);

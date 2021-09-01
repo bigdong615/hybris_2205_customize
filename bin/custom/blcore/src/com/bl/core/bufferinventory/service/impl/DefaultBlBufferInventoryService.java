@@ -61,7 +61,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
       final int totalSerialProducts = blProductModel.getSerialProducts()
           .stream().filter(serialProduct -> getProductService().isActiveSerialProduct(serialProduct.getSerialStatus()))
           .collect(Collectors.toList()).size();
-      return totalSerialProducts > minQtyForBufferInventory;
+      return totalSerialProducts >= minQtyForBufferInventory;
     }
     return Boolean.TRUE;
   }

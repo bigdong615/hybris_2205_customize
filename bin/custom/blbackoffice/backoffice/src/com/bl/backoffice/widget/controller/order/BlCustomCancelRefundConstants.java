@@ -14,6 +14,11 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String ZERO_DOUBLE = "#0.00";
     public static final double ZERO_DOUBLE_VAL = 0d;
 
+    public static final String FULL = "FULL";
+    public static final String PARTIAL = "PARTIAL";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String FAILURE = "FAILURE";
+
     public static final String ON_CHECK = "onCheck";
     public static final String ON_CLICK = "onClick";
     public static final String ON_SELECT = "onSelect";
