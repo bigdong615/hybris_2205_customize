@@ -293,7 +293,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void voidAuthorizedPaymentAndRefundGiftCard() {
         StringBuilder resultBuilder = new StringBuilder("Successfully cancelled");
         if (this.globalCancelEntriesSelection.isChecked()) {
-            if(this.cancelOrder() != null) {
+            if(null != this.cancelOrder()) {
                 this.cancelFUllOrderByLoggingGiftCardTransactions(resultBuilder);
             } else {
                 BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Failed to cancel order, please try again later");
@@ -301,7 +301,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         Messagebox.OK, Messagebox.ERROR);
             }
         } else {
-            if (this.partiallyFullOrderRefund() && this.cancelOrder() != null) {
+            if (this.partiallyFullOrderRefund() && null != this.cancelOrder()) {
                 resultBuilder.append(" and captured payment with remaining amount!!");
                 BlLogger.logFormattedMessage(LOGGER, INFO, StringUtils.EMPTY, resultBuilder.toString());
                 Messagebox.show(resultBuilder.toString(), BlCustomCancelRefundConstants.SUCCESS, Messagebox.OK, Messagebox.INFORMATION);
@@ -447,11 +447,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     Messagebox.show("Order cancelled and Refund Amount has been initiated successfully");
                 } else {
                     BlLogger.logMessage(LOGGER, Level.DEBUG, "Order can not be cancel as failed to initiate refund.");
-                    Messagebox.show("Order can not be cancel as failed to initiate refund.", "Failure!!", Messagebox.OK, Messagebox.ERROR);
+                    Messagebox.show("Order can not be cancel as failed to initiate refund.", BlCustomCancelRefundConstants.FAILURE,
+                            Messagebox.OK, Messagebox.ERROR);
                 }
             }  catch (final AdapterException e) {
                 BlLogger.logMessage(LOGGER, Level.DEBUG, "Order can not be cancel as failed to initiate refund.");
-                Messagebox.show("Order can not be cancel as failed to initiate refund.", "Failure!!", Messagebox.OK, Messagebox.ERROR);
+                Messagebox.show("Order can not be cancel as failed to initiate refund.", BlCustomCancelRefundConstants.FAILURE,
+                        Messagebox.OK, Messagebox.ERROR);
+
             }
         }
     }
