@@ -100,6 +100,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
         target.setRetailGearPrice(getProductPriceData(BigDecimal.valueOf(retailGearPrice)));
       }
     }
+    if(null != this.getValue(source , BlCoreConstants.BUNDLEPRODUCT)) {
+   	 target.setIsbundle(this.<Boolean>getValue(source, BlCoreConstants.BUNDLEPRODUCT));
+    }
    // Adding this condition to segregate the rental and used gear data and to prevent unwanted calls on each PLP AND SLP.
     if(BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(source.getBlPage())) {
       addProductTag(source,target);

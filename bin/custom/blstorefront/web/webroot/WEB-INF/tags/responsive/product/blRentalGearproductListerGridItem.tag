@@ -16,7 +16,10 @@
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 <c:set value="image coming soon" var="altText"/>
-
+<div class="page-loader-new-layout rental-loader">
+	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
+		title="Loading.." id="new_loading_Img" />
+</div>
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <!-- BL-926: Added condition for Gift Card as per requirement -->

@@ -27,6 +27,7 @@
     <property name="isDiscontinued" type="Boolean"/>
     <property name="isNew" type="Boolean"/>
     <property name="isUpcoming" type="Boolean"/>
+    <property name="isbundle" type="Boolean"/>
     <property name="productPageType" type="java.lang.String"/>
     <property name="serialproducts" type="java.util.List"/>
     <property name="productTagValues" type="String"/>

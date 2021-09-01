@@ -885,6 +885,7 @@
                     <wz:property-list root="newBLInventoryLocation">
                         <wz:property qualifier="code"/>
                         <wz:property qualifier="name"/>
+                        <wz:property qualifier="locationCategory"/>
                         <wz:property qualifier="inventoryType"/>
                         <wz:property qualifier="active"/>
                         <wz:property qualifier="parentInventoryLocation"/>
