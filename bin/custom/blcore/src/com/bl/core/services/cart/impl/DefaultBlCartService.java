@@ -498,6 +498,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  	@Override
  	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
  	{
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
  		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
  		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
 				.getAllBlackoutDatesForGivenType(blackoutDateType);
@@ -517,7 +518,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  				return;
  			}
  		});
-
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck, isGivenDateIsBlackoutDate.get());
  		return isGivenDateIsBlackoutDate.get();
  	}
 

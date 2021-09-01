@@ -156,7 +156,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		}
 		catch (final Exception exception)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, "", "Error while getting list of black out dates", exception);
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting list of black out dates", exception);
 		}
 
 		return Lists.newArrayList();

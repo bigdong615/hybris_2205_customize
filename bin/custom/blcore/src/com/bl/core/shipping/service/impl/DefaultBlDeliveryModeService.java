@@ -110,49 +110,47 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
     
 	 /**
- 	 * Exclude blocked shipping group assigned on blackout dates.
- 	 *
- 	 * @param allShippingGroups the all shipping groups
- 	 * @return the collection
- 	 */
- 	private Collection<ShippingGroupModel> excludeBlockedShippingGroup(final Collection<ShippingGroupModel> allShippingGroups)
+	  * Exclude blocked shipping group assigned on blackout dates.
+	  *
+	  * @param allShippingGroups
+	  *           the all shipping groups
+	  * @return the collection
+	  */
+	 private Collection<ShippingGroupModel> excludeBlockedShippingGroup(final Collection<ShippingGroupModel> allShippingGroups)
 	 {
 		 final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
 
 		 if (CollectionUtils.isEmpty(allShippingGroups) || Objects.isNull(rentalDatesFromSession))
 		 {
+			 BlLogger.logMessage(LOG, Level.DEBUG, "Empty Shipping Group found or No Dates found in session");
 			 return allShippingGroups;
 		 }
 		 final List<ShippingGroupModel> updatedList = Lists.newArrayList();
 		 final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(),
 				 BlCoreConstants.DATE_FORMAT);
+		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Rental Start date found : {}", rentalStartDate);
 		 final List<String> shippingGroupCodes = allShippingGroups.stream().map(ShippingGroupModel::getCode)
 				 .collect(Collectors.toList());
-		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingGroup = getBlBlackoutDatesDao()
-				 .getAllBlackoutDatesForShippingMethods(shippingGroupCodes);
+		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All shipping group code : {}", shippingGroupCodes);
+		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingGroup = getBlackOutDates(shippingGroupCodes);
 		 if (CollectionUtils.isNotEmpty(allBlackoutDatesForShippingGroup))
 		 {
-			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups = allBlackoutDatesForShippingGroup.stream()
-					 .collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
+			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups = getGroupedBlackoutDatesMap(
+					 allBlackoutDatesForShippingGroup);
 			 allShippingGroups.forEach(shippingGroup -> {
-				 final List<BlBlackoutDateModel> deliveryBlackOutList = Lists
-						 .newArrayList(CollectionUtils.emptyIfNull(groupedShippingGroups.get(shippingGroup.getCode())));
-				 deliveryBlackOutList
-						 .removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
+				 final String code = shippingGroup.getCode();
+				 final List<BlBlackoutDateModel> deliveryBlackOutList = getBlackoutDatesForCode(groupedShippingGroups, code);
+				 removeRentalEndBlackoutDates(deliveryBlackOutList);
 				 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
 				 final AtomicBoolean isDateIsBlocked = new AtomicBoolean(Boolean.FALSE);
-				 lBlackoutDate.forEach(bDate -> {
-					 if (DateUtils.isSameDay(rentalStartDate, bDate))
-					 {
-						 isDateIsBlocked.set(Boolean.TRUE);
-						 return;
-					 }
-				 });
+				 checkIfDatesIsSame(rentalStartDate, lBlackoutDate, isDateIsBlocked);
+				 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Is Blackout date present for code : {} is {}", code, isDateIsBlocked.get());
 				 if (!isDateIsBlocked.get())
 				 {
 					 updatedList.add(shippingGroup);
 				 }
 			 });
+			 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Updated Shipping Group List : {}", updatedList);
 			 return updatedList;
 		 }
 		 return allShippingGroups;
@@ -930,68 +928,137 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
     
-    /**
- 	 * Exclude blocked shipping methods.
- 	 *
- 	 * @param deliveryModeModels
- 	 *           the delivery mode models
- 	 * @param rentalStart
- 	 *           the rental start
- 	 * @return the collection<? extends zone delivery mode model>
- 	 */
- 	private Collection<? extends ZoneDeliveryModeModel> excludeBlockedShippingMethods(
- 			final List<? extends ZoneDeliveryModeModel> deliveryModeModels, final String rentalStart)
- 	{
- 		if(CollectionUtils.isEmpty(deliveryModeModels))
- 		{
- 			return deliveryModeModels;
- 		}
- 		final List<ZoneDeliveryModeModel> updatedList = Lists.newArrayList();
- 		final Date rentalStartDate = BlDateTimeUtils.getDate(rentalStart, BlCoreConstants.DATE_FORMAT);
- 		final List<String> deliveryModeCodes = deliveryModeModels.stream().map(
-        DeliveryModeModel::getCode)
- 				.collect(Collectors.toList());
- 		final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlBlackoutDatesDao()
- 				.getAllBlackoutDatesForShippingMethods(deliveryModeCodes);
- 		if (CollectionUtils.isNotEmpty(allBlackoutDatesForShippingMethods))
- 		{
- 			final Map<String, List<BlBlackoutDateModel>> groupedDeliveryMethods = allBlackoutDatesForShippingMethods.stream()
- 					.collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
- 			deliveryModeModels.forEach(deliveryMode -> {
- 				final List<BlBlackoutDateModel> deliveryBlackOutList = Lists
- 						.newArrayList(CollectionUtils.emptyIfNull(groupedDeliveryMethods.get(deliveryMode.getCode())));
- 				deliveryBlackOutList
- 						.removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
- 				final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
- 				final AtomicBoolean isDateIsBlocked = new AtomicBoolean(Boolean.FALSE);
- 				lBlackoutDate.forEach(bDate -> {
- 					if (DateUtils.isSameDay(rentalStartDate, bDate))
- 					{
- 						isDateIsBlocked.set(Boolean.TRUE);
- 						return;
- 					}
- 				});
- 				if (!isDateIsBlocked.get())
- 				{
- 					updatedList.add(deliveryMode);
- 				}
- 			});
- 			return updatedList;
- 		}
- 		return deliveryModeModels;
- 	}
+	 /**
+	  * Exclude blocked shipping methods.
+	  *
+	  * @param deliveryModeModels
+	  *           the delivery mode models
+	  * @param rentalStart
+	  *           the rental start
+	  * @return the collection<? extends zone delivery mode model>
+	  */
+	 private Collection<? extends ZoneDeliveryModeModel> excludeBlockedShippingMethods(
+			 final List<? extends ZoneDeliveryModeModel> deliveryModeModels, final String rentalStart)
+	 {
+		 if (CollectionUtils.isEmpty(deliveryModeModels))
+		 {
+			 BlLogger.logMessage(LOG, Level.DEBUG, "Empty Shipping Methods found");
+			 return deliveryModeModels;
+		 }
+		 final List<ZoneDeliveryModeModel> updatedList = Lists.newArrayList();
+		 final Date rentalStartDate = BlDateTimeUtils.getDate(rentalStart, BlCoreConstants.DATE_FORMAT);
+		 final List<String> deliveryModeCodes = deliveryModeModels.stream().map(DeliveryModeModel::getCode)
+				 .collect(Collectors.toList());
+		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All shipping method codes : {}", deliveryModeCodes);
+		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlackOutDates(deliveryModeCodes);
+		 if (CollectionUtils.isNotEmpty(allBlackoutDatesForShippingMethods))
+		 {
+			 final Map<String, List<BlBlackoutDateModel>> groupedDeliveryMethods = getGroupedBlackoutDatesMap(
+					 allBlackoutDatesForShippingMethods);
+			 deliveryModeModels.forEach(deliveryMode -> {
+				final String code = deliveryMode.getCode();
+				final List<BlBlackoutDateModel> deliveryBlackOutList = getBlackoutDatesForCode(groupedDeliveryMethods, code);
+				 removeRentalEndBlackoutDates(deliveryBlackOutList);
+				 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
+				 final AtomicBoolean isDateIsBlocked = new AtomicBoolean(Boolean.FALSE);
+				 checkIfDatesIsSame(rentalStartDate, lBlackoutDate, isDateIsBlocked);
+				 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Is Blackout date present for code : {} is {}", code, isDateIsBlocked.get());
+				 if (!isDateIsBlocked.get())
+				 {
+					 updatedList.add(deliveryMode);
+				 }
+			 });
+			 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Updated Shipping Method List : {}", updatedList);
+			 return updatedList;
+		 }
+		 return deliveryModeModels;
+	 }
 
- 	/**
- 	 * Gets the list of dates.
- 	 *
- 	 * @param blackoutDates
- 	 *           the blackout dates
- 	 * @return the list of dates
- 	 */
- 	private List<Date> getListOfDates(final List<BlBlackoutDateModel> blackoutDates)
- 	{
- 		return blackoutDates.stream().map(BlBlackoutDateModel::getBlackoutDate).collect(Collectors.toList());
- 	}
+	 /**
+	  * Gets the list of dates.
+	  *
+	  * @param blackoutDates
+	  *           the blackout dates
+	  * @return the list of dates
+	  */
+	 private List<Date> getListOfDates(final List<BlBlackoutDateModel> blackoutDates)
+	 {
+		 return blackoutDates.stream().map(BlBlackoutDateModel::getBlackoutDate).collect(Collectors.toList());
+	 }
+
+	 /**
+	  * Gets the black out dates.
+	  *
+	  * @param shippingGroupOrMethodCodes
+	  *           the shipping group or method codes
+	  * @return the black out dates
+	  */
+	 private List<BlBlackoutDateModel> getBlackOutDates(final List<String> shippingGroupOrMethodCodes)
+	 {
+		 return getBlBlackoutDatesDao().getAllBlackoutDatesForShippingMethods(shippingGroupOrMethodCodes);
+	 }
+
+	 /**
+	  * Gets the grouped blackout dates map.
+	  *
+	  * @param allBlackoutDatesForShippingGroup
+	  *           the all blackout dates for shipping group
+	  * @return the grouped blackout dates map
+	  */
+	 private Map<String, List<BlBlackoutDateModel>> getGroupedBlackoutDatesMap(
+			 final List<BlBlackoutDateModel> allBlackoutDatesForShippingGroup)
+	 {
+		 return allBlackoutDatesForShippingGroup.stream()
+				 .collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
+	 }
+
+	 /**
+	  * Gets the blackout dates for code.
+	  *
+	  * @param groupedShippingGroups
+	  *           the grouped shipping groups
+	  * @param code
+	  *           the code
+	  * @return the blackout dates for code
+	  */
+	 private ArrayList<BlBlackoutDateModel> getBlackoutDatesForCode(
+			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups, String code)
+	 {
+		 return Lists.newArrayList(CollectionUtils.emptyIfNull(groupedShippingGroups.get(code)));
+	 }
+
+	 /**
+	  * Removes the rental end blackout dates.
+	  *
+	  * @param deliveryBlackOutList
+	  *           the delivery black out list
+	  */
+	 private void removeRentalEndBlackoutDates(final List<BlBlackoutDateModel> deliveryBlackOutList)
+	 {
+		 deliveryBlackOutList.removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
+	 }
+
+	 /**
+	  * Check if dates is same.
+	  *
+	  * @param rentalStartDate
+	  *           the rental start date
+	  * @param lBlackoutDate
+	  *           the l blackout date
+	  * @param isDateIsBlocked
+	  *           the is date is blocked
+	  */
+	 private void checkIfDatesIsSame(final Date rentalStartDate, final List<Date> lBlackoutDate,
+			 final AtomicBoolean isDateIsBlocked)
+	 {
+		 lBlackoutDate.forEach(bDate -> {
+			 if (DateUtils.isSameDay(rentalStartDate, bDate))
+			 {
+				 isDateIsBlocked.set(Boolean.TRUE);
+				 return;
+			 }
+		 });
+	 }
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;

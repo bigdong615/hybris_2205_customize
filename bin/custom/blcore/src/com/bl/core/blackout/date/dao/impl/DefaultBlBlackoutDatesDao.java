@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
 
 import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.BlackoutDateShippingMethodEnum;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlBlackoutDateModel;
@@ -46,16 +47,16 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Query to Fetch {} Blackout Dates : {}", blackoutDateType.toString(),
 				flexiQuery);
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(flexiQuery);
-		query.addQueryParameter("code", blackoutDateType.toString());
+		query.addQueryParameter(BlCoreConstants.CODE, blackoutDateType.toString());
 		final SearchResult<BlBlackoutDateModel> search = getFlexibleSearchService().<BlBlackoutDateModel> search(query);
-		if (Objects.isNull(search))
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-					"DefaultBlBlackoutDatesDao : getAllBlackoutDatesForGivenType : Error Occured while fetching Blackout Dates for {} Type",
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlBlackoutDatesDao : getAllBlackoutDatesForGivenType : Empty Blackout Dates found for {} Type",
 					blackoutDateType.toString());
 			return Lists.newArrayList();
 		}
-		final List<BlBlackoutDateModel> result = Lists.newArrayList(CollectionUtils.emptyIfNull(search.getResult()));
+		final List<BlBlackoutDateModel> result = search.getResult();
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Result Size fetched for {} Blackout Dates: {}",
 				blackoutDateType.toString(), result.size());
 		return result;
@@ -74,16 +75,16 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Query to Fetch Blocked Shipping Methods Blackout Dates {} is : {}",
 				deliveryModeCodes, flexiQuery);
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(flexiQuery);
-		query.addQueryParameter("code", deliveryModeCodes);
+		query.addQueryParameter(BlCoreConstants.CODE, deliveryModeCodes);
 		final SearchResult<BlBlackoutDateModel> search = getFlexibleSearchService().<BlBlackoutDateModel> search(query);
-		if (Objects.isNull(search))
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-					"DefaultBlBlackoutDatesDao : getAllBlackoutDatesForShippingMethods : Error Occured while fetching Blackout Dates for {}",
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlBlackoutDatesDao : getAllBlackoutDatesForShippingMethods : No Blackout Dates found for {}",
 					deliveryModeCodes);
 			return Lists.newArrayList();
 		}
-		final List<BlBlackoutDateModel> result = Lists.newArrayList(CollectionUtils.emptyIfNull(search.getResult()));
+		final List<BlBlackoutDateModel> result = search.getResult();
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Result Size fetched for {} Blackout Dates: {}", deliveryModeCodes,
 				result.size());
 		return result;
