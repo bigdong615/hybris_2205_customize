@@ -164,42 +164,38 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel inputObject) {
         modelService.refresh(inputObject);
-        if(inputObject.getOriginalVersion() != null) {
-            BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Cancel and Refund not applicable for cloned order!!");
-            Messagebox.show("Cancel and Refund not applicable for cloned order!!", "FAILURE!!", Messagebox.OK, Messagebox.ERROR);
-        } else {
-            if(inputObject.getOriginalOrderTotalAmount() == null) {
-                inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
-                modelService.save(inputObject);
-                modelService.refresh(inputObject);
-            }
-
-            this.setOrderModel(inputObject);
-            this.setAmountInTextBox(this.getOrderModel());
-
-            this.getEnumerationService().getEnumerationValues(CancelReason.class).forEach(reason ->
-                    this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
-            this.globalCancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
-
-            this.orderEntriesToCancel = new HashSet<>();
-            if (CollectionUtils.isNotEmpty(this.orderModel.getEntries())) {
-                this.orderCancellableEntries = this.orderModel.getEntries().stream().collect(
-                        Collectors.toMap(entryModel -> entryModel, entryModel -> ((OrderEntryModel) entryModel).getQuantityPending(),
-                                (a, b) -> b));
-            }
-            if (!this.orderCancellableEntries.isEmpty()) {
-                this.orderCancellableEntries.forEach((entry, cancellableQty) ->
-                        this.orderEntriesToCancel.add(new BlOrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
-                                this.determineDeliveryMode(entry), 0L, false, false,
-                                (long) blCustomCancelRefundService.getTotalRefundedAmountOnOrderEntry(blCustomCancelRefundService
-                                        .getAllRefundEntriesForOrderEntry(String.valueOf(entry.getEntryNumber()), this.orderModel.getCode(),
-                                                Boolean.TRUE)))));
-            }
-
-            this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesToCancel));
-            this.getOrderEntries().renderAll();
-            this.addListeners();
+        if(inputObject.getOriginalOrderTotalAmount() == null || inputObject.getOriginalOrderTotalAmount() ==
+                BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
+            inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
+            modelService.save(inputObject);
+            modelService.refresh(inputObject);
         }
+
+        this.setOrderModel(inputObject);
+        this.setAmountInTextBox(this.getOrderModel());
+
+        this.getEnumerationService().getEnumerationValues(CancelReason.class).forEach(reason ->
+                this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
+        this.globalCancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
+
+        this.orderEntriesToCancel = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(this.orderModel.getEntries())) {
+            this.orderCancellableEntries = this.orderModel.getEntries().stream().collect(
+                    Collectors.toMap(entryModel -> entryModel, entryModel -> ((OrderEntryModel) entryModel).getQuantityPending(),
+                            (a, b) -> b));
+        }
+        if (!this.orderCancellableEntries.isEmpty()) {
+            this.orderCancellableEntries.forEach((entry, cancellableQty) ->
+                    this.orderEntriesToCancel.add(new BlOrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
+                            this.determineDeliveryMode(entry), 0L, false, false,
+                            (long) blCustomCancelRefundService.getTotalRefundedAmountOnOrderEntry(blCustomCancelRefundService
+                                    .getAllRefundEntriesForOrderEntry(String.valueOf(entry.getEntryNumber()), this.orderModel.getCode(),
+                                            Boolean.TRUE)))));
+        }
+
+        this.getOrderEntries().setModel(new ListModelList<>(this.orderEntriesToCancel));
+        this.getOrderEntries().renderAll();
+        this.addListeners();
     }
 
     /**
@@ -261,11 +257,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 responseMap = this.executeVoidOnTransactions(allVoidTransactionModels.stream().filter(voidEntry ->
                         (voidEntry.getAmount().doubleValue()) > BlInventoryScanLoggingConstants.ONE).collect(Collectors.toList()));
             }
-            if(MapUtils.isNotEmpty(responseMap)) {
-                this.voidAuthorizedPaymentAndRefundGiftCard();
-            } else {
+            if(Boolean.TRUE.equals(responseMap.containsKey("FAILED"))) {
                 BlLogger.logFormattedMessage(LOGGER, ERROR, StringUtils.EMPTY, "Failed to cancel due to payment gateway error!!");
                 Messagebox.show("Failed to cancel due to payment gateway error!!", "FAILURE!!", Messagebox.OK, Messagebox.ERROR);
+            } else {
+                this.voidAuthorizedPaymentAndRefundGiftCard();
             }
         }
     }
@@ -351,7 +347,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             }
         }
         return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
-                this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund), Boolean.TRUE, null);
+                this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund).setScale(BlInventoryScanLoggingConstants.TWO,
+                RoundingMode.HALF_EVEN), Boolean.FALSE, null);
     }
 
     /**

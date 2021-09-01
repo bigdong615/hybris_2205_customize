@@ -1700,7 +1700,7 @@
                     </attribute>
                     <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
+                        <modifiers read="true" write="true" optional="false"/>
                         <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
