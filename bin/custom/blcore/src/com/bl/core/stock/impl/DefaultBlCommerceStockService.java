@@ -1,10 +1,19 @@
 package com.bl.core.stock.impl;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -20,22 +29,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.StockResult;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.stock.BlStockLevelDao;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
 
 /**
  * This class is used to get the inventory for a product
@@ -245,12 +243,31 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	@Override
 	public Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes,
-			final WarehouseModel warehouse, final Date startDate, final Date endDate) {
-		return getBlStockLevelDao().findStockLevelsForProductCodesAndDate(productCodes, warehouse, startDate, endDate);
+			final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory) {
+		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findStockLevelsForProductCodesAndDate(
+				productCodes, warehouse, startDate, endDate, isBufferInventory);
+		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
+				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
+		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
+		final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
+		final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
+		final Collection<StockLevelModel> finalStockLevels = new ArrayList<>();
+		for(Map.Entry<Object, List<StockLevelModel>> entry : stockLevelsProductWise.entrySet()) {
+			if(entry.getValue().size() == stayDuration) {
+				finalStockLevels.addAll(entry.getValue());
+			} else {
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"No stock found for serial product : {} and date between : {} and {}", entry.getKey(),
+						startDate, endDate);
+			}
+		}
+		return finalStockLevels;
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * @param stockLevels the stock levels
+	 * @return map of product code and stock level models
 	 */
 	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels) {
@@ -312,7 +329,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final Map<String, List<StockLevelModel>> newProductWiseStocks = new HashMap<>();
 		final Map<String, List<StockLevelModel>> productWiseStocks = stockLevelsforProducts.stream()
 				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
-		lProductCodes.removeIf(productCode -> productWiseStocks.containsKey(productCode));
+		lProductCodes.removeIf(productWiseStocks::containsKey);
 		if (CollectionUtils.isNotEmpty(lProductCodes))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "No Stock Levels found for product : {} and date between : {} and {}",
@@ -383,7 +400,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 						"Before adding shipping days to Rental Start Date {} and Rental End Date {}", rentalDates.getSelectedFromDate(),
 						rentalDates.getSelectedToDate());
 				final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-				final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+				final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 				final Date newRentalStartDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 						rentalDates.getSelectedFromDate(), blackOutDates);
 				final Date newRentalEndDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDates, lastDateToCheck);				
@@ -438,7 +455,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		Date nextAvailableDate = null;
 		Boolean continueCheck = Boolean.TRUE;
-		final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+		final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		while (nextAvailableDate == null && continueCheck)
 		{
 			Date nextStockUnavailableDate = getDateIfStockNotAvailable(productCode, lWareHouses, newRentalStartDate,
@@ -635,6 +652,11 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 
 	/**
 	 * This method created to get stock for extend rental products
+	 * @param productCode the product code
+	 * @param warehouses the warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return list of stock level model
 	 */
 	public Collection<StockLevelModel> getStockForExtendDate(final String productCode, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate)

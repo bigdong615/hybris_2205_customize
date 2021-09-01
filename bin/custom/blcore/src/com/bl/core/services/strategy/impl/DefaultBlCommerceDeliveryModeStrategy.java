@@ -3,6 +3,7 @@ package com.bl.core.services.strategy.impl;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceDeliveryModeStrategy;
@@ -37,7 +38,7 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
     validateParameterNotNull(cartModel, "Cart model cannot be null");
     validateParameterNotNull(deliveryModeModel, "Delivery mode model cannot be null");
 
-    final List<Date> blackOutDates = blDatePickerService.getListOfBlackOutDates();
+    final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
     final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
 
