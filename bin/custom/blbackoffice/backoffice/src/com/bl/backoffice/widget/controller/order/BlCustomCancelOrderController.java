@@ -605,9 +605,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @return amount
      */
     private double deductGiftCartAmount(final double refundAmount) {
-        return this.getOrderModel().isGiftCardOrder() ? (refundAmount - (this.getOrderModel().getGiftCardAvailableAmount() >
-                BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL ? this.getOrderModel().getGiftCardAvailableAmount() :
-                this.getOrderModel().getGiftCardAmount())) : refundAmount;
+        final double gcAmount = (this.getOrderModel().getGiftCardAvailableAmount() > BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL ?
+                this.getOrderModel().getGiftCardAvailableAmount() : this.getOrderModel().getGiftCardAmount());
+        final double amount = this.getOrderModel().isGiftCardOrder() ? (refundAmount - gcAmount) : refundAmount;
+        return amount < BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL ? -amount : amount;
     }
 
     /**
