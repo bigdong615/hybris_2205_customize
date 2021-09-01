@@ -257,7 +257,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         (voidEntry.getAmount().doubleValue()) > BlInventoryScanLoggingConstants.ONE).collect(Collectors.toList()));
             }
             if(Boolean.TRUE.equals(responseMap.containsKey(BlCustomCancelRefundConstants.FAILED))) {
-                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR);
+                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR
+                + this.getOrderModel().getCode());
                 Messagebox.show(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR, BlCustomCancelRefundConstants.FAILURE,
                         Messagebox.OK, Messagebox.ERROR);
             } else {
@@ -294,7 +295,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         StringBuilder resultBuilder = new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED);
         if (this.globalCancelEntriesSelection.isChecked()) {
             if(null == this.cancelOrder()) {
-                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER);
+                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER
+                + this.getOrderModel().getCode());
                 Messagebox.show(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, BlCustomCancelRefundConstants.FAILURE,
                         Messagebox.OK, Messagebox.ERROR);
             } else {
@@ -303,7 +305,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         } else {
             if (this.partiallyFullOrderRefund() && null != this.cancelOrder()) {
                 resultBuilder.append(BlCustomCancelRefundConstants.AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT);
-                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, resultBuilder.toString());
+                BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, resultBuilder.toString() + this.getOrderModel().getCode());
                 Messagebox.show(resultBuilder.toString(), BlCustomCancelRefundConstants.SUCCESS, Messagebox.OK, Messagebox.INFORMATION);
             } else {
                 BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION);
