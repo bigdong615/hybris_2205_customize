@@ -159,7 +159,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         return getBlCommerceStockService().getStockForProductCodesAndDate(newProductCodes, sourcingLocation.getWarehouse(),
                 BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
                         getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)), BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS,
-                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)));
+                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)),
+                        null);
     }
 
     /**
