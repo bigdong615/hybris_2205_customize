@@ -357,7 +357,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 }
             }
             BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.TOTAL_REFUND_AMOUNT_FOR_FULL_ORDER_REFUND_AFTER_PART_REFUND +
-                    totalAmountToRefund);
+                    totalAmountToRefund + StringUtils.SPACE + this.getOrderModel().getCode());
         }
         return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
                 this.getOrderModel().getOriginalOrderTotalAmount() - totalAmountToRefund).setScale(BlInventoryScanLoggingConstants.TWO,
