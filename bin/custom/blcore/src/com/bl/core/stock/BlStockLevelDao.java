@@ -89,10 +89,11 @@ public interface BlStockLevelDao {
 	 * @param warehouse    the warehouse
 	 * @param startDate    the start date
 	 * @param endDate      the end date
+	 * @param isBufferInventory Buffer Inventory Flag
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(final Set<String> productCodes,
-			final WarehouseModel warehouse, final Date startDate, final Date endDate);
+			final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory);
 
 	/**
 	 * It finds the stocks for the given serials and serial from start date to end date
