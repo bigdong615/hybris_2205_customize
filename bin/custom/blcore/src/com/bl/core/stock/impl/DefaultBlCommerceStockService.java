@@ -3,6 +3,7 @@ package com.bl.core.stock.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -328,7 +329,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final Map<String, List<StockLevelModel>> newProductWiseStocks = new HashMap<>();
 		final Map<String, List<StockLevelModel>> productWiseStocks = stockLevelsforProducts.stream()
 				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
-		lProductCodes.removeIf(productCode -> productWiseStocks.containsKey(productCode));
+		lProductCodes.removeIf(productWiseStocks::containsKey);
 		if (CollectionUtils.isNotEmpty(lProductCodes))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "No Stock Levels found for product : {} and date between : {} and {}",
@@ -399,7 +400,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 						"Before adding shipping days to Rental Start Date {} and Rental End Date {}", rentalDates.getSelectedFromDate(),
 						rentalDates.getSelectedToDate());
 				final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-				final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+				final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 				final Date newRentalStartDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 						rentalDates.getSelectedFromDate(), blackOutDates);
 				final Date newRentalEndDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDates, lastDateToCheck);				
@@ -454,7 +455,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		Date nextAvailableDate = null;
 		Boolean continueCheck = Boolean.TRUE;
-		final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+		final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		while (nextAvailableDate == null && continueCheck)
 		{
 			Date nextStockUnavailableDate = getDateIfStockNotAvailable(productCode, lWareHouses, newRentalStartDate,
