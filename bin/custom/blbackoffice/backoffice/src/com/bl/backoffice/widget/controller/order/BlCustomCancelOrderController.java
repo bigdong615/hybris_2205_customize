@@ -478,6 +478,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 returnRequestModel.setSubtotal(returnRequestModel.getReturnEntries().stream().filter(entry ->
                         entry instanceof RefundEntryModel).map(refund -> ((RefundEntryModel) refund).getAmount())
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
+                BlLogger.logMessage(LOGGER, Level.DEBUG, BlCustomCancelRefundConstants.CREATE_RETURN_REQUEST_AND_REFUND_ENTRY);
             });
         }
     }

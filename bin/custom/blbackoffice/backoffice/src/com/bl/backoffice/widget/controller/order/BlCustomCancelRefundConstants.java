@@ -71,6 +71,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String INVALID_ENTERED_AMOUNT_AMOUNT_SHOULD_BE_UP_TO_TWO_DECIMAL_DIGITS_ONLY = "Invalid entered amount!! amount should be up to two decimal digits only!!";
     public static final String TOTAL_REFUND_AMOUNT_FOR_FULL_ORDER_REFUND_AFTER_PART_REFUND = "Total refund amount for full order refund after part refund for authorization: ";
     public static final String PART_TOTAL_REFUND_AMOUNT = "Part total refund amount: ";
+    public static final String CREATE_RETURN_REQUEST_AND_REFUND_ENTRY = "Create ReturnRequest and RefundEntry";
 
     private BlCustomCancelRefundConstants() {}
 }
