@@ -39,10 +39,11 @@ public interface BlCommerceStockService
 	 * @param warehouse the warehouse
 	 * @param startDate the start date
 	 * @param endDate the end date
+	 * @param isBufferInventory buffer inventory flag
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes, final WarehouseModel warehouse,
-			final Date startDate, final Date endDate);
+			final Date startDate, final Date endDate, final Boolean isBufferInventory);
 
 	/**
 	 * This is to get the stock level status of a SKU
@@ -180,6 +181,11 @@ public interface BlCommerceStockService
 
 	/**
 	 * this method created to get stock duration for same serial includes in active rental for extending order
+	 * @param productCode the product code
+	 * @param warehouses the warehouse
+	 * @param startDate start date
+	 * @param endDate end date
+	 * @return Stock Result
 	 */
 	 StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
