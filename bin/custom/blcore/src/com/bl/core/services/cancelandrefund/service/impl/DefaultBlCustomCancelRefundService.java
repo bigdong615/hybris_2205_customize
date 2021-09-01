@@ -22,14 +22,10 @@ import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Custom cancel and refund service implementer
@@ -38,8 +34,6 @@ import java.util.stream.Collectors;
  */
 public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundService {
 
-    private static final Logger LOG = Logger.getLogger(DefaultBlCustomCancelRefundService.class);
-
     private BlCustomCancelRefundDao blCustomCancelRefundDao;
     private BrainTreePaymentService brainTreePaymentService;
     private CommonI18NService commonI18NService;
@@ -47,6 +41,9 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     private transient ModelService modelService;
     private ReturnService returnService;
 
+    public static final String AMOUNT = "Amount";
+    public static final String TAX = "Tax";
+    public static final String WAIVER = "Waiver";
     /**
      * {@inheritDoc}
      */
@@ -185,14 +182,14 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         if(CollectionUtils.isNotEmpty(refundEntryModels)) {
             totalOrderRefundedAmount = this.getTotalRefundedAmountOnOrderEntry(refundEntryModels);
         }
-        final double entryTotal = order.getBasePrice() + order.getAvalaraLineTax() + (order.getGearGuardWaiverSelected()
+        final double entryTotal = order.getBasePrice() + order.getAvalaraLineTax() + (Boolean.TRUE.equals(order.getGearGuardWaiverSelected())
                 ? order.getGearGuardWaiverPrice() : order.getGearGuardProFullWaiverPrice());
 
-        final double currentEntryTotal = (order.getBasePrice() * qtyToCancel) + (Boolean.TRUE.equals(collectionMap.get("Tax"))
-                ? (order.getAvalaraLineTax() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO) + (Boolean.TRUE.equals(collectionMap.get("Waiver"))
+        final double currentEntryTotal = (order.getBasePrice() * qtyToCancel) + (Boolean.TRUE.equals(collectionMap.get(TAX))
+                ? (order.getAvalaraLineTax() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO) + (Boolean.TRUE.equals(collectionMap.get(WAIVER))
                 ? (order.getGearGuardWaiverPrice() * qtyToCancel) : BlInventoryScanLoggingConstants.ZERO);
 
-        if(((Double) collectionMap.get("Amount")) + totalOrderRefundedAmount <= entryTotal) {
+        if(((Double) collectionMap.get(AMOUNT)) + totalOrderRefundedAmount <= entryTotal) {
             return BigDecimal.valueOf(currentEntryTotal).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
         } else {
             return BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
@@ -206,15 +203,14 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     public Map<String, Object> collectSelectionCheckboxAndCreateMap(final boolean tax, final boolean waiver, final Boolean shipping,
                                                                      final Double amount) {
         final Map<String, Object> selectionAttributeMap = new HashMap<>();
-        selectionAttributeMap.put("Tax", tax);
-        selectionAttributeMap.put("Waiver", waiver);
+        selectionAttributeMap.put(TAX, tax);
+        selectionAttributeMap.put(WAIVER, waiver);
         if(shipping != null) {
             selectionAttributeMap.put("Shipping", shipping);
         }
         if(amount != null) {
-            selectionAttributeMap.put("Amount", amount);
+            selectionAttributeMap.put(AMOUNT, amount);
         }
-
         return selectionAttributeMap;
     }
 

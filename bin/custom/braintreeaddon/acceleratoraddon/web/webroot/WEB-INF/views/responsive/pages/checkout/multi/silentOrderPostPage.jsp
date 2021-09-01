@@ -441,6 +441,10 @@
                    </c:if>
                    </c:forEach>
                </c:if>
+               <c:if test="${cartData.isNewGearOrder eq false}">
+                     <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+               </c:if>
+               <div class="notification notification-error d-none"id="errorMessages_voucher" />
             </div>
 					</div>
 				</div>	
