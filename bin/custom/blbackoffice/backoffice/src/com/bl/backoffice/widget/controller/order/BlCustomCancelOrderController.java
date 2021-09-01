@@ -445,6 +445,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
                     BlLogger.logMessage(LOGGER, Level.DEBUG, "Cancel and Refund Txn has been initiated successfully.");
                     Messagebox.show("Order cancelled and Refund Amount has been initiated successfully");
+                } else {
+                    BlLogger.logMessage(LOGGER, Level.DEBUG, "Order can not be cancel as failed to initiate refund.");
+                    Messagebox.show("Order can not be cancel as failed to initiate refund.", "Failure!!", Messagebox.OK, Messagebox.ERROR);
                 }
             }  catch (final AdapterException e) {
                 BlLogger.logMessage(LOGGER, Level.DEBUG, "Order can not be cancel as failed to initiate refund.");
