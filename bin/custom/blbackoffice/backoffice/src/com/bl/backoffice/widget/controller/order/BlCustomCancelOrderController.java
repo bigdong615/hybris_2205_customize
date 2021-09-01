@@ -31,6 +31,7 @@ import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordercancel.*;
 import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.returns.ReturnService;
 import de.hybris.platform.returns.model.RefundEntryModel;
@@ -43,7 +44,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.mvel2.util.Make;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.Locales;
 import org.zkoss.zk.ui.Component;
@@ -385,7 +385,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                             String.valueOf((totalAmountToRefund - refundAmount)));
                 } else {
                     return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
-                        otherPayment - ((totalAmountToRefund + refundedAmount))).setScale(BlInventoryScanLoggingConstants.TWO,
+                        otherPayment - (totalAmountToRefund + refundedAmount)).setScale(BlInventoryScanLoggingConstants.TWO,
                         RoundingMode.HALF_EVEN), Boolean.FALSE, null);
                 }
             } else {
@@ -494,7 +494,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 final BrainTreeRefundTransactionResult result = brainTreePaymentService.refundTransaction(request);
                 if (result.isSuccess() && this.cancelOrder() != null) {
                     this.fullOrderCancelAndLogReturnEntries();
-
+                    blCustomCancelRefundService.createRefundTransaction(this.getOrderModel().getPaymentTransactions().get(0),
+                            result, PaymentTransactionType.REFUND_STANDALONE);
                     BlLogger.logMessage(LOGGER, Level.DEBUG, BlCustomCancelRefundConstants.CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY,
                             this.getOrderModel().getCode());
                     Messagebox.show(BlCustomCancelRefundConstants.ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY);
@@ -532,6 +533,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
                 BlLogger.logMessage(LOGGER, Level.DEBUG, BlCustomCancelRefundConstants.CREATE_RETURN_REQUEST_AND_REFUND_ENTRY,
                         this.getOrderModel().getCode());
+
             });
         }
     }
@@ -674,7 +676,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @return amount
      */
     private double getGiftCardAmount() {
-        double gcAmount = 0d;
+        double gcAmount ;
         if(this.getOrderModel().getGiftCardAvailableAmount() == null) {
             gcAmount = this.getOrderModel().getGiftCardAmount();
         } else {
