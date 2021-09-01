@@ -43,6 +43,7 @@
 		<property name="blSourcingService" ref="blSourcingService"/>
 		<property name="allocationService" ref="allocationService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
 	</bean>
 	
 	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />

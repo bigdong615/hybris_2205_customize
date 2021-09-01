@@ -3,8 +3,10 @@ package com.bl.Ordermanagement.actions.order;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
+import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -31,7 +33,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -46,6 +47,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private BusinessProcessService businessProcessService;
   private BlSourcingService blSourcingService;
   private AllocationService allocationService;
+  private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
    * {@inheritDoc}
@@ -130,8 +132,73 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    */
   private SourcingResults getSourcingResults(final OrderModel order) {
 
-    return BooleanUtils.isTrue(order.getIsRentalCart()) ? blSourcingService.sourceOrder(order)
-        : getResultsForUsedGearOrder(order);
+    SourcingResults results = null;
+    if (order.getIsRentalCart()) {
+
+      if (isOrderWithOnlyAquatechProducts(order)) {
+        results =  getResultsForOrderWithOnlyAquatechProducts(order);
+      } else {
+        results = blSourcingService.sourceOrder(order);
+      }
+    } else{
+      results = getResultsForUsedGearOrder(order);
+    }
+
+    return results;
+  }
+
+  /**
+   * Create sourcing result if order is only with aquatech products.
+   *
+   * @param order - the order.
+   * @return SourcingResults
+   */
+  private SourcingResults getResultsForOrderWithOnlyAquatechProducts(final OrderModel order) {
+
+    final SourcingResults results = new SourcingResults();
+    final Set<SourcingResult> resultSet = new HashSet<>();
+
+
+
+    for (AbstractOrderEntryModel entry : order.getEntries()) {
+
+      final WarehouseModel warehouseModel = blDeliveryStateSourcingLocationFilter.applyFilter(order);
+
+      final SourcingResult sourcingResult = new SourcingResult();
+
+      final Set<BlProductModel> aquatechProductsToAssign = new HashSet<>();
+      aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
+
+      final Map<Integer, Set<BlProductModel>> resultAquatechProductMap =
+          (null != sourcingResult.getAquatechProductMap()) ? new HashMap<>(sourcingResult.getAquatechProductMap()) : new HashMap<>();
+      resultAquatechProductMap.put(entry.getEntryNumber(), aquatechProductsToAssign);
+
+      final Map<AbstractOrderEntryModel, Long> resultAllocationMap =
+          (null != sourcingResult.getAllocation()) ? new HashMap<>(sourcingResult.getAllocation())
+              : new HashMap<>();
+      resultAllocationMap.put(entry, (long) aquatechProductsToAssign.size());
+
+      sourcingResult.setAquatechProductMap(resultAquatechProductMap);
+      sourcingResult.setAllocation(resultAllocationMap);
+      sourcingResult.setWarehouse(warehouseModel);
+      resultSet.add(sourcingResult);
+    }
+
+    results.setResults(resultSet);
+
+    return results;
+  }
+
+  /**
+   * Checks whether the order is only with aquatech products.
+   *
+   * @param order - the order.
+   * @return true      - if the order is fully aquatech products
+   */
+  private boolean isOrderWithOnlyAquatechProducts(final OrderModel order) {
+
+    return order.getEntries().stream().allMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
+        .equals(entry.getProduct().getManufacturerAID()));
   }
 
   /**
@@ -272,5 +339,14 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
   public void setAllocationService(final AllocationService allocationService) {
     this.allocationService = allocationService;
+  }
+
+  public BlDeliveryStateSourcingLocationFilter getBlDeliveryStateSourcingLocationFilter() {
+    return blDeliveryStateSourcingLocationFilter;
+  }
+
+  public void setBlDeliveryStateSourcingLocationFilter(
+      final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
+    this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
   }
 }

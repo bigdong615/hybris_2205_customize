@@ -18,6 +18,7 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -72,8 +73,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   public ConsignmentModel createConsignment(final AbstractOrderModel order, final String code,
       final SourcingResult result) {
 
-    if (MapUtils.isEmpty(result.getAllocation()) || MapUtils
-        .isEmpty(result.getSerialProductMap())) {
+    if (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
+        .isEmpty(result.getSerialProductMap()) && !isOrderWithAquatechProducts(order))) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
     }
 
@@ -126,40 +127,48 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
-        for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {
-          allocatedProductCodes
-              .addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
-                  Collectors.toSet()));
+        if (null != result.getSerialProductMap()) {
+          for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {
+            allocatedProductCodes
+                .addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
+                    Collectors.toSet()));
+          }
         }
 
-        final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
-            new HashSet<>(allocatedProductCodes));
+        if (!isOrderWithOnlyAquatechProducts(order) && CollectionUtils.isNotEmpty(allocatedProductCodes)) {
+          final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
+              new HashSet<>(allocatedProductCodes));
 
-        if ((!serialStocks.isEmpty()) && serialStocks.stream()
-            .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+          if ((!serialStocks.isEmpty()) && serialStocks.stream()
+              .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+
+            this.optimizeShippingMethodForConsignment(consignment, result);
+            this.getModelService().save(consignment);
+            serialStocks.forEach(stock -> stock.setReservedStatus(true));
+
+            //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
+
+            this.getModelService().saveAll(serialStocks);
+
+            return consignment;
+
+          } else {
+
+            order.setStatus(OrderStatus.SUSPENDED);
+            order.setConsignments(null);
+            order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
+            getModelService().save(order);
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+                "At the time of consignment creation, the availability of the allocated serial products not found.");
+
+            throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
+          }
+        } else {  // for only aquatech products in order
 
           this.optimizeShippingMethodForConsignment(consignment, result);
           this.getModelService().save(consignment);
-          serialStocks.forEach(stock -> stock.setReservedStatus(true));
-
-          //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
-
-          this.getModelService().saveAll(serialStocks);
-
           return consignment;
-
-        } else {
-
-          order.setStatus(OrderStatus.SUSPENDED);
-          order.setConsignments(null);
-          order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
-          getModelService().save(order);
-          BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-              "At the time of consignment creation, the availability of the allocated serial products not found.");
-
-          throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
         }
-
       } else{   // used gear cart
 
         //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.HARD_ASSIGNED);
@@ -173,6 +182,29 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     }
   }
 
+  /**
+   * Checks whether the order contains any aquatech products.
+   *
+   * @param order - the order.
+   * @return true      - if the order contains any aquatech product
+   */
+  private boolean isOrderWithAquatechProducts(final AbstractOrderModel order) {
+
+    return order.getEntries().stream().anyMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
+        .equals(entry.getProduct().getManufacturerAID()));
+  }
+
+  /**
+   * Checks whether the order contains only aquatech products.
+   *
+   * @param order - the order.
+   * @return true      - if the order contains only aquatech product
+   */
+  private boolean isOrderWithOnlyAquatechProducts(final AbstractOrderModel order) {
+
+    return order.getEntries().stream().allMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
+        .equals(entry.getProduct().getManufacturerAID()));
+  }
   /**
    * Set assigned flag to hardAssign or softAssign for the serial products
    *
@@ -249,11 +281,28 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap().get(orderEntry.getEntryNumber());
-    entry.setSerialProducts(new ArrayList<>(serialProductModels));   //setting serial products from result
+    if (!isOrderWithAquatechProducts(orderEntry.getOrder())) {
+      final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap()
+          .get(orderEntry.getEntryNumber());
+      entry.setSerialProducts(
+          new ArrayList<>(serialProductModels));   //setting serial products from result
 
-    setItemsMap(entry, serialProductModels);
-    setSerialCodesToBillingCharges(entry, serialProductModels);
+      setItemsMap(entry, serialProductModels);
+      setSerialCodesToBillingCharges(entry, serialProductModels);
+    } else {
+
+      Set<BlSerialProductModel> serialProductModels =
+          null != result.getSerialProductMap() ? result.getSerialProductMap()
+              .get(orderEntry.getEntryNumber()) : new HashSet<>();
+      if (CollectionUtils.isNotEmpty(serialProductModels)) {
+
+        entry.setSerialProducts(
+            new ArrayList<>(serialProductModels));   //setting serial products from result
+
+        setItemsMap(entry, serialProductModels);
+        setSerialCodesToBillingCharges(entry, serialProductModels);
+      }
+    }
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
