@@ -1022,7 +1022,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	  * @return the blackout dates for code
 	  */
 	 private ArrayList<BlBlackoutDateModel> getBlackoutDatesForCode(
-			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups, String code)
+			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups, final String code)
 	 {
 		 return Lists.newArrayList(CollectionUtils.emptyIfNull(groupedShippingGroups.get(code)));
 	 }
