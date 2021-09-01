@@ -41,13 +41,16 @@ public class BlInventoryScanLoggingConstants {
     public static final String CA = "CA";
     public static final String FEDEX = "FedEx";
     public static final String UPS = "UPS";
+    public static final String USPS = "USPS";
     public static final String VIP = "VIP";
     public static final String EMPLOYEE = "Employee";
     public static final String BOS = "BOS";
     public static final String IN_HOUSE = "In House Scrapped Items";
-    public static final String UNKNOWN = "Unknown Carrier";
+    public static final String UNKNOWN_CARRIER = "Unknown Carrier";
+    public static final String UNKNOWN = "UNKNOWN";
     public static final String MAW = "MAW";
     public static final String CAW = "CAW";
+    public static final String ORD = "ORD";
     public static final String BIN_LOCATION = "FDSHIP01";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
@@ -242,6 +245,9 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(MAW);
         defaultLocations.add(CAW);
         defaultLocations.add(BIN);
+        defaultLocations.add(UNKNOWN_CARRIER);
+        defaultLocations.add(ORD);
+        defaultLocations.add(USPS);
         return defaultLocations;
     }
 
