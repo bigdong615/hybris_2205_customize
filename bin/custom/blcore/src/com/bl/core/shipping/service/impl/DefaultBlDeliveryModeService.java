@@ -48,6 +48,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.services.cart.BlCartService;
@@ -57,6 +58,7 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
 import com.bl.facades.fexEx.data.SameDayCityResData;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.integration.services.BlFedExSameDayService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
@@ -94,6 +96,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     @Value("${shipping.nyc.zip.code}")
     private String nyc;
+    
+    private BlDatePickerService blDatePickerService;
 
     /**
      * {@inheritDoc}
@@ -102,8 +106,57 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public Collection<ShippingGroupModel> getAllShippingGroups() {
-        return getBlZoneDeliveryModeDao().getAllShippingGroups();
+        return excludeBlockedShippingGroup(getBlZoneDeliveryModeDao().getAllShippingGroups());
     }
+    
+	 /**
+ 	 * Exclude blocked shipping group assigned on blackout dates.
+ 	 *
+ 	 * @param allShippingGroups the all shipping groups
+ 	 * @return the collection
+ 	 */
+ 	private Collection<ShippingGroupModel> excludeBlockedShippingGroup(final Collection<ShippingGroupModel> allShippingGroups)
+	 {
+		 final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
+
+		 if (CollectionUtils.isEmpty(allShippingGroups) || Objects.isNull(rentalDatesFromSession))
+		 {
+			 return allShippingGroups;
+		 }
+		 final List<ShippingGroupModel> updatedList = Lists.newArrayList();
+		 final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(),
+				 BlCoreConstants.DATE_FORMAT);
+		 final List<String> shippingGroupCodes = allShippingGroups.stream().map(ShippingGroupModel::getCode)
+				 .collect(Collectors.toList());
+		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingGroup = getBlBlackoutDatesDao()
+				 .getAllBlackoutDatesForShippingMethods(shippingGroupCodes);
+		 if (CollectionUtils.isNotEmpty(allBlackoutDatesForShippingGroup))
+		 {
+			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups = allBlackoutDatesForShippingGroup.stream()
+					 .collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
+			 allShippingGroups.forEach(shippingGroup -> {
+				 final List<BlBlackoutDateModel> deliveryBlackOutList = Lists
+						 .newArrayList(CollectionUtils.emptyIfNull(groupedShippingGroups.get(shippingGroup.getCode())));
+				 deliveryBlackOutList
+						 .removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
+				 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
+				 final AtomicBoolean isDateIsBlocked = new AtomicBoolean(Boolean.FALSE);
+				 lBlackoutDate.forEach(bDate -> {
+					 if (DateUtils.isSameDay(rentalStartDate, bDate))
+					 {
+						 isDateIsBlocked.set(Boolean.TRUE);
+						 return;
+					 }
+				 });
+				 if (!isDateIsBlocked.get())
+				 {
+					 updatedList.add(shippingGroup);
+				 }
+			 });
+			 return updatedList;
+		 }
+		 return allShippingGroups;
+	 }
 
     /**
      * {@inheritDoc}
@@ -1020,5 +1073,21 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
 	{
 		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
 	}
 }

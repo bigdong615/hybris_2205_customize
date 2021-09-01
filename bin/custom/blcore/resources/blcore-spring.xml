@@ -785,6 +785,7 @@
 		<property name="blCartService" ref="cartService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->

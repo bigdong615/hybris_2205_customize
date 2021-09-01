@@ -461,22 +461,6 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)             
                                              ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)          
                                              ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)          
-                                             ; RUSH_NYC_NEXT_DAY_4_30_To_7_30          ; 04:30 PM - 07:30 PM EST_Order by                    
-                                             ; RUSH_NYC_NEXT_DAY_3_To_6                ; 03:00 PM - 06:00 PM EST_Order by                    
-                                             ; RUSH_SAN_CARLOS_3_To_6_BL               ; 03:00 PM - 06:00 PM PST_Order by 01:20 PM           
-                                             ; RUSH_SAN_CARLOS_4_30_To_7_30            ; 04:30 PM - 07:30 PM PST_Order by 02:50 PM           
-                                             ; RUSH_SAN_CARLOS_3_To_6                  ; 03:00 PM - 06:00 PM PST_Order by 01:20 PM           
-                                             ; RUSH_NYC_NEXT_DAY_9_To_12               ; 09:00 AM - 12:00 PM EST_Order by                    
-                                             ; RUSH_NYC_NEXT_DAY_12_To_3               ; 12:00 PM - 03:00 PM EST_Order by                    
-                                             ; RUSH_SAN_CARLOS_12_To_3_BL              ; 12:00 PM - 03:00 PM PST_Order by 10:20 AM           
-                                             ; RUSH_SAN_CARLOS_12_To_3                 ; 12:00 PM - 03:00 PM PST_Order by 10:20 AM           
-                                             ; RUSH_SAN_CARLOS_9_To_12                 ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM           
-                                             ; RUSH_SAN_CARLOS_9_To_12_BL              ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM           
-                                             ; RUSH_SAN_CARLOS_4_30_To_7_30_BL         ; 04:30 PM - 07:30 PM PST_Order by 02:50 PM           
-                                             ; RUSH_NYC_NEXT_DAY_9_To_12_BL            ; 09:00 AM - 12:00 PM EST_Order by                    
-                                             ; RUSH_NYC_NEXT_DAY_3_To_6_BL             ; 03:00 PM - 06:00 PM EST_Order by                    
-                                             ; RUSH_NYC_NEXT_DAY_12_To_3_BL            ; 12:00 PM - 03:00 PM EST_Order by                    
-                                             ; RUSH_NYC_NEXT_DAY_4_30_To_7_30_BL       ; 04:30 PM - 07:30 PM EST_Order by                    
                                              ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL                       
                                              ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL                        
                                              ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL                              
@@ -485,3 +469,7 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL                            
                                              ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL                      
                                              ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL                         
+                                             ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
+                                             ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
+                                             
+                                             
