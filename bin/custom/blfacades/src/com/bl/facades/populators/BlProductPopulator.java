@@ -1,6 +1,9 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.facades.product.data.BlBundleReferenceData;
+import com.google.common.collect.Lists;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -15,6 +18,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -50,7 +54,22 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         if (CollectionUtils.isNotEmpty(dataSheets)) {
             populateResourceData(dataSheets, target);
         }
-     
+        target.setIsBundle(source.isBundleProduct());
+       if(CollectionUtils.isNotEmpty(source.getProductReferences()))
+        {
+            final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(source
+                .getProductReferences()));
+            List<BlBundleReferenceData> list= new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(productReferences)) {
+              productReferences.forEach(productReferenceModel -> {
+                final BlBundleReferenceData referenceData = new BlBundleReferenceData();
+                referenceData.setProductReferenceName(productReferenceModel.getTarget().getName());
+                list.add(referenceData);
+              });
+              target.setBundleProductReference(list);
+            }
+
+        }
         target.setProductType(source.getProductType().getCode());
       
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
