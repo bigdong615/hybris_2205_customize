@@ -56,22 +56,22 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String INVALID_ORDER_AMOUNT = "customersupportbackoffice.cancelorder.higheramount";
 
     public static final String FAILED = "FAILED";
-    public static final String FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR = "Failed to cancel due to payment gateway error!!";
+    public static final String FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR = "Failed to cancel due to payment gateway error for order: {}";
     public static final String SUCCESSFULLY_CANCELLED = "Successfully cancelled";
-    public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER = "Failed to cancel order, please try again later";
-    public static final String AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT = " and captured payment with remaining amount!!";
-    public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION = "Failed to cancel order as error occurred during authorization";
+    public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER = "Failed to cancel order, please try again later for order: {}";
+    public static final String AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT = " and captured payment with remaining amount for order: {}";
+    public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION = "Failed to cancel order as error occurred during authorization for order: {}";
     public static final String PLEASE_CREATE_GIFT_CARD_WITH = "!! Please create gift card with: ";
-    public static final String CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY = "Cancel and Refund Txn has been initiated successfully.";
+    public static final String CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY = "Cancel and Refund Txn has been initiated successfully for order: {}";
     public static final String ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY = "Order cancelled and Refund Amount has been initiated successfully";
-    public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND = "Order can not be cancel as failed to initiate refund.";
+    public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND = "Order can not be cancel as failed to initiate refund for order: {}";
     public static final String REFUND_NOTES_WHILE_FULL_REFUND = "Refund Notes while full refund";
-    public static final String AND_REFUNDED = " and refunded!!";
-    public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND = "Order can not be cancel as failed to refund!!";
+    public static final String AND_REFUNDED = " and refunded for order: {}";
+    public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND = "Order can not be cancel as failed to refund for order: {}";
     public static final String INVALID_ENTERED_AMOUNT_AMOUNT_SHOULD_BE_UP_TO_TWO_DECIMAL_DIGITS_ONLY = "Invalid entered amount!! amount should be up to two decimal digits only!!";
-    public static final String TOTAL_REFUND_AMOUNT_FOR_FULL_ORDER_REFUND_AFTER_PART_REFUND = "Total refund amount for full order refund after part refund for authorization: ";
-    public static final String PART_TOTAL_REFUND_AMOUNT = "Part total refund amount: ";
-    public static final String CREATE_RETURN_REQUEST_AND_REFUND_ENTRY = "Create ReturnRequest and RefundEntry";
+    public static final String TOTAL_REFUND_AMOUNT_FOR_FULL_ORDER_REFUND_AFTER_PART_REFUND = "Total refund amount for full order refund after part refund for authorization for amount: {} for order: {} ";
+    public static final String PART_TOTAL_REFUND_AMOUNT = "Part total refund amount: {} for order: {}";
+    public static final String CREATE_RETURN_REQUEST_AND_REFUND_ENTRY = "Create ReturnRequest and RefundEntry for order: {}";
 
     private BlCustomCancelRefundConstants() {}
 }
