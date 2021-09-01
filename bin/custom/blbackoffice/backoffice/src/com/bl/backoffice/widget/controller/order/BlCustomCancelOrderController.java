@@ -325,7 +325,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param resultBuilder message string
      */
     private void cancelFUllOrderByLoggingGiftCardTransactions(StringBuilder resultBuilder) {
-        if(this.getOrderModel().isGiftCardOrder()) {
+        if(this.getOrderModel().isGiftCardOrder() && this.getGiftCardAmount() > BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
             this.logAmountForGiftCardTransactions(BlInventoryScanLoggingConstants.ZERO, String.valueOf(this.getGiftCardAmount()));
             resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH + (this.getGiftCardAmount()));
         }
