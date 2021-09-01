@@ -230,7 +230,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELLING_THE_ORDER_FOR_CODE,
                     this.getOrderModel().getCode());
             if (this.buildCancelRequest() != null) {
-                this.refundProcess(blCustomCancelRefundService.getCapturedPaymentTransaction(this.getOrderModel()));
+                this.refundProcess(blCustomCancelRefundService.getCapturedPaymentTransaction(this.getOrderModel()).orElse(null));
             }
 
             final OrderModel order = this.getModelService().get(this.getOrderModel().getPk());
@@ -245,9 +245,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      *
      * @param captureEntry capture transaction details
      */
-    private void refundProcess(final Optional<PaymentTransactionEntryModel> captureEntry) {
-        if (BooleanUtils.isTrue(this.getOrderModel().getIsCaptured()) && captureEntry.isPresent()) {
-            this.doRefund(this.globalCancelEntriesSelection.isChecked(), captureEntry.get());
+    private void refundProcess(final PaymentTransactionEntryModel captureEntry) {
+        if (BooleanUtils.isTrue(this.getOrderModel().getIsCaptured()) && null != captureEntry) {
+            this.doRefund(this.globalCancelEntriesSelection.isChecked(), captureEntry);
         } else {
             Map<String, String> responseMap = new HashMap<>();
             final Collection<PaymentTransactionEntryModel> allVoidTransactionModels = braintreeBackofficeOrderFacade
