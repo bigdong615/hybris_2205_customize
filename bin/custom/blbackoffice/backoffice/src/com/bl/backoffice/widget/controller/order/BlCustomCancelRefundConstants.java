@@ -62,7 +62,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER = "Failed to cancel order, please try again later for order: {}";
     public static final String FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG = "Failed to cancel order, please try again later";
     public static final String AND_CAPTURED_PAYMENT_WITH_REMAINING_AMOUNT = " and captured payment with remaining amount for order: {}";
-    public static final String SUCCESS_CANCEL_REFUND = "Successfully cancelled and authorized payment with remaining amount";
+    public static final String SUCCESS_CANCEL_REFUND = "Successfully cancelled and initiated refund";
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION = "Failed to cancel order as error occurred during authorization for order: {}";
     public static final String FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_AUTHORIZATION_MSG = "Failed to cancel order as error occurred during authorization";
     public static final String PLEASE_CREATE_GIFT_CARD_WITH = "!! Please create gift card with: ";
