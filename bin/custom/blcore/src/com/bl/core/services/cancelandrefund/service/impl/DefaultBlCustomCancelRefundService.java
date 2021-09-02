@@ -127,7 +127,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      */
     @Override
     public void createRefundTransaction(final PaymentTransactionModel transaction, final BrainTreeRefundTransactionResult result,
-                                        final PaymentTransactionType transactionType) {
+                                        final PaymentTransactionType transactionType, final OrderModel orderModel) {
         final String newEntryCode = getPaymentService().getNewPaymentTransactionEntryCode(transaction, transactionType);
         final PaymentTransactionEntryModel entry = getModelService().create(PaymentTransactionEntryModel.class);
         entry.setType(transactionType);
@@ -140,6 +140,12 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         entry.setTransactionStatusDetails(result.getTransactionStatusDetails().toString());
         entry.setTime(new Date());
         getModelService().saveAll(entry, transaction);
+
+        final Collection<PaymentTransactionEntryModel> entries = orderModel.getPaymentTransactions().get(
+                BlInventoryScanLoggingConstants.ZERO).getEntries();
+        entries.add(entry);
+        modelService.save(orderModel);
+        modelService.refresh(orderModel);
     }
 
     /**
@@ -157,7 +163,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         returnRequestModel.setSubtotal(returnRequestModel.getReturnEntries().stream().filter(entry -> entry instanceof RefundEntryModel)
                 .map(refund -> ((RefundEntryModel) refund).getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add));
         modelService.save(returnRequestModel);
-        this.createRefundTransaction(orderModel.getPaymentTransactions().get(BlInventoryScanLoggingConstants.ZERO), result, refundStandalone);
+        this.createRefundTransaction(orderModel.getPaymentTransactions().get(BlInventoryScanLoggingConstants.ZERO), result, refundStandalone, orderModel);
     }
 
     /**
