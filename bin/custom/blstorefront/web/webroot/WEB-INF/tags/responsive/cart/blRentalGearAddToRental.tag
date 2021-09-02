@@ -20,7 +20,7 @@
 		<spring:param name="configuratorType" value="${configuratorType}" />
 	</spring:url>
      <c:choose>
-     			<c:when test="${product.isUpcoming eq true && product.isbundle ne true}">
+     			<c:when test="${product.isUpcoming eq true && product.isBundle ne true}">
      			 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                  <button type="submit" class="btn btn-primary dis btnwidthplp js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
                    data-bs-toggle="modal"  data-bs-target="#signIn" aria-disabled="false">
