@@ -11,7 +11,7 @@
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="list"/>
-      <collectiontype code="modifiedSerialProduct" elementtype="BlSerialProduct" autocreate="true"
+      <collectiontype code="ModifiedSerialProduct" elementtype="BlSerialProduct" autocreate="true"
       generate="false" type="list"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
 
@@ -2174,7 +2174,7 @@
               <modifiers read="true" write="true" search="true" optional="true"/>
               <description>Allocated warehouse , by CSAgent to modify order.</description>
             </attribute>
-            <attribute qualifier="modifiedSerialProductList" type="modifiedSerialProduct">
+            <attribute qualifier="modifiedSerialProductList" type="ModifiedSerialProduct">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true" initial="true"/>
               <description>Allocated serialProduct , by CSAgent to modify order.</description>
