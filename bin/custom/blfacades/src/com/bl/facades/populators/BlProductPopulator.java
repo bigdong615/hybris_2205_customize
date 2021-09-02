@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.facades.product.data.BlBundleReferenceData;
 import com.google.common.collect.Lists;
@@ -75,7 +76,13 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
       
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
+
+        if (BlCoreConstants.AQUATECH_BRAND_ID.equals(source.getManufacturerAID())) {
+            target.setIsUpcoming(false);
+        } else {
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+        }
+
         target.setAlternativeProduct(source.getAlternativeProduct());
         target.setOnSale(source.getOnSale() != null && source.getOnSale());
         target.setUpc(StringUtils.isNotEmpty(source.getUpc()) ? source.getUpc() : StringUtils.EMPTY );

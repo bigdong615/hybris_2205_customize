@@ -257,6 +257,20 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   }
 
   /**
+   * Checks whether this given product is aquatech product or not.
+   *
+   * @param target the price value
+   * @return true if this given product is aquatech product
+   */
+  private boolean isAquatechProduct(final ProductData target) {
+
+    final BlProductModel blProductModel = (BlProductModel) getProductService()
+        .getProductForCode(target.getCode());
+    return blProductModel != null && blProductModel.getManufacturerAID()
+        .equalsIgnoreCase(BlCoreConstants.AQUATECH_BRAND_ID);
+  }
+
+  /**
    * It sets the stock data to productData
    * @param target
    */
@@ -267,7 +281,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
 			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
-			if (blProductModel != null && !blProductModel.getManufacturerAID().equalsIgnoreCase("9"))
+			if (blProductModel != null && !isAquatechProduct(target))
 			{
 				target.setStock(getStockConverter().convert(blProductModel));
 			}
@@ -426,11 +440,15 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target target to be fill
    * @param key key to get value from source
    */
-  private void setUpcomingAttributeValue(final SearchResultValueData source, final ProductData target ,final String key) {
-      if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)) {
+  private void setUpcomingAttributeValue(final SearchResultValueData source,
+      final ProductData target, final String key) {
+
+    if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)
+        && !isAquatechProduct(target)) {
         target.setIsUpcoming(this.<Boolean>getValue(source,key));
     }
   }
+
 
 
   protected PromotionData createPromotionData()

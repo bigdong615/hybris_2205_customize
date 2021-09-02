@@ -5,8 +5,8 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
-import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -18,7 +18,6 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -281,27 +280,49 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    if (!isOrderWithAquatechProducts(orderEntry.getOrder())) {
-      final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap()
-          .get(orderEntry.getEntryNumber());
-      entry.setSerialProducts(
-          new ArrayList<>(serialProductModels));   //setting serial products from result
+    if (!isOrderWithOnlyAquatechProducts(orderEntry.getOrder())) {
 
-      setItemsMap(entry, serialProductModels);
-      setSerialCodesToBillingCharges(entry, serialProductModels);
-    } else {
+      final List<BlProductModel> consignmentEntrySerialProducts =
+          null != entry.getSerialProducts() ? entry.getSerialProducts() : new ArrayList<>();
 
-      Set<BlSerialProductModel> serialProductModels =
+      final Set<BlSerialProductModel> serialProductModels =
           null != result.getSerialProductMap() ? result.getSerialProductMap()
               .get(orderEntry.getEntryNumber()) : new HashSet<>();
+
       if (CollectionUtils.isNotEmpty(serialProductModels)) {
 
+        consignmentEntrySerialProducts.addAll(serialProductModels);
         entry.setSerialProducts(
-            new ArrayList<>(serialProductModels));   //setting serial products from result
+            consignmentEntrySerialProducts);   //setting serial products from result
 
         setItemsMap(entry, serialProductModels);
         setSerialCodesToBillingCharges(entry, serialProductModels);
       }
+
+      final List<BlProductModel> productModels =
+          null != result.getAquatechProductMap() ? result.getAquatechProductMap()
+              .get(orderEntry.getEntryNumber()) : new ArrayList<>();
+
+      if (CollectionUtils.isNotEmpty(productModels)) {
+
+        consignmentEntrySerialProducts.addAll(productModels);
+        entry.setSerialProducts(
+            consignmentEntrySerialProducts);   //setting serial products from result
+
+        setItemsMapForAquatechProducts(entry, productModels);
+      }
+
+
+    } else {
+
+      final List<BlProductModel> productModels =
+          null != result.getAquatechProductMap() ? result.getAquatechProductMap()
+              .get(orderEntry.getEntryNumber()) : new ArrayList<>();
+
+      entry.setSerialProducts(
+          new ArrayList<>(productModels));   //setting aquatech products from result
+
+      setItemsMapForAquatechProducts(entry, productModels);
     }
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
@@ -312,6 +333,31 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     consignmentEntries.add(entry);
     orderEntry.setConsignmentEntries(consignmentEntries);
     return entry;
+  }
+
+  /**
+   * Created Map for aquatech products which will be stored in consignment entry.
+   *
+   */
+  private void setItemsMapForAquatechProducts(final ConsignmentEntryModel entry,
+      final List<BlProductModel> productModels) {
+
+    final Map<String, ItemStatusEnum> itemsMap =
+        null != entry.getItems() ? entry.getItems() : new HashMap<>();
+
+    if (productModels.size() == 1) {
+
+      itemsMap.put(productModels.get(0).getName(), ItemStatusEnum.NOT_INCLUDED);
+
+    } else {
+      for (int i = 1; i <= productModels.size(); i++) {
+
+        itemsMap.put(productModels.get(i-1).getName() + BlCoreConstants.DOUBLE_HYPHEN + i,
+            ItemStatusEnum.NOT_INCLUDED);
+      }
+    }
+
+    entry.setItems(itemsMap);
   }
 
   /**

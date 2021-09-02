@@ -25,11 +25,13 @@ import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
@@ -157,19 +159,19 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     final SourcingResults results = new SourcingResults();
     final Set<SourcingResult> resultSet = new HashSet<>();
-
-
+    final SourcingResult sourcingResult = new SourcingResult();
 
     for (AbstractOrderEntryModel entry : order.getEntries()) {
 
       final WarehouseModel warehouseModel = blDeliveryStateSourcingLocationFilter.applyFilter(order);
 
-      final SourcingResult sourcingResult = new SourcingResult();
+      final List<BlProductModel> aquatechProductsToAssign = new ArrayList<>();
+      for (int i = 0; i < entry.getQuantity(); i++){
+        aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
+      }
 
-      final Set<BlProductModel> aquatechProductsToAssign = new HashSet<>();
-      aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
 
-      final Map<Integer, Set<BlProductModel>> resultAquatechProductMap =
+      final Map<Integer, List<BlProductModel>> resultAquatechProductMap =
           (null != sourcingResult.getAquatechProductMap()) ? new HashMap<>(sourcingResult.getAquatechProductMap()) : new HashMap<>();
       resultAquatechProductMap.put(entry.getEntryNumber(), aquatechProductsToAssign);
 

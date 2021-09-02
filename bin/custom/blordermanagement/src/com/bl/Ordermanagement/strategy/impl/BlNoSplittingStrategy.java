@@ -1,6 +1,7 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -104,20 +105,37 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       final SourcingLocation sourcingLocation) {
 
     sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-      final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(orderEntry) ? orderEntry.getQuantity()
+          : getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
       if (availableQty.longValue() != 0l) {
         populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
             availableQty);
       }
+
     });
 
     return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
-      final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(entry) ? entry.getQuantity()
+          : getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
   }
 
   /**
+   * Check whether aquatech product is in given order entry.
+   *
+   * @param orderEntry
+   * @return true if aquatech product is in this entry.
+   */
+  private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
+
+    return BlCoreConstants.AQUATECH_BRAND_ID.equals(orderEntry.getProduct().getManufacturerAID());
+  }
+
+    /**
    * Populate context with allocatedQuantity.
    * @param sourcingContext
    * @param sourcingLocation
