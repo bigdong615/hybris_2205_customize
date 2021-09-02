@@ -11,6 +11,8 @@
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="list"/>
+      <collectiontype code="ModifiedSerialProduct" elementtype="BlSerialProduct" autocreate="true"
+      generate="false" type="list"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
 
         <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
@@ -2172,7 +2174,7 @@
               <modifiers read="true" write="true" search="true" optional="true"/>
               <description>Allocated warehouse , by CSAgent to modify order.</description>
             </attribute>
-            <attribute qualifier="serialProduct" type="BLSerialProduct">
+            <attribute qualifier="modifiedSerialProductList" type="ModifiedSerialProduct">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true" initial="true"/>
               <description>Allocated serialProduct , by CSAgent to modify order.</description>
@@ -2482,6 +2484,7 @@
                         <description>Gift Card Available Amount</description>
                         <modifiers read="true" write="true" search="false" optional="true" />
                         <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="giftCardAmountTransactions" type="OrderGiftCardTransactions">
                         <description>Gift Card Amount Transactions</description>
