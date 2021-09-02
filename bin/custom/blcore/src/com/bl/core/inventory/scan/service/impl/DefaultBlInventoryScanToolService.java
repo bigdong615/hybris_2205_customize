@@ -1704,7 +1704,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public boolean getStatusOfLocationDC()	{
 		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
 		if(Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory())) {
-			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory());
+			return BlInventoryScanUtility.getDirtyCartLocations().contains(blInventoryLocationModel.getLocationCategory().getCode());
 		}
 		return false;
 	}
