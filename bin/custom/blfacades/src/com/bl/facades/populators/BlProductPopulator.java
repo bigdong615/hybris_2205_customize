@@ -3,6 +3,7 @@ package com.bl.facades.populators;
 import com.bl.core.model.BlProductModel;
 import com.bl.facades.product.data.BlBundleReferenceData;
 import com.google.common.collect.Lists;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
@@ -59,8 +60,9 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         {
             final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(source
                 .getProductReferences()));
-            List<BlBundleReferenceData> list= new ArrayList<>();
-            if (CollectionUtils.isNotEmpty(productReferences)) {
+          productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType()));
+          List<BlBundleReferenceData> list= new ArrayList<>();
+              if (CollectionUtils.isNotEmpty(productReferences)) {
               productReferences.forEach(productReferenceModel -> {
                 final BlBundleReferenceData referenceData = new BlBundleReferenceData();
                 referenceData.setProductReferenceName(productReferenceModel.getTarget().getName());
