@@ -107,7 +107,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 				.isNotEmpty(availableProductCount)) {
 			availability = availableProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			totalUnits = totalProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Stock Level found for product : {} and date between: {} and {} with "
 							+ "total count : {} and avaiable count : {}", blProductModel.getCode(), startDate,
 					endDate, totalProductCount, availableProductCount);
@@ -149,7 +149,12 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 								+ "total count : {} and avaiable count : {}",
 						productReferenceModel.getTarget().getCode(), startDate, endDate, totalUnits,
 						availability);
-				availableProductCount.add(availability);
+				final long noOfQuantity = productReferenceModel.getQuantity() != null ? productReferenceModel.getQuantity().longValue() : 0L;
+				if( noOfQuantity <= availability.longValue()) {
+					availableProductCount.add(availability);
+				} else{
+					availableProductCount.add(Long.valueOf(0));
+				}
 				totalProductCount.add(totalUnits);
 			}
 		});
