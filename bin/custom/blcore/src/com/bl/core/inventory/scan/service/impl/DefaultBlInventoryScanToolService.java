@@ -584,10 +584,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlProductModel> newBarcode = new ArrayList<>(scannedSerialProduct);
 		final List<BlProductModel> lErrorSubParts = new ArrayList<>();
 		final List<String> skuNames = new ArrayList<>();
+		final List<BlProductModel> scannedBlProduct = scannedSubpartProduct.stream().map(BlSerialProductModel::getBlProduct)
+				.collect(Collectors.toList());
 
 		newBarcode.removeIf(entryBarcode::contains);
 		entryBarcode.removeIf(scannedSerialProduct::contains);
-		entryBarcode.removeIf(scannedSubpartProduct::contains);
+		entryBarcode.removeIf(scannedBlProduct::contains);
 		serials.forEach(item -> {
 			if (item.getProductType().equals(ProductTypeEnum.SUBPARTS))
 			{
@@ -595,10 +597,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 		});
 		scannedSubpartProduct.forEach(subpart -> {
-			if (Objects.nonNull(subpart) && !skuNames.contains(subpart.getName()))
+			if (Objects.nonNull(subpart) && !skuNames.contains(subpart.getBlProduct().getName()))
 			{
 				lErrorSubParts.add(subpart);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned subParts {} are not available on consignment",lErrorSubParts);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scanned subParts {} are not available on consignment",
+						lErrorSubParts);
 			}
 		});
 
@@ -613,7 +616,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		return invalidSerials;
 	}
-
 	/**
 	 * method will be used to create success response
 	 * @param barcodes
