@@ -590,6 +590,7 @@
 		<property name="catalogVersionDao" ref="catalogVersionDao" />
 		<property name="productDao" ref="productDao" />
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 
@@ -692,6 +693,7 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 
@@ -782,6 +784,8 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="blCartService" ref="cartService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
@@ -1392,5 +1396,10 @@
 		<property name="paymentService" ref="paymentService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="returnService" ref="returnService"/>
+	</bean>
+	
+	<alias name="defaultBlBlackoutDatesDao" alias="blBlackoutDatesDao"/>
+	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 </beans>
