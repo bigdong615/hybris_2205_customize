@@ -1778,7 +1778,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -2020,6 +2020,8 @@
 								<editorArea:value>create-wizard-no-save</editorArea:value>
 							</editorArea:editor-parameter>
 						</editorArea:attribute>
+					<editorArea:attribute qualifier="poEnabled"
+						position="5" />
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2442,6 +2444,7 @@
             <n:navigation-node id="UnboxingScanTool"/>
             <n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
             <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+            <n:type-node id="Consignment" code="Consignment"/>
         </n:explorer-tree>
     </context>
     
