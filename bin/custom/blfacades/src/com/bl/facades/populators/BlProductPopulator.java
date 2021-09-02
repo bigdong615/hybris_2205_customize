@@ -60,7 +60,6 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         {
             final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(source
                 .getProductReferences()));
-          productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType()));
           List<BlBundleReferenceData> list= new ArrayList<>();
               if (CollectionUtils.isNotEmpty(productReferences)) {
                 productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
