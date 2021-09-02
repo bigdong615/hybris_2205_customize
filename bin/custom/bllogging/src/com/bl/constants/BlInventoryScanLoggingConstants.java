@@ -52,6 +52,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String CAW = "CAW";
     public static final String ORD = "ORD";
     public static final String BIN_LOCATION = "FDSHIP01";
+    public static final String CARRIER = "CARRIER";
+    public static final String BOXING_FEDEX = "FEDEX";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
