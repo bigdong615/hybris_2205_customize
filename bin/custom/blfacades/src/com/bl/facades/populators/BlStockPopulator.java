@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.converters.Populator;
@@ -22,7 +23,7 @@ import com.bl.facades.product.data.RentalDateDto;
  *
  * @author Moumita
  */
-public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockData> implements Populator<SOURCE, TARGET>
+public class BlStockPopulator<SOURCE extends BlProductModel, TARGET extends StockData> implements Populator<SOURCE, TARGET>
 {
 	private BaseStoreService baseStoreService;
 	private BlCommerceStockService blCommerceStockService;
@@ -47,8 +48,14 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 					.convertStringDateToDate(startDate, BlFacadesConstants.DATE_FORMAT);
 			final Date endDay = BlDateTimeUtils
 					.convertStringDateToDate(endDate, BlFacadesConstants.DATE_FORMAT);
-			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
-					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
+      final StockResult stockResult;
+     if(blProductModel.isBundleProduct()){
+       stockResult = getBlCommerceStockService().getStockForBundleProduct(
+           blProductModel, baseStore.getWarehouses(), startDay, endDay);
+     }else{
+       stockResult = getBlCommerceStockService().getStockForEntireDuration(
+           blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
+     }
 			final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
 			stockData.setStockLevelStatus(stockLevelStatus);
 			stockData.setStockLevel(stockResult.getAvailableCount());
