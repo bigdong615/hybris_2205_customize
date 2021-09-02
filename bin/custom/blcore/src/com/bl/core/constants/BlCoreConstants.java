@@ -264,6 +264,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SOFT_ASSIGNED = "softAssign";
   public static final String NEW_GEAR = "newgear";
 	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BUNDLEPRODUCT = "bundleProduct" ;
 	public static final String BARCODE = "barcode";
   public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 

@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -189,6 +190,7 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		checkDatesIsBlackoutDate(model);
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
@@ -227,6 +229,30 @@ public class CartPageController extends AbstractCartPageController
 							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
 		}
 		return prepareCartUrl(model);
+	}
+	
+	/**
+	 * Check selected rental dates is blackout date.
+	 *
+	 * @param model the model
+	 */
+	private void checkDatesIsBlackoutDate(final Model model)
+	{
+		final RentalDateDto rentalDatesFromSession = blDatePickerService.getRentalDatesFromSession();
+		if(Objects.nonNull(rentalDatesFromSession) && StringUtils.isNotBlank(rentalDatesFromSession.getSelectedFromDate())
+				&& StringUtils.isNotBlank(rentalDatesFromSession.getSelectedToDate()))
+		{
+			final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
+			if(blCartService.isSelectedDateIsBlackoutDate(rentalStartDate, BlackoutDateTypeEnum.RENTAL_START_DATE))
+			{
+				GlobalMessages.addErrorMessage(model, "blackout.rental.start.date.error");
+			}
+			final Date rentalEndDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
+			if(blCartService.isSelectedDateIsBlackoutDate(rentalEndDate, BlackoutDateTypeEnum.RENTAL_END_DATE))
+			{
+				GlobalMessages.addErrorMessage(model, "blackout.rental.end.date.error");
+			}
+		}
 	}
 
 	protected String prepareCartUrl(final Model model) throws CMSItemNotFoundException
@@ -513,7 +539,7 @@ public class CartPageController extends AbstractCartPageController
 	private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
 	{
 		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore().getWarehouses();
-		final List<Date> blackOutDates = blDatePickerService.getListOfBlackOutDates();
+		final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
 		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
@@ -1018,6 +1044,13 @@ public class CartPageController extends AbstractCartPageController
 		if (rentalDateDto == null)
 		{
 			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
+		}
+		else if(blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
+				BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_START_DATE)
+				|| blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
+						BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_END_DATE))
+		{
+			return BlControllerConstants.BLACKOUT_DATE_FOUND;
 		}
 		else
 		{
