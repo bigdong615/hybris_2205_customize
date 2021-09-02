@@ -2482,6 +2482,7 @@
                         <description>Gift Card Available Amount</description>
                         <modifiers read="true" write="true" search="false" optional="true" />
                         <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="giftCardAmountTransactions" type="OrderGiftCardTransactions">
                         <description>Gift Card Amount Transactions</description>
