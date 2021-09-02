@@ -2020,6 +2020,8 @@
 								<editorArea:value>create-wizard-no-save</editorArea:value>
 							</editorArea:editor-parameter>
 						</editorArea:attribute>
+					<editorArea:attribute qualifier="poEnabled"
+						position="5" />
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
