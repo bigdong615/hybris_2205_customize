@@ -191,4 +191,12 @@ public interface BlCartFacade extends CartFacade {
 	 * @return
 	 */
 	public boolean isNewGearProductAllowToAdd(final String productCode, final String serialCode);
+
+	/**
+	 * Check rental dates should be 2 business days minimum for shipping for aquatech products
+	 *
+	 * @param cartData
+	 *           the cart data
+	 */
+	void checkAquatechRentalDates(final CartData cartData);
 }
