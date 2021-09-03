@@ -96,24 +96,13 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 							defaultPriceInformation, rentalDays)
 							: defaultPriceInformation;
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "============Before discount ================ " +info.getPriceValue().getValue(),
-							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
 					final Double discount = baseStoreModel.getBundleDiscount();
 					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
 					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "************* After discount *****************" + info.getPriceValue().getValue(),
-							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
-					final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+				final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
 							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
 					    lPrices.add(newPriceInformation);
-					/*info.getPriceValue().getValue() *
-						final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
-								.createNewPriceInformation(info, BigDecimal.valueOf(var));
-						//TO-DO add logic to apply discount and create an priceinformation then add to list
-						lPrices.add(newPriceInformation);*/
-					/*lPrices.add(info);*/
-
-				}
+					}
 			});
 			if(CollectionUtils.isEmpty(lPrices)){
 				return null;
