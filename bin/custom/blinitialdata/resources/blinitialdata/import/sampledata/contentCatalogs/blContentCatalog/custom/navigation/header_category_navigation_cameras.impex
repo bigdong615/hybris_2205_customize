@@ -69,16 +69,17 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true]           ; $contentCV[unique
                                 ; ActionNavNode              ;                         ; Action Link          ; ActionNavNode              
                                 ; 360NavNode                 ;                         ; 360 Link             ; 360NavNode                 
                                 ; WebcamsNavNode             ;                         ; Webcams Link         ; WebcamsNavNode             
-                                ; CameraPackagesNavNode      ;                         ; Camera Packages Link ; CameraPackagesNavNode      
-                                
-                                
-                                
+                                ; CameraPackagesNavNode      ;                         ; Camera Packages Link ; CameraPackagesNavNode
+                                ; AllGearPackageNavNode       ;                         ; All GearPackage Link     ; AllGearPackageNavNode
+
+
+
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
 UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef       ; children(uid,$contentCV)                                                                                                                                                                                 
-                         ; CamerasNavNode   ;                         ; CamersLinks ; BLCategoryNavNode       ; CamerasNavNode ; AllCamerasNavNode,NewArrivalsNavNode_Cameras,DSLRCamerasNavNode,MirrorlessNavNode,CinemaCamerasNavNode,CamcordersNavNode,PointShootNavNode,ActionNavNode,360NavNode,WebcamsNavNode,CameraPackagesNavNode 
+                         ; CamerasNavNode   ;                         ; CamersLinks ; BLCategoryNavNode       ; CamerasNavNode ; AllCamerasNavNode,NewArrivalsNavNode_Cameras,DSLRCamerasNavNode,MirrorlessNavNode,CinemaCamerasNavNode,CamcordersNavNode,PointShootNavNode,ActionNavNode,360NavNode,WebcamsNavNode,CameraPackagesNavNode,AllGearPackageNavNode
                          
 #####################################################################
 #### Navigation Node ENtry ####
@@ -96,9 +97,10 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[
                                  ; ActionNavNodeEntry              ;                         ; Action Navigation Node Entry          ; ActionNavNode              ; ActionLink                                             
                                  ; 360NavNodeEntry                 ;                         ; 360 Navigation Node Entry             ; 360NavNode                 ; 360Link                                                
                                  ; WebcamsNavNodeEntry             ;                         ; Webcams Navigation Node Entry         ; WebcamsNavNode             ; WebcamsLink                                            
-                                 ; CameraPackagesNavNodeEntry      ;                         ; Camera Packages Navigation Node Entry ; CameraPackagesNavNode      ; CameraPackagesLink                                     
-                                 
-                                 
+                                 ; CameraPackagesNavNodeEntry      ;                         ; Camera Packages Navigation Node Entry ; CameraPackagesNavNode      ; CameraPackagesLink
+                                 ; AllGearPackageNavNodeEntry     ;                          ; All GearPackage Navigation Node Entry    ; AllGearPackageNavNode   ; AllGearPackageLink
+
+
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
@@ -115,6 +117,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
 ;                         ; 360Link                 ; 360 Link             ; "/rent/category/cameras/vr-video-cameras" ; vr-video-cameras           ;                                    ; 360                ;
 ;                         ; WebcamsLink             ; Webcams Link         ; "/rent/category/cameras/webcams" ; webcams                    ;                                    ; Webcams            ;
 ;                         ; CameraPackagesLink      ; Camera Packages Link ; "/rent/category/cameras/camera_packages" ; camera_packages            ;                                    ; Camera Packages    ;
+;                         ; AllGearPackageLink        ; AllGearPackage Link      ; "/rent/category/package" ; package                          ;                                    ; All Gear Package ;
 
                                
 #                              ; BLCategoryNavNode       ;                         ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode
