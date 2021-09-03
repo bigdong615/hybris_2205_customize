@@ -173,12 +173,52 @@ public class DefaultBlStockService implements BlStockService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void findAndUpdateStockRecordsForParticularDuration(final BlSerialProductModel blSerialProduct,
-			final boolean reservedStatus, final Date startDate, final Date endDate)
-	{
-		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findSerialStockLevelForDate(blSerialProduct.getCode(),
-				startDate, endDate);
-		stockLevels.forEach(stockLevel -> saveStockRecord(stockLevel, reservedStatus));
+	public boolean isActiveStatus(final SerialStatusEnum currentStatus) {
+		switch (currentStatus.getCode()) {
+			case "ACTIVE":
+			case "PARTIALLY_UNBOXED":
+			case "UNBOXED":
+			case "RECEIVED_OR_RETURNED":
+			case "BOXED":
+			case "SHIPPED":
+			case "IN_HOUSE":
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isInactiveStatus(final SerialStatusEnum currentStatus) {
+		switch (currentStatus.getCode()) {
+			case "REPAIR":
+			case "REPAIR_IN_HOUSE":
+			case "REPAIR_SEND_TO_VENDOR":
+			case "REPAIR_PARTS_NEEDED":
+			case "REPAIR_AWAITING_QUOTES":
+			case "LOST":
+			case "LOST_IN_TRANSIT":
+			case "LOST_IN_HOUSE":
+			case "LOST_UNDER_INVESTIGATION":
+			case "STOLEN":
+			case "STOLEN_PAID_IN_FULL":
+			case "STOLEN_PAID_SOME":
+			case "STOLEN_NOT_PAID":
+			case "STOLEN_PAID_12_PERCENT":
+			case "SCRAPPED":
+			case "ARCHIVED":
+			case "REPAIR_NEEDED":
+			case "PARTS_NEEDED":
+			case "SOLD":
+			case "ADDED_TO_CART":
+			case "LATE":
+				return Boolean.TRUE;
+			default:
+		}
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -380,6 +420,11 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
+		if(isInactiveStatus(serial.getSerialStatus())) {
+			stockLevel.setReservedStatus(Boolean.TRUE);
+		} else {
+			stockLevel.setReservedStatus(Boolean.FALSE);
+		}
 		if(null != serial.getIsBufferedInventory()) {
 			stockLevel.setBufferedInventory(serial.getIsBufferedInventory());
 		}

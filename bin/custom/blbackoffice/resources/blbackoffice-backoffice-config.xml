@@ -2150,6 +2150,7 @@
 				<n:type-node code="StockLevel" id="StockLevel"/>
 			</n:navigation-node>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
+			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
 		</n:explorer-tree>
 	</context>
 	
@@ -2427,7 +2428,8 @@
 				<n:type-node id="OrdersNotCompletedQueue" code="OrdersNotCompletedQueue"/> 			
 			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-			<n:type-node id="RepairLog" code="BlRepairLog"/>            
+			<n:type-node id="RepairLog" code="BlRepairLog"/>   
+			<n:type-node id="Order" code="Order"/>            
         </n:explorer-tree>
     </context>
     
