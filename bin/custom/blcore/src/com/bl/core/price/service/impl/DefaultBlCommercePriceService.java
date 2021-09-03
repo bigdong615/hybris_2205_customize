@@ -8,7 +8,6 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.BlBundleReferenceData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
@@ -19,8 +18,10 @@ import de.hybris.platform.commerceservices.price.impl.DefaultCommercePriceServic
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
+
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.util.PriceValue;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,44 +72,60 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 			return null;
 		}
 		else if(PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && ((BlProductModel) product).isBundleProduct()){
-					final PriceInformation productReferencesPrice;
-          List<PriceInformation> lPrices = new ArrayList<>();
-			final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)
-					.getProductReferences()));
-			final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-			List<BlBundleReferenceData> list= new ArrayList<>();
-			if (CollectionUtils.isNotEmpty(productReferences)) {
-				productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
-					final ProductModel target = productReferenceModel.getTarget();
-					final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
-					if (CollectionUtils.isNotEmpty(prices))
-					{
-						final PriceInformation defaultPriceInformation = prices.get(0);
-						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price is {} for product {}",
-								defaultPriceInformation.getPriceValue().getValue(), product.getCode());
-						final Long rentalDays = getRentalDaysFromSession();
-						final PriceInformation info = Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
-								? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
-								defaultPriceInformation, rentalDays)
-								: defaultPriceInformation;
-						lPrices.add(info);
-
-					}
-				});
-				if(CollectionUtils.isEmpty(lPrices)){
-					return null;
-				}
-				AtomicDouble rPrice = new AtomicDouble(0.0d);
-				lPrices.forEach(refPrice -> rPrice.addAndGet(refPrice.getPriceValue().getValue()));
-				final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
-						.createNewPriceInformation(lPrices.get(0), BigDecimal.valueOf(rPrice.get()));
-				return newPriceInformation;
-			}
-
+     return getWebPriceForBundleProduct(product);
 		}
 		return super.getWebPriceForProduct(product);
 	}
 
+	public PriceInformation getWebPriceForBundleProduct(final ProductModel product){
+		List<PriceInformation> lPrices = new ArrayList<>();
+		final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)
+				.getProductReferences()));
+		if (CollectionUtils.isNotEmpty(productReferences)) {
+			productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
+				final ProductModel target = productReferenceModel.getTarget();
+				final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
+				if (CollectionUtils.isNotEmpty(prices))
+				{
+					final PriceInformation defaultPriceInformation = prices.get(0);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price is {} for product {}",
+							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+					final Long rentalDays = getRentalDaysFromSession();
+					final PriceInformation info = Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+							defaultPriceInformation, rentalDays)
+							: defaultPriceInformation;
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "============Before discount ================ " +info.getPriceValue().getValue(),
+							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+					final Double discount = baseStoreModel.getBundleDiscount();
+					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
+					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "************* After discount *****************" + info.getPriceValue().getValue(),
+							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+					final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
+					    lPrices.add(newPriceInformation);
+					/*info.getPriceValue().getValue() *
+						final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+								.createNewPriceInformation(info, BigDecimal.valueOf(var));
+						//TO-DO add logic to apply discount and create an priceinformation then add to list
+						lPrices.add(newPriceInformation);*/
+					/*lPrices.add(info);*/
+
+				}
+			});
+			if(CollectionUtils.isEmpty(lPrices)){
+				return null;
+			}
+			AtomicDouble rPrice = new AtomicDouble(0.0d);
+			lPrices.forEach(refPrice -> rPrice.addAndGet(refPrice.getPriceValue().getValue()));
+			final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+					.createNewPriceInformation(lPrices.get(0), BigDecimal.valueOf(rPrice.get()));
+			return newPriceInformation;
+		}
+		return null;
+	}
 	/**
 	 * Gets the dynamic price data for product.
 	 *
@@ -126,6 +143,25 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
 				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)
 				: BigDecimal.valueOf(priceValue);
+	}
+	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct
+	 *           the is constrained product
+	 * @param ProductModel
+	 *           the price value
+	 * @return the dynamic price data for product
+	 */
+	@Override
+	public BigDecimal getDynamicPriceDataForBundleProduct(final Boolean isConstrainedProduct, final ProductModel product)
+	{
+		final PriceInformation webPriceForBundleProduct = getWebPriceForBundleProduct(product);
+		if(Objects.nonNull(webPriceForBundleProduct)){
+		PriceValue priceValue =webPriceForBundleProduct.getPriceValue();
+		return BigDecimal.valueOf(priceValue.getValue());
+		}
+		return null;
 	}
 
 	/**

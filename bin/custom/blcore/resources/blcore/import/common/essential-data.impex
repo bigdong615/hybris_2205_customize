@@ -102,3 +102,6 @@ INSERT_UPDATE ServicelayerJob ; code[unique=true]               ; springId[uniqu
 # Deactivate Frontend Restriction on category by default for perfomance purposes
 UPDATE SearchRestriction ; code[unique=true]           ; active[default=false] 
                          ; Frontend_RestrictedCategory 
+UPDATE BaseStore ; uid[unique=true] ; name[lang=$lang] ; bundleDiscount
+                 ; bl               ; "Borrow Lenses"  ; 10
+                         

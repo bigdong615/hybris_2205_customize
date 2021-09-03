@@ -35,6 +35,17 @@ public interface BlCommercePriceService extends CommercePriceService
 	 *           the is constrained product
 	 * @param priceValue
 	 *           the price value
+	 * @return the dynamic price data for product
+	 */
+	public BigDecimal getDynamicPriceDataForBundleProduct(final Boolean isConstrainedProduct, final ProductModel product);
+
+	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct
+	 *           the is constrained product
+	 * @param priceValue
+	 *           the price value
 	 * @param rentalDays
 	 *         the rentalDays
 	 * @return the dynamic price data for product
