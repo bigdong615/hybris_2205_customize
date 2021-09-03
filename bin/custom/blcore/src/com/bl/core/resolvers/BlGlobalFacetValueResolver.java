@@ -21,10 +21,10 @@ import java.util.List;
 public class BlGlobalFacetValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
 
-  private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION,"package","gear package");
+  private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION,BlCoreConstants.PACKAGE,BlCoreConstants.GEAR_PACKAGE);
 
   private ModelService modelService;
-
+  
   /**
    *
    * @param inputDocument inputDocument adds field values to solr
