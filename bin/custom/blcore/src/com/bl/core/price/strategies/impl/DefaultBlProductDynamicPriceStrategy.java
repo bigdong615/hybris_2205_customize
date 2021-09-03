@@ -271,7 +271,8 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	 *           the price for number of days
 	 * @return the price information
 	 */
-	private PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
+	@Override
+	public PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
 			final BigDecimal priceForNumberOfDays)
 	{
 		final PriceRow priceRow = ((PriceRow) defaultPriceInformation.getQualifiers().get(BlCoreConstants.PRICE_ROW));

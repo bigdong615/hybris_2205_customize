@@ -673,6 +673,7 @@
     <bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
         <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
+        <property name="baseStoreService" ref="baseStoreService"/>
     </bean>
 
 	<!--BL-110 Inventory Scan Tool-->

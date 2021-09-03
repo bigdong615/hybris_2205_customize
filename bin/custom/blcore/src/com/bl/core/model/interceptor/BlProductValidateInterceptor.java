@@ -3,10 +3,14 @@ package com.bl.core.model.interceptor;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.google.common.collect.Lists;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -35,5 +39,27 @@ public class BlProductValidateInterceptor implements ValidateInterceptor<BlProdu
         }
 
     }
+    checkReferenceProduct(blProductModel, interceptorContext);
+  }
+
+  private void checkReferenceProduct(final BlProductModel blProductModel,
+      final InterceptorContext interceptorContext) throws InterceptorException {
+    if(blProductModel.isBundleProduct()){
+      final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(blProductModel
+          .getProductReferences()));
+      productReferences.removeIf(refer -> !ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType()));
+      if(CollectionUtils.isEmpty(productReferences) || checkSizeOfReferences(productReferences)){
+        throw new InterceptorException("Can't mark this product as discontinue");
+      }
+    }
+  }
+
+  private boolean checkSizeOfReferences(final List<ProductReferenceModel> productReferences){
+    final int size = productReferences.size();
+    if(size < 2){
+      return Boolean.TRUE;
+    }
+    return Boolean.FALSE;
   }
 }
+
