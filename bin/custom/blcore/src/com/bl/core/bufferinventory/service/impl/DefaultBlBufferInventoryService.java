@@ -7,6 +7,8 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.impl.DefaultBlStockService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.store.BaseStoreModel;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class is used to manage the buffer inventory of SKU products
@@ -26,6 +30,7 @@ import org.apache.commons.lang3.BooleanUtils;
  */
 public class DefaultBlBufferInventoryService implements BlBufferInventoryService
 {
+  private static final Logger LOG = Logger.getLogger(DefaultBlBufferInventoryService.class);
   private BlProductDao productDao;
   private BaseStoreService baseStoreService;
   private ModelService modelService;
@@ -127,12 +132,18 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
         final Double diffInPercentage = bufferInventoryPercentage - currentBufferInventoryPercentage;
         final int productsNeededForBufferInv = (int) ((diffInPercentage * totalActiveSerialProducts)/100);
         if(productsNeededForBufferInv > 0) {
+          BlLogger
+              .logFormatMessageInfo(LOG, Level.DEBUG, "{} products to be marked as buffer inventory for the product {} ",
+                  productsNeededForBufferInv, blProduct.getCode());
           markProductsBufferInv(productsNeededForBufferInv, blProduct);
         }
       } else if(Double.compare(bufferInventoryPercentage, currentBufferInventoryPercentage) < 0) {
         final Double diffInPercentage = currentBufferInventoryPercentage - bufferInventoryPercentage;
         final int productsNeededForBufferInv = (int) ((diffInPercentage * totalActiveSerialProducts)/100);
         if(productsNeededForBufferInv > 0) {
+          BlLogger
+              .logFormatMessageInfo(LOG, Level.DEBUG, "{} products to be removed from buffer inventory for the product {} ",
+                  productsNeededForBufferInv, blProduct.getCode());
           unMarkProductsBufferInv(productsNeededForBufferInv, blProduct);
         }
       }
