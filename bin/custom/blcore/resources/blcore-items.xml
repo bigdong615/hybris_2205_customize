@@ -23,6 +23,11 @@
 
         <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
 
+      <collectiontype code="OrderCodes" elementtype="java.lang.String" type="list"/>
+      <collectiontype code="ConsignmentCodes" elementtype="java.lang.String" type="list"/>
+      <collectiontype code="RescheduledOrders" elementtype="AbstractOrder" type="list"/>
+      <collectiontype code="RescheduledConsignment" elementtype="Consignment" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -1996,9 +2001,37 @@
               </attribute>
             </attributes>
           </itemtype>
-            
-         </typegroup>
-         
+
+
+
+
+          <itemtype code="UPSScrapeCronJob" extends="CronJob">
+            <description>This CronJob is to Run UPS Scrape Cron job</description>
+            <attributes>
+            <attribute qualifier="orderCodes" type="OrderCodes">
+              <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+              <persistence type="property" />
+              <description> List of order codes</description>
+            </attribute>
+              <attribute qualifier="consignmentsCodes" type="ConsignmentCodes">
+                <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                <persistence type="property" />
+                <description> List of order codes</description>
+              </attribute>
+              <attribute qualifier="orders" type="RescheduledOrders">
+                <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                <persistence type="property" />
+                <description> List of order</description>
+              </attribute>
+              <attribute qualifier="consignments" type="RescheduledConsignment">
+                <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                <persistence type="property" />
+                <description> List of order</description>
+              </attribute>
+            </attributes>
+          </itemtype>
+        </typegroup>
+
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"
              jaloclass="com.bl.core.jalo.BLPricingLogic">
@@ -5938,6 +5971,7 @@ new Integer(0)
 </itemtype>
   
 </typegroup>
+
       
 	</itemtypes>
 </items>

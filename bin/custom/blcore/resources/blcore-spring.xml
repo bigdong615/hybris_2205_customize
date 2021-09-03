@@ -1361,4 +1361,13 @@
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+
+	<!--BL-803 UPS Scrape-->
+	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.blbackoffice.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
+		<property name="defaultBlUPSScrapeService" ref="defaultBlUPSScrapeService"/>
+		<property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
+	</bean>
+
+	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService"/>
+
 </beans>

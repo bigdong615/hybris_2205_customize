@@ -175,4 +175,11 @@
     <bean id="blFedExShipmentCreateRequestPopulator"
 		class="com.bl.integration.shipping.ups.converters.populator.BLFedExShipmentCreateRequestPopulator" />
 
+
+  <!--BL-803 UPS Scrape -->
+
+  <bean id="defaultBlUPSScrapeService" class="com.bl.integration.services.impl.DefaultBlUPSScrapeService">
+  </bean>
+
+
 </beans>
