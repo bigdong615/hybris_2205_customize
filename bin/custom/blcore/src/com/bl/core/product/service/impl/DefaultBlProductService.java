@@ -1,6 +1,7 @@
 package com.bl.core.product.service.impl;
 
 import com.bl.core.enums.SerialStatusEnum;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.impl.DefaultProductService;
 
 import java.util.Objects;
@@ -58,5 +59,14 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     return null != serialStatusEnum && ("ACTIVE".equals(serialStatusEnum.getCode()) ||
         "UNBOXED".equals(serialStatusEnum.getCode()) ||
         "RECEIVED_OR_RETURNED".equals(serialStatusEnum.getCode()));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isAquatechProduct(final ProductModel productModel) {
+
+    return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
   }
 }

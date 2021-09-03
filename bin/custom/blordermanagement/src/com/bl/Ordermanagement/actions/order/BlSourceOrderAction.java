@@ -8,6 +8,7 @@ import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -50,6 +51,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private BlSourcingService blSourcingService;
   private AllocationService allocationService;
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
+  private BlOrderService blOrderService;
 
   /**
    * {@inheritDoc}
@@ -135,9 +137,9 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private SourcingResults getSourcingResults(final OrderModel order) {
 
     SourcingResults results = null;
-    if (order.getIsRentalCart()) {
+    if (order.getIsRentalCart().booleanValue()) {
 
-      if (isOrderWithOnlyAquatechProducts(order)) {
+      if (blOrderService.isAquatechProductOrder(order)) {
         results =  getResultsForOrderWithOnlyAquatechProducts(order);
       } else {
         results = blSourcingService.sourceOrder(order);
@@ -189,18 +191,6 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     results.setResults(resultSet);
 
     return results;
-  }
-
-  /**
-   * Checks whether the order is only with aquatech products.
-   *
-   * @param order - the order.
-   * @return true      - if the order is fully aquatech products
-   */
-  private boolean isOrderWithOnlyAquatechProducts(final OrderModel order) {
-
-    return order.getEntries().stream().allMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
-        .equals(entry.getProduct().getManufacturerAID()));
   }
 
   /**
@@ -350,5 +340,13 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   public void setBlDeliveryStateSourcingLocationFilter(
       final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
     this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+  }
+
+  public BlOrderService getBlOrderService() {
+    return blOrderService;
+  }
+
+  public void setBlOrderService(final BlOrderService blOrderService) {
+    this.blOrderService = blOrderService;
   }
 }

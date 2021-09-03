@@ -7,6 +7,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -68,6 +69,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BlCommerceStockService blCommerceStockService;
 
 	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
+
+	private BlProductService blProductService;
+
 	@Resource(name = "i18nService")
 	private I18NService i18nService;
 
@@ -169,7 +173,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
         	parameter.setRetailGear(blProductModel.getRetailGear());
 				}
-				if(BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())){
+				if (blProductService.isAquatechProduct(blProductModel)) {
 					parameter.setAqautechProduct(Boolean.TRUE);
 				}
       }
@@ -428,7 +432,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 					final int cartEntryQty = entry.getQuantity().intValue();
 					final String productCode = entry.getProduct().getCode();
 					//skip for aquatech products
-					if (!isAquatechProduct(productCode)) {
+					if (!blCartService.isAquatechProductsPresentInCart(getProductService()
+							.getProductForCode(productCode))) {
+
 						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
 						if (availableQty == 0) {
 							final String nextAvailabilityDate = getBlCommerceStockService()
@@ -508,16 +514,18 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 			final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
 					.getRentalDatesFromSession();
-			final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
-					BlCoreConstants.SQL_DATE_FORMAT);
-			final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
-					rentalDatesFromSession.getSelectedFromDate());
+			if (null != rentalDatesFromSession) {
+				final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
+						BlCoreConstants.SQL_DATE_FORMAT);
+				final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
+						rentalDatesFromSession.getSelectedFromDate());
 
-			if (BooleanUtils.isTrue(cartData.getIsRentalCart())
-					&& CollectionUtils.isNotEmpty(cartData.getEntries())
-					&& daysDifference < BlCoreConstants.TWO_DAYS) {
+				if (BooleanUtils.isTrue(cartData.getIsRentalCart())
+						&& CollectionUtils.isNotEmpty(cartData.getEntries())
+						&& daysDifference < BlCoreConstants.TWO_DAYS) {
 
-				setMessageToAquatechEntry(cartData);
+					setMessageToAquatechEntry(cartData);
+				}
 			}
 		} catch (final Exception exception) {
 			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
@@ -534,30 +542,12 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				"cart.entry.item.aquatech.order.date.error", Lists.emptyList());
 		cartData.getEntries().forEach(cartEntry -> {
 
-			if (isAquatechProduct(cartEntry.getProduct().getCode())) {
+			if (blCartService.isAquatechProductsPresentInCart(getProductService()
+					.getProductForCode(cartEntry.getProduct().getCode()))) {
+
 				cartEntry.setAvailabilityMessage(orderDateErrorMessage);
 			}
 		});
-	}
-
-	/**
-	 * Returns true if the given product code is aquatech product in the session cart.
-	 * @param productCode
-	 * @return true if aquatech product
-	 */
-	private boolean isAquatechProduct(final String productCode) {
-
-		final AtomicBoolean foundAquatech = new AtomicBoolean(false);
-		final CartModel cartModel = blCartService.getSessionCart();
-		cartModel.getEntries().forEach(entry -> {
-			if(null != entry.getProduct() && BlCoreConstants.AQUATECH_BRAND_ID
-					.equals(entry.getProduct().getManufacturerAID()) && entry.getProduct().getCode().equalsIgnoreCase(productCode)) {
-
-				foundAquatech.set(true);
-			}
-		});
-
-		return foundAquatech.get();
 	}
 
 	/**
@@ -598,10 +588,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			cartModel.getEntries().forEach(cartEntry -> {
 				final int cartQuantity = cartEntry.getQuantity().intValue();
 				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
-				final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntry.getProduct().getManufacturerAID());
 
-				if ( !isAquatechProduct && availableStockQuantity < cartQuantity)
-				{
+				if (!blProductService.isAquatechProduct(cartEntry.getProduct())
+						&& availableStockQuantity < cartQuantity) {
+
 					isAvailable.set(Boolean.FALSE);
 					return;
 				}
@@ -812,5 +802,13 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	public void setCommerceCartParameterConverter(
 			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
+	}
+
+	public BlProductService getBlProductService() {
+		return blProductService;
+	}
+
+	public void setBlProductService(final BlProductService blProductService) {
+		this.blProductService = blProductService;
 	}
 }

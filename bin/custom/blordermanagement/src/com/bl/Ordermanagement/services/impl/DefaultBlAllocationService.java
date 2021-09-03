@@ -10,6 +10,7 @@ import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -59,6 +60,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   private SessionService sessionService;
   private SearchRestrictionService searchRestrictionService;
   private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
+  private BlOrderService blOrderService;
 
   /**
    * Create consignment.
@@ -73,7 +75,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       final SourcingResult result) {
 
     if (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
-        .isEmpty(result.getSerialProductMap()) && !isOrderWithAquatechProducts(order))) {
+        .isEmpty(result.getSerialProductMap()) && !blOrderService
+        .isAquatechProductsPresentInOrder(order))) {
+
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
     }
 
@@ -134,7 +138,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           }
         }
 
-        if (!isOrderWithOnlyAquatechProducts(order) && CollectionUtils.isNotEmpty(allocatedProductCodes)) {
+        if (!blOrderService.isAquatechProductOrder(order) && CollectionUtils
+            .isNotEmpty(allocatedProductCodes)) {
+
           final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
               new HashSet<>(allocatedProductCodes));
 
@@ -181,29 +187,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     }
   }
 
-  /**
-   * Checks whether the order contains any aquatech products.
-   *
-   * @param order - the order.
-   * @return true      - if the order contains any aquatech product
-   */
-  private boolean isOrderWithAquatechProducts(final AbstractOrderModel order) {
-
-    return order.getEntries().stream().anyMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
-        .equals(entry.getProduct().getManufacturerAID()));
-  }
-
-  /**
-   * Checks whether the order contains only aquatech products.
-   *
-   * @param order - the order.
-   * @return true      - if the order contains only aquatech product
-   */
-  private boolean isOrderWithOnlyAquatechProducts(final AbstractOrderModel order) {
-
-    return order.getEntries().stream().allMatch(entry -> BlCoreConstants.AQUATECH_BRAND_ID
-        .equals(entry.getProduct().getManufacturerAID()));
-  }
   /**
    * Set assigned flag to hardAssign or softAssign for the serial products
    *
@@ -280,7 +263,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    if (!isOrderWithOnlyAquatechProducts(orderEntry.getOrder())) {
+    if (!blOrderService.isAquatechProductOrder(orderEntry.getOrder())) {
 
       final List<BlProductModel> consignmentEntrySerialProducts =
           null != entry.getSerialProducts() ? entry.getSerialProducts() : new ArrayList<>();
@@ -579,5 +562,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
   public void setBlShippingOptimizationStrategy(BlShippingOptimizationStrategy blShippingOptimizationStrategy) {
     this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
+  }
+
+  public BlOrderService getBlOrderService() {
+    return blOrderService;
+  }
+
+  public void setBlOrderService(final BlOrderService blOrderService) {
+    this.blOrderService = blOrderService;
   }
 }

@@ -1,6 +1,36 @@
 package com.bl.core.shipping.service.impl;
 
-import com.bl.core.model.*;
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.CarrierEnum;
+import com.bl.core.model.BlBlackoutDateModel;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.PartnerPickUpStoreModel;
+import com.bl.core.model.ShippingCostModel;
+import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.model.ShippingOptimizationModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.shipping.dao.BlDeliveryModeDao;
+import com.bl.core.shipping.service.BlDeliveryModeService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.fexEx.data.SameDayCityReqData;
+import com.bl.facades.fexEx.data.SameDayCityResData;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.integration.services.BlFedExSameDayService;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -14,7 +44,6 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
-
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
@@ -33,36 +62,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.StockResult;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.enums.CarrierEnum;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.shipping.dao.BlDeliveryModeDao;
-import com.bl.core.shipping.service.BlDeliveryModeService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.fexEx.data.SameDayCityReqData;
-import com.bl.facades.fexEx.data.SameDayCityResData;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.integration.services.BlFedExSameDayService;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -98,6 +104,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private String nyc;
     
     private BlDatePickerService blDatePickerService;
+
+    private BlProductService productService;
 
     /**
      * {@inheritDoc}
@@ -832,9 +840,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             cartModel.getEntries().forEach(cartEntry -> {
                 final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
                         cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
-                final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntry.getProduct().getManufacturerAID());
 
-                if ( !isAquatechProduct && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+                if (!productService.isAquatechProduct(cartEntry.getProduct())
+                    && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+
                     isAvailable.set(Boolean.FALSE);
                     return;
                 }
@@ -1159,4 +1168,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	{
 		this.blDatePickerService = blDatePickerService;
 	}
+
+    public BlProductService getProductService() {
+        return productService;
+    }
+
+    public void setProductService(BlProductService productService) {
+        this.productService = productService;
+    }
 }

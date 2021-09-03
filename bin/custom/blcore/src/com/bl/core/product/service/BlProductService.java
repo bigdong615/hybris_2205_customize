@@ -1,9 +1,9 @@
 package com.bl.core.product.service;
 
 import com.bl.core.enums.SerialStatusEnum;
-import de.hybris.platform.product.ProductService;
-
 import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.product.ProductService;
 
 
 /**
@@ -27,4 +27,11 @@ public interface BlProductService extends ProductService {
    * @return true if the serial product status is active
    */
   boolean isActiveSerialProduct(final SerialStatusEnum serialStatusEnum);
+
+  /**
+   * It checks the product is aquatech product or not
+   * @param productModel
+   * @return true if the product is aquatech product
+   */
+  boolean isAquatechProduct(final ProductModel productModel);
 }

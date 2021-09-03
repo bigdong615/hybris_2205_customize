@@ -1,5 +1,6 @@
 package com.bl.core.services.strategy.impl;
 
+import com.bl.core.product.service.BlProductService;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
 import de.hybris.platform.commerceservices.strategies.impl.DefaultCartValidationStrategy;
@@ -41,6 +42,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 	private static final Logger LOG = Logger.getLogger(DefaultBlCartValidationStrategy.class);
 	private BlDatePickerService blDatePickerService;
 	private BlCommerceStockService blCommerceStockService;
+	private BlProductService productService;
 
 	/**
 	 * {@inheritDoc}
@@ -100,10 +102,9 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		// Overall stock quantity in the cart
 		final long cartLevel = getCartLevel(cartEntryModel, cartModel);
 
-		final boolean isAquatechProduct = BlCoreConstants.AQUATECH_BRAND_ID.equals(cartEntryModel.getProduct().getManufacturerAID());
+		if (!productService.isAquatechProduct(cartEntryModel.getProduct()) && (
+				Objects.isNull(stockLevel) || stockLevel.intValue() < cartLevel)) {
 
-		if (!isAquatechProduct && (Objects.isNull(stockLevel) || stockLevel.intValue() < cartLevel))
-		{
 			final CommerceCartModification modification = new CommerceCartModification();
 			modification.setStatusCode(CommerceCartModificationStatus.NO_STOCK);
 			modification.setQuantityAdded(cartLevel);
@@ -228,5 +229,11 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		this.blDatePickerService = blDatePickerService;
 	}
 
+	public BlProductService getProductService() {
+		return productService;
+	}
 
+	public void setProductService(BlProductService productService) {
+		this.productService = productService;
+	}
 }

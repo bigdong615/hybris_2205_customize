@@ -1,7 +1,7 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
-import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -38,6 +38,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
   private BlCommerceStockService blCommerceStockService;
   private BlSourcingLocationService blSourcingLocationService;
   private BaseStoreService baseStoreService;
+  private BlProductService productService;
 
   /**
    * This is to source the order
@@ -132,7 +133,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
    */
   private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
 
-    return BlCoreConstants.AQUATECH_BRAND_ID.equals(orderEntry.getProduct().getManufacturerAID());
+    return productService.isAquatechProduct(orderEntry.getProduct());
   }
 
     /**
@@ -213,4 +214,11 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     this.baseStoreService = baseStoreService;
   }
 
+  public BlProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(BlProductService productService) {
+    this.productService = productService;
+  }
 }

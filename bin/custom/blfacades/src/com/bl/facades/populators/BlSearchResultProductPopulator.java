@@ -3,6 +3,7 @@ package com.bl.facades.populators;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.logging.BlLogger;
@@ -69,6 +70,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
   private BlCommercePriceService commercePriceService;
   private BlWishlistOptionsPopulator blWishlistOptionsPopulator;
+  private BlProductService blProductService;
 
   /**
    * this method is created for populating values from source to target
@@ -256,19 +258,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     }
   }
 
-  /**
-   * Checks whether this given product is aquatech product or not.
-   *
-   * @param target the price value
-   * @return true if this given product is aquatech product
-   */
-  private boolean isAquatechProduct(final ProductData target) {
 
-    final BlProductModel blProductModel = (BlProductModel) getProductService()
-        .getProductForCode(target.getCode());
-    return blProductModel != null && blProductModel.getManufacturerAID()
-        .equalsIgnoreCase(BlCoreConstants.AQUATECH_BRAND_ID);
-  }
 
   /**
    * It sets the stock data to productData
@@ -281,10 +271,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 			// In case of low stock then make a call to the stock service to determine if in or out of stock.
 			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
 			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
-			if (blProductModel != null && !isAquatechProduct(target))
-			{
-				target.setStock(getStockConverter().convert(blProductModel));
-			}
+      if (blProductModel != null && !blProductService
+          .isAquatechProduct(getProductService().getProductForCode(target.getCode()))) {
+
+        target.setStock(getStockConverter().convert(blProductModel));
+      }
 		}
 		catch (final UnknownIdentifierException ex)
 		{
@@ -444,8 +435,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       final ProductData target, final String key) {
 
     if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)
-        && !isAquatechProduct(target)) {
-        target.setIsUpcoming(this.<Boolean>getValue(source,key));
+        && !blProductService
+        .isAquatechProduct(getProductService().getProductForCode(target.getCode()))) {
+
+      target.setIsUpcoming(this.<Boolean>getValue(source, key));
     }
   }
 
@@ -589,5 +582,13 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   public void setBlPromotionService(
       BlPromotionService blPromotionService) {
     this.blPromotionService = blPromotionService;
+  }
+
+  public BlProductService getBlProductService() {
+    return blProductService;
+  }
+
+  public void setBlProductService(final BlProductService blProductService) {
+    this.blProductService = blProductService;
   }
 }

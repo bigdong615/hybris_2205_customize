@@ -1,8 +1,8 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -26,6 +26,7 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	private BaseStoreService baseStoreService;
 	private BlCommerceStockService blCommerceStockService;
 	private BlDatePickerService blDatePickerService;
+	private BlProductService productService;
 
 	/**
 	 * It populates the stock status and available quantity
@@ -49,7 +50,7 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
 					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
 
-			if (BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())) {
+			if (productService.isAquatechProduct(blProductModel)) {
 
 				stockData.setStockLevelStatus(StockLevelStatus.INSTOCK);
 				stockData.setStockLevel((long) 999);
@@ -112,4 +113,11 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 		this.blDatePickerService = blDatePickerService;
 	}
 
+	public BlProductService getProductService() {
+		return productService;
+	}
+
+	public void setProductService(BlProductService productService) {
+		this.productService = productService;
+	}
 }

@@ -1,7 +1,7 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.facades.product.data.BlBundleReferenceData;
 import com.google.common.collect.Lists;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
@@ -37,6 +37,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     private Populator<BlProductModel, ProductData> blProductTagPopulator;
     private PriceDataFactory priceDataFactory;
     private CommonI18NService commonI18NService;
+    private BlProductService productService;
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
@@ -77,10 +78,10 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
 
-        if (BlCoreConstants.AQUATECH_BRAND_ID.equals(source.getManufacturerAID())) {
-            target.setIsUpcoming(false);
+        if (productService.isAquatechProduct(source)) {
+          target.setIsUpcoming(false);
         } else {
-        target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+          target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
         }
 
         target.setAlternativeProduct(source.getAlternativeProduct());
@@ -162,5 +163,13 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         CommonI18NService commonI18NService) {
         this.commonI18NService = commonI18NService;
     }
+
+  public BlProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(BlProductService productService) {
+    this.productService = productService;
+  }
 }
 
