@@ -1,5 +1,6 @@
 package com.bl.core.stock;
 
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -188,5 +189,16 @@ public interface BlCommerceStockService
 	 * @return Stock Result
 	 */
 	 StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
+
+	/**
+	 * This is to get the stock level status of a Bundle SKU for the entire duration and determines the total and available count.
+	 * @param blProductModel the product code
+	 * @param warehouses the list of warehouse associated to base store
+	 * @param startDate the start date of rental period
+	 * @param endDate the end date of rental period
+	 * @return StockLevelStatus
+	 */
+	 StockResult getStockForBundleProduct(final BlProductModel blProductModel, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
 }

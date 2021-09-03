@@ -66,6 +66,8 @@
             <value code="PARTS_NEEDED" />
             <value code="BOXED" />
             <value code="IN_HOUSE" />
+            <value code="SHIPPED" />
+            <value code="LATE" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -4417,7 +4419,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
 			</value>
 		</property>
 	</custom-properties>
@@ -5362,7 +5364,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {dm:name} as shippingMethod, {no:code} as nextOrderCode, {s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce}, {DeliveryMode as dm} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {dm:pk} = {no:deliveryMode}"
+"select {s:code} as serialCode, {dm:name} as shippingMethod, {no:code} as nextOrderCode, {s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce}, {DeliveryMode as dm} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {dm:pk} = {no:deliveryMode}"
 			</value>
 		</property>
 	</custom-properties>
@@ -5535,7 +5537,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode, case when({no:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder ,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {no:isVipOrder} = 1"
+"select {s:code} as serialCode, {no:code} as nextOrderCode, case when({no:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder ,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {no:isVipOrder} = 1"
 			</value>
 		</property>
 	</custom-properties>
@@ -5709,7 +5711,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
+"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
 			</value>
 		</property>
 	</custom-properties>
