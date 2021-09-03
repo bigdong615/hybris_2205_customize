@@ -21,10 +21,9 @@ import java.util.List;
 public class BlGlobalFacetValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
 
-  private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION);
+  private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION,"package","gear package");
 
   private ModelService modelService;
-
 
   /**
    *
