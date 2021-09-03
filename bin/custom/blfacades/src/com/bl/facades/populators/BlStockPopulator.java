@@ -2,6 +2,7 @@ package com.bl.facades.populators;
 
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -10,7 +11,6 @@ import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.Date;
  *
  * @author Moumita
  */
-public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockData> implements Populator<SOURCE, TARGET>
+public class BlStockPopulator<SOURCE extends BlProductModel, TARGET extends StockData> implements Populator<SOURCE, TARGET>
 {
 	private BaseStoreService baseStoreService;
 	private BlCommerceStockService blCommerceStockService;
@@ -35,21 +35,25 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	 * @param stockData
 	 */
 	@Override
-	public void populate(final SOURCE blProductModel, final TARGET stockData)
-	{
+	public void populate(final SOURCE blProductModel, final TARGET stockData) {
 		final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		if (null != rentalDateDto)
-		{
+		if (null != rentalDateDto) {
 			final String startDate = rentalDateDto.getSelectedFromDate();
 			final String endDate = rentalDateDto.getSelectedToDate();
 			final Date startDay = BlDateTimeUtils
 					.convertStringDateToDate(startDate, BlFacadesConstants.DATE_FORMAT);
 			final Date endDay = BlDateTimeUtils
 					.convertStringDateToDate(endDate, BlFacadesConstants.DATE_FORMAT);
-			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
-					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
 
+			final StockResult stockResult;
+			if (blProductModel.isBundleProduct()) {
+				stockResult = getBlCommerceStockService().getStockForBundleProduct(
+						blProductModel, baseStore.getWarehouses(), startDay, endDay);
+			} else {
+				stockResult = getBlCommerceStockService().getStockForEntireDuration(
+						blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
+			}
 			if (productService.isAquatechProduct(blProductModel)) {
 
 				stockData.setStockLevelStatus(StockLevelStatus.INSTOCK);

@@ -4,6 +4,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -11,6 +12,8 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -45,6 +48,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	private BlStockLevelDao blStockLevelDao;
 	private BaseStoreService baseStoreService;
 	private BlDatePickerService blDatePickerService;
+	private static final String STOCK_RESULT_MESSAGE = "Stock Level found for product : {} and date between: {} and {} with "
+			+ "total count : {} and available count : {}";
 
 	/**
 	 * {@inheritDoc}
@@ -71,8 +76,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount)) {
 			availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock Level found for product : {} and date between: {} and {} with "
-					+ "total count : {} and avaiable count : {}", productCode, startDate, endDate, totalUnits, availability);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, STOCK_RESULT_MESSAGE, productCode, startDate, endDate, totalUnits, availability);
 		}
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
@@ -82,6 +86,78 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return stockResult;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public StockResult getStockForBundleProduct(final BlProductModel blProductModel,
+			final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate) {
+		final Collection<ProductReferenceModel> productReferenceList = blProductModel
+				.getProductReferences().stream().filter(
+						productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
+								.equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+		final List<Long> availableProductCount = new ArrayList<>();
+		final List<Long> totalProductCount = new ArrayList<>();
+		// getting available count for all bundle product.
+		collectAvailabilityForBundle(productReferenceList, warehouses, startDate, endDate,
+				availableProductCount, totalProductCount);
+		Long availability = Long.valueOf(0);
+		Long totalUnits = Long.valueOf(0);
+		if (CollectionUtils.isNotEmpty(totalProductCount) && CollectionUtils
+				.isNotEmpty(availableProductCount)) {
+			availability = availableProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
+			totalUnits = totalProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					STOCK_RESULT_MESSAGE, blProductModel.getCode(), startDate,
+					endDate, totalProductCount, availableProductCount);
+		}
+		final StockResult stockResult = new StockResult();
+		stockResult.setTotalCount(totalUnits);
+		stockResult.setAvailableCount(availability);
+		final StockLevelStatus stockLevelStatus = setStockLevelStatus(stockResult);
+		stockResult.setStockLevelStatus(stockLevelStatus);
+		return stockResult;
+	}
+
+	/**
+	 * This Method used for collecting stock for all sku of given bundle.
+	 * @param productReferenceList
+	 * @param warehouses
+	 * @param startDate
+	 * @param endDate
+	 * @param availableProductCount
+	 * @param totalProductCount
+	 */
+	private void collectAvailabilityForBundle(
+			final Collection<ProductReferenceModel> productReferenceList,
+			final Collection<WarehouseModel> warehouses, final Date startDate, final Date endDate,
+			final List<Long> availableProductCount, final List<Long> totalProductCount) {
+		productReferenceList.forEach(productReferenceModel -> {
+			final List<Long> availableCount = new ArrayList<>();
+			final List<Long> totalCount = new ArrayList<>();
+			collectAvailability(startDate, endDate, productReferenceModel.getTarget().getCode(),
+					warehouses,
+					availableCount, totalCount);
+			Long availability = Long.valueOf(0);
+			Long totalUnits = Long.valueOf(0);
+			if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount)) {
+				availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
+				totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						STOCK_RESULT_MESSAGE,
+						productReferenceModel.getTarget().getCode(), startDate, endDate, totalUnits,
+						availability);
+				final long noOfQuantity = productReferenceModel.getQuantity() != null ? productReferenceModel.getQuantity().longValue() : 0L;
+				if( noOfQuantity <= availability.longValue()) {
+					availableProductCount.add(availability);
+				} else{
+					availableProductCount.add(Long.valueOf(0));
+				}
+				totalProductCount.add(totalUnits);
+			}
+		});
+	}
 	/**
 	 * This is to set the stock level status of a SKU
 	 *
