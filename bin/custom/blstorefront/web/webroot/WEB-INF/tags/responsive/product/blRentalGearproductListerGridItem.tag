@@ -25,7 +25,7 @@
 <!-- BL-926: Added condition for Gift Card as per requirement -->
  <c:if test="${product.productType ne 'GIFTCARD'}">
 		<c:choose>
-			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isbundle ne true}">
 				<span class="badge badge-limited-stock"><spring:theme
 						code="text.product.tile.flag.only.left"
 						arguments="${product.stock.stockLevel}" /></span>
