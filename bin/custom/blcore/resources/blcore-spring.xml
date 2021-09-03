@@ -591,8 +591,14 @@
 		<property name="productDao" ref="productDao" />
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
+	<!--<BL-500 bean entry is for order service>-->
+	<alias name="defaultBlOrderService" alias="blOrderService" />
+	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
+		<property name="productService" ref="productService"/>
+	</bean>
 
 	<!--Pricing Logic changes-->
 	<alias name="defaultBlPricingService" alias="blPricingService"/>
@@ -787,6 +793,7 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
@@ -906,7 +913,8 @@
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
     <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
         <property name="blDatePickerService" ref="blDatePickerService"/>
-		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+				<property name="blCommerceStockService" ref="blCommerceStockService"/>
+				<property name="productService" ref="productService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->

@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -72,6 +73,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
       context.getOrderEntries().forEach(entry -> {
 
+        if (!isAquatechProductInEntry(entry)) {  //Skip for aquatech product entries
       final List<StockLevelModel> stocks = finalSourcingLocation.getAvailabilityMap()
           .get(entry.getProduct().getCode());
 
@@ -82,6 +84,30 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       } else {
         allEntrySourceComplete.add(new AtomicBoolean(false));
       }
+        } else {   //for aquatech product entries
+
+          final List<BlProductModel> aquatechProductsToAssign = new ArrayList<>();
+          for (int i = 0; i < entry.getQuantity(); i++){
+            aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
+          }
+
+          final Map<Integer, List<BlProductModel>> resultAquatechProductMap =
+              (null != result.getAquatechProductMap()) ? new HashMap<>(result.getAquatechProductMap()) : new HashMap<>();
+          resultAquatechProductMap.put(entry.getEntryNumber(), aquatechProductsToAssign);
+
+          final Map<AbstractOrderEntryModel, Long> resultAllocationMap =
+              (null != result.getAllocation()) ? new HashMap<>(result.getAllocation())
+                  : new HashMap<>();
+          resultAllocationMap.put(entry, (long) aquatechProductsToAssign.size());
+
+          result.setAquatechProductMap(resultAquatechProductMap);
+          result.setAllocation(resultAllocationMap);
+          result.setWarehouse(finalSourcingLocation.getWarehouse());
+          context.getResult().getResults().add(result);
+
+          allEntrySourceComplete.add(new AtomicBoolean(true));
+        }
+
     });
 
     //Ground availability status
@@ -89,7 +115,19 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
             finalSourcingLocation.isGroundAvailability()) {
         result.setThreeDayGroundAvailability(finalSourcingLocation.isGroundAvailability());
     }
+
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
+  }
+
+  /**
+   * Check whether aquatech product is in given order entry.
+   *
+   * @param orderEntry
+   * @return true if aquatech product is in this entry.
+   */
+  private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
+
+    return BlCoreConstants.AQUATECH_BRAND_ID.equals(orderEntry.getProduct().getManufacturerAID());
   }
 
   /**
@@ -105,7 +143,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         }
       }
 
-      if (allResultQuantityAllocated.equals(entry.getQuantity())) {
+      if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated.equals(entry.getQuantity())) {
         allEntryQuantityFulfilled.add(new AtomicBoolean(true));
       }
     });
