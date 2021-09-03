@@ -375,22 +375,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param totalAmountToRefund amount
      */
     private boolean partiallyFullOrderRefundGCScenario(final double totalAmountToRefund) {
-        if(this.getOrderModel().isGiftCardOrder()) {
-            final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
-            final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - (this.getGiftCardAmount());
-            if (refundedAmount < otherPayment) {
-                if ((totalAmountToRefund + refundedAmount) > otherPayment) {
-                    final double refundAmount = (totalAmountToRefund - (otherPayment - refundedAmount));
-                    this.logAmountForGiftCardTransactions((this.getGiftCardAmount() - (totalAmountToRefund - refundAmount)),
-                            String.valueOf((totalAmountToRefund - refundAmount)));
-                } else {
-                    return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
+        final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
+        final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - (this.getGiftCardAmount());
+        if (refundedAmount < otherPayment) {
+            if ((totalAmountToRefund + refundedAmount) > otherPayment) {
+                final double refundAmount = (totalAmountToRefund - (otherPayment - refundedAmount));
+                this.logAmountForGiftCardTransactions((this.getGiftCardAmount() - (totalAmountToRefund - refundAmount)),
+                        String.valueOf((totalAmountToRefund - refundAmount)));
+            } else {
+                return brainTreeTransactionService.createAuthorizationTransactionOfOrder(this.getOrderModel(), BigDecimal.valueOf(
                         otherPayment - (totalAmountToRefund + refundedAmount)).setScale(BlInventoryScanLoggingConstants.TWO,
                         RoundingMode.HALF_EVEN), Boolean.FALSE, null);
-                }
-            } else {
-                this.logAmountForGiftCardTransactions((this.getGiftCardAmount() - totalAmountToRefund), String.valueOf(totalAmountToRefund));
             }
+        } else {
+            this.logAmountForGiftCardTransactions((this.getGiftCardAmount() - totalAmountToRefund), String.valueOf(totalAmountToRefund));
         }
         return Boolean.TRUE;
     }
@@ -494,8 +492,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 final BrainTreeRefundTransactionResult result = brainTreePaymentService.refundTransaction(request);
                 if (result.isSuccess() && this.cancelOrder() != null) {
                     this.fullOrderCancelAndLogReturnEntries();
-                    blCustomCancelRefundService.createRefundTransaction(this.getOrderModel().getPaymentTransactions().get(0),
-                            result, PaymentTransactionType.REFUND_STANDALONE);
+                    blCustomCancelRefundService.createRefundTransaction(this.getOrderModel().getPaymentTransactions().get(
+                            BlCustomCancelRefundConstants.ZERO), result, PaymentTransactionType.REFUND_STANDALONE, this.getOrderModel());
                     BlLogger.logMessage(LOGGER, Level.DEBUG, BlCustomCancelRefundConstants.CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY,
                             this.getOrderModel().getCode());
                     Messagebox.show(BlCustomCancelRefundConstants.ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY);
@@ -512,6 +510,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         Messagebox.OK, Messagebox.ERROR);
 
             }
+        } else {
+            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.INVALID_ORDER_AMOUNT),
+                    this.getLabel(BlCustomCancelRefundConstants.EMPTY_AMOUNT_HEADER), Messagebox.OK, Messagebox.ERROR);
         }
     }
 
