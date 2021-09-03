@@ -76,7 +76,13 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		}
 		return super.getWebPriceForProduct(product);
 	}
-
+	/**
+	 * Gets the price data for bundle product.
+	 *
+	 * @param ProductModel
+	 *           the Product
+	 * @return PriceInformation
+	 */
 	public PriceInformation getWebPriceForBundleProduct(final ProductModel product){
 		List<PriceInformation> lPrices = new ArrayList<>();
 		final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)
@@ -96,7 +102,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 							defaultPriceInformation, rentalDays)
 							: defaultPriceInformation;
-					final Double discount = baseStoreModel.getBundleDiscount();
+				final Double discount = baseStoreModel.getBundleDiscount();
 					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
 					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
 				final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
