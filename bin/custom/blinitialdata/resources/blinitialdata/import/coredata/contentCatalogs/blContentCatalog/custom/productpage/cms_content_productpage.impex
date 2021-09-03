@@ -33,11 +33,13 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                              ; buyingUsedGearEasySection           ;                                                                             ;                           ; wide
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
+                             ;CrossSelling            ;                                                                      ;ProductReferencesComponent;narrow
 
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
-                          ;                         ;BreadcrumbSlot                      ;Breadcrumb slot
+                          ;                         ;BreadcrumbSlot            ;Breadcrumb slot
+                          ;                         ;CrossSellingSlot          ;Cross Selling
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='ProductDetailsPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
@@ -65,6 +67,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                    ;                         ; BuyingUsedGearComponentSectionSlot-productDetails ; buyingUsedGearEasySection ;                                                       ; buyingUsedGearEasySectionSlot  ; true
                                    ;                         ; SocialMediaSectionSlot-productDetails              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                    ;                         ; TopHeaderSlot-productDetails              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
+                                   ;                         ;CrossSelling-ProductDetails                ;CrossSelling          ;                                                                           ;CrossSellingSlot                 ;true
 
 
 
@@ -72,8 +75,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
 INSERT_UPDATE ProductPage ; $contentCV[unique=true] ; uid[unique=true] ; name            ; masterTemplate(uid,$contentCV) ; defaultPage ; approvalStatus(code)[default='approved']
                           ;                         ; productDetails   ; Product Details ; ProductDetailsPageTemplate     ; true        ;
 
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]   ; name                 ; &componentRef      ;  medias(code)                                                                                        ;headline
-                              ;                         ; buyingUsedGearEasySectionComponent ; Buying UsedGear Easy Section Component ; buyingUsedGearEasySectionComponent ;/images/theme/inspected123.png,/images/theme/guarantee123.png,/images/theme/condition123.png,/images/theme/returns123.png ;"Buying used gear is easy"
+#INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]   ; name                 ; &componentRef      ;  medias(code)                                                                                        ;headline
+#                              ;                         ; buyingUsedGearEasySectionComponent ; Buying UsedGear Easy Section Component ; buyingUsedGearEasySectionComponent ;/images/theme/inspected123.png,/images/theme/guarantee123.png,/images/theme/condition123.png,/images/theme/returns123.png ;"Buying used gear is easy"
 
-INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 ; cmsComponents(uid,$contentCV)
-                          ;                         ; buyingUsedGearEasySectionSlot     ; buyingUsedGearEasySectionComponent
+#INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 ; cmsComponents(uid,$contentCV)
+#                          ;                         ; buyingUsedGearEasySectionSlot     ; buyingUsedGearEasySectionComponent
