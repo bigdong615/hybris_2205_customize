@@ -48,6 +48,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	private BlStockLevelDao blStockLevelDao;
 	private BaseStoreService baseStoreService;
 	private BlDatePickerService blDatePickerService;
+	private static final String STOCK_RESULT_MESSAGE = "Stock Level found for product : {} and date between: {} and {} with "
+			+ "total count : {} and available count : {}";
 
 	/**
 	 * {@inheritDoc}
@@ -74,8 +76,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount)) {
 			availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock Level found for product : {} and date between: {} and {} with "
-					+ "total count : {} and avaiable count : {}", productCode, startDate, endDate, totalUnits, availability);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, STOCK_RESULT_MESSAGE, productCode, startDate, endDate, totalUnits, availability);
 		}
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
@@ -108,8 +109,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			availability = availableProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			totalUnits = totalProductCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Stock Level found for product : {} and date between: {} and {} with "
-							+ "total count : {} and avaiable count : {}", blProductModel.getCode(), startDate,
+					STOCK_RESULT_MESSAGE, blProductModel.getCode(), startDate,
 					endDate, totalProductCount, availableProductCount);
 		}
 		final StockResult stockResult = new StockResult();
@@ -145,8 +145,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 				availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
 				totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"Stock Level found for product : {} and date between: {} and {} with "
-								+ "total count : {} and avaiable count : {}",
+						STOCK_RESULT_MESSAGE,
 						productReferenceModel.getTarget().getCode(), startDate, endDate, totalUnits,
 						availability);
 				final long noOfQuantity = productReferenceModel.getQuantity() != null ? productReferenceModel.getQuantity().longValue() : 0L;
