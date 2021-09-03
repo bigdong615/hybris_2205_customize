@@ -1,6 +1,7 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -37,6 +38,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
   private BlCommerceStockService blCommerceStockService;
   private BlSourcingLocationService blSourcingLocationService;
   private BaseStoreService baseStoreService;
+  private BlProductService productService;
 
   /**
    * This is to source the order
@@ -104,20 +106,37 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       final SourcingLocation sourcingLocation) {
 
     sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-      final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(orderEntry) ? orderEntry.getQuantity()
+          : getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
       if (availableQty.longValue() != 0l) {
         populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
             availableQty);
       }
+
     });
 
     return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
-      final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(entry) ? entry.getQuantity()
+          : getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
   }
 
   /**
+   * Check whether aquatech product is in given order entry.
+   *
+   * @param orderEntry
+   * @return true if aquatech product is in this entry.
+   */
+  private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
+
+    return productService.isAquatechProduct(orderEntry.getProduct());
+  }
+
+    /**
    * Populate context with allocatedQuantity.
    * @param sourcingContext
    * @param sourcingLocation
@@ -195,4 +214,11 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     this.baseStoreService = baseStoreService;
   }
 
+  public BlProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(BlProductService productService) {
+    this.productService = productService;
+  }
 }

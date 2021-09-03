@@ -231,4 +231,12 @@ UPDATE BlProduct ; $catalogVersion ; code[unique=true]                          
                  ;                 ; 3002962                                                          ; 990              ; 58              
                  ;                 ; 152000000000                                                     ; 990              ; 58              
                  ;                 ; 132000000001                                                     ; 990              ; 58              
-                 ;                 ; 132000000000                                                     ; 990              ; 58              
+                 ;                 ; 132000000000                                                     ; 990              ; 58
+
+# BL-500 Added for aquatech products
+                ;                 ;  Canon_60mm_Aquatech                                                ; 360              ; 60
+                ;                 ;  Canon_70mm_Aquatech                                                ; 370              ; 70
+                ;                 ;  Canon_61mm_Aquatech                                                ; 360              ; 60
+                ;                 ;  Canon_71mm_Aquatech                                                ; 370              ; 70
+                ;                 ;  Canon_62mm_Aquatech                                                ; 360              ; 60
+                ;                 ;  Canon_72mm_Aquatech                                                ; 370              ; 70

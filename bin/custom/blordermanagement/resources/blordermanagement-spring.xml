@@ -108,6 +108,7 @@
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
         <property name="sessionService" ref="sessionService"/>
         <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
+        <property name="blOrderService" ref="blOrderService"/>
     </bean>
 
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
@@ -158,6 +159,7 @@
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
         <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
         <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="productService" ref="productService"/>
     </bean>
 
     <alias name="defaultBlNoRestrictionsStrategy" alias="blNoRestrictionsStrategy"/>
