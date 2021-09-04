@@ -1369,4 +1369,8 @@
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+
+	<bean id="blEspEventService" class="com.bl.core.services.esp.order.impl.DefaultBlEspEventService">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
 </beans>

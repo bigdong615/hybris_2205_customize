@@ -1998,8 +1998,60 @@
               </attribute>
             </attributes>
           </itemtype>
-            
-         </typegroup>
+
+            <itemtype code="BlStoredEspEvent" autocreate="true" generate="true"
+                      jaloclass="com.bl.core.jalo.BlStoredEspEvent">
+                <description>Esp Event detail</description>
+                <deployment table="BlStoredEspEvent" typecode="12235"/>
+                <attributes>
+                    <attribute qualifier="eventInstanceId" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Event ID created for current request
+                        </description>
+                    </attribute>
+                    <attribute qualifier="eventType" type="EspEventTypeEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>ESP Event Type of current request
+                        </description>
+                    </attribute>
+                    <attribute qualifier="requestString" type="java.lang.String">
+                        <description>This attribute is used to store the request json string of ESP Event.
+                        </description>
+                        <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="responseString" type="java.lang.String">
+                        <description>This attribute is used to store the response json string of ESP Event.
+                        </description>
+                        <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                        <persistence type="property">
+                            <columntype database="oracle">
+                                <value>CLOB</value>
+                            </columntype>
+                            <columntype database="sap">
+                                <value>NCLOB</value>
+                            </columntype>
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+        </typegroup>
          
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"

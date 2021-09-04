@@ -23,7 +23,8 @@ public enum LogErrorCodeEnum implements LogError
   ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order"),
    ORDER_OPTIMIZATION_ERROR("0012","Error occur while shipping optimization process for order"),
    EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0013", "Email subscription integration Error"),
-  CONSIGNMENT_CREATION_ERROR("0014", "Error occur while creating consignment");
+  CONSIGNMENT_CREATION_ERROR("0014", "Error occur while creating consignment"),
+    ESP_EVENT_INTEGRATION_ERROR("0015", "Error occur while getting access token for ESP Event API");
 
     private String code;
     private String description;
