@@ -1369,4 +1369,11 @@
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+  <!--BL-27: This process is override to call own strategy to provide email related things.-->
+	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
+		<property name="key">
+			<value type="java.lang.Class">de.hybris.platform.processengine.model.BusinessProcessModel</value>
+		</property>
+		<property name="value" ref="storeFrontProcessContextStrategy"/>
+	</bean>
 </beans>
