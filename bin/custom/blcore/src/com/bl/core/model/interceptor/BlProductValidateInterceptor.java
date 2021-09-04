@@ -41,7 +41,12 @@ public class BlProductValidateInterceptor implements ValidateInterceptor<BlProdu
     }
     checkReferenceProduct(blProductModel, interceptorContext);
   }
-
+  /**
+   * check bundle Reference Product
+   *
+   * @param blProductModel
+   * @param interceptorContext
+   */
   private void checkReferenceProduct(final BlProductModel blProductModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
     if(blProductModel.isBundleProduct()){
@@ -53,13 +58,14 @@ public class BlProductValidateInterceptor implements ValidateInterceptor<BlProdu
       }
     }
   }
-
+  /**
+   * Check product References size
+   *
+   * @param productReferences
+   * @return true if productReferences is less than 2
+   */
   private boolean checkSizeOfReferences(final List<ProductReferenceModel> productReferences){
-    final int size = productReferences.size();
-    if(size < 2){
-      return Boolean.TRUE;
+    return productReferences.size()< 2 ? Boolean.TRUE : Boolean.FALSE;
     }
-    return Boolean.FALSE;
-  }
 }
 
