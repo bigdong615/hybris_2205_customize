@@ -142,6 +142,11 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
         .getLocationCategory().getCode()
         : "";
 
+    if (StringUtils.isNotBlank(parentLocationCode)) {
+      ((BlSerialProductModel) productModel).setLastLocationScanParent(parentLocationCode);
+      modelService.save(productModel);
+    }
+
     return getCleanLocationCategoryList()
         .contains(StringUtils.isNotBlank(parentLocationCode) ? parentLocationCode : locationCode);
   }
