@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -126,11 +127,23 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
    */
   private boolean isSerialLocationClean(final BlProductModel productModel) {
 
-    return null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+    final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
         && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
-        .getLocationCategory() && getCleanLocationCategoryList().contains(
-        ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
-            .getCode());
+        .getLocationCategory() ? ((BlSerialProductModel) productModel).getOcLocationDetails()
+        .getLocationCategory()
+        .getCode() : "";
+
+    final String parentLocationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+        && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+        .getParentInventoryLocation()
+        && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+        .getParentInventoryLocation().getLocationCategory()
+        ? ((BlSerialProductModel) productModel).getOcLocationDetails().getParentInventoryLocation()
+        .getLocationCategory().getCode()
+        : "";
+
+    return getCleanLocationCategoryList()
+        .contains(StringUtils.isNotBlank(parentLocationCode) ? parentLocationCode : locationCode);
   }
 
   /**
