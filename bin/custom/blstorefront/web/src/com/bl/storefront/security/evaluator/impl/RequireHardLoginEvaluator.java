@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.security.evaluator.impl;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.util.CookieGenerator;
@@ -96,10 +98,11 @@ public class RequireHardLoginEvaluator implements SecurityTraitEvaluator
 				result = false;
 			} else
 			{
-				LOG.warn((guid == null ? "missing secure token in session" : "no matching guid cookie") + ", login required");
+				BlLogger.logFormatMessageInfo(LOG, Level.WARN,(guid == null ? "missing secure token in session" : "no matching guid cookie") + ", login required");
 				result = true;
 			}
 		}
+
 		return result;
 	}
 
