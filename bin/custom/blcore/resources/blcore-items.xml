@@ -359,6 +359,10 @@
         <value code="HOLIDAY" />
       </enumtype>
 
+        <enumtype generate="true" code="EspEventTypeEnum" autocreate="true" dynamic="true">
+            <value code="ORDER_CONFIRMATION_EVENT" />
+        </enumtype>
+
 	  </enumtypes>
 
     <maptypes>
