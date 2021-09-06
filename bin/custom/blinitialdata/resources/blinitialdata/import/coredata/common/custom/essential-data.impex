@@ -155,7 +155,7 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blStockCreationJob;blStockCreationJob
 ;blAutomatedStockCreationJob;blAutomatedStockCreationJob
 ;blAuthorizePaymentJob;blAuthorizePaymentJob
-;;blBufferInventoryJob;blBufferInventoryJob
+;blBufferInventoryJob;blBufferInventoryJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
@@ -167,6 +167,8 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?
+;blAuthorizePaymentCronJob; 0 0 0/3 1/1 * ?
+;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
  
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
@@ -282,6 +284,7 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
                                               ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
                                               ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; CARRIER					              ; Carrier                         
                                               ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
                                               ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
                                               ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
@@ -352,7 +355,7 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 
 INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
                                 ; GIFTCARD                        ; Gift Card 
-                                                    
+                                ; PACKAGE                          ;   package                      
 #Media folder for verification documents
 INSERT_UPDATE MediaFolder;qualifier[unique=true];path[unique=true]
 ;verificationDocuments;verificationDocuments
@@ -437,3 +440,37 @@ INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] ; name[lang=en]
                                         ; MISSING_CHARGE    ; MISSING CHARGE 
                                         ; LATE_CHARGE       ; LATE CHARGE    
                                         ; REPAIR_CHARGE     ; REPAIR CHARGE 
+
+ 
+INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]                                       
+                                             ; FEDEX_SAT_DELIVERY_BL                   ; FedEx Saturday Delivery on BL                       
+                                             ; FEDEX_STANDARD_ROUND_TRIP               ; FedEx Standard Round Trip                           
+                                             ; FEDEX_OVERNIGHT_ROUND_TRIP              ; FedEx Overnight Round Trip                          
+                                             ; UPS_STANDARD_ROUND_TRIP                 ; UPS Standard Round Trip                             
+                                             ; UPS_STANDARD_AM_ROUND_TRIP              ; UPS Standard Am Round Trip                          
+                                             ; UPS_OVERNIGHT_SAVER_ROUND_TRIP          ; Test UPS Overnight Saver Round Trip                 
+                                             ; UPS_OVERNIGHT_ROUND_TRIP                ; UPS Overnight Round Trip                            
+                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP          ; Ups Store Overnight Round Trip                      
+                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP        ; Ups Store Standard Am Round Trip                    
+                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP    ; Ups Store Overnight Saver Round Trip                
+                                             ; UPS_STORE_STANDARD_ROUND_TRIP           ; Ups Store Standard Round Trip                       
+                                             ; BL_SAN_CARLOS                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office) 
+                                             ; COLORTEK                                ; Pick-up in Boston, MA (Colortek)                    
+                                             ; FOTO_EXPRESS                            ; Pick-up in San Jose, CA (Foto Express)              
+                                             ; WEBCAM                                  ; Pick-up in Philadelphia, PA (WEBBCAM)               
+                                             ; BL_WALTHAM                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)    
+                                             ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)             
+                                             ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)          
+                                             ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)          
+                                             ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL                       
+                                             ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL                        
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL                              
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_SAT_BL   ; FEDEX Overnight AM Saturday on BL                   
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_SAT_BL     ; Ups Overnight AM Saturday on BL                     
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL                            
+                                             ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL                      
+                                             ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL                         
+                                             ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
+                                             ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
+                                             
+                                             

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import com.bl.facades.shipment.data.DimensionsTypeData;
 import com.bl.facades.shipment.data.PackageTypeData;
 import com.bl.facades.shipment.data.PackageWeightTypeData;
-import com.bl.facades.shipment.data.ReturnServiceData;
 import com.bl.facades.shipment.data.ShipFromData;
 import com.bl.facades.shipment.data.ShipToData;
 import com.bl.facades.shipment.data.ShipmentData;
@@ -139,7 +138,10 @@ public class BLUpsShippingDataPopulator
 		final AddressData shipToAddress = addressConverter.convert(packagingInfo.getConsignment().getOrder().getDeliveryAddress());
 
 		final AddressData shipToAddressData = new AddressData();
-		shipToAddressData.setFirstName(shipToAddress.getFirstName());
+		if (StringUtils.isNotEmpty(shipToAddress.getFirstName()))
+		{
+			shipToAddressData.setFirstName(shipToAddress.getFirstName());
+		}
 		shipToAddressData.setLastName(shipToAddress.getLastName());
 		shipToAddressData.setLine1(shipToAddress.getLine1());
 		shipToAddressData.setLine2(shipToAddress.getLine2());
@@ -201,12 +203,6 @@ public class BLUpsShippingDataPopulator
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
 		populatePackage(packageDataList, packagingInfo);
 
-		/** Creating UPS Return Data List **/
-		final ReturnServiceData returnServiceData = new ReturnServiceData();
-		returnServiceData.setCode(returnServiceCode);
-		returnServiceData.setDescription(returnServiceDescription + "-" + packagingInfo.getConsignment().getOrder().getCode());
-
-		shipmentData.setReturnService(returnServiceData);
 		shipmentData.setShipper(shipperData);
 		shipmentData.setShipFrom(shipFromData);
 		shipmentData.setShipTo(shipToData);

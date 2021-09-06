@@ -1,7 +1,10 @@
 package com.bl.core.datepicker.impl;
 
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlBlackoutDateModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -16,13 +19,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -40,6 +41,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	private static final Logger LOG = Logger.getLogger(DefaultBlDatePickerService.class);
 	private SessionService sessionService;
 	private BaseStoreService baseStoreService;
+	private BlBlackoutDatesDao blBlackoutDatesDao;
 
 	/**
 	 * {@inheritDoc}
@@ -138,21 +140,23 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Date> getListOfBlackOutDates()
+	public List<Date> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType)
 	{
 		try
 		{
-			if (Objects.nonNull(getBaseStoreService().getCurrentBaseStore())
-					&& CollectionUtils.isNotEmpty(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()))
-			{
-				return getBaseStoreService().getCurrentBaseStore().getBlackOutDates().stream()
-						.map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime()).collect(Collectors.toList());
-			}
+			final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
+					.getAllBlackoutDatesForGivenType(blackoutDateType);
+			final List<Date> blackoutDates = allBlackoutDatesForGivenType.stream().map(
+					BlBlackoutDateModel::getBlackoutDate)
+					.collect(Collectors.toList()).stream().map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime())
+					.collect(Collectors.toList());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Blackout dates found for type {} is {}", blackoutDateType.toString(),
+					blackoutDates);
+			return blackoutDates;
 		}
 		catch (final Exception exception)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, "", "Error while getting list of black out dates from current base store",
-					exception);
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting list of black out dates", exception);
 		}
 
 		return Lists.newArrayList();
@@ -189,6 +193,22 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public void setBaseStoreService(BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
+	}
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
 	}
 
 }

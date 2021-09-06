@@ -115,6 +115,7 @@
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
 
+		<input type="hidden" id="enableSaturdays" value="${enableSaturdays}">
 		<script>
 			$(document).ready(function(){
 				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
@@ -451,6 +452,9 @@
         			 //BL-520 - disable weekends in the calendar
                          lockDaysFilter: (day) => {
                              const d = day.getDay();
+                             if($("#enableSaturdays").val() === 'true'){
+                            	 return [0].includes(d);
+                             }
                              return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
@@ -523,6 +527,9 @@
           			 //BL-520 - disable weekends in the calendar
                         lockDaysFilter: (day) => {
                               const d = day.getDay();
+                              if($("#enableSaturdays").val() === 'true'){
+                             	 return [0].includes(d);
+                              }
                                return [6, 0].includes(d);
                             },
                          lockDays: disallowedDates,
@@ -744,7 +751,10 @@
                                            	//BL-520 - disable weekends in the calendar
                                                     lockDaysFilter: (day) => {
                                                          const d = day.getDay();
-                                                         return [6, 0].includes(d);
+                                                         if($("#enableSaturdays").val() === 'true'){
+                                                        	 return [0].includes(d);
+                                                         }
+                                                         return [6,0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
                                             //Limit days selection to 91 days
@@ -810,6 +820,9 @@
                                            //BL-520 - disable weekends in the calendar
                                                     lockDaysFilter: (day) => {
                                                          const d = day.getDay();
+                                                         if($("#enableSaturdays").val() === 'true'){
+                                                        	 return [0].includes(d);
+                                                         }
                                                          return [6, 0].includes(d);
                                                        },
                                                     lockDays: disallowedDates,
@@ -1312,6 +1325,9 @@
                       		 //BL-520 - disable weekends in the calendar
                                 lockDaysFilter: (day) => {
                                     const d = day.getDay();
+                                    if($("#enableSaturdays").val() === 'true'){
+                                   	 return [0].includes(d);
+                                    }
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
@@ -1384,6 +1400,9 @@
                       //BL-520 - disable weekends in the calendar
                                lockDaysFilter: (day) => {
                                        const d = day.getDay();
+                                       if($("#enableSaturdays").val() === 'true'){
+                                      	 return [0].includes(d);
+                                       }
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
@@ -1510,6 +1529,9 @@
                       		 //BL-520 - disable weekends in the calendar
                                 lockDaysFilter: (day) => {
                                     const d = day.getDay();
+                                    if($("#enableSaturdays").val() === 'true'){
+                                   	 return [0].includes(d);
+                                    }
                                     return [6, 0].includes(d);
                                   },
                                 lockDays: disallowedDates,
@@ -1582,6 +1604,9 @@
                       //BL-520 - disable weekends in the calendar
                                lockDaysFilter: (day) => {
                                        const d = day.getDay();
+                                       if($("#enableSaturdays").val() === 'true'){
+                                      	 return [0].includes(d);
+                                       }
                                        return [6, 0].includes(d);
                                      },
                                lockDays: disallowedDates,
@@ -1772,6 +1797,9 @@
                       //BL-520 - disable weekends in the calendar
                         lockDaysFilter: (day) => {
                             const d = day.getDay();
+                            if($("#enableSaturdays").val() === 'true'){
+                           	 return [0].includes(d);
+                            }
                             return [6, 0].includes(d);
                         },
                         lockDays: disallowedDates,
@@ -1864,6 +1892,9 @@
                                 			},
                                           lockDaysFilter: (day) => {
                                               const d = day.getDay();
+                                              if($("#enableSaturdays").val() === 'true'){
+                                             	 return [0].includes(d);
+                                              }
                                               return [6, 0].includes(d);
                                             },
                                           lockDays: disallowedDates,

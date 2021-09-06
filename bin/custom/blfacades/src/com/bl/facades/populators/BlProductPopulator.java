@@ -1,6 +1,11 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.facades.product.data.BlBundleReferenceData;
+import com.google.common.collect.Lists;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -15,6 +20,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -31,6 +37,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
     private Populator<BlProductModel, ProductData> blProductTagPopulator;
     private PriceDataFactory priceDataFactory;
     private CommonI18NService commonI18NService;
+    private BlProductService productService;
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
@@ -50,12 +57,33 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         if (CollectionUtils.isNotEmpty(dataSheets)) {
             populateResourceData(dataSheets, target);
         }
-     
+        target.setIsBundle(source.isBundleProduct());
+       if(CollectionUtils.isNotEmpty(source.getProductReferences()))
+        {
+            final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(source
+                .getProductReferences()));
+          List<BlBundleReferenceData> list= new ArrayList<>();
+              if (CollectionUtils.isNotEmpty(productReferences)) {
+                productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
+                final BlBundleReferenceData referenceData = new BlBundleReferenceData();
+                referenceData.setProductReferenceName(productReferenceModel.getTarget().getName());
+                list.add(referenceData);
+              });
+              target.setBundleProductReference(list);
+            }
+
+        }
         target.setProductType(source.getProductType().getCode());
       
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
-        target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+
+        if (productService.isAquatechProduct(source)) {
+          target.setIsUpcoming(false);
+        } else {
+          target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+        }
+
         target.setAlternativeProduct(source.getAlternativeProduct());
         target.setOnSale(source.getOnSale() != null && source.getOnSale());
         target.setUpc(StringUtils.isNotEmpty(source.getUpc()) ? source.getUpc() : StringUtils.EMPTY );
@@ -135,5 +163,13 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         CommonI18NService commonI18NService) {
         this.commonI18NService = commonI18NService;
     }
+
+  public BlProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(BlProductService productService) {
+    this.productService = productService;
+  }
 }
 

@@ -590,8 +590,15 @@
 		<property name="catalogVersionDao" ref="catalogVersionDao" />
 		<property name="productDao" ref="productDao" />
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
+	<!--<BL-500 bean entry is for order service>-->
+	<alias name="defaultBlOrderService" alias="blOrderService" />
+	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
+		<property name="productService" ref="productService"/>
+	</bean>
 
 	<!--Pricing Logic changes-->
 	<alias name="defaultBlPricingService" alias="blPricingService"/>
@@ -672,6 +679,7 @@
     <bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
         <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
+        <property name="baseStoreService" ref="baseStoreService"/>
     </bean>
 
 	<!--BL-110 Inventory Scan Tool-->
@@ -692,6 +700,7 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 
 
@@ -782,6 +791,9 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="blCartService" ref="cartService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
@@ -901,7 +913,8 @@
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
     <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
         <property name="blDatePickerService" ref="blDatePickerService"/>
-		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+				<property name="blCommerceStockService" ref="blCommerceStockService"/>
+				<property name="productService" ref="productService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->
@@ -1351,5 +1364,17 @@
 		<property name="paymentService" ref="paymentService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="returnService" ref="returnService"/>
+	</bean>
+	
+	<alias name="defaultBlBlackoutDatesDao" alias="blBlackoutDatesDao"/>
+	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+  <!--BL-27: This process is override to call own strategy to provide email related things.-->
+	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
+		<property name="key">
+			<value type="java.lang.Class">de.hybris.platform.processengine.model.BusinessProcessModel</value>
+		</property>
+		<property name="value" ref="storeFrontProcessContextStrategy"/>
 	</bean>
 </beans>
