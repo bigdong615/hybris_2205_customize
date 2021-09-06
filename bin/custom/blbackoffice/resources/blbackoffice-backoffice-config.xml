@@ -43,7 +43,7 @@
                 <n:type-node id="CleanCompleteOrderQueue" code="CleanCompleteOrderQueue"/>
                 <n:type-node id="IncompleteOrdersQueue" code="IncompleteOrdersQueue"/>
              </n:navigation-node>
-            
+            <n:type-node id="BlBlackoutDate" code="BlBlackoutDate"/>
         </n:explorer-tree>
     </context>
 
@@ -1778,7 +1778,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -2020,6 +2020,8 @@
 								<editorArea:value>create-wizard-no-save</editorArea:value>
 							</editorArea:editor-parameter>
 						</editorArea:attribute>
+					<editorArea:attribute qualifier="poEnabled"
+						position="5" />
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2148,6 +2150,7 @@
 				<n:type-node code="StockLevel" id="StockLevel"/>
 			</n:navigation-node>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
+			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
 		</n:explorer-tree>
 	</context>
 	
@@ -2425,7 +2428,8 @@
 				<n:type-node id="OrdersNotCompletedQueue" code="OrdersNotCompletedQueue"/> 			
 			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-			<n:type-node id="RepairLog" code="BlRepairLog"/>            
+			<n:type-node id="RepairLog" code="BlRepairLog"/>   
+			<n:type-node id="Order" code="Order"/>            
         </n:explorer-tree>
     </context>
     
@@ -2442,6 +2446,7 @@
             <n:navigation-node id="UnboxingScanTool"/>
             <n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
             <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+            <n:type-node id="Consignment" code="Consignment"/>
         </n:explorer-tree>
     </context>
     
@@ -2636,6 +2641,59 @@
 			<list-view:column qualifier="unboxedDate"/>
 		</list-view:list-view>
 	</context>
+	
+	<context type="BlBlackoutDate" component="create-wizard">
+		<wz:flow id="blBlackoutDateCreateWizard" title="create.title(ctx.TYPE_CODE)" >
+			<wz:prepare id="blBlackoutDatePrepare">
+				<wz:initialize property="newBlBlackoutDate" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step0" label="hmc.essential">
+				<wz:content>
+					<wz:property-list root="newBlBlackoutDate">
+						<wz:property qualifier="blackoutDate"/>
+						<wz:property qualifier="blockedShippingMethod"/>
+						<wz:property qualifier="blackoutDateType"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step0.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlBlackoutDate"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	
+	<context type="BlBlackoutDate" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
+			<advanced-search:field-list>
+				<advanced-search:field mandatory="false" name="blackoutDate" selected="true"/>
+                <advanced-search:field mandatory="false" name="blockedShippingMethod" selected="true"/>
+                <advanced-search:field mandatory="false" name="blackoutDateType" selected="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+	
+	<context type="BlBlackoutDate" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="blackoutDate"/>
+			<list-view:column qualifier="blockedShippingMethod"/>
+			<list-view:column qualifier="blackoutDateType"/>
+		</list-view:list-view>
+	</context>
+	
+	<context merge-by="type" type="BlBlackoutDate" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blackout.date.tab" position="1">
+				<editorArea:section name="hmc.section.blackout.date.attributes">
+					<editorArea:attribute qualifier="blackoutDate"/>
+					<editorArea:attribute qualifier="blockedShippingMethod"/>
+					<editorArea:attribute qualifier="blackoutDateType"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
 
 
 	<!-- Added for modify order tab on order entry-->
@@ -2644,7 +2702,7 @@
 			<ea:tab name="ModifyOrder">
 				<ea:section name="ModifyOrder">
 					<ea:attribute qualifier="warehouse"/>
-					<ea:attribute qualifier="serialProduct"/>
+					<ea:attribute qualifier="modifiedSerialProductList"/>
 					<ea:attribute qualifier="isModifiedOrder"/>
 				</ea:section>
 			</ea:tab>

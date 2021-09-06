@@ -138,6 +138,15 @@ INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; productId[unique=true] ;
                         ;                 ;           ; 1498                   ; Sony_NP-FV70                                                     ; batteries_power,nikon      ; Extra Sony NP-FV70 Battery                                            ; 57.48           ; Extra Sony NP-FV70 Battery                                            ; SONPFV70            ; NPFV70         ; NA             ; BATTERIES                              ; true    ; false   ; false          ; false          ; BARCODE            ; true      ; false   ; 14              ; Sony             ; 3600
                         ;                 ;           ; 1521                   ; Panasonic_Battery_DMW-BLC12                                      ; batteries_power,Panasonic ; Extra Panasonic DMW-BLC12 Battery                                     ; 60              ; Extra Panasonic DMW-BLC12 Battery                                     ; PADMWBLC12          ; DMW-BLC12      ; 799559307080   ; BATTERIES                              ; true    ; false   ; false          ; false          ; BARCODE            ; true      ; false   ; 13              ; Panasonic        ; 3600
 
+#BL-500 Added for testing aquatech products
+                        ;                 ;           ; 13                     ;  Canon_60mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  60mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 60mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
+                        ;                 ;           ; 13                     ;  Canon_70mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  70mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 70mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
+
+                        ;                 ;           ; 13                     ;  Canon_61mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  61mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 61mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9              ; Canon            ; 1400
+                        ;                 ;           ; 13                     ;  Canon_71mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  71mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 71mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
+
+                        ;                 ;           ; 13                     ;  Canon_62mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  62mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 62mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
+                        ;                 ;           ; 13                     ;  Canon_72mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  72mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 72mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
 
 
 
@@ -229,3 +238,13 @@ INSERT_UPDATE BlProduct2BlProductRelation;$blProducts;$subParts;
                                          ;Nikon_17-35mm_f2.8 AF-S_IF_ED       ;77mm_front_cap
                                          ;Nikon_85mm_f1.4_AF                  ;77mm_front_cap
                                          ;Nikkor_105mm_f2.8_Micro_AF-S_VR     ;77mm_front_cap
+
+# BL-500 Added for testing aquatech products
+                                        ; Canon_60mm_Aquatech                   ;77mm_front_cap
+                                        ; Canon_70mm_Aquatech                   ;77mm_front_cap
+
+                                        ; Canon_61mm_Aquatech                   ;77mm_front_cap
+                                        ; Canon_71mm_Aquatech                   ;77mm_front_cap
+
+                                        ; Canon_62mm_Aquatech                   ;77mm_front_cap
+                                        ; Canon_72mm_Aquatech                   ;77mm_front_cap

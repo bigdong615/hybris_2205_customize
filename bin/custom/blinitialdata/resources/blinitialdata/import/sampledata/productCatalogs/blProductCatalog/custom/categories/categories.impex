@@ -19,7 +19,8 @@ INSERT_UPDATE Category; code[unique = true]             ; active; name[lang = en
                       ; lenses                   ; true  ; Lenses                       ; true          ; Lenses                       ;                                                                       ;                                                  ;                ; true
                       ; production               ; true  ; Production                   ; true          ; Production                   ;                                                                       ;                                                  ;                ; true
                       ; subparts                 ; true  ; Subparts                     ; false         ; Subparts                     ;                                                                       ;                                                  ;                ; true
-                      ; newgear                  ; true  ; New Gear                     ; false         ; New Gear                     ;                                                                       ; asagentgroup                                                 ;                ; false
+                      ; newgear                  ; true  ; New Gear                     ; false         ; New Gear                     ;                                                                       ; asagentgroup                                     ;                ; false
+                      ; package                  ; true  ; package                      ; false         ; package                      ;                                                                       ;                                                  ;                ; true
                       ; usedgear                 ; true  ; Used Gear                    ; true          ; Used Gear                    ;                                                                       ;                                                  ;                ; false
                       ; audio                    ; true  ; Audio                        ; true          ; Audio                        ; Camera microphones | Audio Mixers | UHF Lavaliers | Borrow Lenses     ;                                                  ;                ; true
                       ; lighting                 ; true  ; Lighting                     ; true          ; Lighting                     ;                                                                       ;                                                  ;                ; true
@@ -157,6 +158,7 @@ UPDATE Category; $catalogVersion; code[unique = true]      ; headerContent; foot
                ;                ; production               ;              ;
                ;                ; subparts                 ;              ;
                ;                ; newgear                  ;              ;
+               ;                ;  package                 ;              ;
                ;                ; audio                    ;              ; "<!-- Begin OrangeSoda Tracking Code -->
 <!--
 <script language='javascript' type='text/javascript'>

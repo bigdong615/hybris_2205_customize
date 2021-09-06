@@ -23,7 +23,7 @@
           path="j_password" inputCSS="form-control mb-2"  placeholder="Password" />
            <input type="hidden" id="serialClick" name="serialClick" value=""/>
            <input type="hidden" class="js-selected-product" name="js-selected-product" value=""/>
-        <input type="checkbox" name="remember-me" id="_spring_security_remember_me">
+        <input type="checkbox" name="remember-me" id="_spring_security_remember_me" checked>
         <label for="_spring_security_remember_me">
           <small>
             <spring:theme code="login.rememberme"/>

@@ -27,6 +27,8 @@
     <property name="isDiscontinued" type="Boolean"/>
     <property name="isNew" type="Boolean"/>
     <property name="isUpcoming" type="Boolean"/>
+    <property name="isBundle" type="boolean"/>
+    <property name="bundleProductReference" type="java.util.List&lt;com.bl.facades.product.data.BlBundleReferenceData>"/>
     <property name="productPageType" type="java.lang.String"/>
     <property name="serialproducts" type="java.util.List"/>
     <property name="productTagValues" type="String"/>
@@ -110,7 +112,9 @@
   	<property name="optionPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
   	<property name="subOptions" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
   </bean>
-
+<bean class="com.bl.facades.product.data.BlBundleReferenceData">
+  	<property name="ProductReferenceName" type="String"/>
+ </bean>
   
   <!-- Adding custom attributes in existing DTO of OrderEntryData -->
   <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">

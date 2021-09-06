@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -271,7 +270,8 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	 *           the price for number of days
 	 * @return the price information
 	 */
-	private PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
+	@Override
+	public PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
 			final BigDecimal priceForNumberOfDays)
 	{
 		final PriceRow priceRow = ((PriceRow) defaultPriceInformation.getQualifiers().get(BlCoreConstants.PRICE_ROW));
