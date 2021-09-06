@@ -6,7 +6,6 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.util.concurrent.AtomicDouble;
-import de.hybris.platform.acceleratorservices.payment.cybersource.enums.PaymentOptionEnum;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -90,14 +89,21 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      updateRentalDetailsIfExtendOrderExist(source, target);
    }
 
-   if(null != source.getRentalStartDate() && null != source.getRentalEndDate()){
+
+    target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source) : setUsedOrderStatus(source));
+
+    if(null != source.getRentalStartDate() && null != source.getRentalEndDate() ){
      target.setIsRentalActive(isRentalCartAcive(source));
-     target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
+     if(source.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
+          paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+              PaymentTransactionType.CAPTURE)))) {
+       target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
+     }
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
    final AtomicDouble totalAmt = new AtomicDouble(0.0);
 
-    if (source.getStatus().getCode().equalsIgnoreCase(OrderStatus.INCOMPLETE.getCode())
+    if (source.getStatus().getCode().startsWith(OrderStatus.INCOMPLETE.getCode())
         && BooleanUtils.isTrue(source.isOrderReturnedToWarehouse())) {
 	 source.getConsignments()
 			  .forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
@@ -115,7 +121,6 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
       target.setIsReplacementOrder(Boolean.TRUE);
     }
-    target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source , target) : setUsedOrderStatus(source));
 
   }
 
@@ -182,28 +187,36 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   }
 
 
-  private  String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel , final OrderHistoryData orderHistoryData) {
+  /**
+   * This method created for rental order status
+   */
+  private String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel) {
 
-    AtomicReference<String> orderStatus = new AtomicReference<>();
+    final AtomicReference<String> orderStatus = new AtomicReference<>();
 
     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) ||
         abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
             paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
-      orderStatus.set("Received");
+      orderStatus.set(BlFacadesConstants.RECEIVED);
     }
 
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
         paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
-      orderStatus.set("Shipped");
+      orderStatus.set(BlFacadesConstants.SHIPPED);
     }
 
 
     if(BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse()) && abstractOrderModel.getStatus().getCode().equalsIgnoreCase(
         OrderStatus.UNBOXED.getCode())) {
-      orderStatus.set("Returned");
+      orderStatus.set(BlFacadesConstants.RETURNED);
     }
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.COMPLETED.getCode())){
+      orderStatus.set(BlFacadesConstants.COMPLETED);
+    }
+
     if (BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse())) {
       abstractOrderModel.getConsignments().forEach(
           consignmentModel -> consignmentModel.getConsignmentEntries()
@@ -211,63 +224,63 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
                 consignmentEntryModel.getBillingCharges()
                     .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
                       if (BooleanUtils.isFalse(billing.isBillPaid())) {
-                        orderStatus.set("Completed");
+                        orderStatus.set(BlFacadesConstants.INCOMPLETE);
                       } else if (BooleanUtils.isTrue(billing.isBillPaid())) {
-                        orderStatus.set("InComplete");
+                        orderStatus.set(BlFacadesConstants.COMPLETED);
                       }
                     }));
               }));
     }
 
+
     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())) {
-      orderStatus.set("Canceled");
+      orderStatus.set(BlFacadesConstants.CANCELED);
     }
 
     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.LATE.getCode())){
-      orderStatus.set("Late");
+      orderStatus.set(BlFacadesConstants.LATE);
     }
 
     return orderStatus.get();
   }
 
 
+
+  /**
+   * This method created to set used gear order status
+   */
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
         paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
-      orderStatus =  "Sold";
+      orderStatus =  BlFacadesConstants.SOLD;
     }
 
+
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
+        paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+            PaymentTransactionType.CAPTURE)))) {
+      orderStatus = BlFacadesConstants.SHIPPED;
+    }
 
     final Calendar calendar = Calendar.getInstance();
     calendar.setTime(abstractOrderModel.getDate());
     calendar.add(Calendar.DAY_OF_MONTH ,30);
     Date addedDate = calendar.getTime();
      if(DateUtils.isSameDay(addedDate , new Date()) || new Date().after(addedDate)){
-       orderStatus =  "Completed";
+       orderStatus =  BlFacadesConstants.COMPLETED;
     }
 
      if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.CANCELLED.getCode())) {
-       orderStatus = "Canceled";
+       orderStatus = BlFacadesConstants.CANCELED;
      }
 
      if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RETURNED.getCode())){
-       orderStatus = "Returned ";
+       orderStatus = BlFacadesConstants.RETURNED;
      }
 
     return orderStatus;
   }
-
-  /**
-   * This method created to show order status on order history page
-   *//*
-  private String setRentalOrderStatus(final AtomicDouble atomicDouble) {
-    final AtomicReference<String> orderStatus = new AtomicReference<>();
-    if (Double.compare(atomicDouble.get(), 0.0) > 0) {
-      orderStatus.set(BlFacadesConstants.INCOMPLETE);
-    }
-    return orderStatus.get();
-  }*/
 
 }
