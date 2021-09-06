@@ -1,11 +1,13 @@
 package com.bl.core.services.cart;
 
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Date;
@@ -125,4 +127,21 @@ public interface BlCartService extends CartService {
      * @param cartModel
      */
     public void removeEmptyCart(final CartModel cartModel);
+    
+    /**
+     * Checks if is selected date is blackout date.
+     *
+     * @param dateToCheck the date to check
+     * @param blackoutDateType the blackout date type
+     * @return true, if is selected date is blackout date
+     */
+    boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType);
+
+    /**
+     * Checks if the given product is aquatech in session cart
+     *
+     * @param productModel the date to check
+     * @return true, if the given product is aquatech
+     */
+    boolean isAquatechProductsPresentInCart(final ProductModel productModel);
 }

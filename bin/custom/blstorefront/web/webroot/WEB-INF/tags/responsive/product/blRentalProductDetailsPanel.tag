@@ -73,13 +73,23 @@
                                      </c:choose>
                                  </div>
                                  </c:when>
-                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <c:when test="${product.isUpcoming eq 'true' && !product.isBundle}">
                                 <div id="pickupDelivery">
                                   <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
                                 </div>
                                 </c:when>
+
                                 <c:otherwise>
-                                 <div id="productDates">
+								<c:if test="${product.isBundle}">
+									<spring:theme code="text.bundle.pdp.include" />
+									<ul>
+										<c:forEach items="${product.bundleProductReference}"
+											var="bundleReference">
+											<li>${bundleReference.productReferenceName}<br /></li>
+										</c:forEach>
+									</ul>
+								</c:if>
+								<div id="productDates">
                                       <div class="input-group">
                                         <span class="rental-dates d-md-inline"><i class="icon-calendar"></i> <spring:theme code="pdp.rental.dates.label.text" /></span>
                                         <input type="text" id="product-litepicker" class="form-control d-none d-md-inline-block" placeholder="Select dates...">
@@ -114,7 +124,7 @@
                                 <c:choose >
                                  <c:when test="${product.isDiscontinued eq 'true'}">
                                  </c:when>
-                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <c:when test="${product.isUpcoming eq 'true' && !product.isBundle}">
                                 <spring:theme code="text.stock.notification.subscribe.title" var="colorBoxTitle" />
                                 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                                    <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-login-popup"   data-link="<c:url value='/login/loginpopup'/>"

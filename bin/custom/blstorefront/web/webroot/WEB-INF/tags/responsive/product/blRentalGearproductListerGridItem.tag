@@ -16,13 +16,16 @@
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 <c:set value="image coming soon" var="altText"/>
-
+<div class="page-loader-new-layout rental-loader">
+	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
+		title="Loading.." id="new_loading_Img" />
+</div>
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <!-- BL-926: Added condition for Gift Card as per requirement -->
  <c:if test="${product.productType ne 'GIFTCARD'}">
 		<c:choose>
-			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
 				<span class="badge badge-limited-stock"><spring:theme
 						code="text.product.tile.flag.only.left"
 						arguments="${product.stock.stockLevel}" /></span>

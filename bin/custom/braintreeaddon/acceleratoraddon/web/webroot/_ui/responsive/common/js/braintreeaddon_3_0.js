@@ -1131,10 +1131,11 @@ $('#submit_silentOrderPostForm').click(function () {
 	var savedPoForm = $("#submitSavedPoForm");
   var poNumber = savedPoForm.find('input[id="poNumber"]').val();
   var poNotes = savedPoForm.find('input[id="poNotes"]').val();
-  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {
+  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {     
   	var validationDiv = $(
-  			'<div class="notification notification-warning mb-4" />').text(
+  			'<div class="notification notification-error mb-4" />').text(
   			ACC.ccError.poNumber);
+    $('#poNumber').addClass('error');       
   	$('#validationMessage').append(validationDiv);
   } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
   	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
@@ -1244,7 +1245,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
     ACC.track.trackPaymentSelection('PayPal Payment');
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
-	  $('.page-loader-new-layout').hide();
+	  $('.page-loader-new-layout').hide();     
     var validationDiv = $('<div class="notification notification-error mb-4" />').text(ACC.ccError.poNumber);
     $('#poNumber').addClass('error'); 
     $('#validationMessage').append(validationDiv);

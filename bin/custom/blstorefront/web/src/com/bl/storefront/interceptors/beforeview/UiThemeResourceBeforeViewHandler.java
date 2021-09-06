@@ -110,6 +110,7 @@ public class UiThemeResourceBeforeViewHandler implements BeforeViewHandler
 		modelAndView.addObject("addOnCommonCssPaths", uiThemeUtils.getAddOnCommonCSSPaths(request));
 		modelAndView.addObject("addOnThemeCssPaths", uiThemeUtils.getAddOnThemeCSSPaths(request));
 		modelAndView.addObject("addOnJavaScriptPaths", uiThemeUtils.getAddOnJSPaths(request));
+		modelAndView.addObject("enableSaturdays", baseStore.isEnableSaturdays());
 	}
 	
 	/**

@@ -11,8 +11,9 @@
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="list"/>
+      <collectiontype code="ModifiedSerialProduct" elementtype="BlSerialProduct" autocreate="true"
+      generate="false" type="list"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
-        <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
 
         <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
 
@@ -60,6 +61,8 @@
             <value code="PARTS_NEEDED" />
             <value code="BOXED" />
             <value code="IN_HOUSE" />
+            <value code="SHIPPED" />
+            <value code="LATE" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -91,6 +94,7 @@
             <value code="STABLIZERS"/>
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
+            <value code="PACKAGE"/>
         </enumtype>
 
         <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">
@@ -343,6 +347,16 @@
         <value code="EXTRA_DOCUMENT3"/>
         <value code="EXTRA_DOCUMENT4"/>
         <value code="EXTRA_DOCUMENT5"/>
+      </enumtype>
+      
+      <enumtype generate="true" code="BlackoutDateShippingMethodEnum" autocreate="true" dynamic="true">
+      	<value code="ALL" />
+      </enumtype>
+      
+      <enumtype generate="true" code="BlackoutDateTypeEnum" autocreate="true" dynamic="true">
+      	<value code="RENTAL_START_DATE" />
+        <value code="RENTAL_END_DATE" />
+        <value code="HOLIDAY" />
       </enumtype>
 
 	  </enumtypes>
@@ -866,6 +880,12 @@
                          <modifiers read="true" write="false" optional="true" unique="true" initial="true"/>
                          <description>Auto generated Product ID</description>
                      </attribute>
+                    <attribute qualifier="bundleProduct" type="boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether the product is bundle Product</description>
+                   </attribute>
                      <attribute qualifier="displayName" type="java.lang.String">
                          <persistence type="property" />
                          <modifiers read="true" search="true" write="true" optional="true"/>
@@ -1700,7 +1720,7 @@
                     </attribute>
                     <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
+                        <modifiers read="true" write="true" optional="false"/>
                         <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
@@ -2156,7 +2176,7 @@
               <modifiers read="true" write="true" search="true" optional="true"/>
               <description>Allocated warehouse , by CSAgent to modify order.</description>
             </attribute>
-            <attribute qualifier="serialProduct" type="BLSerialProduct">
+            <attribute qualifier="modifiedSerialProductList" type="ModifiedSerialProduct">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true" initial="true"/>
               <description>Allocated serialProduct , by CSAgent to modify order.</description>
@@ -2365,6 +2385,12 @@
             <itemtype code="AbstractOrder" autocreate="false" generate="false">
                 <description>Extending AbstractOrder type with additional attributes.</description>
                 <attributes>
+                    <attribute qualifier="originalOrderTotalAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total cost of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                     <attribute qualifier="totalWeight" type="java.lang.Double">
                         <description>The address where the order is to be shipped from.</description>
                         <persistence type="property" />
@@ -2460,6 +2486,7 @@
                         <description>Gift Card Available Amount</description>
                         <modifiers read="true" write="true" search="false" optional="true" />
                         <persistence type="property" />
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="giftCardAmountTransactions" type="OrderGiftCardTransactions">
                         <description>Gift Card Amount Transactions</description>
@@ -3038,11 +3065,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute type="BlackOutDates" qualifier="blackOutDates">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" search="true" initial="true" />
-                        <description>List of BlackOut Dates</description>
-                    </attribute>
+                   <attribute qualifier="bundleDiscount" type="java.lang.Double">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Redeclaring attribute to set optional true for Serial Products</description>
+                   </attribute>
                     <attribute qualifier="usedGearCartTimer" type="java.lang.String">
 						<persistence type="property" />
 						<modifiers optional="true" read="true" write="true" />
@@ -3086,6 +3113,12 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <persistence type="property"/>
                    </attribute>
+                   <attribute qualifier="enableSaturdays" type="boolean">
+                   	<modifiers read="true" write="true" optional="false"/>
+                   	<description>Flag to enable and disable Saturdays on datepicker</description>
+                   	<persistence type="property" />
+                   	<defaultvalue>Boolean.FALSE</defaultvalue>
+                  </attribute>
                 </attributes>                
             </itemtype>
         </typegroup>
@@ -3611,6 +3644,32 @@
 				</attributes>
 			</itemtype>
 		</typegroup>
+		
+		<!-- BL-1087 BL-1088 BL-1089 -->
+        <typegroup name="BlackoutDate">
+            <itemtype code="BlBlackoutDate" autocreate="true" generate="true">
+                <description>Bl Blackout Dates</description>
+                <deployment table="blackoutDate" typecode="12234"/>
+                <attributes>
+                    <attribute qualifier="blackoutDate" type="java.util.Date">
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Blackout Date</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="blockedShippingMethod" type="BlackoutDateShippingMethodEnum">
+                        <modifiers read="true" write="true" optional="false" />
+                        <defaultvalue>em().getEnumerationValue("BlackoutDateShippingMethodEnum", "ALL")</defaultvalue>
+                        <description>Blocked Shipping Method for Blackout date</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="blackoutDateType" type="BlackoutDateTypeEnum">
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Blackout Date Type</description>
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
       
 <typegroup name="BlReportDefinition">
 <itemtype code="PulledOrdersQueue" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
@@ -4333,7 +4392,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
 			</value>
 		</property>
 	</custom-properties>
@@ -4570,7 +4629,7 @@ new Integer(8)
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND {c:optimizedShippingStartDate} = ?shipdate"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -4805,7 +4864,7 @@ new Integer(8)
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {order:orderType} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND {c:optimizedShippingStartDate} = ?shipdate"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 0 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -5278,7 +5337,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {dm:name} as shippingMethod, {no:code} as nextOrderCode, {s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce}, {DeliveryMode as dm} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {dm:pk} = {no:deliveryMode}"
+"select {s:code} as serialCode, {dm:name} as shippingMethod, {no:code} as nextOrderCode, {s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce}, {DeliveryMode as dm} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {dm:pk} = {no:deliveryMode}"
 			</value>
 		</property>
 	</custom-properties>
@@ -5451,7 +5510,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode, case when({no:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder ,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {no:isVipOrder} = 1"
+"select {s:code} as serialCode, {no:code} as nextOrderCode, case when({no:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder ,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {pos:code} as previousOrderStatus, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as po}, {Order as no}, {OrderStatus as pos}, {Consignment as c}, {ConsignmentEntry as ce} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} = 'UNBOXED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {po:pk} = {s:associatedOrder} and {pos:pk} = {po:status} and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order} and {no:isVipOrder} = 1"
 			</value>
 		</property>
 	</custom-properties>
@@ -5625,7 +5684,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and {c:optimizedShippingStartDate} = ?currentDate and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
+"select {s:code} as serialCode, {no:code} as nextOrderCode,{s:ocLocation} as currentOcLocation, {sse:code} as serialStatus, {c:optimizedShippingStartDate} as shippingDate, {s:lastUnboxedOcLocationDate} as unboxedDate  from {BlSerialProduct as s}, {SerialStatusEnum as sse}, {Order as no}, {Consignment as c}, {ConsignmentEntry as ce} where {s:testingStatus} = ({{select {tse:pk} from {ItemTestingStatusEnum as tse} where {tse:code} = 'TESTING_NEEDED'}}) and {s:dirtyPriorityStatus} = 1 and {ce:serialProducts} LIKE CONCAT('%',CONCAT({s.pk},'%')) and {sse:pk} = {s:serialStatus} and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = ?warehouse and {no:pk} = {c:order}"
 			</value>
 		</property>
 	</custom-properties>

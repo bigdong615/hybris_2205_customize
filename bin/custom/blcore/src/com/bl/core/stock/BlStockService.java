@@ -1,5 +1,6 @@
 package com.bl.core.stock;
 
+import com.bl.core.enums.SerialStatusEnum;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
 import java.util.Date;
@@ -60,16 +61,6 @@ public interface BlStockService
 	public void findAndUpdateStockRecords(final BlSerialProductModel blSerialProduct, final boolean reservedStatus);
 
 	/**
-	 * It finds the stock level based on given start and end date and updates the reserved status attribute
-	 * @param blSerialProduct the serial product
-	 * @param reservedStatus the reserved status
-	 * @param startDate the rental start date
-	 * @param endDate the rental end date
-	 */
-	public void findAndUpdateStockRecordsForParticularDuration(final BlSerialProductModel blSerialProduct,
-			final boolean reservedStatus, final Date startDate, final Date endDate);
-
-	/**
 	 * It updates the warehouse in the stock records from present date to all the future dates
 	 * @param blSerialProduct the serial product
 	 */
@@ -88,4 +79,18 @@ public interface BlStockService
 	 * @param blSerialProduct the serial product model
 	 */
 	void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct);
+
+	/**
+	 * It defines the active status based on serial status of the product
+	 * @param currentStatus
+	 * @return boolean
+	 */
+	boolean isActiveStatus(final SerialStatusEnum currentStatus);
+
+	/**
+	 * It defines the inactive status based on serial status of the product
+	 * @param currentStatus
+	 * @return boolean
+	 */
+	boolean isInactiveStatus(final SerialStatusEnum currentStatus);
 }

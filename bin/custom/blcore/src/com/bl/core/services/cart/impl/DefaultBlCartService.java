@@ -1,13 +1,18 @@
 package com.bl.core.services.cart.impl;
 
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateShippingMethodEnum;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.OrderTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlBlackoutDateModel;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -38,10 +43,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -63,6 +70,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private CatalogVersionDao catalogVersionDao;
     private ProductDao productDao;
     private SearchRestrictionService searchRestrictionService;
+    private BlBlackoutDatesDao blBlackoutDatesDao;
+    private BlProductService productService;
 
     /**
      * {@inheritDoc}
@@ -277,7 +286,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
                 .collect(Collectors.toList());
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-        final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+        final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
@@ -483,6 +492,56 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
             .contains(deliveryModeModel.getCode()));
     }
+    
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
+ 	{
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
+ 		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
+ 		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
+				.getAllBlackoutDatesForGivenType(blackoutDateType);
+ 		final boolean isRentalStartDate = Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE.equals(blackoutDateType);
+ 		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
+ 		{
+ 			return isGivenDateIsBlackoutDate.get();
+ 		}
+ 		if(isRentalStartDate)
+ 		{
+ 			allBlackoutDatesForGivenType.removeIf(blackoutDate -> !BlackoutDateShippingMethodEnum.ALL.equals(blackoutDate.getBlockedShippingMethod()));
+ 		}
+ 		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
+ 			if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate()))
+ 			{
+ 				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
+ 				return;
+ 			}
+ 		});
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck, isGivenDateIsBlackoutDate.get());
+ 		return isGivenDateIsBlackoutDate.get();
+ 	}
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean isAquatechProductsPresentInCart(final ProductModel productModel) {
+
+        final AtomicBoolean foundAquatech = new AtomicBoolean(false);
+        final CartModel cartModel = getSessionCart();
+        cartModel.getEntries().forEach(entry -> {
+
+            if (null != entry.getProduct() && productService.isAquatechProduct(productModel)
+                && entry.getProduct().getCode().equalsIgnoreCase(productModel.getCode())) {
+
+                foundAquatech.set(true);
+            }
+        });
+
+        return foundAquatech.get();
+    }
 
     /**
      * @inheritDoc
@@ -589,4 +648,27 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
        this.searchRestrictionService = searchRestrictionService;
    }
 
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
+
+    public BlProductService getProductService() {
+        return productService;
+    }
+
+    public void setProductService(BlProductService productService) {
+        this.productService = productService;
+    }
 }

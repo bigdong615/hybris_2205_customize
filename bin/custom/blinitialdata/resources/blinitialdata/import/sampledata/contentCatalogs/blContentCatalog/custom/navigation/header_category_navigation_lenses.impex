@@ -69,14 +69,15 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true]          ; $contentCV[unique=
                                 ; TelescopesNavNode         ;                         ; Telescopes Link        ; TelescopesNavNode         
                                 ; LensAdaptersNavNode       ;                         ; LensAdapters Link      ; LensAdaptersNavNode       
                                 ; LensExtendersNavNode      ;                         ; LensExtenders Link     ; LensExtendersNavNode      
-                                ; LensPackagesNavNode       ;                         ; LensPackages Link      ; LensPackagesNavNode       
-                                
+                                ; LensPackagesNavNode       ;                         ; LensPackages Link      ; LensPackagesNavNode
+                                ; AllGearPackageLenseNavNode       ;                         ; All GearPackage Link     ; AllGearPackageLenseNavNode
+
 #####################################################################
 #####################################################################
 #### Navigation Node  ####      
 #####################################################################
 UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef      ; children(uid,$contentCV)                                                                                                                                                                                                                                     
-                         ; LensesNavNode    ;                         ; LensesLinks ; BLCategoryNavNode       ; LensesNavNode ; AllLensesNavNode,NewArrivalsNavNode_Lenses,WideAngleLensesNavNode,StandardLensesNavNode,TelephotoLensesNavNode,CineLensesNavNode,MacroNavNode,FisheyeNavNode,TiltShiftNavNode,TelescopesNavNode,LensAdaptersNavNode,LensExtendersNavNode,LensPackagesNavNode 
+                         ; LensesNavNode    ;                         ; LensesLinks ; BLCategoryNavNode       ; LensesNavNode ; AllLensesNavNode,NewArrivalsNavNode_Lenses,WideAngleLensesNavNode,StandardLensesNavNode,TelephotoLensesNavNode,CineLensesNavNode,MacroNavNode,FisheyeNavNode,TiltShiftNavNode,TelescopesNavNode,LensAdaptersNavNode,LensExtendersNavNode,LensPackagesNavNode,AllGearPackageLenseNavNode
                          
                          
 #####################################################################
@@ -97,8 +98,10 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]               ; $contentCV[u
                                  ; TelescopesNavNodeEntry         ;                         ; Telescopes Nav Node Entry          ; TelescopesNavNode         ; TelescopesLink                                         
                                  ; LensAdaptersNavNodeEntry       ;                         ; Lens Adapters Nav Node Entry       ; LensAdaptersNavNode       ; LensAdaptersLink                                       
                                  ; LensExtendersNavNodeEntry      ;                         ; Lens Extenders Nav Node Entry      ; LensExtendersNavNode      ; LensExtendersLink                                      
-                                 ; LensPackagesNavNodeEntry       ;                         ; Lens Packages Nav Node Entry       ; LensPackagesNavNode       ; LensPackagesLink                                       
-                                 
+                                 ; LensPackagesNavNodeEntry       ;                         ; Lens Packages Nav Node Entry       ; LensPackagesNavNode       ; LensPackagesLink
+                                 ; AllGearPackageLenseNavNodeEntry     ;                          ; All GearPackage Navigation Node Entry    ; AllGearPackageLenseNavNode   ; AllGearPackageLink
+
+
 #####################################################################
 #### Navigation Node Link  ####  
 #####################################################################
