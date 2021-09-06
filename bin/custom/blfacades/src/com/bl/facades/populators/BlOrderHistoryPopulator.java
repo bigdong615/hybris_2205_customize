@@ -188,7 +188,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
 
   /**
-   * This method created to set used gear order status
+   * This method created to set rental gear order status
    * @param abstractOrderModel abstractOrderModel
    * @return order status as String
    */
