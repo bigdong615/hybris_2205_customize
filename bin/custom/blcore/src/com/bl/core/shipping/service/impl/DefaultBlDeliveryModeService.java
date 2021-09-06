@@ -830,9 +830,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
         if (Objects.nonNull(deliveryModeModel)) {
-            final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
-            final Date rentalStartDate = getRentalStartDate(rentalStart, numberOfDaysToSkip);
-            final Date rentalEndDate = getRentalEndDate(rentalEnd, numberOfDaysToSkip);
+            //final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
+            final int preDaysToDeduct = Integer.valueOf(deliveryModeModel.getPreReservedDays());
+            final int postDaysToAdd =  Integer.valueOf(deliveryModeModel.getPostReservedDays());
+
+            final Date rentalStartDate = getRentalStartDate(rentalStart, preDaysToDeduct);
+            final Date rentalEndDate = getRentalEndDate(rentalEnd, postDaysToAdd);
+
+            final boolean isRentalStartDateIsPastDate = rentalStartDate.before(new Date());
+
             final Set<WarehouseModel> lWareHouses = Objects.nonNull(deliveryModeModel.getWarehouse())
                     ? Sets.newHashSet(deliveryModeModel.getWarehouse())
                     : Sets.newHashSet(getBaseStoreService().getCurrentBaseStore().getWarehouses());
