@@ -239,8 +239,8 @@ private void saveOriginalOrderTotal(final double originalOrderTotal, final Abstr
   
   /**
    * It validates gift card.
-   * @param giftCardModel
-   * @param orderModel
+   * @param giftCardModel for the GiftCard
+   * @param orderModel for the current order
    * @return boolean value.
    */
 private boolean validateGiftCardAndApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -280,8 +280,8 @@ private boolean validateGiftCardAndApplyForModifyOrder(final GiftCardModel giftC
   
   /**
    * It checks whether gift card eligible to apply or not.
-   * @param giftCardModel
-   * @param orderModel
+   * @param giftCardModel current giftCard
+   * @param orderModel  current order
    * @return boolean value.
    */
 private boolean isGiftCardNotEligibleToApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -333,8 +333,8 @@ private boolean isGiftCardNotEligibleToApplyForModifyOrder(final GiftCardModel g
   
   /**
    * It checks whether gift card already applied to cart.
-   * @param giftCardModel
-   * @param orderModel
+   * @param giftCardModel  the Gift Card code
+   * @param orderModel current order
    * @return boolean value.
    */
 private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -363,7 +363,7 @@ private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardMode
     
     /**
      * It checks whether cart total amount is eligible to apply gift card or not.
-     * @param orderModel
+     * @param orderModel current order
      * @return true/false
      */
     private boolean isOrderFullyPaidForModifyOrder(final AbstractOrderModel orderModel) {
@@ -497,8 +497,8 @@ private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardMode
   /**
    * Method to clear inactiveCarts from gift card.
    *
-   * @param giftCardModel
-   * @param orderModel
+   * @param giftCardModel current GiftCard
+   * @param orderModel current order
    */
   private void clearInactiveCartsForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
     List<AbstractOrderModel> abstractOrderModelList = new ArrayList<>(giftCardModel.getOrder());
