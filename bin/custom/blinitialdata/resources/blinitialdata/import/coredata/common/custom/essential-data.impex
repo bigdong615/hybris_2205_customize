@@ -284,6 +284,7 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
                                               ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
                                               ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; CARRIER					              ; Carrier                         
                                               ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
                                               ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
                                               ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
