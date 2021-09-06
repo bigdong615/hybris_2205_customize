@@ -375,21 +375,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
         String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
 
-        /*if (payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
-        {
-        		paymentProvider = BraintreeConstants.APPLE_PAY_CARD;
-        }
-        else if (payPalExpressResponse.getType().equals(BraintreeConstants.VENMO_CHECKOUT))
-        {
-			paymentProvider = BraintreeConstants.VENMO_CHECKOUT;
-			payPalEmail = payPalExpressResponse.getDetails().getUsername();
-			hybrisBillingAddress = brainTreeUserFacade.getAddressForCode(selectedAddressCode);
-		}
-		else if(payPalExpressResponse.getType().equals(BraintreeConstants.ANDROID_PAY_CARD))
-		{
-			paymentProvider = BraintreeConstants.ANDROID_PAY_CARD;
-		}*/
-
         final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
 				  paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
 
