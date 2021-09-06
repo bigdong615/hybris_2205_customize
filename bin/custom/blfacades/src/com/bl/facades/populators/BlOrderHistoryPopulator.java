@@ -188,7 +188,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
 
   /**
-   * This method created for rental order status
+   * This method created to set used gear order status
+   * @param abstractOrderModel abstractOrderModel
+   * @return order status as String
    */
   private String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel) {
 
@@ -245,9 +247,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   }
 
 
-
   /**
    * This method created to set used gear order status
+   * @param abstractOrderModel  abstractOrderModel
+   * @return order status as a string
    */
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
