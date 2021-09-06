@@ -108,6 +108,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
     target.setOrderStatus(setRentalOrderStatus(totalAmt));
 
+      if(BooleanUtils.isTrue(source.getIsCaptured())){
+          target.setIsCaptured(Boolean.TRUE);
+      }else{
+          target.setIsCaptured(Boolean.FALSE);
+      }
+
   }
 
   /**

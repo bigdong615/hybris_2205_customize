@@ -369,6 +369,8 @@ $('#applyGcCode').click(function (e) {
 	});
 });
 
+
+
 //BL-927 Gift Card Purchase Amount
 $('#add-to-gc').click(function(e) {
     $('.page-loader-new-layout').hide();
@@ -386,6 +388,7 @@ $('#add-to-gc').click(function(e) {
 
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
+	
      e.preventDefault();
      var itemIndex = $(this).data("index");
      var $form = $(document).find('#removeGiftCardForm' + itemIndex);
@@ -764,8 +767,7 @@ function createHiddenParameter(name, value) {
 
 $('.usedgear-signout').on("click", function (e) {
 	fetchdata();
-	clearInterval(z);
-	localStorage.removeItem('saved_countdown');
+	
 	
 });
 
@@ -1181,3 +1183,59 @@ function hideShorting(){
                }
           }) ;
        });
+      
+      
+      //BL-1134 Gift Card Apply
+      $('#applyGcCodeForModifyPayment').click(function (e) {
+    	 
+      	e.preventDefault();
+        var giftCardForm = $("#giftCardForm");
+        var $form = $(this);
+      	var gcCode = $("#gift-card-apply-gift-card-number").val();
+      	var gcOrderCode = $("#orderCode").val();
+      	$.ajax({
+      		url: giftCardForm.attr('action'),
+      		type: giftCardForm.attr("method"),
+      		data: {code: gcCode, orderCode : gcOrderCode},
+      		
+      		beforeSend: function(){
+              $('.page-loader-new-layout').show();
+          },
+          success: function (data) {
+            window.location.reload();
+          },
+          complete: function() {
+              $('.page-loader-new-layout').hide();
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+             $('.page-loader-new-layout').hide();
+             console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+          }
+      	});
+      });
+      
+      
+      
+      //BL-1134 Remove Gift Card
+      $('.remove-gift-card-modify-order').on("click", function(e) {
+      	
+           e.preventDefault();
+         
+           var itemIndex = $(this).data("index");
+           var $form = $(document).find('#removeGiftCardForm' + itemIndex);
+           var gcOrderCode = $("#orderCode").val();
+           var gcCode = $("#gift-code"+ itemIndex).val();
+           var method = $form.attr("method") ? $form.attr("method").toUpperCase() : "POST";
+           $.ajax({
+               url: $form.attr("action"),
+               data: $form.serialize() + "&orderCode="+gcOrderCode + "&gcCode="+gcCode,
+               async: false,
+               type: method,
+               success: function(data, status, xhr) {
+                    window.location.reload();
+               },
+               error: function(error) {
+                   console.log("Error while removing gift card");
+               }
+           });
+      });

@@ -609,6 +609,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
         if(!(blSerialProduct instanceof BlSerialProductModel)) {
             weight = totalWeight.doubleValue() + weight;
+        }else {
+            if (!(((BlSerialProductModel) entry.getProduct()).getBlProduct().getCode().equals(((BlSerialProductModel) blSerialProduct).getBlProduct().getCode()))) {
+                weight = totalWeight.doubleValue() + weight;
+            }
         }
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);

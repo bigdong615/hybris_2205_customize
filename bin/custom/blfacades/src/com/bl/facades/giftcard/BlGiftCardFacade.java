@@ -1,6 +1,8 @@
 package com.bl.facades.giftcard;
 
 import com.bl.core.model.GiftCardModel;
+
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import java.util.List;
 import org.springframework.ui.Model;
@@ -27,6 +29,14 @@ public interface BlGiftCardFacade {
      */
     boolean applyGiftCard(final String giftCardCode);
 
+
+    /**
+     * This method is used to apply gift card.
+     * @param giftCardCode
+     * @return true or false.
+     */
+    boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
+
     /**
      * This method is used to place Order.
      * @param redirectModel
@@ -50,4 +60,11 @@ public interface BlGiftCardFacade {
      * @param giftCardModelList
      */
     void removeAppliedGiftCardFromCartOrShippingPage(final CartModel cartModel, final List<GiftCardModel> giftCardModelList);
+    
+    /**
+     *  This method is to remove applied gift card from Modify Payment page.
+     * @param giftCardCode
+     */
+    void removeGiftCardforModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
+
 }

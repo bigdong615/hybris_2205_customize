@@ -4,8 +4,11 @@ import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.controllers.pages.CheckoutController;
+import com.bl.storefront.forms.GiftCardForm;
 import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.exceptions.ResourceErrorMessage;
 import com.braintree.facade.BrainTreeUserFacade;
@@ -32,8 +35,11 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.servicelayer.session.SessionService;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -58,7 +64,23 @@ import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import java.math.RoundingMode;
-
+import java.util.Locale;
+import de.hybris.platform.servicelayer.session.SessionService;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.gitfcard.BlGiftCardService;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
+import com.bl.facades.giftcard.data.BLGiftCardData;
+import java.util.ArrayList;
+import org.apache.commons.collections.CollectionUtils;
+import com.bl.logging.BlLogger;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import java.util.Date;
+import com.bl.core.model.GiftCardMovementModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.core.enums.OrderStatus;
 
 
 
@@ -66,6 +88,9 @@ import java.math.RoundingMode;
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
+	private static final Logger LOG = Logger.getLogger(BrainTreeAccountPageController.class);
+	
+	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
 	private static final String PAY_BILL = "/payBill";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
@@ -73,6 +98,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_PAYMENT_DETAILS;
 	private static final String REDIRECT_TO_ADD_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/add-payment-method";
 	private static final String REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/edit-payment-method";
+	private static final String REDIRECT_TO_ORDER_DETAILS_PAGE = REDIRECT_PREFIX + "/my-account/order/";
 
 	// CMS Page
 	private static final String ADD_EDIT_PAYMENT_METHOD_CMS_PAGE = "add-edit-payment-method";
@@ -80,7 +106,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
 	private static final int DECIMAL_PRECISION = 2;
-
+	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
+	
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
 
@@ -107,6 +134,15 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@Resource(name = "priceDataFactory")
 	private PriceDataFactory priceDataFactory;
+	
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+	
+	@Resource(name = "blGiftCardFacade")
+	private BlGiftCardFacade blGiftCardFacade;
+
+	@Resource(name = "modelService")
+	private ModelService modelService;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -358,6 +394,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 			if(getRedirectionUrl(orderCode).equalsIgnoreCase(BlControllerConstants.EXTEND)) {
 				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + originalOrderCode;
 			}
+			else if(getRedirectionUrl(orderCode).equalsIgnoreCase(BlControllerConstants.MODIFYPAYMENT)){
+				return REDIRECT_PREFIX + MY_ACCOUNT_MODIFY_PAYMENT + originalOrderCode;
+			}
 			else {
 				return REDIRECT_PREFIX + MY_ACCOUNT + originalOrderCode + PAY_BILL;
 			}
@@ -378,6 +417,28 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		blOrderFacade.setPayBillAttributes(orderDetails);
 		model.addAttribute("orderData", orderDetails);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setupAdditionalFields(model);
+		return getViewForPage(model);
+	}
+	
+	/**
+	 * This method created for the Modify Payment page. 
+	 */
+	@GetMapping(value = "/modifyPayment/{orderCode}")
+	@RequireHardLogIn
+	public String getModifyPaymentForOrder(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel modifyPaymentPage = getContentPageForLabelOrId(MODIFY_PAYMENT_CMS_PAGE);
+		storeCmsPageInModel(model, modifyPaymentPage);
+		setUpMetaDataForContentPage(model, modifyPaymentPage);
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.setPayBillAttributes(orderDetails);
+		model.addAttribute("orderData", orderDetails);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
+		{
+			model.addAttribute(BlCoreConstants.COUPON_APPLIED_MSG, sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG));
+			sessionService.removeAttribute(BlCoreConstants.COUPON_APPLIED_MSG);
+		}
 		setupAdditionalFields(model);
 		return getViewForPage(model);
 	}
@@ -407,6 +468,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 						poNotes, order);
 
 		}
+		
 
 		if (isSuccess) {
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
@@ -427,6 +489,55 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		}
 	}
 
+	@PostMapping(value = "/modify-payment-success")
+	@RequireHardLogIn
+	public String doSelectPaymentMethod(final Model model, final HttpServletRequest request,
+										final HttpServletResponse response, final RedirectAttributes redirectAttributes)throws CMSItemNotFoundException
+	{
+		String paymentInfoId = request.getParameter("paymentId");
+		String paymentMethodNonce = request.getParameter("paymentNonce");
+		String orderCode = request.getParameter("orderCode");
+		String modifiedOrderTotal = request.getParameter("modifyOrderTotal");
+		double modifyOrderTotal = Double.parseDouble(modifiedOrderTotal);
+		AbstractOrderModel order = null;
+		boolean isSuccess = false;
+			
+			 order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+			if (StringUtils.isNotBlank(paymentInfoId))
+			{
+				if (StringUtils.isNotBlank(paymentMethodNonce))
+				{
+					brainTreeCheckoutFacade.setPaymentDetailsForModifyPayment(paymentInfoId, paymentMethodNonce, order);
+				}
+				if(null != order) {
+					final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+							.getBrainTreePaymentInfoForCode(
+									(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
+					if (null != paymentInfo) {
+
+						isSuccess = brainTreeTransactionService
+								.createAuthorizationTransactionOfOrder(order,
+										BigDecimal.valueOf(modifyOrderTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+					}
+				}
+				
+			}
+			
+			
+		if (isSuccess) {
+			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			order.setIsCaptured(Boolean.TRUE);
+			modelService.save(order);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+					getLocalizedString("text.account.modify.payment.success"));
+			return REDIRECT_TO_ORDER_DETAILS_PAGE + orderCode;
+		} else {
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+					getLocalizedString("text.account.modify.payment.error"));
+			return REDIRECT_PREFIX + MY_ACCOUNT_MODIFY_PAYMENT + orderCode;
+		}
+		
+	}
     /**
      * This method will return true after Authorization and capture done successfully
      *
@@ -463,6 +574,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		return isSuccess;
 	}
 
+	 
 	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,                         // NOSONAR
                                                                 final String cardDetails, final String cardType, final String email, final String deviceData,
                                                                 final String liabilityShifted, final AddressData addressData, final String cardholder, final String defaultCard  )
@@ -562,7 +674,149 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 	
+	/**
+	 * This method is used to apply gift card.
+	 *
+	 * @param code
+	 * @param request
+	 * @param model
+	 * @return String.
+	 * @throws CMSItemNotFoundException
+	 * @throws CalculationException
+	 */
+	@PostMapping(value = "/applyGiftCard")
+	@ResponseBody
+	public String apply(final String orderCode, final String code, final HttpServletRequest request, final Model model) {
+	//	String orderCode = request.getParameter("orderCode");
+		final AbstractOrderModel orderModel  = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+		final Locale locale = getI18nService().getCurrentLocale();
+		if(StringUtils.isEmpty(code)){
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.code.blank", null, locale));
+			return BlControllerConstants.ERROR;
+		}
 
+		if(orderModel != null) {
+			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
+			if (checkGcEndDate(locale, giftCardModel)) {
+				return BlControllerConstants.ERROR;
+			}
+			
+			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			final List<BLGiftCardData> blGiftCardDataList = orderDetails
+					.getGiftCardData();
+			final List<String> giftCardDataList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(blGiftCardDataList)) {
+				for (BLGiftCardData giftCardData : blGiftCardDataList) {
+					giftCardDataList.add(giftCardData.getCode());
+				}
+			}
+			try {
+				return handleGiftCardStatus(code, locale, giftCardDataList, orderModel, giftCardModel);
+			} catch (final Exception exception) {
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+						"Error occurred while applying gift card code: {} on cart: {} for the customer: {}",
+						code,
+						orderModel.getCode(), orderModel.getUser().getUid(), exception);
+			}
+		}
+		return BlControllerConstants.ERROR;
+	}
+	
+	/**
+	 * It removes applied gift card from Modified order .
+	 * @param giftCardForm
+	 * @param request
+	 * @param model
+	 * @return String
+	 */
+	@PostMapping(value = "/removeGiftCard")
+	@ResponseBody
+	public String removeGiftCardForModifyOrder(final String orderCode, final String gcCode, final GiftCardForm giftCardForm, final HttpServletRequest request, final Model model) {
+		final AbstractOrderModel orderModel  = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+		try {
+			blGiftCardFacade.removeGiftCardforModifyOrder(gcCode, orderModel);
+			return BlControllerConstants.TRUE_STRING;
+		} catch (final Exception exception) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error while removing applied gift card code: {} from cart: {} for the customer: {}",
+					gcCode, orderModel.getCode(), orderModel.getUser().getUid(), exception);
+			return BlControllerConstants.FALSE_STRING;
+		}
+	}
+	
+    // Check end date for gift card
+	private boolean checkGcEndDate(Locale locale, GiftCardModel giftCardModel) {
+		if (giftCardModel != null) {
+			int endDate = giftCardModel.getEndDate().compareTo(new Date());
+			if(endDate < 0)
+			{
+				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+						getMessageSource().getMessage("text.gift.apply.applied.expire", null, locale));
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * It sets message in the session attribute based on the gift card apply operation.
+	 *
+	 * @param code
+	 * @param locale
+	 * @param giftCardData
+	 * @param cartModel
+	 * @param giftCardModel
+	 * @return String.
+	 */
+	private String handleGiftCardStatus(final String code, final Locale locale,
+			final List<String> giftCardData, final AbstractOrderModel orderModel,
+			final GiftCardModel giftCardModel) {
+		if (CollectionUtils.isNotEmpty(giftCardData) && giftCardData.contains(code)
+				&& isOrderFullyPaid(orderModel)) {
+			//if cart already have applied GC  and order total is 0.00
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+			return BlControllerConstants.ERROR;
+		} else if (CollectionUtils.isNotEmpty(giftCardData) && giftCardData.contains(code)) {
+			//if cart already have applied GC and GC have insufficient balance
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+							{code}, locale));
+			return BlControllerConstants.ERROR;
+		}
+		if (blGiftCardFacade.applyGiftCardForModifyOrder(code, orderModel)) {
+			final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+			final BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.apply.success", new Object[]
+							{gcRedeemedAmount.abs().doubleValue()}, locale));
+			return BlControllerConstants.SUCCESS;
+		} else {
+			if (giftCardModel == null) {
+				//if applied GC is not present in the system.
+				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+						getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+				return BlControllerConstants.ERROR;
+			} else if (isOrderFullyPaid(orderModel)) {
+				//if order total is 0.00
+				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+						getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+				return BlControllerConstants.ERROR;
+			}
+		}
+		return BlControllerConstants.ERROR;
+	}
+
+	/**
+	 * It checks that cart total price shouldn't be zero or less than zero.
+	 *
+	 * @param cartModel
+	 * @return boolean value
+	 */
+	private boolean isOrderFullyPaid(final AbstractOrderModel orderModel) {
+		return orderModel.getTotalPrice() <= 0;
+	}
 
 	/**
 	 * This method create to get the URL based on order code
@@ -570,7 +824,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 * @return string
 	 */
 	private String getRedirectionUrl(final String orderCode) {
-		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.PAY_BILL;
+		return orderCode.contains(BlControllerConstants.EXTEND) ? BlControllerConstants.EXTEND : BlControllerConstants.MODIFYPAYMENT;
 	}
 
 	/**

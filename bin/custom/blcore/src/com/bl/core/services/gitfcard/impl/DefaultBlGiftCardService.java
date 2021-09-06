@@ -24,6 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import de.hybris.platform.commerceservices.service.data.CommerceOrderParameter;
 
 /**
  * Default implementation class of {@link BlGiftCardService}.
@@ -136,6 +137,29 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     }
     return false;
   }
+  
+  /**
+   *{@inheritDoc}
+   */
+@Override
+public boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel) {
+  if (StringUtils.isEmpty(giftCardCode)) {
+    return false;
+  }
+  
+  try {
+    final GiftCardModel giftCardModel = getGiftCardDao().getGiftCard(giftCardCode);
+    if (giftCardModel != null && orderModel != null) {
+      this.clearUncommittedMovements(giftCardModel);
+      clearInactiveCartsForModifyOrder(giftCardModel, orderModel);
+      return validateGiftCardAndApplyForModifyOrder(giftCardModel, orderModel);
+    }
+  } catch (final Exception exception) {
+    BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, "Error while applying gift card code {}",
+        giftCardCode, exception);
+  }
+  return false;
+}
 
     /**
      * It applies eligible gift card to cart.
@@ -158,7 +182,40 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     getModelService().refresh(cartModel);
     return true;
   }
+  
+  
 
+  /**
+   * It applies eligible gift card to cart.
+   * @param cartModel
+   * @param giftCardModel
+   * @return boolean value
+   */
+private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, final GiftCardModel giftCardModel) {
+  final List<GiftCardModel> giftCardModelList = new ArrayList<>(orderModel.getGiftCard());
+  giftCardModelList.add(giftCardModel);
+  orderModel.setGiftCard(giftCardModelList);
+  orderModel.setCalculated(Boolean.FALSE);
+  getModelService().save(orderModel);
+  final CommerceOrderParameter commerceCartParameter = new CommerceOrderParameter();
+  commerceCartParameter.setOrder(orderModel);
+ // commerceCartParameter.setBaseSite(orderModel.getSite());
+ //commerceCartParameter.setEnableHooks(true);
+ // commerceCartParameter.setRecalculate(true);
+ // getBlCheckoutCartCalculationStrategy().calculateOrder(commerceCartParameter);
+   double originalOrderTotal =  orderModel.getTotalPrice();
+    if(giftCardModelList.size() == 1){
+      saveOrdiginalOrderTotal(originalOrderTotal, orderModel);
+    }
+    calculateGiftCard(orderModel, orderModel.getOrderTotalBeforeGCAdd());
+  getModelService().refresh(orderModel);
+  return true;
+}
+
+ private void saveOrdiginalOrderTotal(final double originalOrderTotal, final AbstractOrderModel orderModel) {
+	 orderModel.setOrderTotalBeforeGCAdd(originalOrderTotal);
+	 getModelService().save(orderModel);
+ }
     /**
      * It validates gift card.
      * @param giftCardModel
@@ -177,6 +234,25 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     // apply gift card
     return applyGiftCardToCart(cartModel, giftCardModel);
   }
+  
+  /**
+   * It validates gift card.
+   * @param giftCardModel
+   * @param cartModel
+   * @return boolean value.
+   */
+private boolean validateGiftCardAndApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
+
+  if (Boolean.FALSE.equals(giftCardModel.getActive()) && giftCardModel.getCurrency() != null
+      && giftCardModel.getCurrency() != commonI18NService.getCurrentCurrency()) {
+    return false;
+  }
+  if (Boolean.FALSE.equals(isGiftCardNotEligibleToApplyForModifyOrder(giftCardModel, orderModel))) {
+    return false;
+  }
+  // apply gift card
+  return applyGiftCardToModifyOrder(orderModel, giftCardModel);
+}
 
     /**
      * It checks whether gift card eligible to apply or not.
@@ -199,6 +275,28 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     return (calculateGiftCardBalance(giftCardModel) > 0);
 
   }
+  
+  /**
+   * It checks whether gift card eligible to apply or not.
+   * @param giftCardModel
+   * @param cartModel
+   * @return boolean value.
+   */
+private boolean isGiftCardNotEligibleToApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
+
+  if (isGiftCardAppliedForModifyOrder(giftCardModel, orderModel)) {
+    // this gift card is already applied, it can't be applied twice.
+    return false;
+  }
+
+  if (isOrderFullyPaidForModifyOrder(orderModel)) {
+    // order is fully paid, this gift card can't be applied.
+    return false;
+  }
+
+  return (calculateGiftCardBalance(giftCardModel) > 0);
+
+}
   /**
   * Generate code for gift card purchase.
    * @return String value.
@@ -230,6 +328,27 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     }
     return false;
   }
+  
+  /**
+   * It checks whether gift card already applied to cart.
+   * @param giftCardModel
+   * @param cartModel
+   * @return boolean value.
+   */
+private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
+  // check if gift card is already applied
+  final List<GiftCardModel> giftCardModelList = orderModel.getGiftCard();
+  // if cart has no gift card applied
+  if (CollectionUtils.isEmpty(giftCardModelList)) {
+    return false;
+  }
+  for (final GiftCardModel giftcard : giftCardModelList) {
+    if (giftcard.getCode().equals(giftCardModel.getCode())) {
+      return true;
+    }
+  }
+  return false;
+}
 
     /**
      * It checks whether cart total amount is eligible to apply gift card or not.
@@ -239,6 +358,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     private boolean isOrderFullyPaid(final CartModel cartModel) {
     return cartModel.getTotalPrice() <= 0;
   }
+    
+    /**
+     * It checks whether cart total amount is eligible to apply gift card or not.
+     * @param cartModel
+     * @return true/false
+     */
+    private boolean isOrderFullyPaidForModifyOrder(final AbstractOrderModel orderModel) {
+    return orderModel.getTotalPrice() <= 0;
+  } 
 
     /**
      * It checks whether gift card has enough balance to apply or not.
@@ -308,6 +436,36 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     }
   }
 
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void removeGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel) {
+    List<GiftCardModel> giftCardModelList = new ArrayList<>();
+    final GiftCardModel giftCard = getGiftCardDao().getGiftCard(giftCardCode);
+    if (giftCard != null) {
+        final Collection<GiftCardModel> giftCardPresentInCart = new ArrayList<>(orderModel.getGiftCard());
+        this.clearUncommittedMovements(giftCard);
+        for (GiftCardModel giftCardModel : giftCardPresentInCart) {
+          //Remove gift card, if already present in current cart.
+          if (giftCardModel.getCode().equals(giftCardCode)) {
+             giftCardPresentInCart.removeIf(gcCode -> gcCode.getCode().equals(giftCard.getCode()));
+             break;
+          }
+        }
+        giftCardModelList.addAll(giftCardPresentInCart);
+        orderModel.setGiftCard(giftCardModelList);
+        orderModel.setCalculated(Boolean.FALSE);
+        getModelService().save(orderModel);
+        final CommerceOrderParameter commerceCartParameter = new CommerceOrderParameter();
+        commerceCartParameter.setOrder(orderModel);
+        final double originalOrderTotal =  orderModel.getOrderTotalBeforeGCAdd();
+        calculateGiftCard(orderModel, originalOrderTotal);
+        getModelService().refresh(orderModel);
+        
+    }
+  }
   /**
    *{@inheritDoc}
    */
@@ -334,6 +492,22 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     getModelService().refresh(giftCardModel);
   }
 
+  /**
+   * Method to clear inactiveCarts from gift card.
+   *
+   * @param giftCardModel
+   * @param currentCart
+   */
+  private void clearInactiveCartsForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
+    List<AbstractOrderModel> abstractOrderModelList = new ArrayList<>(giftCardModel.getOrder());
+    if (CollectionUtils.isEmpty(abstractOrderModelList)) {
+      return;
+    }
+    abstractOrderModelList.add(orderModel);
+    giftCardModel.setOrder(abstractOrderModelList);
+    getModelService().save(giftCardModel);
+    getModelService().refresh(giftCardModel);
+  }
   /**
    * {@inheritDoc}
    */
