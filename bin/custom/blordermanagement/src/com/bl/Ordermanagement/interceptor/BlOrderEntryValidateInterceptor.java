@@ -14,9 +14,9 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
+import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -57,24 +57,24 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	 private static final Logger LOG = Logger.getLogger(BlOrderEntryValidateInterceptor.class);
 	 
 	@Resource(name = "defaultBlAllocationService")
-	DefaultBlAllocationService defaultBlAllocationService;
+	private DefaultBlAllocationService defaultBlAllocationService;
 
 	@Resource(name = "allocationService")
-	AllocationService allocationService;
+	private AllocationService allocationService;
 
 	@Resource(name = "modelService")
-	ModelService modelService;
+	private ModelService modelService;
 
 	@Resource(name = "userService")
 	private UserService userService;
 
-	@Autowired
+	@Resource(name="calculationService")
 	CalculationService calculationService;
 
-	@Autowired
-	BlSourceOrderAction blSourceOrderAction;
+	@Resource(name="blSourceOrderAction")
+	private BlSourceOrderAction blSourceOrderAction;
 
-	@Autowired
+	@Resource(name="blShippingOptimizationStrategy")
 	private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
 
 	/**
@@ -92,15 +92,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			final WarehouseModel warehouse = orderEntryModel.getWarehouse();
 			if (CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
 			{
-				if (!interceptorContext.isNew(orderEntryModel) && orderEntryModel.isIsModifiedOrder()
-						&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER))
-				{
-					isOrderModified(orderEntryModel, serialProduct, warehouse);
-				}
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Modifiy order {} ", orderEntryModel.getOrder().getCode());
+				checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
 			}
 		}
 	}
-	
+
 	/**
 	 * method will called to check is logged in user is CS user or not
 	 * @return
@@ -120,6 +117,23 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 		}
 		return isCsAgent;
+	}
+	
+	/**
+	 * method will check for order modification from cs 
+	 * @param orderEntryModel
+	 * @param interceptorContext
+	 * @param serialProduct
+	 * @param warehouse
+	 */
+	private void checkForOrderModification(final OrderEntryModel orderEntryModel, final InterceptorContext interceptorContext,
+			final List<BlSerialProductModel> serialProduct, final WarehouseModel warehouse)
+	{
+		if (!interceptorContext.isNew(orderEntryModel) && orderEntryModel.isIsModifiedOrder()
+				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER))
+		{
+			isOrderModified(orderEntryModel, serialProduct, warehouse);
+		}
 	}
 	
 	/**
@@ -186,11 +200,15 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment created for order {}",orderEntryModel.getOrder().getCode());
 		
 		orderEntryModel.getOrder().getOrderProcess().forEach(orderProcess -> {
-		blSourceOrderAction.startConsignmentSubProcess(consignment, orderProcess);
+			if(BlOrdermanagementConstants.ORDER_PROCESS.equals(orderProcess.getProcessDefinitionName()))
+			{
+				blSourceOrderAction.startConsignmentSubProcess(consignment, orderProcess);
+			}
 			
 		});
 		
-	//	blSourceOrderAction.startConsignmentSubProcess(consignment, orderEntryModel.getOrder().getOrderProcess().iterator().next());
+		
+		
 		recalculateOrder(orderEntryModel.getOrder());
 	}
 
