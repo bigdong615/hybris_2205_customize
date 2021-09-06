@@ -892,35 +892,40 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     /**
      * {@inheritDoc}
      */
-    public boolean checkShippingBlackout(final List<String> lDeliveryModeAndGroupCode)
+    public boolean isShippingOnBlackoutDate(final List<String> lDeliveryModeAndGroupCode)
 	 {
    	 final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
 		 if(Objects.isNull(rentalDatesFromSession))
 		 {
 			 BlLogger.logMessage(LOG, Level.ERROR, "No Rental dates found in session");
-			 return Boolean.FALSE;
+			 return Boolean.TRUE;
 		 }
 		 final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT);
 		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All shipping method and group codes : {}", lDeliveryModeAndGroupCode);
 		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlackOutDates(lDeliveryModeAndGroupCode);
 		 if(CollectionUtils.isEmpty(allBlackoutDatesForShippingMethods))
 		 {
-			 return Boolean.TRUE;
+			 return Boolean.FALSE;
 		 }
 		 final Map<String, List<BlBlackoutDateModel>> groupedDeliveryMethods = getGroupedBlackoutDatesMap(
 				 allBlackoutDatesForShippingMethods);
-		 final AtomicBoolean isShippingIsBlocked = new AtomicBoolean(Boolean.TRUE);
-		 lDeliveryModeAndGroupCode.forEach(deliveryCode -> {
-			final List<BlBlackoutDateModel> deliveryBlackOutList = getBlackoutDatesForCode(groupedDeliveryMethods, deliveryCode);
-			 removeRentalEndBlackoutDates(deliveryBlackOutList);
-			 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);			 
-			 checkIfDatesIsSame(rentalStartDate, lBlackoutDate, isShippingIsBlocked);
-			 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Is Blackout date present for code : {} is {}", deliveryCode, isShippingIsBlocked.get());
-			 if(isShippingIsBlocked.get())
+		 final AtomicBoolean isShippingIsBlocked = new AtomicBoolean(Boolean.FALSE);
+		 for (final String deliveryCode : lDeliveryModeAndGroupCode)
+		 {
+			 final List<BlBlackoutDateModel> deliveryBlackOutList = getBlackoutDatesForCode(groupedDeliveryMethods, deliveryCode);
+			 if(CollectionUtils.isNotEmpty(deliveryBlackOutList))
 			 {
-				 return;
-			 }			 
-		 });
+				 removeRentalEndBlackoutDates(deliveryBlackOutList);
+				 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
+				 checkIfDatesIsSame(rentalStartDate, lBlackoutDate, isShippingIsBlocked);
+				 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Is Blackout date present for code : {} is {}", deliveryCode,
+						 isShippingIsBlocked.get());
+				 if (isShippingIsBlocked.get())
+				 {
+					 break;
+				 } 
+			 }
+		 }
 		 return isShippingIsBlocked.get();
 	 }
 
@@ -1001,13 +1006,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	 private void checkIfDatesIsSame(final Date rentalStartDate, final List<Date> lBlackoutDate,
 			 final AtomicBoolean isDateIsBlocked)
 	 {
-		 lBlackoutDate.forEach(bDate -> {
+		 for(final Date bDate : lBlackoutDate)
+		 {
 			 if (DateUtils.isSameDay(rentalStartDate, bDate))
 			 {
 				 isDateIsBlocked.set(Boolean.TRUE);
-				 return;
+				 break;
 			 }
-		 });
+		 }
 	 }
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {

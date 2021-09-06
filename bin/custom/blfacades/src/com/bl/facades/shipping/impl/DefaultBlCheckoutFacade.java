@@ -828,7 +828,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean checkShippingBlackout(final String deliveryModeCode)
+	public boolean isShippingOnBlackoutDate(final String deliveryModeCode)
 	{
 		final CartModel cartModel = getCart();
 		if (BooleanUtils.isTrue(cartModel.getIsRentalCart()))
@@ -845,11 +845,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 					final String shippingGroupCode = delivery.getShippingGroup().getCode();
 					lDeliveryModeAndGroupCode.add(shippingGroupCode);
 				}
-				return getBlZoneDeliveryModeService().checkShippingBlackout(lDeliveryModeAndGroupCode);
+				return getBlZoneDeliveryModeService().isShippingOnBlackoutDate(lDeliveryModeAndGroupCode);
 			}	
-			return Boolean.TRUE;
+			return Boolean.FALSE;
 		}
-		return Boolean.TRUE;
+		return Boolean.FALSE;
 	}
 
 	/**

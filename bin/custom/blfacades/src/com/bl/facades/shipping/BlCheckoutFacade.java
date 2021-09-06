@@ -296,6 +296,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param deliveryModeCode the delivery mode code
      * @return true, if successful
      */
-    boolean checkShippingBlackout(final String deliveryModeCode);
+    boolean isShippingOnBlackoutDate(final String deliveryModeCode);
 
 }

@@ -338,5 +338,5 @@ public interface BlDeliveryModeService {
      * @param lDeliveryModeAndGroupCode the l delivery mode and group code
      * @return true, if successful
      */
-    public boolean checkShippingBlackout(final List<String> lDeliveryModeAndGroupCode);
+    public boolean isShippingOnBlackoutDate(final List<String> lDeliveryModeAndGroupCode);
 }

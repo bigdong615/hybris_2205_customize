@@ -444,7 +444,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
  			final Model model) 
  	 {
  	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
- 	 		 && getCheckoutFacade().checkShippingBlackout(selectedDeliveryMethod) ? BlControllerConstants.ERROR : BlControllerConstants.SUCCESS;
+ 	 		 && getCheckoutFacade().isShippingOnBlackoutDate(selectedDeliveryMethod) ? BlControllerConstants.ERROR : BlControllerConstants.SUCCESS;
  	 }
 
     /**
