@@ -187,7 +187,6 @@ INSERT_UPDATE SolrSearchQueryProperty ; indexedProperty(name, solrIndexedType(id
 #                                     ; brand:$solrIndexedType                                            ;                                                                                                       ;                       ; MultiSelectOr   ;                                   ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider 
 
 
-
                                       
                                       
 ### BL Product Attribues For Search #######

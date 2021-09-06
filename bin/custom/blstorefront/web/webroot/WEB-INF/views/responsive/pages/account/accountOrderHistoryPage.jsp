@@ -44,7 +44,7 @@
 									code="order.gift.card.myaccount.review.page.gift.certificate" />
 							</p>
 						</div>
-						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end one">
+						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
 							<p class="my-2">
 								<spring:theme code="order.gift.card.myaccount.order.completed" />
 							</p>
@@ -97,7 +97,7 @@
                                        </c:forEach>
                                       </p>
                      						</div>
-                                 <div class="col-6 col-md-3 offset-md-1 text-start text-md-end two">
+                                 <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                   <c:choose>
                                     <c:when test="${order.newGearOrder eq true}">
                                       <p class="my-2"> ${order.status.code}</p>
@@ -200,8 +200,6 @@
                 							      
                 							</c:otherwise>	
                 							</c:choose>
-
-
                 						</div>
                 					</div>
                 					</c:otherwise>

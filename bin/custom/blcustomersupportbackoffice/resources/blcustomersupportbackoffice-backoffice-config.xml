@@ -28,8 +28,8 @@
 						<wz:property qualifier="unit"/>
 						<wz:property qualifier="quantity"/>
 						<wz:property qualifier="basePrice"/>
-						<wz:property qualifier="rentalStartDate"/>
-						<wz:property qualifier="rentalReturnDate"/>
+						<wz:property qualifier="rentalStartDate" readonly="true"/>
+						<wz:property qualifier="rentalReturnDate" readonly="true"/>
 					</wz:property-list>
 				</wz:content>
 				<wz:navigation id="orderEntryStep1.navigation">
