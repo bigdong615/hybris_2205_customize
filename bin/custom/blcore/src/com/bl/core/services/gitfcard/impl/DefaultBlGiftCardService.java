@@ -155,7 +155,7 @@ public boolean applyGiftCardForModifyOrder(final String giftCardCode, final Abst
       return validateGiftCardAndApplyForModifyOrder(giftCardModel, orderModel);
     }
   } catch (final Exception exception) {
-    BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, "Error while applying gift card code {}",
+    BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, "Error while applying gift card code for modify order {}",
         giftCardCode, exception);
   }
   return false;
@@ -187,7 +187,7 @@ public boolean applyGiftCardForModifyOrder(final String giftCardCode, final Abst
 
   /**
    * It applies eligible gift card to cart.
-   * @param cartModel
+   * @param orderModel
    * @param giftCardModel
    * @return boolean value
    */
@@ -202,14 +202,19 @@ private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, 
  
    double originalOrderTotal =  orderModel.getTotalPrice();
     if(giftCardModelList.size() == 1){
-      saveOrdiginalOrderTotal(originalOrderTotal, orderModel);
+      saveOriginalOrderTotal(originalOrderTotal, orderModel);
     }
     calculateGiftCard(orderModel, orderModel.getOrderTotalBeforeGCAdd());
   getModelService().refresh(orderModel);
   return true;
 }
 
- private void saveOrdiginalOrderTotal(final double originalOrderTotal, final AbstractOrderModel orderModel) {
+ /**
+  * This method is use to store original orderTotal temp. before applying gift card. 
+ * @param originalOrderTotal
+ * @param orderModel
+ */
+private void saveOriginalOrderTotal(final double originalOrderTotal, final AbstractOrderModel orderModel) {
 	 orderModel.setOrderTotalBeforeGCAdd(originalOrderTotal);
 	 getModelService().save(orderModel);
  }
@@ -235,7 +240,7 @@ private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, 
   /**
    * It validates gift card.
    * @param giftCardModel
-   * @param cartModel
+   * @param orderModel
    * @return boolean value.
    */
 private boolean validateGiftCardAndApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -276,7 +281,7 @@ private boolean validateGiftCardAndApplyForModifyOrder(final GiftCardModel giftC
   /**
    * It checks whether gift card eligible to apply or not.
    * @param giftCardModel
-   * @param cartModel
+   * @param orderModel
    * @return boolean value.
    */
 private boolean isGiftCardNotEligibleToApplyForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -329,7 +334,7 @@ private boolean isGiftCardNotEligibleToApplyForModifyOrder(final GiftCardModel g
   /**
    * It checks whether gift card already applied to cart.
    * @param giftCardModel
-   * @param cartModel
+   * @param orderModel
    * @return boolean value.
    */
 private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
@@ -358,7 +363,7 @@ private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardMode
     
     /**
      * It checks whether cart total amount is eligible to apply gift card or not.
-     * @param cartModel
+     * @param orderModel
      * @return true/false
      */
     private boolean isOrderFullyPaidForModifyOrder(final AbstractOrderModel orderModel) {
@@ -493,7 +498,7 @@ private boolean isGiftCardAppliedForModifyOrder(final GiftCardModel giftCardMode
    * Method to clear inactiveCarts from gift card.
    *
    * @param giftCardModel
-   * @param currentCart
+   * @param orderModel
    */
   private void clearInactiveCartsForModifyOrder(final GiftCardModel giftCardModel, final AbstractOrderModel orderModel) {
     List<AbstractOrderModel> abstractOrderModelList = new ArrayList<>(giftCardModel.getOrder());

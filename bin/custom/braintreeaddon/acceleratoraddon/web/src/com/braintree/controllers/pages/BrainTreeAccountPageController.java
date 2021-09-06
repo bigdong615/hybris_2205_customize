@@ -428,7 +428,6 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		storeCmsPageInModel(model, modifyPaymentPage);
 		setUpMetaDataForContentPage(model, modifyPaymentPage);
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
-		blOrderFacade.setPayBillAttributes(orderDetails);
 		model.addAttribute(ORDER_DATA, orderDetails);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
@@ -742,7 +741,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		}
 	}
 	
-    // Check end date for gift card
+	/**
+	 * Check end date for gift card
+	 * @param locale
+	 * @param giftCardModel
+	 * @return boolean
+	 */
 	private boolean checkGcEndDate(Locale locale, GiftCardModel giftCardModel) {
 		if (giftCardModel != null) {
 			int endDate = giftCardModel.getEndDate().compareTo(new Date());

@@ -227,6 +227,7 @@ public interface BrainTreePaymentService extends PaymentMethod
 	public void createPaymentMethodTokenForOrderReplenishment();
 
 	/**
+	 * This method is used to update payment info
 	 * @param customer
 	 * @param paymentInfoId
 	 * @return
