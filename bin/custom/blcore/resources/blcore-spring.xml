@@ -1369,4 +1369,14 @@
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+	
+	<alias name="blWarehousePrepareInterceptor" alias="blWarehousePrepareInterceptor"/>
+	<bean id="blWarehousePrepareInterceptor" class="com.bl.core.model.interceptor.BlWarehousePrepareInterceptor">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blWarehousePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blWarehousePrepareInterceptor"/>
+		<property name="typeCode" value="Warehouse"/>
+	</bean>
 </beans>

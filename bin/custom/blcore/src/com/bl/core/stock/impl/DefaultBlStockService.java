@@ -15,6 +15,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -219,6 +220,35 @@ public class DefaultBlStockService implements BlStockService
 			default:
 		}
 		return Boolean.FALSE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @param warehouseModel the warehouse model
+	 * @param interceptorContext interceptor context
+	 */
+	public void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel, final
+			InterceptorContext interceptorContext) {
+		warehouseModel.getBlockInventory().stream().forEach(blockInventoryModel -> {
+			if(BlDateTimeUtils.getFormattedStartDay(blockInventoryModel.getStartDate()).before(
+					BlDateTimeUtils.getFormattedEndDay(blockInventoryModel.getEndDate()))) {
+			final Date startDate = blockInventoryModel.getStartDate();
+			final Date currentDate = Date
+					.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			if (!(startDate.before(currentDate))) {
+				final Collection<StockLevelModel> stockLevels = getBlStockLevelDao()
+						.reserveProductsBelongToWHForSpecifiedDate(
+								warehouseModel, startDate, blockInventoryModel.getEndDate());
+				stockLevels.forEach(stockLevelModel -> {
+					stockLevelModel.setReservedStatus(Boolean.TRUE);
+				});
+				this.getModelService().saveAll(stockLevels);
+			}
+		} else {
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start date should be before end date for Block "
+									+ "Inventory of warehouse {} ", warehouseModel.getCode());
+			}
+		});
 	}
 
 	/**

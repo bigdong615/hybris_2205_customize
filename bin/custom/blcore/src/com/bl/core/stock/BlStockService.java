@@ -1,13 +1,13 @@
 package com.bl.core.stock;
 
 import com.bl.core.enums.SerialStatusEnum;
-import de.hybris.platform.servicelayer.exceptions.BusinessException;
-
-import java.util.Date;
-import java.util.List;
-
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.exceptions.BusinessException;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -82,15 +82,23 @@ public interface BlStockService
 
 	/**
 	 * It defines the active status based on serial status of the product
-	 * @param currentStatus
+	 * @param currentStatus the serial status
 	 * @return boolean
 	 */
 	boolean isActiveStatus(final SerialStatusEnum currentStatus);
 
 	/**
 	 * It defines the inactive status based on serial status of the product
-	 * @param currentStatus
+	 * @param currentStatus the serial status
 	 * @return boolean
 	 */
 	boolean isInactiveStatus(final SerialStatusEnum currentStatus);
+
+	/**
+	 * It reserves all the products belong to that warehouse for the specified date range
+	 * @param warehouseModel the warehouse model
+	 * @param interceptorContext interceptor context
+	 */
+	void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel, final
+				InterceptorContext interceptorContext);
 }
