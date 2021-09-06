@@ -2151,6 +2151,7 @@
 			</n:navigation-node>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
+			<n:type-node code="CronJob" id="CronJob"/>
 		</n:explorer-tree>
 	</context>
 	

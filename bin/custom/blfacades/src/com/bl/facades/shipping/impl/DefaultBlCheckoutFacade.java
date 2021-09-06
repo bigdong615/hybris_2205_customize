@@ -65,6 +65,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -821,6 +822,34 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 		{
 			return Boolean.TRUE;
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkShippingBlackout(final String deliveryModeCode)
+	{
+		final CartModel cartModel = getCart();
+		if (BooleanUtils.isTrue(cartModel.getIsRentalCart()))
+		{
+			final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
+			if(PredicateUtils.instanceofPredicate(ZoneDeliveryModeModel.class).evaluate(deliveryModeModel))
+			{
+				final List<String> lDeliveryModeAndGroupCode = Lists.newArrayList();
+				final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel)deliveryModeModel);
+				final String devliveryModeCode = delivery.getCode();
+				lDeliveryModeAndGroupCode.add(devliveryModeCode);
+				if(Objects.nonNull(delivery.getShippingGroup()))
+				{
+					final String shippingGroupCode = delivery.getShippingGroup().getCode();
+					lDeliveryModeAndGroupCode.add(shippingGroupCode);
+				}
+				return getBlZoneDeliveryModeService().checkShippingBlackout(lDeliveryModeAndGroupCode);
+			}	
+			return Boolean.TRUE;
+		}
+		return Boolean.TRUE;
 	}
 
 	/**

@@ -5,6 +5,7 @@ import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
@@ -15,9 +16,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Lists;
 
 /**
  * It is used to get consignments.
@@ -32,6 +36,9 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
   private static final String FIND_READY_TO_SHIP_CONSIGNMENTS_FOR_DATE = "SELECT {pk} FROM {Consignment as con} WHERE {con:STATUS} NOT IN ({{SELECT {cs:PK} FROM {ConsignmentStatus as cs} WHERE {cs:CODE} = ?status1 OR {cs:CODE} = ?status2}})" +
       " AND {con:optimizedShippingStartDate"+ DATE_PARAM;
+  
+  private static final String CONSIGNMENT_FOR_RETURN_DATE_QUERY = "SELECT {con:" + ItemModel.PK + "} FROM {" 
+		  + ConsignmentModel._TYPECODE + " as con} WHERE {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?returnDate";
 
   /**
    * Get consignments
@@ -90,6 +97,23 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
     fQuery.addQueryParameter(BlCoreConstants.STATUS2, statusList.get(1).getCode());
 
   }
+  
+  @Override
+	public List<ConsignmentModel> getConsignmentForReturnDate(final Date returnDate)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_FOR_RETURN_DATE_QUERY);
+		fQuery.addQueryParameter("returnDate", returnDate);
+		final SearchResult<ConsignmentModel> search = getFlexibleSearchService().<ConsignmentModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlConsignmentDao : getConsignmentForReturnDate : No Consignment found for return date : {}", returnDate);
+			return Lists.newArrayList();
+		}
+		final List<ConsignmentModel> result = search.getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment found : {} for return date: {}", result, returnDate);
+		return Lists.newArrayList(result);
+	}
 
   public FlexibleSearchService getFlexibleSearchService() {
     return flexibleSearchService;

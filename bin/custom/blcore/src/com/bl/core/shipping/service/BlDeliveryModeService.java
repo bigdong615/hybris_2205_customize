@@ -8,6 +8,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * {javadoc}
@@ -330,4 +331,12 @@ public interface BlDeliveryModeService {
      * @return model
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
+    
+    /**
+     * Check shipping blackout.
+     *
+     * @param lDeliveryModeAndGroupCode the l delivery mode and group code
+     * @return true, if successful
+     */
+    public boolean checkShippingBlackout(final List<String> lDeliveryModeAndGroupCode);
 }

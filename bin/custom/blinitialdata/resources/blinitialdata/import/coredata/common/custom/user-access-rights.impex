@@ -320,6 +320,8 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Product;+;-;-;-;
 ;;;BlProduct;+;-;-;-;
 ;;;BlSerialProduct;+;-;-;-;
+;;;ExportAllDirtyPrioritySerials;+;+;+;+
+;;;CronJob;+;+;-;-
 
 $END_USERRIGHTS;;;;
 
