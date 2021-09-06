@@ -199,10 +199,7 @@ private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, 
   getModelService().save(orderModel);
   final CommerceOrderParameter commerceCartParameter = new CommerceOrderParameter();
   commerceCartParameter.setOrder(orderModel);
- // commerceCartParameter.setBaseSite(orderModel.getSite());
- //commerceCartParameter.setEnableHooks(true);
- // commerceCartParameter.setRecalculate(true);
- // getBlCheckoutCartCalculationStrategy().calculateOrder(commerceCartParameter);
+ 
    double originalOrderTotal =  orderModel.getTotalPrice();
     if(giftCardModelList.size() == 1){
       saveOrdiginalOrderTotal(originalOrderTotal, orderModel);
