@@ -292,7 +292,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param consignments - list of consignments; never <tt>null</tt>
    * @param process      - order process model
    */
-  protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
+  public void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
       final OrderProcessModel process) {
 
     for (final ConsignmentModel consignment : consignments) {

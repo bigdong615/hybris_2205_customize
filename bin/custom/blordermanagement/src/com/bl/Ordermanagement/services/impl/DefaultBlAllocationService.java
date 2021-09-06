@@ -251,7 +251,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @param result
    * @return consignment entry
    */
-  protected ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
+  public ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
       Long quantity, final ConsignmentModel consignment, final SourcingResult result) {
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
