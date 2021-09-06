@@ -1378,4 +1378,11 @@
 
 	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService"/>
 
+  <!--BL-27: This process is override to call own strategy to provide email related things.-->
+	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
+		<property name="key">
+			<value type="java.lang.Class">de.hybris.platform.processengine.model.BusinessProcessModel</value>
+		</property>
+		<property name="value" ref="storeFrontProcessContextStrategy"/>
+	</bean>
 </beans>

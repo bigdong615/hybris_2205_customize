@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.security.evaluator.impl;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.util.CookieGenerator;
@@ -24,6 +26,7 @@ public class RequireHardLoginEvaluator implements SecurityTraitEvaluator
 	private static final Logger LOG = Logger.getLogger(RequireHardLoginEvaluator.class);
 
 	public static final String SECURE_GUID_SESSION_KEY = "acceleratorSecureGUID";
+	public static final String SECURE_REMEMBER_ME_COOKIES = "blstorefrontRememberMe";
 
 	private CookieGenerator cookieGenerator;
 	private UserService userService;
@@ -88,10 +91,37 @@ public class RequireHardLoginEvaluator implements SecurityTraitEvaluator
 
 		if (result)
 		{
-			LOG.warn((guid == null ? "missing secure token in session" : "no matching guid cookie") + ", login required");
+			if(isRememberMeCookiePresent(request))
+			{
+				// If you find your guid is missing, lets recreate it.
+				getCookieGenerator().addCookie(response,SECURE_GUID_SESSION_KEY);
+				result = false;
+			} else
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.WARN,(guid == null ? "missing secure token in session" : "no matching guid cookie") + ", login required");
+				result = true;
+			}
 		}
 
 		return result;
+	}
+
+	/**
+	 * This method is used to check remember me cookies present or not.
+	 */
+	protected boolean isRememberMeCookiePresent(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+
+		if ((cookies == null) || (cookies.length == 0)) {
+			return false;
+		}
+
+		for (Cookie cookie : cookies) {
+			if (SECURE_REMEMBER_ME_COOKIES.equals(cookie.getName())) {
+				return cookie.getValue() != null;
+			}
+		}
+		return false;
 	}
 
 	protected boolean checkForGUIDCookie(final HttpServletRequest request, final HttpServletResponse response, final String guid)
