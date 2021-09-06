@@ -23,6 +23,7 @@ UPDATE Category;code[unique=true];$catalogVersion;name[lang=$lang]
                ;production;;Production
                ;subparts;;Subparts
                ;newgear;;New Gear
+               ;package;;Gear Package
                ;usedgear;;Used Gear
                ;audio;;Audio
                ;lighting;;Lighting

@@ -2,10 +2,12 @@ package com.bl.facades.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -15,9 +17,11 @@ import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
+
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
+
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -51,7 +55,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.ProductTypeEnum;
 
 
 /**
@@ -72,6 +75,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private CMSComponentService cmsComponentService;
 
 	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
+
+	private BlProductService blProductService;
+
 	@Resource(name = "i18nService")
 	private I18NService i18nService;
 
@@ -173,7 +179,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
         	parameter.setRetailGear(blProductModel.getRetailGear());
 				}
-				if(BlCoreConstants.AQUATECH_BRAND_ID.equals(blProductModel.getManufacturerAID())){
+				if (blProductService.isAquatechProduct(blProductModel)) {
 					parameter.setAqautechProduct(Boolean.TRUE);
 				}
       }
@@ -431,22 +437,27 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				cartData.getEntries().forEach(entry -> {
 					final int cartEntryQty = entry.getQuantity().intValue();
 					final String productCode = entry.getProduct().getCode();
-					final int availableQty = availabilityForRentalCart.get(productCode).intValue();
-					if (availableQty == 0)
-					{
-						final String nextAvailabilityDate = getBlCommerceStockService().getNextAvailabilityDateInCheckout(productCode,
-								rentalDatesFromSession, warehouses, cartEntryQty);
-						setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
-					}
-					else if (BooleanUtils.negate(availableQty >= cartEntryQty))
-					{
-						if(getBlCartService().isFreeRentalDayPromoApplied()){
-							entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
-									Arrays.asList(String.valueOf(availableQty),getContactUsLink() )));
-						}else {
-							entry.setAvailabilityMessage(
-									getMessage("cart.entry.item.availability.low.stock.available",
-											Arrays.asList(String.valueOf(availableQty))));
+					//skip for aquatech products
+					if (!blCartService.isAquatechProductsPresentInCart(getProductService()
+							.getProductForCode(productCode))) {
+
+						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
+						if (availableQty == 0) {
+							final String nextAvailabilityDate = getBlCommerceStockService()
+									.getNextAvailabilityDateInCheckout(productCode,
+											rentalDatesFromSession, warehouses, cartEntryQty);
+							setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
+						}
+						else if (BooleanUtils.negate(availableQty >= cartEntryQty)) {
+							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
+										Arrays.asList(String.valueOf(availableQty),getContactUsLink() )));
+							}
+							else{
+								entry.setAvailabilityMessage(
+										getMessage("cart.entry.item.availability.low.stock.available",
+												Arrays.asList(String.valueOf(availableQty))));
+							}
 						}
 					}
 				});
@@ -460,6 +471,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			cartData.getEntries().forEach(cartEntry -> cartEntry.setAvailabilityMessage(productUnavailableMessage));
 		}
 	}
+
 
 	/**
 	 * Get Contact Us Link Node
@@ -519,6 +531,53 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		return message;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void checkAquatechRentalDates(final CartData cartData) {
+
+		try {
+
+			final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
+					.getRentalDatesFromSession();
+			if (null != rentalDatesFromSession) {
+				final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
+						BlCoreConstants.SQL_DATE_FORMAT);
+				final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
+						rentalDatesFromSession.getSelectedFromDate());
+
+				if (BooleanUtils.isTrue(cartData.getIsRentalCart())
+						&& CollectionUtils.isNotEmpty(cartData.getEntries())
+						&& daysDifference < BlCoreConstants.TWO_DAYS) {
+
+					setMessageToAquatechEntry(cartData);
+				}
+			}
+		} catch (final Exception exception) {
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while checking aquatech product rental dates for cart - {}", cartData.getCode());
+		}
+	}
+
+	/**
+	 * Set the date error message to aquatech entries, if rental start date is less than 2 business days
+	 */
+	private void setMessageToAquatechEntry(final CartData cartData) {
+
+		final AvailabilityMessage orderDateErrorMessage = getMessage(
+				"cart.entry.item.aquatech.order.date.error", Lists.emptyList());
+		cartData.getEntries().forEach(cartEntry -> {
+
+			if (blCartService.isAquatechProductsPresentInCart(getProductService()
+					.getProductForCode(cartEntry.getProduct().getCode()))) {
+
+				cartEntry.setAvailabilityMessage(orderDateErrorMessage);
+			}
+		});
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -557,8 +616,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			cartModel.getEntries().forEach(cartEntry -> {
 				final int cartQuantity = cartEntry.getQuantity().intValue();
 				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
-				if (availableStockQuantity < cartQuantity)
-				{
+
+				if (!blProductService.isAquatechProduct(cartEntry.getProduct())
+						&& availableStockQuantity < cartQuantity) {
+
 					isAvailable.set(Boolean.FALSE);
 					return;
 				}
@@ -702,7 +763,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
-	
+
   /**
    * Gets the bl cart service.
    *
@@ -766,10 +827,10 @@ public BlCommerceStockService getBlCommerceStockService()
 /**
  * @param blCommerceStockService the blCommerceStockService to set
  */
-public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
-{
-	this.blCommerceStockService = blCommerceStockService;
-}
+ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
 
 	public CMSComponentService getCmsComponentService() {
 		return cmsComponentService;
@@ -778,5 +839,13 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	public void setCmsComponentService(
 			CMSComponentService cmsComponentService) {
 		this.cmsComponentService = cmsComponentService;
+	}
+
+	public BlProductService getBlProductService() {
+		return blProductService;
+	}
+
+	public void setBlProductService(final BlProductService blProductService) {
+		this.blProductService = blProductService;
 	}
 }

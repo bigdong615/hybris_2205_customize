@@ -25,38 +25,31 @@
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.transactionId}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
-                         id="transactionId" width="125px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="transactionId" width="125px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalLineItemPrice}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
-                         id="totalLineItemPrice" width="110px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalLineItemPrice" width="110px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalShippingCost}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
-                         id="totalShippingCost" width="120px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalShippingCost" width="120px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalDamageWaiverCost}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true"
-                         id="totalDamageWaiverCost" width="140px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalDamageWaiverCost" width="140px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalTax}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalTax"
-                         width="105px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalTax" width="105px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalRefundedAmount}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalRefundedAmount"
-                         width="140px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalRefundedAmount" width="140px"/>
             </vbox>
             <vbox>
                 <label value="${labels.customersupportbackoffice.cancelorder.totalAmount}" width="100%"/>
-                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalAmount"
-                         width="140px"/>
+                <textbox sclass="oms-widget-cancelorder-input-text-box" readonly="true" id="totalAmount" width="140px"/>
             </vbox>
         </hbox>
     </hlayout>
@@ -86,18 +79,15 @@
                     </column>
                     <column width="140px" sclass="oms-widget-cancelorder-listbox-header">
                         <checkbox id="globalShippingSelection" class="oms-widget-cancelorder-list-container__checkbox"
-                                  label="${labels.customersupportbackoffice.cancelorder.totalShippingCost}"
-                                  name="globalShipping"/>
+                                  label="${labels.customersupportbackoffice.cancelorder.totalShippingCost}" name="globalShipping"/>
                     </column>
                     <column width="140px" sclass="oms-widget-cancelorder-listbox-header">
                         <checkbox id="globalTaxSelection" class="oms-widget-cancelorder-list-container__checkbox"
-                                  label="${labels.customersupportbackoffice.cancelorder.producttax}"
-                                  name="globalTax"/>
+                                  label="${labels.customersupportbackoffice.cancelorder.producttax}" name="globalTax"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <checkbox id="globalWaiverSelection" class="oms-widget-cancelorder-list-container__checkbox"
-                                  label="${labels.customersupportbackoffice.cancelorder.productwaiver}"
-                                  name="globalWaiver"/>
+                                  label="${labels.customersupportbackoffice.cancelorder.productwaiver}" name="globalWaiver"/>
                     </column>
                     <column width="160px" sclass="oms-widget-cancelorder-listbox-header">
                         <label value="${labels.customersupportbackoffice.cancelorder.orderRefundedAmount}" width="100%"/>

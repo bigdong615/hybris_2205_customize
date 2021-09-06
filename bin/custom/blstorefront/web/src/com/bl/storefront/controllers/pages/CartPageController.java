@@ -914,6 +914,7 @@ public class CartPageController extends AbstractCartPageController
 		if(BooleanUtils.isTrue(cartData.getIsRentalCart()))
 		{
 			getBlCartFacade().checkAvailabilityForRentalCart(cartData);
+			getBlCartFacade().checkAquatechRentalDates(cartData);
 		}
 		if (CollectionUtils.isEmpty(cartData.getEntries())) {
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);

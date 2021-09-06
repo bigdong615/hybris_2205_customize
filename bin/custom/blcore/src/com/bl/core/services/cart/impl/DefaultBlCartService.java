@@ -12,6 +12,7 @@ import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -44,7 +45,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +71,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private ProductDao productDao;
     private SearchRestrictionService searchRestrictionService;
     private BlBlackoutDatesDao blBlackoutDatesDao;
+    private BlProductService productService;
 
     /**
      * {@inheritDoc}
@@ -570,6 +571,26 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @inheritDoc
      */
     @Override
+    public boolean isAquatechProductsPresentInCart(final ProductModel productModel) {
+
+        final AtomicBoolean foundAquatech = new AtomicBoolean(false);
+        final CartModel cartModel = getSessionCart();
+        cartModel.getEntries().forEach(entry -> {
+
+            if (null != entry.getProduct() && productService.isAquatechProduct(productModel)
+                && entry.getProduct().getCode().equalsIgnoreCase(productModel.getCode())) {
+
+                foundAquatech.set(true);
+            }
+        });
+
+        return foundAquatech.get();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void removeEmptyCart(final CartModel cartModel){
         getModelService().remove(cartModel);
         BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Removing empty cart with code:{} ", cartModel.getCode());
@@ -687,4 +708,11 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		this.blBlackoutDatesDao = blBlackoutDatesDao;
 	}
 
+    public BlProductService getProductService() {
+        return productService;
+    }
+
+    public void setProductService(BlProductService productService) {
+        this.productService = productService;
+    }
 }

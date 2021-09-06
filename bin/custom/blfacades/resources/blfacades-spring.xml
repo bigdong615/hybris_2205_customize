@@ -199,6 +199,7 @@
 		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blPromotionService" ref="blPromotionService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 
@@ -268,6 +269,7 @@
 	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
 	    <property name="priceDataFactory" ref="priceDataFactory"/>
 	    <property name="commonI18NService" ref="commonI18NService"/>
+			<property name="productService" ref="productService"/>
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
@@ -309,6 +311,7 @@
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="cmsComponentService" ref="cmsComponentService" />
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->
@@ -346,6 +349,7 @@
         <property name="baseStoreService" ref="baseStoreService"/>
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
+        <property name="productService" ref="productService"/>
     </bean>
 	
 	<alias name="defaultStockConverter" alias="stockConverter"/>

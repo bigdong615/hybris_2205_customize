@@ -78,13 +78,13 @@ public interface BlCustomCancelRefundService {
 
     /**
      * This method will create PaymentTransactionEntryModel and return
-     *
-     * @param transaction transaction
+     *  @param transaction transaction
      * @param result refund result
      * @param transactionType refund or partial refund
+     * @param orderModel
      */
     void createRefundTransaction(final PaymentTransactionModel transaction, final BrainTreeRefundTransactionResult result,
-                                 final PaymentTransactionType transactionType);
+                                 final PaymentTransactionType transactionType, OrderModel orderModel);
 
     /**
      * This method will create refund and payment transaction entry
