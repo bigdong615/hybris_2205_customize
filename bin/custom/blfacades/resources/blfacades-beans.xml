@@ -86,6 +86,7 @@
     <property name="selectedFromDate" type="String"/>
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
+    <property name="selectedDays" type="String"/>
   </bean>
 
 <!-- DTO to store Serial Product Data -->

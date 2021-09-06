@@ -21,7 +21,8 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
 
     target.setRentalCart(source.getIsRentalCart());
     if(BlRentalDateUtils.getRentalsDuration() != null) {
-      target.setRentalDurationDays(Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getNumberOfDays()));
+      target.setRentalDurationDays(Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getSelectedDays()));
+      System.out.println("Rental Duration Days" + target.getRentalDurationDays());
       final RentalDateDto rentalDatesFromSession = BlRentalDateUtils.getBlDatePickerService()
           .getRentalDatesFromSession();
       if(rentalDatesFromSession != null && (rentalDatesFromSession.getSelectedFromDate() != null || rentalDatesFromSession.getSelectedToDate() != null)) {
@@ -29,6 +30,7 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
         target.setRentalToDate(getFormattedDate(rentalDatesFromSession.getSelectedToDate()));
       }
     }
+    target.setExtendedDurationDays(target.getExtendedFreeRentalDays());
     target.setTotalIncludingDamageWaiver(
         BigDecimal.valueOf(source.getSubtotal() + source.getTotalDamageWaiverCost()));
 

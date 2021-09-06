@@ -1,13 +1,16 @@
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
+import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import java.text.ParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +38,9 @@ public class BlDatePickerController extends AbstractPageController
 
 	@Resource(name = "blRentalDateCookieGenerator")
 	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
+
+	@Resource(name = "blRentalDurationCookieGenerator")
+	private BlRentalDurationCookieGenerator blRentalDurationCookieGenerator;
 
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
@@ -71,15 +77,21 @@ public class BlDatePickerController extends AbstractPageController
 					BlControllerConstants.DAY_MON_DATE_YEAR_FORMAT);
 			final String endDay = BlDateTimeUtils.convertDateToStringDate(endDate,
 					BlControllerConstants.DATE_FORMAT_PATTERN);
+			final String rentalDuration = String.valueOf(ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDay, BlCoreConstants.DATE_FORMAT),
+							BlDateTimeUtils.convertStringDateToLocalDate(endDay, BlCoreConstants.DATE_FORMAT)));
 			try
 			{
 				if (!(blDatePickerService.checkIfSelectedDateIsSame(request, startDay, endDay)))
 				{
+					//added for getting explicit days on the Date Picker selected by user
+					final StringBuilder datePickerDurationCookieValue = new StringBuilder();
+					datePickerDurationCookieValue.append(rentalDuration);
 					final StringBuilder datePickerCookieValue = new StringBuilder();
 					datePickerCookieValue.append(startDay);
 					datePickerCookieValue.append(BlControllerConstants.SEPARATOR);
 					datePickerCookieValue.append(endDay);
 					blRentalDateCookieGenerator.addCookie(response, datePickerCookieValue.toString());
+					blRentalDurationCookieGenerator.addCookie(response, datePickerDurationCookieValue.toString());
 					// Setting rental start date and end date on cart
 					getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 					// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is changed

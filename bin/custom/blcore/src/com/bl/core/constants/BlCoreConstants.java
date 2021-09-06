@@ -113,9 +113,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DEFAULT_ZONE_ID = "UTC";
 	public static final String COOKIE_NAME_FOR_DATE = "selectedDate";
+	public static final String COOKIE_NAME_FOR_DURATION = "selectedDuration";
+	public static final String SELECTED_DURATION = "selectedDuration";
 	public static final int PAIR_OF_DATES = 2;
 	public static final String SEPARATOR = "\\|";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
+	public static final String SELECTED_DURATION_MAP = "selectedDurationMap";
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
 	public static final String SELECTED_DATE = "selectedDate";
 

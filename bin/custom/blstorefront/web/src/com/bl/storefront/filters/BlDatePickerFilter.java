@@ -1,25 +1,21 @@
 package com.bl.storefront.filters;
+
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.order.CartService;
 import java.io.IOException;
-
 import java.time.LocalDate;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.bl.core.datepicker.BlDatePickerService;
 
 
 /**
@@ -66,33 +62,34 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		final LocalDate currentDate = LocalDate.now();
 		final String selectedFromDate = rentalDateDto.getSelectedFromDate();
 		final String selectedToDate = rentalDateDto.getSelectedToDate();
+		final String selectedDuration = rentalDateDto.getSelectedDays();
 		final LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedFromDate,
 				BlCoreConstants.DATE_FORMAT);
 		//[BL-669]when endDate is updated for a specific promotion
-		/*if(getBlDatePickerService().getRentalDatesFromSession() != null) {
+		if(getBlDatePickerService().getRentalDatesFromSession() != null) {
 			 updatedSelectedToDate = getBlDatePickerService().getRentalDatesFromSession().getSelectedToDate();
 		      updatedEndDate = BlDateTimeUtils.convertStringDateToLocalDate(updatedSelectedToDate,
 					BlCoreConstants.DATE_FORMAT);
 		}
 
 		final LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedToDate,
-				BlCoreConstants.DATE_FORMAT);*/
-		BlLogger.logMessage(LOG, Level.INFO, "BlDATEPICKERFILTER:: promoActive: " + getBlCartService().isFreeRentalDayPromoApplied());
+				BlCoreConstants.DATE_FORMAT);
 
 		if (startDate.isBefore(currentDate))
 		{
 			getBlDatePickerService().removeRentalDatesFromSession();
 		}
 
-/*		else if(getBlCartService().isFreeRentalDayPromoApplied() && updatedEndDate != null && updatedEndDate.isAfter(endDate) && updatedSelectedToDate != null){
+		else if(getBlCartService().isFreeRentalDayPromoApplied() && updatedEndDate != null && updatedEndDate.isAfter(endDate) && updatedSelectedToDate != null){
 
 			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, updatedSelectedToDate);
-			BlLogger.logMessage(LOG, Level.INFO, "BlDATEPICKERFILTER:: updatedEnddate: " + updatedSelectedToDate);
+			BlLogger.logMessage(LOG, Level.INFO, "BlDATEPICKERFILTER:: updatedEnddate:{} ", updatedSelectedToDate);
 
-		}*/
+		}
 		else
 		{
 			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate);
+			getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
 		}
 	}
 

@@ -51,15 +51,19 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			throws JsonProcessingException
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DATE);
-		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()))
+		final Cookie durationDayCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DURATION);
+		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()) && null != durationDayCookie && StringUtils.isNotEmpty(durationDayCookie.getValue()))
 		{
 			final String date = selectedDateCookie.getValue();
 			final String[] lSelectedDates = date.split(BlCoreConstants.SEPARATOR);
+			final String rentalDuration = durationDayCookie.getValue();
 			if (lSelectedDates.length == BlCoreConstants.PAIR_OF_DATES)
 			{
 				final RentalDateDto rentalDateDto = new RentalDateDto();
 				rentalDateDto.setSelectedFromDate(lSelectedDates[0]);
 				rentalDateDto.setSelectedToDate(lSelectedDates[1]);
+				// duration days fixed picked from date picker
+				rentalDateDto.setSelectedDays(rentalDuration);
 				return rentalDateDto;
 			}
 		}
@@ -73,6 +77,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public void removeRentalDatesFromSession()
 	{
 		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date {} removed from session", BlCoreConstants.SELECTED_DATE_MAP);
 	}
 
@@ -97,6 +102,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			throws JsonProcessingException
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		final Map<String, String> rentalDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		if (null != rentalDate)
 		{
 			final String startDayFromCookie = rentalDate.get(BlCoreConstants.START_DATE);
@@ -118,11 +124,13 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public RentalDateDto getRentalDatesFromSession()
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		final Map<String, String> selectedDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		if (null != rentalDate)
 		{
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
+			final String selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
 			if (null != startDate && null != endDate)
 			{
 				date.setSelectedFromDate(startDate);
@@ -130,6 +138,9 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
 								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
+				if(org.apache.commons.lang.StringUtils.isNotBlank(selectedDurationDays)) {
+					date.setSelectedDays(selectedDurationDays);
+				}
 				return date;
 			}
 		}
@@ -161,7 +172,22 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 
 		return Lists.newArrayList();
 	}
-	
+
+	/**
+	 * It sets the date picker date into session
+	 *
+	 * @param selectedDuration the selected Duration
+	 */
+	@Override
+	public void addSelectedRentalDurationIntoSession(final String selectedDuration) {
+		final Map<String, String> selectedDurationMap = new HashMap<>();
+		selectedDurationMap.put("selectedDuration", selectedDuration);
+		getSessionService().setAttribute(BlCoreConstants.SELECTED_DURATION_MAP, selectedDurationMap);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected duration {} set into session", selectedDuration);
+	}
+
+
+
 	/**
 	 * @return the sessionService
 	 */

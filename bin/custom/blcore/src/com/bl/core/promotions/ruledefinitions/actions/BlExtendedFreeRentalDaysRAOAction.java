@@ -2,12 +2,12 @@ package com.bl.core.promotions.ruledefinitions.actions;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.ruleengineservices.calculation.NumberedLineItem;
@@ -84,17 +84,13 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
               .convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
           BlDateTimeUtils
               .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
-      CartModel cartModel = getCartService().getSessionCart();
-      if(cartModel != null){
-        cartModel.setSubtotal(newExtendedDaysSubtotal.doubleValue());
-        getModelService().save(cartModel);
+      BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
 
-      }
       getCartService().updatePromotionalEndDate(updatedRentalToDate);
       cartRAO.setRentalToDate(updatedRentalToDate);
-      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(cartRAO.getSubTotal())
+      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal)
           .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-      BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + cartRAO.getSubTotal());
+      BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + existingSubTotal);
 
       cartRAO.setSubTotal(newExtendedDaysSubtotal);
       cartRAO.setTotal(newExtendedDaysSubtotal);
@@ -128,7 +124,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @return
    */
   private Date getUpdatedEndDate(final CartRAO cartRao, final Integer freeRentalDays) {
-    final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+    final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     Date updatedRentalToDate = addFreeRentalDays(freeRentalDays.longValue(), BlDateTimeUtils
         .convertDateToStringDate(cartRao.getRentalToDate(),BlCoreConstants.DATE_FORMAT));
     BlLogger.logMessage(LOG, Level.INFO, "Updated Rental To Date without checking it is blackout date or Weekend: " + updatedRentalToDate);
@@ -165,12 +161,12 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
           totalRentalPrice = totalRentalPrice.add(updatedEntryRentalPrice).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
           entry.setPrice(updatedEntryRentalPrice);
           entry.setBasePrice(updatedEntryRentalPrice);
-          entry.setTotalPrice(updatedEntryRentalPrice);
-          entry.setEntryNumber(entryNumber);
+         // entry.setTotalPrice(updatedEntryRentalPrice);
+          //entry.setEntryNumber(entryNumber);
           BlLogger.logMessage(LOG, Level.INFO,
               " extended day cart entry price for : " + rentalDays + "rental days" + "for product"
                   + entry.getProductCode() + " is : " + updatedEntryRentalPrice);
-          this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
+          //this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
           entryNumber++;
         }
       }

@@ -470,6 +470,7 @@
 	<bean id="defaultAbstractOrderDatePopulatePrepareInterceptor"
 		class="com.bl.core.interceptor.BlDefaultAbstractOrderDatePopulatePrepareInterceptor">
 		<property name="blBackOfficePriceService" ref="blBackOfficePriceService"/>
+		<property name="blCartService" ref="cartService"/>
 	</bean>
 
 	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultAbstractOrderDatePopulatePrepareInterceptor mapping
@@ -592,6 +593,7 @@
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="productService" ref="productService"/>
+		<property name="promotionDao" ref="promotionDao"/>
 	</bean>
 
 	<!--<BL-500 bean entry is for order service>-->
