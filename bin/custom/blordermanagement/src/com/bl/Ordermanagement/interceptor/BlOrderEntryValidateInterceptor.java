@@ -34,6 +34,7 @@ import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -137,7 +138,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	}
 	
 	/**
-	 * method will be called when there is any mofication on order
+	 * method will be called when there is any modification on order
 	 * @param orderEntryModel
 	 * @param serialProduct
 	 * @param warehouse
@@ -171,6 +172,11 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	{
 		final ConsignmentModel consignment = consignmentModel.get();
 		final Set<ConsignmentEntryModel> consignmentEntries = consignment.getConsignmentEntries();
+		final Set<String> serialCodes = new HashSet<>();
+		if(CollectionUtils.isNotEmpty(orderEntryModel.getModifiedSerialProductList()))
+		{
+		serialCodes.add(orderEntryModel.getModifiedSerialProductList().get(0).getCode());
+		}
 		final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
 				.createConsignmentEntry(orderEntryModel, orderEntryModel.getQuantity(), consignment, sourceResult);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment enrty created for order {}",consignment.getOrder().getCode());
@@ -179,6 +185,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		entries.add(createConsignmentEntry);
 
 		consignment.setConsignmentEntries(entries);
+		Collection<StockLevelModel> serialStocks = defaultBlAllocationService.getSerialsForDateAndCodes(consignment.getOrder(),serialCodes);
+		if(CollectionUtils.isNotEmpty(serialStocks))
+		{
+		serialStocks.forEach(stock -> stock.setReservedStatus(true));
+		modelService.saveAll(serialStocks);
+		}
 		modelService.save(consignment);
 		modelService.refresh(consignment);
 		recalculateOrder(orderEntryModel.getOrder());
