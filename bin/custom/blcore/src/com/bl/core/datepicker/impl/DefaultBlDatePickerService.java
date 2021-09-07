@@ -181,7 +181,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	@Override
 	public void addSelectedRentalDurationIntoSession(final String selectedDuration) {
 		final Map<String, String> selectedDurationMap = new HashMap<>();
-		selectedDurationMap.put("selectedDuration", selectedDuration);
+		selectedDurationMap.put(BlCoreConstants.SELECTED_DURATION, selectedDuration);
 		getSessionService().setAttribute(BlCoreConstants.SELECTED_DURATION_MAP, selectedDurationMap);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected duration {} set into session", selectedDuration);
 	}

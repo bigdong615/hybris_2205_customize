@@ -33,7 +33,6 @@ public final class BlRentalDateUtils {
 		return formatRentalDates(Objects.nonNull(rentalDates) ? rentalDates : new RentalDateDto());
 	}
 
-
 	/**
 	 * Format rental dates in MMM dd format.
 	 *

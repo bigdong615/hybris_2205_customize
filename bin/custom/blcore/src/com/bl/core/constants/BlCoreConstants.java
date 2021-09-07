@@ -312,6 +312,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_PROMO_GROUP = "blPromoGrp";
 	public static final String BL_EXTENDED_RENTAL_DAYS_PROMOCODE = "EXTENDEDRENTALDAYS";
 	public static final String QUALIFYING_COUPONS = "y_qualifying_coupons";
+	public static final String CONTACTUS_NAVNODE = "ContactUsNavNode";
 
 	public static final String BL_BLACKOUT_DATE_MODEL = "BlBlackoutDateModel";
 	public static final String FROM_DATE = "fromDate";
