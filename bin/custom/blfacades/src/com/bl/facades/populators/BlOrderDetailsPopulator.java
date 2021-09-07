@@ -372,8 +372,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   
  /**
- * @param source
- * @param val
+ * @param source for the order
+ * @param val for the price
  * @return PriceData
  */
 private PriceData createPrice(final AbstractOrderModel source, final Double val)

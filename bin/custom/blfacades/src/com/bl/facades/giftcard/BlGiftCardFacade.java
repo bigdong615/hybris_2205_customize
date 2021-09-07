@@ -32,7 +32,7 @@ public interface BlGiftCardFacade {
 
     /**
      * This method is used to apply gift card.
-     * @param giftCardCode
+     * @param giftCardCode for current Gift Card
      * @return true or false.
      */
     boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
@@ -63,7 +63,7 @@ public interface BlGiftCardFacade {
     
     /**
      *  This method is to remove applied gift card from Modify Payment page.
-     * @param giftCardCode
+     * @param giftCardCode for the current Gift Card
      */
     void removeGiftCardforModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
 

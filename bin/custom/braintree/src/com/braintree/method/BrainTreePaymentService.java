@@ -228,9 +228,9 @@ public interface BrainTreePaymentService extends PaymentMethod
 
 	/**
 	 * This method is used to update payment info
-	 * @param customer
-	 * @param paymentInfoId
-	 * @return
+	 * @param customer For the current customer
+	 * @param paymentInfoId for the current order
+	 * @return payment info
 	 */
 	BrainTreePaymentInfoModel completeCreateSubscriptionForModifyPayment(final CustomerModel customer, final String paymentInfoId,final AbstractOrderModel order);
 

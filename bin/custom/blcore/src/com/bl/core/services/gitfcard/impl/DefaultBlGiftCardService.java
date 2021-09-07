@@ -211,8 +211,8 @@ private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, 
 
  /**
   * This method is use to store original orderTotal temp. before applying gift card. 
- * @param originalOrderTotal
- * @param orderModel
+ * @param originalOrderTotal for order total
+ * @param orderModel current order
  */
 private void saveOriginalOrderTotal(final double originalOrderTotal, final AbstractOrderModel orderModel) {
 	 orderModel.setOrderTotalBeforeGCAdd(originalOrderTotal);
