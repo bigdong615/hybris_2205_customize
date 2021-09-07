@@ -5,6 +5,7 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,9 @@ import com.bl.logging.BlLogger;
  */
 public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 {
+	private static final String SELECT_BD = "select {bd:";
+	private static final String WHERE_BD = " as bd} where {bd:";
+	private static final String RESULT_SIZE_FETCHED_FOR_BLACKOUT_DATES = "Result Size fetched for {} Blackout Dates: {}";
 	private static final String FROM = "} from {";
 	private static final Logger LOG = Logger.getLogger(DefaultBlBlackoutDatesDao.class);
 	private FlexibleSearchService flexibleSearchService;
@@ -41,7 +45,7 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 	public List<BlBlackoutDateModel> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType)
 	{
 		Validate.notNull(blackoutDateType, "Blackout Date Type must not be null");
-		final String flexiQuery = "select {bd:" + ItemModel.PK + FROM + BlBlackoutDateModel._TYPECODE + " as bd} where {bd:"
+		final String flexiQuery = SELECT_BD + ItemModel.PK + FROM + BlBlackoutDateModel._TYPECODE + WHERE_BD
 				+ BlBlackoutDateModel.BLACKOUTDATETYPE + "} = ({{select {type:" + ItemModel.PK + FROM + BlackoutDateTypeEnum._TYPECODE
 				+ " as type} where {type:code} = ?code}})";
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Query to Fetch {} Blackout Dates : {}", blackoutDateType.toString(),
@@ -57,9 +61,9 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 			return Lists.newArrayList();
 		}
 		final List<BlBlackoutDateModel> result = search.getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Result Size fetched for {} Blackout Dates: {}",
-				blackoutDateType.toString(), result.size());
-		return result;
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, RESULT_SIZE_FETCHED_FOR_BLACKOUT_DATES, blackoutDateType.toString(),
+				result.size());
+		return Lists.newArrayList(result);
 	}
 
 	/**
@@ -69,7 +73,7 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 	public List<BlBlackoutDateModel> getAllBlackoutDatesForShippingMethods(final List<String> deliveryModeCodes)
 	{
 		Validate.notNull(deliveryModeCodes, "Delivery modes code must not be null");
-		final String flexiQuery = "select {bd:" + ItemModel.PK + FROM + BlBlackoutDateModel._TYPECODE + " as bd} where {bd:"
+		final String flexiQuery = SELECT_BD + ItemModel.PK + FROM + BlBlackoutDateModel._TYPECODE + WHERE_BD
 				+ BlBlackoutDateModel.BLOCKEDSHIPPINGMETHOD + "} IN ({{select {type:" + ItemModel.PK + FROM
 				+ BlackoutDateShippingMethodEnum._TYPECODE + " as type} where {type:code} IN (?code)}})";
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Query to Fetch Blocked Shipping Methods Blackout Dates {} is : {}",
@@ -85,9 +89,40 @@ public class DefaultBlBlackoutDatesDao implements BlBlackoutDatesDao
 			return Lists.newArrayList();
 		}
 		final List<BlBlackoutDateModel> result = search.getResult();
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Result Size fetched for {} Blackout Dates: {}", deliveryModeCodes,
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, RESULT_SIZE_FETCHED_FOR_BLACKOUT_DATES, deliveryModeCodes, result.size());
+		return Lists.newArrayList(result);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<BlBlackoutDateModel> getAllBlackoutDatesForGivenTypeAndFromDate(final Date fromDate,
+			final BlackoutDateTypeEnum blackoutDateType)
+	{
+		Validate.notNull(fromDate, "From Date must not be null");
+		Validate.notNull(blackoutDateType, "Blackout Date Type must not be null");
+		final String flexiQuery = SELECT_BD + ItemModel.PK + FROM + BlBlackoutDateModel._TYPECODE + WHERE_BD
+				+ BlBlackoutDateModel.BLACKOUTDATE + " } >= ?fromDate and {bd:" + BlBlackoutDateModel.BLACKOUTDATETYPE
+				+ "} = ({{select {type:" + ItemModel.PK + FROM + BlackoutDateTypeEnum._TYPECODE
+				+ " as type} where {type:code} = ?code}})";
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Query to Fetch {} Blackout Dates : {}", blackoutDateType.toString(),
+				flexiQuery);
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(flexiQuery);
+		query.addQueryParameter(BlCoreConstants.CODE, blackoutDateType.toString());
+		query.addQueryParameter(BlCoreConstants.FROM_DATE, fromDate);
+		final SearchResult<BlBlackoutDateModel> search = getFlexibleSearchService().<BlBlackoutDateModel> search(query);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlBlackoutDatesDao : getAllBlackoutDatesForGivenType : Empty Blackout Dates found for {} Type",
+					blackoutDateType.toString());
+			return Lists.newArrayList();
+		}
+		final List<BlBlackoutDateModel> result = search.getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, RESULT_SIZE_FETCHED_FOR_BLACKOUT_DATES, blackoutDateType.toString(),
 				result.size());
-		return result;
+		return Lists.newArrayList(result);
 	}
 
 	/**

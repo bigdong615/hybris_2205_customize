@@ -304,13 +304,18 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String STATUS_LIST = "statusList";
 
 	public static final int TWO_DAYS = 2;
+	public static final int ONE_DAY = 1;
 
 	public static final String STATUS1 = "status1";
 	public static final String STATUS2 = "status2";
+
 	public static final String BL_PROMO_GROUP = "blPromoGrp";
 	public static final String BL_EXTENDED_RENTAL_DAYS_PROMOCODE = "EXTENDEDRENTALDAYS";
 	public static final String QUALIFYING_COUPONS = "y_qualifying_coupons";
 
+	public static final String BL_BLACKOUT_DATE_MODEL = "BlBlackoutDateModel";
+	public static final String FROM_DATE = "fromDate";
+	public static final String RETURN_DATE = "returnDate";
 
 
 	private BlCoreConstants()

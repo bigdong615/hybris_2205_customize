@@ -205,14 +205,19 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
-				if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
-					createStockRecordsForNewProducts(blSerialProduct, initialValue);
-				} else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
+
+				if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
+						.isInactiveStatus((SerialStatusEnum) initialValue)){
+					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
+				}
+				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
 						.isActiveStatus((SerialStatusEnum) initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
 				} else if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
 						.isInactiveStatus((SerialStatusEnum) initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
+				}else if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
+					createStockRecordsForNewProducts(blSerialProduct, initialValue);
 				}
 			}
 		} catch(final Exception ex) {

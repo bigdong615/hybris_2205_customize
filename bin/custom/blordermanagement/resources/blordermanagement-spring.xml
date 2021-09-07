@@ -169,5 +169,15 @@
         <property name="modelService" ref="modelService"/>
         <property name="blAssignSerialService" ref="blAssignSerialService"/>
     </bean>
+    
+
+<!-- BL-982 Modify order changes-->   
+	<alias name="blOrderEntryValidateInterceptor" alias="blOrderEntryValidateInterceptor"/>
+	<bean id="blOrderEntryValidateInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryValidateInterceptor"/>
+
+	<bean id="blOrderEntryValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blOrderEntryValidateInterceptor"/>
+		<property name="typeCode" value="OrderEntry"/>
+	</bean>
 
 </beans>
