@@ -450,6 +450,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         if (updatedRentalToDate != null && cartModel != null) {
             String cartCode = cartModel.getCode();
             cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+            cartModel.setRentalEndDate(updatedRentalToDate);
+            getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartModel.getRentalStartDate(),BlCoreConstants.DATE_FORMAT),BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT));
                 BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
                     "Setting Rental Promotional End Date: {} on Cart: {}",
                     cartModel.getPromotionalRentalEndDate(), cartCode);
@@ -463,6 +465,26 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                     "Error while saving Rental Promotional End Date: {}  on cart - {}",
                     updatedRentalToDate,
                     cartCode);
+            }
+        }
+    }
+    /**
+     * Update promotional End date for the promotion with extended rental days
+     *
+     * @param updatedRentalToDate
+     */
+    @Override
+    public void removePromotionalEndDate() {
+        final CartModel cartModel = getSessionCart();
+        if (cartModel.getPromotionalRentalEndDate() != null && cartModel != null) {
+            cartModel.setPromotionalRentalEndDate(null);
+            try {
+                getModelService().save(cartModel);
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+                    "Removing the promotional end date from Cart - {}",cartModel.getCode());
+            } catch (final Exception exception) {
+                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+                    "Error while removing promotionalEndDate from  cart - {}", cartModel.getCode());
             }
         }
     }
@@ -480,11 +502,14 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         if (blPromoGroup != null && CollectionUtils
             .isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
             final Date currentDate = new Date();
-            Optional<PromotionSourceRuleModel> extended_rental_days = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
-            boolean isPromotionActiveInBackend = extended_rental_days.isPresent()  && extended_rental_days.get().getStartDate() != null
-                && extended_rental_days.get().getEndDate() != null && currentDate.getTime() >= extended_rental_days.get().getStartDate().getTime() && currentDate.getTime() <= extended_rental_days.get().getEndDate().getTime();
-            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().filter( promotionResult -> promotionResult.getPromotion().getCode().equals(extended_rental_days.get().getCode())).findAny().isPresent() : Boolean.FALSE;
-            return  isPromotionActiveInBackend && orderResult;
+            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
+            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains("y_qualifying_coupons")).findAny();
+            boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
+                && extendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= extendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= extendedRentalDayPromotion.get().getEndDate().getTime();
+            boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
+                && couponExtendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= couponExtendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= couponExtendedRentalDayPromotion.get().getEndDate().getTime();
+            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
+            return  (isPromotionActiveInBackend || isCouponPromotionActiveInBackend) && orderResult;
         }
 
         return false;

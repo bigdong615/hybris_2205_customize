@@ -61,7 +61,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
         //update rental date based on order dates
         // calculating base price after updating effective dates
         try {
-          rentalReturnDate = getBlCartService().isFreeRentalDayPromoApplied() && abstractOrderModel.getPromotionalRentalEndDate() != null ? abstractOrderModel.getPromotionalRentalEndDate() : rentalReturnDate;
+      //    rentalReturnDate = getBlCartService().isFreeRentalDayPromoApplied() && abstractOrderModel.getPromotionalRentalEndDate() != null ? abstractOrderModel.getPromotionalRentalEndDate() : rentalReturnDate;
           final BigDecimal calculatedBasePrice = getBlBackOfficePriceService()
               .getProductPrice(orderEntry.getProduct(), rentalStartDate,
                   rentalReturnDate , BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
