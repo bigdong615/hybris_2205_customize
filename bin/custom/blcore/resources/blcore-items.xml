@@ -190,6 +190,7 @@
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="TESTING_NEEDED"/>
+        <value code="CUSTOMER_OWNED_ITEMS_NOTES"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
