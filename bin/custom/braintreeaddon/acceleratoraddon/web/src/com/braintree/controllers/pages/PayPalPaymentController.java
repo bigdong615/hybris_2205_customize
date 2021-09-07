@@ -414,7 +414,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				return CheckoutOrderPageErrorPage;
 			}
 			if (isSuccess) {
-				order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+				order.setStatus(OrderStatus.SHIPPED);
 				order.setIsCaptured(Boolean.TRUE);
 				modelService.save(order);
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,

@@ -236,6 +236,7 @@
       		<value code="UNBOXED" />
       		<value code="LATE" />
       		<value code="RETURNED" />
+      		<value code="SHIPPED"></value>
         </enumtype>
       
       
