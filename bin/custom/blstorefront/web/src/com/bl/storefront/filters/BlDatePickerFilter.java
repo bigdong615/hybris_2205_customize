@@ -61,7 +61,7 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		LocalDate updatedEndDate = null;
 		final LocalDate currentDate = LocalDate.now();
 		final String selectedFromDate = rentalDateDto.getSelectedFromDate();
-		final String selectedToDate = rentalDateDto.getSelectedToDate();
+		String selectedToDate = rentalDateDto.getSelectedToDate();
 		final String selectedDuration = rentalDateDto.getSelectedDays();
 		final LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedFromDate,
 				BlCoreConstants.DATE_FORMAT);
@@ -92,8 +92,10 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 		}
 		else
 		{
+			selectedToDate = getBlCartService().getSessionCart().getRentalEndDate() != null ? BlDateTimeUtils.convertDateToStringDate(getBlCartService().getSessionCart().getRentalEndDate(),BlCoreConstants.DATE_FORMAT) : selectedToDate;
 			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate);
 			getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
+			getBlCartService().removePromotionalEndDate();
 		}
 	}
 
