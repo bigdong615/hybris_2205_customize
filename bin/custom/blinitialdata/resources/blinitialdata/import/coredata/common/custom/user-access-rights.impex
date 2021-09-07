@@ -320,6 +320,8 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Product;+;-;-;-;
 ;;;BlProduct;+;-;-;-;
 ;;;BlSerialProduct;+;-;-;-;
+;;;BlockInventory;+;+;+;-;
+;;;Warehouse.blockInventory;+;+;+;-;
 
 $END_USERRIGHTS;;;;
 
