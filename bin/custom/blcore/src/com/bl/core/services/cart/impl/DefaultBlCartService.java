@@ -560,7 +560,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void updatePromotionalEndDate(Date updatedRentalToDate) {
         final CartModel cartModel = getSessionCart();
         if (updatedRentalToDate != null && cartModel != null) {
-            String cartCode = cartModel.getCode();
+            final String cartCode = cartModel.getCode();
             cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
             cartModel.setRentalEndDate(updatedRentalToDate);
             getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartModel.getRentalStartDate(),BlCoreConstants.DATE_FORMAT),BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT));
@@ -607,14 +607,12 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      */
     @Override
     public boolean isFreeRentalDayPromoApplied() {
-        final PromotionGroupModel blPromoGroup = getPromotionDao()
-            .findPromotionGroupByCode("blPromoGrp");
+        final PromotionGroupModel blPromoGroup = getPromotionDao().findPromotionGroupByCode(BlCoreConstants.BL_PROMO_GROUP);
         final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(getSessionCart());
-        if (blPromoGroup != null && CollectionUtils
-            .isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
+          if (blPromoGroup != null && CollectionUtils.isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
             final Date currentDate = new Date();
-            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
-            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains("y_qualifying_coupons")).findAny();
+            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
+            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains(BlCoreConstants.QUALIFYING_COUPONS)).findAny();
             boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
                 && extendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= extendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= extendedRentalDayPromotion.get().getEndDate().getTime();
             boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
@@ -622,8 +620,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
             return  (isPromotionActiveInBackend || isCouponPromotionActiveInBackend) && orderResult;
         }
-
-        return false;
+      return false;
     }
 
 

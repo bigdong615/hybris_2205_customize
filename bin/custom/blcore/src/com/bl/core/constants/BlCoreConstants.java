@@ -307,6 +307,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String STATUS1 = "status1";
 	public static final String STATUS2 = "status2";
+	public static final String BL_PROMO_GROUP = "blPromoGrp";
+	public static final String BL_EXTENDED_RENTAL_DAYS_PROMOCODE = "EXTENDEDRENTALDAYS";
+	public static final String QUALIFYING_COUPONS = "y_qualifying_coupons";
 
 
 
