@@ -75,15 +75,15 @@ public interface BlGiftCardService {
     
     /**
      * It performs operation to apply gift card.
-     * @param giftCardCode
-     * @return
+     * @param giftCardCode current gift card code
+     * @return boolean true/false
      */
     public boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
     
     
     /**
      * It removes applied gift card.
-     * @param giftCardCode
+     * @param giftCardCode current gift card code
      */
     public void removeGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
 

@@ -187,8 +187,8 @@ public boolean applyGiftCardForModifyOrder(final String giftCardCode, final Abst
 
   /**
    * It applies eligible gift card to cart.
-   * @param orderModel
-   * @param giftCardModel
+   * @param orderModel current order
+   * @param giftCardModel current gift card
    * @return boolean value
    */
 private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, final GiftCardModel giftCardModel) {

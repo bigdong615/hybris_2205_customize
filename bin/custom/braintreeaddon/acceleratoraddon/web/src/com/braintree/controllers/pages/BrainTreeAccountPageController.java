@@ -419,7 +419,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	}
 	
 	/**
-	 * This method created for the Modify Payment page. 
+	 * This method is created for the Modify Payment page. 
 	 */
 	@GetMapping(value = "/modifyPayment/{orderCode}")
 	@RequireHardLogIn
@@ -673,10 +673,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	/**
 	 * This method is used to apply gift card.
 	 *
-	 * @param code
-	 * @param request
+	 * @param code  giftCard code
+	 * @param request 
 	 * @param model
-	 * @return String.
+	 * @return String. for the order
 	 * @throws CMSItemNotFoundException
 	 * @throws CalculationException
 	 */
@@ -721,10 +721,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	/**
 	 * It removes applied gift card from Modified order .
-	 * @param giftCardForm
+	 * @param giftCardForm 
 	 * @param request
 	 * @param model
-	 * @return String
+	 * @return String giftcard code and orderCode
 	 */
 	@PostMapping(value = "/removeGiftCard")
 	@ResponseBody
@@ -744,8 +744,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	/**
 	 * Check end date for gift card
 	 * @param locale
-	 * @param giftCardModel
-	 * @return boolean
+	 * @param giftCardModel for current GiftCard
+	 * @return boolean true/false
 	 */
 	private boolean checkGcEndDate(Locale locale, GiftCardModel giftCardModel) {
 		if (giftCardModel != null) {
@@ -763,12 +763,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	/**
 	 * It sets message in the session attribute based on the gift card apply operation.
 	 *
-	 * @param code
+	 * @param code GiftCard code
 	 * @param locale
-	 * @param giftCardData
-	 * @param cartModel
-	 * @param giftCardModel
-	 * @return String.
+	 * @param giftCardData list of Gift Card
+	 * @param orderModel current order
+	 * @param giftCardModel current gift card
+	 * @return String. for GiftCard code
 	 */
 	private String handleGiftCardStatus(final String code, final Locale locale,
 			final List<String> giftCardData, final AbstractOrderModel orderModel,
@@ -812,7 +812,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	/**
 	 * It checks that cart total price shouldn't be zero or less than zero.
 	 *
-	 * @param cartModel
+	 * @param orderModel current order
 	 * @return boolean value
 	 */
 	private boolean isOrderFullyPaid(final AbstractOrderModel orderModel) {
