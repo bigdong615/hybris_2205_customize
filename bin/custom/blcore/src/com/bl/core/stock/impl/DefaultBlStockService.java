@@ -15,7 +15,6 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -225,10 +224,8 @@ public class DefaultBlStockService implements BlStockService
 	/**
 	 * {@inheritDoc}
 	 * @param warehouseModel the warehouse model
-	 * @param interceptorContext interceptor context
 	 */
-	public void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel, final
-			InterceptorContext interceptorContext) {
+	public void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel) {
 		warehouseModel.getBlockInventory().stream().forEach(blockInventoryModel -> {
 			if(BlDateTimeUtils.getFormattedStartDay(blockInventoryModel.getStartDate()).before(
 					BlDateTimeUtils.getFormattedEndDay(blockInventoryModel.getEndDate()))) {

@@ -99,6 +99,5 @@ public interface BlStockService
 	 * @param warehouseModel the warehouse model
 	 * @param interceptorContext interceptor context
 	 */
-	void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel, final
-				InterceptorContext interceptorContext);
+	void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel);
 }
