@@ -104,6 +104,7 @@ function reverseTraverseOnShipping() {
 
  //MainContinueMethod
  function shippingMethodContinue() {
+ 	$("#validationMessage").empty();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
     if(shippingCategory == 'ship-it') {
         $('#ship-it-notification').html("");
@@ -141,6 +142,7 @@ function reverseTraverseOnShipping() {
 });
 
  function onChangeOfShipItShippingMethod() {
+ 	$("#validationMessage").empty();
     hideErrorForInputValidation();
     $('#ship-it-notification').html("");
     $('#ship-it-am-notification').html("");
@@ -345,7 +347,14 @@ function reverseTraverseOnShipping() {
          });
          ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
          var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
-         addNewAddress(createUPSStoreAddress(), deliveryMethod)
+         if(checkShippingBlackout(deliveryMethod))
+{
+	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+	$('#validationMessage').append(validationDiv);
+}
+else
+{
+	addNewAddress(createUPSStoreAddress(), deliveryMethod)
              .then((data) => {
                  saveDeliveryMode(deliveryMethod, false)
                      .then((data) => {
@@ -359,6 +368,7 @@ function reverseTraverseOnShipping() {
              .catch((error) => {
                console.log(error)
              })
+}         
      } else {
         showErrorForUPSOrPickAddressError();
      }
@@ -543,6 +553,7 @@ function reverseTraverseOnShipping() {
   }
 
  function changeUPSStore() {
+ 	 $("#validationMessage").empty();
      $('#showErrorForUPSOrPickAddressError').html('');
      $('#showErrorForUPSOrPickAddressError').hide();
      $('#showErrorForInputValidation').html('');
@@ -616,7 +627,15 @@ function reverseTraverseOnShipping() {
          "shipping_method_not_available"     : "0"
         });
         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
-        saveDeliveryMode($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true)
+        var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
+        if(checkShippingBlackout(deliveryMode))
+{
+	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+	$('#validationMessage').append(validationDiv);
+}
+else
+{
+	saveDeliveryMode(deliveryMode, true)
             .then((data) => {
                 $('.page-loader-new-layout').hide();
                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
@@ -624,6 +643,7 @@ function reverseTraverseOnShipping() {
             .catch((error) => {
               console.log(error)
             })
+}        
      } else {
         showErrorForUPSOrPickAddressError();
      }
@@ -824,6 +844,7 @@ function reverseTraverseOnShipping() {
  }
 
   function onSelectPartnerPickup(event) {
+  	 $("#validationMessage").empty();
      resetPartnerPickUpSection();
      showPartnerPickUpDeliveryModes(event.value);
      $('#showErrorForUPSOrPickAddressError').html('');
@@ -1833,6 +1854,7 @@ function reverseTraverseOnShipping() {
 
   //show Price of shipping on cart
   function onChangeOfShipItShipToHome(event) {    
+	$("#validationMessage").empty();  	
      $('#cart-shipping-cost').text($ ($("#shipToHomeShippingMethods .selected").find(".text-muted")).html());
       calculateCartTotal();
       if($('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype') == "true") {
@@ -1848,6 +1870,7 @@ function reverseTraverseOnShipping() {
   }
 
   function onChangeOfShipItShipToUPS() {
+  	 $("#validationMessage").empty();
      $('#cart-shipping-cost').text($ ($("#shipToUPSShippingMethods .selected").find(".text-muted")).html());
      calculateCartTotal();
      if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "true") {
@@ -1861,11 +1884,13 @@ function reverseTraverseOnShipping() {
   }
 
   function onSelectOfPartnerAddress(event) {
+  	$("#validationMessage").empty();
     $('#cart-shipping-cost').text($('#'+event.getAttribute('id')+'-pickUpCost').text().trim());
     calculateCartTotal();
   }
 
   function onChangeOfSameDayShippingMethodForCost() {
+  	$("#validationMessage").empty();
     $('#cart-shipping-cost').text($ ($("#sameDayShippingMethods .selected").find(".text-muted")).html());
     calculateCartTotal();
   }
@@ -2104,13 +2129,22 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
           });
           ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
           var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
-          addNewAddress(createUPSStoreAddress(), deliveryMethod)
+          if(checkShippingBlackout(deliveryMethod))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+	  else
+	  {
+	  	addNewAddress(createUPSStoreAddress(), deliveryMethod)
               .then((data) => {
                   saveDeliveryModeForOrderReplacement(deliveryMethod, false);
               })
               .catch((error) => {
                 console.log(error)
               })
+	  }
+          
       } else {
          showErrorForUPSOrPickAddressError();
       }
