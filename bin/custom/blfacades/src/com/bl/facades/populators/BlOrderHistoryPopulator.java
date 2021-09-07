@@ -122,6 +122,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
       target.setIsReplacementOrder(Boolean.TRUE);
     }
 
+      if(BooleanUtils.isTrue(source.getIsCaptured())){
+          target.setIsCaptured(Boolean.TRUE);
+      }else{
+          target.setIsCaptured(Boolean.FALSE);
+      }
+
   }
 
   /**

@@ -69,6 +69,8 @@ import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import java.math.RoundingMode;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.core.enums.OrderStatus;
 
 
 @Controller
@@ -80,6 +82,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private static final String DEVICE_DATA = "device_data";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	private static final int DECIMAL_PRECISION = 2;
+	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
+	private static final String REDIRECT_TO_ORDER_DETAILS_PAGE = REDIRECT_PREFIX + "/my-account/order/";
 
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -126,6 +130,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource(name = "priceDataFactory")
 	private PriceDataFactory priceDataFactory;
+
+	@Resource(name = "modelService")
+	private ModelService modelService;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -344,6 +351,78 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				return getViewForPage(model);
 			} else {
 				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
+			}
+    }
+    
+    
+    @PostMapping(value = "/modify-payment-method")
+    public String modifyPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
+			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
+                                   final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
+        PayPalExpressResponse payPalExpressResponse = null;
+        AddressData hybrisBillingAddress = null;
+        final String orderCode = request.getParameter("order_code");
+        String modifiedOrderTotal = request.getParameter("modifyOrderTotal");
+		double modifyOrderTotal = Double.parseDouble(modifiedOrderTotal);
+        try {
+            payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
+        } catch (final IllegalArgumentException exeption) {
+            handleErrors(exeption.getMessage(), model);
+            return CheckoutOrderPageErrorPage;
+        }
+
+        String payPalEmail = payPalExpressResponse.getDetails().getEmail();
+
+        String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+
+        final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
+				  paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
+
+        final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
+		 if (payPalBillingAddress != null)
+		 {
+			 hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
+					 payPalExpressResponse.getDetails(), payPalBillingAddress);
+			 hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 }
+		 else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
+		 {
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 } else {
+			 LOG.warn("No billing address provide by Pay Pal. Use empty billing address...");
+			 hybrisBillingAddress = new AddressData();
+			 hybrisBillingAddress.setEmail(payPalEmail);
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 }
+			boolean isSuccess = false;
+			AbstractOrderModel order = null;
+			try {
+				order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+				if (null != order) {
+					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
+							.completeCreateSubscription(
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
+					if (null != paymentInfo) {
+						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+								BigDecimal.valueOf(modifyOrderTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+					}
+				}
+			} catch (final Exception exception) {
+				final String errorMessage = getLocalizedString("braintree.billing.general.error");
+				handleErrors(errorMessage, model);
+				return CheckoutOrderPageErrorPage;
+			}
+			if (isSuccess) {
+				order.setStatus(OrderStatus.SHIPPED);
+				order.setIsCaptured(Boolean.TRUE);
+				modelService.save(order);
+				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+						getLocalizedString("text.account.modify.payment.success"));
+				return REDIRECT_TO_ORDER_DETAILS_PAGE + orderCode;
+
+			} else {
+				return REDIRECT_PREFIX  + MY_ACCOUNT_MODIFY_PAYMENT + orderCode;
 			}
     }
 
