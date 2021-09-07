@@ -102,7 +102,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			throws JsonProcessingException
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
-		final Map<String, String> rentalDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		if (null != rentalDate)
 		{
 			final String startDayFromCookie = rentalDate.get(BlCoreConstants.START_DATE);
