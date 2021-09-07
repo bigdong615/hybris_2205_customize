@@ -98,11 +98,14 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
   }
   
+  /**
+   * {@inheritDoc}
+   */
   @Override
 	public List<ConsignmentModel> getConsignmentForReturnDate(final Date returnDate)
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_FOR_RETURN_DATE_QUERY);
-		fQuery.addQueryParameter("returnDate", returnDate);
+		fQuery.addQueryParameter(BlCoreConstants.RETURN_DATE, returnDate);
 		final SearchResult<ConsignmentModel> search = getFlexibleSearchService().<ConsignmentModel> search(fQuery);
 		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
