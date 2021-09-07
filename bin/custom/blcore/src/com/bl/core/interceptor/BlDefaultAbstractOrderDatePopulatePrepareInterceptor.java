@@ -79,5 +79,4 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   public void setBlBackOfficePriceService(BlBackOfficePriceService blBackOfficePriceService) {
     this.blBackOfficePriceService = blBackOfficePriceService;
   }
-
 }
