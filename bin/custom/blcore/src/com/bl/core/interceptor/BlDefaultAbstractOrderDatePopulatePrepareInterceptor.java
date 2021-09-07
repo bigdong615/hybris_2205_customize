@@ -2,7 +2,6 @@ package com.bl.core.interceptor;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.service.BlBackOfficePriceService;
-import com.bl.core.services.cart.BlCartService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -30,7 +29,6 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   private static final Logger LOG = Logger.getLogger(BlDefaultAbstractOrderDatePopulatePrepareInterceptor.class);
 
   private BlBackOfficePriceService blBackOfficePriceService;
-  private BlCartService blCartService;
 
   @Resource
   private CatalogVersionService catalogVersionService;
@@ -61,7 +59,6 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
         //update rental date based on order dates
         // calculating base price after updating effective dates
         try {
-      //    rentalReturnDate = getBlCartService().isFreeRentalDayPromoApplied() && abstractOrderModel.getPromotionalRentalEndDate() != null ? abstractOrderModel.getPromotionalRentalEndDate() : rentalReturnDate;
           final BigDecimal calculatedBasePrice = getBlBackOfficePriceService()
               .getProductPrice(orderEntry.getProduct(), rentalStartDate,
                   rentalReturnDate , BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()));
@@ -83,11 +80,4 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
     this.blBackOfficePriceService = blBackOfficePriceService;
   }
 
-  public BlCartService getBlCartService() {
-    return blCartService;
-  }
-
-  public void setBlCartService(BlCartService blCartService) {
-    this.blCartService = blCartService;
-  }
 }

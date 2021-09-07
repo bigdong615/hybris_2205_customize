@@ -470,7 +470,6 @@
 	<bean id="defaultAbstractOrderDatePopulatePrepareInterceptor"
 		class="com.bl.core.interceptor.BlDefaultAbstractOrderDatePopulatePrepareInterceptor">
 		<property name="blBackOfficePriceService" ref="blBackOfficePriceService"/>
-		<property name="blCartService" ref="cartService"/>
 	</bean>
 
 	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultAbstractOrderDatePopulatePrepareInterceptor mapping
@@ -861,18 +860,6 @@
 		<property name="add" ref="giftCardOrderMethodHook" />
 	</bean>
 
-<!--	<alias name="defaultBlCartCalculationMethodHook" alias="blCartCalculationMethodHook" />
-	<bean id="defaultCartCalculationOrderMethodHook"
-		class="com.bl.core.order.hook.impl.BlCartCalculationMethodHook">
-		<property name="cartService" ref="cartService" />
-		<property name="modelService" ref="modelService" />
-	</bean>
-
-	<bean id="blCartCalculationMethodHookMergeDirective"
-		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
-		<property name="add" ref="blCartCalculationMethodHook" />
-	</bean>-->
-
 	<alias name="blGiftCardServiceImpl" alias="giftCardService" />
 	<bean id="blGiftCardServiceImpl"
 		class="com.bl.core.services.gitfcard.impl.DefaultBlGiftCardService">
@@ -964,11 +951,6 @@
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
 	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />
-
-<!--
-	<alias alias="ruleExtendedDurationConditionTranslator" name="defaultRuleExtendedDurationConditionTranslator" />
-	<bean id="defaultRuleExtendedDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleExtendedDurationConditionTranslator" />
--->
 
 	<alias alias="ruleRentalCartConditionTranslator" name="defaultRuleRentalCartConditionTranslator" />
 	<bean id="defaultRuleRentalCartConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalCartConditionTranslator" />
@@ -1250,10 +1232,6 @@
 		<property name="cartService" ref="cartService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="orderEntryRaoToNumberedLineItemConverter" ref="orderEntryRaoToNumberedLineItemConverter"/>
-	</bean>
-	<alias name="defaultBlOrderAdjustTotalActionStrategy" alias="blOrderTotalAdjustActionStrategy"/>
-	<bean id="defaultBlOrderAdjustTotalActionStrategy" parent="defaultOrderAdjustTotalActionStrategy" class="com.bl.core.promotions.promotionengineservices.actions.DefaultBlOrderAdjustTotalActionStrategy" >
-		<property name="promotionAction" value="de.hybris.platform.promotionengineservices.model.RuleBasedOrderAdjustTotalActionModel"></property>
 	</bean>
 
 	<bean id="blExtendedFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
