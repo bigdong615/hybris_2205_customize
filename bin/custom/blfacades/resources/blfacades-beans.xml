@@ -645,6 +645,8 @@
 		<property name="productCode" type="String"/>
 		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
+		<property name="replacementFor" type="java.lang.String" />
+		<property name="isReplacementOrder " type="java.lang.Boolean"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->
