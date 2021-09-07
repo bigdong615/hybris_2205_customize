@@ -23,6 +23,8 @@
 
         <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
 
+        <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -365,6 +367,7 @@
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
         <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
+        <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
     </maptypes>
 
 
@@ -5940,6 +5943,120 @@ new Integer(0)
 </itemtype>
   
 </typegroup>
-      
+
+        <typegroup name="BlInventoryCycleCount">
+            <itemtype code="BlInventoryCycleCount" autocreate="true" generate="true" >
+                <description>Contains all inventory cycle count details</description>
+                <deployment table="BlInventoryCycleCount" typecode="12235"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>Inventory cycle count name</description>
+                    </attribute>
+                    <attribute qualifier="currentCycleCountStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count start date</description>
+                    </attribute>
+                    <attribute qualifier="currentCycleCountEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count end date</description>
+                    </attribute>
+                    <attribute qualifier="previousCycleCountStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>previous cycle count start date</description>
+                    </attribute>
+                    <attribute qualifier="previousCycleCountEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>previous cycle count end date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProducts" type="BlInventoryCycleCountDetails">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>cycle count sku with dates </description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountskipDays" type="InventoryCycleCountSkipDays">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count sku with dates </description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountActive" type="boolean">
+                        <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                        <description>flag to identify current running inventory cycle count</description>
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountDetails" autocreate="true" generate="true">
+                <description>Contains inventory cycle count details</description>
+                <deployment table="BlInventoryCycleCountDetails" typecode="12238"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>Inventory cycle count name</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountSKUs" type="SkuProductList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count skus</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountScanHistory" autocreate="true" generate="true" >
+                <description>Contains all inventory cycle count scanning history</description>
+                <deployment table="BlInventoryCycleCountScanHistory" typecode="12236"/>
+                <attributes>
+                    <attribute qualifier="scannedSKUsAndSerials" type="InventoryCycleCountScanSKUDetails">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Map of scanned SKU along with serials</description>
+                    </attribute>
+                    <attribute qualifier="unexpectedScannedSerials" type="ModifiedSerialProduct">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>unexpected serials scanned for SKU batch</description>
+                    </attribute>
+                    <attribute qualifier="missingSerialsForScan" type="ModifiedSerialProduct">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>missing serials scanned for SKU batch</description>
+                    </attribute>
+                    <attribute qualifier="scannedUser" type="User">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <description>User who scanned the inventory</description>
+                    </attribute>
+                    <attribute qualifier="scannedTime" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <description>Time when user scanned inventory</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
 	</itemtypes>
 </items>
