@@ -2676,6 +2676,11 @@
                     <description>To identify whether order submitted or not </description>
                     <defaultvalue>false</defaultvalue>
                   </attribute>
+                  <attribute qualifier="orderTotalBeforeGCAdd" type="java.lang.Double">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify order Total before GC add </description>
+                </attribute>
                 </attributes>
             </itemtype>
 
