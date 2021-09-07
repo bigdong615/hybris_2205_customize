@@ -237,7 +237,8 @@
       		<value code="INCOMPLETE_RECOVERED" />
       		<value code="PARTIALLY_UNBOXED" />
       		<value code="UNBOXED" />
-           <value code="LATE" />
+      		<value code="LATE" />
+      		<value code="RETURNED" />
         </enumtype>
       
       
@@ -2220,6 +2221,12 @@
               <modifiers read="true" write="true" search="true"/>
               <description>flag to identify if the order is modified by cs agent</description>
               <defaultvalue>Boolean.FALSE</defaultvalue>
+            </attribute>
+            <attribute qualifier="unAllocatedQuantity" type="java.lang.long">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <defaultvalue>0L</defaultvalue>
+              <description>The number of quantity remained un-allocated during sourcing and allocation</description>
             </attribute>
           </attributes>
         </itemtype>
