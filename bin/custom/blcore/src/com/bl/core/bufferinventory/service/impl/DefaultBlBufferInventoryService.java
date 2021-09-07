@@ -7,9 +7,9 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
-import com.bl.core.stock.impl.DefaultBlStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -76,30 +76,40 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
    * @param bufferInvPercentage
    * @param minQtyForBufferInventory
    */
-  private void updateBufferInvData(final Double bufferInvPercentage, final Integer minQtyForBufferInventory) {
+  private void updateBufferInvData(final Double bufferInvPercentage, final Integer minQtyForBufferInventory)
+      throws BusinessException {
     final Collection<BlProductModel> skuProducts = getProductDao().getAllActiveSkuProducts();
-    for(BlProductModel blProduct : skuProducts) {
-      setBufferInvPercentageIfNull(blProduct);
-      if(minQtyEligibleForBufferInv(minQtyForBufferInventory, blProduct)) {
-        if(BooleanUtils.isFalse(blProduct.isBufferInvPercChangedManually())) {
-          blProduct.setBufferedInventoryPercentage(bufferInvPercentage);
-          getModelService().save(blProduct);
-          setSerialProductsBufferInv(blProduct);
-        } else {
+    try {
+      for (BlProductModel blProduct : skuProducts) {
+        setBufferInvPercentageIfNull(blProduct);
+        if (minQtyEligibleForBufferInv(minQtyForBufferInventory, blProduct)) {
+          if (BooleanUtils.isFalse(blProduct.isBufferInvPercChangedManually())) {
+            blProduct.setBufferedInventoryPercentage(bufferInvPercentage);
+            getModelService().save(blProduct);
+            setSerialProductsBufferInv(blProduct);
+          } else {
             setSerialProductsBufferInv(blProduct);
           }
         } else {
-        List<BlSerialProductModel> serialProducts = blProduct.getSerialProducts().stream()
-            .filter(
-                blSerialProductModel -> null != blSerialProductModel.getIsBufferedInventory() &&
-                    blSerialProductModel.getIsBufferedInventory()).collect(Collectors.toList());
-        serialProducts.forEach(serialProductModel -> {
-          serialProductModel.setIsBufferedInventory(Boolean.FALSE);
-          getModelService().save(serialProductModel);
-        });
-        blProduct.setBufferedInventoryPercentage(Double.valueOf(0.0));
-        getModelService().save(blProduct);
+          List<BlSerialProductModel> serialProducts = blProduct.getSerialProducts().stream()
+              .filter(
+                  blSerialProductModel -> null != blSerialProductModel.getIsBufferedInventory() &&
+                      blSerialProductModel.getIsBufferedInventory()).collect(Collectors.toList());
+          serialProducts.forEach(serialProductModel -> {
+            serialProductModel.setIsBufferedInventory(Boolean.FALSE);
+            getModelService().save(serialProductModel);
+          });
+          blProduct.setBufferedInventoryPercentage(Double.valueOf(0.0));
+          getModelService().save(blProduct);
+        }
       }
+    } catch (final ModelSavingException exception) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Exception occurred while saving the instances as part "
+          + "of BlBufferInventoryCronJob " , exception);
+      throw new BusinessException("Error occurred while performing BlBufferInventoryCronJob");
+    } catch(final Exception exception) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Exception occurred for BlBufferInventoryCronJob " , exception);
+      throw new BusinessException("Error occurred while performing BlBufferInventoryCronJob");
     }
   }
 
@@ -133,7 +143,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
         final int productsNeededForBufferInv = (int) ((diffInPercentage * totalActiveSerialProducts)/100);
         if(productsNeededForBufferInv > 0) {
           BlLogger
-              .logFormatMessageInfo(LOG, Level.DEBUG, "{} products to be marked as buffer inventory for the product {} ",
+              .logFormatMessageInfo(LOG, Level.INFO, "{} products to be marked as buffer inventory for the product {} ",
                   productsNeededForBufferInv, blProduct.getCode());
           markProductsBufferInv(productsNeededForBufferInv, blProduct);
         }
@@ -142,7 +152,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
         final int productsNeededForBufferInv = (int) ((diffInPercentage * totalActiveSerialProducts)/100);
         if(productsNeededForBufferInv > 0) {
           BlLogger
-              .logFormatMessageInfo(LOG, Level.DEBUG, "{} products to be removed from buffer inventory for the product {} ",
+              .logFormatMessageInfo(LOG, Level.INFO, "{} products to be removed from buffer inventory for the product {} ",
                   productsNeededForBufferInv, blProduct.getCode());
           unMarkProductsBufferInv(productsNeededForBufferInv, blProduct);
         }
