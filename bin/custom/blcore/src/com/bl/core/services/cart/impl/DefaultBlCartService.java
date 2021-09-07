@@ -103,8 +103,9 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             commerceCartParameter.setCart(cartModel);
             getCommerceCartService().removeAllEntries(commerceCartParameter);
 
+
             BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
-                "All entries removed from cart with code : {}", cartModel.getCode());
+                    "All entries removed from cart with code : {}", cartModel.getCode());
         }
     }
 
@@ -146,8 +147,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         final Integer cartEntryNumber = Integer.valueOf((int) entryNumber);
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
             final AbstractOrderEntryModel cartEntryModel = cartModel.getEntries().stream()
-                .filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst()
-                .orElse(null);
+                    .filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
             checkAndSetFlagForSelectedDamageWaiver(cartEntryModel, damageWaiverType);
             cartModel.setCalculated(Boolean.FALSE);
             getModelService().save(cartEntryModel);
@@ -156,24 +156,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
         }
     }
-
     /**
      * Update cart entry with the selected option
      *
      * @param entryNumber the entry number
-     * @param optionCode  the optionCode
+     * @param optionCode the optionCode
      */
     @Override
-    public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode) {
+    public void updateCartEntrySelectedOption(final long entryNumber, final String optionCode){
         {
             final CartModel cartModel = getSessionCart();
             final Integer cartEntryNumber = Integer.valueOf((int) entryNumber);
             if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
                 final AbstractOrderEntryModel cartEntryModel = cartModel.getEntries().stream()
-                    .filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber()))
-                    .findFirst().orElse(null);
-                if (Objects.nonNull(cartEntryModel)) {
-                    setOptionOnCartEntry(cartEntryModel, optionCode);
+                    .filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
+                if(Objects.nonNull(cartEntryModel)){
+                    setOptionOnCartEntry(cartEntryModel,optionCode);
                     cartModel.setCalculated(Boolean.FALSE);
                     getModelService().save(cartEntryModel);
                     getModelService().save(cartModel);
@@ -184,42 +182,36 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             }
         }
     }
-
     /**
      * set Option On CartEntry
      *
      * @param AbstractOrderEntryModel the cartEntryModel
-     * @param String                  the selectedOptionCode
+     * @param String the selectedOptionCode
      */
     private void setOptionOnCartEntry(final AbstractOrderEntryModel cartEntryModel,
-        final String selectedOptionCode) {
-        ProductModel product = cartEntryModel.getProduct();
-        if (product instanceof BlProductModel) {
-            BlProductModel blProductModel = (BlProductModel) product;
-            List<BlOptionsModel> options = blProductModel.getOptions();
-            if (CollectionUtils.isNotEmpty(options)) {
-                BlOptionsModel option = options.iterator().next();
-                if (CollectionUtils.isNotEmpty(option.getSubOptions())) {
-                    final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions()
-                        .stream()
-                        .filter(subOption -> selectedOptionCode.equals(subOption.getCode()))
-                        .findFirst();
-                    if (selectedSubOption.isPresent()) {
-                        final Integer quantity = Integer
-                            .parseInt(cartEntryModel.getQuantity().toString());
-                        List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(
-                            quantity);
-                        for (int i = 0; i < quantity; i++) {
-                            selectOptionList.add(selectedSubOption.get());
-                        }
-                        cartEntryModel.setOptions(selectOptionList);
+    final String selectedOptionCode){
+    ProductModel product = cartEntryModel.getProduct();
+    if(product instanceof BlProductModel){
+        BlProductModel blProductModel = (BlProductModel) product;
+        List<BlOptionsModel> options = blProductModel.getOptions();
+        if(CollectionUtils.isNotEmpty(options)){
+            BlOptionsModel option = options.iterator().next();
+            if(CollectionUtils.isNotEmpty(option.getSubOptions())){
+                final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
+                    .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
+                if(selectedSubOption.isPresent()){
+                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
+                    List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+                    for(int i = 0 ; i < quantity ; i++){
+                        selectOptionList.add(selectedSubOption.get());
                     }
+                    cartEntryModel.setOptions(selectOptionList);
                 }
-
             }
+
         }
     }
-
+}
     /**
      * {@inheritDoc}
      */
@@ -231,14 +223,12 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         cartModel.setRentalEndDate(rentalEndDate);
         try {
             getModelService().save(cartModel);
-            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
-                "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
-                rentalStartDate, rentalEndDate, cartCode);
+            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
+                    rentalStartDate, rentalEndDate, cartCode);
         } catch (final Exception exception) {
             BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                "Error while saving rental Start Date: {} and End Date: {} on cart - {}",
-                rentalStartDate, rentalEndDate,
-                cartCode);
+                    "Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate,
+                    cartCode);
         }
     }
 
@@ -262,9 +252,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @param cartEntryModel   the cart entry model
      * @param damageWaiverType the damage Waiver type
      */
-    private void checkAndSetFlagForSelectedDamageWaiver(
-        final AbstractOrderEntryModel cartEntryModel,
-        final String damageWaiverType) {
+    private void checkAndSetFlagForSelectedDamageWaiver(final AbstractOrderEntryModel cartEntryModel,
+                                                        final String damageWaiverType) {
         switch (damageWaiverType) {
             case BlCoreConstants.GEAR_GUARD_PRO_FULL:
                 setFlags(cartEntryModel, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
@@ -288,9 +277,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @param gearGuardWaiverSelected        the gear Guard waiver selected
      * @param noGearGuardWaiverSelected      the no gear Guard waiver selected
      */
-    private void setFlags(final AbstractOrderEntryModel cartEntryModel,
-        final Boolean gearGuardProFullWaiverSelected,
-        final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected) {
+    private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGuardProFullWaiverSelected,
+                          final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected) {
         cartEntryModel.setGearGuardProFullWaiverSelected(gearGuardProFullWaiverSelected);
         cartEntryModel.setGearGuardWaiverSelected(gearGuardWaiverSelected);
         cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
@@ -301,23 +289,16 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData,
-        final List<WarehouseModel> warehouses,
-        final RentalDateDto rentalDatesFromSession) {
-        final List<String> lProductCodes = cartData.getEntries().stream()
-            .map(cartEntry -> cartEntry.getProduct().getCode())
-            .collect(Collectors.toList());
-        final Date lastDateToCheck = BlDateTimeUtils
-            .getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-        final List<Date> blackOutDates = getBlDatePickerService()
-            .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
-        final Date startDate = BlDateTimeUtils
-            .subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+    public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
+                                                          final RentalDateDto rentalDatesFromSession) {
+        final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
+                .collect(Collectors.toList());
+        final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+        final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+        final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
-        final Date endDate = BlDateTimeUtils
-            .getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
-        return getBlCommerceStockService()
-            .groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+        final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
+        return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
     }
 
 
@@ -325,56 +306,55 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void setUsedGearSerialProductStatus(final CartModel cartModel,
-        final AbstractOrderEntryModel cartEntry) {
-        if (Objects.nonNull(cartEntry) && cartEntry.getProduct() instanceof BlSerialProductModel) {
-            doChangeSerialProductStatus(cartEntry);
-        } else if (Objects.nonNull(cartModel) && CollectionUtils
-            .isNotEmpty(cartModel.getEntries())) {
-            for (final AbstractOrderEntryModel entry : cartModel.getEntries()) {
-                if (entry.getProduct() instanceof BlSerialProductModel) {
-                    doChangeSerialProductStatus(entry);
-                }
-            }
-        }
+    public void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry) {
+   	 if(Objects.nonNull(cartEntry) && cartEntry.getProduct() instanceof BlSerialProductModel){
+   		 doChangeSerialProductStatus(cartEntry);
+   	 }
+		else if (Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries())){
+			for (final AbstractOrderEntryModel entry : cartModel.getEntries())
+			{
+				if (entry.getProduct() instanceof BlSerialProductModel)
+				{
+					doChangeSerialProductStatus(entry);
+				}
+			}
+		}
     }
-
     /**
      * Change gift card purchase status when remove from cart
      *
      * @param cartModel
      */
     @Override
-    public void updateGiftCardPurchaseStatus(final CartModel cartModel) {
-        if (CollectionUtils.isEmpty(cartModel.getEntries())) {
-            cartModel.setGiftCardOrder(Boolean.FALSE);
-            getModelService().save(cartModel);
-            getModelService().refresh(cartModel);
-        }
+    public void updateGiftCardPurchaseStatus(final CartModel cartModel){
+      if(CollectionUtils.isEmpty(cartModel.getEntries())){
+          cartModel.setGiftCardOrder(Boolean.FALSE);
+          getModelService().save(cartModel);
+          getModelService().refresh(cartModel);
+      }
     }
 
     /**
      * Change new gear purchase status when remove from cart
      */
     @Override
-    public void updateNewGearPurchaseStatus(final CartModel cartModel) {
-        if (CollectionUtils.isEmpty(cartModel.getEntries())) {
+    public void updateNewGearPurchaseStatus(final CartModel cartModel){
+        if(CollectionUtils.isEmpty(cartModel.getEntries())){
             cartModel.setIsNewGearOrder(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
         }
     }
-
     /**
-     * {@inheritDoc}
+     *{@inheritDoc}
      */
     @Override
     public void savePoPaymentDetails(final String poNumber, final String poNotes) {
         final CartModel cartModel = getSessionCart();
-        if (cartModel != null) {
+        if(cartModel != null){
             cartModel.setPoNumber(poNumber.trim());
             cartModel.setPoNotes(poNotes);
-            if (cartModel.getPaymentInfo() != null) {
+            if(cartModel.getPaymentInfo() != null){
                 cartModel.setPaymentInfo(null);
             }
             getModelService().save(cartModel);
@@ -387,14 +367,11 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void changeSerialStatusInStagedVersion(final String productCode,
-        final SerialStatusEnum serialStatus) {
-        Collection<CatalogVersionModel> catalogModels = getCatalogVersionDao()
-            .findCatalogVersions(BlCoreConstants
-                .CATALOG_VALUE, BlCoreConstants.STAGED);
-        List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode,
-            catalogModels.iterator().next());
-        if (CollectionUtils.isNotEmpty(products)) {
+    public void changeSerialStatusInStagedVersion(final String productCode, final SerialStatusEnum serialStatus) {
+        Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
+            .CATALOG_VALUE, BlCoreConstants.STAGED);
+        List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode, catalogModels.iterator().next());
+        if(CollectionUtils.isNotEmpty(products)) {
             BlSerialProductModel product = products.get(0);
             product.setSerialStatus(serialStatus);
             getModelService().save(product);
@@ -404,20 +381,25 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     /**
      * It gets serialProductModel of staged version
      *
-     * @param productCode         the product code
+     * @param productCode the product code
      * @param catalogVersionModel the catalog version model
      * @return List<BlSerialProductModel> the blSerialProducts
      */
     public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
         final CatalogVersionModel catalogVersionModel) {
-        return getSessionService().executeInLocalView(new SessionExecutionBody() {
+        return getSessionService().executeInLocalView(new SessionExecutionBody()
+        {
             @Override
-            public Object execute() {
-                try {
+            public Object execute()
+            {
+                try
+                {
                     getSearchRestrictionService().disableSearchRestrictions();
                     return getProductDao().findProductsByCode(catalogVersionModel,
                         productCode);
-                } finally {
+                }
+                finally
+                {
                     getSearchRestrictionService().enableSearchRestrictions();
                 }
             }
@@ -425,115 +407,37 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
-     * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
-     *
-     * @param entry
-     */
-    private void doChangeSerialProductStatus(final AbstractOrderEntryModel entry) {
-        final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
-        if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
-            blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-            changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
-                SerialStatusEnum.ACTIVE);
-            getModelService().save(blSerialProductModel);
-        }
-    }
+	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
+	 *
+	 * @param entry
+	 */
+	private void doChangeSerialProductStatus(final AbstractOrderEntryModel entry) {
+		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
+		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
+		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+		      changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
+		      getModelService().save(blSerialProductModel);
+		  }
+	}
 
-    /**
-     * Update promotional End date for the promotion with extended rental days
-     *
-     * @param updatedRentalToDate
-     */
-    @Override
-    public void updatePromotionalEndDate(Date updatedRentalToDate) {
-        final CartModel cartModel = getSessionCart();
-        if (updatedRentalToDate != null && cartModel != null) {
-            String cartCode = cartModel.getCode();
-            cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
-            cartModel.setRentalEndDate(updatedRentalToDate);
-            getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartModel.getRentalStartDate(),BlCoreConstants.DATE_FORMAT),BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT));
-                BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
-                    "Setting Rental Promotional End Date: {} on Cart: {}",
-                    cartModel.getPromotionalRentalEndDate(), cartCode);
-            try {
-                getModelService().save(cartModel);
-                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
-                    "Setting Rental Promotional End Date: {} on Cart: {}", updatedRentalToDate,
-                    cartCode);
-            } catch (final Exception exception) {
-                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                    "Error while saving Rental Promotional End Date: {}  on cart - {}",
-                    updatedRentalToDate,
-                    cartCode);
-            }
-        }
-    }
-    /**
-     * Update promotional End date for the promotion with extended rental days
-     *
-     * @param updatedRentalToDate
-     */
-    @Override
-    public void removePromotionalEndDate() {
-        final CartModel cartModel = getSessionCart();
-        if (cartModel.getPromotionalRentalEndDate() != null && cartModel != null) {
-            cartModel.setPromotionalRentalEndDate(null);
-            try {
-                getModelService().save(cartModel);
-                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
-                    "Removing the promotional end date from Cart - {}",cartModel.getCode());
-            } catch (final Exception exception) {
-                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                    "Error while removing promotionalEndDate from  cart - {}", cartModel.getCode());
-            }
-        }
-    }
+	/**
+	   * This method created to store the PO number to order
+	   */
+	  @Override
+	  public boolean savePoPaymentDetailsForPayBill(final String poNumber , final String poNotes , final OrderModel orderModel){
 
-    /**
-     * Check if the Promotion with extended days is applied to cart
-     *
-     * @return
-     */
-    @Override
-    public boolean isFreeRentalDayPromoApplied() {
-        final PromotionGroupModel blPromoGroup = getPromotionDao()
-            .findPromotionGroupByCode("blPromoGrp");
-        final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(getSessionCart());
-        if (blPromoGroup != null && CollectionUtils
-            .isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
-            final Date currentDate = new Date();
-            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
-            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains("y_qualifying_coupons")).findAny();
-            boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
-                && extendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= extendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= extendedRentalDayPromotion.get().getEndDate().getTime();
-            boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
-                && couponExtendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= couponExtendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= couponExtendedRentalDayPromotion.get().getEndDate().getTime();
-            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
-            return  (isPromotionActiveInBackend || isCouponPromotionActiveInBackend) && orderResult;
-        }
-
-        return false;
-    }
-
-    /**
-     * This method created to store the PO number to order
-     */
-    @Override
-    public boolean savePoPaymentDetailsForPayBill(final String poNumber, final String poNotes,
-        final OrderModel orderModel) {
-
-        if (null != orderModel) {
-            orderModel.setPoNumber(poNumber.trim());
-            orderModel.setPoNotes(poNotes);
-            if (orderModel.getPaymentInfo() != null) {
-                orderModel.setPaymentInfo(null);
-            }
-            getModelService().save(orderModel);
-            getModelService().refresh(orderModel);
-            return true;
-        }
-        return false;
-    }
+          if (null != orderModel) {
+              orderModel.setPoNumber(poNumber.trim());
+              orderModel.setPoNotes(poNotes);
+              if (orderModel.getPaymentInfo() != null) {
+                  orderModel.setPaymentInfo(null);
+              }
+              getModelService().save(orderModel);
+              getModelService().refresh(orderModel);
+              return true;
+          }
+          return false;
+      }
 
     /**
      * {@inheritDoc}
@@ -598,37 +502,34 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck,
-        final BlackoutDateTypeEnum blackoutDateType) {
-        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
-        final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
-        final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
-            .getAllBlackoutDatesForGivenType(blackoutDateType);
-        final boolean isRentalStartDate =
-            Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE
-                .equals(blackoutDateType);
-        if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType)) {
-            return isGivenDateIsBlackoutDate.get();
-        }
-        if (isRentalStartDate) {
-            allBlackoutDatesForGivenType.removeIf(
-                blackoutDate -> !BlackoutDateShippingMethodEnum.ALL
-                    .equals(blackoutDate.getBlockedShippingMethod()));
-        }
-        allBlackoutDatesForGivenType.forEach(blackoutDate -> {
-            if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate())) {
-                isGivenDateIsBlackoutDate.set(Boolean.TRUE);
-                return;
-            }
-        });
-        BlLogger
-            .logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck,
-                isGivenDateIsBlackoutDate.get());
-        return isGivenDateIsBlackoutDate.get();
-    }
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
+ 	{
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
+ 		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
+ 		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
+				.getAllBlackoutDatesForGivenType(blackoutDateType);
+ 		final boolean isRentalStartDate = Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE.equals(blackoutDateType);
+ 		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
+ 		{
+ 			return isGivenDateIsBlackoutDate.get();
+ 		}
+ 		if(isRentalStartDate)
+ 		{
+ 			allBlackoutDatesForGivenType.removeIf(blackoutDate -> !BlackoutDateShippingMethodEnum.ALL.equals(blackoutDate.getBlockedShippingMethod()));
+ 		}
+ 		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
+ 			if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate()))
+ 			{
+ 				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
+ 				return;
+ 			}
+ 		});
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck, isGivenDateIsBlackoutDate.get());
+ 		return isGivenDateIsBlackoutDate.get();
+ 	}
 
     /**
      * @inheritDoc
@@ -651,13 +552,88 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
+     * Update promotional End date for the promotion with extended rental days
+     *
+     * @param updatedRentalToDate
+     */
+    @Override
+    public void updatePromotionalEndDate(Date updatedRentalToDate) {
+        final CartModel cartModel = getSessionCart();
+        if (updatedRentalToDate != null && cartModel != null) {
+            String cartCode = cartModel.getCode();
+            cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+            cartModel.setRentalEndDate(updatedRentalToDate);
+            getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartModel.getRentalStartDate(),BlCoreConstants.DATE_FORMAT),BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT));
+            BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+                "Setting Rental Promotional End Date: {} on Cart: {}",
+                cartModel.getPromotionalRentalEndDate(), cartCode);
+            try {
+                getModelService().save(cartModel);
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+                    "Setting Rental Promotional End Date: {} on Cart: {}", updatedRentalToDate,
+                    cartCode);
+            } catch (final Exception exception) {
+                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+                    "Error while saving Rental Promotional End Date: {}  on cart - {}",
+                    updatedRentalToDate,
+                    cartCode);
+            }
+        }
+    }
+    /**
+     * Remove promotional End date for the promotion
+     *
+     */
+    @Override
+    public void removePromotionalEndDate() {
+        final CartModel cartModel = getSessionCart();
+        if (cartModel.getPromotionalRentalEndDate() != null && cartModel != null) {
+            cartModel.setPromotionalRentalEndDate(null);
+            try {
+                getModelService().save(cartModel);
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+                    "Removing the promotional end date from Cart - {}",cartModel.getCode());
+            } catch (final Exception exception) {
+                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+                    "Error while removing promotionalEndDate from  cart - {}", cartModel.getCode());
+            }
+        }
+    }
+
+    /**
+     * Check if the Promotion with extended days is applied to cart
+     *
+     * @return
+     */
+    @Override
+    public boolean isFreeRentalDayPromoApplied() {
+        final PromotionGroupModel blPromoGroup = getPromotionDao()
+            .findPromotionGroupByCode("blPromoGrp");
+        final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(getSessionCart());
+        if (blPromoGroup != null && CollectionUtils
+            .isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
+            final Date currentDate = new Date();
+            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
+            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains("y_qualifying_coupons")).findAny();
+            boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
+                && extendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= extendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= extendedRentalDayPromotion.get().getEndDate().getTime();
+            boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
+                && couponExtendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= couponExtendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= couponExtendedRentalDayPromotion.get().getEndDate().getTime();
+            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
+            return  (isPromotionActiveInBackend || isCouponPromotionActiveInBackend) && orderResult;
+        }
+
+        return false;
+    }
+
+
+    /**
      * @inheritDoc
      */
     @Override
     public void removeEmptyCart(final CartModel cartModel){
         getModelService().remove(cartModel);
-        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Removing empty cart with code:{} ",
-            cartModel.getCode());
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Removing empty cart with code:{} ", cartModel.getCode());
     }
 
     public CommerceCartService getCommerceCartService() {
@@ -678,8 +654,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     /**
      * @param blCheckoutCartCalculationStrategy
      */
-    public void setBlCheckoutCartCalculationStrategy(
-        final CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+    public void setBlCheckoutCartCalculationStrategy(final CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
     }
 
@@ -726,8 +701,52 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     public CatalogVersionDao getCatalogVersionDao() {
-        return catalogVersionDao;
-    }
+       return catalogVersionDao;
+   }
+
+   public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
+       this.catalogVersionDao = catalogVersionDao;
+   }
+
+   /**
+    * @return the productDao
+    */
+   public ProductDao getProductDao() {
+       return productDao;
+   }
+
+   /**
+    * @param productDao the productDao to set
+    */
+   public void setProductDao(ProductDao productDao) {
+       this.productDao = productDao;
+   }
+
+
+   public SearchRestrictionService getSearchRestrictionService() {
+       return searchRestrictionService;
+   }
+
+   public void setSearchRestrictionService(
+       SearchRestrictionService searchRestrictionService) {
+       this.searchRestrictionService = searchRestrictionService;
+   }
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
 
     public BlProductService getProductService() {
         return productService;
@@ -735,49 +754,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
     public void setProductService(BlProductService productService) {
         this.productService = productService;
-
-    }
-
-    public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
-        this.catalogVersionDao = catalogVersionDao;
-    }
-
-    /**
-     * @return the productDao
-     */
-    public ProductDao getProductDao() {
-        return productDao;
-    }
-
-    /**
-     * @param productDao the productDao to set
-     */
-    public void setProductDao(ProductDao productDao) {
-        this.productDao = productDao;
-    }
-
-
-    public SearchRestrictionService getSearchRestrictionService() {
-        return searchRestrictionService;
-    }
-
-    public void setSearchRestrictionService(
-        SearchRestrictionService searchRestrictionService) {
-        this.searchRestrictionService = searchRestrictionService;
-    }
-
-    /**
-     * @return the blBlackoutDatesDao
-     */
-    public BlBlackoutDatesDao getBlBlackoutDatesDao() {
-        return blBlackoutDatesDao;
-    }
-
-    /**
-     * @param blBlackoutDatesDao the blBlackoutDatesDao to set
-     */
-    public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao) {
-        this.blBlackoutDatesDao = blBlackoutDatesDao;
     }
 
     public PromotionDao getPromotionDao() {

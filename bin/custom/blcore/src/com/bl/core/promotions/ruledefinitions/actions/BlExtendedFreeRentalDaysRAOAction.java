@@ -32,7 +32,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * This action is created to allow extended free rental days
+ * @author Ritika
  */
 public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSupport {
 
@@ -48,6 +49,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
 
 
   public BlExtendedFreeRentalDaysRAOAction() {
+    // Do Nothing
   }
 
   /**
@@ -71,50 +73,38 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   protected boolean performAction(final RuleActionContext context, final Integer freeRentalDays) {
     CartRAO cartRAO = context.getCartRao();
-    Date orginalEndDate = getCartService().getSessionCart().getRentalEndDate();
     if(freeRentalDays > 0 && cartRAO.getRentalDurationDays() > 0) {
       final BigDecimal newExtendedDaysSubtotal;
-      Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
-      final int rentalDays
-          = cartRAO.getRentalDurationDays() + freeRentalDays;
+      final Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
+      final int rentalDays = cartRAO.getRentalDurationDays() + freeRentalDays;
       newExtendedDaysSubtotal = getPromotionRentalDurationPrice(cartRAO,context, rentalDays);
-      BlLogger.logMessage(LOG, Level.INFO, " New total for : " +rentalDays+" is: "+ newExtendedDaysSubtotal);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Subtotal for extended rental days :{}  is: {}",rentalDays, newExtendedDaysSubtotal);
+      //original subtotal without rental days
+      final BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
 
-      BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
-        if(BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
-          getBlDatePickerService().addRentalDatesIntoSession(
-              BlDateTimeUtils
-                  .convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
-              BlDateTimeUtils
-                  .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
-          getCartService().updatePromotionalEndDate(updatedRentalToDate);
-          cartRAO.setRentalToDate(updatedRentalToDate);
-        }
-        BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal)
-            .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + existingSubTotal);
-
-        cartRAO.setSubTotal(newExtendedDaysSubtotal);
-        cartRAO.setTotal(newExtendedDaysSubtotal);
-        cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
+      if(BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
+        getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT), BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
+        getCartService().updatePromotionalEndDate(updatedRentalToDate);
         cartRAO.setRentalToDate(updatedRentalToDate);
-        BlLogger
-            .logMessage(LOG, Level.INFO, " before discount cart Total: " + cartRAO.getSubTotal());
-
-        DiscountRAO discount = this.getRuleEngineCalculationService()
-            .addOrderLevelDiscount(cartRAO, true, finalDiscount);
-        BlLogger.logMessage(LOG, Level.INFO, "Discount calculated: " + finalDiscount);
-        BlLogger.logMessage(LOG, Level.INFO, "cart Sub Total: " + cartRAO.getSubTotal());
-        BlLogger.logMessage(LOG, Level.INFO, "cart Total: " + cartRAO.getTotal());
-
-        RuleEngineResultRAO result = context.getRuleEngineResultRao();
-        result.getActions().add(discount);
-        this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
-        context.scheduleForUpdate(new Object[]{cartRAO, discount});
-        context.insertFacts(new Object[]{discount});
-
-        return true;
       }
+      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Old sub Total:{}", existingSubTotal);
+      //set values on cartRao
+      cartRAO.setSubTotal(newExtendedDaysSubtotal);
+      cartRAO.setTotal(newExtendedDaysSubtotal);
+      cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
+      cartRAO.setRentalToDate(updatedRentalToDate);
+      final DiscountRAO discount = this.getRuleEngineCalculationService().addOrderLevelDiscount(cartRAO, true, finalDiscount);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Discount calculated for free extended rental days is : {}" + finalDiscount);
+
+      RuleEngineResultRAO result = context.getRuleEngineResultRao();
+      result.getActions().add(discount);
+      this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
+      context.scheduleForUpdate(new Object[]{cartRAO, discount});
+      context.insertFacts(new Object[]{discount});
+
+      return true;
+    }
 
     return  false;
   }
@@ -129,15 +119,11 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   private Date getUpdatedEndDate(final CartRAO cartRao, final Integer freeRentalDays) {
     final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
-    Date updatedRentalToDate = addFreeRentalDays(freeRentalDays.longValue(), BlDateTimeUtils
-        .convertDateToStringDate(cartRao.getRentalToDate(),BlCoreConstants.DATE_FORMAT));
-    BlLogger.logMessage(LOG, Level.INFO, "Updated Rental To Date without checking it is blackout date or Weekend: " + updatedRentalToDate);
+    Date updatedRentalToDate = addFreeRentalDays(freeRentalDays.longValue(), BlDateTimeUtils.convertDateToStringDate(cartRao.getRentalToDate(),BlCoreConstants.DATE_FORMAT));
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Updated Rental To Date without checking it is blackout date or Weekend: {} ",updatedRentalToDate);
     if(BlDateTimeUtils.isDateFallsOnBlackOutDate(updatedRentalToDate,blackOutDates)){
-      updatedRentalToDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
-          BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT), blackOutDates);
-
-      BlLogger.logMessage(LOG, Level.INFO, "Updated Rental To Date After checking it is blackout date or Weekend: " + updatedRentalToDate);
-
+      updatedRentalToDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT), blackOutDates);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Updated Rental To Date After checking it is blackout date or Weekend: {} ", updatedRentalToDate);
     }
     return updatedRentalToDate;
   }
@@ -150,7 +136,6 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @param rentalDays
    * @return
    */
-
   private BigDecimal getPromotionRentalDurationPrice(final CartRAO cartRao, final RuleActionContext context, final Integer rentalDays) {
     BigDecimal totalRentalPrice = BigDecimal.ZERO;
     int  entryNumber = 1;
@@ -167,9 +152,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
           entry.setBasePrice(updatedEntryRentalPrice);
          // entry.setTotalPrice(updatedEntryRentalPrice);
           //entry.setEntryNumber(entryNumber);
-          BlLogger.logMessage(LOG, Level.INFO,
-              " extended day cart entry price for : " + rentalDays + "rental days" + "for product"
-                  + entry.getProductCode() + " is : " + updatedEntryRentalPrice);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO," extended day cart entry price for : {} rental days for product {} is : {}",rentalDays,entry.getProductCode(), updatedEntryRentalPrice);
           //this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
           entryNumber++;
         }
@@ -193,7 +176,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     try {
      return this.getProductService().getProductForCode(productCode);
     } catch (Exception var5) {
-      BlLogger.logMessage(LOG, Level.ERROR, "no product found for code"+ productCode+"in rule"+this.getRuleCode(context) +"cannot apply rule action.");
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "no product found for code {} in rule {} cannot apply rule action.", productCode, this.getRuleCode(context) );
 
     }
     return product;
@@ -217,7 +200,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
           localDate = localDate.plusDays(1);
           addedDays++;
         }
-        BlLogger.logMessage(LOG, Level.INFO, "Added final to end date " + localDate);
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Added final to end date {} ", localDate);
 
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
       }
