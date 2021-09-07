@@ -322,6 +322,8 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;BlSerialProduct;+;-;-;-;
 ;;;BlockInventory;+;+;+;-;
 ;;;Warehouse.blockInventory;+;+;+;-;
+;;;ExportAllDirtyPrioritySerials;+;+;+;+
+;;;CronJob;+;+;-;-
 
 $END_USERRIGHTS;;;;
 

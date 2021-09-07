@@ -223,8 +223,12 @@ function reverseTraverseOnShipping() {
       if(typeof businessType == "string") {
         businessType = JSON.parse(businessType);
       }
-
-      if(checkAvailability(deliveryMode))
+	  if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+      else if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
               saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
@@ -987,7 +991,12 @@ function reverseTraverseOnShipping() {
     var savedAddress = null;
     var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
-    if(checkAvailability(deliveryMode))
+    if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+    else if(checkAvailability(deliveryMode))
     {
         // track Tealium event on continue shipping.
            utag.link({
@@ -1731,7 +1740,12 @@ function reverseTraverseOnShipping() {
  }
 
  function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
-     if(checkAvailability(deliveryMethod))
+ if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+     else if(checkAvailability(deliveryMethod))
      {
          $.ajax({
              url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
@@ -1909,7 +1923,30 @@ function reverseTraverseOnShipping() {
     return isAvailable;
  }
 
-
+function checkShippingBlackout(deliveryMode){
+	var blockShipping;
+	if(deliveryMode != undefined && deliveryMode != '') {
+		 $.ajax({
+            url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkShippingBlackout',
+            async: false,
+            data: { deliveryMethod : deliveryMode },
+            type: "GET",
+            success: function (data) {
+                if(data=='error') {
+                    blockShipping = true;
+                } else {
+                    blockShipping = false;
+                }
+            },
+            error: function (error) {
+                blockShipping = true;
+            }
+        });
+	}  else {
+        blockShipping = false;
+    }
+    return blockShipping;
+}
 
  //Replacement place order , mai method.
  $(document).on("click", ".js-replacement-order", function (e) {
@@ -1940,7 +1977,11 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       if(typeof businessType == "string") {
         businessType = JSON.parse(businessType);
       }
-
+		if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
@@ -2083,7 +2124,12 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
       var savedAddress = null;
       var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
       var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
-      if(checkAvailability(deliveryMode))
+      if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+      else if(checkAvailability(deliveryMode))
       {
           // track Tealium event on continue shipping.
              utag.link({

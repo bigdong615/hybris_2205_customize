@@ -1388,4 +1388,25 @@
 		<property name="interceptor" ref="blWarehousePrepareInterceptor"/>
 		<property name="typeCode" value="Warehouse"/>
 	</bean>
+	
+	<alias name="blBlackoutDatePrepareInterceptor" alias="blBlackoutDatePrepareInterceptor"/>
+    <bean id="blBlackoutDatePrepareInterceptor"    class="com.bl.core.model.interceptor.BlBlackoutDatePrepareInterceptor"/>    
+
+    <bean id="blBlackoutDatePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blBlackoutDatePrepareInterceptor"/>
+		<property name="typeCode" value="BlBlackoutDate"/>
+    </bean>   
+
+    <alias name="defaultBlBlackoutDateService" alias="blBlackoutDateService"/>
+	<bean id="defaultBlBlackoutDateService" class="com.bl.core.services.blackout.impl.DefaultBlBlackoutDateService">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>    
+
+    <!--BL-1089-->
+	<bean id="blChangeOrderReturnDateJob" class="com.bl.core.job.BlChangeOrderReturnDateJob" parent="abstractJobPerformable">
+		<property name="blBlackoutDateService" ref="blBlackoutDateService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+	</bean>
 </beans>

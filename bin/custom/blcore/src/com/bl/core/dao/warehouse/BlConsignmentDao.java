@@ -18,5 +18,12 @@ public interface BlConsignmentDao {
    */
   List<ConsignmentModel> getReadyToShipConsignmentsForDate(final Date shipDate);
 
+  /**
+   * Gets the consignment for return date.
+   *
+   * @param returnDate the return date
+   * @return the consignment for return date
+   */
+  List<ConsignmentModel> getConsignmentForReturnDate(final Date returnDate);
 
 }
