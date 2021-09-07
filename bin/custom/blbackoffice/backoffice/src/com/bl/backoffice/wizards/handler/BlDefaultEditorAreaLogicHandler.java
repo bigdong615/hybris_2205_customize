@@ -20,6 +20,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.constants.BlloggingConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.impl.DefaultBlCalculationService;
@@ -125,6 +127,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			if (CollectionUtils.isEmpty(updatedSerialList))
 			{
 				consignmentEntryToRemove.add(consignmentEntry);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry {} removed", consignmentEntry);
 			}
 			else
 			{
@@ -155,6 +158,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 					modelService.save(stockLevel);
 					modelService.save(serial);
 				});
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}",serial );
 			}
 		}
 	}
@@ -173,6 +177,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
 			{
 				consignmentToRemove.add(consignment);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed", consignment.getCode());
 			}
 		}
 	}
@@ -184,7 +189,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 	 */
 	private List<Object> getPreviousChangedOrderEntrysList(final AbstractOrderModel orderModel)
 	{
-		final Object previousValue = orderModel.getItemModelContext().getOriginalValue("entries");
+		final Object previousValue = orderModel.getItemModelContext().getOriginalValue(BlloggingConstants.ORIGINAL_VALUE);
 		if (previousValue instanceof List)
 		{
 			return Lists.newArrayList((List) previousValue);

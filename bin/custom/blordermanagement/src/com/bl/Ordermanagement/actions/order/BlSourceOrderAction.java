@@ -229,7 +229,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     final Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, 2);
+    calendar.add(Calendar.DATE, BlOrdermanagementConstants.TWO);
     order.setActualRentalStartDate(calendar.getTime());
     blSourcingService.updateShippingDatesForInternalTransfers(order, results);
 

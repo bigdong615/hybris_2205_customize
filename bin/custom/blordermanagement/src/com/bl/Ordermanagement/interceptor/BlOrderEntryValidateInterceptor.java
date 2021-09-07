@@ -146,8 +146,8 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	private void isOrderModified(final OrderEntryModel orderEntryModel, final List<BlSerialProductModel> serialProduct,
 			final WarehouseModel warehouse)
 	{
-		SourcingLocation finalSourcingLocation = createSourcingLocation(orderEntryModel);
-		SourcingResult sourceResult = createSourceResult(orderEntryModel, serialProduct, finalSourcingLocation);
+		final SourcingLocation finalSourcingLocation = createSourcingLocation(orderEntryModel);
+		final SourcingResult sourceResult = createSourceResult(orderEntryModel, serialProduct, finalSourcingLocation);
 		final Optional<ConsignmentModel> consignmentModel = orderEntryModel.getOrder().getConsignments().stream()
 				.filter(consignment -> consignment.getWarehouse().getCode().equals(warehouse.getCode())).findFirst();
 		if (consignmentModel.isPresent())
@@ -175,7 +175,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		final Set<String> serialCodes = new HashSet<>();
 		if(CollectionUtils.isNotEmpty(orderEntryModel.getModifiedSerialProductList()))
 		{
-		serialCodes.add(orderEntryModel.getModifiedSerialProductList().get(0).getCode());
+			orderEntryModel.getModifiedSerialProductList().forEach(serialProduct -> serialCodes.add(serialProduct.getCode()));
 		}
 		final ConsignmentEntryModel createConsignmentEntry = defaultBlAllocationService
 				.createConsignmentEntry(orderEntryModel, orderEntryModel.getQuantity(), consignment, sourceResult);
@@ -242,7 +242,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 		});
 			
-		SourcingLocation sourcingLocation = new SourcingLocation();
+		final SourcingLocation sourcingLocation = new SourcingLocation();
 		sourcingLocation.setWarehouse(orderEntryModel.getWarehouse());
 		final Map<String, Long> allocationMap = new HashedMap()
 				;
@@ -265,7 +265,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		}
 		catch (CalculationException cx)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception Occur for {} ", cx.getMessage());
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception Occur for {} ", cx.getMessage());
 		}
 	}
 
