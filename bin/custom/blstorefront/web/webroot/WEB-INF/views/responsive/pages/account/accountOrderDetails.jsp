@@ -412,6 +412,10 @@
                                       </c:choose>
                                 </c:if>
                             </div>
+                            <c:if test="${not empty orderData.customerOwnedOrderNote}">
+	                            <p class="customer-item-note"><spring:theme code="text.myaccount.order.level.note"/></p>
+	                            <div class="notification-order-note notification-order-note-warning">${orderData.customerOwnedOrderNote} </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

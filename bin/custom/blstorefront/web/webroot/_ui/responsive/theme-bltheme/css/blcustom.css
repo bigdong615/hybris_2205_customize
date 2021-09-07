@@ -621,3 +621,26 @@ ul.ui-autocomplete.active {
 .for-credit-card .dropdown-menu>li>a{
   line-height:1px;
 }  
+.notification-order-note {
+    display: block;
+    padding: 10px;
+    border-left: 4px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-radius: 6px;
+    background-position: 12px 18px;
+    background-repeat: no-repeat;
+    font-size: 14px;
+}
+.notification-order-note-warning {
+    border-left-color: #E97D1E;
+	border-right-color: #E97D1E;
+	border-bottom-color: #E97D1E;
+	border-top-color: #E97D1E;
+}
+p.customer-item-note {
+    margin-top: 16px;
+    font-size: 20px;
+    font-weight: bold;
+}

@@ -1,6 +1,7 @@
 package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
@@ -22,9 +23,12 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -210,10 +214,33 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
           orderNotes = notesModel.getNote();
         }
       }
+      populateCustomerOwnedNote(notesModelList, orderData);
     }
 
     orderData.setOrderNotes(orderNotes);
   }
+  
+  /**
+	 * Populate customer owned note.
+	 *
+	 * @param notesModelList
+	 *           the notes model list
+	 * @param orderData
+	 *           the order data
+	 */
+	private void populateCustomerOwnedNote(final List<NotesModel> notesModelList, final OrderData orderData)
+	{
+		final List<NotesModel> filteredNoteList = notesModelList.stream()
+				.filter(note -> note.getType().equals(NotesEnum.CUSTOMER_OWNED_ITEMS_NOTES)).collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(filteredNoteList))
+		{
+			if (filteredNoteList.size() >= BlFacadesConstants.TWO)
+			{
+				Collections.sort(filteredNoteList, (note1,note2) -> note1.getCreationtime().compareTo(note2.getCreationtime()));
+			}
+			orderData.setCustomerOwnedOrderNote(filteredNoteList.get(filteredNoteList.size() - BlFacadesConstants.ONE).getNote());
+		}
+	}
 
   /**
    * This method is created to update the rental end date , if order is extended
