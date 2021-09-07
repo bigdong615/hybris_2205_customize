@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -194,6 +195,14 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForProduct(constrained, priceValue);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
 		target.setPrice(getProductPriceData(dynamicPriceValue));
+    }
+    
+   else if(target.isIsBundle())
+    {
+      final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+      final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForBundleProduct(constrained, blProductModel);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
+       target.setPrice(Objects.nonNull(dynamicPriceValue) ? getProductPriceData(dynamicPriceValue) : (getProductPriceData(BigDecimal.valueOf(0.0d))));
     }
   }
   

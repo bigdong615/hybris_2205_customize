@@ -301,9 +301,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String STATUS_LIST = "statusList";
 
 	public static final int TWO_DAYS = 2;
+	public static final int ONE_DAY = 1;
 
 	public static final String STATUS1 = "status1";
 	public static final String STATUS2 = "status2";
+	public static final String BL_BLACKOUT_DATE_MODEL = "BlBlackoutDateModel";
+	public static final String FROM_DATE = "fromDate";
+	public static final String RETURN_DATE = "returnDate";
 
 	public static final String ESP_EVENT_AUTH_BASE_URL = "esp.event.auth.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.auth.marketingcloudapis.com
 	public static final String ESP_EVENT_REST_BASE_URL = "esp.event.rest.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.rest.marketingcloudapis.com

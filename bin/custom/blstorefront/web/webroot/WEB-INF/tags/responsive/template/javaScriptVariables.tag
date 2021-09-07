@@ -14,6 +14,7 @@
 		var ACC = { config: {},
 				ccError: {},
 				payPalError: {},
+				blackoutError: {},
 				deActivateAccount: {}};
 			ACC.config.contextPath = '${ycommerce:encodeJavaScript(contextPath)}';
 			ACC.config.encodedContextPath = '${ycommerce:encodeJavaScript(encodedContextPath)}';
@@ -46,6 +47,7 @@
 			ACC.ccError.poNumber = '<spring:theme code="payment.error.po.number" htmlEscape="false" javaScriptEscape="true" />'
 			
 			ACC.payPalError.paypalPaymentFail = '<spring:theme code="text.paypal.payment.error.message" htmlEscape="false" javaScriptEscape="true" />'
+			ACC.blackoutError.blockedShipping = '<spring:theme code="blackout.blocked.shipping.error" htmlEscape="false" javaScriptEscape="true" />'
 			
 			ACC.deActivateAccount.login = '<spring:theme code="login.error.account.deactivate.title" htmlEscape="false" javaScriptEscape="true"/>'
 			<c:if test="${request.secure}">

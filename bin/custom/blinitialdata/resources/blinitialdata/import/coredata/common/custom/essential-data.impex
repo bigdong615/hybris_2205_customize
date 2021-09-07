@@ -284,6 +284,7 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
                                               ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
                                               ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; CARRIER					              ; Carrier                         
                                               ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
                                               ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
                                               ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
@@ -472,4 +473,10 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
                                              ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
                                              
+INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
+                              ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
+                              
+                              
+INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
+                      ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
                                              

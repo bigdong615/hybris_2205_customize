@@ -2148,9 +2148,11 @@
 			<n:type-node code="Consignment" id="Consignment"/>
 			<n:navigation-node id="StockLevel">
 				<n:type-node code="StockLevel" id="StockLevel"/>
+				<n:type-node code="Warehouse" id="Warehouse"/>
 			</n:navigation-node>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
+			<n:type-node code="CronJob" id="CronJob"/>
 		</n:explorer-tree>
 	</context>
 	
@@ -2702,7 +2704,7 @@
 			<ea:tab name="ModifyOrder">
 				<ea:section name="ModifyOrder">
 					<ea:attribute qualifier="warehouse"/>
-					<ea:attribute qualifier="serialProduct"/>
+					<ea:attribute qualifier="modifiedSerialProductList"/>
 					<ea:attribute qualifier="isModifiedOrder"/>
 				</ea:section>
 			</ea:tab>

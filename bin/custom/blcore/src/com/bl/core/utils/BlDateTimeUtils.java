@@ -546,7 +546,7 @@ public final class BlDateTimeUtils
 			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
 		}
 	}
-
+	
 	/**
 	 * Adds the days in rental dates excluding Weekends.
 	 *
@@ -561,6 +561,28 @@ public final class BlDateTimeUtils
 		try
 		{
 			LocalDate localDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			return addDaysInRentalDates(numberOfDaysToAdd, localDate, listOfBlackOutDates);
+		}
+		catch (final DateTimeParseException e)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "BlDateTimeUtils : addDaysInRentalDates : Unable to add days in date");
+			return null;
+		}		
+	}
+
+	/**
+	 * Adds the days in rental dates excluding Weekends.
+	 *
+	 * @param numberOfDaysToAdd
+	 *           the number of days to add
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the date
+	 */
+	public static Date addDaysInRentalDates(final int numberOfDaysToAdd, LocalDate localDate, final Collection<Date> listOfBlackOutDates)
+	{
+		try
+		{
 			if (Objects.nonNull(localDate))
 			{
 				int addedDays = 0;
@@ -571,11 +593,12 @@ public final class BlDateTimeUtils
 				}
 				return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 			}
-			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			return null;
 		}
 		catch (final DateTimeParseException e)
 		{
-			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			BlLogger.logMessage(LOG, Level.ERROR, "BlDateTimeUtils : addDaysInRentalDates : Unable to add days in date");
+			return null;
 		}
 	}
 
