@@ -1379,7 +1379,7 @@
 		<property name="value" ref="storeFrontProcessContextStrategy"/>
 	</bean>
 	
-	<alias name="blWarehousePrepareInterceptor" alias="blWarehousePrepareInterceptor"/>
+	<!-- <alias name="blWarehousePrepareInterceptor" alias="blWarehousePrepareInterceptor"/>
 	<bean id="blWarehousePrepareInterceptor" class="com.bl.core.model.interceptor.BlWarehousePrepareInterceptor">
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
@@ -1387,7 +1387,7 @@
 	<bean id="blWarehousePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blWarehousePrepareInterceptor"/>
 		<property name="typeCode" value="Warehouse"/>
-	</bean>
+	</bean> -->
 	
 	<alias name="blBlackoutDatePrepareInterceptor" alias="blBlackoutDatePrepareInterceptor"/>
     <bean id="blBlackoutDatePrepareInterceptor"    class="com.bl.core.model.interceptor.BlBlackoutDatePrepareInterceptor"/>    
