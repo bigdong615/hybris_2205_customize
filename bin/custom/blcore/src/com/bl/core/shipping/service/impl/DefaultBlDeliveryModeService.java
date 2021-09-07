@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -780,32 +781,50 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
         if (Objects.nonNull(deliveryModeModel)) {
-            //final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
-            final int preDaysToDeduct = Integer.valueOf(deliveryModeModel.getPreReservedDays());
-            final int postDaysToAdd =  Integer.valueOf(deliveryModeModel.getPostReservedDays());
 
-            final Date rentalStartDate = getRentalStartDate(rentalStart, preDaysToDeduct);
-            final Date rentalEndDate = getRentalEndDate(rentalEnd, postDaysToAdd);
+            final int preDaysToDeduct =
+                StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
+                    .parseInt(deliveryModeModel.getPreReservedDays()) : 0;
 
-            final boolean isRentalStartDateIsPastDate = rentalStartDate.before(new Date());
+            final int postDaysToAdd =
+                StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
+                    .parseInt(deliveryModeModel.getPostReservedDays()) : 0;
 
-            final Set<WarehouseModel> lWareHouses = Objects.nonNull(deliveryModeModel.getWarehouse())
-                    ? Sets.newHashSet(deliveryModeModel.getWarehouse())
-                    : Sets.newHashSet(getBaseStoreService().getCurrentBaseStore().getWarehouses());
-            final CartModel cartModel = getBlCartService().getSessionCart();
-            cartModel.getEntries().forEach(cartEntry -> {
-                final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
-                        cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
+            final List<Date> holidayBlackoutDates = getBlDatePickerService()
+                .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 
-                if (!productService.isAquatechProduct(cartEntry.getProduct())
-                    && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+            final Date rentalStartDate = BlDateTimeUtils
+                .subtractDaysInRentalDates(preDaysToDeduct, rentalStart, holidayBlackoutDates);
+            final Date rentalEndDate = BlDateTimeUtils
+                .addDaysInRentalDates(postDaysToAdd, rentalEnd, holidayBlackoutDates);
 
-                    isAvailable.set(Boolean.FALSE);
-                    return;
-                }
+            if (rentalStartDate.after(new Date())) {
 
-            });
+                final Set<WarehouseModel> lWareHouses =
+                    Objects.nonNull(deliveryModeModel.getWarehouse())
+                        ? Sets.newHashSet(deliveryModeModel.getWarehouse())
+                        : Sets.newHashSet(
+                            getBaseStoreService().getCurrentBaseStore().getWarehouses());
+                final CartModel cartModel = getBlCartService().getSessionCart();
+                cartModel.getEntries().forEach(cartEntry -> {
+                    final StockResult stockForEntireDuration = getBlCommerceStockService()
+                        .getStockForEntireDuration(
+                            cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate,
+                            rentalEndDate);
+
+                    if (!productService.isAquatechProduct(cartEntry.getProduct())
+                        && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+
+                        isAvailable.set(Boolean.FALSE);
+                        return;
+                    }
+
+                });
+            } else {
+                isAvailable.set(Boolean.FALSE);
+            }
             return isAvailable.get();
+
         }
         return isAvailable.get();
     }
