@@ -557,18 +557,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @param updatedRentalToDate
      */
     @Override
-    public void updatePromotionalEndDate(Date updatedRentalToDate) {
+    public void updatePromotionalEndDate(final Date updatedRentalToDate) {
         final CartModel cartModel = getSessionCart();
         if (updatedRentalToDate != null && cartModel != null) {
             final String cartCode = cartModel.getCode();
-            cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
             cartModel.setRentalEndDate(updatedRentalToDate);
-            getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartModel.getRentalStartDate(),BlCoreConstants.DATE_FORMAT),BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT));
-            BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
-                "Setting Rental Promotional End Date: {} on Cart: {}",
-                cartModel.getPromotionalRentalEndDate(), cartCode);
+            BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,"Setting Rental Cart End Date: {} on Cart: {}", cartModel.getRentalEndDate(), cartCode);
             try {
                 getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
                     "Setting Rental Promotional End Date: {} on Cart: {}", updatedRentalToDate,
                     cartCode);
@@ -580,25 +577,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             }
         }
     }
-    /**
-     * Remove promotional End date for the promotion
-     *
-     */
-    @Override
-    public void removePromotionalEndDate() {
-        final CartModel cartModel = getSessionCart();
-        if (cartModel.getPromotionalRentalEndDate() != null && cartModel != null) {
-            cartModel.setPromotionalRentalEndDate(null);
-            try {
-                getModelService().save(cartModel);
-                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
-                    "Removing the promotional end date from Cart - {}",cartModel.getCode());
-            } catch (final Exception exception) {
-                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                    "Error while removing promotionalEndDate from  cart - {}", cartModel.getCode());
-            }
-        }
-    }
+
 
     /**
      * Check if the Promotion with extended days is applied to cart

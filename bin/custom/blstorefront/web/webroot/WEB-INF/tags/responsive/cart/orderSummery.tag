@@ -33,11 +33,6 @@
             id="summary-litepicker"
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
         </p>
-        "${cartData.promotionalToDate}
-         <c:forEach items="${cartData.appliedOrderPromotions}" var="promotion">
-             <div class="promotion" style="color:green">${ycommerce:sanitizeHTML(promotion.description)}
-             <fmt:formatDate value="${cartData.promotionalToDate}" pattern="dd/MM/YYYY" /></div>
-          </c:forEach>
       </c:when>
       <c:otherwise>
         <b><spring:theme code="text.used.Gear.cart.timer" /> <span

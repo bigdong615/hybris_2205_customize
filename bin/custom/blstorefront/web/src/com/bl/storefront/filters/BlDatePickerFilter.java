@@ -5,15 +5,12 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
 import java.io.IOException;
 import java.time.LocalDate;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -57,45 +54,25 @@ public class BlDatePickerFilter extends OncePerRequestFilter
 	 */
 	private void setOrRemoveRentalDateInSession(final RentalDateDto rentalDateDto)
 	{
-		String updatedSelectedToDate = StringUtils.EMPTY;
-		LocalDate updatedEndDate = null;
+
 		final LocalDate currentDate = LocalDate.now();
 		final String selectedFromDate = rentalDateDto.getSelectedFromDate();
 		String selectedToDate = rentalDateDto.getSelectedToDate();
 		final String selectedDuration = rentalDateDto.getSelectedDays();
 		final LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedFromDate,
 				BlCoreConstants.DATE_FORMAT);
-		//[BL-669]when endDate is updated for a specific promotion
-		if(getBlDatePickerService().getRentalDatesFromSession() != null) {
-			 updatedSelectedToDate = getBlDatePickerService().getRentalDatesFromSession().getSelectedToDate();
-		      updatedEndDate = BlDateTimeUtils.convertStringDateToLocalDate(updatedSelectedToDate,
-					BlCoreConstants.DATE_FORMAT);
-			BlLogger.logMessage(LOG, Level.INFO, "BlDATEPICKERFILTER:: updatedEnddate:{} ", updatedSelectedToDate);
 
-		}
-
-		final LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedToDate,
-				BlCoreConstants.DATE_FORMAT);
 
 		if (startDate.isBefore(currentDate))
 		{
 			getBlDatePickerService().removeRentalDatesFromSession();
 		}
 
-		else if(getBlCartService().isFreeRentalDayPromoApplied() && getBlCartService().getSessionCart().getPromotionalRentalEndDate() != null && updatedEndDate.isAfter(endDate) && updatedSelectedToDate != null ){
-
-			String promotionEndDate = BlDateTimeUtils.convertDateToStringDate(getBlCartService().getSessionCart().getPromotionalRentalEndDate(), BlCoreConstants.DATE_FORMAT);
-			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate,promotionEndDate);
-  		getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
-			BlLogger.logMessage(LOG, Level.INFO, "BlDATEPICKERFILTER:: updatedEnddate:{} ", updatedSelectedToDate);
-
-		}
 		else
 		{
 			selectedToDate = getBlCartService().getSessionCart().getRentalEndDate() != null ? BlDateTimeUtils.convertDateToStringDate(getBlCartService().getSessionCart().getRentalEndDate(),BlCoreConstants.DATE_FORMAT) : selectedToDate;
 			getBlDatePickerService().addRentalDatesIntoSession(selectedFromDate, selectedToDate);
 			getBlDatePickerService().addSelectedRentalDurationIntoSession(selectedDuration);
-			getBlCartService().removePromotionalEndDate();
 		}
 	}
 

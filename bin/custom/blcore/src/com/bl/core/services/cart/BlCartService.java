@@ -102,11 +102,6 @@ public interface BlCartService extends CartService {
     void updatePromotionalEndDate(Date updatedRentalToDate);
 
     /**
-     * Remove promotionEndDate
-     */
-    void removePromotionalEndDate();
-
-    /**
      * Check if the Promotion with extended days is applied to cart
      * @return
      */
