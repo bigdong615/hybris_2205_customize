@@ -234,6 +234,8 @@
       		<value code="INCOMPLETE_RECOVERED" />
       		<value code="PARTIALLY_UNBOXED" />
       		<value code="UNBOXED" />
+      		<value code="LATE" />
+      		<value code="RETURNED" />
         </enumtype>
       
       

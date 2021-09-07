@@ -2703,7 +2703,7 @@
 			<ea:tab name="ModifyOrder">
 				<ea:section name="ModifyOrder">
 					<ea:attribute qualifier="warehouse"/>
-					<ea:attribute qualifier="serialProduct"/>
+					<ea:attribute qualifier="modifiedSerialProductList"/>
 					<ea:attribute qualifier="isModifiedOrder"/>
 				</ea:section>
 			</ea:tab>

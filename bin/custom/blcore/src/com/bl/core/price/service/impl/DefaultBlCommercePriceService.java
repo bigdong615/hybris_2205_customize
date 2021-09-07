@@ -10,14 +10,24 @@ import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commerceservices.price.impl.DefaultCommercePriceService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
+
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.util.PriceValue;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.collections.CollectionUtils;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -36,6 +46,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	private static final Logger LOG = Logger.getLogger(DefaultBlCommercePriceService.class);
 	private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
 	private BlDatePickerService blDatePickerService;
+	private BaseStoreService baseStoreService;
 
 	/**
 	 * {@inheritDoc}
@@ -43,7 +54,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	@Override
 	public PriceInformation getWebPriceForProduct(final ProductModel product)
 	{
-		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && !((BlProductModel) product).isBundleProduct())
 		{
 			validateParameterNotNull(product, "Product cannot be null");
 			final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(product);
@@ -60,9 +71,56 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 			}
 			return null;
 		}
+		else if(PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && ((BlProductModel) product).isBundleProduct()){
+     return getWebPriceForBundleProduct(product);
+		}
 		return super.getWebPriceForProduct(product);
 	}
-
+	/**
+	 * Gets the price data for bundle product.
+	 *
+	 * @param ProductModel
+	 *           the Product
+	 * @return PriceInformation
+	 */
+	public PriceInformation getWebPriceForBundleProduct(final ProductModel product){
+		List<PriceInformation> lPrices = new ArrayList<>();
+		final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)
+				.getProductReferences()));
+		if (CollectionUtils.isNotEmpty(productReferences)) {
+			productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
+				final ProductModel target = productReferenceModel.getTarget();
+				final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
+				if (CollectionUtils.isNotEmpty(prices))
+				{
+					final PriceInformation defaultPriceInformation = prices.get(0);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price is {} for product {}",
+							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+					final Long rentalDays = getRentalDaysFromSession();
+					final PriceInformation info = Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+							defaultPriceInformation, rentalDays)
+							: defaultPriceInformation;
+				final Double discount = baseStoreModel.getBundleDiscount();
+					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
+					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
+				final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
+					    lPrices.add(newPriceInformation);
+					}
+			});
+			if(CollectionUtils.isEmpty(lPrices)){
+				return null;
+			}
+			AtomicDouble rPrice = new AtomicDouble(0.0d);
+			lPrices.forEach(refPrice -> rPrice.addAndGet(refPrice.getPriceValue().getValue()));
+			final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+					.createNewPriceInformation(lPrices.get(0), BigDecimal.valueOf(rPrice.get()));
+			return newPriceInformation;
+		}
+		return null;
+	}
 	/**
 	 * Gets the dynamic price data for product.
 	 *
@@ -80,6 +138,25 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
 				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)
 				: BigDecimal.valueOf(priceValue);
+	}
+	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct
+	 *           the is constrained product
+	 * @param ProductModel
+	 *           the price value
+	 * @return the dynamic price data for product
+	 */
+	@Override
+	public BigDecimal getDynamicPriceDataForBundleProduct(final Boolean isConstrainedProduct, final ProductModel product)
+	{
+		final PriceInformation webPriceForBundleProduct = getWebPriceForBundleProduct(product);
+		if(Objects.nonNull(webPriceForBundleProduct)){
+		PriceValue priceValue =webPriceForBundleProduct.getPriceValue();
+		return BigDecimal.valueOf(priceValue.getValue());
+		}
+		return null;
 	}
 
 	/**
@@ -207,5 +284,12 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 	{
 		this.blDatePickerService = blDatePickerService;
+	}
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
 	}
 }
