@@ -235,7 +235,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     }
   }
 
-  private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
+  /**
+   * method will used to get serial for date and codes
+ * @param order as Order
+ * @param serialProductCodes as serialProductCodes
+ * @return Collection<StockLevelModel serialStocks
+ */
+public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
       final Set<String> serialProductCodes) {
 
     return blStockLevelDao
@@ -245,13 +251,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
   /**
    * Create consignment entry.
-   * @param orderEntry
-   * @param quantity
-   * @param consignment
-   * @param result
+   * @param orderEntry as order Entry
+   * @param quantity as quantity
+   * @param consignment as consignment 
+   * @param result as result 
    * @return consignment entry
    */
-  protected ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
+  public ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
       Long quantity, final ConsignmentModel consignment, final SourcingResult result) {
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,

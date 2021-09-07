@@ -289,5 +289,13 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param GiftCardPurchaseForm the giftCardPurchaseForm
      */
     boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm);
+    
+    /**
+     * Check shipping blackout.
+     *
+     * @param deliveryModeCode the delivery mode code
+     * @return true, if successful
+     */
+    boolean isShippingOnBlackoutDate(final String deliveryModeCode);
 
 }

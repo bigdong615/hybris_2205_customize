@@ -22,6 +22,8 @@ public class BlOrdermanagementConstants extends GeneratedBlOrdermanagementConsta
 	public static final String CONSIGNMENT_SUBPROCESS_NAME = "consignment-process";
 	public static final String CONSIGNMENT_ACTION_EVENT_NAME = "ConsignmentActionEvent";
 	public static final String CONSIGNMENT_PICKUP = "ConsignmentPickup";
+	public static final String ORDER_PROCESS = "order-process";
+	public static final int TWO = 2;
 	
 	private BlOrdermanagementConstants()
 	{
