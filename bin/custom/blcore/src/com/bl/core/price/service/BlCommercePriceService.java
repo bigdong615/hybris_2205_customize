@@ -61,5 +61,6 @@ public interface BlCommercePriceService extends CommercePriceService
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays);
 
 	PriceInformation getWebPriceForTax(final ProductModel product , final AbstractOrderModel abstractOrderModel);
+	 PriceInformation getWebPriceForBundleProduct(final ProductModel product);
 
 }

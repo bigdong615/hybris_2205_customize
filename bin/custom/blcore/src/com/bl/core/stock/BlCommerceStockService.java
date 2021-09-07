@@ -201,4 +201,15 @@ public interface BlCommerceStockService
 	 */
 	 StockResult getStockForBundleProduct(final BlProductModel blProductModel, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
+
+	/**
+	 * This is to get the available count of a bundle
+	 * @param productModel
+	 * @param warehouses
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public Long getAvailableCountForBundle(final BlProductModel productModel, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
 }

@@ -3,6 +3,7 @@ package com.bl.core.services.strategy.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlOptionsModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -153,10 +154,12 @@ private void updateOptionEntry(final AbstractOrderEntryModel orderEntry){
               BlCoreConstants.DATE_FORMAT);
       final Date endDay = BlDateTimeUtils
           .convertStringDateToDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
-
-      stockLevel = getBlCommerceStockService()
-          .getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
-
+     if(((BlProductModel)productModel).isBundleProduct()){
+			 stockLevel = getBlCommerceStockService().getAvailableCountForBundle(((BlProductModel)productModel),warehouseModelList,startDay,endDay);
+     }else {
+			 stockLevel = getBlCommerceStockService()
+					 .getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
+		 }
       // this is to update the quantity as per availability.
       newTotalQuantityAfterStockLimit = Math.min(newTotalQuantity, stockLevel);
     } else {

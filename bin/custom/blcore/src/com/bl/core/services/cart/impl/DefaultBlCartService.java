@@ -21,6 +21,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -285,12 +287,30 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                                                           final RentalDateDto rentalDatesFromSession) {
         final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
                 .collect(Collectors.toList());
+        final List<ProductData> bundleProductList = new ArrayList<>();
+        cartData.getEntries().forEach(orderEntryData -> {
+            if(orderEntryData.getProduct().isIsBundle()){
+                bundleProductList.add(orderEntryData.getProduct());
+                lProductCodes.remove(orderEntryData.getProduct().getCode());
+            }
+        });
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
-        return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+         final Map<String, Long> stockLevelProductWise ;
+        if(CollectionUtils.isNotEmpty(lProductCodes)){
+            stockLevelProductWise=getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+        }else{
+            stockLevelProductWise = new HashMap<>();
+        }
+        if(CollectionUtils.isNotEmpty(bundleProductList)){
+            bundleProductList.forEach(productData -> {
+                stockLevelProductWise.put(productData.getCode(),productData.getStock().getStockLevel());
+            });
+        }
+    return stockLevelProductWise;
     }
 
 

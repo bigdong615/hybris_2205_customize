@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -583,11 +585,34 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
 			final List<String> listOfProductCodes = cartModel.getEntries().stream()
 					.map(cartEntry -> cartEntry.getProduct().getCode()).collect(Collectors.toList());
-			final Map<String, Long> groupByProductsAvailability = getBlCommerceStockService().groupByProductsAvailability(startDay,
-					endDay, listOfProductCodes, getBaseStoreService().getCurrentBaseStore().getWarehouses());
+
+			final List<BlProductModel> bundleProductList = new ArrayList<>();
+			cartModel.getEntries().forEach(orderEntryModel -> {
+				BlProductModel blProductModel = (BlProductModel)orderEntryModel.getProduct();
+				if(blProductModel.isBundleProduct()){
+					bundleProductList.add(blProductModel);
+					listOfProductCodes.remove(blProductModel.getCode());
+				}
+			});
+			final Map<String, Long> groupByProductsAvailability;
+			if(CollectionUtils.isNotEmpty(listOfProductCodes)){
+				groupByProductsAvailability=getBlCommerceStockService().groupByProductsAvailability(startDay,
+						endDay, listOfProductCodes, getBaseStoreService().getCurrentBaseStore().getWarehouses());
+			}else {
+				groupByProductsAvailability = new HashMap<>();
+			}
+			if(CollectionUtils.isNotEmpty(bundleProductList)) {
+				bundleProductList.forEach(blProductModel -> {
+					final StockResult stockResult = blCommerceStockService.getStockForBundleProduct(
+							blProductModel, getBaseStoreService().getCurrentBaseStore().getWarehouses(), startDay, endDay);
+					groupByProductsAvailability
+							.put(blProductModel.getCode(),stockResult.getAvailableCount() );
+				});
+			}
 			cartModel.getEntries().forEach(cartEntry -> {
 				final int cartQuantity = cartEntry.getQuantity().intValue();
-				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
+				final int availableStockQuantity = groupByProductsAvailability
+						.get(cartEntry.getProduct().getCode()).intValue();
 
 				if (!blProductService.isAquatechProduct(cartEntry.getProduct())
 						&& availableStockQuantity < cartQuantity) {
