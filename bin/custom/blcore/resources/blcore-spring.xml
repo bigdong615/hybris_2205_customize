@@ -594,6 +594,7 @@
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="productService" ref="productService"/>
 		<property name="promotionDao" ref="promotionDao"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 
 	<!--<BL-500 bean entry is for order service>-->

@@ -71,47 +71,51 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   protected boolean performAction(final RuleActionContext context, final Integer freeRentalDays) {
     CartRAO cartRAO = context.getCartRao();
+    Date orginalEndDate = getCartService().getSessionCart().getRentalEndDate();
     if(freeRentalDays > 0 && cartRAO.getRentalDurationDays() > 0) {
       final BigDecimal newExtendedDaysSubtotal;
-      final Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
+      Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
       final int rentalDays
           = cartRAO.getRentalDurationDays() + freeRentalDays;
       newExtendedDaysSubtotal = getPromotionRentalDurationPrice(cartRAO,context, rentalDays);
       BlLogger.logMessage(LOG, Level.INFO, " New total for : " +rentalDays+" is: "+ newExtendedDaysSubtotal);
 
-      getBlDatePickerService().addRentalDatesIntoSession(
-          BlDateTimeUtils
-              .convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
-          BlDateTimeUtils
-              .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
       BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
+        if(BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
+          getBlDatePickerService().addRentalDatesIntoSession(
+              BlDateTimeUtils
+                  .convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
+              BlDateTimeUtils
+                  .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
+          getCartService().updatePromotionalEndDate(updatedRentalToDate);
+          cartRAO.setRentalToDate(updatedRentalToDate);
+        }
+        BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal)
+            .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+        BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + existingSubTotal);
 
-      getCartService().updatePromotionalEndDate(updatedRentalToDate);
-      cartRAO.setRentalToDate(updatedRentalToDate);
-      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal)
-          .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-      BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + existingSubTotal);
+        cartRAO.setSubTotal(newExtendedDaysSubtotal);
+        cartRAO.setTotal(newExtendedDaysSubtotal);
+        cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
+        cartRAO.setRentalToDate(updatedRentalToDate);
+        BlLogger
+            .logMessage(LOG, Level.INFO, " before discount cart Total: " + cartRAO.getSubTotal());
 
-      cartRAO.setSubTotal(newExtendedDaysSubtotal);
-      cartRAO.setTotal(newExtendedDaysSubtotal);
-      cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
-      cartRAO.setRentalToDate(updatedRentalToDate);
-      BlLogger.logMessage(LOG, Level.INFO, " before discount cart Total: " + cartRAO.getSubTotal());
+        DiscountRAO discount = this.getRuleEngineCalculationService()
+            .addOrderLevelDiscount(cartRAO, true, finalDiscount);
+        BlLogger.logMessage(LOG, Level.INFO, "Discount calculated: " + finalDiscount);
+        BlLogger.logMessage(LOG, Level.INFO, "cart Sub Total: " + cartRAO.getSubTotal());
+        BlLogger.logMessage(LOG, Level.INFO, "cart Total: " + cartRAO.getTotal());
 
-      DiscountRAO discount = this.getRuleEngineCalculationService()
-          .addOrderLevelDiscount(cartRAO, true, finalDiscount);
-      BlLogger.logMessage(LOG, Level.INFO, "Discount calculated: " + finalDiscount);
-      BlLogger.logMessage(LOG, Level.INFO, "cart Sub Total: " + cartRAO.getSubTotal());
-      BlLogger.logMessage(LOG, Level.INFO, "cart Total: " + cartRAO.getTotal());
+        RuleEngineResultRAO result = context.getRuleEngineResultRao();
+        result.getActions().add(discount);
+        this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
+        context.scheduleForUpdate(new Object[]{cartRAO, discount});
+        context.insertFacts(new Object[]{discount});
 
-      RuleEngineResultRAO result = context.getRuleEngineResultRao();
-      result.getActions().add(discount);
-      this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
-      context.scheduleForUpdate(new Object[]{cartRAO, discount});
-      context.insertFacts(new Object[]{discount});
+        return true;
+      }
 
-      return true;
-    }
     return  false;
   }
 

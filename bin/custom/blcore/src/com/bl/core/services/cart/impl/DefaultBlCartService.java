@@ -34,7 +34,9 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.daos.ProductDao;
 import de.hybris.platform.promotionengineservices.dao.PromotionDao;
 import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
+import de.hybris.platform.promotions.PromotionsService;
 import de.hybris.platform.promotions.model.PromotionGroupModel;
+import de.hybris.platform.promotions.result.PromotionOrderResults;
 import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
@@ -77,6 +79,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private BlBlackoutDatesDao blBlackoutDatesDao;
     private BlProductService productService;
     private PromotionDao promotionDao;
+    private PromotionsService promotionsService;
 
     /**
      * {@inheritDoc}
@@ -444,18 +447,12 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public void updatePromotionalEndDate(Date updatedRentalToDate) {
         final CartModel cartModel = getSessionCart();
-        Optional<PromotionSourceRuleModel> extended_rental_days = getPromotionDao().findPromotionGroupByCode("blPromoGrp").getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
-        boolean orderResult = CollectionUtils.isNotEmpty(getSessionCart().getAllPromotionResults()) ? getSessionCart().getAllPromotionResults().stream().filter(promotionResultModel -> promotionResultModel.getPromotion().getCode().equals(extended_rental_days.get().getCode())).findAny().isPresent() : Boolean.FALSE;
         if (updatedRentalToDate != null && cartModel != null) {
             String cartCode = cartModel.getCode();
-            if (!isFreeRentalDayPromoApplied() && orderResult) {
-                cartModel.setPromotionalRentalEndDate(null);
-            } else {
-                cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+            cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
                 BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
                     "Setting Rental Promotional End Date: {} on Cart: {}",
                     cartModel.getPromotionalRentalEndDate(), cartCode);
-            }
             try {
                 getModelService().save(cartModel);
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
@@ -479,13 +476,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public boolean isFreeRentalDayPromoApplied() {
         final PromotionGroupModel blPromoGroup = getPromotionDao()
             .findPromotionGroupByCode("blPromoGrp");
+        final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(getSessionCart());
         if (blPromoGroup != null && CollectionUtils
             .isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
             final Date currentDate = new Date();
             Optional<PromotionSourceRuleModel> extended_rental_days = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains("EXTENDEDRENTALDAYS") && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
             boolean isPromotionActiveInBackend = extended_rental_days.isPresent()  && extended_rental_days.get().getStartDate() != null
                 && extended_rental_days.get().getEndDate() != null && currentDate.getTime() >= extended_rental_days.get().getStartDate().getTime() && currentDate.getTime() <= extended_rental_days.get().getEndDate().getTime();
-            return  isPromotionActiveInBackend;
+            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().filter( promotionResult -> promotionResult.getPromotion().getCode().equals(extended_rental_days.get().getCode())).findAny().isPresent() : Boolean.FALSE;
+            return  isPromotionActiveInBackend && orderResult;
         }
 
         return false;
@@ -762,5 +761,13 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
     public void setPromotionDao(PromotionDao promotionDao) {
         this.promotionDao = promotionDao;
+    }
+
+    public PromotionsService getPromotionsService() {
+        return promotionsService;
+    }
+
+    public void setPromotionsService(PromotionsService promotionsService) {
+        this.promotionsService = promotionsService;
     }
 }
