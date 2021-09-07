@@ -73,6 +73,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   protected boolean performAction(final RuleActionContext context, final Integer freeRentalDays) {
     CartRAO cartRAO = context.getCartRao();
+
     if(freeRentalDays > 0 && cartRAO.getRentalDurationDays() > 0) {
       final BigDecimal newExtendedDaysSubtotal;
       final Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
@@ -82,20 +83,26 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
       //original subtotal without rental days
       final BigDecimal existingSubTotal = getPromotionRentalDurationPrice(cartRAO,context, cartRAO.getRentalDurationDays());
 
-      if(BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
+      if( BlDateTimeUtils.getDaysBetweenDates(cartRAO.getRentalArrivalDate(),updatedRentalToDate) == rentalDays) {
         getBlDatePickerService().addRentalDatesIntoSession(BlDateTimeUtils.convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT), BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
         getCartService().updatePromotionalEndDate(updatedRentalToDate);
         cartRAO.setRentalToDate(updatedRentalToDate);
-      }
+      }/*
+        * ToDo - changes for BL-985
+        else if (BlExtendOrderUtils.getCurrentExtendOrderToSession() != null){
+        OrderModel extendOrder = BlExtendOrderUtils.getCurrentExtendOrderToSession();
+        extendOrder.setExtendRentalEndDate(updatedRentalToDate);
+        extendOrder.setRentalEndDate(updatedRentalToDate);
+      }*/
       BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(existingSubTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Old sub Total:{}", existingSubTotal);
       //set values on cartRao
       cartRAO.setSubTotal(newExtendedDaysSubtotal);
       cartRAO.setTotal(newExtendedDaysSubtotal);
       cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
-      cartRAO.setRentalToDate(updatedRentalToDate);
+
       final DiscountRAO discount = this.getRuleEngineCalculationService().addOrderLevelDiscount(cartRAO, true, finalDiscount);
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Discount calculated for free extended rental days is : {}" + finalDiscount);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Discount calculated for free extended rental days is : {}" ,finalDiscount);
 
       RuleEngineResultRAO result = context.getRuleEngineResultRao();
       result.getActions().add(discount);
