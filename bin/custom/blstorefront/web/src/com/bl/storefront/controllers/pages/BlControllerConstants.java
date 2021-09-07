@@ -182,9 +182,9 @@ public class BlControllerConstants
 	public static final String PAY_BILL = "payBill";
 	public static final String REDIRECT_TO_HOME_URL ="redirect:/";
 	public static final String IS_NEW_GEAR_CATEGORY ="isNewGearCategory";
-    public static final String USED_CATEGORY_CODE = "usedgear";
-    public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
-	public static final String MODIFYPAYMENT = "modifyPayment";
+  public static final String USED_CATEGORY_CODE = "usedgear";
+  public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
+  public static final String ENABLE_SATURDAYS = "enableSaturdays";
 
 	private BlControllerConstants()
 	{

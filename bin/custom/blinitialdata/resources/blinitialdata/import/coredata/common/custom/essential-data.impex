@@ -473,4 +473,10 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
                                              ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
                                              
+INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
+                              ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
+                              
+                              
+INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
+                      ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
                                              

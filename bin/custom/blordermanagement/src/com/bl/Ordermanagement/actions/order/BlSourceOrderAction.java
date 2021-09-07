@@ -229,7 +229,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     final Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, 2);
+    calendar.add(Calendar.DATE, BlOrdermanagementConstants.TWO);
     order.setActualRentalStartDate(calendar.getTime());
     blSourcingService.updateShippingDatesForInternalTransfers(order, results);
 
@@ -295,7 +295,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param consignments - list of consignments; never <tt>null</tt>
    * @param process      - order process model
    */
-  protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
+  public void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
       final OrderProcessModel process) {
 
     for (final ConsignmentModel consignment : consignments) {

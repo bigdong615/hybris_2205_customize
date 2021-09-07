@@ -1,5 +1,6 @@
 package com.bl.core.blackout.date.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.bl.core.enums.BlackoutDateTypeEnum;
@@ -32,4 +33,16 @@ public interface BlBlackoutDatesDao
 	 * @return the all blackout dates for shipping methods
 	 */
 	public List<BlBlackoutDateModel> getAllBlackoutDatesForShippingMethods(final List<String> deliveryModeCodes);
+
+	/**
+	 * Gets the all blackout dates for given type and from date provided.
+	 *
+	 * @param fromDate
+	 *           the from date
+	 * @param blackoutDateType
+	 *           the blackout date type
+	 * @return the all blackout dates for given type and from date
+	 */
+	public List<BlBlackoutDateModel> getAllBlackoutDatesForGivenTypeAndFromDate(final Date fromDate,
+			final BlackoutDateTypeEnum blackoutDateType);
 }
