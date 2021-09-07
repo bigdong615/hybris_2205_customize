@@ -28,7 +28,8 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
-
+import java.math.RoundingMode;
+import de.hybris.platform.core.model.c2l.CurrencyModel;
 
 /**
  * This Populator created to populate order details
@@ -85,6 +86,37 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
       target.setIsNewGearOrder(source.getIsNewGearOrder());
     }
+    
+ // BL-1134 to add total discount with gift cart discount to display on summary section
+    Double totalPromotionDiscount = 0.0;
+    Double totalGiftCardDiscount = 0.0;
+    if(null != source.getTotalDiscounts()){
+      totalPromotionDiscount = source.getTotalDiscounts();
+    }
+    if(null != source.getGiftCardAmount()){
+      totalGiftCardDiscount = source.getGiftCardAmount();
+    }
+    final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+    target.setTotalDiscounts(createPrice(source , totalDiscount));
+
+    if (CollectionUtils.isNotEmpty(source.getGiftCard()))
+    {
+      final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+      for (final GiftCardModel giftCardModel : source.getGiftCard())
+      {
+        final BLGiftCardData blGiftCardData = new BLGiftCardData();
+        blGiftCardData.setCode(giftCardModel.getCode());
+        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+        //rounding off double value to 2 decimal places
+        BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+        blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
+        blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
+        blGiftCardDataList.add(blGiftCardData);
+      }
+      target.setGiftCardData(blGiftCardDataList);
+    }
+
+    
   }
 
   /**
@@ -338,6 +370,30 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     blGiftCardDataList.add(blGiftCardData);
   }
 
+  
+ /**
+ * @param source for the order
+ * @param val for the price
+ * @return PriceData
+ */
+private PriceData createPrice(final AbstractOrderModel source, final Double val)
+  {
+    if (source == null)
+    {
+      throw new IllegalArgumentException("source order must not be null");
+    }
+
+    final CurrencyModel currency = source.getCurrency();
+    if (currency == null)
+    {
+      throw new IllegalArgumentException("source order currency must not be null");
+    }
+
+    // Get double value, handle null as zero
+    final double priceValue = val != null ? val.doubleValue() : 0d;
+
+    return getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(priceValue), currency);
+  }
 
   public PriceDataFactory getPriceDataFactory() {
     return priceDataFactory;

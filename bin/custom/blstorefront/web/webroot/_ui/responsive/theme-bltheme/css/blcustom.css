@@ -621,3 +621,27 @@ ul.ui-autocomplete.active {
 .for-credit-card .dropdown-menu>li>a{
   line-height:1px;
 }  
+.view-links .dropdown-menu>li>a {  
+    padding: 3px 20px 0 0;
+}
+.gift-card-input{
+padding-left:0;
+}
+.gift-card-input input{
+border: 1px solid #ced4da;
+    border-radius: 5px !important;
+    margin: 0 19px 0 0;
+}
+.gift-card-input input:focus{
+	color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+.modify-order{
+	margin:5.5px 0 0 0 !important;
+}
+.modify-order [hidden] {
+    display:revert !important;
+}

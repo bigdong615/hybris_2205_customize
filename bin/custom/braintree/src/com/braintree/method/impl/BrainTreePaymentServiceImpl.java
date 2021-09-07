@@ -72,6 +72,7 @@ import com.braintreegateway.WebhookNotification;
 import com.braintreegateway.exceptions.NotFoundException;
 import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -448,6 +449,31 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 			modelService.save(paymentInfo);
 			card.setPaymentInfo(paymentInfo);
 			modelService.save(card);
+
+			return paymentInfo;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@Override
+	public BrainTreePaymentInfoModel completeCreateSubscriptionForModifyPayment(final CustomerModel customer, final String paymentInfoId, final AbstractOrderModel order)
+	{
+		
+
+		final BrainTreePaymentInfoModel paymentInfo = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(customer,
+				paymentInfoId);
+
+		if (paymentInfo != null)
+		{
+			paymentInfo.setUsePaymentMethodToken(Boolean.TRUE);
+			paymentInfo.setMerchantAccountIdForCurrentSite(getBrainTreeConfigService()
+					.getMerchantAccountIdForCurrentSiteAndCurrency());
+			modelService.save(paymentInfo);
+			order.setPaymentInfo(paymentInfo);
+			modelService.save(order);
 
 			return paymentInfo;
 		}
