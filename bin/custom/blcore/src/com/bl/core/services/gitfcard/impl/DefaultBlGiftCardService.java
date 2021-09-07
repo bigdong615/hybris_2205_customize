@@ -204,6 +204,11 @@ private boolean applyGiftCardToModifyOrder(final AbstractOrderModel orderModel, 
     if(giftCardModelList.size() == 1){
       saveOriginalOrderTotal(originalOrderTotal, orderModel);
     }
+    if(orderModel.getOrderTotalBeforeGCAdd() == null)
+    {
+      orderModel.setOrderTotalBeforeGCAdd(orderModel.getTotalPrice());
+      getModelService().save(orderModel);
+    }
     calculateGiftCard(orderModel, orderModel.getOrderTotalBeforeGCAdd());
   getModelService().refresh(orderModel);
   return true;
