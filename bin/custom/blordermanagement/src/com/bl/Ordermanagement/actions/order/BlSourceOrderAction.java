@@ -62,34 +62,31 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Process: {} in step {}",
         process.getCode(), getClass().getSimpleName());
     final OrderModel order = process.getOrder();
-    boolean isSourcingSuccessful;
+
     SourcingResults results = null;
 
     try {
       results = getSourcingResults(order);
-      isSourcingSuccessful = true;
+
     } catch (final IllegalArgumentException e) {
 
-      isSourcingSuccessful = false;
       setOrderSuspendedStatus(order);
       BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), e,
           "Could not create SourcingResults. Changing order status to SUSPENDED for order code {}", order.getCode());
 
     } catch (final BlSourcingException ex) {
 
-      isSourcingSuccessful = false;
       setOrderToManualReviewStatus(order);
       BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), ex,
           " Changing order status to MANUAL_REVIEW for order code {}", order.getCode());
     } catch (final Exception e) {
 
-      isSourcingSuccessful = false;
       setOrderSuspendedStatus(order);
       BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e,
           " Changing order status to SUSPENDED for order code {}", order.getCode());
     }
 
-    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
+    if (null != results && CollectionUtils.isNotEmpty(results.getResults())) {  //NOSONAR
       try {
         final Collection<ConsignmentModel> consignments = getAllocationService()
             .createConsignments(process.getOrder(),
@@ -98,7 +95,14 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
         order.setStatus(OrderStatus.READY);
+
+        if (order.getEntries().stream()
+            .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
+
+          setOrderToManualReviewStatus(order);
+        } else {
         getModelService().save(order);
+        }
 
       } catch (final AmbiguousIdentifierException ex) {
 
@@ -171,7 +175,6 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
       for (int i = 0; i < entry.getQuantity(); i++){
         aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
       }
-
 
       final Map<Integer, List<BlProductModel>> resultAquatechProductMap =
           (null != sourcingResult.getAquatechProductMap()) ? new HashMap<>(sourcingResult.getAquatechProductMap()) : new HashMap<>();
