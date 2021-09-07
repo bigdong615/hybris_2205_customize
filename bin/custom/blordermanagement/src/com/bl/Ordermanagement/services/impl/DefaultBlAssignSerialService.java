@@ -145,6 +145,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
       if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated.equals(entry.getQuantity())) {
         allEntryQuantityFulfilled.add(new AtomicBoolean(true));
+      } else {
+        allEntryQuantityFulfilled.add(new AtomicBoolean(false));
       }
     });
 
@@ -264,11 +266,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private long getFulfilledQuantity(final SourcingContext context, final AbstractOrderEntryModel entry) {
 
     final long[] fulfilledQuantity = {0l};
-    context.getResult().getResults().stream().forEach(result -> {
+    context.getResult().getResults().stream().forEach(result ->
       fulfilledQuantity[0] += (null != result.getSerialProductMap() && null != result.getSerialProductMap()
           .get(entry.getEntryNumber())) ? result.getSerialProductMap()
-          .get(entry.getEntryNumber()).size() : 0;
-    } );
+          .get(entry.getEntryNumber()).size() : 0
+    );
 
     return fulfilledQuantity[0];
   }
@@ -372,7 +374,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       orderModel.setStatus(OrderStatus.MANUAL_REVIEW);
       modelService.save(orderModel);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced.");
-      throw new BlSourcingException("All products can not be sourced.");
+      return false;
     }
   }
 
