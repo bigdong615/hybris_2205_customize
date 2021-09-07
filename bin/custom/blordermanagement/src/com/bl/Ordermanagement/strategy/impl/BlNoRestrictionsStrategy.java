@@ -13,6 +13,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
   private boolean updateOrderEntryUnallocatedQuantity(final SourcingContext sourcingContext) {
 
-    final AtomicBoolean sourcingInComplete = new AtomicBoolean(false);
+    final List<AtomicBoolean> allEntrySourceInComplete = new ArrayList<>();
     sourcingContext.getOrderEntries().stream().forEach(entry -> {
       Long allResultQuantityAllocated = 0l;
       for (SourcingResult result : sourcingContext.getResult().getResults()) {
@@ -69,14 +70,15 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
       }
 
       if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated < entry.getQuantity()) {
-        sourcingInComplete.set(true);
+        allEntrySourceInComplete.add(new AtomicBoolean(true));
         entry.setUnAllocatedQuantity(entry.getQuantity() - allResultQuantityAllocated);
       }
     });
 
     modelService.saveAll(sourcingContext.getOrderEntries());
 
-    return sourcingInComplete.get();
+    return !allEntrySourceInComplete.isEmpty() && allEntrySourceInComplete.stream()
+        .allMatch(AtomicBoolean::get);
   }
 
   /**
