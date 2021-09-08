@@ -99,7 +99,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
             blProduct.setBufferedInventoryPercentage(bufferInvPercentage);
             setSerialProductsBufferInv(blProduct, onlineCatalog);
             saveRecord(blProduct);
-            setBufferInvPercentInOnlineVersionProduct(blProduct.getCode(), onlineCatalog, bufferInvPercentage);
+            setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, bufferInvPercentage);
           } else {
             setSerialProductsBufferInv(blProduct, onlineCatalog);
             setBufferInvPercentInOnlineVersion(blProduct, onlineCatalog);
@@ -116,7 +116,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
           });
           blProduct.setBufferedInventoryPercentage(Double.valueOf(0.0));
           saveRecord(blProduct);
-          setBufferInvPercentInOnlineVersionProduct(blProduct.getCode(), onlineCatalog, Double.valueOf(0.0));
+          setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, Double.valueOf(0.0));
         }
       }
   }
@@ -159,18 +159,19 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
 
   /**
    * It sets buffer inventory percentage in product of online version
-   * @param code product code
+   * @param blProduct SKU product model
    * @param onlineCatalog online catalog version model
    * @param bufferInvPercentage buffer inventory percentage
    */
-  private void setBufferInvPercentInOnlineVersionProduct(final String code, final CatalogVersionModel onlineCatalog,
+  private void setBufferInvPercentInOnlineVersionProduct(final BlProductModel blProduct, final CatalogVersionModel onlineCatalog,
       final Double bufferInvPercentage) {
-    final BlProductModel blProductInOnlineVersion = getSkuProduct(code, onlineCatalog);
+    final BlProductModel blProductInOnlineVersion = getSkuProduct(blProduct.getCode(), onlineCatalog);
     if(null != blProductInOnlineVersion) {
       blProductInOnlineVersion.setBufferedInventoryPercentage(bufferInvPercentage);
+      blProductInOnlineVersion.setBufferInvPercChangedManually(blProduct.isBufferInvPercChangedManually());
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "buffer inventory percentage {} is set for the product {}",
-          bufferInvPercentage, code);
+          bufferInvPercentage, blProduct.getCode());
       saveRecord(blProductInOnlineVersion);
     }
   }
