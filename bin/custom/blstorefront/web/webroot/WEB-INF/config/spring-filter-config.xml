@@ -240,8 +240,17 @@
 		<property name="useDefaultPath" value="true"/>
 		<property name="httpOnly" value="true"/>
 	</bean>
+
+	<!-- BL-668 - Local Storage Implementation of Duration -->
+	<bean id="blRentalDurationCookieGenerator" class="com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator" >
+		<property name="cookieSecure" value="true"/>
+		<property name="cookieMaxAge" value="360000000"/>
+		<property name="useDefaultPath" value="true"/>
+		<property name="httpOnly" value="true"/>
+	</bean>
 	
 	<bean id="blDatePickerFilter" class="com.bl.storefront.filters.BlDatePickerFilter" >
 		<property name="blDatePickerService" ref="blDatePickerService"/>	
+		<property name="blCartService" ref="cartService"/>
 	</bean>
 </beans>

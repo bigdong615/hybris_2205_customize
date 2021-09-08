@@ -2626,6 +2626,11 @@
                       </property>
                     </custom-properties>
                   </attribute>
+                    <attribute qualifier="promotionalRentalEndDate" type="java.util.Date">
+                      <description>Updated rental end date when Extended rental days added</description>
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" optional="true" />
+                  </attribute>
                   <attribute qualifier="isVipOrder" type="java.lang.Boolean">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
