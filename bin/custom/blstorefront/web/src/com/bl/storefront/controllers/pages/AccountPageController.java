@@ -726,7 +726,7 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.mismatchMessage", null, getI18nService().getCurrentLocale()));
+					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
 					model.addAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 				}
 			}
