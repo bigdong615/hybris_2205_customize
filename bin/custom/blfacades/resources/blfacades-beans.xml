@@ -86,6 +86,7 @@
     <property name="selectedFromDate" type="String"/>
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
+    <property name="selectedDays" type="String"/>
   </bean>
 
 <!-- DTO to store Serial Product Data -->
@@ -372,6 +373,7 @@
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+		<property name="extendedFreeRentalDays" type="java.lang.Integer" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
     <property name="usedGearDiscount" type="java.lang.Integer" />
   </bean>
