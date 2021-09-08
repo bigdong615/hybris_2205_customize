@@ -441,10 +441,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
 						if (availableQty == 0) {
-							final String nextAvailabilityDate = getBlCommerceStockService()
-									.getNextAvailabilityDateInCheckout(productCode,
-											rentalDatesFromSession, warehouses, cartEntryQty);
-							setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
+							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
+										Arrays.asList(getContactUsLink())));
+							}else {
+								final String nextAvailabilityDate = getBlCommerceStockService()
+										.getNextAvailabilityDateInCheckout(productCode,
+												rentalDatesFromSession, warehouses, cartEntryQty);
+								setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
+							}
 						}
 						else if (BooleanUtils.negate(availableQty >= cartEntryQty)) {
 							if(getBlCartService().isFreeRentalDayPromoApplied()){
