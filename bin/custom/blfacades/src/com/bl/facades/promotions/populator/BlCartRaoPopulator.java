@@ -21,7 +21,7 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
 
     target.setRentalCart(source.getIsRentalCart());
     if(BlRentalDateUtils.getRentalsDuration() != null) {
-      target.setRentalDurationDays(Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getNumberOfDays()));
+      target.setRentalDurationDays(BlRentalDateUtils.getRentalsDuration().getSelectedDays()!= null ? Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getSelectedDays()): 7);
       final RentalDateDto rentalDatesFromSession = BlRentalDateUtils.getBlDatePickerService()
           .getRentalDatesFromSession();
       if(rentalDatesFromSession != null && (rentalDatesFromSession.getSelectedFromDate() != null || rentalDatesFromSession.getSelectedToDate() != null)) {
