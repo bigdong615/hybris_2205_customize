@@ -7,6 +7,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -40,6 +41,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   private BlStockLevelDao blStockLevelDao;
   private BlProductService productService;
   private CatalogVersionDao catalogVersionDao;
+  private BlStockService blStockService;
 
   /**
    * {@inheritDoc}
@@ -75,7 +77,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   public boolean minQtyEligibleForBufferInv(final Integer minQtyForBufferInventory, final BlProductModel blProductModel) {
     if(minQtyForBufferInventory > 0) {
       final int totalSerialProducts = blProductModel.getSerialProducts()
-          .stream().filter(serialProduct -> getProductService().isActiveSerialProduct(serialProduct.getSerialStatus()))
+          .stream().filter(serialProduct -> getBlStockService().isActiveStatus(serialProduct.getSerialStatus()))
           .collect(Collectors.toList()).size();
       return totalSerialProducts >= minQtyForBufferInventory;
     }
@@ -231,7 +233,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   private void setSerialProductsBufferInv(final BlProductModel blProduct, final CatalogVersionModel onlineCatalog) {
     final Double bufferInventoryPercentage = blProduct.getBufferedInventoryPercentage();
     final int totalActiveSerialProducts = blProduct.getSerialProducts()
-        .stream().filter(serialProduct -> getProductService().isActiveSerialProduct(serialProduct.getSerialStatus()))
+        .stream().filter(serialProduct -> getBlStockService().isActiveStatus(serialProduct.getSerialStatus()))
         .collect(Collectors.toList()).size();
     if(totalActiveSerialProducts > 0) {
       final int totalBufferProducts = blProduct.getSerialProducts().stream()
@@ -370,5 +372,13 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
 
   public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
     this.catalogVersionDao = catalogVersionDao;
+  }
+
+  public BlStockService getBlStockService() {
+    return blStockService;
+  }
+
+  public void setBlStockService(BlStockService blStockService) {
+    this.blStockService = blStockService;
   }
 }
