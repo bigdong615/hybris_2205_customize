@@ -297,12 +297,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
-         final Map<String, Long> stockLevelProductWise ;
-        if(CollectionUtils.isNotEmpty(lProductCodes)){
-            stockLevelProductWise=getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
-        }else{
-            stockLevelProductWise = new HashMap<>();
-        }
+        final Map<String, Long> stockLevelProductWise =
+            CollectionUtils.isNotEmpty(lProductCodes) ? getBlCommerceStockService()
+                .groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses)
+                : new HashMap<>();
         if(CollectionUtils.isNotEmpty(bundleProductList)){
             bundleProductList.forEach(productData -> {
                 stockLevelProductWise.put(productData.getCode(),productData.getStock().getStockLevel());

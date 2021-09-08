@@ -592,13 +592,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 					.map(cartEntry -> cartEntry.getProduct())
 					.collect(Collectors.toList());
 
-			final Map<String, Long> groupByProductsAvailability;
-			if(CollectionUtils.isNotEmpty(listOfProductCodes)){
-				groupByProductsAvailability=getBlCommerceStockService().groupByProductsAvailability(startDay,
-						endDay, listOfProductCodes, getBaseStoreService().getCurrentBaseStore().getWarehouses());
-			}else {
-				groupByProductsAvailability = new HashMap<>();
-			}
+			final Map<String, Long> groupByProductsAvailability =
+					CollectionUtils.isNotEmpty(listOfProductCodes) ? getBlCommerceStockService()
+							.groupByProductsAvailability(startDay, endDay, listOfProductCodes,
+									getBaseStoreService().getCurrentBaseStore().getWarehouses()) : new HashMap<>();
+
 			if(CollectionUtils.isNotEmpty(bundleProductList)) {
 				bundleProductList.forEach(blProductModel -> {
 					final StockResult stockResult = blCommerceStockService.getStockForBundleProduct(

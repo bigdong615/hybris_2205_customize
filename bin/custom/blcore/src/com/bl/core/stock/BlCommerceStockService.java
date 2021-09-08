@@ -204,11 +204,11 @@ public interface BlCommerceStockService
 
 	/**
 	 * This is to get the available count of a bundle
-	 * @param productModel
-	 * @param warehouses
-	 * @param startDate
-	 * @param endDate
-	 * @return
+	 * @param productModel product
+	 * @param warehouses store
+	 * @param startDate rental start date
+	 * @param endDate rental end date
+	 * @return availability
 	 */
 	public Long getAvailableCountForBundle(final BlProductModel productModel, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
