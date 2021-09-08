@@ -1,6 +1,8 @@
 package com.bl.core.payment.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
+
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -18,6 +20,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
@@ -99,9 +103,26 @@ public class DefaultBlPaymentService implements BlPaymentService
 	 */
 	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture, final boolean status) {
 		if(isSuccessCapture) {
+			order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
+					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
+						if (serialProduct instanceof BlSerialProductModel)
+						{
+							final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serialProduct);
+							serialProductModel.setSerialStatus(SerialStatusEnum.SHIPPED);
+							getModelService().save(serialProductModel);
+							getModelService().refresh(serialProductModel);
+						}
+					})));
+			order.getConsignments().forEach(consignment -> {
+				consignment.setStatus(ConsignmentStatus.SHIPPED);
+				getModelService().save(consignment);
+				getModelService().refresh(consignment);
+			});
+
 			order.setStatus(OrderStatus.SHIPPED);
 			order.setIsCaptured(Boolean.TRUE);
 			getModelService().save(order);
+			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
 			return true;
 		} else {
