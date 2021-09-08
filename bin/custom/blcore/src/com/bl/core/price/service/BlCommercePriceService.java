@@ -61,6 +61,12 @@ public interface BlCommercePriceService extends CommercePriceService
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays);
 
 	PriceInformation getWebPriceForTax(final ProductModel product , final AbstractOrderModel abstractOrderModel);
+
+	/**
+	 * Gets dynamic price data for rental bundle product.
+	 * @param product product
+	 * @return the dynamic price data for bundle product
+	 */
 	 PriceInformation getWebPriceForBundleProduct(final ProductModel product);
 
 }
