@@ -732,7 +732,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			else
 			{
-				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.password.mismatchMessage", null, getI18nService().getCurrentLocale()));
 				model.addAttribute(BlControllerConstants.CURRENTPASSWORD_MSG_TYPE,true);
 			}
 		}
