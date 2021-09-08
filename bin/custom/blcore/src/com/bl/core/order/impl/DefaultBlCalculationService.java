@@ -559,12 +559,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final AbstractOrderModel order = entry.getOrder();
 		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		final PriceValue dynamicBasePrice;
-		if(((BlProductModel)product).isBundleProduct()){
-			dynamicBasePrice = basePrice;
-		}else {
-			dynamicBasePrice = getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
-		}
+		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
@@ -648,12 +643,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final AbstractOrderModel order = entry.getOrder();
 		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		final PriceValue dynamicBasePrice;
-		if(((BlProductModel)product).isBundleProduct()){
-			dynamicBasePrice = basePrice;
-		}else {
-			dynamicBasePrice = getDynamicBasePriceForTax(basePrice, product , entry.getOrder());
-		}
+		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct() ? basePrice : getDynamicBasePriceForTax(basePrice, product , entry.getOrder());
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
