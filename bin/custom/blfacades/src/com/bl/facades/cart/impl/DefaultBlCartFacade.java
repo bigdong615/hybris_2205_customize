@@ -479,10 +479,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	private String getContactUsLink() {
 		try {
-			CMSLinkComponentModel contactUsNavNode = getCmsComponentService().getAbstractCMSComponent(BlCoreConstants.CONTACTUS_NAVNODE);
+			final CMSLinkComponentModel contactUsNavNode = getCmsComponentService().getAbstractCMSComponent(BlCoreConstants.CONTACTUS_NAVNODE);
 			return contactUsNavNode.getUrl() != null ? contactUsNavNode.getUrl() : org.apache.commons.lang.StringUtils.EMPTY;
 		} catch (final CMSItemNotFoundException ex) {
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, ex.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while finding the link component", ex.getMessage());
 			return StringUtils.EMPTY;
 		}
 	}

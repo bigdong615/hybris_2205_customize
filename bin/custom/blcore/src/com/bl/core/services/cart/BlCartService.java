@@ -99,7 +99,7 @@ public interface BlCartService extends CartService {
      * rental days
      * @param updatedRentalToDate
      */
-    void updatePromotionalEndDate(Date updatedRentalToDate);
+    void updatePromotionalEndDate(final Date updatedRentalToDate);
 
     /**
      * Check if the Promotion with extended days is applied to cart

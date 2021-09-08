@@ -92,7 +92,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
       cartRAO.setTotalIncludingCharges(newExtendedDaysSubtotal);
 
       final DiscountRAO discount = this.getRuleEngineCalculationService().addOrderLevelDiscount(cartRAO, true, finalDiscount);
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Discount calculated for free extended rental days is : {}" ,finalDiscount);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Discount calculated for free extended rental days is : {}" ,finalDiscount);
 
       RuleEngineResultRAO result = context.getRuleEngineResultRao();
       result.getActions().add(discount);
@@ -117,10 +117,10 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
   private Date getUpdatedEndDate(final CartRAO cartRao, final Integer freeRentalDays) {
     final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     Date updatedRentalToDate = addFreeRentalDays(freeRentalDays.longValue(), BlDateTimeUtils.convertDateToStringDate(cartRao.getRentalToDate(),BlCoreConstants.DATE_FORMAT));
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Updated Rental To Date without checking it is blackout date or Weekend: {} ",updatedRentalToDate);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Updated Rental To Date without checking it is blackout date or Weekend: {} ",updatedRentalToDate);
     if(BlDateTimeUtils.isDateFallsOnBlackOutDate(updatedRentalToDate,blackOutDates)){
       updatedRentalToDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,BlDateTimeUtils.convertDateToStringDate(updatedRentalToDate,BlCoreConstants.DATE_FORMAT), blackOutDates);
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Updated Rental To Date After checking it is blackout date or Weekend: {} ", updatedRentalToDate);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Updated Rental To Date After checking it is blackout date or Weekend: {} ", updatedRentalToDate);
     }
     return updatedRentalToDate;
   }
@@ -147,7 +147,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
           entry.setPrice(updatedEntryRentalPrice);
           entry.setBasePrice(updatedEntryRentalPrice);
 
-          BlLogger.logFormatMessageInfo(LOG, Level.INFO," extended day cart entry price for : {} rental days for product {} is : {}",rentalDays,entry.getProductCode(), updatedEntryRentalPrice);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG," extended day cart entry price for : {} rental days for product {} is : {}",rentalDays,entry.getProductCode(), updatedEntryRentalPrice);
         }
       }
     }
@@ -164,12 +164,12 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @param context
    * @return
    */
-  protected ProductModel findProduct(String productCode, RuleActionContext context) {
+  protected ProductModel findProduct(final String productCode, final RuleActionContext context) {
     ProductModel product = null;
     try {
      return this.getProductService().getProductForCode(productCode);
     } catch (Exception var5) {
-      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "no product found for code {} in rule {} cannot apply rule action.", productCode, this.getRuleCode(context) );
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "no product found for code {} in rule {} cannot apply rule action.", productCode, this.getRuleCode(context), var5 );
 
     }
     return product;
@@ -193,7 +193,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
           localDate = localDate.plusDays(1);
           addedDays++;
         }
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Added final to end date {} ", localDate);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Added {} free rental days in end date {}",numberOfDaysToAdd,localDate);
 
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
       }

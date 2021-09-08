@@ -83,15 +83,13 @@ public class BlDatePickerController extends AbstractPageController
 			{
 				if (!(blDatePickerService.checkIfSelectedDateIsSame(request, startDay, endDay)))
 				{
-					//added for getting explicit days on the Date Picker selected by user
-					final StringBuilder datePickerDurationCookieValue = new StringBuilder();
-					datePickerDurationCookieValue.append(rentalDuration);
 					final StringBuilder datePickerCookieValue = new StringBuilder();
 					datePickerCookieValue.append(startDay);
 					datePickerCookieValue.append(BlControllerConstants.SEPARATOR);
 					datePickerCookieValue.append(endDay);
 					blRentalDateCookieGenerator.addCookie(response, datePickerCookieValue.toString());
-					blRentalDurationCookieGenerator.addCookie(response, datePickerDurationCookieValue.toString());
+					//added for getting explicit days on the Date Picker selected by user
+					blRentalDurationCookieGenerator.addCookie(response, rentalDuration);
 					// Setting rental start date and end date on cart
 					getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 					// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is changed

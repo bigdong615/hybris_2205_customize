@@ -562,7 +562,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         if (updatedRentalToDate != null && cartModel != null) {
             final String cartCode = cartModel.getCode();
             cartModel.setRentalEndDate(updatedRentalToDate);
-            BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,"Setting Rental Cart End Date: {} on Cart: {}", cartModel.getRentalEndDate(), cartCode);
+            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,"Setting Rental Cart End Date: {} on Cart: {}", cartModel.getRentalEndDate(), cartCode);
             try {
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
@@ -590,13 +590,13 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(getSessionCart());
           if (blPromoGroup != null && CollectionUtils.isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
             final Date currentDate = new Date();
-            Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
-            Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains(BlCoreConstants.QUALIFYING_COUPONS)).findAny();
-            boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
+            final Optional<PromotionSourceRuleModel> extendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus())).findAny();
+            final Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains(BlCoreConstants.QUALIFYING_COUPONS)).findAny();
+            final boolean isPromotionActiveInBackend = extendedRentalDayPromotion.isPresent()  && extendedRentalDayPromotion.get().getStartDate() != null
                 && extendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= extendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= extendedRentalDayPromotion.get().getEndDate().getTime();
-            boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
+            final boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
                 && couponExtendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= couponExtendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= couponExtendedRentalDayPromotion.get().getEndDate().getTime();
-            boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
+            final boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(extendedRentalDayPromotion.get().getCode()) || promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
             return  (isPromotionActiveInBackend || isCouponPromotionActiveInBackend) && orderResult;
         }
       return false;
