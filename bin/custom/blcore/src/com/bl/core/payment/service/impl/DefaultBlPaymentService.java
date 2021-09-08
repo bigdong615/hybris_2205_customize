@@ -99,7 +99,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 	 */
 	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture, final boolean status) {
 		if(isSuccessCapture) {
-			order.setStatus(OrderStatus.PAYMENT_CAPTURED);
+			order.setStatus(OrderStatus.SHIPPED);
 			order.setIsCaptured(Boolean.TRUE);
 			getModelService().save(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
