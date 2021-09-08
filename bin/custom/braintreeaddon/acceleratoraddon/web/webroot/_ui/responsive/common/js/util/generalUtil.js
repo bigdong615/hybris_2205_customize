@@ -15,13 +15,18 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
 
     if ((typeof addPaymentMethodsPage != 'undefined')) {
         payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/add-payment-method");
-    } else {
+    } 
+   else {
         payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/express");
     }
 
     if($('#js-extend-order-page').val() == 'true'){
            payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/extendOrder-payment");
     }
+    
+    if($('#js-modify-order-page').val() == 'true'){
+        payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/modify-payment-method");
+ }
 
     if ($(CONST.SAVE_PAYMENT_INFO_ID + ':' + CONST.PROP_CHECKED).val() === CONST.TRUE || forceVault === true) {
         isSavePaymentInfo = createHiddenParameter("isSaved", CONST.TRUE);
@@ -42,7 +47,9 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     payPalForm.append($(extendOrderPage));
     var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
     var payBillTotal = createHiddenParameter("payBillTotal", $("#payBillTotal").val());
-   
+    var modifyOrderTotal = createHiddenParameter("modifyOrderTotal", $("#modifyOrderTotal").val());
+    
+    payPalForm.append($(modifyOrderTotal));
     payPalForm.append($(payBillTotal));
     payPalForm.append($(orderCode));
 
