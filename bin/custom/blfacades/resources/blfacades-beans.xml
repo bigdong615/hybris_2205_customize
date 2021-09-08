@@ -201,6 +201,7 @@
 	  	<property name="isUnPaidBillPresent" type="java.lang.Boolean"/>
         <property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
         <property name="orderTotalWithTaxForPayBill" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+        <property name="customerOwnedOrderNote" type="java.lang.String"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -643,6 +644,7 @@
 		<property name="orderStatus" type="java.lang.String"/>
 		<property name="replacementFor" type="java.lang.String" />
 		<property name="isReplacementOrder " type="java.lang.Boolean"/>
+		<property name="isCaptured" type="java.lang.Boolean"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->
