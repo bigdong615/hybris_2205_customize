@@ -107,7 +107,7 @@
 															</c:otherwise>
 														</c:choose>
 													<spring:theme code="text.review.page.your.rental.total"/>  <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
-												 <c:if test="${cartEntry.product.bundleProductReference}">
+												 <c:if test="${not empty cartEntry.product.bundleProductReference}">
 												 <ul class="checklist mt-4">
                            <c:forEach items="${cartEntry.product.bundleProductReference}" var="bundleItems">
                                 <li>  ${bundleItems.productReferenceName}</li>
