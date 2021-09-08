@@ -135,7 +135,7 @@
                             <checkbox value="${each.waiver}" class="oms-widget-cancelorder-list-container__checkbox" width="153px"
                                       name="waiver_${each.orderEntry.product.code}" id="waiver_${each.orderEntry.product.code}"
                                       label="${each.orderEntry.gearGuardWaiverSelected ? each.orderEntry.gearGuardWaiverPrice :
-                                            each.orderEntry.gearGuardProFullWaiverPrice}"/>
+                                            each.orderEntry.gearGuardProFullWaiverSelected ? each.orderEntry.gearGuardProFullWaiverPrice : 0.0 }"/>
                             <textbox value="${each.refundedAmount}" width="152px" class="oms-widget-cancelorder--qty-label"
                                      name="refundedAmount_${each.orderEntry.product.code}" id="refundedAmount_${each.orderEntry.product.code}" readonly="true"/>
                             <intbox value="${each.quantityAvailableToCancel}" width="152px" class="oms-widget-cancelorder--qty-label"
