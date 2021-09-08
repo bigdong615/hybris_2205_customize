@@ -285,15 +285,13 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
                                                           final RentalDateDto rentalDatesFromSession) {
-        final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
-                .collect(Collectors.toList());
-        final List<ProductData> bundleProductList = new ArrayList<>();
-        cartData.getEntries().forEach(orderEntryData -> {
-            if(orderEntryData.getProduct().isIsBundle()){
-                bundleProductList.add(orderEntryData.getProduct());
-                lProductCodes.remove(orderEntryData.getProduct().getCode());
-            }
-        });
+
+        final List<String> lProductCodes =  cartData.getEntries().stream().filter(cartEntry -> !cartEntry.getProduct().isIsBundle())
+            .map(cartEntry -> cartEntry.getProduct().getCode())
+            .collect(Collectors.toList());
+        final List<ProductData> bundleProductList = cartData.getEntries().stream().filter(cartEntry -> cartEntry.getProduct().isIsBundle())
+            .map(cartEntry -> cartEntry.getProduct())
+            .collect(Collectors.toList());
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,

@@ -28,6 +28,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
@@ -583,17 +584,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		{
 			final Date startDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedFromDate(), BlFacadesConstants.DATE_FORMAT);
 			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
-			final List<String> listOfProductCodes = cartModel.getEntries().stream()
-					.map(cartEntry -> cartEntry.getProduct().getCode()).collect(Collectors.toList());
 
-			final List<BlProductModel> bundleProductList = new ArrayList<>();
-			cartModel.getEntries().forEach(orderEntryModel -> {
-				BlProductModel blProductModel = (BlProductModel)orderEntryModel.getProduct();
-				if(blProductModel.isBundleProduct()){
-					bundleProductList.add(blProductModel);
-					listOfProductCodes.remove(blProductModel.getCode());
-				}
-			});
+			final List<String> listOfProductCodes =  cartModel.getEntries().stream().filter(cartEntry -> !((BlProductModel)cartEntry.getProduct()).isBundleProduct())
+					.map(cartEntry -> cartEntry.getProduct().getCode())
+					.collect(Collectors.toList());
+			final List<ProductModel> bundleProductList = cartModel.getEntries().stream().filter(cartEntry -> ((BlProductModel)cartEntry.getProduct()).isBundleProduct())
+					.map(cartEntry -> cartEntry.getProduct())
+					.collect(Collectors.toList());
+
 			final Map<String, Long> groupByProductsAvailability;
 			if(CollectionUtils.isNotEmpty(listOfProductCodes)){
 				groupByProductsAvailability=getBlCommerceStockService().groupByProductsAvailability(startDay,
@@ -604,7 +602,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			if(CollectionUtils.isNotEmpty(bundleProductList)) {
 				bundleProductList.forEach(blProductModel -> {
 					final StockResult stockResult = blCommerceStockService.getStockForBundleProduct(
-							blProductModel, getBaseStoreService().getCurrentBaseStore().getWarehouses(), startDay, endDay);
+							(BlProductModel) blProductModel, getBaseStoreService().getCurrentBaseStore().getWarehouses(), startDay, endDay);
 					groupByProductsAvailability
 							.put(blProductModel.getCode(),stockResult.getAvailableCount() );
 				});
