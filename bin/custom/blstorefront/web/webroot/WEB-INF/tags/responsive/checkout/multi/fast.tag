@@ -13,7 +13,7 @@
     </div>
     <div class="col-1 text-center">
         <button class="btn-checkbox" type="button" data-bs-toggle="collapse" data-bs-target="#ship-it-expand"
-            aria-controls="ship-it-expand" aria-expanded="false">
+            aria-controls="ship-it-expand" aria-expanded="false" onClick="$('#validationMessage').empty();">
             <input type="radio" id="ship-it" name="shipProduct" ><label for="ship-it"></label>
         </button>
     </div>

@@ -59,9 +59,18 @@
                 								</li>
                 								<li>
                 								<c:if test="${order.rentalCart}">
+                								
                 								 <c:url value="/rent/product/${order.productCode}" var="rentOrderAction" />
                                  <a href="${rentOrderAction}">
                                                         <spring:theme code="order.gift.card.myaccount.order.another"/> </a>
+                							  </c:if>
+                								</li>
+                								<li>
+                						
+                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
+                                 <a href="${modifyPaymentAction}">
+                                                        <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 							</ul>
@@ -150,7 +159,8 @@
                             </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">
-                						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
+                					
+                						<div class="btn-group view-links"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
                 							<ul class="dropdown-menu" aria-labeledby="btn-rental-001">
                 								<li>
                 									<c:url value="/my-account/order/${order.code}" var="viewOrderAction" />
@@ -162,6 +172,15 @@
                 								 <c:url value="/my-account/order/${order.code}" var="rentOrderAction" />
                                                    <a href="${rentOrderAction}">
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
+                							  </c:if>
+                								</li>
+                								<li>
+                								
+                						
+                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
+                                                      <a href="${modifyPaymentAction}">
+                                                        <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 							</ul>
