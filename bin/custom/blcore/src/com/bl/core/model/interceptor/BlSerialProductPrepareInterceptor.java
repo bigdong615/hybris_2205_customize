@@ -213,10 +213,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
 						.isActiveStatus((SerialStatusEnum) initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
-				} else if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
-						.isInactiveStatus((SerialStatusEnum) initialValue)){
-					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
-				}else if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
+				} else if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
 					createStockRecordsForNewProducts(blSerialProduct, initialValue);
 				}
 			}
