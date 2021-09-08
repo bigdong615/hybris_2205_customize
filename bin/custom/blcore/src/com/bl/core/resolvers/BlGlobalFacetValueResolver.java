@@ -24,7 +24,8 @@ public class BlGlobalFacetValueResolver extends
   private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION,BlCoreConstants.PACKAGE,BlCoreConstants.GEAR_PACKAGE);
 
   private ModelService modelService;
-  
+
+
   /**
    *
    * @param inputDocument inputDocument adds field values to solr
