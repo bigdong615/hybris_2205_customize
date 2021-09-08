@@ -17,11 +17,9 @@ import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
-
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
-
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -451,7 +449,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 						else if (BooleanUtils.negate(availableQty >= cartEntryQty)) {
 							if(getBlCartService().isFreeRentalDayPromoApplied()){
 								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
-										Arrays.asList(String.valueOf(availableQty),getContactUsLink() )));
+										Arrays.asList(getContactUsLink())));
 							}
 							else{
 								entry.setAvailabilityMessage(
@@ -479,11 +477,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	private String getContactUsLink() {
 		try {
-			final CMSLinkComponentModel contactUsNavNode = getCmsComponentService().getAbstractCMSComponent(BlCoreConstants.CONTACTUS_NAVNODE);
-			return contactUsNavNode.getUrl() != null ? contactUsNavNode.getUrl() : org.apache.commons.lang.StringUtils.EMPTY;
+			final CMSLinkComponentModel contactUsNavNode = getCmsComponentService().getAbstractCMSComponent(BlCoreConstants.CONTACTUS_NAV_LINK);
+			return contactUsNavNode.getUrl() != null ? contactUsNavNode.getUrl() : BlCoreConstants.CONTACTUS_LINK;
 		} catch (final CMSItemNotFoundException ex) {
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while finding the link component", ex.getMessage());
-			return StringUtils.EMPTY;
+      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while finding the link component", ex);
+			return BlCoreConstants.CONTACTUS_LINK;
 		}
 	}
 
