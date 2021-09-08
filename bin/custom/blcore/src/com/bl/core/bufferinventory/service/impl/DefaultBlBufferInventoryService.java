@@ -142,7 +142,8 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
    * @param onlineCatalog online catalog version model
    * @param isBufferProduct flag to identify buffer product
    */
-  private void markBufferProductInOnlineVersion(String code, CatalogVersionModel onlineCatalog, Boolean isBufferProduct) {
+  private void markBufferProductInOnlineVersion(final String code, final CatalogVersionModel onlineCatalog,
+      final Boolean isBufferProduct) {
     final BlSerialProductModel serialProductInOnlineVersion = getSerialProduct(code, onlineCatalog);
     if(null != serialProductInOnlineVersion) {
       serialProductInOnlineVersion.setIsBufferedInventory(isBufferProduct);
@@ -154,9 +155,9 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
    * It sets buffer inventory percentage in product of online version
    * @param code product code
    * @param onlineCatalog online catalog version model
-   * @param bufferInvPercentage buffer inventry percentage
+   * @param bufferInvPercentage buffer inventory percentage
    */
-  private void setBufferInvPercentInOnlineVersionProduct(String code, CatalogVersionModel onlineCatalog,
+  private void setBufferInvPercentInOnlineVersionProduct(final String code, final CatalogVersionModel onlineCatalog,
       final Double bufferInvPercentage) {
     final BlProductModel blProductInOnlineVersion = getSkuProduct(code, onlineCatalog);
     if(null != blProductInOnlineVersion) {
