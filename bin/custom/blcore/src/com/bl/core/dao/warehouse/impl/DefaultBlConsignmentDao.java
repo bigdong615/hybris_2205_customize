@@ -2,10 +2,12 @@ package com.bl.core.dao.warehouse.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.ItemModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
@@ -39,6 +42,12 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
   
   private static final String CONSIGNMENT_FOR_RETURN_DATE_QUERY = "SELECT {con:" + ItemModel.PK + "} FROM {" 
 		  + ConsignmentModel._TYPECODE + " as con} WHERE {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?returnDate";
+  
+  private static final String CONSIGNMENT_ENTRY_FOR_SERIAL_AND_FROM_DATE = "SELECT {ce:" + ItemModel.PK + "} from {"
+			+ ConsignmentEntryModel._TYPECODE + " as ce}, {"
+			+ ConsignmentModel._TYPECODE + " as con} where {ce:" + ConsignmentEntryModel.SERIALPRODUCTS
+			+ "} LIKE CONCAT('%',CONCAT(?serial,'%'))" + " and {con:" + ItemModel.PK + "} = {ce:"
+			+ ConsignmentEntryModel.CONSIGNMENT + "} and {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} >= ?fromDate"; 
 
   /**
    * Get consignments
@@ -115,6 +124,34 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 		}
 		final List<ConsignmentModel> result = search.getResult();
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment found : {} for return date: {}", result, returnDate);
+		return Lists.newArrayList(result);
+	}
+  
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCodeAndDate(final BlSerialProductModel serial,
+			final Date fromDate)
+	{
+		Validate.notNull(serial, "Serial Product must not be null", null);
+		Validate.notNull(fromDate, "From Date must not be null", null);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL_AND_FROM_DATE);
+		fQuery.addQueryParameter("serial", serial);
+		final SimpleDateFormat simpleformat = new SimpleDateFormat(BlCoreConstants.QUERY_DATE_FORMAT);
+		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(fromDate);
+		fQuery.addQueryParameter(BlCoreConstants.FROM_DATE, simpleformat.format(startDate.getTime()));
+		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {} and from date : {}",
+					serial.getCode(), fromDate);
+			return Lists.newArrayList();
+		}
+		final List<ConsignmentEntryModel> result = search.getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry found : {} for serial : {} and from date: {}", result,
+				serial.getCode(), fromDate);
 		return Lists.newArrayList(result);
 	}
 
