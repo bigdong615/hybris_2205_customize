@@ -24,6 +24,7 @@ public class BlOrdermanagementConstants extends GeneratedBlOrdermanagementConsta
 	public static final String CONSIGNMENT_PICKUP = "ConsignmentPickup";
 	public static final String ORDER_PROCESS = "order-process";
 	public static final int TWO = 2;
+	public static final String UNDER_SCORE = "_";
 	
 	private BlOrdermanagementConstants()
 	{
