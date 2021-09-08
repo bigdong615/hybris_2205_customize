@@ -1,5 +1,8 @@
 package com.bl.core.services.strategy.impl;
 
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.product.service.BlProductService;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
@@ -11,10 +14,13 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,6 +143,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		final RentalDateDto rentalDateDto = getBlDatePickerService().getRentalDatesFromSession();
 		try
 		{
+			Long stocksAvailable = 0l;
 			final DeliveryModeModel deliveryMode = cartEntryModel.getOrder().getDeliveryMode();
 			if (Objects.nonNull(rentalDateDto) && deliveryMode instanceof ZoneDeliveryModeModel)
 			{
@@ -145,12 +152,50 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 				{
 					return Long.valueOf(0);
 				}
-				final Date startDay = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-						BlCoreConstants.DATE_FORMAT);
-				final Date endDay = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-						BlCoreConstants.DATE_FORMAT);
-				return getBlCommerceStockService().getAvailableCount(cartEntryModel.getProduct().getCode(), listOfWarehouses,
-						startDay, endDay);
+
+				final int preDaysToDeduct =
+						StringUtils.isNotBlank(((ZoneDeliveryModeModel)deliveryMode).getPreReservedDays()) ? Integer
+								.parseInt(((ZoneDeliveryModeModel)deliveryMode).getPreReservedDays()) : 0;
+
+				final int postDaysToAdd =
+						StringUtils.isNotBlank(((ZoneDeliveryModeModel)deliveryMode).getPostReservedDays()) ? Integer
+								.parseInt(((ZoneDeliveryModeModel)deliveryMode).getPostReservedDays()) : 0;
+
+				final List<Date> holidayBlackoutDates = getBlDatePickerService()
+						.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+
+				final Date rentalStartDate = BlDateTimeUtils
+						.subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(), holidayBlackoutDates);
+				final Date rentalEndDate = BlDateTimeUtils
+						.addDaysInRentalDates(postDaysToAdd, rentalDateDto.getSelectedToDate(), holidayBlackoutDates);
+
+				stocksAvailable = getStocksForProductAndDate(cartEntryModel, listOfWarehouses,
+						rentalStartDate, rentalEndDate);
+
+				if (deliveryMode instanceof BlPickUpZoneDeliveryModeModel
+						|| deliveryMode instanceof BlRushDeliveryModeModel) {
+
+					if (stocksAvailable < cartEntryModel.getQuantity()) {  //check in other warehouse with +1 start date
+
+						final Date newStartDate = BlDateTimeUtils.getDateWithSubtractedDays(rentalStartDate, 1);
+						if (newStartDate.after(new Date()) || BlDateTimeUtils
+								.compareTimeWithCutOff(((ZoneDeliveryModeModel) deliveryMode).getCutOffTime())) {
+
+							final List<WarehouseModel> otherListOfWarehouses = getBaseStoreService()
+									.getCurrentBaseStore().getWarehouses().stream().filter(
+											warehouseModel -> !warehouseModel.getCode()
+													.equalsIgnoreCase(listOfWarehouses.get(0).getCode()))
+									.collect(Collectors.toList());
+
+							stocksAvailable = getStocksForProductAndDate(cartEntryModel, otherListOfWarehouses,
+									newStartDate, rentalEndDate);
+						} else {
+							stocksAvailable = 0l;
+						}
+					}
+				}
+
+				return stocksAvailable;
 			}
 		}
 		catch (final Exception exception)
@@ -160,6 +205,15 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 					cartEntryModel.getProduct().getCode());
 		}
 		return Long.valueOf(0);
+	}
+
+	private Long getStocksForProductAndDate(final CartEntryModel cartEntryModel,
+			final List<WarehouseModel> listOfWarehouses, final Date rentalStartDate,
+			final Date rentalEndDate) {
+
+		return getBlCommerceStockService()
+				.getAvailableCount(cartEntryModel.getProduct().getCode(), listOfWarehouses,
+						rentalStartDate, rentalEndDate);
 	}
 
 	@Override

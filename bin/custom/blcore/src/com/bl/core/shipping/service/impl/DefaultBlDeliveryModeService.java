@@ -47,8 +47,6 @@ import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +63,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -786,13 +783,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
         if (Objects.nonNull(deliveryModeModel)) {
 
-            final int preDaysToDeduct =
-                StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
-                    .parseInt(deliveryModeModel.getPreReservedDays()) : 0;
+            final int preDaysToDeduct = Integer.parseInt(deliveryModeModel.getPreReservedDays());
 
-            final int postDaysToAdd =
-                StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
-                    .parseInt(deliveryModeModel.getPostReservedDays()) : 0;
+            final int postDaysToAdd = Integer.parseInt(deliveryModeModel.getPostReservedDays());
 
             final List<Date> holidayBlackoutDates = getBlDatePickerService()
                 .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
@@ -802,13 +795,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             final Date rentalEndDate = BlDateTimeUtils
                 .addDaysInRentalDates(postDaysToAdd, rentalEnd, holidayBlackoutDates);
 
-            if (rentalStartDate.after(new Date())) {
+            if (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel
+                || deliveryModeModel instanceof BlRushDeliveryModeModel) {
 
+                isAvailable.set(
+                    checkAvailabilityForPossibleInternalTransferOrders(deliveryModeModel,
+                        rentalStartDate, rentalEndDate));
+
+            } else {
                 final Set<WarehouseModel> lWareHouses =
                     Objects.nonNull(deliveryModeModel.getWarehouse())
                         ? Sets.newHashSet(deliveryModeModel.getWarehouse())
                         : Sets.newHashSet(
                             getBaseStoreService().getCurrentBaseStore().getWarehouses());
+
                 final CartModel cartModel = getBlCartService().getSessionCart();
                 cartModel.getEntries().forEach(cartEntry -> {
                     final StockResult stockForEntireDuration = getBlCommerceStockService()
@@ -824,12 +824,58 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     }
 
                 });
-            } else {
-                isAvailable.set(Boolean.FALSE);
-            }
-            return isAvailable.get();
 
+                return isAvailable.get();
+            }
         }
+        return isAvailable.get();
+    }
+
+    private boolean checkAvailabilityForPossibleInternalTransferOrders(
+        final ZoneDeliveryModeModel deliveryModeModel, final Date rentalStartDate,
+        final Date rentalEndDate) {
+
+        final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
+
+            final Set<WarehouseModel> selectedWareHouse = Sets
+                .newHashSet(deliveryModeModel.getWarehouse());
+
+            final Set<WarehouseModel> otherWareHouse = getBaseStoreService().getCurrentBaseStore()
+                .getWarehouses().stream().filter(warehouse -> !warehouse.getCode()
+                    .equalsIgnoreCase(deliveryModeModel.getWarehouse().getCode())).collect(
+                    Collectors.toSet());
+
+            final CartModel cartModel = getBlCartService().getSessionCart();
+            cartModel.getEntries().forEach(cartEntry -> {
+                final StockResult stockForEntireDuration = getBlCommerceStockService()
+                    .getStockForEntireDuration(
+                        cartEntry.getProduct().getCode(), selectedWareHouse, rentalStartDate,
+                        rentalEndDate);
+
+                if (!productService.isAquatechProduct(cartEntry.getProduct())
+                    && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+
+                    //here not available, so check in other warehouse  with +1 start date
+                    final Date newStartDate = BlDateTimeUtils.getDateWithSubtractedDays(rentalStartDate, 1);
+                    if (newStartDate.after(new Date()) || BlDateTimeUtils
+                        .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())) {
+
+                        final StockResult stockForEntireDurationOtherWarehouse = getBlCommerceStockService()
+                            .getStockForEntireDuration(
+                                cartEntry.getProduct().getCode(), otherWareHouse, newStartDate,
+                                rentalEndDate);
+                        if (stockForEntireDurationOtherWarehouse.getAvailableCount() < cartEntry
+                            .getQuantity()) {
+                            //change the start date with +1 internal transfer
+                            isAvailable.set(false);
+                            return;
+                        }
+                    }
+
+                }
+
+            });
+
         return isAvailable.get();
     }
 
@@ -861,43 +907,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return getBlZoneDeliveryModeDao().getOptimizedShippingMethod(code);
     }
 
-    /**
-     * Gets the rental start date by subtracting number of days to skip for selected delivery mode.
-     *
-     * @param rentalStartDate    the rental start date
-     * @param numberOfDaysToSkip the number of days to skip
-     * @return the rental start date
-     */
-    private Date getRentalStartDate(final String rentalStartDate, final int numberOfDaysToSkip) {
-        LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalStartDate, BlCoreConstants.DATE_FORMAT);
-        int subtractedDays = 0;
-        while (subtractedDays < numberOfDaysToSkip) {
-            startDate = startDate.minusDays(1);
-            if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-                ++subtractedDays;
-            }
-        }
-        return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
-
-    /**
-     * Gets the rental end date by adding number of days to skip for selected delivery mode..
-     *
-     * @param rentalEndDate     the rental end date
-     * @param numberOfDaysToAdd the number of days to add
-     * @return the rental end date
-     */
-    private Date getRentalEndDate(final String rentalEndDate, final int numberOfDaysToAdd) {
-        LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalEndDate, BlCoreConstants.DATE_FORMAT);
-        int addedDays = 0;
-        while (addedDays < numberOfDaysToAdd) {
-            endDate = endDate.plusDays(1);
-            if (!(endDate.getDayOfWeek() == DayOfWeek.SATURDAY || endDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-                ++addedDays;
-            }
-        }
-        return Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
 
     /**
      * {@inheritDoc}

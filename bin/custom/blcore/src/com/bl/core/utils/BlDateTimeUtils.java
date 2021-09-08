@@ -724,4 +724,21 @@ public final class BlDateTimeUtils
 		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(date);
 	}
 
+	/**
+	 * This method will return new Date after subtracting given no of days from it.
+	 *
+	 * @param givenDate date
+	 * @return noOfDaysToSubtract integer to be subtracted as days
+	 */
+	public static Date getDateWithSubtractedDays(final Date givenDate, final int noOfDaysToSubtract) {
+
+		LocalDate rentalStartLocalDate = givenDate.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDate();
+
+		rentalStartLocalDate = rentalStartLocalDate.minusDays(noOfDaysToSubtract);
+
+		return Date.from(rentalStartLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+	}
 }
