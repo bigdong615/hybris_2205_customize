@@ -45,7 +45,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
    * {@inheritDoc}
    */
   @Override
-  public void updateBufferInvProducts() throws BusinessException {
+  public void updateBufferInventory() throws BusinessException {
     final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
         BlCoreConstants.BASE_STORE_ID);
     if(null != baseStore) {
@@ -57,11 +57,11 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
         final Integer minQtyForBufferInv = baseStore.getMinQtyForBufferInventory();
         final Integer minQtyForBufferInventory = (null != minQtyForBufferInv &&
             minQtyForBufferInv > 0) ? minQtyForBufferInv : 0;
-        updateBufferInvData(bufferInventoryPercentage, minQtyForBufferInventory);
+        updateBufferInventoryForProducts(bufferInventoryPercentage, minQtyForBufferInventory);
       } catch (final Exception exception) {
         BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred for BlBufferInventoryCronJob ",
             exception);
-        throw new BusinessException("Exception occurred for BlBufferInventoryCronJob");
+        throw new BusinessException("Error while updating the buffer inventory for products");
       }
     } else {
       throw new BusinessException("Base Store should not be null");
@@ -87,7 +87,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
    * @param bufferInvPercentage
    * @param minQtyForBufferInventory
    */
-  private void updateBufferInvData(final Double bufferInvPercentage, final Integer minQtyForBufferInventory) {
+  private void updateBufferInventoryForProducts(final Double bufferInvPercentage, final Integer minQtyForBufferInventory) {
     final Collection<BlProductModel> skuProducts = getProductDao(). getAllActiveSkuProducts();
     final Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
           .CATALOG_VALUE, BlCoreConstants.ONLINE);
@@ -131,6 +131,9 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
     final BlProductModel blProductInOnlineVersion = getSkuProduct(blProductModel.getCode(), onlineCatalog);
     if(null != blProductInOnlineVersion) {
       blProductInOnlineVersion.setBufferedInventoryPercentage(blProductModel.getBufferedInventoryPercentage());
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "buffer inventory percentage {} is set for the product {}",
+          blProductInOnlineVersion.getBufferedInventoryPercentage(), blProductInOnlineVersion.getCode());
       blProductInOnlineVersion.setBufferInvPercChangedManually(blProductModel.isBufferInvPercChangedManually());
       saveRecord(blProductInOnlineVersion);
     }
@@ -147,6 +150,9 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
     final BlSerialProductModel serialProductInOnlineVersion = getSerialProduct(code, onlineCatalog);
     if(null != serialProductInOnlineVersion) {
       serialProductInOnlineVersion.setIsBufferedInventory(isBufferProduct);
+      BlLogger
+          .logFormatMessageInfo(LOG, Level.DEBUG, "{} product is marked as buffer inventory ",
+              code);
       saveRecord(serialProductInOnlineVersion);
     }
   }
@@ -162,6 +168,9 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
     final BlProductModel blProductInOnlineVersion = getSkuProduct(code, onlineCatalog);
     if(null != blProductInOnlineVersion) {
       blProductInOnlineVersion.setBufferedInventoryPercentage(bufferInvPercentage);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "buffer inventory percentage {} is set for the product {}",
+          bufferInvPercentage, code);
       saveRecord(blProductInOnlineVersion);
     }
   }
@@ -174,8 +183,8 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
     try {
       getModelService().save(object);
     } catch (final ModelSavingException exception) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while saving the instance {} as part "
-          + "of BlBufferInventoryCronJob ", object.toString(), exception);
+      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while saving the instance {} as part of BlBufferInventoryCronJob ",
+          object.toString(), exception);
     }
   }
 
@@ -190,7 +199,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
       return (BlProductModel) productService
           .getProductForCode(onlineCatalog, code);
     } catch(final UnknownIdentifierException exception) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while getting the product instance ",
+      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while getting the product instance {} ",
           code, exception);
     }
     return null;
@@ -207,7 +216,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
       return (BlSerialProductModel) productService
           .getProductForCode(onlineCatalog, code);
     } catch(final UnknownIdentifierException exception) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while getting the product instance ",
+      BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while getting the product instance {} ",
           code, exception);
     }
     return null;

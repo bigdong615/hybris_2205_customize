@@ -40,7 +40,7 @@ public class BlConsignmentStatusValidateInterceptor implements ValidateIntercept
 
 		for (final PrincipalGroupModel userGroup : currentUser.getGroups())
 		{
-			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(currentUser.getUid()))
+			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(userGroup.getUid()))
 			{
 				isCsAgent = true;
 				break;
