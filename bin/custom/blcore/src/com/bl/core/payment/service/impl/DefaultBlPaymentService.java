@@ -111,18 +111,21 @@ public class DefaultBlPaymentService implements BlPaymentService
 							serialProductModel.setSerialStatus(SerialStatusEnum.SHIPPED);
 							getModelService().save(serialProductModel);
 							getModelService().refresh(serialProductModel);
+							BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for serial {}",serialProductModel.getSerialStatus(),serialProductModel.getCode());
 						}
 					})));
 			order.getConsignments().forEach(consignment -> {
 				consignment.setStatus(ConsignmentStatus.SHIPPED);
 				getModelService().save(consignment);
 				getModelService().refresh(consignment);
-			});
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}",consignment.getStatus(),consignment.getCode());
 
+			});
 			order.setStatus(OrderStatus.SHIPPED);
 			order.setIsCaptured(Boolean.TRUE);
 			getModelService().save(order);
 			getModelService().refresh(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for order {}",order.getStatus(),order.getCode());
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
 			return true;
 		} else {
