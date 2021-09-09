@@ -196,6 +196,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 				}
 
 				return stocksAvailable;
+
 			}
 		}
 		catch (final Exception exception)

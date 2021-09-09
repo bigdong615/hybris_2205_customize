@@ -3,16 +3,21 @@ package com.bl.facades.populators;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 
+import com.bl.facades.product.data.BlBundleReferenceData;
 import com.bl.facades.product.data.BlOptionData;
 import com.google.common.collect.Lists;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import com.bl.core.model.BlSerialProductModel;
@@ -141,8 +146,46 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
 				? ((BlSerialProductModel) product).getBlProduct() : product));
 		if(product!= null) {
-			entry.getProduct().setProductId(((BlProductModel) product).getProductId());
-			entry.getProduct().setIsVideo(((BlProductModel) product).getIsVideo());
+			populatingBlProductSpecificData(product,entry.getProduct());
 		}
 	}
+
+	/**
+	 * This method used for populating BlProduct specific data for OrderEntry.
+	 * @param productModel
+	 * @param productData
+	 */
+	private void populatingBlProductSpecificData(final ProductModel productModel,
+			final ProductData productData) {
+		BlProductModel blProductModel = (BlProductModel) productModel;
+		productData.setProductId(blProductModel.getProductId());
+		productData.setIsVideo(blProductModel.getIsVideo());
+		productData.setIsBundle(blProductModel.isBundleProduct());
+		populateBundleEntryData(blProductModel, productData);
+	}
+
+	/**
+	 * This method is used for populating all sku name for single bundle product.
+	 * @param blProductModel
+	 * @param productData
+	 */
+	private void populateBundleEntryData(final BlProductModel blProductModel,
+			final ProductData productData) {
+		List<ProductReferenceModel> referenceModel = blProductModel.getProductReferences().stream()
+				.filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType()))
+				.collect(
+						Collectors.toList());
+		if (CollectionUtils.isNotEmpty(referenceModel)) {
+			List<BlBundleReferenceData> bundleProductReference = new ArrayList<>();
+			referenceModel.forEach(productReferenceModel -> {
+				BlBundleReferenceData blBundleReferenceData = new BlBundleReferenceData();
+				blBundleReferenceData.setProductReferenceName(productReferenceModel.getTarget().getName());
+				bundleProductReference.add(blBundleReferenceData);
+			});
+			productData.setBundleProductReference(bundleProductReference);
+		}
+	}
+
+
+
 }

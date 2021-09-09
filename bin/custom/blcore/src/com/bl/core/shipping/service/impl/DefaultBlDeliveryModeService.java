@@ -847,10 +847,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
             final CartModel cartModel = getBlCartService().getSessionCart();
             cartModel.getEntries().forEach(cartEntry -> {
-                final StockResult stockForEntireDuration = getBlCommerceStockService()
-                    .getStockForEntireDuration(
-                        cartEntry.getProduct().getCode(), selectedWareHouse, rentalStartDate,
-                        rentalEndDate);
+
+                final StockResult stockForEntireDuration =
+                    ((BlProductModel) cartEntry.getProduct()).isBundleProduct()
+                        ? getBlCommerceStockService()
+                        .getStockForBundleProduct((BlProductModel) cartEntry.getProduct(),
+                            lWareHouses, rentalStartDate, rentalEndDate)
+                        : getBlCommerceStockService()
+                            .getStockForEntireDuration(cartEntry.getProduct().getCode(),
+                                lWareHouses, rentalStartDate, rentalEndDate);
 
                 if (!productService.isAquatechProduct(cartEntry.getProduct())
                     && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {

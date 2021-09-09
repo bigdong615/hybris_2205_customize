@@ -166,7 +166,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         modelService.refresh(inputObject);
         if(inputObject.getOriginalOrderTotalAmount() == null || inputObject.getOriginalOrderTotalAmount() ==
                 BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
-            inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
+            if(inputObject.getGrandTotal() > BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
+                inputObject.setOriginalOrderTotalAmount(inputObject.getGrandTotal());
+            } else {
+                inputObject.setOriginalOrderTotalAmount(inputObject.getTotalPrice());
+            }
             modelService.save(inputObject);
             modelService.refresh(inputObject);
         }
@@ -349,7 +353,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                                 .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
                         orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
                                 .getQuantityAvailableToCancel()))), (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
-                                ? orderEntryModel.getGearGuardWaiverPrice() : orderEntryModel.getGearGuardProFullWaiverPrice()));
+                                ? orderEntryModel.getGearGuardWaiverPrice() : (orderEntryModel.getGearGuardProFullWaiverSelected() ?
+                                orderEntryModel.getGearGuardProFullWaiverPrice() : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)));
                 if (orderEntryToCancelDto.getAmount() <= totAmount) {
                     totalAmountToRefund = totalAmountToRefund + orderEntryToCancelDto.getAmount();
                 }
@@ -554,7 +559,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
                         orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
                         .getQuantityAvailableToCancel()))), (Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
-                        ? orderEntryModel.getGearGuardWaiverPrice() : orderEntryModel.getGearGuardProFullWaiverPrice()));
+                        ? orderEntryModel.getGearGuardWaiverPrice() : (orderEntryModel.getGearGuardProFullWaiverSelected() ?
+                                orderEntryModel.getGearGuardProFullWaiverPrice() : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL)));
                 this.doPartRefundCalculation(Math.min(orderEntryToCancelDto.getAmount(), totAmount), captureEntry, orderEntryModel);
             }
         }
@@ -895,9 +901,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 } else if (myComponent instanceof Intbox) {
                     myComponent.addEventListener(BlCustomCancelRefundConstants.ON_CHANGING, event -> {
                         this.autoSelect(event);
-                        ((BlOrderEntryToCancelDto) ((Row) event.getTarget().getParent()).getValue())
-                                .setQuantityToCancel(Long.valueOf(((InputEvent) event).getValue()));
-                        this.populateEntryLevelAmount((Row) event.getTarget().getParent());
+                        if(StringUtils.isNotEmpty(((InputEvent) event).getValue())) {
+                            ((BlOrderEntryToCancelDto) ((Row) event.getTarget().getParent()).getValue())
+                                    .setQuantityToCancel(Long.valueOf(((InputEvent) event).getValue()));
+                            this.populateEntryLevelAmount((Row) event.getTarget().getParent());
+                        }
                     });
                 } else if (myComponent instanceof Textbox) {
                     myComponent.addEventListener(BlCustomCancelRefundConstants.ON_CHANGING, event -> {
@@ -990,13 +998,16 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     /myEntry.getQuantityAvailableToCancel()) * myEntry.getQuantityToCancel()) : BlInventoryScanLoggingConstants.ZERO;
             final Checkbox waiver = (Checkbox) row.getChildren().get(BlInventoryScanLoggingConstants.SEVEN);
             final double waiverAmount = (myEntry.getOrderEntry().getGearGuardWaiverSelected()
-                    ? myEntry.getOrderEntry().getGearGuardWaiverPrice() : myEntry.getOrderEntry().getGearGuardProFullWaiverPrice());
+                    ? myEntry.getOrderEntry().getGearGuardWaiverPrice() : (myEntry.getOrderEntry().getGearGuardProFullWaiverSelected() ?
+                    myEntry.getOrderEntry().getGearGuardProFullWaiverPrice() : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL));
             double refundAmount = myEntry.getOrderEntry().getBasePrice() + taxAmount + (waiver.isChecked() ? waiverAmount
                     : BlInventoryScanLoggingConstants.ZERO);
             final double finalAmount = BigDecimal.valueOf(refundAmount * myEntry.getQuantityToCancel()).setScale(BlInventoryScanLoggingConstants.TWO,
                     RoundingMode.HALF_EVEN).doubleValue();
             myEntry.setAmount(finalAmount);
             ((Doublebox) row.getChildren().get(BlInventoryScanLoggingConstants.ELEVEN)).setValue(finalAmount);
+        } else {
+            ((Doublebox) row.getChildren().get(BlInventoryScanLoggingConstants.ELEVEN)).setValue(BlCustomCancelRefundConstants.ZERO);
         }
     }
 

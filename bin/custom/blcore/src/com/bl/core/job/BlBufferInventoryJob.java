@@ -30,7 +30,7 @@ public class BlBufferInventoryJob extends AbstractJobPerformable<CronJobModel>
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlBufferInventoryJob...");
 		try
 		{
-			getBlBufferInventoryService().updateBufferInvProducts();
+			getBlBufferInventoryService().updateBufferInventory();
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlBufferInventoryJob finished successfully");
 		}
 		catch (final Exception ex)
