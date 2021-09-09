@@ -3,6 +3,7 @@ package com.bl.core.services.upsscrape.impl;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.upsscrape.UpdateSerialService;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -37,22 +38,28 @@ public class BlUpdateSerialService  implements UpdateSerialService {
       getModelService().refresh(orderModel);
 
 
-      // To set serial as late
+      // To set serial as late or stolen based on UPS response
 
-      orderModel.getConsignments().forEach(consignmentModel -> consignmentModel.getPackaginginfos().forEach(packagingInfoModel ->
-      {
-        packagingInfoModel.getSerialProducts().forEach(blProductModel -> {
-          if (blProductModel instanceof BlSerialProductModel) {
-            BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-            if(numberOfRepetition < 3) {
-              blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
-            }
-            else if(numberOfRepetition == 3){
-              blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
-            }
-          }
-        });
-      }));
+      orderModel.getConsignments().forEach(
+          consignmentModel -> consignmentModel.getPackaginginfos().forEach(packagingInfoModel ->
+              packagingInfoModel.getSerialProducts().forEach(blProductModel -> {
+                if (blProductModel instanceof BlSerialProductModel) {
+                  final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+                  if (numberOfRepetition < 3) {
+                    blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
+                    BlUpdateStagedProductUtils
+                        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
+                            SerialStatusEnum.LATE);
+                  } else if (numberOfRepetition == 3) {
+                    blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
+                    BlUpdateStagedProductUtils
+                        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
+                            SerialStatusEnum.STOLEN);
+                  }
+                  getModelService().save(blSerialProductModel);
+                  getModelService().refresh(blSerialProductModel);
+                }
+              })));
     }
   }
 

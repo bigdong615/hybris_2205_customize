@@ -84,11 +84,8 @@ ACC.product = {
             ACC.minicart.updateMiniCartDisplay();
         }
         var titleHeader = $('#addToCartTitle').html();
-
-        ACC.colorbox.open(titleHeader, {
-            html: cartResult.addToCartLayer,
-            width: "460px"
-        });
+        //BL-454 show modal
+        $('#addToCartModalDialog').html(cartResult.addToCartLayer);
 
         var productCode = $('[name=productCodePost]', formElement).val();
         var quantityField = $('[name=qty]', formElement).val();
@@ -107,7 +104,8 @@ ACC.product = {
             "productName": cartAnalyticsData.productName
         };
         ACC.track.trackAddToCart(productCode, quantity, cartData);
-    }
+    },
+
 };
 
 $(document).ready(function () {
