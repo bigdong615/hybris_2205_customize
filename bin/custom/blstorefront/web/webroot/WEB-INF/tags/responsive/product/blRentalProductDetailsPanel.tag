@@ -43,7 +43,7 @@
                                     <c:when test="${not empty disableButton and disableButton == true}">
                                       	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
                                       </c:when>
-                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
                                         <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">

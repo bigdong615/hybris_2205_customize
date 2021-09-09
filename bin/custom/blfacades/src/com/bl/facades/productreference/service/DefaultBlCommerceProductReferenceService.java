@@ -10,6 +10,7 @@ import de.hybris.platform.commerceservices.product.impl.DefaultCommerceProductRe
 import de.hybris.platform.core.model.product.ProductModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * It is a custom implementation of OOTB class for Product Reference Section
@@ -51,7 +52,9 @@ public class DefaultBlCommerceProductReferenceService extends
 
   protected List<ProductReferenceModel> getAllActiveProductReferencesFromSourceOfType(
       final ProductModel product) {
-    return (List<ProductReferenceModel>) getProductReferencesForProduct(product);
+   return  getProductReferencesForProduct(product).stream().filter(
+        productReferenceModel -> !ProductReferenceTypeEnum.CONSISTS_OF
+            .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
   }
 
 }
