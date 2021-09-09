@@ -72,10 +72,10 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			}
 
 			final Collection<BlProductModel> activeBlProductModelList = getProductDao().getAllActiveSkuProducts();
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of SKU found : {}", activeBlProductModelList.size());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Number of SKU found : {}", activeBlProductModelList.size());
 			final AtomicBoolean executeNextCriteria = new AtomicBoolean(Boolean.TRUE);
 			final Date currentDate = BlDateTimeUtils.getFormattedStartDay(new Date()).getTime();
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Current Date : {}", currentDate);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Date : {}", currentDate);
 
 			if (CollectionUtils.isNotEmpty(activeBlProductModelList))
 			{
