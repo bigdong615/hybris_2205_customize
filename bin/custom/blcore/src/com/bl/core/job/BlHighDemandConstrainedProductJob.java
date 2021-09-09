@@ -107,7 +107,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 *           the after week percentage
 	 * @param week
 	 *           the week
-	 * @param executeNextCriteria
+	 * @param executeCriteria
 	 *           the execute next criteria
 	 * @param currentDate
 	 *           the current date
@@ -115,19 +115,19 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 *           the sku
 	 */
 	private void startPerformingCriteriasOnSKU(final Long month, final Long beforWeekPercentage, final Long afterWeekPercentage,
-			final Long week, final AtomicBoolean executeNextCriteria, final Date currentDate, final BlProductModel sku)
+			final Long week, final AtomicBoolean executeCriteria, final Date currentDate, final BlProductModel sku)
 	{
-		if (executeNextCriteria.get())
+		if (executeCriteria.get())
 		{
-			executeFirstCriteria(executeNextCriteria, currentDate, sku, month);
+			executeFirstCriteria(executeCriteria, currentDate, sku, month);
 		}
-		if (!executeNextCriteria.get())
+		if (!executeCriteria.get())
 		{
-			executeSecondCriteria(beforWeekPercentage, week, executeNextCriteria, currentDate, sku);
+			executeSecondCriteria(beforWeekPercentage, week, executeCriteria, currentDate, sku);
 		}
-		if (!executeNextCriteria.get())
+		if (!executeCriteria.get())
 		{
-			executeThirdCriteria(afterWeekPercentage, week, executeNextCriteria, currentDate, sku);
+			executeThirdCriteria(afterWeekPercentage, week, executeCriteria, currentDate, sku);
 		}
 	}
 
@@ -143,7 +143,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 * @param month
 	 *           the month
 	 */
-	private void executeFirstCriteria(final AtomicBoolean executeNextCriteria, final Date currentDate, final BlProductModel sku,
+	private void executeFirstCriteria(final AtomicBoolean executeCriteria, final Date currentDate, final BlProductModel sku,
 			final Long month)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeFirstCriteria : {}", sku.getCode());
@@ -168,8 +168,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"First Serial Product Code : {} , First Serial product Creationtime : {}", blSerialProductModel.getCode(),
 					blSerialProductModel.getCreationtime());
-			 executeNextCriteria.set(isFirstCriteriaIsEligible(currentDate, startDateToCheck, blSerialProductModel));
-			if (executeNextCriteria.get())
+			executeCriteria.set(isFirstCriteriaIsEligible(currentDate, startDateToCheck, blSerialProductModel));
+			if (executeCriteria.get())
 			{
 				setConstrainedToTrueOnSKU(sku);
 			}
@@ -183,14 +183,14 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 *           the befor week percentage
 	 * @param week
 	 *           the week
-	 * @param executeNextCriteria
+	 * @param executeCriteria
 	 *           the execute next criteria
 	 * @param currentDate
 	 *           the current date
 	 * @param sku
 	 *           the sku
 	 */
-	private void executeSecondCriteria(final Long beforWeekPercentage, final Long week, final AtomicBoolean executeNextCriteria,
+	private void executeSecondCriteria(final Long beforWeekPercentage, final Long week, final AtomicBoolean executeCriteria,
 			final Date currentDate, final BlProductModel sku)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeSecondCriteria : {}", sku.getCode());
@@ -232,8 +232,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			{
 				final double serialProductPercentage = ((double) criteria2Numerator / criteria2Denominator) * 100;
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Serial Product Percentage : {}", serialProductPercentage);
-				executeNextCriteria.set(serialProductPercentage <= beforWeekPercentage.longValue());
-				if (executeNextCriteria.get())
+				executeCriteria.set(serialProductPercentage <= beforWeekPercentage.longValue());
+				if (executeCriteria.get())
 				{
 					setConstrainedToTrueOnSKU(sku);
 				}
@@ -248,14 +248,14 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 *           the after week percentage
 	 * @param week
 	 *           the week
-	 * @param executeNextCriteria
+	 * @param executeCriteria
 	 *           the execute next criteria
 	 * @param currentDate
 	 *           the current date
 	 * @param sku
 	 *           the sku
 	 */
-	private void executeThirdCriteria(final Long afterWeekPercentage, final Long week, final AtomicBoolean executeNextCriteria,
+	private void executeThirdCriteria(final Long afterWeekPercentage, final Long week, final AtomicBoolean executeCriteria,
 			final Date currentDate, final BlProductModel sku)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeThirdCriteria : {}", sku.getCode());
@@ -299,8 +299,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			{
 				final double serialProductPercentage = ((double) criteria3Numerator / criteria3Denominator) * 100;
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Serial Product Percentage : {}", serialProductPercentage);
-				executeNextCriteria.set(serialProductPercentage <= afterWeekPercentage.longValue());
-				if (executeNextCriteria.get())
+				executeCriteria.set(serialProductPercentage <= afterWeekPercentage.longValue());
+				if (executeCriteria.get())
 				{
 					setConstrainedToTrueOnSKU(sku);
 				}
