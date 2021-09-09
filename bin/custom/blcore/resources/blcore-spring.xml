@@ -948,6 +948,13 @@
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 
+	<bean id="blHighDemandConstrainedProductJob" class="com.bl.core.job.BlHighDemandConstrainedProductJob" parent="abstractJobPerformable">
+	<property name="productDao" ref="productDao" />
+	<property name="configurationService" ref="configurationService" />
+	<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+
+
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
 	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />
