@@ -568,6 +568,26 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean isAquatechProductsPresentInCart() {
+
+        final AtomicBoolean foundAquatech = new AtomicBoolean(false);
+        final CartModel cartModel = getSessionCart();
+        cartModel.getEntries().forEach(entry -> {
+
+            if (null != entry.getProduct() && productService.isAquatechProduct(entry.getProduct())) {
+
+                foundAquatech.set(true);
+                return;
+            }
+        });
+
+        return foundAquatech.get();
+    }
+
+    /**
      * Update promotional End date for the promotion with extended rental days
      *
      * @param updatedRentalToDate
