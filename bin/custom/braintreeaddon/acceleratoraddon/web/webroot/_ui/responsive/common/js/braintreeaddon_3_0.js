@@ -1435,3 +1435,59 @@ $(".add-cc-form").on("click",function(e){
 	var orderId = $("#orderId").val(id);
     $("#payment-add-form").submit();
 });
+
+
+$('ul#saved-payment-action-modifyPayment').on('click','li',function(e){
+	 e.preventDefault();
+	 
+		var paymentId = $(this).find("button").data("id");
+		
+		var paymentnonce = $(this).find("button").data("nonce");
+		
+	    var buttonData = $(this).find("button").html();
+	    $("#savedCards").html(buttonData);
+	    $("#paymentId").val(paymentId);
+		$("#paymentNonce").val(paymentnonce);
+        
+});
+
+
+$(".js--order-modify-payment").on("click", function(e) {
+	 e.preventDefault();
+	 
+		var paymentId = $('#saved-payment-action-modifyPayment').find("button").data("id");
+		var paymentnonce = $('#saved-payment-action-modifyPayment').find("button").data("nonce");
+		var ccEnable = $('#paymentMethodBT').is(':checked');
+		var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+		var paymentInfoId =  $('#paymentId').val();
+		
+		
+	    var buttonData = $(this).find("button").html();
+	    $("#savedCards").html(buttonData);
+	    $("#paymentId").val(paymentId);
+		$("#paymentNonce").val(paymentnonce);
+       var selectedPaymentMethodId	= createHiddenParameter("selectedPaymentMethodId", $("#paymentId").val(paymentId));
+       var selectedPaymentMethodNonce = createHiddenParameter("selectedPaymentMethodNonce", $("#paymentNonce").val(paymentnonce));
+		
+		var formToSubmit = $("#modifyPaymentForm");
+		formToSubmit.append($(selectedPaymentMethodId));
+		formToSubmit.append($(selectedPaymentMethodNonce));
+		
+		if((ccEnable == true && paymentInfoId !='') || payPalEnable == true){
+		formToSubmit.submit();
+		}
+		else{
+			allFieldValidation(ACC.ccError.allFieldsNotSelected);
+		}
+});
+
+
+$(".add-cc-form-modifyPayment").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form-modifyPayment").submit();
+});
+
+
+

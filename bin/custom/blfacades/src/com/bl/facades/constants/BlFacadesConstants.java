@@ -61,8 +61,17 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String DAY = "day";
 
   public static final String INCOMPLETE = "Incomplete";
-
-
+  public static final String RECEIVED = "Received";
+  public static final String SHIPPED = "Shipped";
+  public static final String RETURNED = "Returned";
+  public static final String COMPLETED = "Completed";
+  public static final String CANCELED = "Canceled";
+  public static final String LATE = "Late";
+  public static final String SOLD = "Sold";
+  
+  public static final int ONE = 1;
+  public static final int TWO = 2;
+  
   private BlFacadesConstants() {
     //empty
   }

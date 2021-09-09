@@ -14,7 +14,7 @@
     </div>
     <div class="col-1 text-center">
         <button class="btn-checkbox" type="button" data-bs-toggle="collapse" data-bs-target="#pickup-expand"
-            aria-controls="pickup-expand" aria-expanded="false">
+            aria-controls="pickup-expand" aria-expanded="false" onClick="$('#validationMessage').empty();">
             <input type="radio" id="pickup" name="shipProduct"><label for="pickup"></label>
         </button>
     </div>

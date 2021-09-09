@@ -68,4 +68,12 @@ public interface BlDatePickerService
 	 * @return the all blackout dates for given type
 	 */
 	public List<Date> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType);
+
+
+	/**
+	 * It sets the date picker date into session
+	 *
+	 * @param selectedDuration the selected Duration
+	 */
+  void addSelectedRentalDurationIntoSession(final String selectedDuration);
 }

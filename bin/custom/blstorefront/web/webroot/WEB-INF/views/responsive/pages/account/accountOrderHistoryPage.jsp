@@ -59,9 +59,18 @@
                 								</li>
                 								<li>
                 								<c:if test="${order.rentalCart}">
+                								
                 								 <c:url value="/rent/product/${order.productCode}" var="rentOrderAction" />
                                  <a href="${rentOrderAction}">
                                                         <spring:theme code="order.gift.card.myaccount.order.another"/> </a>
+                							  </c:if>
+                								</li>
+                								<li>
+                						
+                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
+                                 <a href="${modifyPaymentAction}">
+                                                        <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 							</ul>
@@ -103,7 +112,7 @@
                                       <p class="my-2"> ${order.status.code}</p>
                                     </c:when>
                                     <c:otherwise>
-                                      <p class="my-2"><spring:theme code="text.myaccount.order.completed" /></p>
+                                               <p class="my-2">${order.orderStatus}</p>
                                     </c:otherwise>
                                   </c:choose>
                                  </div>
@@ -138,7 +147,7 @@
                 						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end three">
                 						  <c:choose>
 
-                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
+                							<c:when test="${(order.isRentalActive eq true && order.isRentalStartDateActive eq true && order.orderReturnedToWarehouse eq false) || (not empty agent.uid && order.orderReturnedToWarehouse eq false)}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
@@ -150,7 +159,8 @@
                             </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">
-                						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
+                					
+                						<div class="btn-group view-links"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
                 							<ul class="dropdown-menu" aria-labeledby="btn-rental-001">
                 								<li>
                 									<c:url value="/my-account/order/${order.code}" var="viewOrderAction" />
@@ -164,6 +174,15 @@
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
                 							  </c:if>
                 								</li>
+                								<li>
+                								
+                						
+                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
+                                                      <a href="${modifyPaymentAction}">
+                                                        <spring:theme code="order.myaccount.modify.payment"/> </a>
+                							  </c:if>
+                								</li>
                 							</ul>
                 						</div>
                 					</div>
@@ -173,11 +192,19 @@
                 								<p class="body14">
                 									<c:if test="${order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total"/></c:if>
                 									<c:if test="${!order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total.cost"/></c:if>
-                									<br><spring:theme code="text.myaccount.order"/> </p>
+                									<br><spring:theme code="text.myaccount.order"/>
+                									 <c:if test="${order.isReplacementOrder eq true}">
+                                       <spring:theme code="text.myaccount.order.replacementFor"/>
+                                   </c:if>
+                                </p>
                 							</div>
                 							<div class="col-8 col-md-10">
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
-                									<br> ${fn:escapeXml(order.code)}</p>
+                									<br> ${fn:escapeXml(order.code)}
+                									 <c:if test="${order.isReplacementOrder eq true}">
+                                        <br> ${order.replacementFor}
+                                   </c:if>
+                									</p>
                 							</div>
                 							<c:url value="/my-account/${order.code}/payBill" var="payBillAction" />
                 						  
@@ -191,7 +218,7 @@
                 							<c:otherwise>
                 							      
                 							</c:otherwise>	
-                							</c:choose>	
+                							</c:choose>
                 						</div>
                 					</div>
                 					</c:otherwise>

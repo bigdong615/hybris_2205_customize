@@ -22,13 +22,6 @@ public interface BlProductService extends ProductService {
   boolean isFunctionalAndCosmeticIsAvailable(final BlSerialProductModel blSerialProductModel);
 
   /**
-   * It checks the serial product status
-   * @param serialStatusEnum serial status enum
-   * @return true if the serial product status is active
-   */
-  boolean isActiveSerialProduct(final SerialStatusEnum serialStatusEnum);
-
-  /**
    * It checks the product is aquatech product or not
    * @param productModel
    * @return true if the product is aquatech product

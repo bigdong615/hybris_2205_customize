@@ -86,6 +86,7 @@
     <property name="selectedFromDate" type="String"/>
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
+    <property name="selectedDays" type="String"/>
   </bean>
 
 <!-- DTO to store Serial Product Data -->
@@ -201,6 +202,7 @@
 	  	<property name="isUnPaidBillPresent" type="java.lang.Boolean"/>
         <property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
         <property name="orderTotalWithTaxForPayBill" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+        <property name="customerOwnedOrderNote" type="java.lang.String"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -371,6 +373,7 @@
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+		<property name="extendedFreeRentalDays" type="java.lang.Integer" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
     <property name="usedGearDiscount" type="java.lang.Integer" />
   </bean>
@@ -641,6 +644,9 @@
 		<property name="productCode" type="String"/>
 		<property name="payBillingCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="orderStatus" type="java.lang.String"/>
+		<property name="replacementFor" type="java.lang.String" />
+		<property name="isReplacementOrder " type="java.lang.Boolean"/>
+		<property name="isCaptured" type="java.lang.Boolean"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

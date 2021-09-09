@@ -7,6 +7,7 @@ import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.List;
@@ -42,10 +43,25 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
    * {@inheritDoc}
    */
   @Override
+  public void removeGiftCardforModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel) {
+    giftCardService.removeGiftCardForModifyOrder(giftCardCode, orderModel);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public boolean applyGiftCard(final String giftCardCode) {
     return giftCardService.applyGiftCard(giftCardCode);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel) {
+    return giftCardService.applyGiftCardForModifyOrder(giftCardCode, orderModel );
+  }
   /**
    * Commented this method, we can remove later on if not required.
    * {@inheritDoc}

@@ -438,14 +438,14 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	 */
 	private void addCartDataInModel(final CartData cartData, final Model model) {
 		if(Objects.nonNull(cartData)) {
-			if (Objects.nonNull(cartData.getEntries()) && CollectionUtils.isNotEmpty(cartData.getEntries())) {
+			/*if (Objects.nonNull(cartData.getEntries()) && CollectionUtils.isNotEmpty(cartData.getEntries())) {
 			  cartData.getEntries().forEach(cartEntry -> {
 			  	final String productCode = cartEntry.getProduct().getCode();
 			  	final ProductData product = getProductFacade().getProductForCodeAndOptions(productCode,
               		Arrays.asList(ProductOption.BASIC, ProductOption.PRICE));
 			  	cartEntry.setProduct(product);
 			  });
-			}
+			}*/
 			model.addAttribute(BraintreeaddonControllerConstants.CART_DATA, cartData);
 			model.addAttribute(BraintreeaddonControllerConstants.ALL_ITEMS, cartData.getEntries());
 			model.addAttribute(BraintreeaddonControllerConstants.DELIVERY_ADDRESS, cartData.getDeliveryAddress());

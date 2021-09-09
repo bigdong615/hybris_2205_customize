@@ -592,6 +592,8 @@
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="productService" ref="productService"/>
+		<property name="promotionDao" ref="promotionDao"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 
 	<!--<BL-500 bean entry is for order service>-->
@@ -1216,6 +1218,25 @@
 	<bean id="blMarkDirtyPriorityJob" class="com.bl.core.job.BlMarkDirtyPrioritySerialsJob" parent="abstractJobPerformable">
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
+	<!-- [BL-668]: Custom Actions for rental products promotion-->
+	<alias alias="ruleExtendedFreeRentalDaysAction" name="defaultRuleExtendedFreeRentalDaysAction" />
+	<bean id="defaultRuleExtendedFreeRentalDaysAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="blExtendedFreeRentalDaysRAOAction"/>
+	</bean>
+
+	<alias alias="blExtendedFreeRentalDaysRAOAction" name="defaultBlExtendedFreeRentalDaysRAOAction" />
+	<bean id="defaultBlExtendedFreeRentalDaysRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlExtendedFreeRentalDaysRAOAction">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommercePriceService" ref="commercePriceService"/>
+		<property name="productService" ref="productService"/>
+		<property name="cartService" ref="cartService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<bean id="blExtendedFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+	<property name="key" value="defaultBlExtendedFreeRentalDaysRAOAction"/>
+	<property name="value" ref="orderTotalAdjustActionStrategy"/>
+	</bean>
 
 	<!--BL-828 Marking consignments cleanCompleteFlag start -->
 	<bean id="markConsignmentsCleanJob" class="com.bl.core.job.MarkReadyToShipConsignmentsCleanJob"
@@ -1292,6 +1313,8 @@
 		<property name="modelService" ref="modelService" />
 		<property name="blStockLevelDao" ref="blStockLevelDao" />
 		<property name="productService" ref="productService" />
+		<property name="catalogVersionDao" ref="catalogVersionDao" />
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
@@ -1370,11 +1393,43 @@
 	<bean id="defaultBlBlackoutDatesDao" class="com.bl.core.blackout.date.dao.impl.DefaultBlBlackoutDatesDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+
   <!--BL-27: This process is override to call own strategy to provide email related things.-->
 	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
 		<property name="key">
 			<value type="java.lang.Class">de.hybris.platform.processengine.model.BusinessProcessModel</value>
 		</property>
 		<property name="value" ref="storeFrontProcessContextStrategy"/>
+	</bean>
+	
+	<alias name="blWarehousePrepareInterceptor" alias="blWarehousePrepareInterceptor"/>
+	<bean id="blWarehousePrepareInterceptor" class="com.bl.core.model.interceptor.BlWarehousePrepareInterceptor">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blWarehousePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blWarehousePrepareInterceptor"/>
+		<property name="typeCode" value="Warehouse"/>
+	</bean> 
+	
+	<alias name="blBlackoutDatePrepareInterceptor" alias="blBlackoutDatePrepareInterceptor"/>
+    <bean id="blBlackoutDatePrepareInterceptor"    class="com.bl.core.model.interceptor.BlBlackoutDatePrepareInterceptor"/>    
+
+    <bean id="blBlackoutDatePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blBlackoutDatePrepareInterceptor"/>
+		<property name="typeCode" value="BlBlackoutDate"/>
+    </bean>   
+
+    <alias name="defaultBlBlackoutDateService" alias="blBlackoutDateService"/>
+	<bean id="defaultBlBlackoutDateService" class="com.bl.core.services.blackout.impl.DefaultBlBlackoutDateService">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>    
+
+    <!--BL-1089-->
+	<bean id="blChangeOrderReturnDateJob" class="com.bl.core.job.BlChangeOrderReturnDateJob" parent="abstractJobPerformable">
+		<property name="blBlackoutDateService" ref="blBlackoutDateService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 	</bean>
 </beans>

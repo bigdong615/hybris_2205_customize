@@ -395,6 +395,32 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return false;
 	}
 
+	/**
+	 * It sets the payment details
+	 * @param paymentInfoId the payment info id
+	 * @param paymentMethodNonce the payment method nonce
+	 * @return boolean
+	 */
+	public boolean setPaymentDetailsForModifyPayment(final String paymentInfoId, final String paymentMethodNonce, final AbstractOrderModel order) {
+		validateParameterNotNullStandardMessage(PAYMENT_INFO_ID, paymentInfoId);
+
+		if (checkIfCurrentUserIsTheCartUser()) {
+			final CustomerModel currentUserForCheckout = getCurrentUserForCheckout();
+			if (StringUtils.isNotBlank(paymentInfoId)) {
+				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentService
+						.completeCreateSubscriptionForModifyPayment(currentUserForCheckout, paymentInfoId, order);
+				if (paymentInfo != null) {
+					paymentInfo.setNonce(paymentMethodNonce);
+					getModelService().save(paymentInfo);
+					return true;
+				} else {
+					super.setPaymentDetails(paymentInfoId);
+				}
+
+			}
+		}
+		return false;
+	}
 	@Override
 	public boolean setPaymentDetails(final String paymentInfoId)
 	{
@@ -510,7 +536,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
 				.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serial -> {
 						if(((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
-								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.UNBOXED)) {
+								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.UNBOXED) ||
+								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.SHIPPED)) {
 							isOrderComplete.set(false);
 					}
 					})));

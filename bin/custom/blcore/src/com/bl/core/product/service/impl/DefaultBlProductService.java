@@ -55,16 +55,6 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
    * {@inheritDoc}
    */
   @Override
-  public boolean isActiveSerialProduct(final SerialStatusEnum serialStatusEnum) {
-    return null != serialStatusEnum && ("ACTIVE".equals(serialStatusEnum.getCode()) ||
-        "UNBOXED".equals(serialStatusEnum.getCode()) ||
-        "RECEIVED_OR_RETURNED".equals(serialStatusEnum.getCode()));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public boolean isAquatechProduct(final ProductModel productModel) {
 
     return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
