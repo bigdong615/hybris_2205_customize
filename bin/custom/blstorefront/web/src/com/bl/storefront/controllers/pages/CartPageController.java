@@ -1074,8 +1074,15 @@ public class CartPageController extends AbstractCartPageController
 					!(cartModel.getRentalEndDate().compareTo(endDate) == 0)) {
 				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 			}
-			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
-			{
+
+			final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
+					BlCoreConstants.SQL_DATE_FORMAT);
+			final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
+					rentalDateDto.getSelectedFromDate());
+
+			if ((blCartService.isAquatechProductsPresentInCart()
+					&& daysDifference < BlCoreConstants.TWO_DAYS) || BooleanUtils
+					.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto))) {
 				return BlControllerConstants.STOCK_FAILURE_RESULT;
 			}
 		}

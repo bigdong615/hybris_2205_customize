@@ -157,4 +157,11 @@ public interface BlCartService extends CartService {
      * @return true, if the given product is aquatech
      */
     boolean isAquatechProductsPresentInCart(final ProductModel productModel);
+
+    /**
+     * Checks if aquatech product present in session cart
+     *
+     * @return true, if the session cart have aquatech products
+     */
+    boolean isAquatechProductsPresentInCart();
 }
