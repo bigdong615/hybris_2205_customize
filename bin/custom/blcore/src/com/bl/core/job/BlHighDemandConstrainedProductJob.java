@@ -83,7 +83,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 						.collect(Collectors.toList());
 				for (final BlProductModel sku : rentalSKUList)
 				{
-					startPerformingCriteriasOnSKU(month, beforWeekPercentage, afterWeekPercentage, week, executeNextCriteria,
+					checkConstrainedProductEligibilty(month, beforWeekPercentage, afterWeekPercentage, week, executeNextCriteria,
 							currentDate, sku);
 				}
 			}
@@ -114,7 +114,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 * @param sku
 	 *           the sku
 	 */
-	private void startPerformingCriteriasOnSKU(final Long month, final Long beforWeekPercentage, final Long afterWeekPercentage,
+	private void checkConstrainedProductEligibilty(final Long month, final Long beforWeekPercentage, final Long afterWeekPercentage,
 			final Long week, final AtomicBoolean executeCriteria, final Date currentDate, final BlProductModel sku)
 	{
 		if (executeCriteria.get())
