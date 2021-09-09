@@ -646,6 +646,7 @@
 		<property name="blRepairLogService" ref="blRepairLogService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1438,5 +1439,11 @@
 		<property name="blBlackoutDateService" ref="blBlackoutDateService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+	</bean>
+	
+	<alias name="defaultBlConsignmentEntryService" alias="blConsignmentEntryService"/>
+	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 </beans>
