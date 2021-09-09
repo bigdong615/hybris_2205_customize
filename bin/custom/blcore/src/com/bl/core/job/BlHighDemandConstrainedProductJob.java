@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Level;
@@ -134,7 +135,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	/**
 	 * Execute first criteria.
 	 *
-	 * @param executeNextCriteria
+	 * @param executeCriteria
 	 *           the execute next criteria
 	 * @param currentDate
 	 *           the current date
@@ -212,7 +213,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 
 			for (final String serialCode : collectserialSkuList)
 			{
-				if (stockAsPerSerial.containsKey(serialCode))
+				if (MapUtils.isNotEmpty(stockAsPerSerial) && stockAsPerSerial.containsKey(serialCode))
 				{
 					final List<StockLevelModel> stockList = stockAsPerSerial.get(serialCode);
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -277,7 +278,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 
 			for (final String serialCode : collectserialSkuList)
 			{
-				if (stockAsPerSerial.containsKey(serialCode))
+				if (MapUtils.isNotEmpty(stockAsPerSerial) && stockAsPerSerial.containsKey(serialCode))
 				{
 					final List<StockLevelModel> stockList = stockAsPerSerial.get(serialCode);
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
