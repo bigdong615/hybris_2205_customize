@@ -31,7 +31,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     try {
 //
 
-      getBlUpdateSerialService().updateSerialProducts(null , null , new Date() , 2);
+      getBlUpdateSerialService().updateSerialProducts(null , "00016003" , new Date() , 2);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG , Level.ERROR , "Error while executing BlUPSScrapeJob"  , e.getMessage());
