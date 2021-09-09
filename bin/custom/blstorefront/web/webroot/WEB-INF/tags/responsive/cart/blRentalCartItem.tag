@@ -23,6 +23,13 @@
          <div class="col-md-7 mt-3">
            <a href="${fn:escapeXml(productUrl)}" class="js-pdplinkUrl" data-productCode="${entry.product.code}" data-brand="${entry.product.manufacturer}"
              data-productName="${ycommerce:sanitizeHTML(entry.product.name)}" data-productType="rental"><b>${entry.product.name}</b></a>
+             <c:if test="${not empty entry.product.bundleProductReference}">
+             <ul class="checklist mt-4">
+             <c:forEach items="${entry.product.bundleProductReference}" var="bundleItems">
+              <li>  ${bundleItems.productReferenceName}</li>
+             </c:forEach>
+             </ul>
+             </c:if>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />

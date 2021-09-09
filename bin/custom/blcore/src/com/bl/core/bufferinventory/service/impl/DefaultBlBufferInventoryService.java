@@ -7,6 +7,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -40,6 +41,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   private BlStockLevelDao blStockLevelDao;
   private BlProductService productService;
   private CatalogVersionDao catalogVersionDao;
+  private BlStockService blStockService;
 
   /**
    * {@inheritDoc}
@@ -75,7 +77,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   public boolean minQtyEligibleForBufferInv(final Integer minQtyForBufferInventory, final BlProductModel blProductModel) {
     if(minQtyForBufferInventory > 0) {
       final int totalSerialProducts = blProductModel.getSerialProducts()
-          .stream().filter(serialProduct -> getProductService().isActiveSerialProduct(serialProduct.getSerialStatus()))
+          .stream().filter(serialProduct -> getBlStockService().isActiveStatus(serialProduct.getSerialStatus()))
           .collect(Collectors.toList()).size();
       return totalSerialProducts >= minQtyForBufferInventory;
     }
@@ -99,7 +101,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
             blProduct.setBufferedInventoryPercentage(bufferInvPercentage);
             setSerialProductsBufferInv(blProduct, onlineCatalog);
             saveRecord(blProduct);
-            setBufferInvPercentInOnlineVersionProduct(blProduct.getCode(), onlineCatalog, bufferInvPercentage);
+            setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, bufferInvPercentage);
           } else {
             setSerialProductsBufferInv(blProduct, onlineCatalog);
             setBufferInvPercentInOnlineVersion(blProduct, onlineCatalog);
@@ -116,7 +118,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
           });
           blProduct.setBufferedInventoryPercentage(Double.valueOf(0.0));
           saveRecord(blProduct);
-          setBufferInvPercentInOnlineVersionProduct(blProduct.getCode(), onlineCatalog, Double.valueOf(0.0));
+          setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, Double.valueOf(0.0));
         }
       }
   }
@@ -159,18 +161,19 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
 
   /**
    * It sets buffer inventory percentage in product of online version
-   * @param code product code
+   * @param blProduct SKU product model
    * @param onlineCatalog online catalog version model
    * @param bufferInvPercentage buffer inventory percentage
    */
-  private void setBufferInvPercentInOnlineVersionProduct(final String code, final CatalogVersionModel onlineCatalog,
+  private void setBufferInvPercentInOnlineVersionProduct(final BlProductModel blProduct, final CatalogVersionModel onlineCatalog,
       final Double bufferInvPercentage) {
-    final BlProductModel blProductInOnlineVersion = getSkuProduct(code, onlineCatalog);
+    final BlProductModel blProductInOnlineVersion = getSkuProduct(blProduct.getCode(), onlineCatalog);
     if(null != blProductInOnlineVersion) {
       blProductInOnlineVersion.setBufferedInventoryPercentage(bufferInvPercentage);
+      blProductInOnlineVersion.setBufferInvPercChangedManually(blProduct.isBufferInvPercChangedManually());
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "buffer inventory percentage {} is set for the product {}",
-          bufferInvPercentage, code);
+          bufferInvPercentage, blProduct.getCode());
       saveRecord(blProductInOnlineVersion);
     }
   }
@@ -230,7 +233,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
   private void setSerialProductsBufferInv(final BlProductModel blProduct, final CatalogVersionModel onlineCatalog) {
     final Double bufferInventoryPercentage = blProduct.getBufferedInventoryPercentage();
     final int totalActiveSerialProducts = blProduct.getSerialProducts()
-        .stream().filter(serialProduct -> getProductService().isActiveSerialProduct(serialProduct.getSerialStatus()))
+        .stream().filter(serialProduct -> getBlStockService().isActiveStatus(serialProduct.getSerialStatus()))
         .collect(Collectors.toList()).size();
     if(totalActiveSerialProducts > 0) {
       final int totalBufferProducts = blProduct.getSerialProducts().stream()
@@ -369,5 +372,13 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
 
   public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
     this.catalogVersionDao = catalogVersionDao;
+  }
+
+  public BlStockService getBlStockService() {
+    return blStockService;
+  }
+
+  public void setBlStockService(BlStockService blStockService) {
+    this.blStockService = blStockService;
   }
 }

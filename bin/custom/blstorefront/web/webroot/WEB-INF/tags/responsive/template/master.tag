@@ -63,8 +63,6 @@
 <!-- Talkable integration Script -->
 <analytics:talkableScript/>
 
-<!-- ShareASale integration Script -->
-<analytics:shareASaleScript/>
 <analytics:shareASaleLeadScript/>
 <%-- Tealium Data --%>
     <tealium:tealium/>
