@@ -83,6 +83,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	 *           the Product
 	 * @return PriceInformation
 	 */
+	@Override
 	public PriceInformation getWebPriceForBundleProduct(final ProductModel product){
 		List<PriceInformation> lPrices = new ArrayList<>();
 		final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)

@@ -7,6 +7,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -61,6 +62,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -174,6 +176,9 @@ public class CartPageController extends AbstractCartPageController
 
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
+
+	@Resource(name ="productService")
+	ProductService productService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -541,6 +546,11 @@ public class CartPageController extends AbstractCartPageController
 		final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
 		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
+		BlProductModel productModel = (BlProductModel)productService.getProductForCode(productCode);
+		if(productModel.isBundleProduct()){
+			return blCommerceStockService.getAvailableCountForBundle(
+					productModel, warehouseModelList, startDay, endDay);
+		}
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
 	}
 
