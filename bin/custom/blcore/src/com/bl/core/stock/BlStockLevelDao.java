@@ -131,4 +131,15 @@ public interface BlStockLevelDao {
 	 */
 	public Collection<StockLevelModel> reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel,
 			final Date startDay, final Date endDay);
+	/**
+	 * It finds all the stocks for the given serials and serial from start date to end date
+	 *
+	 * @param serialProductCodes
+	 * @param startDay           the rental start date
+	 * @param endDay             the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findALLSerialStockLevelsForDateAndCodes(
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
+
 }
