@@ -353,8 +353,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	 */
 	private boolean checkSerialStatus(final BlSerialProductModel blSerialProductModel)
 	{
-		return blSerialProductModel.getSerialStatus().equals(SerialStatusEnum.ACTIVE)
-				|| blSerialProductModel.getSerialStatus().equals(SerialStatusEnum.RECEIVED_OR_RETURNED);
+		return SerialStatusEnum.ACTIVE.equals(blSerialProductModel.getSerialStatus())
+				|| SerialStatusEnum.RECEIVED_OR_RETURNED.equals(blSerialProductModel.getSerialStatus());
 	}
 
 	/**
@@ -427,8 +427,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	private long getAllUnsoldAndUnScrappedSerial(final List<StockLevelModel> stockLevelModels)
 	{
 		return CollectionUtils.isNotEmpty(stockLevelModels)
-				? stockLevelModels.stream().filter(stockLevelModel -> !stockLevelModel.getSerialStatus().equals(SerialStatusEnum.SOLD)
-						&& !stockLevelModel.getSerialStatus().equals(SerialStatusEnum.SCRAPPED)).count()
+				? stockLevelModels.stream().filter(stockLevelModel -> !SerialStatusEnum.SOLD.equals(stockLevelModel.getSerialStatus())
+				&& !SerialStatusEnum.SCRAPPED.equals(stockLevelModel.getSerialStatus())).count()
 				: 0;
 	}
 
@@ -443,8 +443,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	{
 		return CollectionUtils.isNotEmpty(stockLevelModels) ? stockLevelModels.stream()
 				.filter(stockLevelModel -> !stockLevelModel.getReservedStatus()
-						&& (stockLevelModel.getSerialStatus().equals(SerialStatusEnum.ACTIVE)
-								|| stockLevelModel.getSerialStatus().equals(SerialStatusEnum.RECEIVED_OR_RETURNED)))
+						&& (SerialStatusEnum.ACTIVE.equals(stockLevelModel.getSerialStatus())
+						|| SerialStatusEnum.RECEIVED_OR_RETURNED.equals(stockLevelModel.getSerialStatus())))
 				.count() : 0;
 	}
 
