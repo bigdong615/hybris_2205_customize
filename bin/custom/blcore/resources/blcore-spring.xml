@@ -1117,17 +1117,6 @@
 		<property name="typeCode" value="Consignment"/>
 	</bean>
 	
-	<!-- BL-992:This interceptor is added to validate order status based on the user group. -->
-	
-	<alias name="blConsignmentStatusValidateInterceptor" alias="blConsignmentStatusValidateInterceptor"/>
-	<bean id="blConsignmentStatusValidateInterceptor" class="com.bl.core.model.interceptor.BlConsignmentStatusValidateInterceptor"/>
-	
-	<bean id="blConsignmentStatusValidateInterceptorMapping"
-		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
-		<property name="interceptor" ref="blConsignmentStatusValidateInterceptor"/>
-		<property name="typeCode" value="Consignment"/>
-	</bean>
-
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
