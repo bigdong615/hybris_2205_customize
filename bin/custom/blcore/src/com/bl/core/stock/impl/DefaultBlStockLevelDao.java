@@ -87,6 +87,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " +
 			AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
 
+	private static final String WH_SPECIFIC_STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
+			+ WHERE + StockLevelModel.WAREHOUSE + "} =?warehouse " + AND + StockLevelModel.DATE + DATE_PARAM;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -377,5 +380,26 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
     }
     return stockLevels;
   }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Collection<StockLevelModel> reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel,
+			final Date startDay, final Date endDay) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
+				WH_SPECIFIC_STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.WAREHOUSE, warehouseModel);
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels)) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for products belong to this warehouse {}",
+					warehouseModel.getCode());
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
 
 }

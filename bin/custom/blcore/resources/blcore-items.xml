@@ -22,6 +22,8 @@
         <collectiontype code="CatalogUnawareMediaList" elementtype="CatalogUnawareMedia" type="list"/>
 
         <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
+        
+        <collectiontype code="BlockInventoryList" elementtype="BlockInventory" type="list"/>
 
       <collectiontype code="OrderCodes" elementtype="java.lang.String" type="list"/>
       <collectiontype code="ConsignmentCodes" elementtype="java.lang.String" type="list"/>
@@ -193,6 +195,7 @@
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="TESTING_NEEDED"/>
+        <value code="CUSTOMER_OWNED_ITEMS_NOTES"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
@@ -239,6 +242,7 @@
       		<value code="UNBOXED" />
       		<value code="LATE" />
       		<value code="RETURNED" />
+      		<value code="SHIPPED"/>
         </enumtype>
       
       
@@ -2655,6 +2659,11 @@
                       </property>
                     </custom-properties>
                   </attribute>
+                    <attribute qualifier="promotionalRentalEndDate" type="java.util.Date">
+                      <description>Updated rental end date when Extended rental days added</description>
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" optional="true" />
+                  </attribute>
                   <attribute qualifier="isVipOrder" type="java.lang.Boolean">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
@@ -2707,7 +2716,11 @@
                     <description>To identify whether order submitted or not </description>
                     <defaultvalue>false</defaultvalue>
                   </attribute>
-
+                  <attribute qualifier="orderTotalBeforeGCAdd" type="java.lang.Double">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify order Total before GC add </description>
+                </attribute>
                 </attributes>
             </itemtype>
 
@@ -2817,8 +2830,29 @@
 				<persistence type="property"/>
 				<defaultvalue>Boolean.FALSE</defaultvalue>
 			  </attribute>
+			  <attribute type="BlockInventoryList" qualifier="blockInventory">
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Block Inventory for a date range for the warehouse.</description>
+				<persistence type="property"/>
+			  </attribute>
 			</attributes>
 		  </itemtype>
+		  <itemtype code="BlockInventory" autocreate="true" generate="true">
+			<description>Block Inventory For a Particular Date Range.</description>
+			<deployment table="blockInventory" typecode="12237"/>
+			<attributes>
+				<attribute qualifier="startDate" type="java.util.Date">
+            		<description>Date from when inventory will be blocked.</description>
+            		<modifiers read="true" write="true" optional="false"/>
+            		<persistence type="property"/>
+          		</attribute>
+          		<attribute qualifier="endDate" type="java.util.Date">
+            		<description>Till this date inventory will be blocked.</description>
+            		<modifiers read="true" write="true" optional="false"/>
+            		<persistence type="property"/>
+          		</attribute>
+			</attributes>
+		 </itemtype>
 		</typegroup>
 
         <typegroup name="ShippingOptimization">
@@ -2945,6 +2979,12 @@
             <modifiers read="true" write="true" search="false" optional="true" />
             <persistence type="property" />
             <defaultvalue>false</defaultvalue>
+          </attribute>
+          <attribute autocreate="true" qualifier="optimizedRentalEndDateChangedByJob" type="boolean">
+              <modifiers read="true" write="true" optional="false"/>
+              <persistence type="property"/>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+              <description>It tells whether the consignments optimized rental end date is changes due to cronjob.</description>
           </attribute>
         </attributes>
       </itemtype>
@@ -3148,11 +3188,11 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <persistence type="property"/>
                    </attribute>
-                   <attribute qualifier="enableSaturdays" type="boolean">
+                   <attribute qualifier="disableSaturdays" type="boolean">
                    	<modifiers read="true" write="true" optional="false"/>
                    	<description>Flag to enable and disable Saturdays on datepicker</description>
                    	<persistence type="property" />
-                   	<defaultvalue>Boolean.FALSE</defaultvalue>
+                   	<defaultvalue>Boolean.TRUE</defaultvalue>
                   </attribute>
                 </attributes>                
             </itemtype>
@@ -5860,7 +5900,7 @@ new Integer(0)
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {pvo:code} as orderCode,{pvos:code} as previousOrderStatus,{s:code} as serialCode, {s:ocLocation} as ocLocationCode, {sse:code} as itemStatusCode, {s:lastUnboxedOcLocationDate} as unboxedDate from {BlSerialProduct as s},{SerialStatusEnum as sse}, {Order as pvo}, {OrderStatus as pvos},{Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} IN ('UNBOXED','REPAIR_NEEDED','PARTS_NEEDED')}}) and {sse:pk} = {s:serialStatus} and {pvo:pk} = {s:associatedOrder} and {pvos:pk} = {pvo:status} and {pvos:code} IN ('UNBOXED','PARTIALLY_UNBOXED','INCOMPLETE','INCOMPLETE_ITEMS_IN_REPAIR','INCOMPLETE_MISSING_AND_BROKEN_ITEMS','INCOMPLETE_MISSING_ITEMS') and {sse:pk} = {s:serialStatus} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse ORDER BY {s:lastUnboxedOcLocationDate} DESC"
+"select {pvo:code} as orderCode,{pvos:code} as previousOrderStatus,{s:code} as serialCode, {s:ocLocation} as ocLocationCode, {sse:code} as itemStatusCode, {s:lastUnboxedOcLocationDate} as unboxedDate from {BlSerialProduct as s},{SerialStatusEnum as sse}, {Order as pvo}, {OrderStatus as pvos},{Consignment as c} where {s:serialStatus} IN ({{select {sse:pk} from {SerialStatusEnum as sse} where {sse:code} IN ('UNBOXED')}}) and {sse:pk} = {s:serialStatus} and {pvo:pk} = {s:associatedOrder} and {pvos:pk} = {pvo:status} and {pvos:code} IN ('UNBOXED') and {sse:pk} = {s:serialStatus} and {c:pk} = {s:associatedConsignment} and {c:warehouse} = ?warehouse ORDER BY {s:lastUnboxedOcLocationDate} DESC"
 			</value>
 		</property>
 	</custom-properties>

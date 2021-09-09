@@ -437,6 +437,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
  	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
  	 		 && getCheckoutFacade().checkAvailabilityForDeliveryMode(selectedDeliveryMethod) ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
  	 }
+    
+    @GetMapping(value = "/checkShippingBlackout")
+ 	 @ResponseBody
+ 	 public String checkShippingBlackout(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
+ 			final Model model) 
+ 	 {
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 		 && getCheckoutFacade().isShippingOnBlackoutDate(selectedDeliveryMethod) ? BlControllerConstants.ERROR : BlControllerConstants.SUCCESS;
+ 	 }
 
     /**
      * Will set the delivery address

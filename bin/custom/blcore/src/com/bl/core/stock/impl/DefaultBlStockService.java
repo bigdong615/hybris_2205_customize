@@ -222,6 +222,33 @@ public class DefaultBlStockService implements BlStockService
 	}
 
 	/**
+	 * {@inheritDoc}
+	 * @param warehouseModel the warehouse model
+	 */
+	public void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel) {
+		warehouseModel.getBlockInventory().stream().forEach(blockInventoryModel -> {
+			if(BlDateTimeUtils.getFormattedStartDay(blockInventoryModel.getStartDate()).before(
+					BlDateTimeUtils.getFormattedEndDay(blockInventoryModel.getEndDate()))) {
+			final Date startDate = blockInventoryModel.getStartDate();
+			final Date currentDate = Date
+					.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			if (!(startDate.before(currentDate))) {
+				final Collection<StockLevelModel> stockLevels = getBlStockLevelDao()
+						.reserveProductsBelongToWHForSpecifiedDate(
+								warehouseModel, startDate, blockInventoryModel.getEndDate());
+				stockLevels.forEach(stockLevelModel -> {
+					stockLevelModel.setReservedStatus(Boolean.TRUE);
+				});
+				this.getModelService().saveAll(stockLevels);
+			}
+		} else {
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start date should be before end date for Block "
+									+ "Inventory of warehouse {} ", warehouseModel.getCode());
+			}
+		});
+	}
+
+	/**
 	 * It saves the stock record after updates
 	 * @param stockLevel
 	 * @param reservedStatus

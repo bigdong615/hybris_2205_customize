@@ -188,8 +188,7 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@GetMapping
-	public String showCart(final Model model) throws CMSItemNotFoundException
-	{
+	public String showCart(final Model model) throws CMSItemNotFoundException{
 		checkDatesIsBlackoutDate(model);
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
@@ -591,6 +590,7 @@ public class CartPageController extends AbstractCartPageController
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.cart"));
 		model.addAttribute("pageType", PageType.CART.name());
 		final CartData cartData = getCartFacade().getSessionCart();
+		model.addAttribute(BlControllerConstants.RENTAL_DATE, getRentalsDuration());
 		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}

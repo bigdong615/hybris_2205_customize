@@ -150,10 +150,10 @@
              <%--<div class="notification notification-warning">This is a product warning.</div>--%>
              <c:choose>
              	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
-             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${not empty entry.availabilityMessage }">
-             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
              		<div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>
