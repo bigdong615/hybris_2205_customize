@@ -137,7 +137,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 		Validate.notNull(serial, "Serial Product must not be null", null);
 		Validate.notNull(fromDate, "From Date must not be null", null);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(CONSIGNMENT_ENTRY_FOR_SERIAL_AND_FROM_DATE);
-		fQuery.addQueryParameter("serial", serial);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL, serial);
 		final SimpleDateFormat simpleformat = new SimpleDateFormat(BlCoreConstants.QUERY_DATE_FORMAT);
 		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(fromDate);
 		fQuery.addQueryParameter(BlCoreConstants.FROM_DATE, simpleformat.format(startDate.getTime()));

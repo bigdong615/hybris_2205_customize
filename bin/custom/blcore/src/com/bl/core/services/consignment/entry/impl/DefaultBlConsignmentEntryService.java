@@ -2,6 +2,7 @@ package com.bl.core.services.consignment.entry.impl;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -51,12 +53,29 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				consignmentEntry.setSerialProducts(updatedSerialList);
 				getModelService().save(consignmentEntry);
 				getModelService().refresh(consignmentEntry);
+				final AbstractOrderEntryModel orderEntry = consignmentEntry.getOrderEntry();
+				updateUnallotedQuantityOnOrderEntry(orderEntry);
 				final ConsignmentModel consignment = consignmentEntry.getConsignment();
 				changeStatusOnConsignment(consignment);
 				final AbstractOrderModel order = consignment.getOrder();
 				changeStatusOnOrder(order);
 			});
 		}
+	}
+
+	/**
+	 * Update unalloted quantity on order entry.
+	 *
+	 * @param orderEntry
+	 *           the order entry
+	 */
+	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry)
+	{
+		Long unAllocatedQuantity = ObjectUtils.defaultIfNull(orderEntry.getUnAllocatedQuantity(), Long.valueOf(0));
+		unAllocatedQuantity = unAllocatedQuantity + 1;
+		orderEntry.setUnAllocatedQuantity(unAllocatedQuantity);
+		getModelService().save(orderEntry);
+		getModelService().refresh(orderEntry);
 	}
 
 	/**
