@@ -13,7 +13,7 @@ public interface BlBufferInventoryService {
      * It updates buffer inventory at SKU product level
      * @throws BusinessException throws exception when base store is null
      */
-    public void updateBufferInvProducts() throws BusinessException;
+    public void updateBufferInventory() throws BusinessException;
 
     /**
      * It checks whether the SKU product is eligible to have buffer inventory as per

@@ -1303,6 +1303,7 @@
 		<property name="blStockLevelDao" ref="blStockLevelDao" />
 		<property name="productService" ref="productService" />
 		<property name="catalogVersionDao" ref="catalogVersionDao" />
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
