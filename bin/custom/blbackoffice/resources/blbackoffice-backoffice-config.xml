@@ -12,7 +12,8 @@
         xmlns:y="http://www.hybris.com/cockpit/config/hybris"
 		xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
         xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
-        xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea">
+        xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+        xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
 
     <!--Bl Specific custom nodes to be added here -->
     <context component="explorer-tree">
@@ -2710,6 +2711,13 @@
 			</ea:tab>
 		</ea:editorArea>
 	</context>
+	
+ <context type="Order" component="editorAreaDynamicForms" >
+     <df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+         <df:attribute id="disableStartDate" triggeredOn="*" qualifier="rentalStartDate" disabledIf="status.toString()=='SHIPPED'" />
+         <df:attribute id="disableEndDate" triggeredOn="*" qualifier="rentalEndDate" disabledIf="status.toString()=='SHIPPED'" />
+     </df:dynamicForms>
+ </context>
 
 </config>
 
