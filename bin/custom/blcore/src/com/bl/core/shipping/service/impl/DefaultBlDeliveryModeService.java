@@ -47,6 +47,8 @@ import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -795,12 +797,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             final Date rentalEndDate = BlDateTimeUtils
                 .addDaysInRentalDates(postDaysToAdd, rentalEnd, holidayBlackoutDates);
 
+            final LocalDate rentalStartLocalDate = rentalStartDate.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
+            final LocalDate todayLocalDate = new Date().toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate();
+            if (rentalStartLocalDate.isAfter(todayLocalDate) || (
+                rentalStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+                    .compareTimeWithCutOff(deliveryModeModel.getCutOffTime()))) {
+
             if (deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel
                 || deliveryModeModel instanceof BlRushDeliveryModeModel) {
 
                 isAvailable.set(
                     checkAvailabilityForPossibleInternalTransferOrders(deliveryModeModel,
-                        rentalStartDate, rentalEndDate));
+                            rentalStartDate, rentalEndDate, holidayBlackoutDates));
 
             } else {
                 final Set<WarehouseModel> lWareHouses =
@@ -822,7 +832,13 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                     lWareHouses, rentalStartDate, rentalEndDate);
 
                     if (!productService.isAquatechProduct(cartEntry.getProduct())
-                        && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+                            && stockForEntireDuration.getAvailableCount() < cartEntry
+                            .getQuantity()) {
+
+                            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                                "Stock not sufficient for Actual rental start date : {} and actual rental end date : {} for product : {} for delivery mode : {}",
+                                rentalStartDate, rentalEndDate, cartEntry.getProduct().getCode(),
+                                deliveryModeModel.getCode());
 
                         isAvailable.set(Boolean.FALSE);
                         return;
@@ -832,13 +848,31 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
                 return isAvailable.get();
             }
+            }  else {
+
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "New Actual rental start date : {} become past date than : {} for delivery mode : {}",
+                    rentalStartDate, new Date(), deliveryModeModel.getCode());
+
+                isAvailable.set(Boolean.FALSE);
+                return isAvailable.get();
+            }
         }
         return isAvailable.get();
     }
 
+    /**
+     * This method is to check the stock availability in different warehouses, in case of internal
+     * trnasfer orders
+     *
+     * @param deliveryModeModel
+     * @param rentalStartDate
+     * @param rentalEndDate
+     * @return true if stock available
+     */
     private boolean checkAvailabilityForPossibleInternalTransferOrders(
         final ZoneDeliveryModeModel deliveryModeModel, final Date rentalStartDate,
-        final Date rentalEndDate) {
+        final Date rentalEndDate, final List<Date> holidayBlackoutDates) {
 
         final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
@@ -866,9 +900,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
 
                     //here not available, so check in other warehouse  with +1 start date
-                    final Date newStartDate = BlDateTimeUtils.getDateWithSubtractedDays(rentalStartDate, 1);
-                    if (newStartDate.after(new Date()) || BlDateTimeUtils
-                        .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())) {
+                   final Date newStartDate = BlDateTimeUtils.getDateWithSubtractedDays(1, rentalStartDate, holidayBlackoutDates);
+
+                    final LocalDate newStartLocalDate = newStartDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    final LocalDate todayLocalDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+                    if (newStartLocalDate.isAfter(todayLocalDate) || (
+                        newStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+                            .compareTimeWithCutOff(deliveryModeModel.getCutOffTime()))) {
 
                         final StockResult stockForEntireDurationOtherWarehouse = getBlCommerceStockService()
                             .getStockForEntireDuration(
@@ -876,10 +915,24 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                 rentalEndDate);
                         if (stockForEntireDurationOtherWarehouse.getAvailableCount() < cartEntry
                             .getQuantity()) {
+
+                            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                                "Stock not sufficient for +1 rental start date : {} and actual rental end date : {} for product : {} for delivery mode : {}",
+                                newStartDate, rentalEndDate, cartEntry.getProduct().getCode(),
+                                deliveryModeModel.getCode());
+
                             //change the start date with +1 internal transfer
-                            isAvailable.set(false);
+                            isAvailable.set(Boolean.FALSE);
                             return;
                         }
+                    } else {
+
+                        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                            "New Actual rental start date : {} become past date than : {} for delivery mode : {}",
+                            newStartDate, new Date(), deliveryModeModel.getCode());
+
+                        isAvailable.set(Boolean.FALSE);
+                        return;
                     }
 
                 }

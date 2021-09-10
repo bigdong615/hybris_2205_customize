@@ -59,6 +59,11 @@ INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique
                              ;;59676;6128212 ;6128212 ;Canon_50mm_f1.2_L;;ACTIVE;50003855;true;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                          ; 7    ; 3
                              ;;59677;6128213 ;6128213 ;Canon_50mm_f1.2_L;;ACTIVE;50003856;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                           ; 8    ; 1
 
+# BL-1185 added for testing pre post reserve days
+                            ;;59682;6128217 ;6128217 ;Canon_80mm_f80_L;;ACTIVE;40003857;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                           ; 8    ; 1
+                            ;;59683;6128218 ;6128218 ;Canon_80mm_f80_L;;ACTIVE;50003858;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 9    ; 3
+                            ;;59684;6128219 ;6128219 ;Canon_90mm_f90_L;;ACTIVE;50003859;true;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                          ; 7    ; 3
+                            ;;59685;6128220 ;6128220 ;Canon_90mm_f90_L;;ACTIVE;50003860;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                           ; 8    ; 1
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
                       ;;5122541 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
@@ -125,6 +130,12 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocL
                     ;;6128211 ;2430;;warehouse_ca;7;;;;;;
                     ;;6128212 ;2586;;warehouse_ca;11;;;;;;
                     ;;6128213 ;2586;;warehouse_ca;4;;;;;;
+
+# BL-1185 added for testing pre post reserve days
+                    ;;6128217 ;2430;;warehouse_ma;4;;;;;;
+                    ;;6128218 ;2430;;warehouse_ma;7;;;;;;
+                    ;;6128219 ;2586;;warehouse_ca;11;;;;;;
+                    ;;6128220 ;2586;;warehouse_ca;4;;;;;;
 
 
 # Data for setting price on serials assigned on SKU 
@@ -240,3 +251,8 @@ UPDATE BlProduct ; $catalogVersion ; code[unique=true]                          
                 ;                 ;  Canon_71mm_Aquatech                                                ; 370              ; 70
                 ;                 ;  Canon_62mm_Aquatech                                                ; 360              ; 60
                 ;                 ;  Canon_72mm_Aquatech                                                ; 370              ; 70
+
+# BL-1185 added for pre post reserve days
+                ;                 ; Canon_80mm_f80_L                                                ; 360              ; 60
+                ;                 ; Canon_90mm_f90_L                                                ; 370              ; 70
+

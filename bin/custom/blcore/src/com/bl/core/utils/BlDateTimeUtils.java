@@ -725,20 +725,18 @@ public final class BlDateTimeUtils
 	}
 
 	/**
-	 * This method will return new Date after subtracting given no of days from it.
+	 * This method will return new Date after subtracting given no of days from it considering blackout dates
 	 *
 	 * @param givenDate date
 	 * @return noOfDaysToSubtract integer to be subtracted as days
 	 */
-	public static Date getDateWithSubtractedDays(final Date givenDate, final int noOfDaysToSubtract) {
+	public static Date getDateWithSubtractedDays(final int noOfDaysToSubtract, final Date givenDate,
+			final List<Date> holidayBlackoutDates) {
 
-		LocalDate rentalStartLocalDate = givenDate.toInstant()
-				.atZone(ZoneId.systemDefault())
-				.toLocalDate();
+		final String stringGivenDate = BlDateTimeUtils
+				.convertDateToStringDate(givenDate, BlCoreConstants.DATE_FORMAT);
 
-		rentalStartLocalDate = rentalStartLocalDate.minusDays(noOfDaysToSubtract);
-
-		return Date.from(rentalStartLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
+		return BlDateTimeUtils
+				.subtractDaysInRentalDates(noOfDaysToSubtract, stringGivenDate, holidayBlackoutDates);
 	}
 }

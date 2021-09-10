@@ -1,9 +1,16 @@
 package com.bl.core.services.strategy.impl;
 
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.strategy.BlCartValidationStrategy;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
 import de.hybris.platform.commerceservices.strategies.impl.DefaultCartValidationStrategy;
@@ -13,28 +20,17 @@ import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.services.strategy.BlCartValidationStrategy;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
 
 
 /**
@@ -143,7 +139,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 		final RentalDateDto rentalDateDto = getBlDatePickerService().getRentalDatesFromSession();
 		try
 		{
-			Long stocksAvailable = 0l;
+			Long stocksAvailable;
 			final DeliveryModeModel deliveryMode = cartEntryModel.getOrder().getDeliveryMode();
 			if (Objects.nonNull(rentalDateDto) && deliveryMode instanceof ZoneDeliveryModeModel)
 			{
@@ -172,27 +168,14 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 				stocksAvailable = getStocksForProductAndDate(cartEntryModel, listOfWarehouses,
 						rentalStartDate, rentalEndDate);
 
-				if (deliveryMode instanceof BlPickUpZoneDeliveryModeModel
-						|| deliveryMode instanceof BlRushDeliveryModeModel) {
+				if ((deliveryMode instanceof BlPickUpZoneDeliveryModeModel
+						|| deliveryMode instanceof BlRushDeliveryModeModel) && stocksAvailable < cartEntryModel
+						.getQuantity()) {
 
-					if (stocksAvailable < cartEntryModel.getQuantity()) {  //check in other warehouse with +1 start date
-
-						final Date newStartDate = BlDateTimeUtils.getDateWithSubtractedDays(rentalStartDate, 1);
-						if (newStartDate.after(new Date()) || BlDateTimeUtils
-								.compareTimeWithCutOff(((ZoneDeliveryModeModel) deliveryMode).getCutOffTime())) {
-
-							final List<WarehouseModel> otherListOfWarehouses = getBaseStoreService()
-									.getCurrentBaseStore().getWarehouses().stream().filter(
-											warehouseModel -> !warehouseModel.getCode()
-													.equalsIgnoreCase(listOfWarehouses.get(0).getCode()))
-									.collect(Collectors.toList());
-
-							stocksAvailable = getStocksForProductAndDate(cartEntryModel, otherListOfWarehouses,
-									newStartDate, rentalEndDate);
-						} else {
-							stocksAvailable = 0l;
-						}
-					}
+					 //check in other warehouse with +1 start date
+					stocksAvailable = getStockFromOtherWarehouse(cartEntryModel,
+							(ZoneDeliveryModeModel) deliveryMode, listOfWarehouses,
+							holidayBlackoutDates, rentalStartDate, rentalEndDate);
 				}
 
 				return stocksAvailable;
@@ -206,6 +189,49 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 					cartEntryModel.getProduct().getCode());
 		}
 		return Long.valueOf(0);
+	}
+
+	/**
+	 * Gets the stock from other warehouse with +1 date.
+	 *
+	 * @param cartEntryModel the cartEntryModel
+	 * @param deliveryMode the delivery mode
+	 * @param listOfWarehouses list of warehouses
+	 * @param  holidayBlackoutDates
+	 * @param rentalEndDate
+	 * @param rentalEndDate
+	 * @return stocklevel
+	 */
+	private Long getStockFromOtherWarehouse(final CartEntryModel cartEntryModel,
+			final ZoneDeliveryModeModel deliveryMode, final List<WarehouseModel> listOfWarehouses,
+			final List<Date> holidayBlackoutDates, final Date rentalStartDate, final Date rentalEndDate) {
+
+		final Long stocksAvailable;
+		final Date newStartDate = BlDateTimeUtils
+				.getDateWithSubtractedDays(1, rentalStartDate, holidayBlackoutDates);
+
+		final LocalDate newStartLocalDate = newStartDate.toInstant()
+				.atZone(ZoneId.systemDefault()).toLocalDate();
+		final LocalDate todayLocalDate = new Date().toInstant().atZone(ZoneId.systemDefault())
+				.toLocalDate();
+
+		if (newStartLocalDate.isAfter(todayLocalDate) || (
+				newStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+						.compareTimeWithCutOff(
+								deliveryMode.getCutOffTime()))) {
+
+			final List<WarehouseModel> otherListOfWarehouses = getBaseStoreService()
+					.getCurrentBaseStore().getWarehouses().stream().filter(
+							warehouseModel -> !warehouseModel.getCode()
+									.equalsIgnoreCase(listOfWarehouses.get(0).getCode()))
+					.collect(Collectors.toList());
+
+			stocksAvailable = getStocksForProductAndDate(cartEntryModel, otherListOfWarehouses,
+					newStartDate, rentalEndDate);
+		} else {
+			stocksAvailable = 0l;
+		}
+		return stocksAvailable;
 	}
 
 	private Long getStocksForProductAndDate(final CartEntryModel cartEntryModel,
