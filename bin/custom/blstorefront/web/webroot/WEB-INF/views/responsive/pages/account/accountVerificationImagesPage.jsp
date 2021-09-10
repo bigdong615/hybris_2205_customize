@@ -57,7 +57,12 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<c:set var="doc" value="${uploadedDocument.code}" />
-				${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
+			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
 				<%--  ${uploadedDocument.code} --%>
 				<div class="uploaded-doc">
 					<form action="${removeDocument}" method="get"
@@ -134,7 +139,12 @@
 				var="uploadedDocument">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<c:set var="doc" value="${uploadedDocument.code}" />
-				${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
+			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
 				
 					<form action="${removeDocument}" method="get"
 					id="removeDocumentForm_UTILITY_BILL_${loopindex.index}">
@@ -194,7 +204,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate}
+				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate}
 					<%-- <fmt:formatDate value="${uploadedDocument.expiryDate}" pattern="dd-MM-yy" /> --%>
 					 <input type="hidden" class="existing-doc">
 				</div>
@@ -250,7 +265,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
+			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
 						type="hidden" class="existing-doc">
 				</div>
 
@@ -300,7 +320,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
+			    <c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
 						type="hidden" class="existing-doc">
 				</div>
 
@@ -351,7 +376,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
+					<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
 						type="hidden" class="existing-doc">
 				</div>
 
@@ -397,7 +427,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
+				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
 						type="hidden" class="existing-doc">
 				</div>
 
@@ -445,7 +480,12 @@
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
 					<c:set var="doc" value="${uploadedDocument.code}" />
-					${fn:substringAfter(doc,'-')}<br />${uploadedDocument.expiryDate} <input
+				<c:set var="firstIndex" value="${fn:indexOf(doc,'-') + 1}" />
+				<c:set value="${fn:split(doc,'_')}" var="separatorPosition" />
+				<c:set var="timeStampStr" value="${separatorPosition[fn:length(separatorPosition)-1]}"/>
+				<c:set var="lastIndex" value="${fn:length(doc) - fn:length(timeStampStr) - 1}"/>
+				
+			${fn:substring(doc, firstIndex, lastIndex)} <br />${uploadedDocument.expiryDate} <input
 						type="hidden" class="existing-doc">
 				</div>
 
