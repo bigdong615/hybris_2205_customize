@@ -22,6 +22,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -292,14 +294,28 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
                                                           final RentalDateDto rentalDatesFromSession) {
-        final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
-                .collect(Collectors.toList());
+
+        final List<String> lProductCodes =  cartData.getEntries().stream().filter(cartEntry -> !cartEntry.getProduct().isIsBundle())
+            .map(cartEntry -> cartEntry.getProduct().getCode())
+            .collect(Collectors.toList());
+        final List<ProductData> bundleProductList = cartData.getEntries().stream().filter(cartEntry -> cartEntry.getProduct().isIsBundle())
+            .map(cartEntry -> cartEntry.getProduct())
+            .collect(Collectors.toList());
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
-        return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+        final Map<String, Long> stockLevelProductWise =
+            CollectionUtils.isNotEmpty(lProductCodes) ? getBlCommerceStockService()
+                .groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses)
+                : new HashMap<>();
+        if(CollectionUtils.isNotEmpty(bundleProductList)){
+            bundleProductList.forEach(productData -> {
+                stockLevelProductWise.put(productData.getCode(),productData.getStock().getStockLevel());
+            });
+        }
+    return stockLevelProductWise;
     }
 
 
@@ -504,6 +520,26 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 && entry.getProduct().getCode().equalsIgnoreCase(productModel.getCode())) {
 
                 foundAquatech.set(true);
+            }
+        });
+
+        return foundAquatech.get();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public boolean isAquatechProductsPresentInCart() {
+
+        final AtomicBoolean foundAquatech = new AtomicBoolean(false);
+        final CartModel cartModel = getSessionCart();
+        cartModel.getEntries().forEach(entry -> {
+
+            if (null != entry.getProduct() && productService.isAquatechProduct(entry.getProduct())) {
+
+                foundAquatech.set(true);
+                return;
             }
         });
 

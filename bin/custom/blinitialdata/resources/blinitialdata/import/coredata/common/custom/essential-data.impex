@@ -157,7 +157,7 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blAuthorizePaymentJob;blAuthorizePaymentJob
 ;blBufferInventoryJob;blBufferInventoryJob
 ;defaultBlAutomatedUPSScrapeJob;defaultBlAutomatedUPSScrapeJob
-
+;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
@@ -166,6 +166,7 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
 ;blAuthorizePaymentCronJob ;blAuthorizePaymentJob ; ;true;;
 ;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
+;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
 
 INSERT_UPDATE UPSScrapeCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
                               ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
