@@ -13,6 +13,7 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import java.util.ArrayList;
@@ -45,7 +46,13 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 
 	private static final String GET_ORDERS_BY_CUSTOMER_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.USER + "} = ?user and {o:status} IN ({{select {se:pk} from {OrderStatus as se} where {se:code} IN (?orderStatuses) }})";
-	
+
+	private static final String GET_INCOMPLETE_ORDERS_TO_BE_PROCESSED_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
+			+ "} BETWEEN ?startDate AND ?endDate) AND {o:status} IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'MANUAL_REVIEW'}})";
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -135,12 +142,28 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
 			if (CollectionUtils.isEmpty(result.getResult()))
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders for current user with incomplted status {} ", getUserService().getCurrentUser().getUid());
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders for current user with incomplete status {} ", getUserService().getCurrentUser().getUid());
 				
 			}
 			return result.getResult();
 	}
-	
+
+	@Override
+	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate,
+			final Date date) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_INCOMPLETE_ORDERS_TO_BE_PROCESSED_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+	//	fQuery.addQueryParameter(BlCoreConstants.STATUS, OrderStatus.MANUAL_REVIEW);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders to be processed via reshuffler job with manual review status");
+
+		}
+		return result.getResult();
+	}
+
 	/**
 	 * @return list of order statuses
 	 */

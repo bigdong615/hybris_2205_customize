@@ -201,4 +201,7 @@ public interface BlCommerceStockService
 	 */
 	 StockResult getStockForBundleProduct(final BlProductModel blProductModel, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
+
+	public Map<String, Long> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
 }

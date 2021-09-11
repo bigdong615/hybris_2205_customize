@@ -6,6 +6,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -131,4 +132,7 @@ public interface BlStockLevelDao {
 	 */
 	public Collection<StockLevelModel> reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel,
 			final Date startDay, final Date endDay);
+
+	public Collection<StockLevelModel> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
 }
