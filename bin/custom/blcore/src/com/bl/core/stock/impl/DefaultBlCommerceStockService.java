@@ -149,12 +149,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 						STOCK_RESULT_MESSAGE,
 						productReferenceModel.getTarget().getCode(), startDate, endDate, totalUnits,
 						availability);
-				final long noOfQuantity = productReferenceModel.getQuantity() != null ? productReferenceModel.getQuantity().longValue() : 0L;
-				if( noOfQuantity <= availability.longValue()) {
-					availableProductCount.add(availability);
-				} else{
-					availableProductCount.add(Long.valueOf(0));
-				}
+				final long noOfQuantity = productReferenceModel.getQuantity() != null ? productReferenceModel.getQuantity().longValue() : 1L;
+				Long availableProduct = availability.longValue()/noOfQuantity;
+				availableProductCount.add(availableProduct);
 				totalProductCount.add(totalUnits);
 			}
 		});
@@ -197,6 +194,16 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return stockResult.getAvailableCount();
 	}
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Long getAvailableCountForBundle(final BlProductModel productModel, final Collection<WarehouseModel> warehouses,
+      final Date startDate, final Date endDate)
+  {
+    StockResult stockResult= getStockForBundleProduct(productModel,warehouses,startDate,endDate);
+    return stockResult.getAvailableCount();
+  }
 	/**
 	 * {@inheritDoc}
 	 */

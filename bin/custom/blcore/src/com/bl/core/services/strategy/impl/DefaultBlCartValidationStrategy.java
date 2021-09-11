@@ -1,5 +1,6 @@
 package com.bl.core.services.strategy.impl;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.core.product.service.BlProductService;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
@@ -149,6 +150,9 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 						BlCoreConstants.DATE_FORMAT);
 				final Date endDay = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
 						BlCoreConstants.DATE_FORMAT);
+				if(((BlProductModel)cartEntryModel.getProduct()).isBundleProduct()){
+				return getBlCommerceStockService().getAvailableCountForBundle((BlProductModel)cartEntryModel.getProduct(),listOfWarehouses,startDay,endDay);
+				}
 				return getBlCommerceStockService().getAvailableCount(cartEntryModel.getProduct().getCode(), listOfWarehouses,
 						startDay, endDay);
 			}

@@ -316,8 +316,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String BL_BLACKOUT_DATE_MODEL = "BlBlackoutDateModel";
 	public static final String FROM_DATE = "fromDate";
+	public static final String SERIAL = "serial";
 	public static final String RETURN_DATE = "returnDate";
 	public static final String CONTACTUS_LINK = "contactus";
+	
+	public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 
 	private BlCoreConstants()

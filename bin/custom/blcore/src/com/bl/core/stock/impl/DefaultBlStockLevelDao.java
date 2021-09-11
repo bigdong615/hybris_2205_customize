@@ -64,6 +64,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
           AND + StockLevelModel.SERIALPRODUCTCODE + "} IN (?serialProductCodes) " +
           AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
 
+  private static final String ALL_SERIAL_STOCK_LEVELS_FOR_DATE_AND_CODES_QUERY =
+			SELECT + ItemModel.PK + FROM
+					+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE + DATE_PARAM +
+					AND + StockLevelModel.SERIALPRODUCTCODE + "} IN (?serialProductCodes) ";
+
 	private static final String USED_GEAR_SERIAL_STOCK_LEVEL = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.SERIALPRODUCTCODE
 			+ "} = ?serialProductCode";
@@ -385,6 +390,34 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
     }
     return stockLevels;
   }
+	/**
+	 * It finds all the stocks for the given serials and serial from start date to end date
+	 *
+	 * @param serialProductCodes
+	 * @param startDay           the rental start date
+	 * @param endDay             the rental end date
+	 * @return list of stock levels
+	 */
+	@Override
+	public Collection<StockLevelModel> findALLSerialStockLevelsForDateAndCodes(
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay) {
+
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
+				ALL_SERIAL_STOCK_LEVELS_FOR_DATE_AND_CODES_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODES, serialProductCodes);
+		addQueryParameter(startDay, endDay, fQuery);
+
+
+		final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels)) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial products {} with date between : {} and {}",
+					serialProductCodes, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
 
 	/**
 	 * {@inheritDoc}
