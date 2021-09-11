@@ -27,6 +27,8 @@
 
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
+        <collectiontype code="InventoryCycleCountProducts" elementtype="BlInventoryCycleCountDetails" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -365,6 +367,12 @@
       	<value code="RENTAL_START_DATE" />
         <value code="RENTAL_END_DATE" />
         <value code="HOLIDAY" />
+      </enumtype>
+
+      <enumtype generate="true" code="InventoryCycleCountStatus" autocreate="true" dynamic="true">
+          <value code="READY"/>
+          <value code="IN_PROCESS"/>
+          <value code="COMPLETED"/>
       </enumtype>
 
 	  </enumtypes>
@@ -6027,7 +6035,7 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true" />
                         <description>previous cycle count end date</description>
                     </attribute>
-                    <attribute qualifier="inventoryCycleCountProducts" type="BlInventoryCycleCountDetails">
+                    <attribute qualifier="inventoryCycleCountProducts" type="InventoryCycleCountProducts">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true"/>
                         <description>cycle count sku with dates </description>
@@ -6043,12 +6051,18 @@ new Integer(0)
                         <persistence type="property"/>
                         <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     </attribute>
+                    <attribute qualifier="inventoryCycleCountStatus" type="InventoryCycleCountStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountStatus", "READY")</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
             <itemtype code="BlInventoryCycleCountDetails" autocreate="true" generate="true">
                 <description>Contains inventory cycle count details</description>
-                <deployment table="BlInventoryCycleCountDetails" typecode="12238"/>
+                <deployment table="BlICCDetails" typecode="12238"/>
                 <attributes>
                     <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
                         <persistence type="property"/>
@@ -6070,12 +6084,18 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true" />
                         <description>current cycle count skus</description>
                     </attribute>
+                    <attribute qualifier="inventoryCycleCountDetailStatus" type="InventoryCycleCountStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count detail status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountStatus", "READY")</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
             <itemtype code="BlInventoryCycleCountScanHistory" autocreate="true" generate="true" >
                 <description>Contains all inventory cycle count scanning history</description>
-                <deployment table="BlInventoryCycleCountScanHistory" typecode="12236"/>
+                <deployment table="BlICCScanHistory" typecode="12236"/>
                 <attributes>
                     <attribute qualifier="scannedSKUsAndSerials" type="InventoryCycleCountScanSKUDetails">
                         <persistence type="property"/>

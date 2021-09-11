@@ -1435,4 +1435,11 @@
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
+
+	<!--Inventory Cycle count-->
+	<bean id="blInventoryCycleCountDao" name="blInventoryCycleCountDao"
+		  class="com.bl.core.inventory.cycle.count.dao.impl.DefaultBlInventoryCycleCountDao"/>
+
+	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
+		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService"/>
 </beans>

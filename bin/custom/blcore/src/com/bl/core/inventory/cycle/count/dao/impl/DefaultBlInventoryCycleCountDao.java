@@ -1,6 +1,5 @@
 package com.bl.core.inventory.cycle.count.dao.impl;
 
-import com.bl.constants.BlInventoryCycleCountLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.cycle.count.dao.BlInventoryCycleCountDao;
 import com.bl.core.model.BlInventoryCycleCountModel;
@@ -33,7 +32,7 @@ public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao
         final FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlInventoryCycleCount!} WHERE " +
                 "{inventoryCycleCountActive} = 0");
         final List<BlInventoryCycleCountModel> results = getFlexibleSearchService().<BlInventoryCycleCountModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryCycleCountLoggingConstants.FETCH_ACTIVE_INVENTORY_CYCLE_COUNT);
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_ACTIVE_INVENTORY_CYCLE_COUNT);
         return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
     }
 
@@ -48,7 +47,7 @@ public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao
                 "{version.version} = 'Online'";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(queryString);
         final List<BlProductModel> results = getFlexibleSearchService().<BlProductModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryCycleCountLoggingConstants.FETCH_ALL_SKUs);
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_ALL_SKUs);
         return CollectionUtils.isNotEmpty(results) ? results : CollectionUtils.EMPTY_COLLECTION;
     }
 

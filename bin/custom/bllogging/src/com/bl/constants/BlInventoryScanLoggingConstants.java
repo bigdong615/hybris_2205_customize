@@ -58,6 +58,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
     public static final String NOTIFICATION_HANDLER = "webSanToolNotification";
+    public static final String ICC_NOTIFICATION_HANDLER = "inventoryCycleCountNotification";
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE = "oneBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE = "maxBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE = "maxBarcodeLimitEQErrorFailure";
@@ -71,6 +72,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
+    public static final String INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY = "inventoryCycleCountScanToolDataModelKey";
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
 
@@ -224,6 +226,13 @@ public class BlInventoryScanLoggingConstants {
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
     public static final String FOR = " for ";
 
+    public static final String FETCH_ACTIVE_INVENTORY_CYCLE_COUNT = "Fetch active inventory cycle count record!!";
+    public static final String FETCH_ALL_SKUs = "Fetch all active SKUs considering serials status!!";
+    public static final String ICCDAY = "ICCDay_";
+    public static final int TWENTY_NINE = 29;
+    public static final int THIRTY = 30;
+    public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
+    public static final String DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivating previous cycle count with code: {}";
 
     private BlInventoryScanLoggingConstants() { }
 

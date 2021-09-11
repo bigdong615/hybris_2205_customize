@@ -31,6 +31,12 @@
                     <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
                     <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
                 </n:navigation-node>
+				<n:navigation-node id="BLProductInventoryCycleCount">
+					<n:navigation-node id="InventoryCycleCountScan"/>
+					<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
+					<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
+					<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
+				</n:navigation-node>
             </n:navigation-node>
 					<n:type-node id="BlOptions" code="BlOptions"/>
 					<n:type-node id="BlDamageWaiverPricing" code="BlDamageWaiverPricing"/>
@@ -2719,6 +2725,53 @@
      </df:dynamicForms>
  </context>
 
+	<!-- BlInventoryCycleCount -->
+	<context type="InventoryCycleCountScan" component="create-wizard">
+		<wz:flow id="InventoryCycleCountScan" title="blbackoffice.inventory.cycle.count.scan.tool.title">
+			<wz:prepare id="userPasswordChangePrepare">
+				<wz:initialize property="inventoryCycleCountScanToolData" template-bean="inventoryCycleCountScanToolData"/>
+			</wz:prepare>
+			<wz:step id="step1" label="blbackoffice.inventory.cycle.count.scan.tool.label">
+				<wz:content>
+					<wz:custom-view id="step1.content.customView" lang="zul">
+						<wz:renderer spring-bean="defaultInventoryCycleCountScanToolRenderer">
+							<wz:parameter>
+								<wz:name>inventoryCycleCountScanToolDataModelKey</wz:name>
+								<wz:value>inventoryCycleCountScanToolData</wz:value>
+							</wz:parameter>
+						</wz:renderer>
+					</wz:custom-view>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel />
+					<wz:custom label="blbackoffice.inventory.cycle.count.scan.tool.report" handler="defaultInventoryCycleCountScanToolHandler"
+							   align="left">
+						<wz:parameter>
+							<wz:name>inventoryCycleCountScanToolDataModelKey</wz:name>
+							<wz:value>inventoryCycleCountScanToolData</wz:value>
+						</wz:parameter>
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context component="notification-area" source="inventoryCycleCountNotification" merge-by="source">
+		<na:notification-area>
+			<na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+		</na:notification-area>
+	</context>
 </config>
 
 
