@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -76,6 +77,10 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND
 			+ StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
+
+	private static final String STOCK_FOR_UNALLOCATED_PRODUCTS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
+			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
+			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
 
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
@@ -400,6 +405,31 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			return Collections.emptyList();
 		}
 		return stockLevels;
+	}
+
+	public Collection<StockLevelModel> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate) {
+		if (null == warehouses)
+		{
+			throw new IllegalArgumentException("warehouses cannot be null.");
+		}
+		else
+		{
+			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_FOR_UNALLOCATED_PRODUCTS_QUERY);
+			fQuery.addQueryParameter("productCodes", productCodes);
+			addQueryParameter(startDate, endDate, fQuery);
+			fQuery.addQueryParameter("warehouses", warehouses);
+
+			final SearchResult result = getFlexibleSearchService().search(fQuery);
+			final List<StockLevelModel> stockLevels = result.getResult();
+			if (CollectionUtils.isEmpty(stockLevels))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"No Stock Levels found for product codes : {} and date between : {} and {}", productCodes, startDate, endDate);
+				return Collections.emptyList();
+			}
+			return stockLevels;
+		}
 	}
 
 }
