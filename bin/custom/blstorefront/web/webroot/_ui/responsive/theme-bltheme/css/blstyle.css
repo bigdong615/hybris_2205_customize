@@ -805,3 +805,9 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
 @media screen and (max-width: 350px) {
     .ratingCircle { width: 90%; }
 }
+.asmAutoComplete .ui-menu-item span:nth-last-child(1){
+  display: none !important;
+}
+.asmAutoComplete ul.ui-autocomplete li:hover{
+  background: none !important;
+}

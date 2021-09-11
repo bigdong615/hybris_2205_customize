@@ -13,6 +13,7 @@ import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.repair.log.service.BlRepairLogService;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
@@ -53,6 +54,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BlRepairLogService blRepairLogService;
 	private BaseStoreService baseStoreService;
 	private BlBufferInventoryService blBufferInventoryService;
+	private BlConsignmentEntryService blConsignmentEntryService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -82,6 +84,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
+			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 		}
 	}
 
@@ -668,6 +671,36 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				&& BooleanUtils.negate(RepairTypeEnum.NONE.equals(blSerialProduct.getRepairLogType()))
 				&& SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus());
 	}
+	
+	/**
+	 * Removes the serial assigned to future order.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param interceptorContext the interceptor context
+	 */
+	private void removeSerialAssignedToFutureOrder(final BlSerialProductModel blSerialProduct,
+			final InterceptorContext interceptorContext)
+	{
+		if (isEligibleToRemoveSerialFromOrder(blSerialProduct, interceptorContext))
+		{
+			getBlConsignmentEntryService().removeSerialFromConsignmentEntry(blSerialProduct);
+		}
+	}
+
+	/**
+	 * Checks if is eligible to remove serial from order.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param interceptorContext the interceptor context
+	 * @return true, if is eligible to remove serial from order
+	 */
+	private boolean isEligibleToRemoveSerialFromOrder(final BlSerialProductModel blSerialProduct, final InterceptorContext interceptorContext)
+	{
+		return interceptorContext.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)
+				&& Objects.nonNull(blSerialProduct.getSerialStatus())
+				&& (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED)
+						|| blSerialProduct.getSerialStatus().equals(SerialStatusEnum.PARTS_NEEDED));
+	}
 
 	/**
 	 *
@@ -739,5 +772,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlBufferInventoryService(
 			BlBufferInventoryService blBufferInventoryService) {
 		this.blBufferInventoryService = blBufferInventoryService;
+	}
+
+	/**
+	 * @return the blConsignmentEntryService
+	 */
+	public BlConsignmentEntryService getBlConsignmentEntryService()
+	{
+		return blConsignmentEntryService;
+	}
+
+	/**
+	 * @param blConsignmentEntryService the blConsignmentEntryService to set
+	 */
+	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
+	{
+		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
 }
