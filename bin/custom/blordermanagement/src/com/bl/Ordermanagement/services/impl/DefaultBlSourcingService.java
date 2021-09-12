@@ -120,7 +120,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
         if (isDeliveryModeForInternalTransfer(deliveryModeModel) && checkIfDifferentWarehouseAllocated(
             sourcingResult, deliveryModeModel)) {
 
-          sourcingResult.setInternalTransferConsignment(true);
+          sourcingResult.setOrderTransferConsignment(true);
           final List<Date> holidayBlackoutDates = blDatePickerService
               .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
           final Date newStartDate = BlDateTimeUtils
@@ -144,7 +144,8 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
       final ZoneDeliveryModeModel deliveryModeModel) {
 
-    return !sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode());
+    return !sourcingResult.getWarehouse().getCode()
+        .equalsIgnoreCase(deliveryModeModel.getWarehouse().getCode());
   }
 
   /**

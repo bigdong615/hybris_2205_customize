@@ -6,6 +6,7 @@ import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.strategy.BlCartValidationStrategy;
+import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -45,6 +46,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 	private BlDatePickerService blDatePickerService;
 	private BlCommerceStockService blCommerceStockService;
 	private BlProductService productService;
+	private BlDeliveryModeService zoneDeliveryModeService;
 
 	/**
 	 * {@inheritDoc}
@@ -168,12 +170,12 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 				stocksAvailable = getStocksForProductAndDate(cartEntryModel, listOfWarehouses,
 						rentalStartDate, rentalEndDate);
 
-				if ((deliveryMode instanceof BlPickUpZoneDeliveryModeModel
-						|| deliveryMode instanceof BlRushDeliveryModeModel) && stocksAvailable < cartEntryModel
-						.getQuantity()) {
+				if ((zoneDeliveryModeService
+						.isEligibleDeliveryModeForOrderTransfer((ZoneDeliveryModeModel) deliveryMode))
+						&& stocksAvailable < cartEntryModel.getQuantity()) {
 
 					 //check in other warehouse with +1 start date
-					stocksAvailable = getStockFromOtherWarehouse(cartEntryModel,
+					stocksAvailable = getStockFromOtherWarehouseForOrderTransfer(cartEntryModel,
 							(ZoneDeliveryModeModel) deliveryMode, listOfWarehouses,
 							holidayBlackoutDates, rentalStartDate, rentalEndDate);
 				}
@@ -202,11 +204,12 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 	 * @param rentalEndDate
 	 * @return stocklevel
 	 */
-	private Long getStockFromOtherWarehouse(final CartEntryModel cartEntryModel,
+	private Long getStockFromOtherWarehouseForOrderTransfer(final CartEntryModel cartEntryModel,
 			final ZoneDeliveryModeModel deliveryMode, final List<WarehouseModel> listOfWarehouses,
 			final List<Date> holidayBlackoutDates, final Date rentalStartDate, final Date rentalEndDate) {
 
 		final Long stocksAvailable;
+		// +1 day is added backwardly for order transfer which is required to transfer the order from one warehouse to other
 		final Date newStartDate = BlDateTimeUtils
 				.getDateWithSubtractedDays(1, rentalStartDate, holidayBlackoutDates);
 
@@ -316,5 +319,14 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 
 	public void setProductService(BlProductService productService) {
 		this.productService = productService;
+	}
+
+	public BlDeliveryModeService getZoneDeliveryModeService() {
+		return zoneDeliveryModeService;
+	}
+
+	public void setZoneDeliveryModeService(
+			final BlDeliveryModeService zoneDeliveryModeService) {
+		this.zoneDeliveryModeService = zoneDeliveryModeService;
 	}
 }
