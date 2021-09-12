@@ -647,6 +647,7 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="userService" ref="userService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1435,4 +1436,8 @@
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
+	
+	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
+    <bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
+	
 </beans>

@@ -7,7 +7,6 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.model.CustomerResponsibleRepairLogModel;
 import com.bl.core.model.InHouseRepairLogModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
@@ -21,12 +20,14 @@ import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
@@ -55,6 +56,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BaseStoreService baseStoreService;
 	private BlBufferInventoryService blBufferInventoryService;
 	private BlConsignmentEntryService blConsignmentEntryService;
+	private UserService userService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -85,6 +87,26 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
 			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+			setLastUserChangedConditionRating(blSerialProduct, ctx);
+		}
+	}
+	
+	private void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		if(!ctx.isNew(blSerialProduct) && (ctx.isModified(blSerialProduct, BlSerialProductModel.FUNCTIONALRATING)
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.COSMETICRATING)))
+		{
+			final UserModel currentUser = getUserService().getCurrentUser();
+			if (Objects.nonNull(currentUser))
+			{
+				final String currentUserUid = currentUser.getUid();
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
+				blSerialProduct.setUserChangedConditionRating(currentUserUid);
+			}
+			else
+			{
+				BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+			}
 		}
 	}
 
@@ -625,11 +647,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 							blSerialProduct.getRepairLogType().getCode());
 					getBlRepairLogService().addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct);
 					break;
-				case BlCoreConstants.CUSTOMER_RESPONSIBLE_REPAIR:
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
-							blSerialProduct.getRepairLogType().getCode());
-					getBlRepairLogService().addGeneratedRepairLog(CustomerResponsibleRepairLogModel.class, blSerialProduct);
-					break;
 				case BlCoreConstants.PARTS_NEEDED_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
@@ -788,5 +805,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
 	{
 		this.blConsignmentEntryService = blConsignmentEntryService;
+	}
+
+	/**
+	 * @return the userService
+	 */
+	public UserService getUserService()
+	{
+		return userService;
+	}
+
+	/**
+	 * @param userService the userService to set
+	 */
+	public void setUserService(UserService userService)
+	{
+		this.userService = userService;
 	}
 }
