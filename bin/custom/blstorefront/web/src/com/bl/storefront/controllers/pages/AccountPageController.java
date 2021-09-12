@@ -1183,6 +1183,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
 		VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlControllerConstants.VERIFICATION_PAGE_IDENTIFIER);
     model.addAttribute("verificationDocumentForm",verificationDocumentForm);
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);

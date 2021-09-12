@@ -187,6 +187,7 @@ public class BlControllerConstants
   public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
   public static final String ENABLE_SATURDAYS = "enableSaturdays";
   public static final String MODIFYPAYMENT = "modifyPayment";
+	public static final String VERIFICATION_PAGE_IDENTIFIER = "verificationImages";
   
 	private BlControllerConstants()
 	{
