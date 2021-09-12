@@ -75,7 +75,11 @@ public class InventoryCycleCountScanToolHandler implements com.hybris.cockpitng.
      * @param serialBarcodes barcodes
      */
     private void executeInventoryCycleCount(final List<String> skuList, final List<String> serialBarcodes) {
+        if(Boolean.TRUE.equals(getBlInventoryCycleCountService().checkIsSKUListMatching(skuList))) {
 
+        } else {
+            //TODO: error msg for sku list
+        }
     }
 
 

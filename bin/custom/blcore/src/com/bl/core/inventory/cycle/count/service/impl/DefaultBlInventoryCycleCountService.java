@@ -7,6 +7,7 @@ import com.bl.core.inventory.cycle.count.service.BlInventoryCycleCountService;
 import com.bl.core.model.BlInventoryCycleCountDetailsModel;
 import com.bl.core.model.BlInventoryCycleCountModel;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Inventory Cycle Count Service
@@ -35,6 +37,8 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
 
     @Autowired
     ModelService modelService;
+
+    private Collection<BlProductModel> inventorySKUList;
 
     /**
      * {@inheritDoc}
@@ -98,6 +102,60 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<BlInventoryCycleCountDetailsModel> getAllActiveSKUs() {
+        final BlInventoryCycleCountModel activeInventoryCycleCount = this.getActiveInventoryCycleCount();
+        if(null != activeInventoryCycleCount) {
+            final Collection<BlInventoryCycleCountDetailsModel> allICCDaysSKUs = activeInventoryCycleCount.getInventoryCycleCountProducts();
+            if(CollectionUtils.isNotEmpty(allICCDaysSKUs)) {
+                return allICCDaysSKUs.stream().filter(entry -> InventoryCycleCountStatus.READY.equals(entry.getInventoryCycleCountDetailStatus())).findFirst();
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkIsSKUListMatching(final Collection<String> inputList) {
+        final BlInventoryCycleCountDetailsModel blInventoryCycleCountDetailsModel = this.getAllActiveSKUs().orElse(null);
+        if(blInventoryCycleCountDetailsModel != null && CollectionUtils.isNotEmpty(inputList) && CollectionUtils.isNotEmpty(
+                blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs())) {
+            for(BlProductModel sku : blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs()) {
+                if(inputList.stream().noneMatch(input -> sku.getCode().equals(input))) {
+                    return Boolean.FALSE;
+                }
+            }
+            this.setInventorySKUList(blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs());
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void executeInventoryCycleCount(final Collection<String> serialBarcodes) {
+        final Collection<BlProductModel> missingList = new ArrayList<>();
+        final Collection<BlProductModel> unexpectedSerialList = new ArrayList<>();
+        final Collection<BlProductModel> allSKUList = this.getInventorySKUList();
+        if(CollectionUtils.isNotEmpty(allSKUList)) {
+            for(final BlProductModel sku : allSKUList) {
+                final Collection<BlSerialProductModel> allSerials = sku.getSerialProducts();
+                if(CollectionUtils.isNotEmpty(allSerials)) {
+                    for(final BlSerialProductModel serial : allSerials) {
+                        //TODO: check missing and unexpected and log history of scanning
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * This method will create BlInventoryCycleCountModel
      *
      * @param previousInventoryCount count
@@ -153,7 +211,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         blInventoryCycleCountDetailsModel.setInventoryCycleCountDate(this.getNextWorkingDate(previousDate, calendar));
         previousDate = blInventoryCycleCountDetailsModel.getInventoryCycleCountDate();
         inventoryCycleCountCounter = inventoryCycleCountCounter + BlInventoryScanLoggingConstants.ONE;
-        blInventoryCycleCountDetailsModel.setInventoryCycleCountCode(BlInventoryScanLoggingConstants.ICCDAY
+        blInventoryCycleCountDetailsModel.setInventoryCycleCountCode(BlInventoryScanLoggingConstants.ICC_DAY
                 + inventoryCycleCountCounter);
         blInventoryCycleCountDetailsModel.setInventoryCycleCountSKUs(list);
         getModelService().save(blInventoryCycleCountDetailsModel);
@@ -200,5 +258,13 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
 
     public void setModelService(ModelService modelService) {
         this.modelService = modelService;
+    }
+
+    public Collection<BlProductModel> getInventorySKUList() {
+        return inventorySKUList;
+    }
+
+    public void setInventorySKUList(Collection<BlProductModel> inventorySKUList) {
+        this.inventorySKUList = inventorySKUList;
     }
 }

@@ -228,7 +228,7 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String FETCH_ACTIVE_INVENTORY_CYCLE_COUNT = "Fetch active inventory cycle count record!!";
     public static final String FETCH_ALL_SKUs = "Fetch all active SKUs considering serials status!!";
-    public static final String ICCDAY = "ICCDay_";
+    public static final String ICC_DAY = "ICC_Day_";
     public static final int TWENTY_NINE = 29;
     public static final int THIRTY = 30;
     public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
