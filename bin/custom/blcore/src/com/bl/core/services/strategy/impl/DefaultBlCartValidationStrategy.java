@@ -2,8 +2,6 @@ package com.bl.core.services.strategy.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
-import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
-import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.strategy.BlCartValidationStrategy;
 import com.bl.core.shipping.service.BlDeliveryModeService;

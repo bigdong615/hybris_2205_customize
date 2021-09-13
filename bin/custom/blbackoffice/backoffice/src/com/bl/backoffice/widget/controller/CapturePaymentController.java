@@ -5,7 +5,6 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
-import com.braintree.constants.GeneratedBraintreeConstants;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
@@ -13,10 +12,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.util.localization.Localization;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Resource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
