@@ -10,20 +10,16 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
-
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -52,6 +48,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DATE);
 		final Cookie durationDayCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DURATION);
+
 		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()) && null != durationDayCookie && StringUtils.isNotEmpty(durationDayCookie.getValue()))
 		{
 			final String date = selectedDateCookie.getValue();
@@ -122,14 +119,17 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	@Override
 	public RentalDateDto getRentalDatesFromSession()
 	{
+		String selectedDurationDays = StringUtils.EMPTY;
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
-		final Map<String, String> selectedDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
+		final Map<String, String> selectedDuration = null!= getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP) ? getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP) : null;
 		if (null != rentalDate)
 		{
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
-			final String selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
+			if(null != selectedDuration && StringUtils.isNotBlank(selectedDuration.get(BlCoreConstants.SELECTED_DURATION))) {
+			  selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
+			}
 			if (null != startDate && null != endDate)
 			{
 				date.setSelectedFromDate(startDate);
@@ -137,9 +137,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
 								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
-				if(org.apache.commons.lang.StringUtils.isNotBlank(selectedDurationDays)) {
-					date.setSelectedDays(selectedDurationDays);
-				}
+					date.setSelectedDays(StringUtils.isNotBlank(selectedDurationDays) ? selectedDurationDays : date.getNumberOfDays());
 				return date;
 			}
 		}
@@ -185,6 +183,14 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected duration {} set into session", selectedDuration);
 	}
 
+	/**
+	 * It removes the selected duration from session
+	 */
+	@Override
+	public void removeRentalDurationFromSession() {
+		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "duration {} removed from session", BlCoreConstants.SELECTED_DATE_MAP);
+	}
 
 
 	/**

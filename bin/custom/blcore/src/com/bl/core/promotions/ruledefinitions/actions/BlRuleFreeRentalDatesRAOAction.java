@@ -5,7 +5,9 @@ import com.bl.core.model.BlProductModel;
 
 
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 
 import de.hybris.platform.product.ProductService;
@@ -75,6 +77,9 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
       BlLogger.logMessage(LOG, Level.DEBUG, "Discount: " + finalDiscount);
       BlLogger.logMessage(LOG, Level.DEBUG, "Subtotal for non-discounted days: " + noDiscountTotal);
       cartRao.setSubTotal(noDiscountTotal);
+      if (BlExtendOrderUtils.getCurrentExtendOrderToSession() != null  && BlExtendOrderUtils.getCurrentExtendOrderToSession().getTotalExtendDays().compareTo(cartRao.getRentalDurationDays()) == 0) {
+        OrderModel extendOrder = BlExtendOrderUtils.getCurrentExtendOrderToSession();
+      }
       DiscountRAO discount = this.getRuleEngineCalculationService().addOrderLevelDiscount(cartRao, true, finalDiscount );
       BlLogger.logMessage(LOG, Level.DEBUG, "Discount calculated for free dates: " + finalDiscount);
       RuleEngineResultRAO result = context.getRuleEngineResultRao();

@@ -22,6 +22,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -99,6 +100,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 /**
  * Controller for cart page
@@ -177,8 +179,11 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
-	@Resource(name ="productService")
+  @Resource(name ="productService")
 	ProductService productService;
+
+	@Resource(name = "blRentalDurationCookieGenerator")
+	private BlRentalDurationCookieGenerator blRentalDurationCookieGenerator;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -814,6 +819,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		try
 		{
+      WebUtils.getCookie(request,BlCoreConstants.COOKIE_NAME_FOR_DURATION).setValue(getRentalsDuration().getNumberOfDays());
 			voucherFacade.releaseVoucher(form.getVoucherCode());
 		}
 		catch (final VoucherOperationException e)
