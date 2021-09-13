@@ -73,10 +73,10 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			}
 
 			final Collection<BlProductModel> activeBlProductModelList = getProductDao().getAllActiveSkuProducts();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Number of SKU found : {}", activeBlProductModelList.size());
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of SKU found : {}", activeBlProductModelList.size());
 			final AtomicBoolean executeNextCriteria = new AtomicBoolean(Boolean.TRUE);
 			final Date currentDate = BlDateTimeUtils.getFormattedStartDay(new Date()).getTime();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current Date : {}", currentDate);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Current Date : {}", currentDate);
 
 			if (CollectionUtils.isNotEmpty(activeBlProductModelList))
 			{
@@ -147,7 +147,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	private void executeFirstCriteria(final AtomicBoolean executeCriteria, final Date currentDate, final BlProductModel sku,
 			final Long month)
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeFirstCriteria : {}", sku.getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeFirstCriteria : {}", sku.getCode());
 		final Date startDateToCheck = BlDateTimeUtils.getFormattedStartDay(new DateTime().minusMonths(month.intValue()).toDate())
 				.getTime();
 		final List<BlSerialProductModel> lSerials = Lists.newArrayList(sku.getSerialProducts());
@@ -155,18 +155,18 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		{
 			if (lSerials.size() > 1)
 			{
-				lSerials.forEach(serialcreationtime -> BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				lSerials.forEach(serialcreationtime -> BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Serial Product Code Befor Sorting: {} ,Serial product Creationtime : {}", serialcreationtime.getCode(),
 						serialcreationtime.getCreationtime()));
 
 				Collections.sort(lSerials, (serial1, serial2) -> serial1.getCreationtime().compareTo(serial2.getCreationtime()));
-				lSerials.forEach(serialcreationtime -> BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				lSerials.forEach(serialcreationtime -> BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"Serial Product Code After Sorting: {} ,Serial product Creationtime : {}", serialcreationtime.getCode(),
 						serialcreationtime.getCreationtime()));
 
 			}
 			final BlSerialProductModel blSerialProductModel = lSerials.get(0);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"First Serial Product Code : {} , First Serial product Creationtime : {}", blSerialProductModel.getCode(),
 					blSerialProductModel.getCreationtime());
 			executeCriteria.set(isFirstCriteriaIsEligible(currentDate, startDateToCheck, blSerialProductModel));
@@ -194,7 +194,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	private void executeSecondCriteria(final Long beforWeekPercentage, final Long week, final AtomicBoolean executeCriteria,
 			final Date currentDate, final BlProductModel sku)
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeSecondCriteria : {}", sku.getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeSecondCriteria : {}", sku.getCode());
 		final Date beforWeekStartDate = BlDateTimeUtils.getFormattedStartDay(new DateTime().minusWeeks(week.intValue()).toDate())
 				.getTime();
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
@@ -203,7 +203,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		{
 			final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 					.findALLSerialStockLevelsForDateAndCodes(collectserialSkuList, beforWeekStartDate, currentDate);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"BlProduct Code : {} ,Serial Product's Total Stock Found : {}", sku.getCode(),
 					serialStock.size());
 			final Map<String, List<StockLevelModel>> stockAsPerSerial = serialStock.stream()
@@ -216,23 +216,23 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 				if (MapUtils.isNotEmpty(stockAsPerSerial) && stockAsPerSerial.containsKey(serialCode))
 				{
 					final List<StockLevelModel> stockList = stockAsPerSerial.get(serialCode);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 							"Serial Product Code : {} ,Serial Product's Stock List Size : {}", serialCode,
 								serialStock.size());
 				stockList.forEach(
-							stockSerial -> 	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							stockSerial -> 	BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 									"Serial Product Status : {} ,Serial Product ReservedStatus : {}", stockSerial.getSerialStatus(),
 									stockSerial.getReservedStatus()));
 					criteria2Numerator += getActiveSerials(stockList);
 					criteria2Denominator += getAllUnsoldAndUnScrappedSerial(stockList);
 				}
 			}
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Criteria2 Numerator : {}", criteria2Numerator);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " criteria2 Denominator : {}", criteria2Denominator);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, " Criteria2 Numerator : {}", criteria2Numerator);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, " criteria2 Denominator : {}", criteria2Denominator);
 			if (criteria2Denominator > 0 && criteria2Numerator > 0)
 			{
 				final double serialProductPercentage = ((double) criteria2Numerator / criteria2Denominator) * 100;
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Serial Product Percentage : {}", serialProductPercentage);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, " Serial Product Percentage : {}", serialProductPercentage);
 				executeCriteria.set(serialProductPercentage <= beforWeekPercentage.longValue());
 				if (executeCriteria.get())
 				{
@@ -259,7 +259,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 	private void executeThirdCriteria(final Long afterWeekPercentage, final Long week, final AtomicBoolean executeCriteria,
 			final Date currentDate, final BlProductModel sku)
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "executeThirdCriteria : {}", sku.getCode());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeThirdCriteria : {}", sku.getCode());
 		final Date afterWeekEndDate = BlDateTimeUtils.getFormattedStartDay(new DateTime().plusWeeks(week.intValue()).toDate())
 				.getTime();
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
@@ -268,7 +268,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		{
 			final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
 					.findALLSerialStockLevelsForDateAndCodes(collectserialSkuList, currentDate, afterWeekEndDate);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"BlProduct Code : {} ,Serial Product's Total Stock Found : {}", sku.getCode(),
 					serialStock.size());
 			final Map<String, List<StockLevelModel>> stockAsPerSerial = serialStock.stream()
@@ -281,11 +281,11 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 				if (MapUtils.isNotEmpty(stockAsPerSerial) && stockAsPerSerial.containsKey(serialCode))
 				{
 					final List<StockLevelModel> stockList = stockAsPerSerial.get(serialCode);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 							"Serial Product Code : {} ,Serial Product's Stock List Size : {}", serialCode,
 							serialStock.size());
 					stockList.forEach(
-							stockSerial -> 	BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							stockSerial -> 	BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 									"Serial Product Status : {} ,Serial Product ReservedStatus : {}", stockSerial.getSerialStatus(),
 									stockSerial.getReservedStatus()));
 
@@ -293,13 +293,13 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 					criteria3Denominator += getAllUnsoldAndUnScrappedSerial(stockList);
 				}
 			}
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " criteria3 Numerator : {}", criteria3Numerator);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " criteria3 Denominator : {}", criteria3Denominator);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, " criteria3 Numerator : {}", criteria3Numerator);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, " criteria3 Denominator : {}", criteria3Denominator);
 
 			if (criteria3Denominator > 0 && criteria3Numerator > 0)
 			{
 				final double serialProductPercentage = ((double) criteria3Numerator / criteria3Denominator) * 100;
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Serial Product Percentage : {}", serialProductPercentage);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, " Serial Product Percentage : {}", serialProductPercentage);
 				executeCriteria.set(serialProductPercentage <= afterWeekPercentage.longValue());
 				if (executeCriteria.get())
 				{
