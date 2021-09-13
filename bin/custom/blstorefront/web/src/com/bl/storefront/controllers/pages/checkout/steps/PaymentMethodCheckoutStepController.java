@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -178,6 +179,11 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
+
+		if(null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))) {
+			return REDIRECT_PREFIX  + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
+		}
+
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
