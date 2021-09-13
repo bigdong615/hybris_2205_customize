@@ -24,6 +24,8 @@
         <collectiontype code="OrderGiftCardTransactions" elementtype="java.lang.String" type="list"/>
         
         <collectiontype code="BlockInventoryList" elementtype="BlockInventory" type="list"/>
+        
+        <collectiontype code="AssessmentNotes" elementtype="Notes" type="list"/>
 
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
@@ -195,6 +197,7 @@
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="TESTING_NEEDED"/>
         <value code="CUSTOMER_OWNED_ITEMS_NOTES"/>
+        <value code="ASSESSMENT_NOTE"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
@@ -284,7 +287,6 @@
       		<value code="NONE"/>
             <value code="IN_HOUSE_REPAIR" />
             <value code="VENDOR_REPAIR" />
-            <value code="CUSTOMER_RESPONSIBLE_REPAIR" />
             <value code="PARTS_NEEDED_REPAIR" />
       </enumtype>
       
@@ -301,9 +303,10 @@
         <value code="NONE" />
     </enumtype>
 	
-	<enumtype generate="true" code="SubStatusEnum" autocreate="true" dynamic="true">
-        <value code="BACK_ORDERED" />
-		<value code="PARTS_ORDERED" />
+	<enumtype generate="true" code="PartsStatusEnum" autocreate="true" dynamic="true">
+        <value code="NOT_STARTED" />
+		<value code="ORDERED" />
+		<value code="BACK_ORDERED" />		
     </enumtype>
     
     <enumtype generate="true" code="RepairLogStatusEnum" autocreate="true" dynamic="true">
@@ -369,6 +372,29 @@
         <value code="RENTAL_END_DATE" />
         <value code="HOLIDAY" />
       </enumtype>
+      
+      <enumtype generate="true" code="GearGaurdEnum" autocreate="true" dynamic="true">
+        <value code="GEAR_GAURD" />
+		<value code="GEAR_GAURD_PRO" />
+		<value code="NONE" />
+    </enumtype>
+	
+	
+	<enumtype generate="true" code="CustomerResponsibleEnum" autocreate="true" dynamic="true">
+        <value code="YES" />
+		<value code="NO" />
+    </enumtype>
+	
+	<enumtype generate="true" code="CustomerCollectionStatusEnum" autocreate="true" dynamic="true">
+        <value code="NOT_STARTED" />
+		<value code="BILL_CREATED" />
+		<value code="FIRST_FOLLOW_UP_SENT" />
+		<value code="SECOND_FOLLOW_UP_SENT" />
+		<value code="PASSED_TO_RECOVERY" />
+		<value code="EXCEPTION_MADE" />
+		<value code="BLACKLISTED" />
+		<value code="RESOLVED" />
+    </enumtype>
 
       <enumtype generate="true" code="InventoryCycleCountStatus" autocreate="true" dynamic="true">
           <value code="READY"/>
@@ -1507,6 +1533,10 @@
                        <modifiers read="true" write="true" optional="true"/>
                        <description>last OC location date at the time of unbox</description>
                    </attribute>
+                   <attribute qualifier="userChangedConditionRating" type="java.lang.String">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+			</attribute>
                  </attributes>
              </itemtype>
 
@@ -2954,7 +2984,13 @@
               <description>It tells whether the consignment is threeDayGround marked or not.</description>
           </attribute>
           <attribute qualifier="internalTransferConsignment" type="boolean">
-            <description>Flag to identify whether current consignment is internal transfer or not </description>
+            <description>Flag to identify whether created consignment is for internal transfer or not </description>
+            <modifiers read="true" write="true" search="false" optional="true" />
+            <persistence type="property" />
+            <defaultvalue>false</defaultvalue>
+          </attribute>
+          <attribute qualifier="orderTransferConsignment" type="boolean">
+            <description>Flag to identify whether current consignment is order transfer or not </description>
             <modifiers read="true" write="true" search="false" optional="true" />
             <persistence type="property" />
             <defaultvalue>false</defaultvalue>
@@ -3452,231 +3488,224 @@
       </typegroup>
       
       <typegroup name="RepairLog">
-		<itemtype code="BlRepairLog" autocreate="true" generate="true">
+	<itemtype code="BlRepairLog" autocreate="true" generate="true">
 		<description>BlRepairLog</description>
-		<deployment table="repairLog" typecode="12232"/>          
-          	 <attributes>
-          	 	<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Repair Tech Claim</description>
-                     <persistence type="property" />
-                  </attribute>
-                <attribute qualifier="recommendToRepair" type="boolean">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Recommendation to repair or not</description>
-	                     <persistence type="property" />
-	                     <defaultvalue>Boolean.FALSE</defaultvalue>
-                  </attribute>
-          	 	<attribute qualifier="order" type="AbstractOrder">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Order</description>
-                     <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="lastRepairReturnDay" type="java.util.Date">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Last Repair Return Day</description>
-                     <persistence type="property" />
-                  </attribute>
-          	 	<attribute qualifier="repairAssessment" type="java.lang.String">
-					<modifiers read="true" write="true"	optional="true" />
-						<persistence type="property"/>
-				</attribute>
-				<attribute qualifier="otherDocument" type="CatalogUnawareMediaList">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Upload of image of damage</description>
-	                    <persistence type="property" />
-                  </attribute>
-                <attribute qualifier="repairLogStatus" type="RepairLogStatusEnum">
-	            	  	<modifiers read="true" write="true" optional="false" />
-	            	  	<defaultvalue>em().getEnumerationValue("RepairLogStatusEnum", "OPEN")</defaultvalue>
-	                    <description>Repair Status</description>
-	                    <persistence type="property" />
-                  </attribute>          	 
-                   <attribute qualifier="overallSpend" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Overall Spend Per Serial</description>
-                     <persistence type="property" />
-                  </attribute>
-                  <!-- <attribute qualifier="currentRetailValue" type="java.lang.Double">
-	            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
-	                    <description>Current retail value</description>
-	                    <persistence type="dynamic" attributeHandler="" />
-                  </attribute> -->
-                  <attribute qualifier="returnOnInvestment" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Return On Investment Per Serial</description>
-                     <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="costForParts" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Cost For Parts</description>
-                     <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="costForLabor" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Cost For Labour</description>
-                     <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="itemBarcode" type="java.lang.String">
-					<modifiers read="true" write="true"	optional="true" />
-						<persistence type="property"/>
-					</attribute>
-				<attribute qualifier="serialCode" type="java.lang.String">
-					<modifiers read="true" write="true"	optional="true" />
-						<persistence type="property"/>
-				</attribute>
-				<attribute qualifier="associatedConsignment" type="Consignment">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>To store associated consignment on serial</description>
-                </attribute>
-				<attribute qualifier="consignmentEntry" type="ConsignmentEntry">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>To store associated consignment entry on serial</description>
-                </attribute>
-                <attribute qualifier="userId" type="java.lang.String">
-					<modifiers read="true" write="true"	optional="true" />
-						<persistence type="property"/>
-				</attribute>
-                <attribute qualifier="totalForPartsAndLaborCost" type="java.lang.Double">
-            	  	<modifiers read="true" write="false" optional="true"/>
-                    <description>Total for Parts and Labor costs</description>
-                     <persistence type="dynamic" attributeHandler="blTotalForPartsAndLabourChargeHandler" />
-                  </attribute>
-               <attribute qualifier="damageWaiverPaid" type="java.lang.Double">
-            	  	<modifiers read="true" write="false" optional="true"/>
-                    <description>Damage Waiver taken by Customer for the item</description>
-                     <persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
-                  </attribute>
-                  <!-- Tech Eng Notes Attributes -->
-                  <attribute qualifier="repairReasons" type="RepairReasonsEnum">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Determines what type of repair is required</description>
-                     </attribute>
-                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
-                     </attribute>
-                     <attribute qualifier="notesOnIssue" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify notes on the issue</description>
-                     </attribute>
-                  <attribute qualifier="frequency" type="IssueFrequencyEnum">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Determines the frequency of the issue on serial</description>
-                     </attribute>
-                     <attribute qualifier="cause" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify notes on the issue</description>
-                     </attribute>
-                     <attribute qualifier="blame" type="RepairBlameEnum">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Determines the blame</description>
-                     </attribute>
-                     <attribute qualifier="issueLocation" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify notes on the issue location</description>
-                     </attribute>
-             </attributes>
-       		</itemtype>
-       		
-       		<itemtype code="InHouseRepairLog" autocreate="true" generate="true" extends="BlRepairLog"/>
-       		
-       		<itemtype code="VendorRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
-       			<attributes>      			  
-                  <attribute qualifier="repairVendor" type="VendorsEnum">
-	            	  	<modifiers read="true" write="true" optional="true" />
-	            	  	<defaultvalue>em().getEnumerationValue("VendorsEnum", "NONE")</defaultvalue>
-	                    <description>Repair Vendor</description>
-	                    <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="dateSent" type="java.util.Date">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Date Sent</description>
-	                   <persistence type="property" />
-                  </attribute>
-                   <attribute qualifier="dateReturned" type="java.util.Date">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Date Returned</description>
-	                   <persistence type="property" />
-                  </attribute>
-       			</attributes>
-       		</itemtype>
-       		<itemtype code="CustomerResponsibleRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
-       			<attributes>
-      			  <attribute qualifier="customerAlerted" type="boolean">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Customer alerted</description>
-	                    <persistence type="property" />
-	                    <defaultvalue>Boolean.FALSE</defaultvalue>
-                  </attribute>                  
-                  <attribute qualifier="repairVendor" type="VendorsEnum">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Repair Vendor</description>
-	                   <persistence type="property" />
-                  </attribute>
-                   <attribute qualifier="dateSent" type="java.util.Date">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Date Sent</description>
-	                   <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="dateReturned" type="java.util.Date">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Date Returned</description>
-	                   <persistence type="property" />
-                  </attribute>
-                  <attribute qualifier="gearGaurdAvailable" type="boolean">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Customer alerted</description>
-	                    <persistence type="property" />
-	                    <defaultvalue>Boolean.FALSE</defaultvalue>
-                  </attribute>
-                   <!-- <attribute qualifier="customerNotes" type="Notes">
-	            	  	<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
-	                    <description>Customer Notes History</description>
-	                    <persistence type="dynamic" attributeHandler="" />
-                  </attribute> -->
-                  <attribute qualifier="customerChargeCost" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Customer Charge Cost</description>
-                     <persistence type="property" />
-                  </attribute>  
-                  <attribute qualifier="estimateApprovedCost" type="java.lang.Double">
-            	  	<modifiers read="true" write="true" optional="true"/>
-                    <description>Customer Charge Cost</description>
-                     <persistence type="property" />
-                  </attribute>  
-                  <attribute qualifier="customerCharged" type="CustomerChargedEnum">
-	            	  	<modifiers read="true" write="true" optional="true" />
-	            	  	<defaultvalue>em().getEnumerationValue("CustomerChargedEnum", "NO")</defaultvalue>
-	                    <description>Customer Charged</description>
-	                    <persistence type="property" />
-                  </attribute>                   
-       			</attributes>
-       		</itemtype>
-       		<itemtype code="PartsNeededRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
-       			<attributes>
-                   <attribute qualifier="repairVendor" type="VendorsEnum">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>Repair Vendor</description>
-	                   <persistence type="property" />
-                  </attribute>
-                   <attribute qualifier="subStatus" type="SubStatusEnum">
-	            	  	<modifiers read="true" write="true" optional="true"/>
-	                    <description>SUB-status</description>
-	                   <persistence type="property" />
-                  </attribute>
-       			</attributes>
-       		</itemtype>
-		</typegroup>
+		<deployment table="repairLog" typecode="12232" />
+		<attributes>
+			<attribute qualifier="serialCode" type="java.lang.String">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="itemBarcode" type="java.lang.String">
+				<modifiers read="true" write="true" optional="false" />
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Repair Tech Claim</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="order" type="AbstractOrder">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Order</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="selectedGearGaurd" type="GearGaurdEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Selected Gear Gaurd</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="recommendToRepair" type="boolean">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Recommendation to repair or not</description>
+				<persistence type="property" />
+				<defaultvalue>Boolean.FALSE</defaultvalue>
+			</attribute>
+			<attribute qualifier="customerResponsible" type="CustomerResponsibleEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Selected Gear Gaurd</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="lastRepairReturnDay" type="java.util.Date">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Last Repair Return Day</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="costForParts" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Cost For Parts</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="labourHours" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Cost For Parts</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="labourRate" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Cost For Parts</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="costForLabor" type="java.lang.Double">
+				<modifiers read="true" write="false" optional="true" />
+				<description>Cost For Labour</description>
+				<persistence type="dynamic" attributeHandler="blCalculateCostForLaborHandler" />
+			</attribute>
+			<attribute qualifier="totalForPartsAndLaborCost" type="java.lang.Double">
+				<modifiers read="true" write="false" optional="true" />
+				<description>Total for Parts and Labor costs</description>
+				<persistence type="dynamic" attributeHandler="blTotalForPartsAndLabourChargeHandler" />
+			</attribute>
+			<attribute qualifier="customerCharged" type="CustomerChargedEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Customer Charged</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="customerCollectionStatus" type="CustomerCollectionStatusEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Customer Charged</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="otherDocument" type="CatalogUnawareMediaList">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Upload of image of damage</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="repairLogStatus" type="RepairLogStatusEnum">
+				<modifiers read="true" write="true" optional="false" />
+				<defaultvalue>em().getEnumerationValue("RepairLogStatusEnum", "OPEN")</defaultvalue>
+				<description>Repair Status</description>
+				<persistence type="property" />
+			</attribute>
+			<!-- Tech Eng Notes Attributes -->
+			<attribute qualifier="notesOnIssue" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify notes on the issue</description>
+			</attribute>
+			<attribute qualifier="conditionRating" type="java.lang.Double">
+				<modifiers read="true" write="false" optional="true" />
+				<description>Total for Parts and Labor costs</description>
+				<persistence type="dynamic" attributeHandler="blRepairLogSerialConditionRatingHandler" />
+			</attribute>
+			<attribute qualifier="repairReasons" type="RepairReasonsEnum">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Determines what type of repair is required</description>
+			</attribute>
+			<attribute qualifier="otherRepairReasons" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+			</attribute>
+			<attribute qualifier="frequency" type="IssueFrequencyEnum">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Determines the frequency of the issue on serial</description>
+			</attribute>
+			<attribute qualifier="cause" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify notes on the issue</description>
+			</attribute>
+			<attribute qualifier="blame" type="RepairBlameEnum">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Determines the blame</description>
+			</attribute>
+			<attribute qualifier="issueLocation" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify notes on the issue location</description>
+			</attribute>
+			<attribute qualifier="associatedConsignment" type="Consignment">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>To store associated consignment on serial</description>
+			</attribute>
+			<attribute qualifier="consignmentEntry" type="ConsignmentEntry">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>To store associated consignment entry on serial</description>
+			</attribute>
+			<attribute qualifier="userId" type="java.lang.String">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="lastUserChangedConditionRating" type="java.lang.String">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="assessmentNotes" type="AssessmentNotes">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="damageWaiverPaid" type="java.lang.Double">
+				<modifiers read="true" write="false" optional="true" />
+				<description>Damage Waiver taken by Customer for the item</description>
+				<persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
+			</attribute>
+		</attributes>
+	</itemtype>
+
+	<itemtype code="InHouseRepairLog" autocreate="true" generate="true" extends="BlRepairLog" />
+
+	<itemtype code="VendorRepairLog" autocreate="true" generate="true" extends="BlRepairLog">
+		<attributes>
+			<attribute qualifier="repairVendor" type="VendorsEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<defaultvalue>em().getEnumerationValue("VendorsEnum", "NONE")</defaultvalue>
+				<description>Repair Vendor</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="dateSent" type="java.util.Date">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Date Sent</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="estimateCostApproved" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Customer Charge Cost</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="estimateCostDeclined" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Customer Charge Cost</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="estimateNote" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify notes on the issue</description>
+			</attribute>
+			<attribute qualifier="dateReturned" type="java.util.Date">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Date Returned</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="trackingNumber" type="java.lang.String">
+				<persistence type="property" />
+				<modifiers read="true" write="true" optional="true" />
+				<description>Tech Eng. Team member can specify notes on the issue</description>
+			</attribute>
+		</attributes>
+	</itemtype>
+	<itemtype code="PartsNeededRepairLog" autocreate="true"
+		generate="true" extends="BlRepairLog">
+		<attributes>
+			<attribute qualifier="repairVendor" type="VendorsEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Repair Vendor</description>
+				<persistence type="property" />
+			</attribute>
+			<attribute qualifier="partsStatus" type="PartsStatusEnum">
+				<modifiers read="true" write="true" optional="true" />
+				<description>SUB-status</description>
+				<persistence type="property" />
+			</attribute>
+		</attributes>
+	</itemtype>
+</typegroup>
 		
 		<!-- BL-957 Testing Gear Needed -->
 		<typegroup name="TestingGear">

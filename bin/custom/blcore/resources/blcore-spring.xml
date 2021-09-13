@@ -600,6 +600,7 @@
 	<alias name="defaultBlOrderService" alias="blOrderService" />
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -647,6 +648,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="blOrderService" ref="blOrderService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -918,6 +921,7 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 				<property name="blCommerceStockService" ref="blCommerceStockService"/>
 				<property name="productService" ref="productService"/>
+				<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->
@@ -1155,7 +1159,9 @@
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
 
 	<alias alias="productService" name="defaultBlProductService"/>
-	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService">
+		<property name="userService" ref="userService"/>
+	</bean>
 	
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
 	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
@@ -1247,6 +1253,7 @@
 	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
 	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
 		<property name="modelService" ref="modelService"/>
+		<property name="blShipmentCreationService" ref="blShipmentCreationService"/>
 	</bean>
 	
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
@@ -1436,10 +1443,7 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
-	<!--Inventory Cycle count-->
-	<bean id="blInventoryCycleCountDao" name="blInventoryCycleCountDao"
-		  class="com.bl.core.inventory.cycle.count.dao.impl.DefaultBlInventoryCycleCountDao"/>
+	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
+	<bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
 
-	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
-		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService"/>
 </beans>
