@@ -121,6 +121,11 @@ public final class BlInventoryScanUtility
 		return repairLocations;
 	}
 
+	/**
+	 * Gets the shipping work station locations.
+	 *
+	 * @return defaultLocations for shipping
+	 */
 	public static List<String> getShippingWorkstationInitial()
 	{
 		final List<String> defaultLocations = new ArrayList<>();
@@ -131,6 +136,12 @@ public final class BlInventoryScanUtility
 		defaultLocations.add(BlInventoryScanLoggingConstants.UPS);
 		return defaultLocations;
 	}
+
+	/**
+	 * Gets the front desk shelf locations.
+	 *
+	 * @return defaultLocations for front desk
+	 */
 
 	public static List<String> getFrontDeskShelfInitial()
 	{
@@ -200,17 +211,17 @@ public final class BlInventoryScanUtility
 	}
 
 	/**
-	 * Gets the tech eng repair locations.
+	 * Gets the front desk allowed working station locations.
 	 *
-	 * @return the tech eng repair locations
+	 * @return fdAllowedLocation
 	 */
 	public static List<String> getFrontDeskAllowedWorkStationLocations()
 	{
-		final List<String> shippingAllowedLocation = new ArrayList<>();
-		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
-		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPER_WORKSTATION);
-		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
-		return shippingAllowedLocation;
+		final List<String> fdAllowedLocation = new ArrayList<>();
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPER_WORKSTATION);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		return fdAllowedLocation;
 	}
 
 	/**

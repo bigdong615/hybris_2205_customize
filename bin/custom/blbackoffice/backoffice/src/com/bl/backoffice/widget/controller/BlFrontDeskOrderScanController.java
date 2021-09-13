@@ -375,17 +375,25 @@ public class BlFrontDeskOrderScanController extends DefaultWidgetController
 	 */
 	private void createResponseMsgForFDScan(final int result, final List<String> barcodes)
 	{
-		final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBarcodeList(barcodes);
-		if (CollectionUtils.isNotEmpty(failedBinBarcodeList))
+		if (result == BlInventoryScanLoggingConstants.ONE)
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.FRONT_DESK_INVALID_LOCATION_ERROR, failedBinBarcodeList);
+			final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBarcodeList(barcodes);
+			if (CollectionUtils.isNotEmpty(failedBinBarcodeList))
+			{
+				notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.FRONT_DESK_INVALID_LOCATION_ERROR, failedBinBarcodeList);
+			}
+			else
+			{
+				BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
+				Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+				this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+			}
 		}
 		else
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
-			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.FRONT_DESK_LAST_INVALID_LOCATION_ERROR);
 		}
 	}
 
