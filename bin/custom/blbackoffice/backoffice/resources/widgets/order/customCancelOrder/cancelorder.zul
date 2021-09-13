@@ -115,8 +115,7 @@
                     <template name="model">
                         <row style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;white-space: nowrap'
                                     : 'white-space: nowrap'}">
-                            <checkbox disabled="${each.quantityAvailableToCancel eq 0 and each.refundedAmount gt each.orderEntry.totalPrice ? true : false}"
-                                      width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
+                            <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
                                       name="cancel_entry_${each.orderEntry.product.code}" id="cancel_entry_${each.orderEntry.product.code}"/>
                                       <!-- onCheck='Clients.evalJavaScript("onEntrySelect(${each.orderEntry.product.code})")' -->
                             <textbox value="${each.orderEntry.product.code}" width="200px" name="code_${each.orderEntry.product.code}"
