@@ -18,8 +18,10 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.controllers.pages.CartPageController;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -45,6 +47,7 @@ import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import groovy.util.logging.Log;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +55,8 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -68,6 +73,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/checkout/multi/delivery-method")
 public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepController implements BlCheckoutStepController {
+
+    private static final Logger LOG = Logger.getLogger(DeliveryMethodCheckoutStepController.class);
+
     private static final String DELIVERY_METHOD = "delivery-method";
     private static final String DELIVERY_OR_PICKUP = "deliveryOrPickup";
     private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
@@ -146,6 +154,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
 
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+
+
+        if(null != getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))){
+            model.addAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION , true);
+            getSessionService().removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
@@ -268,10 +282,16 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @ResponseBody
     public String doSelectDeliveryMode(@RequestParam("delivery_method") final String selectedDeliveryMethod,
                                        @RequestParam("internalStoreAddress") final boolean internalStoreAddress) {
-   	 if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
-     	  return getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
-     			  ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
-       }
+        try {
+            if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
+                return getCheckoutFacade()
+                    .setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
+                    ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
+            }
+        }
+        catch (Exception e){
+            BlLogger.logMessage(LOG , Level.ERROR  , "*******************");
+        }
        return BlControllerConstants.ERROR;
     }
 
