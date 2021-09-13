@@ -680,4 +680,5 @@
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.shippingscanaction" outputId="blShippingScanContext" targetWidgetId="createShippingScanPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.packagescanaction" outputId="blPackageScanContext" targetWidgetId="createPackageScanPopup" inputId="inputObject" />
     <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction" outputId="blCapturePaymentContext" targetWidgetId="capturePaymentPopup" inputId="inputObject" />
+	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.frontdeskorderscan" outputId="blFrontDeskOrderScanContext" targetWidgetId="createFrontDeskScanPopup" inputId="inputObject" />
 </widgets>

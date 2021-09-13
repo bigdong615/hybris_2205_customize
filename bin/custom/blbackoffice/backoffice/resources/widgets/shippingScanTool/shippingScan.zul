@@ -32,15 +32,15 @@
   
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
-        <button id="cancel"
-				label="${labels.blbackoffice.shipping.scan.cancel.button}" 
-				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
-	    <button id="scanToBin" 
+       <button id="scanToBin" 
 				label="${labels.blbackoffice.shipping.scan.bin.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 	    <button id="verifyScan" 
 				label="${labels.blbackoffice.shipping.scan.verify.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+		 <button id="cancel"
+				label="${labels.blbackoffice.shipping.scan.cancel.button}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
 
     </div>            	
 </widget>

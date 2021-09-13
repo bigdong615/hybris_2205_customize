@@ -132,6 +132,17 @@ public final class BlInventoryScanUtility
 		return defaultLocations;
 	}
 
+	public static List<String> getFrontDeskShelfInitial()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+
+		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.MAM);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAM);
+		return defaultLocations;
+	}
+
 	/**
 	 * This method will return list of location that will be applicable for DirtyCart and DirtyPriorityCart location
 	 *
@@ -185,6 +196,20 @@ public final class BlInventoryScanUtility
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
+		return shippingAllowedLocation;
+	}
+
+	/**
+	 * Gets the tech eng repair locations.
+	 *
+	 * @return the tech eng repair locations
+	 */
+	public static List<String> getFrontDeskAllowedWorkStationLocations()
+	{
+		final List<String> shippingAllowedLocation = new ArrayList<>();
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPER_WORKSTATION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
 		return shippingAllowedLocation;
 	}
 

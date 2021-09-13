@@ -422,6 +422,15 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes)
 	{
+		return getFailedBinBarcodeList(barcodes, Collections.emptyList());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList)
+	{
 		final String subList = barcodes.get(0);
 		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
 		final int result = checkBinLocationWithType(subList, BlInventoryScanUtility.getDefaultBinLocation(),
