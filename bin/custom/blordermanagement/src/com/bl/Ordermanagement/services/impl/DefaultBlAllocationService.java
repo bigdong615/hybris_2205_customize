@@ -30,6 +30,7 @@ import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +112,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
       consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
 
-      consignment.setOrderTransferConsignment(result.isOrderTransferConsignment());
+      if (result.isOrderTransferConsignment()) {
+        updateOrderTransferValues(consignment, order);
+      }
+
 
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
@@ -185,6 +189,14 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
+
+  private void updateOrderTransferValues(final ConsignmentModel consignment, final AbstractOrderModel order) {
+
+    final Date orderTransferDateFromFirstWarehouse = order.getActualRentalStartDate();
+
+    consignment.setOrderTransferConsignment(true);
+   // consignment.setActualShippingDateToCustomer(orderTransferDateFromFirstWarehouse + 1);
   }
 
   /**
