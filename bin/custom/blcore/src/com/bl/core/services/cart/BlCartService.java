@@ -93,7 +93,20 @@ public interface BlCartService extends CartService {
      * @param poNotes
      */
     void savePoPaymentDetails(final String poNumber, final String poNotes);
-    
+
+    /**
+     * Update promotional End date for the promotion with extended
+     * rental days
+     * @param updatedRentalToDate
+     */
+    void updatePromotionalEndDate(final Date updatedRentalToDate);
+
+    /**
+     * Check if the Promotion with extended days is applied to cart
+     * @return
+     */
+    boolean isFreeRentalDayPromoApplied();
+
     /**
      * Change serial status of product of Staged version
      *  @param productCode
@@ -144,4 +157,11 @@ public interface BlCartService extends CartService {
      * @return true, if the given product is aquatech
      */
     boolean isAquatechProductsPresentInCart(final ProductModel productModel);
+
+    /**
+     * Checks if aquatech product present in session cart
+     *
+     * @return true, if the session cart have aquatech products
+     */
+    boolean isAquatechProductsPresentInCart();
 }

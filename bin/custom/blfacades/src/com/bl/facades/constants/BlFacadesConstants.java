@@ -68,6 +68,10 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String CANCELED = "Canceled";
   public static final String LATE = "Late";
   public static final String SOLD = "Sold";
+  
+  public static final int ONE = 1;
+  public static final int TWO = 2;
+  
 
   public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
   public static final String SHIPPING_FIRST_NAME = "shippingfirstname";

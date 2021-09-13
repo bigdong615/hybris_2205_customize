@@ -179,7 +179,15 @@
                                						</c:choose>
                                						</c:if>
                                							<spring:theme code="text.review.page.your.rental.total"/>
-                               							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" /></p>
+                               							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
+                               							<c:if test="${not empty cartEntry.product.bundleProductReference}">
+                                             	<ul class="checklist mt-4">
+                                                  <c:forEach items="${cartEntry.product.bundleProductReference}" var="bundleItems">
+                                                  <li>${bundleItems.productReferenceName}</li>
+                                                  </c:forEach>
+                                              </ul>
+                                           </c:if>
+                               							</p>
                                					</div>
                                				</div>
                                    </c:forEach>
@@ -412,6 +420,10 @@
                                       </c:choose>
                                 </c:if>
                             </div>
+                            <c:if test="${not empty orderData.customerOwnedOrderNote}">
+	                            <p class="customer-item-note"><spring:theme code="text.myaccount.order.level.note"/></p>
+	                            <div class="notification-order-note notification-order-note-warning">${orderData.customerOwnedOrderNote} </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

@@ -190,6 +190,7 @@
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="TESTING_NEEDED"/>
+        <value code="CUSTOMER_OWNED_ITEMS_NOTES"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
@@ -236,6 +237,7 @@
       		<value code="UNBOXED" />
       		<value code="LATE" />
       		<value code="RETURNED" />
+      		<value code="SHIPPED"/>
         </enumtype>
       
       
@@ -2680,6 +2682,11 @@
                       </property>
                     </custom-properties>
                   </attribute>
+                    <attribute qualifier="promotionalRentalEndDate" type="java.util.Date">
+                      <description>Updated rental end date when Extended rental days added</description>
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" optional="true" />
+                  </attribute>
                   <attribute qualifier="isVipOrder" type="java.lang.Boolean">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
@@ -2732,6 +2739,11 @@
                     <description>To identify whether order submitted or not </description>
                     <defaultvalue>false</defaultvalue>
                   </attribute>
+                  <attribute qualifier="orderTotalBeforeGCAdd" type="java.lang.Double">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify order Total before GC add </description>
+                </attribute>
                 </attributes>
             </itemtype>
 
@@ -2986,7 +2998,13 @@
               <description>It tells whether the consignment is threeDayGround marked or not.</description>
           </attribute>
           <attribute qualifier="internalTransferConsignment" type="boolean">
-            <description>Flag to identify whether current consignment is internal transfer or not </description>
+            <description>Flag to identify whether created consignment is for internal transfer or not </description>
+            <modifiers read="true" write="true" search="false" optional="true" />
+            <persistence type="property" />
+            <defaultvalue>false</defaultvalue>
+          </attribute>
+          <attribute qualifier="orderTransferConsignment" type="boolean">
+            <description>Flag to identify whether current consignment is order transfer or not </description>
             <modifiers read="true" write="true" search="false" optional="true" />
             <persistence type="property" />
             <defaultvalue>false</defaultvalue>
@@ -3762,7 +3780,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} = 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} = 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>
@@ -3869,7 +3887,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} != 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} != 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>

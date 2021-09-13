@@ -7,6 +7,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
@@ -61,6 +62,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -175,6 +177,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
+	@Resource(name ="productService")
+	ProductService productService;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -188,8 +193,7 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@GetMapping
-	public String showCart(final Model model) throws CMSItemNotFoundException
-	{
+	public String showCart(final Model model) throws CMSItemNotFoundException{
 		checkDatesIsBlackoutDate(model);
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
@@ -542,6 +546,11 @@ public class CartPageController extends AbstractCartPageController
 		final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
 		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
+		BlProductModel productModel = (BlProductModel)productService.getProductForCode(productCode);
+		if(productModel.isBundleProduct()){
+			return blCommerceStockService.getAvailableCountForBundle(
+					productModel, warehouseModelList, startDay, endDay);
+		}
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
 	}
 
@@ -591,6 +600,7 @@ public class CartPageController extends AbstractCartPageController
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.cart"));
 		model.addAttribute("pageType", PageType.CART.name());
 		final CartData cartData = getCartFacade().getSessionCart();
+		model.addAttribute(BlControllerConstants.RENTAL_DATE, getRentalsDuration());
 		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
@@ -1064,8 +1074,15 @@ public class CartPageController extends AbstractCartPageController
 					!(cartModel.getRentalEndDate().compareTo(endDate) == 0)) {
 				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 			}
-			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
-			{
+
+			final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
+					BlCoreConstants.SQL_DATE_FORMAT);
+			final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
+					rentalDateDto.getSelectedFromDate());
+
+			if ((blCartService.isAquatechProductsPresentInCart()
+					&& daysDifference < BlCoreConstants.TWO_DAYS) || BooleanUtils
+					.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto))) {
 				return BlControllerConstants.STOCK_FAILURE_RESULT;
 			}
 		}

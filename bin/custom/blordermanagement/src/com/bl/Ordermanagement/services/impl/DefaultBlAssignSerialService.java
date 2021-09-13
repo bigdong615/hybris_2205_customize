@@ -1,17 +1,20 @@
 package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
+import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -50,6 +53,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private SearchRestrictionService searchRestrictionService;
   private SessionService sessionService;
   private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
+  private BlDeliveryModeService zoneDeliveryModeService;
+  private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
    * {@inheritDoc}
@@ -65,8 +70,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
-    final SourcingLocation finalSourcingLocation = getBlShippingOptimizationStrategy().getProductAvailabilityForThreeDayGround(
-              context, sourcingLocation);
+
+    final SourcingLocation finalSourcingLocation =
+        isOrderBeingTransferredToOtherWarehouse(context, sourcingLocation.getWarehouse())
+            ?  sourcingLocation : getBlShippingOptimizationStrategy()
+            .getProductAvailabilityForThreeDayGround(context, sourcingLocation);
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Allocation map after shipping optimization:- {}",
         finalSourcingLocation.getAllocatedMap().toString());
@@ -120,6 +128,26 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   }
 
   /**
+   * Check whether the order will be sourced and transferred to different warehouse.
+   *
+   * @param context
+   * @param warehouseToBeSourced
+   * @return true if delivery mode is order transfer eligible and order is sourced from other
+   * warehouse
+   */
+  private boolean isOrderBeingTransferredToOtherWarehouse(final SourcingContext context,
+      final WarehouseModel warehouseToBeSourced) {
+
+    final AbstractOrderModel order = context.getOrderEntries().iterator().next().getOrder();
+    final WarehouseModel primaryWarehouse = blDeliveryStateSourcingLocationFilter
+        .applyFilter(order);
+
+    return zoneDeliveryModeService
+        .isEligibleDeliveryModeForOrderTransfer((ZoneDeliveryModeModel) order.getDeliveryMode())
+        && !primaryWarehouse.getCode().equalsIgnoreCase(warehouseToBeSourced.getCode());
+  }
+
+  /**
    * Check whether aquatech product is in given order entry.
    *
    * @param orderEntry
@@ -143,10 +171,14 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         }
       }
 
-      if (!isAquatechProductInEntry(entry) && allResultQuantityAllocated.equals(entry.getQuantity())) {
-        allEntryQuantityFulfilled.add(new AtomicBoolean(true));
+      if (!isAquatechProductInEntry(entry)) {
+        if (allResultQuantityAllocated.equals(entry.getQuantity())) {
+          allEntryQuantityFulfilled.add(new AtomicBoolean(true));
+        } else {
+          allEntryQuantityFulfilled.add(new AtomicBoolean(false));
+        }
       } else {
-        allEntryQuantityFulfilled.add(new AtomicBoolean(false));
+        allEntryQuantityFulfilled.add(new AtomicBoolean(true));
       }
     });
 
@@ -190,6 +222,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(allSerialProducts);
 
     if (blConsignerSerials.size() > 0 ) {
+
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BL consigner serials found {}",
+          blConsignerSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
       if (validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
           assignedSerials, blConsignerSerials) && isFulfilledQuantityEqualToEntryQuantity(entry, context)) {
         allEntrySourceComplete.add(new AtomicBoolean(true));
@@ -200,6 +236,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         final Set<BlSerialProductModel> unAssignedForSaleFalseSerials = new HashSet<>(
             getUnAssignedSerials(forSaleFalseSerials, assignedSerials));
 
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned forSale False Serials found {}",
+            unAssignedForSaleFalseSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
         if (unAssignedForSaleFalseSerials.size() != 0 && ((entry.getQuantity() - getFulfilledQuantity(context, entry)) < unAssignedForSaleFalseSerials.size()
             || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
             assignedSerials, unAssignedForSaleFalseSerials))) {
@@ -207,6 +246,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
           if (!isFulfilledQuantityEqualToEntryQuantity(entry, context)) {
             final List<BlSerialProductModel> oldestSerials = getOldestSerials(
                 new ArrayList<>(unAssignedForSaleFalseSerials));
+
             getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
                 oldestSerials);
           }
@@ -218,6 +258,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
           final Set<BlSerialProductModel> unAssignedForSaleTrueSerials = new HashSet<>(
               getUnAssignedSerials(forSaleTrueSerials, assignedSerials));
 
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned forSale True Serials found {}",
+              unAssignedForSaleTrueSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
           if (unAssignedForSaleTrueSerials.size() != 0 && ((entry.getQuantity() - getFulfilledQuantity(context, entry))  < unAssignedForSaleTrueSerials.size()
               || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
               assignedSerials, unAssignedForSaleTrueSerials))) {
@@ -228,6 +271,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
                   new ArrayList<>(unAssignedForSaleTrueSerials));
               final List<BlSerialProductModel> unAssignedSerials = new ArrayList<>(
                   getUnAssignedSerials(oldestSerials, assignedSerials));
+
+              BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned oldest Serials found {}",
+                  unAssignedSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
               getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
                   unAssignedSerials);
             }
@@ -236,6 +283,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
             final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
                 allSerialProducts);
+
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found {}",
+                nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
             if (CollectionUtils.isNotEmpty(nonSaleAndNonBLSerials)) {
               validateAndAssignNonBlSerials(context, results, warehouse, result,
                   allEntrySourceComplete, entry, nonSaleAndNonBLSerials, assignedSerials, new HashSet<>(allSerialProducts));
@@ -248,6 +299,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
       final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
           allSerialProducts);
+
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found :: {}",
+          nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
       if (nonSaleAndNonBLSerials.size() > 0) {
         validateAndAssignNonBlSerials(context, results, warehouse, result, allEntrySourceComplete,
             entry,
@@ -255,6 +310,10 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       } else {
         final List<BlSerialProductModel> unAssignedSerials = new ArrayList<>(
             getUnAssignedSerials(allSerialProducts, assignedSerials));
+
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "All unassigned Serials found {}",
+            unAssignedSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
+
         boolean isEntrySourced = getUnAssignedAndFilteredSerials(context, result, results,
             entry, warehouse, unAssignedSerials);
         allEntrySourceComplete.add(new AtomicBoolean(isEntrySourced));
@@ -373,7 +432,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final AbstractOrderModel orderModel = entry.getOrder();
       orderModel.setStatus(OrderStatus.MANUAL_REVIEW);
       modelService.save(orderModel);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced.");
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
       return false;
     }
   }
@@ -580,4 +639,21 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
   }
 
+  public BlDeliveryModeService getZoneDeliveryModeService() {
+    return zoneDeliveryModeService;
+  }
+
+  public void setZoneDeliveryModeService(
+      final BlDeliveryModeService zoneDeliveryModeService) {
+    this.zoneDeliveryModeService = zoneDeliveryModeService;
+  }
+
+  public BlDeliveryStateSourcingLocationFilter getBlDeliveryStateSourcingLocationFilter() {
+    return blDeliveryStateSourcingLocationFilter;
+  }
+
+  public void setBlDeliveryStateSourcingLocationFilter(
+      final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
+    this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+  }
 }

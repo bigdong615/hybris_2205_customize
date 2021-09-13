@@ -724,4 +724,19 @@ public final class BlDateTimeUtils
 		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(date);
 	}
 
+	/**
+	 * This method will return new Date after subtracting given no of days from it considering blackout dates
+	 *
+	 * @param givenDate date
+	 * @return noOfDaysToSubtract integer to be subtracted as days
+	 */
+	public static Date getDateWithSubtractedDays(final int noOfDaysToSubtract, final Date givenDate,
+			final List<Date> holidayBlackoutDates) {
+
+		final String stringGivenDate = BlDateTimeUtils
+				.convertDateToStringDate(givenDate, BlCoreConstants.DATE_FORMAT);
+
+		return BlDateTimeUtils
+				.subtractDaysInRentalDates(noOfDaysToSubtract, stringGivenDate, holidayBlackoutDates);
+	}
 }

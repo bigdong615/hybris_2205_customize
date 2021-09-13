@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
@@ -17,6 +18,9 @@ import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.GiftCardPurchaseForm;
+import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
+import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -27,6 +31,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
@@ -37,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,6 +73,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BaseStoreService baseStoreService;
   
   private BlCommerceStockService blCommerceStockService;
+  private CMSComponentService cmsComponentService;
 
 	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
 
@@ -437,14 +444,26 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
 						if (availableQty == 0) {
-							final String nextAvailabilityDate = getBlCommerceStockService()
-									.getNextAvailabilityDateInCheckout(productCode,
-											rentalDatesFromSession, warehouses, cartEntryQty);
-							setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
-						} else if (BooleanUtils.negate(availableQty >= cartEntryQty)) {
-							entry.setAvailabilityMessage(
-									getMessage("cart.entry.item.availability.low.stock.available",
-											Arrays.asList(String.valueOf(availableQty))));
+							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
+										Arrays.asList(getContactUsLink())));
+							}else {
+								final String nextAvailabilityDate = getBlCommerceStockService()
+										.getNextAvailabilityDateInCheckout(productCode,
+												rentalDatesFromSession, warehouses, cartEntryQty);
+								setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
+							}
+						}
+						else if (BooleanUtils.negate(availableQty >= cartEntryQty)) {
+							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
+										Arrays.asList(getContactUsLink())));
+							}
+							else{
+								entry.setAvailabilityMessage(
+										getMessage("cart.entry.item.availability.low.stock.available",
+												Arrays.asList(String.valueOf(availableQty))));
+							}
 						}
 					}
 				});
@@ -459,6 +478,20 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 	}
 
+
+	/**
+	 * Get Contact Us Link Node
+	 * @return
+	 */
+	private String getContactUsLink() {
+		try {
+			final CMSLinkComponentModel contactUsNavNode = getCmsComponentService().getAbstractCMSComponent(BlCoreConstants.CONTACTUS_NAV_LINK);
+			return contactUsNavNode.getUrl() != null ? contactUsNavNode.getUrl() : BlCoreConstants.CONTACTUS_LINK;
+		} catch (final CMSItemNotFoundException ex) {
+      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while finding the link component", ex);
+			return BlCoreConstants.CONTACTUS_LINK;
+		}
+	}
 
 	/**
 	 * Sets the next available date with message to cart entry.
@@ -581,13 +614,31 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		{
 			final Date startDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedFromDate(), BlFacadesConstants.DATE_FORMAT);
 			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
-			final List<String> listOfProductCodes = cartModel.getEntries().stream()
-					.map(cartEntry -> cartEntry.getProduct().getCode()).collect(Collectors.toList());
-			final Map<String, Long> groupByProductsAvailability = getBlCommerceStockService().groupByProductsAvailability(startDay,
-					endDay, listOfProductCodes, getBaseStoreService().getCurrentBaseStore().getWarehouses());
+
+			final List<String> listOfProductCodes =  cartModel.getEntries().stream().filter(cartEntry -> !((BlProductModel)cartEntry.getProduct()).isBundleProduct())
+					.map(cartEntry -> cartEntry.getProduct().getCode())
+					.collect(Collectors.toList());
+			final List<ProductModel> bundleProductList = cartModel.getEntries().stream().filter(cartEntry -> ((BlProductModel)cartEntry.getProduct()).isBundleProduct())
+					.map(cartEntry -> cartEntry.getProduct())
+					.collect(Collectors.toList());
+
+			final Map<String, Long> groupByProductsAvailability =
+					CollectionUtils.isNotEmpty(listOfProductCodes) ? getBlCommerceStockService()
+							.groupByProductsAvailability(startDay, endDay, listOfProductCodes,
+									getBaseStoreService().getCurrentBaseStore().getWarehouses()) : new HashMap<>();
+
+			if(CollectionUtils.isNotEmpty(bundleProductList)) {
+				bundleProductList.forEach(blProductModel -> {
+					final StockResult stockResult = blCommerceStockService.getStockForBundleProduct(
+							(BlProductModel) blProductModel, getBaseStoreService().getCurrentBaseStore().getWarehouses(), startDay, endDay);
+					groupByProductsAvailability
+							.put(blProductModel.getCode(),stockResult.getAvailableCount() );
+				});
+			}
 			cartModel.getEntries().forEach(cartEntry -> {
 				final int cartQuantity = cartEntry.getQuantity().intValue();
-				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
+				final int availableStockQuantity = groupByProductsAvailability
+						.get(cartEntry.getProduct().getCode()).intValue();
 
 				if (!blProductService.isAquatechProduct(cartEntry.getProduct())
 						&& availableStockQuantity < cartQuantity) {
@@ -623,7 +674,119 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 		return null;
 	}
-	
+
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 * @param cartModel
+	 * @param isCartPage
+	 */
+  @Override
+  public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
+    final StringBuilder removedEntry = new StringBuilder();
+    final List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
+    if (CollectionUtils.isNotEmpty(entryList)) {
+      Collections.reverse(entryList);
+      entryList.forEach(entryNumber -> {
+        try {
+          if (isCartPage) {
+            updateCartEntry(entryNumber, 0);
+          } else {
+            updateCartEntry(entryNumber, 0, cartModel);
+          }
+        } catch (final CommerceCartModificationException ex) {
+        	BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
+							"Couldn't update product with the entry number: {}",entryNumber);
+        }
+      });
+    }
+    String removedEntries = removedEntry.toString();
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			removedEntries = removedEntries.substring(1);
+		}
+		return removedEntries;
+	}
+
+	/**
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
+	 * @param entryNumber
+	 * @param quantity
+	 * @param cartModel
+	 * @return
+	 * @throws CommerceCartModificationException
+	 */
+	@Override
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity,final CartModel cartModel)
+			throws CommerceCartModificationException
+	{
+		final CommerceCartParameter parameter = new CommerceCartParameter();
+		parameter.setCart(cartModel);
+		parameter.setQuantity(quantity);
+		parameter.setCreateNewEntry(false);
+		parameter.setEnableHooks(true);
+		parameter.setEnableHooks(true);
+		parameter.setEntryNumber(entryNumber);
+		final CommerceCartModification modification = getCommerceCartService().updateQuantityForCartEntry(parameter);
+		return getCartModificationConverter().convert(modification);
+	}
+
+	/**
+	 *  This method used for collecting discontinue entries number form cart.
+	 * @param cartModel
+	 * @param removedEntry
+	 */
+	@Override
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, final StringBuilder removedEntry){
+	final	List<Integer> entryList = new ArrayList<>();
+		cartModel.getEntries().forEach(entry -> {
+			if (entry.getProduct() != null) {
+				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();
+				if (org.apache.commons.lang.BooleanUtils.isTrue(blProductModel.getDiscontinued())) {
+					entryList.add(entry.getEntryNumber());
+					removedEntry.append(BlFacadesConstants.COMMA_SEPERATER).append(blProductModel.getName(
+							i18nService.getCurrentLocale()));
+				}
+			}
+		});
+		return entryList;
+	}
+
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public void savePoPaymentDetails(final String poNumber, final String poNotes) {
+		blCartService.savePoPaymentDetails(poNumber,poNotes);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removePoNumber() {
+		CartModel cartModel = blCartService.getSessionCart();
+		if (cartModel != null) {
+			try {
+				cartModel.setPoNumber(null);
+				getModelService().save(cartModel);
+				getModelService().refresh(cartModel);
+			} catch (final ModelSavingException exception) {
+				BlLogger
+						.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
+			}
+		}
+	}
+
+	@Override
+	public Converter<AddToCartParams, CommerceCartParameter> getCommerceCartParameterConverter() {
+		return commerceCartParameterConverter;
+	}
+
+	@Override
+	public void setCommerceCartParameterConverter(
+			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
+		this.commerceCartParameterConverter = commerceCartParameterConverter;
+	}
+
   /**
    * Gets the bl cart service.
    *
@@ -687,121 +850,18 @@ public BlCommerceStockService getBlCommerceStockService()
 /**
  * @param blCommerceStockService the blCommerceStockService to set
  */
-public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
-{
-	this.blCommerceStockService = blCommerceStockService;
-}
-
-	/**
-	 * This method is used for remove discontinue product from cart.
-	 * @param cartModel
-	 * @param isCartPage
-	 */
-  @Override
-  public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
-    final StringBuilder removedEntry = new StringBuilder();
-    final List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
-    if (CollectionUtils.isNotEmpty(entryList)) {
-      Collections.reverse(entryList);
-      entryList.forEach(entryNumber -> {
-        try {
-          if (isCartPage) {
-            updateCartEntry(entryNumber, 0);
-          } else {
-            updateCartEntry(entryNumber, 0, cartModel);
-          }
-        } catch (final CommerceCartModificationException ex) {
-        	BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
-							"Couldn't update product with the entry number: {}",entryNumber);
-        }
-      });
-    }
-    String removedEntries = removedEntry.toString();
-		if(StringUtils.isNotEmpty(removedEntries)) {
-			removedEntries = removedEntries.substring(1);
-		}
-   return removedEntries;
-  }
-
-	/**
-	 * This method used for pre-populating saved card data before removing its discontinue entry.
-	 * @param entryNumber
-	 * @param quantity
-	 * @param cartModel
-	 * @return
-	 * @throws CommerceCartModificationException
-	 */
-	@Override
-	public CartModificationData updateCartEntry(final long entryNumber, final long quantity,final CartModel cartModel)
-			throws CommerceCartModificationException
+ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
 	{
-		final CommerceCartParameter parameter = new CommerceCartParameter();
-		parameter.setCart(cartModel);
-		parameter.setQuantity(quantity);
-		parameter.setCreateNewEntry(false);
-		parameter.setEnableHooks(true);
-		parameter.setEnableHooks(true);
-		parameter.setEntryNumber(entryNumber);
-		final CommerceCartModification modification = getCommerceCartService().updateQuantityForCartEntry(parameter);
-		return getCartModificationConverter().convert(modification);
+		this.blCommerceStockService = blCommerceStockService;
 	}
 
-	/**
-	 *  This method used for collecting discontinue entries number form cart.
-	 * @param cartModel
-	 * @param removedEntry
-	 */
-	@Override
-	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, final StringBuilder removedEntry){
-	final	List<Integer> entryList = new ArrayList<>();
-		cartModel.getEntries().forEach(entry -> {
-			if (entry.getProduct() != null) {
-				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();
-				if (org.apache.commons.lang.BooleanUtils.isTrue(blProductModel.getDiscontinued())) {
-					entryList.add(entry.getEntryNumber());
-					removedEntry.append(BlFacadesConstants.COMMA_SEPERATER).append(blProductModel.getName(
-							i18nService.getCurrentLocale()));
-				}
-			}
-		});
-		return entryList;
+	public CMSComponentService getCmsComponentService() {
+		return cmsComponentService;
 	}
 
-	/**
-	 *{@inheritDoc}
-	 */
-	@Override
-	public void savePoPaymentDetails(final String poNumber, final String poNotes) {
-    blCartService.savePoPaymentDetails(poNumber,poNotes);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void removePoNumber() {
-		CartModel cartModel = blCartService.getSessionCart();
-		if (cartModel != null) {
-			try {
-				cartModel.setPoNumber(null);
-				getModelService().save(cartModel);
-				getModelService().refresh(cartModel);
-			} catch (final ModelSavingException exception) {
-				BlLogger
-						.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
-			}
-		}
-	}
-
-	@Override
-	public Converter<AddToCartParams, CommerceCartParameter> getCommerceCartParameterConverter() {
-		return commerceCartParameterConverter;
-	}
-
-	@Override
-	public void setCommerceCartParameterConverter(
-			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
-		this.commerceCartParameterConverter = commerceCartParameterConverter;
+	public void setCmsComponentService(
+			CMSComponentService cmsComponentService) {
+		this.cmsComponentService = cmsComponentService;
 	}
 
 	public BlProductService getBlProductService() {

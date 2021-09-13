@@ -177,6 +177,15 @@ INSERT_UPDATE Media;mediaFormat(qualifier);code[unique=true];URL;mime[default='i
                    ;515Wx515H; Canon_72mm_Aquatech_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG7006a549-32ca-44b3-a225-fe94989ce891.jpg;;;images
                    ;300Wx300H; Canon_72mm_Aquatech_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD59485dc1-4b27-4021-9d23-530d16ee3449.jpg;;;images
 
+# BL-1185 added for testing pre-post reserve days
+                    ;96Wx96H;Canon_80mm_f80_L_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMd4a9a42c-a4db-4502-b684-5e03633cf6c1.jpg	;;;images
+                    ;515Wx515H;Canon_80mm_f80_L_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG7006a549-32ca-44b3-a225-fe94989ce891.jpg;;;images
+                    ;300Wx300H;Canon_80mm_f80_L_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD59485dc1-4b27-4021-9d23-530d16ee3449.jpg;;;images
+
+                    ;96Wx96H;Canon_90mm_f90_L_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMd4a9a42c-a4db-4502-b684-5e03633cf6c1.jpg	;;;images
+                    ;515Wx515H;Canon_90mm_f90_L_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG7006a549-32ca-44b3-a225-fe94989ce891.jpg;;;images
+                    ;300Wx300H;Canon_90mm_f90_L_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD59485dc1-4b27-4021-9d23-530d16ee3449.jpg;;;images
+
 
 
 # Create Media Containers
@@ -267,6 +276,9 @@ INSERT_UPDATE MediaContainer;qualifier[unique=true];$medias;$catalogVersion
                             ; Canon_62mm_Aquatech_Container; Canon_62mm_Aquatech_Small, Canon_62mm_Aquatech_Medium, Canon_62mm_Aquatech_Large
                             ; Canon_72mm_Aquatech_Container; Canon_72mm_Aquatech_Small, Canon_72mm_Aquatech_Medium, Canon_72mm_Aquatech_Large
 
+# BL-1185 added for testing pre post reserve days
+                            ;Canon_80mm_f80_L_Container;Canon_80mm_f80_L_Small,Canon_80mm_f80_L_Medium,Canon_80mm_f80_L_Large
+                            ;Canon_90mm_f90_L_Container;Canon_90mm_f90_L_Small,Canon_90mm_f90_L_Medium,Canon_90mm_f90_L_Large
 
 
 # Update Products with Media and Media Containers
@@ -362,6 +374,9 @@ UPDATE Product;code[unique=true];$picture;$thumbnail;$galleryImages;$catalogVers
             ; Canon_62mm_Aquatech; Canon_62mm_Aquatech_Medium; Canon_62mm_Aquatech_Small; Canon_62mm_Aquatech_Container
             ; Canon_72mm_Aquatech; Canon_72mm_Aquatech_Medium; Canon_72mm_Aquatech_Small; Canon_72mm_Aquatech_Container
 
+# BL-1185 added for testing pre post reserve days
+            ;Canon_80mm_f80_L;Canon_80mm_f80_L_Medium;Canon_80mm_f80_L_Small;Canon_80mm_f80_L_Container
+            ;Canon_90mm_f90_L;Canon_90mm_f90_L_Medium;Canon_90mm_f90_L_Small;Canon_90mm_f90_L_Container
 
 
 # Update Products with Media and Media Containers

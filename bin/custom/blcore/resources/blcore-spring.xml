@@ -592,6 +592,8 @@
 		<property name="searchRestrictionService" ref="searchRestrictionService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
 		<property name="productService" ref="productService"/>
+		<property name="promotionDao" ref="promotionDao"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 
 	<!--<BL-500 bean entry is for order service>-->
@@ -644,6 +646,7 @@
 		<property name="blRepairLogService" ref="blRepairLogService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -915,6 +918,7 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 				<property name="blCommerceStockService" ref="blCommerceStockService"/>
 				<property name="productService" ref="productService"/>
+				<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->
@@ -945,6 +949,13 @@
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
+
+	<bean id="blHighDemandConstrainedProductJob" class="com.bl.core.job.BlHighDemandConstrainedProductJob" parent="abstractJobPerformable">
+	<property name="productDao" ref="productDao" />
+	<property name="configurationService" ref="configurationService" />
+	<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+
 
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
@@ -1107,17 +1118,6 @@
 		<property name="typeCode" value="Consignment"/>
 	</bean>
 	
-	<!-- BL-992:This interceptor is added to validate order status based on the user group. -->
-	
-	<alias name="blConsignmentStatusValidateInterceptor" alias="blConsignmentStatusValidateInterceptor"/>
-	<bean id="blConsignmentStatusValidateInterceptor" class="com.bl.core.model.interceptor.BlConsignmentStatusValidateInterceptor"/>
-	
-	<bean id="blConsignmentStatusValidateInterceptorMapping"
-		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
-		<property name="interceptor" ref="blConsignmentStatusValidateInterceptor"/>
-		<property name="typeCode" value="Consignment"/>
-	</bean>
-
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
@@ -1216,6 +1216,25 @@
 	<bean id="blMarkDirtyPriorityJob" class="com.bl.core.job.BlMarkDirtyPrioritySerialsJob" parent="abstractJobPerformable">
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
+	<!-- [BL-668]: Custom Actions for rental products promotion-->
+	<alias alias="ruleExtendedFreeRentalDaysAction" name="defaultRuleExtendedFreeRentalDaysAction" />
+	<bean id="defaultRuleExtendedFreeRentalDaysAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="blExtendedFreeRentalDaysRAOAction"/>
+	</bean>
+
+	<alias alias="blExtendedFreeRentalDaysRAOAction" name="defaultBlExtendedFreeRentalDaysRAOAction" />
+	<bean id="defaultBlExtendedFreeRentalDaysRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlExtendedFreeRentalDaysRAOAction">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommercePriceService" ref="commercePriceService"/>
+		<property name="productService" ref="productService"/>
+		<property name="cartService" ref="cartService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<bean id="blExtendedFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+	<property name="key" value="defaultBlExtendedFreeRentalDaysRAOAction"/>
+	<property name="value" ref="orderTotalAdjustActionStrategy"/>
+	</bean>
 
 	<!--BL-828 Marking consignments cleanCompleteFlag start -->
 	<bean id="markConsignmentsCleanJob" class="com.bl.core.job.MarkReadyToShipConsignmentsCleanJob"
@@ -1292,6 +1311,8 @@
 		<property name="modelService" ref="modelService" />
 		<property name="blStockLevelDao" ref="blStockLevelDao" />
 		<property name="productService" ref="productService" />
+		<property name="catalogVersionDao" ref="catalogVersionDao" />
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blBufferInventoryJob" class="com.bl.core.job.BlBufferInventoryJob" parent="abstractJobPerformable">
@@ -1408,6 +1429,12 @@
 		<property name="blBlackoutDateService" ref="blBlackoutDateService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blBlackoutDatesDao" ref="blBlackoutDatesDao"/>
+	</bean>
+	
+	<alias name="defaultBlConsignmentEntryService" alias="blConsignmentEntryService"/>
+	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="blEspEventService" class="com.bl.core.services.esp.order.impl.DefaultBlEspEventService">

@@ -46,7 +46,8 @@ public class BlControllerConstants
 	public static final String SUCCESS = "success";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
 	public static final String SELECTED_DATE = "selectedDate";
-	
+	public static final String SELECTED_DURATION = "selectedDuration";
+
 	public static final int PAGE_SIZE = 100;
 	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
 	public static final String PASSWORD_STRING = "pwd";
@@ -185,7 +186,9 @@ public class BlControllerConstants
   public static final String USED_CATEGORY_CODE = "usedgear";
   public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
   public static final String ENABLE_SATURDAYS = "enableSaturdays";
-
+  public static final String MODIFYPAYMENT = "modifyPayment";
+	public static final String VERIFICATION_PAGE_IDENTIFIER = "verificationImages";
+  
 	private BlControllerConstants()
 	{
 		//empty

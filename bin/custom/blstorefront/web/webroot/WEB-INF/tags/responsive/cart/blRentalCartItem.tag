@@ -23,6 +23,13 @@
          <div class="col-md-7 mt-3">
            <a href="${fn:escapeXml(productUrl)}" class="js-pdplinkUrl" data-productCode="${entry.product.code}" data-brand="${entry.product.manufacturer}"
              data-productName="${ycommerce:sanitizeHTML(entry.product.name)}" data-productType="rental"><b>${entry.product.name}</b></a>
+             <c:if test="${not empty entry.product.bundleProductReference}">
+             <ul class="checklist mt-4">
+             <c:forEach items="${entry.product.bundleProductReference}" var="bundleItems">
+              <li>  ${bundleItems.productReferenceName}</li>
+             </c:forEach>
+             </ul>
+             </c:if>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
@@ -150,10 +157,10 @@
              <%--<div class="notification notification-warning">This is a product warning.</div>--%>
              <c:choose>
              	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
-             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${not empty entry.availabilityMessage }">
-             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
              		<div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>

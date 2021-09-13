@@ -71,4 +71,21 @@ public interface BlGiftCardService {
      * @return String value.
      */
     String getUniqueGiftCodeGenertaor();
+    
+    
+    /**
+     * It performs operation to apply gift card.
+     * @param giftCardCode current gift card code
+     * @return boolean true/false
+     */
+    public boolean applyGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
+    
+    
+    /**
+     * It removes applied gift card.
+     * @param giftCardCode current gift card code
+     */
+    public void removeGiftCardForModifyOrder(final String giftCardCode, final AbstractOrderModel orderModel);
+
+
 }

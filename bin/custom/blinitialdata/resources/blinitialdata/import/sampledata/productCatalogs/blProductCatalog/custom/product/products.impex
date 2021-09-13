@@ -148,7 +148,9 @@ INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; productId[unique=true] ;
                         ;                 ;           ; 13                     ;  Canon_62mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  62mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 62mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
                         ;                 ;           ; 13                     ;  Canon_72mm_Aquatech                                                ; lenses,canon              ; Canon Aquatech  72mm f/1.2L USM Lens                                         ; 0               ; Canon Aquatech 72mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 9               ; Canon            ; 1400
 
-
+# BL-1185 added for testing pre post reserve days
+                        ;                 ;           ; 13                     ; Canon_80mm_f80_L                                                ; lenses,canon              ; Canon EF 80mm f/1.2L USM Lens                                         ; 0               ; Canon EF 80mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 2               ; Canon            ; 1400
+                        ;                 ;           ; 13                     ; Canon_90mm_f90_L                                                ; lenses,canon              ; Canon EF 90mm f/1.2L USM Lens                                         ; 0               ; Canon EF 90mm f/1.2L USM Lens                                         ; CA5012LEF           ; 1257B002       ; 13803064551    ; LENSES                                 ; true    ; true    ; false          ; false          ; BARCODE            ; true      ; false   ; 2               ; Canon            ; 1400
 
 
 
@@ -248,3 +250,7 @@ INSERT_UPDATE BlProduct2BlProductRelation;$blProducts;$subParts;
 
                                         ; Canon_62mm_Aquatech                   ;77mm_front_cap
                                         ; Canon_72mm_Aquatech                   ;77mm_front_cap
+
+# BL-1185 added for testing pre post reserve days
+                                        ;Canon_80mm_f80_L                   ;77mm_front_cap
+                                        ;Canon_90mm_f90_L                   ;77mm_front_cap

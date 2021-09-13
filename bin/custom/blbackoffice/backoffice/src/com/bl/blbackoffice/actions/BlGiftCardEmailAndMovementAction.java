@@ -55,17 +55,17 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
       createGiftCardMovement(giftCardModel);
       ActionResult<String> actionResultForEmail = getStringActionResultForEmail(actionContext,
           giftCardModel);
-      if (actionResultForEmail != null && CollectionUtils.isNotEmpty(giftCardModel.getOrder())) {
+      if (actionResultForEmail != null ) {
+        if(CollectionUtils.isNotEmpty(giftCardModel.getOrder())){
       	final OrderModel order =(OrderModel) giftCardModel.getOrder().get(0);
       	// After send gift card purchase email to customer change order status
-      	if(order.isGiftCardOrder()){
-      	 order.setStatus(OrderStatus.COMPLETED);
+      	if(order.isGiftCardOrder()) {
+          order.setStatus(OrderStatus.COMPLETED);
           modelService.save(order);
           modelService.refresh(order);
-
+        }
       	}
-      	
-        return actionResultForEmail;
+      	return actionResultForEmail;
       }
     }
     Messagebox.show(giftCardModel + " (" + ActionResult.ERROR + ")",
