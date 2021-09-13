@@ -6,7 +6,6 @@ package com.bl.facades.populators;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.services.esp.models.OrderConfirmationRequest;
 import com.bl.core.services.esp.models.OrderData;
-import com.bl.core.services.esp.utils.BlEncryptionUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -22,6 +21,7 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -140,11 +140,12 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer transformer;
                 transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 StringWriter writer = new StringWriter();
 
                 //transform document to string
                 transformer.transform(new DOMSource(shippingInfoInXMLDocument), new StreamResult(writer));
-                data.setShippinginfo(BlEncryptionUtils.encryptData(writer.getBuffer().toString()));
+                data.setShippinginfo(writer.getBuffer().toString());
 
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
@@ -179,11 +180,12 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer transformer;
                 transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 StringWriter writer = new StringWriter();
 
                 //transform document to string
                 transformer.transform(new DOMSource(billingInfoInXMLDocument), new StreamResult(writer));
-                data.setBillinginfo(BlEncryptionUtils.encryptData(writer.getBuffer().toString()));
+                data.setBillinginfo(writer.getBuffer().toString());
 
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
@@ -221,11 +223,12 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer;
             transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             StringWriter writer = new StringWriter();
 
             //transform document to string
             transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
-            data.setOrderitemsinfo(BlEncryptionUtils.encryptData(writer.getBuffer().toString()));
+            data.setOrderitemsinfo(writer.getBuffer().toString());
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
