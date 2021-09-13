@@ -186,7 +186,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
-	public static final String HYPHEN = "-";
+	public static final String UNDERSCORE = "_";
 	public static final String DOUBLE_HYPHEN = "--";
 
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";

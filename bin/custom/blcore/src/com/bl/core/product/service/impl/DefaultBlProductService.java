@@ -1,8 +1,9 @@
 package com.bl.core.product.service.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.product.impl.DefaultProductService;
+import de.hybris.platform.servicelayer.user.UserService;
 
 import java.util.Objects;
 
@@ -24,6 +25,8 @@ import com.bl.logging.BlLogger;
 public class DefaultBlProductService extends DefaultProductService implements BlProductService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlProductService.class);
+  
+  private UserService userService;
 
 	/**
 	 * {@inheritDoc}
@@ -50,6 +53,25 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     }
     return isEligible;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setLastUserChangedConditionRating(BlSerialProductModel blSerialProduct)
+  {
+	  final UserModel currentUser = getUserService().getCurrentUser();
+	  if (Objects.nonNull(currentUser))
+	  {
+		  final String currentUserUid = currentUser.getUid();
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
+		  blSerialProduct.setUserChangedConditionRating(currentUserUid);
+	  }
+	  else
+	  {
+		  BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+	  }
+  }
 
   /**
    * {@inheritDoc}
@@ -59,4 +81,21 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 
     return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
   }
+
+/**
+ * @return the userService
+ */
+public UserService getUserService()
+{
+	return userService;
+}
+
+/**
+ * @param userService the userService to set
+ */
+public void setUserService(UserService userService)
+{
+	this.userService = userService;
+}
+
 }

@@ -21,8 +21,8 @@
                              <form:form action="${action}" method="post" modelAttribute="updatePasswordForm" class="my-4">
 
                        					<formElement:formPasswordBox idKey="currentPassword"  path="currentPassword" inputCSS="form-control mb-3 ${errormsgvalid}" placeholder="Current Password" mandatory="true" />
-                       					<formElement:formPasswordBox idKey="newPassword" path="newPassword" inputCSS="form-control mb-3" placeholder="New Password" mandatory="true" />
-                       					<formElement:formPasswordBox idKey="checkNewPassword"  path="checkNewPassword" inputCSS="form-control ${errormsgvalidates}" placeholder="Confirm New Password" mandatory="true" />
+                       					<formElement:formPasswordBox idKey="newPassword" path="newPassword" inputCSS="form-control mt-3" placeholder="New Password" mandatory="true" />
+                       					<formElement:formPasswordBox idKey="checkNewPassword"  path="checkNewPassword" inputCSS="form-control mt-3 ${errormsgvalidates}" placeholder="Confirm New Password" mandatory="true" />
 
                        							<div class="accountActions text-end mt-3">
                        						     	<button type="button" class="btn btn-outline backToHome">
