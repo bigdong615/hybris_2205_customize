@@ -2,28 +2,21 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.user.UserModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.user.UserService;
-import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.model.VendorRepairLogModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.repair.log.service.BlRepairLogService;
 import com.bl.logging.BlLogger;
@@ -85,8 +78,8 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				blRepairLogModel.setAssociatedConsignment(blSerialProductModel.getAssociatedConsignment());
 				blRepairLogModel.setConsignmentEntry(blSerialProductModel.getConsignmentEntry());
 				addCurrentUserToRepairLog(blRepairLogModel);
-				getSelectedGearGaurdFromOrder(blRepairLogModel, blSerialProductModel);
-				updateTrackingNumberOnLog(blRepairLogModel, blSerialProductModel);
+				getBlRepairLogService().getSelectedGearGaurdFromOrder(blRepairLogModel, blSerialProductModel);
+				getBlRepairLogService().updateTrackingNumberOnRepairLog(blRepairLogModel, blSerialProductModel);
 				getBlRepairLogService().setRepairReasonOnRepairLog(blRepairLogModel, blSerialProductModel);
 				blRepairLogModel.setLastUserChangedConditionRating(blSerialProductModel.getUserChangedConditionRating());
 			}
@@ -118,108 +111,6 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
 		}
-	}
-
-	/**
-	 * Gets the selected gear gaurd from order.
-	 *
-	 * @param blRepairLogModel
-	 *           the bl repair log model
-	 * @param blSerialProductModel
-	 *           the bl serial product model
-	 * @return the selected gear gaurd from order
-	 */
-	private void getSelectedGearGaurdFromOrder(final BlRepairLogModel blRepairLogModel,
-			final BlSerialProductModel blSerialProductModel)
-	{
-		blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.NONE);
-		if (Objects.nonNull(blSerialProductModel.getConsignmentEntry())
-				&& Objects.nonNull(blSerialProductModel.getConsignmentEntry().getOrderEntry()))
-		{
-			final AbstractOrderEntryModel orderEntry = blSerialProductModel.getConsignmentEntry().getOrderEntry();
-			if (BooleanUtils.toBoolean(orderEntry.getGearGuardWaiverSelected()))
-			{
-				blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.GEAR_GAURD);
-			}
-			else if (BooleanUtils.toBoolean(orderEntry.getGearGuardProFullWaiverSelected()))
-			{
-				blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.GEAR_GAURD_PRO);
-			}
-		}
-	}
-
-	/**
-	 * Update tracking number on log.
-	 *
-	 * @param blRepairLogModel
-	 *           the bl repair log model
-	 * @param blSerialProductModel
-	 *           the bl serial product model
-	 */
-	private void updateTrackingNumberOnLog(final BlRepairLogModel blRepairLogModel,
-			final BlSerialProductModel blSerialProductModel)
-	{
-		if (blRepairLogModel instanceof VendorRepairLogModel && Objects.nonNull(blSerialProductModel.getAssociatedConsignment()))
-		{
-			final ConsignmentModel associatedConsignment = blSerialProductModel.getAssociatedConsignment();
-			if (Objects.nonNull(associatedConsignment))
-			{
-				final PackagingInfoModel packageForSerial = getPackageForSerial(associatedConsignment,
-						blSerialProductModel.getCode());
-				if (Objects.nonNull(packageForSerial))
-				{
-					((VendorRepairLogModel) blRepairLogModel)
-							.setTrackingNumber(StringUtils.stripToEmpty(packageForSerial.getTrackingNumber()));
-				}
-				else
-				{
-					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Package found for serial : {} on Consignment : {}",
-							blSerialProductModel.getCode(), associatedConsignment.getCode());
-				}
-			}
-		}
-	}
-
-	/**
-	 * Gets the package for serial.
-	 *
-	 * @param consignment
-	 *           the consignment
-	 * @param serialCode
-	 *           the serial code
-	 * @return the package for serial
-	 */
-	private PackagingInfoModel getPackageForSerial(final ConsignmentModel consignment, final String serialCode)
-	{
-		for (final PackagingInfoModel blPackage : consignment.getPackaginginfos())
-		{
-			if (isSerialPresentInPackage(blPackage, serialCode))
-			{
-				return blPackage;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Checks if is serial present in package.
-	 *
-	 * @param blPackage
-	 *           the bl package
-	 * @param serialCode
-	 *           the serial code
-	 * @return true, if is serial present in package
-	 */
-	private boolean isSerialPresentInPackage(final PackagingInfoModel blPackage, final String serialCode)
-	{
-		for (final BlProductModel product : blPackage.getSerialProducts())
-		{
-			if (product.getCode().equals(serialCode))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
