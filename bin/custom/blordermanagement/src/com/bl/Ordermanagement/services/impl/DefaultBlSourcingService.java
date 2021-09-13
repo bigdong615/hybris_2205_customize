@@ -6,8 +6,11 @@ import com.bl.Ordermanagement.services.BlSourcingLocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -20,7 +23,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategy;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +42,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private BlSourcingStrategyService blSourcingStrategyService;
   private BlSourcingLocationService blSourcingLocationService;
   private ModelService modelService;
-
+  private BlDatePickerService blDatePickerService;
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
@@ -117,12 +120,13 @@ public class DefaultBlSourcingService implements BlSourcingService {
         if (isDeliveryModeForInternalTransfer(deliveryModeModel) && checkIfDifferentWarehouseAllocated(
             sourcingResult, deliveryModeModel)) {
 
-          sourcingResult.setInternalTransferConsignment(true);
-          final Calendar calendar = Calendar.getInstance();
-          calendar.setTime(order.getActualRentalStartDate());
-          calendar.add(Calendar.DATE, -1);
+          sourcingResult.setOrderTransferConsignment(true);
+          final List<Date> holidayBlackoutDates = blDatePickerService
+              .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+          final Date newStartDate = BlDateTimeUtils
+              .getDateWithSubtractedDays(1, order.getActualRentalStartDate(), holidayBlackoutDates);
 
-          order.setActualRentalStartDate(calendar.getTime());
+          order.setActualRentalStartDate(newStartDate);
           modelService.save(order);
         }
       });
@@ -140,7 +144,8 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
       final ZoneDeliveryModeModel deliveryModeModel) {
 
-    return !sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode());
+    return !sourcingResult.getWarehouse().getCode()
+        .equalsIgnoreCase(deliveryModeModel.getWarehouse().getCode());
   }
 
   /**
@@ -194,4 +199,11 @@ public class DefaultBlSourcingService implements BlSourcingService {
     this.modelService = modelService;
   }
 
+  public BlDatePickerService getBlDatePickerService() {
+    return blDatePickerService;
+  }
+
+  public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
+    this.blDatePickerService = blDatePickerService;
+  }
 }

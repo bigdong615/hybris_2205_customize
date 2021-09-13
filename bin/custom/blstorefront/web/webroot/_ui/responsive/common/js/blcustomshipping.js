@@ -475,7 +475,7 @@ else
              }
          });
      } else {
-         showErrorNotification('Please enter valid zipCode!!', false);
+         showErrorNotification('Please enter a valid zipcode.', false);
          $('.page-loader-new-layout').hide();
      }
   }

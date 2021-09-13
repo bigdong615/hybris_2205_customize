@@ -26,3 +26,7 @@ INSERT_UPDATE ProductReference;source(code,$catalogVersion)[unique=true];target(
                               ; Canon_71mm_Aquatech;72mm_CP_Filter;SIMILAR;true;false
                               ; Canon_62mm_Aquatech;72mm_CP_Filter;SIMILAR;true;false
                               ; Canon_72mm_Aquatech;72mm_CP_Filter;SIMILAR;true;false
+
+# BL-1185 added for testing pre post reserve days
+                            ;Canon_80mm_f80_L;72mm_CP_Filter;SIMILAR;true;false
+                            ;Canon_90mm_f90_L;72mm_CP_Filter;SIMILAR;true;false

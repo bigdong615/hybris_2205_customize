@@ -111,7 +111,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
       consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
 
-      consignment.setInternalTransferConsignment(result.isInternalTransferConsignment());
+      consignment.setOrderTransferConsignment(result.isOrderTransferConsignment());
 
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
@@ -227,11 +227,14 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @param result sourcingResult
    */
   private void optimizeShippingMethodForConsignment(final ConsignmentModel consignment, final SourcingResult result) {
+
+    if (!consignment.isOrderTransferConsignment()) {
     try {
       consignment.setThreeDayGroundAvailability(result.isThreeDayGroundAvailability());
       getBlShippingOptimizationStrategy().getOptimizedShippingMethodForOrder(consignment);
     } catch (final Exception e) {
        throw new BlShippingOptimizationException(ERROR_WHILE_OPTIMIZING_THE_ORDER, e);
+      }
     }
   }
 
