@@ -2972,7 +2972,13 @@
               <description>It tells whether the consignment is threeDayGround marked or not.</description>
           </attribute>
           <attribute qualifier="internalTransferConsignment" type="boolean">
-            <description>Flag to identify whether current consignment is internal transfer or not </description>
+            <description>Flag to identify whether created consignment is for internal transfer or not </description>
+            <modifiers read="true" write="true" search="false" optional="true" />
+            <persistence type="property" />
+            <defaultvalue>false</defaultvalue>
+          </attribute>
+          <attribute qualifier="orderTransferConsignment" type="boolean">
+            <description>Flag to identify whether current consignment is order transfer or not </description>
             <modifiers read="true" write="true" search="false" optional="true" />
             <persistence type="property" />
             <defaultvalue>false</defaultvalue>

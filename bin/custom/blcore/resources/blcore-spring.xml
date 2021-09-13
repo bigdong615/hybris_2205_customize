@@ -919,6 +919,7 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 				<property name="blCommerceStockService" ref="blCommerceStockService"/>
 				<property name="productService" ref="productService"/>
+				<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->
