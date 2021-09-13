@@ -10,6 +10,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.InHouseRepairLogModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.service.BlRepairLogService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
@@ -19,22 +20,16 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -57,8 +52,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BaseStoreService baseStoreService;
 	private BlBufferInventoryService blBufferInventoryService;
 	private BlConsignmentEntryService blConsignmentEntryService;
-	private UserService userService;
 	private BlOrderService blOrderService;
+	private BlProductService blProductService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -93,22 +88,18 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		}
 	}
 	
+	/**
+	 * Sets the last user changed condition rating.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param ctx the ctx
+	 */
 	private void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
 		if(!ctx.isNew(blSerialProduct) && (ctx.isModified(blSerialProduct, BlSerialProductModel.FUNCTIONALRATING)
 				|| ctx.isModified(blSerialProduct, BlSerialProductModel.COSMETICRATING)))
 		{
-			final UserModel currentUser = getUserService().getCurrentUser();
-			if (Objects.nonNull(currentUser))
-			{
-				final String currentUserUid = currentUser.getUid();
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
-				blSerialProduct.setUserChangedConditionRating(currentUserUid);
-			}
-			else
-			{
-				BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
-			}
+			getBlProductService().setLastUserChangedConditionRating(blSerialProduct);
 		}
 	}
 
@@ -697,23 +688,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
-
-	/**
-	 * @return the userService
-	 */
-	public UserService getUserService()
-	{
-		return userService;
-	}
-
-	/**
-	 * @param userService the userService to set
-	 */
-	public void setUserService(UserService userService)
-	{
-		this.userService = userService;
-	}
-
+	
 	/**
 	 * @return the blOrderService
 	 */
@@ -728,5 +703,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlOrderService(BlOrderService blOrderService)
 	{
 		this.blOrderService = blOrderService;
+	}
+
+	/**
+	 * @return the blProductService
+	 */
+	public BlProductService getBlProductService()
+	{
+		return blProductService;
+	}
+
+	/**
+	 * @param blProductService the blProductService to set
+	 */
+	public void setBlProductService(BlProductService blProductService)
+	{
+		this.blProductService = blProductService;
 	}
 }
