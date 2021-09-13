@@ -110,6 +110,7 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
         <property name="blOrderService" ref="blOrderService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />

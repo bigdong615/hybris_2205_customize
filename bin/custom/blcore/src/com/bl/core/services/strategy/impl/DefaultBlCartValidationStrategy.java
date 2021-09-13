@@ -164,8 +164,8 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 
 				final Date rentalStartDate = BlDateTimeUtils
 						.subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(), holidayBlackoutDates);
-				final Date rentalEndDate = BlDateTimeUtils
-						.addDaysInRentalDates(postDaysToAdd, rentalDateDto.getSelectedToDate(), holidayBlackoutDates);
+				final Date rentalEndDate = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+						rentalDateDto.getSelectedToDate(), holidayBlackoutDates);
 
 				stocksAvailable = getStocksForProductAndDate(cartEntryModel, listOfWarehouses,
 						rentalStartDate, rentalEndDate);

@@ -4,6 +4,8 @@ import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlOptionsModel;
@@ -13,6 +15,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.base.Strings;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -62,6 +65,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   private SearchRestrictionService searchRestrictionService;
   private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
   private BlOrderService blOrderService;
+  private BlDatePickerService blDatePickerService;
 
   /**
    * Create consignment.
@@ -191,12 +195,28 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     }
   }
 
-  private void updateOrderTransferValues(final ConsignmentModel consignment, final AbstractOrderModel order) {
+  /**
+   * Set order transfer related values to consignment
+   *
+   * @param consignment  -  the consignment
+   * @param order   -  the order
+   */
+  private void updateOrderTransferValues(final ConsignmentModel consignment,
+      final AbstractOrderModel order) {
 
-    final Date orderTransferDateFromFirstWarehouse = order.getActualRentalStartDate();
+    final List<Date> holidayBlackoutDates = blDatePickerService
+        .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+
+    final Date actualShippingDateToCustomer = BlDateTimeUtils
+        .getDateWithAddedDays(1, order.getActualRentalStartDate(), holidayBlackoutDates);
 
     consignment.setOrderTransferConsignment(true);
-   // consignment.setActualShippingDateToCustomer(orderTransferDateFromFirstWarehouse + 1);
+    consignment.setActualShippingDateToCustomer(actualShippingDateToCustomer);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Optimized shipping start date / Order transfer date from first warehouse : {} and actual shipping date to customer : {} set on consignment with code {}",
+        consignment.getOptimizedShippingStartDate(), consignment.getActualShippingDateToCustomer(),
+        consignment.getCode());
   }
 
   /**
@@ -591,5 +611,13 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
 
   public void setBlOrderService(final BlOrderService blOrderService) {
     this.blOrderService = blOrderService;
+  }
+
+  public BlDatePickerService getBlDatePickerService() {
+    return blDatePickerService;
+  }
+
+  public void setBlDatePickerService(final BlDatePickerService blDatePickerService) {
+    this.blDatePickerService = blDatePickerService;
   }
 }
