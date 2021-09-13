@@ -49,11 +49,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
   @Override
   public Object performSave(WidgetInstanceManager widgetInstanceManager, Object currentObject) throws ObjectSavingException {
     if (currentObject instanceof OrderModel) {
-
-			final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
-
-      OrderModel orderModel = (OrderModel) currentObject;
-        orderModel.setCalculated(false);
+		 OrderModel orderModel = (OrderModel) currentObject;
+       orderModel.setCalculated(false);
      	final List<Object> previousChangedOrderEntrysList = getPreviousChangedOrderEntrysList(orderModel);
 
 		if (CollectionUtils.isNotEmpty(previousChangedOrderEntrysList))
@@ -63,6 +60,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 		}
 		removeEntryFromConsignment(orderModel, previousChangedOrderEntrysList);
         orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
+     	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
       try {
         getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
       } catch (CalculationException e) {
