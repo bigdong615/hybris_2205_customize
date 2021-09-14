@@ -1,5 +1,10 @@
 package com.bl.core.utils;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -24,17 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
 
 /**
  * This class is used to convert the date format
@@ -771,7 +768,7 @@ public final class BlDateTimeUtils
 				.addDaysInRentalDates(noOfDaysToAdd, givenDate, holidayBlackoutDates);
 
 		//checking if next date of end date is a backout date and update
-		LocalDate nextLocalDate = getNextLocalDate(endDate);
+		final LocalDate nextLocalDate = getNextLocalDate(endDate);
 
 		getNextLocalDateAndUpdateIfFallsOnBlackoutDates(holidayBlackoutDates, nextLocalDate);
 
@@ -813,7 +810,7 @@ public final class BlDateTimeUtils
 		final LocalDate localDate = BlDateTimeUtils
 				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
 
-		return localDate.plusDays(1);
+		return null != localDate ? localDate.plusDays(1) : null;
 	}
 
 }
