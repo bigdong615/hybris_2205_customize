@@ -1,9 +1,88 @@
 package com.bl.backoffice.widget.controller.order;
 
+import static org.apache.log4j.Level.DEBUG;
+
+import de.hybris.platform.basecommerce.enums.CancelReason;
+import de.hybris.platform.basecommerce.enums.RefundReason;
+import de.hybris.platform.basecommerce.enums.ReturnAction;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import de.hybris.platform.ordercancel.OrderCancelException;
+import de.hybris.platform.ordercancel.OrderCancelRequest;
+import de.hybris.platform.ordercancel.OrderCancelService;
+import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.returns.ReturnService;
+import de.hybris.platform.returns.model.RefundEntryModel;
+import de.hybris.platform.returns.model.ReturnRequestModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.Locales;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zk.ui.event.SelectEvent;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Doublebox;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelArray;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Messagebox.Button;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.impl.InputElement;
+
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.result.BrainTreeRefundTransactionResult;
@@ -21,54 +100,6 @@ import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
-import de.hybris.platform.basecommerce.enums.CancelReason;
-import de.hybris.platform.basecommerce.enums.RefundReason;
-import de.hybris.platform.basecommerce.enums.ReturnAction;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.OrderEntryModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.order.CalculationService;
-import de.hybris.platform.order.exceptions.CalculationException;
-import de.hybris.platform.ordercancel.*;
-import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
-import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.payment.enums.PaymentTransactionType;
-import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
-import de.hybris.platform.returns.ReturnService;
-import de.hybris.platform.returns.model.RefundEntryModel;
-import de.hybris.platform.returns.model.ReturnRequestModel;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.user.UserService;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.Locales;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.InputEvent;
-import org.zkoss.zk.ui.event.SelectEvent;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.*;
-import org.zkoss.zul.Messagebox.Button;
-import org.zkoss.zul.impl.InputElement;
-
-import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.apache.log4j.Level.*;
 
 /**
  * ##################### Bl-986, Bl-987, Bl-988 ###################
@@ -159,6 +190,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
     @Resource
     private BrainTreeTransactionService brainTreeTransactionService;
+    
+    @Resource(name = "blStockLevelDao")
+  	private BlStockLevelDao blStockLevelDao;
 
     /**
      * Init cancellation order form.
@@ -646,22 +680,160 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @return true if cancellation success
      */
     private OrderCancelRecordEntryModel cancelOrder() {
-        try {
-            final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.getOrderCancelService().requestOrderCancel(
-                    this.buildCancelRequest(), this.getUserService().getCurrentUser());
-            if(orderCancelRecordEntryModel != null && (orderCancelRecordEntryModel.getCancelResult().getCode().equals(
-                    BlCustomCancelRefundConstants.FULL) || orderCancelRecordEntryModel.getCancelResult().getCode().equals(
-                    BlCustomCancelRefundConstants.PARTIAL))) {
-                return orderCancelRecordEntryModel;
-            }
-        } catch (final OrderCancelException e) {
-            BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR
-            + StringUtils.SPACE + this.getOrderModel().getCode());
-            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR), BlCustomCancelRefundConstants.FAILURE,
-                    Messagebox.OK, Messagebox.ERROR);
-        }
-        return null;
+   		try
+   		{
+   			final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.getOrderCancelService()
+   					.requestOrderCancel(this.buildCancelRequest(), this.getUserService().getCurrentUser());
+   			final Set<ConsignmentModel> consignments = this.getOrderModel().getConsignments();
+   			if (orderCancelRecordEntryModel != null
+   					&& (orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.FULL)))
+   			{
+   				updateStockForCancelledOrder(consignments);
+
+   				return orderCancelRecordEntryModel;
+   			}
+   			if (orderCancelRecordEntryModel != null
+   					&& orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.PARTIAL))
+   			{
+   				updateStockForPartialCancelledOrder(consignments);
+
+   				return orderCancelRecordEntryModel;
+   			}
+   		}
+   		catch (final OrderCancelException e)
+   		{
+   			BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY,
+   					BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR + StringUtils.SPACE + this.getOrderModel().getCode());
+   			Messagebox.show(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR, BlCustomCancelRefundConstants.FAILURE,
+   					Messagebox.OK, Messagebox.ERROR);
+   		}
+   		return null;
     }
+    
+    /**
+     * method will be used to update stock for partial cancel order
+  	 * @param consignments
+  	 */
+  	private void updateStockForPartialCancelledOrder(final Set<ConsignmentModel> consignments)
+  	{
+  		final List<AbstractOrderEntryModel> consignmentEntryList = new ArrayList<>();
+  		final List<AbstractOrderEntryModel> orderEntryList = new ArrayList<>();
+
+  		getConsignmentEntryList(consignments, consignmentEntryList);
+
+  		getCanclledOrderEntryList(orderEntryList);
+
+  		final boolean isEntryAvailable = orderEntryList.stream().allMatch(consignmentEntryList::contains);
+
+  		if (isEntryAvailable)
+  		{
+  			orderEntryList.forEach(orderEntry -> orderEntry.getSerialProducts().forEach(serialProduct -> {
+  				final ConsignmentModel conisgnmentForSerial = getConisgnmentForSerial(consignments, serialProduct);
+  				updateStockForCancelledProduct(serialProduct, conisgnmentForSerial.getOptimizedShippingStartDate(),
+  						conisgnmentForSerial.getOptimizedShippingEndDate());
+  			}));
+  		}
+  	}
+
+ 	/**
+ 	 * method will be used to  get cancelled order entry
+ 	 * @param orderEntryList
+ 	 */
+ 	private void getCanclledOrderEntryList(final List<AbstractOrderEntryModel> orderEntryList)
+ 	{
+ 		for (final BlOrderEntryToCancelDto orderEntryToCancelDto : this.cancelAndRefundEntries)
+ 		{
+ 			orderEntryList.add(orderEntryToCancelDto.getOrderEntry());
+ 		}
+ 	}
+
+ 	/** 
+ 	 * method will be used to  get consignmentEntry for cancelled order
+ 	 * @param consignments
+ 	 * @param consignmentEntryList
+ 	 */
+ 	private void getConsignmentEntryList(final Set<ConsignmentModel> consignments,
+ 			final List<AbstractOrderEntryModel> consignmentEntryList)
+ 	{
+ 		for (final ConsignmentModel consignment : consignments)
+ 		{
+ 			consignment.getConsignmentEntries()
+ 					.forEach(consignmentEntry -> consignmentEntryList.add(consignmentEntry.getOrderEntry()));
+ 		}
+ 	}
+
+ 	/**
+ 	 * method will used to release the stock for cancelled order
+ 	 * @param consignments
+ 	 */
+ 	private void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments)
+ 	{
+ 		for (final ConsignmentModel consignment : consignments)
+ 		{
+ 			consignment.getConsignmentEntries()
+ 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
+ 							.forEach(serialProduct -> updateStockForCancelledProduct(serialProduct,
+ 									consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())));
+ 		}
+ 	}
+
+ 	/**
+ 	 * method will used to get the consignment for serial
+ 	 * @param consignments
+ 	 * @param serialProduct
+ 	 */
+ 	private ConsignmentModel getConisgnmentForSerial(final Set<ConsignmentModel> consignments, final BlProductModel serialProduct)
+ 	{
+ 		for (final ConsignmentModel consignment : consignments)
+ 		{
+ 			for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
+ 			{
+ 				getConsignemtForSerialCode(serialProduct, consignment, consignmentEntry);
+ 			}
+ 		}
+ 		return null;
+ 	}
+
+	/** method will be used to return consignment for serial product
+	 * @param serialProduct
+	 * @param consignment
+	 * @param consignmentEntry
+	 */
+	private ConsignmentModel getConsignemtForSerialCode(final BlProductModel serialProduct, final ConsignmentModel consignment,
+			final ConsignmentEntryModel consignmentEntry)
+	{
+		for (final BlProductModel item : consignmentEntry.getSerialProducts())
+		{
+			if (item.getCode().equals(serialProduct.getCode()))
+			{
+				return consignment;
+			}
+		}
+	}
+
+ 	/**
+ 	 * method will be used to update the stock level for serial
+ 	 *
+ 	 * @param consignment
+ 	 * @param serialProduct
+ 	 */
+ 	private void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
+ 			final Date optimizedShippingEndDate)
+ 	{
+ 		final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
+ 				.findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate  , optimizedShippingEndDate);
+ 		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
+ 		{
+ 			findSerialStockLevelForDate.forEach(stockLevel -> {
+ 				stockLevel.setHardAssigned(false);
+ 				stockLevel.setReservedStatus(false);
+ 				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
+ 				modelService.save(stockLevel);
+ 				modelService.save(serialProduct);
+ 			});
+ 			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Stock level updated for serial {}", serialProduct);
+ 		}
+ 	}
 
     /**
      * refund and log response
