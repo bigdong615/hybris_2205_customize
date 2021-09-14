@@ -205,6 +205,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BeforWeek StartDate : {}", beforWeekStartDate);
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
 				.collect(Collectors.toSet());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, " second collectserialSkuList : {}", collectserialSkuList.size());
 		if (CollectionUtils.isNotEmpty(collectserialSkuList))
 		{
 			final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
@@ -271,6 +272,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "AfterWeek StartDate : {}", afterWeekEndDate);
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
 				.collect(Collectors.toSet());
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, " Third collectserialSkuList : {}", collectserialSkuList.size());
 		if (CollectionUtils.isNotEmpty(collectserialSkuList))
 		{
 			final Collection<StockLevelModel> serialStock = getBlStockLevelDao()
