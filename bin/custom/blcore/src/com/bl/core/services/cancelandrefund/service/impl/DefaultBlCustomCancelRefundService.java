@@ -34,6 +34,7 @@ import java.util.*;
  */
 public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundService {
 
+    public static final String REFUND = "REFUND";
     private BlCustomCancelRefundDao blCustomCancelRefundDao;
     private BrainTreePaymentService brainTreePaymentService;
     private CommonI18NService commonI18NService;
@@ -89,9 +90,14 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
      */
     @Override
     public Optional<PaymentTransactionEntryModel> getCapturedPaymentTransaction(final OrderModel orderModel) {
-        return orderModel.getPaymentTransactions().get(BlInventoryScanLoggingConstants.ZERO).getEntries().stream().filter(entry ->
-                BlCoreConstants.ACCEPTED.equalsIgnoreCase(entry.getTransactionStatus()) && entry.getAmount().doubleValue() >
-                        BlInventoryScanLoggingConstants.ONE && (PaymentTransactionType.CAPTURE.equals(entry.getType()))).findFirst();
+        if(CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()) && orderModel.getPaymentTransactions().get(
+                BlInventoryScanLoggingConstants.ZERO) != null && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()
+                .get(BlInventoryScanLoggingConstants.ZERO).getEntries())) {
+            return orderModel.getPaymentTransactions().get(BlInventoryScanLoggingConstants.ZERO).getEntries().stream().filter(entry ->
+                    BlCoreConstants.ACCEPTED.equalsIgnoreCase(entry.getTransactionStatus()) && entry.getAmount().doubleValue() >
+                            BlInventoryScanLoggingConstants.ONE && (PaymentTransactionType.CAPTURE.equals(entry.getType()))).findFirst();
+        }
+        return Optional.empty();
     }
 
     /**
@@ -113,10 +119,15 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     @Override
     public double getTotalRefundedAmountOnOrder(final OrderModel orderModel) {
         double refundedAmount = BlInventoryScanLoggingConstants.ZERO;
-        for(final PaymentTransactionEntryModel transactionModel : orderModel.getPaymentTransactions().get(0).getEntries()) {
-            if(BlCoreConstants.ACCEPTED.equalsIgnoreCase(transactionModel.getTransactionStatus()) && transactionModel.getType().getCode()
-                .startsWith("REFUND")) {
-                refundedAmount = refundedAmount + transactionModel.getAmount().doubleValue();
+        if(CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()) && orderModel.getPaymentTransactions().get(
+                BlInventoryScanLoggingConstants.ZERO) != null && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()
+                .get(BlInventoryScanLoggingConstants.ZERO).getEntries())) {
+            for (final PaymentTransactionEntryModel transactionModel : orderModel.getPaymentTransactions().get(
+                    BlInventoryScanLoggingConstants.ZERO).getEntries()) {
+                if (BlCoreConstants.ACCEPTED.equalsIgnoreCase(transactionModel.getTransactionStatus()) && transactionModel.getType().getCode()
+                        .startsWith(REFUND)) {
+                    refundedAmount = refundedAmount + transactionModel.getAmount().doubleValue();
+                }
             }
         }
         return refundedAmount;
@@ -141,11 +152,15 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         entry.setTime(new Date());
         getModelService().saveAll(entry, transaction);
 
-        final Collection<PaymentTransactionEntryModel> entries = orderModel.getPaymentTransactions().get(
-                BlInventoryScanLoggingConstants.ZERO).getEntries();
-        entries.add(entry);
-        modelService.save(orderModel);
-        modelService.refresh(orderModel);
+        if(CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()) && orderModel.getPaymentTransactions().get(
+                BlInventoryScanLoggingConstants.ZERO) != null && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()
+                .get(BlInventoryScanLoggingConstants.ZERO).getEntries())) {
+            final Collection<PaymentTransactionEntryModel> entries = orderModel.getPaymentTransactions().get(
+                    BlInventoryScanLoggingConstants.ZERO).getEntries();
+            entries.add(entry);
+            modelService.save(orderModel);
+            modelService.refresh(orderModel);
+        }
     }
 
     /**
