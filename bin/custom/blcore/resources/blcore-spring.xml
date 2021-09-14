@@ -1442,6 +1442,8 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 	
 	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>

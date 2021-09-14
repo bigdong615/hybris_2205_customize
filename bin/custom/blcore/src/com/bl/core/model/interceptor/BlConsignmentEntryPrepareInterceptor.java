@@ -2,8 +2,6 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
-
-import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -25,6 +22,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
@@ -32,6 +30,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 
 /**
@@ -132,12 +131,17 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		if (!interceptorContext.isNew(consignmentEntryModel)
 				&& interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.SERIALPRODUCTS))
 		{
-			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel.getSerialProducts().stream()
-					.collect(Collectors.toMap(BlProductModel::getCode, serial -> new ArrayList<BlItemsBillingChargeModel>()));
+			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = Maps.newHashMap();
+			consignmentEntryModel.getSerialProducts().forEach(serial -> {
+				if (!billingCharges.containsKey(serial.getCode()))
+				{
+					billingCharges.put(serial.getCode(), new ArrayList<BlItemsBillingChargeModel>());
+				}
+			});
 			consignmentEntryModel.setBillingCharges(billingCharges);
 		}
 	}
-	
+
 	/**
 	 * Do change priority status of serial if modified.
 	 *
