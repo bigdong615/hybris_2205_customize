@@ -10,8 +10,10 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
+
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.services.BaseStoreService;
+
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
