@@ -25,6 +25,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -117,7 +118,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
 
       if (result.isOrderTransferConsignment()) {
-        flagConsignmentAndSetShippingDateForOrderTransfers(consignment, order);
+        flagConsignmentAndSetShippingDateForOrderTransfers(consignment, order, result.getWarehouse());
       }
 
 
@@ -197,12 +198,14 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
   /**
    * Set order transfer related values to consignment
-   *
-   * @param consignment  -  the consignment
+   *  @param consignment  -  the consignment
    * @param order   -  the order
+   * @param warehouse
    */
-  private void flagConsignmentAndSetShippingDateForOrderTransfers(final ConsignmentModel consignment,
-      final AbstractOrderModel order) {
+  private void flagConsignmentAndSetShippingDateForOrderTransfers(
+      final ConsignmentModel consignment,
+      final AbstractOrderModel order,
+      final WarehouseModel warehouse) {
 
     final List<Date> holidayBlackoutDates = blDatePickerService
         .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
@@ -215,7 +218,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Optimized shipping start date / Order transfer date : {} from first warehouse : {} and actual shipping date to customer : {} set on consignment with code {}",
-        consignment.getOptimizedShippingStartDate(), consignment.getWarehouse().getCode(),
+        consignment.getOptimizedShippingStartDate(), warehouse.getCode(),
         consignment.getActualShippingDateToCustomer(),
         consignment.getCode());
   }
