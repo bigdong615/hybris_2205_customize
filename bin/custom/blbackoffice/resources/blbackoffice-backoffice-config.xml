@@ -1311,6 +1311,7 @@
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
+					<editorArea:attribute qualifier="status"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
