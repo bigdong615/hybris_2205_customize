@@ -100,7 +100,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.WebUtils;
 
 /**
  * Controller for cart page
@@ -815,11 +814,12 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@PostMapping(value = "/voucher/remove")
-	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request)
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request, final HttpServletResponse response)
 	{
 		try
 		{
-      WebUtils.getCookie(request,BlCoreConstants.COOKIE_NAME_FOR_DURATION).setValue(getRentalsDuration().getNumberOfDays());
+      blRentalDurationCookieGenerator.removeCookie(response);
+			blRentalDurationCookieGenerator.addCookie(response, getRentalsDuration().getNumberOfDays());
 			voucherFacade.releaseVoucher(form.getVoucherCode());
 		}
 		catch (final VoucherOperationException e)

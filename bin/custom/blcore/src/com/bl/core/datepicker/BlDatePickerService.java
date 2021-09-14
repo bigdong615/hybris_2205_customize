@@ -76,11 +76,4 @@ public interface BlDatePickerService
 	 * @param selectedDuration the selected Duration
 	 */
   void addSelectedRentalDurationIntoSession(final String selectedDuration);
-
-
-	/**
-	 * It removes the selected duration from session
-	 *
-	 */
-	void removeRentalDurationFromSession();
 }

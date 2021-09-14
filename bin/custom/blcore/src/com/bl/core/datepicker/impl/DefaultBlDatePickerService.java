@@ -119,17 +119,14 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	@Override
 	public RentalDateDto getRentalDatesFromSession()
 	{
-		String selectedDurationDays = StringUtils.EMPTY;
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
-		final Map<String, String> selectedDuration = null!= getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP) ? getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP) : null;
+		final Map<String, String> selectedDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		if (null != rentalDate)
 		{
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
-			if(null != selectedDuration && StringUtils.isNotBlank(selectedDuration.get(BlCoreConstants.SELECTED_DURATION))) {
-			  selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
-			}
+			final String selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
 			if (null != startDate && null != endDate)
 			{
 				date.setSelectedFromDate(startDate);
@@ -137,7 +134,9 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
 								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
-					date.setSelectedDays(StringUtils.isNotBlank(selectedDurationDays) ? selectedDurationDays : date.getNumberOfDays());
+				if(org.apache.commons.lang.StringUtils.isNotBlank(selectedDurationDays)) {
+					date.setSelectedDays(selectedDurationDays);
+				}
 				return date;
 			}
 		}
@@ -183,14 +182,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected duration {} set into session", selectedDuration);
 	}
 
-	/**
-	 * It removes the selected duration from session
-	 */
-	@Override
-	public void removeRentalDurationFromSession() {
-		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "duration {} removed from session", BlCoreConstants.SELECTED_DATE_MAP);
-	}
 
 
 	/**
