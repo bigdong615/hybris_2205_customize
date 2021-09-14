@@ -4,7 +4,7 @@ import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.omsbackoffice.actions.order.cancel.CancelOrderAction;
-import de.hybris.platform.ordercancel.OrderCancelEntry;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * ################  BL-986 #######################
@@ -16,16 +16,16 @@ import de.hybris.platform.ordercancel.OrderCancelEntry;
  */
 public class BlCustomCancelOrderAction extends CancelOrderAction {
 
-  private static final String SOCKET_OUTPUT_CTX = "customCancelOrderContext";
+    private static final String SOCKET_OUTPUT_CTX = "customCancelOrderContext";
 
-  @Override
-  public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
-    final OrderModel orderModel = actionContext.getData();
-    if(orderModel.getOriginalVersion() == null) {
-      this.sendOutput(SOCKET_OUTPUT_CTX, orderModel);
-      return new ActionResult<>(ActionResult.SUCCESS);
+    @Override
+    public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
+        final OrderModel orderModel = actionContext.getData();
+        if (orderModel.getOriginalVersion() == null && CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
+            this.sendOutput(SOCKET_OUTPUT_CTX, orderModel);
+            return new ActionResult<>(ActionResult.SUCCESS);
+        }
+        return new ActionResult<>(ActionResult.ERROR);
     }
-    return new ActionResult<>(ActionResult.ERROR);
-  }
 
 }
