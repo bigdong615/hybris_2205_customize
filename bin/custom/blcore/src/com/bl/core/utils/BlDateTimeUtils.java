@@ -767,12 +767,10 @@ public final class BlDateTimeUtils
 		final Date endDate = BlDateTimeUtils
 				.addDaysInRentalDates(noOfDaysToAdd, givenDate, holidayBlackoutDates);
 
-		//checking if next date of end date is a backout date and update
-		final LocalDate nextLocalDate = getNextLocalDate(endDate);
+		final LocalDate finalEndLocalDate = getDateBySkippingBlackoutDates(holidayBlackoutDates, endDate);
 
-		getDateBySkippingBlackoutDates(holidayBlackoutDates, nextLocalDate);
-
-		return Date.from(nextLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		return null == finalEndLocalDate ? endDate
+				: Date.from(finalEndLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 	/**
@@ -780,20 +778,26 @@ public final class BlDateTimeUtils
 	 * check for the next date and so on.
 	 *
 	 * @param holidayBlackoutDates
-	 * @param localDate            date
+	 * @param date            date
 	 */
-	private static void getDateBySkippingBlackoutDates(
+	private static LocalDate getDateBySkippingBlackoutDates(
 			final List<Date> holidayBlackoutDates,
-			LocalDate localDate) {
+			Date date) {
 
-		int daysToAdd = BlDateTimeUtils.checkForSkipingDays(localDate, 0, holidayBlackoutDates);
+		//checking if next date of end date is a backout date and update
+		LocalDate nextLocalDate = getNextLocalDate(date);
 
-		if (daysToAdd == 1) {
-			localDate = getNextLocalDate(
-					Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		if (null != nextLocalDate && BlDateTimeUtils
+				.checkIfWeekendOrBlackoutDates(nextLocalDate, holidayBlackoutDates)) {
 
-			getDateBySkippingBlackoutDates(holidayBlackoutDates, localDate);
+			getDateBySkippingBlackoutDates(holidayBlackoutDates,
+					Date.from(nextLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		} else {
+
+			nextLocalDate = convertDateToLocalDate(date);
 		}
+
+		return nextLocalDate;
 	}
 
 	/**
@@ -804,13 +808,40 @@ public final class BlDateTimeUtils
 	 */
 	public static LocalDate getNextLocalDate(final Date date) {
 
-		final String stringDate = BlDateTimeUtils
-				.convertDateToStringDate(date, BlCoreConstants.DATE_FORMAT);
-
-		final LocalDate localDate = BlDateTimeUtils
-				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
+		final LocalDate localDate = convertDateToLocalDate(date);
 
 		return null == localDate ? null : localDate.plusDays(1);
 	}
 
+	/**
+	 * This method will return new LocalDate after converting the given date
+	 *
+	 * @param date
+	 * @return localdate
+	 */
+	public static LocalDate convertDateToLocalDate(final Date date) {
+
+		final String stringDate = BlDateTimeUtils
+				.convertDateToStringDate(date, BlCoreConstants.DATE_FORMAT);
+
+		return BlDateTimeUtils
+				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
+	}
+	/**
+	 * Check if the date falls on weekends or blackout dates.
+	 *
+	 * @param localDate
+	 *           the local date
+	 * @param listOfBlackOutDates
+	 *           the listOfBlackOutDates days
+	 */
+	private static boolean checkIfWeekendOrBlackoutDates(final LocalDate localDate,
+			final Collection<Date> listOfBlackOutDates) {
+
+		final Date dateToCheck = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+		return localDate.getDayOfWeek() == DayOfWeek.SATURDAY
+				|| localDate.getDayOfWeek() == DayOfWeek.SUNDAY
+				|| listOfBlackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck));
+	}
 }
