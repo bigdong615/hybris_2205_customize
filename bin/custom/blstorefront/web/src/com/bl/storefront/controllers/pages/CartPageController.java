@@ -9,6 +9,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -183,6 +184,9 @@ public class CartPageController extends AbstractCartPageController
 
 	@Resource(name = "blRentalDurationCookieGenerator")
 	private BlRentalDurationCookieGenerator blRentalDurationCookieGenerator;
+
+	@Resource(name = "blPromotionService")
+	private BlPromotionService blPromotionService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -824,8 +828,10 @@ public class CartPageController extends AbstractCartPageController
 	{
 		try
 		{
-      blRentalDurationCookieGenerator.removeCookie(response);
-			blRentalDurationCookieGenerator.addCookie(response, getRentalsDuration().getNumberOfDays());
+			if(blPromotionService.isFreeDayCouponPromoApplied(blCartService.getSessionCart())) {
+				blRentalDurationCookieGenerator.removeCookie(response);
+				blRentalDurationCookieGenerator.addCookie(response, getRentalsDuration().getNumberOfDays());
+			}
 			voucherFacade.releaseVoucher(form.getVoucherCode());
 		}
 		catch (final VoucherOperationException e)
