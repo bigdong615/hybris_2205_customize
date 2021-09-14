@@ -18,8 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -48,7 +50,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DATE);
 		final Cookie durationDayCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DURATION);
-
 		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()) && null != durationDayCookie && StringUtils.isNotEmpty(durationDayCookie.getValue()))
 		{
 			final String date = selectedDateCookie.getValue();
