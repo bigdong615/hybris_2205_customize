@@ -21,12 +21,18 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
 
     target.setRentalCart(source.getIsRentalCart());
     if(BlRentalDateUtils.getRentalsDuration() != null) {
-      target.setRentalDurationDays(BlRentalDateUtils.getRentalsDuration().getSelectedDays()!= null ? Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getSelectedDays()): 7);
+      target.setRentalDurationDays(source.getIsExtendedOrder() ? source.getTotalExtendDays(): (BlRentalDateUtils.getRentalsDuration().getSelectedDays()!= null ? Integer.valueOf(BlRentalDateUtils.getRentalsDuration().getSelectedDays()): 7));
       final RentalDateDto rentalDatesFromSession = BlRentalDateUtils.getBlDatePickerService()
           .getRentalDatesFromSession();
-      if(rentalDatesFromSession != null && (rentalDatesFromSession.getSelectedFromDate() != null || rentalDatesFromSession.getSelectedToDate() != null)) {
-        target.setRentalArrivalDate(getFormattedDate(rentalDatesFromSession.getSelectedFromDate()));
-        target.setRentalToDate(getFormattedDate(rentalDatesFromSession.getSelectedToDate()));
+      if(source.getIsExtendedOrder()){
+        target.setRentalToDate(source.getExtendRentalEndDate());
+        target.setRentalArrivalDate(source.getExtendRentalStartDate());
+      }
+      else{
+        if(rentalDatesFromSession != null && (rentalDatesFromSession.getSelectedFromDate() != null || rentalDatesFromSession.getSelectedToDate() != null)) {
+          target.setRentalArrivalDate(getFormattedDate(rentalDatesFromSession.getSelectedFromDate()));
+          target.setRentalToDate(getFormattedDate(rentalDatesFromSession.getSelectedToDate()));
+        }
       }
     }
     target.setTotalIncludingDamageWaiver(
