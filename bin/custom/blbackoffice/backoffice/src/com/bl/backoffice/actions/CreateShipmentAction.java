@@ -4,13 +4,18 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
+import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -27,6 +32,7 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		implements CockpitAction<ConsignmentModel, ConsignmentModel>
 {
+	private static final Logger LOG = Logger.getLogger(CreateShipmentAction.class);
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
@@ -68,10 +74,16 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		modelService.refresh(consignment);
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
 
-		//Create Shipment and generate label
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
-			blCreateShipmentFacade.createBlShipmentPackages(packagingInfoModel);
+			try
+			{
+				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel);
+			}
+			catch (final ParseException exception)
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occure at {}", exception.getMessage());
+			}
 		}
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		return new ActionResult(BlintegrationConstants.SUCCESS);
@@ -92,6 +104,23 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	public void setBlShipmentCreationService(final DefaultBLShipmentCreationService blShipmentCreationService)
 	{
 		this.blShipmentCreationService = blShipmentCreationService;
+	}
+
+	/**
+	 * @return the blCreateShipmentFacade
+	 */
+	public BlCreateShipmentFacade getBlCreateShipmentFacade()
+	{
+		return blCreateShipmentFacade;
+	}
+
+	/**
+	 * @param blCreateShipmentFacade
+	 *           the blCreateShipmentFacade to set
+	 */
+	public void setBlCreateShipmentFacade(final BlCreateShipmentFacade blCreateShipmentFacade)
+	{
+		this.blCreateShipmentFacade = blCreateShipmentFacade;
 	}
 
 }

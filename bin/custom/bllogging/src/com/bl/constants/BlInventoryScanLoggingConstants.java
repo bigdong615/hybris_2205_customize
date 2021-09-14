@@ -198,6 +198,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SOCKET_ID = "inputObject";
  	public static final String SCANNING_AREA = "scanningArea";
  	public static final String SCAN_TO_BIN = "scanToBin";
+ 	public static final String GENERATE_INBOUND_LABEL = "generateInboundLabel";
  	public static final String SCAN_TO_WORKSTATION = "scanToWorkStation";
  	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
  	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";

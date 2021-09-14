@@ -188,11 +188,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		URIBuilder builder;
 		try
 		{
-			builder = new URIBuilder(fedExapiURL);
+			builder = new URIBuilder("https://wsbeta.fedex.com:443/web-services");
 			final URI uri = builder.build();
 			final HttpPost request = new HttpPost(uri);
 			request.setHeader("Content-Type", "application/json");
-			request.setHeader(BlintegrationConstants.X_API_KEY, fedExapiKey);
+			request.setHeader(BlintegrationConstants.X_API_KEY, "N4jviY6D0v5uY6iU");
+			request.setHeader("Authorization", "kv7rLvEgVZrovN0I5OI87r07f");
 
 			final Gson gson = new Gson();
 			final String json = gson.toJson(fedExShipemtnReq);
@@ -256,7 +257,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	{
 		return this.getClass().getClassLoader().getResource(Config.getString(wsdlLocation, "META-INF/wsdl/Ship.wsdl"));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -271,7 +272,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Checks if is serial present in package.
 	 *

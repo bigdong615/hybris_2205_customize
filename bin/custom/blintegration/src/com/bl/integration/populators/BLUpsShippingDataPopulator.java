@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.bl.facades.shipment.data.DimensionsTypeData;
 import com.bl.facades.shipment.data.PackageTypeData;
 import com.bl.facades.shipment.data.PackageWeightTypeData;
+import com.bl.facades.shipment.data.ReturnServiceData;
 import com.bl.facades.shipment.data.ShipFromData;
 import com.bl.facades.shipment.data.ShipToData;
 import com.bl.facades.shipment.data.ShipmentData;
@@ -78,13 +79,59 @@ public class BLUpsShippingDataPopulator
 	@Resource(name = "addressConverter")
 	private Converter<AddressModel, AddressData> addressConverter;
 
+	/**
+	 * method will be used to create shipment request for UPS
+	 *
+	 * @param packagingInfo
+	 * @return
+	 */
 	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo)
 	{
-		final WarehouseModel warehouse = packagingInfo.getConsignment().getWarehouse();
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
-		AddressModel shipperAddress = new AddressModel();
-
 		final ShipmentData shipmentData = new ShipmentData();
+
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData);
+		upsRequestData.setShipment(upsShipmentData);
+		return upsRequestData;
+
+	}
+
+	/**
+	 * method will be used to create return shipment request for UPS
+	 *
+	 * @param packagingInfo
+	 * @return
+	 */
+	public UpsShippingRequestData populateUPSReturnShipmentRequest(final PackagingInfoModel packagingInfo)
+	{
+		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
+		final ShipmentData shipmentData = new ShipmentData();
+
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData);
+
+		/** Creating return service Data **/
+
+		final ReturnServiceData returnServiceData = new ReturnServiceData();
+		returnServiceData.setCode(returnServiceCode);
+		returnServiceData.setDescription(returnServiceDescription);
+		upsReturnShipmentData.setReturnService(returnServiceData);
+		upsReturnRequestData.setShipment(shipmentData);
+
+		return upsReturnRequestData;
+
+	}
+
+	/**
+	 * method will be used to create shipment request for UPS
+	 *
+	 * @param packagingInfo
+	 * @param upsRequestData
+	 * @param shipmentData
+	 */
+	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData)
+	{
+		final WarehouseModel warehouse = packagingInfo.getConsignment().getWarehouse();
+		AddressModel shipperAddress = new AddressModel();
 
 		/** Creating Shipper Data **/
 
@@ -100,7 +147,58 @@ public class BLUpsShippingDataPopulator
 		shipperPhone.setNumber(addressData.getPhone());
 
 		final AddressData shipperAddressData = new AddressData();
+		populateShipperAddressData(warehouse, addressData, shipperData, shipperAddressData);
 
+		shipperData.setName(shipperName);
+		shipperData.setAttentionName(shipperAttensionName);
+		shipperData.setPhone(shipperPhone);
+		shipperData.setAddress(shipperAddressData);
+
+		/** Creating ShipFrom Data **/
+		final ShipFromData shipFromData = new ShipFromData();
+		populateShipFromData(shipperPhone, shipperAddressData, shipFromData);
+
+		/** Creating ShipTo Data **/
+		final AddressData shipToAddress = addressConverter.convert(packagingInfo.getConsignment().getOrder().getDeliveryAddress());
+
+		final ShipToData shipToData = populateShipToData(shipToAddress);
+
+		/** Creating UPS Shipment Service Data **/
+		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
+
+		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData);
+
+		/** Creating UPS Payment Data **/
+		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
+		populatePaymentServiceData(warehouse, upsPaymentInformation);
+
+		/** Creating UPS Package Data List **/
+		final List<PackageTypeData> packageDataList = new ArrayList<>();
+		populatePackage(packageDataList, packagingInfo);
+
+		shipmentData.setShipper(shipperData);
+		shipmentData.setShipFrom(shipFromData);
+		shipmentData.setShipTo(shipToData);
+		shipmentData.setService(upsShipmentServiceData);
+		shipmentData.setPaymentInformation(upsPaymentInformation);
+		shipmentData.setShipmentPackage(packageDataList);
+
+		return shipmentData;
+	}
+
+
+
+	/**
+	 * method will be used to populate shipper address data
+	 *
+	 * @param warehouse
+	 * @param addressData
+	 * @param shipperData
+	 * @param shipperAddressData
+	 */
+	private void populateShipperAddressData(final WarehouseModel warehouse, final AddressData addressData,
+			final ShipperData shipperData, final AddressData shipperAddressData)
+	{
 		if (warehouse != null && warehouse.getAccountNumber() != null)
 		{
 			shipperData.setShipperNumber(warehouse.getAccountNumber());
@@ -122,21 +220,65 @@ public class BLUpsShippingDataPopulator
 		final RegionData regionData = new RegionData();
 		regionData.setIsocodeShort(addressData.getRegion().getIsocodeShort());
 		shipperAddressData.setRegion(regionData);
-		shipperData.setName(shipperName);
-		shipperData.setAttentionName(shipperAttensionName);
-		shipperData.setPhone(shipperPhone);
-		shipperData.setAddress(shipperAddressData);
+	}
 
-		/** Creating ShipFrom Data **/
-		final ShipFromData shipFromData = new ShipFromData();
+	/**
+	 * method will be used to populate payment service data
+	 *
+	 * @param warehouse
+	 * @param upsPaymentInformation
+	 */
+	private void populatePaymentServiceData(final WarehouseModel warehouse, final UpsPaymentInformation upsPaymentInformation)
+	{
+		upsPaymentInformation.setType(paymentInfoType);
+
+		if (warehouse != null && warehouse.getAccountNumber() != null)
+		{
+			upsPaymentInformation.setAccountNumber(warehouse.getAccountNumber());
+		}
+	}
+
+	/**
+	 * method will be used to populate ups shipment service data
+	 *
+	 * @param packagingInfo
+	 * @param upsShipmentServiceData
+	 */
+	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
+			final UpsShipmentServiceData upsShipmentServiceData)
+	{
+		if (packagingInfo.getConsignment().getOptimizedShippingType() != null
+				&& StringUtils.isNotBlank(packagingInfo.getConsignment().getOptimizedShippingType().getCode()))
+		{
+			upsShipmentServiceData.setCode(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeCode());
+			upsShipmentServiceData.setDescription(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeDesc());
+		}
+	}
+
+	/**
+	 * method will be used to populate ship from data
+	 *
+	 * @param shipperPhone
+	 * @param shipperAddressData
+	 * @param shipFromData
+	 */
+	private void populateShipFromData(final ShipmentPhoneData shipperPhone, final AddressData shipperAddressData,
+			final ShipFromData shipFromData)
+	{
 		shipFromData.setName(shipperName);
 		shipFromData.setAttentionName(shipperAttensionName);
 		shipFromData.setPhone(shipperPhone);
 		shipFromData.setAddress(shipperAddressData);
+	}
 
-		/** Creating ShipTo Data **/
-		final AddressData shipToAddress = addressConverter.convert(packagingInfo.getConsignment().getOrder().getDeliveryAddress());
-
+	/**
+	 * method will be used to populate ship to data
+	 *
+	 * @param shipToAddress
+	 * @return
+	 */
+	private ShipToData populateShipToData(final AddressData shipToAddress)
+	{
 		final AddressData shipToAddressData = new AddressData();
 		if (StringUtils.isNotEmpty(shipToAddress.getFirstName()))
 		{
@@ -178,45 +320,12 @@ public class BLUpsShippingDataPopulator
 		shipToData.setAttentionName(shipToAddressData.getFirstName().concat(" ").concat(shipToAddressData.getLastName()));
 		shipToData.setPhone(shipToPhone);
 		shipToData.setAddress(shipToAddressData);
-
-		/** Creating UPS Shipment Service Data **/
-		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
-
-		if (packagingInfo.getConsignment().getOptimizedShippingType() != null
-				&& StringUtils.isNotBlank(packagingInfo.getConsignment().getOptimizedShippingType().getCode()))
-		{
-			upsShipmentServiceData.setCode(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeCode());
-			upsShipmentServiceData.setDescription(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeDesc());
-		}
-
-		/** Creating UPS Payment Data **/
-		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
-		upsPaymentInformation.setType(paymentInfoType);
-
-		if (warehouse.getAccountNumber() != null)
-		{
-			upsPaymentInformation.setAccountNumber(warehouse.getAccountNumber());
-		}
-
-		/** Creating UPS Package Data List **/
-
-		final List<PackageTypeData> packageDataList = new ArrayList<>();
-		populatePackage(packageDataList, packagingInfo);
-
-		shipmentData.setShipper(shipperData);
-		shipmentData.setShipFrom(shipFromData);
-		shipmentData.setShipTo(shipToData);
-		shipmentData.setService(upsShipmentServiceData);
-		shipmentData.setPaymentInformation(upsPaymentInformation);
-		shipmentData.setShipmentPackage(packageDataList);
-
-		upsRequestData.setShipment(shipmentData);
-
-		return upsRequestData;
-
+		return shipToData;
 	}
 
 	/**
+	 * method will be used to populate package data
+	 *
 	 * @param packageDataList
 	 * @param consignmentEntries
 	 */

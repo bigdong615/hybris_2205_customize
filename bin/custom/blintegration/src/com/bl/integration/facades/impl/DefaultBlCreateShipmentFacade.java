@@ -7,12 +7,15 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.text.ParseException;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.enums.CarrierEnum;
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
 import com.bl.integration.populators.BLUpsShippingDataPopulator;
@@ -43,11 +46,12 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 
 	/**
 	 * @param packagingInfo
+	 * @throws ParseException
 	 */
 	@Override
-	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
+	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo) throws ParseException
 	{
-		BlLogger.logMessage(LOG, Level.INFO, "Shipment call for UPS");
+		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
@@ -56,6 +60,34 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
+			if (upsResponse != null)
+			{
+				saveResponseOnPackage(upsResponse, packagingInfo);
+			}
+		}
+		else
+		{
+			getBlShipmentCreationService()
+					.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
+		}
+	}
+
+	/**
+	 * @param packagingInfo
+	 * @throws ParseException
+	 */
+	@Override
+	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo)
+	{
+		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
+
+		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
+		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
+
+		if (delivertCarrier.getCode().equalsIgnoreCase(CarrierEnum.UPS.getCode()))
+		{
+			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
+					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo));
 			if (upsResponse != null)
 			{
 				saveResponseOnPackage(upsResponse, packagingInfo);
@@ -81,6 +113,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
 		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());
+		packagingInfo.setLabelURL("https://www.ups.com/track?loc=en_US&tracknum=" + shipmentPackage.getTrackingNumber());
 
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
