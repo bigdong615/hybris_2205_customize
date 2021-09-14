@@ -44,6 +44,7 @@ import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
@@ -78,6 +79,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	private PackagingInfoModel packagingInfoModel;
 	private boolean isLocationDP;
+	
+	@Resource(name = "blOrderService")
+   private BlOrderService blOrderService;
 
 	/**
 	 * {@inheritDoc}
@@ -1198,6 +1202,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						.allMatch(pkg -> PackagingInfoStatus.UNBOXED.equals(pkg.getPackagingInfoStatus())))
 				{
 					changeConsignmentStatus(consignmentModel, ConsignmentStatus.UNBOXED);
+					getBlOrderService().checkAndUpdateOrderStatus(consignmentModel.getOrder());
 					BlLogger.logMessage(LOG, Level.DEBUG, "Marked Consignment as Unboxed as all packages are unboxed");
 				}
 			}
@@ -1757,5 +1762,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 		}
 		return resultList;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
 	}
 }

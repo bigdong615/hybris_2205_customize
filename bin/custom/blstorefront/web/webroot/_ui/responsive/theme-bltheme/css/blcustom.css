@@ -668,3 +668,6 @@ p.customer-item-note {
     font-size: 20px;
     font-weight: bold;
 }
+#accountContent hr {
+  height: 0 !important;
+}
