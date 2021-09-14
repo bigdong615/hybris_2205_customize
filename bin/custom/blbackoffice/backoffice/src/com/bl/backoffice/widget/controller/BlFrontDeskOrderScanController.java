@@ -141,7 +141,7 @@ public class BlFrontDeskOrderScanController extends DefaultWidgetController
 	}
 
 	/**
-	 * method will shipping validate bin location
+	 * method will validate bin location
 	 */
 	private void validateFDBinLocation()
 	{
@@ -308,6 +308,7 @@ public class BlFrontDeskOrderScanController extends DefaultWidgetController
 	}
 
 	/**
+	 * method will be used to create response message for FD Scan
 	 * @param scannedBarcodeList
 	 */
 	private void createResponseMsgForShippingScan(final Map<String, List<BlProductModel>> scannedBarcodeMap)
