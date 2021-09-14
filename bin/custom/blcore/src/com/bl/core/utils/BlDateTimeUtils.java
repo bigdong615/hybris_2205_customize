@@ -1,5 +1,10 @@
 package com.bl.core.utils;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,17 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.product.data.RentalDateDto;
-import com.bl.logging.BlLogger;
 
 /**
  * This class is used to convert the date format
@@ -739,4 +737,80 @@ public final class BlDateTimeUtils
 		return BlDateTimeUtils
 				.subtractDaysInRentalDates(noOfDaysToSubtract, stringGivenDate, holidayBlackoutDates);
 	}
+
+	/**
+	 * This method will return new Date after adding given no of days to it considering blackout dates
+	 *
+	 * @param givenDate date
+	 * @return noOfDaysToAdd integer to be added as days
+	 */
+	public static Date getDateWithAddedDays(final int noOfDaysToAdd, final Date givenDate,
+			final List<Date> holidayBlackoutDates) {
+
+		final String stringGivenDate = BlDateTimeUtils
+				.convertDateToStringDate(givenDate, BlCoreConstants.DATE_FORMAT);
+
+		return BlDateTimeUtils
+				.addDaysInRentalDates(noOfDaysToAdd, stringGivenDate, holidayBlackoutDates);
+	}
+
+	/**
+	 * This method will return new Date after adding given no of days to it considering blackout dates
+	 *
+	 * @param givenDate date
+	 * @return noOfDaysToAdd integer to be added as days
+	 */
+	public static Date getFinalEndDateConsideringPostBlackoutDates(final int noOfDaysToAdd,
+			final String givenDate,
+			final List<Date> holidayBlackoutDates) {
+
+		final Date endDate = BlDateTimeUtils
+				.addDaysInRentalDates(noOfDaysToAdd, givenDate, holidayBlackoutDates);
+
+		//checking if next date of end date is a backout date and update
+		final LocalDate nextLocalDate = getNextLocalDate(endDate);
+
+		getDateBySkippingBlackoutDates(holidayBlackoutDates, nextLocalDate);
+
+		return Date.from(nextLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+
+	/**
+	 * This method will check if the given date falls on blackout date, if yes, then update itself and
+	 * check for the next date and so on.
+	 *
+	 * @param holidayBlackoutDates
+	 * @param localDate            date
+	 */
+	private static void getDateBySkippingBlackoutDates(
+			final List<Date> holidayBlackoutDates,
+			LocalDate localDate) {
+
+		int daysToAdd = BlDateTimeUtils.checkForSkipingDays(localDate, 0, holidayBlackoutDates);
+
+		if (daysToAdd == 1) {
+			localDate = getNextLocalDate(
+					Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+			getDateBySkippingBlackoutDates(holidayBlackoutDates, localDate);
+		}
+	}
+
+	/**
+	 * This method will return new LocalDate after adding 1 day to it
+	 *
+	 * @param date
+	 * @return localdate
+	 */
+	public static LocalDate getNextLocalDate(final Date date) {
+
+		final String stringDate = BlDateTimeUtils
+				.convertDateToStringDate(date, BlCoreConstants.DATE_FORMAT);
+
+		final LocalDate localDate = BlDateTimeUtils
+				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
+
+		return null == localDate ? null : localDate.plusDays(1);
+	}
+
 }
