@@ -236,6 +236,12 @@ public class CartPageController extends AbstractCartPageController
 					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
 							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
 		}
+
+
+		if(null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))) {
+			sessionService.removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
+		}
+
 		return prepareCartUrl(model);
 	}
 	

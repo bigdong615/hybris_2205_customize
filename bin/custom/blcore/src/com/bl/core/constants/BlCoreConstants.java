@@ -186,7 +186,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
-	public static final String HYPHEN = "-";
+	public static final String UNDERSCORE = "_";
 	public static final String DOUBLE_HYPHEN = "--";
 
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
@@ -321,8 +321,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CONTACTUS_LINK = "contactus";
 	
 	public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String HYPHEN = "-";
 
-
+	
 	private BlCoreConstants()
 	{
 		//empty

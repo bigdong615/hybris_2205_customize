@@ -1,6 +1,5 @@
 package com.bl.core.product.service;
 
-import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
@@ -27,4 +26,11 @@ public interface BlProductService extends ProductService {
    * @return true if the product is aquatech product
    */
   boolean isAquatechProduct(final ProductModel productModel);
+  
+  /**
+   * Sets the last user changed condition rating.
+   *
+   * @param blSerialProduct the new last user changed condition rating
+   */
+  void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct);
 }
