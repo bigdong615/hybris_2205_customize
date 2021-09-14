@@ -671,3 +671,6 @@ p.customer-item-note {
 #accountContent hr {
   height: 0 !important;
 }
+.savecart-modal .btn-primary{
+color:#fff !important;
+}
