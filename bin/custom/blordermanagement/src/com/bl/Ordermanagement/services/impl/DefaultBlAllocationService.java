@@ -8,7 +8,6 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
-import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
