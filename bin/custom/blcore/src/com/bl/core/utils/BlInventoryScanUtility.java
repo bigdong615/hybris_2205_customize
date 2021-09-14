@@ -147,10 +147,7 @@ public final class BlInventoryScanUtility
 	{
 		final List<String> defaultLocations = new ArrayList<>();
 
-		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
-		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
-		defaultLocations.add(BlInventoryScanLoggingConstants.MAM);
-		defaultLocations.add(BlInventoryScanLoggingConstants.CAM);
+		defaultLocations.add(BlInventoryScanLoggingConstants.FD_MOBILE_SHELF);
 		return defaultLocations;
 	}
 
