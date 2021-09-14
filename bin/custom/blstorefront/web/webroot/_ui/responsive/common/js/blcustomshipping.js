@@ -1254,7 +1254,7 @@ else
         notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
      }
-     notification += '</div>';
+     notification += '</div>' + '<br>';
      $('#showErrorForInputValidation').html(notification);
      $('#showErrorForInputValidation').show();
   }
