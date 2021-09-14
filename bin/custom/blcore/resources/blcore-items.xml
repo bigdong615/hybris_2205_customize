@@ -2983,6 +2983,11 @@
             <persistence type="property" />
             <defaultvalue>false</defaultvalue>
           </attribute>
+          <attribute qualifier="actualShippingDateToCustomer" type="java.util.Date">
+            <description>Actual date for Shipping the product to customer.</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+          </attribute>
           <attribute autocreate="true" qualifier="optimizedRentalEndDateChangedByJob" type="boolean">
               <modifiers read="true" write="true" optional="false"/>
               <persistence type="property"/>
