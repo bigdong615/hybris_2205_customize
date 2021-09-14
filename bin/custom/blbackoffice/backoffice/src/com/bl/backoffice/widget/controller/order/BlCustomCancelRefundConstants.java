@@ -42,7 +42,6 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
 
     public static final String CANCELORDER_CONFIRM_ERROR = "customersupportbackoffice.cancelorder.confirm.error";
 
-    //TODO: New messages
     public static final String CANCEL_CONFIRM_MISSING_SELECT_LINE = "customersupportbackoffice.cancelorder.missing.selectedLine";
     public static final String CANCEL_CONFIRM_MISSING_SELECT_LINE_SELECTION = "customersupportbackoffice.cancelorder.missing.selectedLine.header";
     public static final String CANCELORDER_MISSING_QUANTITY_HEADER = "customersupportbackoffice.cancelorder.missing.quantity.header";
