@@ -1092,6 +1092,7 @@
 	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
 		<property name="promotionDao" ref="promotionDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 	<!--[BL-663] Added facet on sale on PLP/SLP -->
 	<bean id="blOnSaleFacetNameProvider"

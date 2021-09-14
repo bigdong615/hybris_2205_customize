@@ -115,7 +115,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 						}
 					})));
 			order.getConsignments().forEach(consignment -> {
-				consignment.setStatus(ConsignmentStatus.SHIPPED);
+				consignment.setStatus(ConsignmentStatus.BL_SHIPPED);
 				getModelService().save(consignment);
 				getModelService().refresh(consignment);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}",consignment.getStatus(),consignment.getCode());

@@ -795,8 +795,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
             final Date rentalStartDate = BlDateTimeUtils
                 .subtractDaysInRentalDates(preDaysToDeduct, rentalStart, holidayBlackoutDates);
-            final Date rentalEndDate = BlDateTimeUtils
-                .addDaysInRentalDates(postDaysToAdd, rentalEnd, holidayBlackoutDates);
+            final Date rentalEndDate = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+                rentalEnd, holidayBlackoutDates);
+
 
             final LocalDate rentalStartLocalDate = rentalStartDate.toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate();
