@@ -20,7 +20,7 @@
     <grid style="margin-left:50px;margin-top:10px">
     <rows>
       <row>
-       <label value="${labels.blbackoffice.shipping.scan.title.code}" width="100%"/>
+       <label value="${labels.blbackoffice.frontdesk.order.scan.title.code}" width="100%"/>
       </row>
       <row>
         <hlayout>
@@ -32,15 +32,18 @@
   
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
-       <button id="scanToBin" 
-				label="${labels.blbackoffice.shipping.scan.bin.location.button}" 
+       <button id="scanToWorkStation" 
+				label="${labels.blbackoffice.frontdesk.order.shipping.scan.bin.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 	    <button id="verifyScan" 
-				label="${labels.blbackoffice.shipping.scan.verify.button}" 
+				label="${labels.blbackoffice.frontdesk.order.verify.scan.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
-		 <button id="cancel"
-				label="${labels.blbackoffice.shipping.scan.cancel.button}" 
-				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+		 <button id="scanToBin" 
+				label="${labels.blbackoffice.frontdesk.order.bin.scan.button}" 
+				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 
+  		<button id="cancel"
+				label="${labels.blbackoffice.frontdesk.order.scan.cancel.button}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
     </div>            	
 </widget>

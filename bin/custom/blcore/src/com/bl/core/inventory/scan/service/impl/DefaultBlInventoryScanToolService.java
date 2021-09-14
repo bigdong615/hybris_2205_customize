@@ -426,6 +426,15 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes)
 	{
+		return getFailedBinBarcodeList(barcodes, Collections.emptyList());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList)
+	{
 		final String subList = barcodes.get(0);
 		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
 		final int result = checkBinLocationWithType(subList, BlInventoryScanUtility.getDefaultBinLocation(),
@@ -479,7 +488,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes)
 	{
 
-		final List<String> subList = new ArrayList<String>(
+		final List<String> subList = new ArrayList<>(
 				barcodes.subList(0, barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 		final Collection<BlSerialProductModel> scannedSerialProduct = getBlInventoryScanToolDao()
 				.getSerialProductsByBarcode(subList);
@@ -568,25 +577,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final List<BlSerialProductModel> scannedSubpartProduct)
 	{
 		final List<BlProductModel> serials = new ArrayList<>();
-		selectedConsignment.getConsignmentEntries().forEach(entry -> {
-			entry.getSerialProducts().forEach(blSerialProduct -> {
+		selectedConsignment.getConsignmentEntries().forEach(entry -> entry.getSerialProducts().forEach(blSerialProduct -> {
 
-				if (blSerialProduct instanceof BlSerialProductModel)
-				{
-					serials.add(blSerialProduct);
-				}
-				else
-				{
-					blSerialProduct.getSerialProducts().forEach(serial -> {
+			if (blSerialProduct instanceof BlSerialProductModel)
+			{
+				serials.add(blSerialProduct);
+			}
+			else
+			{
+				blSerialProduct.getSerialProducts().forEach(serial -> {
 
-						if (serial instanceof BlSerialProductModel && StringUtils.isNotBlank(serial.getBarcode()))
-						{
-							serials.add(serial);
-						}
-					});
-				}
-			});
-		});
+					if (serial instanceof BlSerialProductModel && StringUtils.isNotBlank(serial.getBarcode()))
+					{
+						serials.add(serial);
+					}
+				});
+			}
+		}));
 
 		final Map<String, List<BlProductModel>> missingSerial = isValidSerial(barcodes, scannedSerialProduct, serials,
 				scannedSubpartProduct);
@@ -614,11 +621,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlProductModel> newBarcode = new ArrayList<>(scannedSerialProduct);
 		final List<BlProductModel> lErrorSubParts = new ArrayList<>();
 		final List<String> skuNames = new ArrayList<>();
-		/*
-		 * final List<BlProductModel> scannedBlProduct =
-		 * scannedSubpartProduct.stream().map(BlSerialProductModel::getBlProduct) .collect(Collectors.toList());
-		 */
-
 		newBarcode.removeIf(entryBarcode::contains);
 		entryBarcode.removeIf(scannedSerialProduct::contains);
 		entryBarcode.removeIf(scannedSubpartProduct::contains);
