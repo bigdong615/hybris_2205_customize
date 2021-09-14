@@ -117,7 +117,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
 
       if (result.isOrderTransferConsignment()) {
-        updateOrderTransferValues(consignment, order);
+        flagConsignmentAndSetShippingDateForOrderTransfers(consignment, order);
       }
 
 
@@ -201,7 +201,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @param consignment  -  the consignment
    * @param order   -  the order
    */
-  private void updateOrderTransferValues(final ConsignmentModel consignment,
+  private void flagConsignmentAndSetShippingDateForOrderTransfers(final ConsignmentModel consignment,
       final AbstractOrderModel order) {
 
     final List<Date> holidayBlackoutDates = blDatePickerService
@@ -214,8 +214,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     consignment.setActualShippingDateToCustomer(actualShippingDateToCustomer);
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Optimized shipping start date / Order transfer date from first warehouse : {} and actual shipping date to customer : {} set on consignment with code {}",
-        consignment.getOptimizedShippingStartDate(), consignment.getActualShippingDateToCustomer(),
+        "Optimized shipping start date / Order transfer date : {} from first warehouse : {} and actual shipping date to customer : {} set on consignment with code {}",
+        consignment.getOptimizedShippingStartDate(), consignment.getWarehouse().getCode(),
+        consignment.getActualShippingDateToCustomer(),
         consignment.getCode());
   }
 

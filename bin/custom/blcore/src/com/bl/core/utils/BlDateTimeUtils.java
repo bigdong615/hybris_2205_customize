@@ -770,7 +770,7 @@ public final class BlDateTimeUtils
 		//checking if next date of end date is a backout date and update
 		final LocalDate nextLocalDate = getNextLocalDate(endDate);
 
-		getNextLocalDateAndUpdateIfFallsOnBlackoutDates(holidayBlackoutDates, nextLocalDate);
+		getDateBySkippingBlackoutDates(holidayBlackoutDates, nextLocalDate);
 
 		return Date.from(nextLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
@@ -782,7 +782,7 @@ public final class BlDateTimeUtils
 	 * @param holidayBlackoutDates
 	 * @param localDate            date
 	 */
-	private static void getNextLocalDateAndUpdateIfFallsOnBlackoutDates(
+	private static void getDateBySkippingBlackoutDates(
 			final List<Date> holidayBlackoutDates,
 			LocalDate localDate) {
 
@@ -792,7 +792,7 @@ public final class BlDateTimeUtils
 			localDate = getNextLocalDate(
 					Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
-			getNextLocalDateAndUpdateIfFallsOnBlackoutDates(holidayBlackoutDates, localDate);
+			getDateBySkippingBlackoutDates(holidayBlackoutDates, localDate);
 		}
 	}
 
@@ -810,7 +810,7 @@ public final class BlDateTimeUtils
 		final LocalDate localDate = BlDateTimeUtils
 				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
 
-		return null != localDate ? localDate.plusDays(1) : null;
+		return null == localDate ? null : localDate.plusDays(1);
 	}
 
 }
