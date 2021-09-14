@@ -242,7 +242,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     calculationService.recalculate(this.getOrderModel());
                 } catch (final CalculationException e) {
                     BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.CART_RECALCULATION_ERROR,
-                            this.getOrderModel().getCode());
+                            this.getOrderModel().getCode(), e.getMessage());
                 }
             }
 

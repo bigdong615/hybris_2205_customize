@@ -79,7 +79,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String CREATE_RETURN_REQUEST_AND_REFUND_ENTRY = "Create ReturnRequest and RefundEntry for order: {}";
     public static final String FOR_ORDER = " for order: {}";
     public static final String FULL_ORDER_REFUND_AMOUNT_FOR_ORDER = "Full order refund amount: {} for order: {}";
-    public static final String CART_RECALCULATION_ERROR = "Exception during cart recalculation for order: {}";
+    public static final String CART_RECALCULATION_ERROR = "Exception during cart recalculation for order: {} with exception: {}";
 
     private BlCustomCancelRefundConstants() {}
 }
