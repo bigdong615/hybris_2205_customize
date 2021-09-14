@@ -74,7 +74,6 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 
 			final Collection<BlProductModel> activeBlProductModelList = getProductDao().getAllActiveSkuProducts();
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of SKU found : {}", activeBlProductModelList.size());
-			final AtomicBoolean executeNextCriteria = new AtomicBoolean(Boolean.TRUE);
 			final Date currentDate = BlDateTimeUtils.getFormattedStartDay(new Date()).getTime();
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Current Date : {}", currentDate);
 
@@ -84,6 +83,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 						.collect(Collectors.toList());
 				for (final BlProductModel sku : rentalSKUList)
 				{
+					final AtomicBoolean executeNextCriteria = new AtomicBoolean(Boolean.TRUE);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "AtomicBoolean : {}", executeNextCriteria);
 					checkConstrainedProductEligibilty(month, beforWeekPercentage, afterWeekPercentage, week, executeNextCriteria,
 							currentDate, sku);
 				}
@@ -150,7 +151,8 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeFirstCriteria : {}", sku.getCode());
 		final Date startDateToCheck = BlDateTimeUtils.getFormattedStartDay(new DateTime().minusMonths(month.intValue()).toDate())
 				.getTime();
-		final List<BlSerialProductModel> lSerials = Lists.newArrayList(sku.getSerialProducts());
+		final List<BlSerialProductModel> lSerials = Lists.newArrayList(sku.getSerialProducts()).stream().filter(serials -> (serials.getSerialStatus().equals(SerialStatusEnum.ACTIVE) || serials.getSerialStatus().equals(SerialStatusEnum.RECEIVED_OR_RETURNED))).collect(
+				Collectors.toList());
 		if (CollectionUtils.isNotEmpty(lSerials))
 		{
 			if (lSerials.size() > 1)
@@ -169,7 +171,10 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"First Serial Product Code : {} , First Serial product Creationtime : {}", blSerialProductModel.getCode(),
 					blSerialProductModel.getCreationtime());
-			executeCriteria.set(isFirstCriteriaIsEligible(currentDate, startDateToCheck, blSerialProductModel));
+			final boolean firstCriteriaIsEligible = isFirstCriteriaIsEligible(currentDate,
+					startDateToCheck, blSerialProductModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "firstCriteriaIsEligible : {}", firstCriteriaIsEligible);
+			executeCriteria.set(firstCriteriaIsEligible);
 			if (executeCriteria.get())
 			{
 				setConstrainedToTrueOnSKU(sku);
@@ -197,6 +202,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeSecondCriteria : {}", sku.getCode());
 		final Date beforWeekStartDate = BlDateTimeUtils.getFormattedStartDay(new DateTime().minusWeeks(week.intValue()).toDate())
 				.getTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BeforWeek StartDate : {}", beforWeekStartDate);
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
 				.collect(Collectors.toSet());
 		if (CollectionUtils.isNotEmpty(collectserialSkuList))
@@ -262,6 +268,7 @@ public class BlHighDemandConstrainedProductJob extends AbstractJobPerformable<Cr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "executeThirdCriteria : {}", sku.getCode());
 		final Date afterWeekEndDate = BlDateTimeUtils.getFormattedStartDay(new DateTime().plusWeeks(week.intValue()).toDate())
 				.getTime();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "AfterWeek StartDate : {}", afterWeekEndDate);
 		final Set<String> collectserialSkuList = sku.getSerialProducts().stream().map(BlSerialProductModel::getCode)
 				.collect(Collectors.toSet());
 		if (CollectionUtils.isNotEmpty(collectserialSkuList))
