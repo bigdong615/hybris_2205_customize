@@ -97,7 +97,7 @@ nav, .alert-promo { z-index: 1030; } /* was 1999 - interfered with modal */
 .submenu div div .phone-number { text-decoration: none; }
 .dropdown-menu i, .mm-menu i { display: inline-block; margin-right: 15px; height: 20px; width: 20px; }
 .navbar-nav .nav-item:nth-child(1) .dropdown-menu h5 i { background: url(../assets/icon-brands.svg) center no-repeat; }
-.navbar-nav .nav-item:nth-child(2) .dropdown-menu h5 i { background: url(../assets/icon-camera.svg) center no-repeat; }
+.navbar-nav .nav-item:nth-child(2) .dropdown-menu h5 i { background: url(../assets/icon-brands.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(3) .dropdown-menu h5 i { background: url(../assets/icon-lenses.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(4) .dropdown-menu h5 i { background: url(../assets/icon-equipment.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(5) .dropdown-menu h5 i { background: url(../assets/icon-usedgear.svg) center no-repeat; }
