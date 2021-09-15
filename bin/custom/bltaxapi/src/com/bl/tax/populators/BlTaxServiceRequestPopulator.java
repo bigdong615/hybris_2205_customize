@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -81,8 +82,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 
     final List<TaxLine> taxLines = new ArrayList<>();
     if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
-
-      for (final AbstractOrderEntryModel entry : abstractOrder.getEntries()) {
+      final  List<AbstractOrderEntryModel> entryModelList = abstractOrder.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(Collectors.toList());
+      for (final AbstractOrderEntryModel entry : entryModelList) {
         final TaxLine taxLine = new TaxLine();
         taxLine.setQuantity(entry.getQuantity().intValue());
         taxLine.setNumber(entry.getEntryNumber());

@@ -65,6 +65,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
         if(BooleanUtils.isTrue(parameter.getRetailGear())){
           entryModel.getOrder().setIsNewGearOrder(true);
         }
+        entryModel.setBundleMainEntry(parameter.isBundleMainEntry());
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,

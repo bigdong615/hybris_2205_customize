@@ -3,17 +3,27 @@ package com.bl.core.order.strategy;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommercePlaceOrderStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -24,6 +34,9 @@ import org.apache.log4j.Logger;
 public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOrderStrategy {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
+
+  @Resource(name="abstractOrderEntryService")
+  private AbstractOrderEntryService abstractOrderEntryService;
 
   /**
    * This method override to set the order to set as submit for tax
@@ -44,7 +57,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
       final CustomerModel customer = (CustomerModel) cartModel.getUser();
       validateParameterNotNull(customer, "Customer model cannot be null");
-
       final OrderModel orderModel = getOrderService().createOrderFromCart(cartModel);
       if (orderModel != null)
       {
@@ -62,7 +74,8 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
         // clear the promotionResults that where cloned from cart PromotionService.transferPromotionsToOrder will copy them over bellow.
         orderModel.setAllPromotionResults(Collections.<PromotionResultModel> emptySet());
-
+        // Creating entry for bundle product.
+        createEntryForBundleProduct(orderModel);
         getModelService().saveAll(customer, orderModel);
 
         if (cartModel.getPaymentInfo() != null && cartModel.getPaymentInfo().getBillingAddress() != null)
@@ -111,4 +124,51 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
     return result;
   }
 
+  /**
+   * This method is used to create a separate entry for every product present in the bundle.
+   * @param orderModel
+   */
+  private void createEntryForBundleProduct(final OrderModel orderModel) {
+    final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+    orderEntryModelList.addAll(
+        orderModel.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleEntry())
+            .collect(Collectors.toList()));
+    final AtomicInteger entryNumber = new AtomicInteger(orderModel.getEntries().size());
+    orderModel.getEntries().forEach(existingEntry -> {
+      if (existingEntry.isBundleMainEntry() && !existingEntry.isEntryCreated()) {
+        final Collection<ProductReferenceModel> productReferenceModels = existingEntry.getProduct()
+            .getProductReferences().stream()
+            .filter(productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
+                .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+        productReferenceModels.forEach(productReferenceModel -> {
+          final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
+          populateOrderEntry(productReferenceModel, newEntryModel, existingEntry);
+          newEntryModel.setEntryNumber(entryNumber.get());
+          getModelService().save(newEntryModel);
+          orderEntryModelList.add(newEntryModel);
+          entryNumber.getAndIncrement();
+        });
+        existingEntry.setEntryCreated(Boolean.TRUE);
+        getModelService().save(existingEntry);
+      }
+    });
+    orderModel.setEntries(orderEntryModelList);
+    getModelService().save(orderModel);
+  }
+
+  /**
+   * This method is used to populate created entry data.
+   */
+  private void populateOrderEntry(final ProductReferenceModel productReferenceModel,
+      final AbstractOrderEntryModel newEntryModel,
+      final AbstractOrderEntryModel existingEntry) {
+    final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
+    newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
+    newEntryModel.setProduct(productReferenceModel.getTarget());
+    newEntryModel.setBundleEntry(Boolean.TRUE);
+    newEntryModel.setBundleProductCode(existingEntry.getProduct().getCode());
+    newEntryModel.setBasePrice(0.0d);
+    newEntryModel.setTotalPrice(0.0d);
+    newEntryModel.setUnit(existingEntry.getUnit());
+  }
 }
