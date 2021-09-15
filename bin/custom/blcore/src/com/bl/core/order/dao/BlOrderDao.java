@@ -31,11 +31,17 @@ public interface BlOrderDao extends OrderDao
 	public List<AbstractOrderModel> getUnPaidBillOrderByCustomer();
 
 	/**
-	 * It gets the order by customer
+	 * It gets the incomplete orders
 	 * @return list of orders
-   * @param currentDate
-   * @param date
+   * @param currentDate the current date
+   * @param date the date
 	 */
 	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(Date currentDate,
       Date date);
+	/**
+	 * It gets the rental orders which are completed and shareASale value is false.
+	 * @return list of orders
+	 */
+	public List<AbstractOrderModel> getCompletedRentalOrderForShareASale();
+
 }
