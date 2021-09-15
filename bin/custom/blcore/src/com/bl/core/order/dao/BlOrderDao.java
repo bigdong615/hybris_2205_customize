@@ -28,4 +28,10 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public List<AbstractOrderModel> getUnPaidBillOrderByCustomer();
+
+	/**
+	 * It gets the rental orders which are completed and shareASale value is false.
+	 * @return list of orders
+	 */
+	public List<AbstractOrderModel> getCompletedRentalOrderForShareASale();
 }

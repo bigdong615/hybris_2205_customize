@@ -479,8 +479,8 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              
 INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
                               ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
-                              
+                              ; blShareASaleJob            ; blShareASaleJob
                               
 INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
                       ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
-                                             
+                      ; blShareASaleCronJob                  ; blShareASaleJob            ;                                        ; true   ;
