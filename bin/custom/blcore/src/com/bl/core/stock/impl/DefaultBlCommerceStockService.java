@@ -350,7 +350,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 
 	/**
 	 * {@inheritDoc}
-	 * @param productCodes
+	 * @param productCodes the list of product code
 	 * @param warehouses the list of warehouse
 	 * @param startDate the start date
 	 * @param endDate the end date

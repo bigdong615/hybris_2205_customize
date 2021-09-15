@@ -665,10 +665,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final Date shippingEndDate =
         Objects.nonNull(consignment) ? consignment.getOptimizedShippingEndDate() :
             order.getActualRentalEndDate();
-    final Collection<StockLevelModel> stockLevels = getBlCommerceStockService()
+    return getBlCommerceStockService()
         .getStockForProductCodesAndDate(productCodes,
             location, shippingStartDate, shippingEndDate);
-    return stockLevels;
   }
 
   private ConsignmentModel getConsignment(final WarehouseModel location,
