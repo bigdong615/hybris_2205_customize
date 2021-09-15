@@ -134,8 +134,13 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
     final Collection<String> appliedCouponCodes = abstractOrderModel.getAppliedCouponCodes();
     if (CollectionUtils.isNotEmpty(appliedCouponCodes)) {
       url.append(BlCoreConstants.SHARE_A_SALE_COUPON_CODE);
+      int size= appliedCouponCodes.size();
       for (final String couponCode : appliedCouponCodes) {
         url.append(URLEncoder.encode(couponCode, BlCoreConstants.SHARE_A_SALE_UTF));
+        if(size > 1){
+          size--;
+          url.append(BlCoreConstants.SHARE_A_SALE_COMMA);
+        }
       }
     }
   }

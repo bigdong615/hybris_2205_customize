@@ -358,7 +358,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_ORDER_CREATION_DATE_FORMAT = "MM/dd/yyyy";
 	public static final String SHARE_A_SALE_NEW_URL_SENDING_MSG = "Sending shareASale new account message: {}";
 	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
-	
+	public static final String SHARE_A_SALE_COMMA = ",";
 	private BlCoreConstants()
 	{
 		//empty
