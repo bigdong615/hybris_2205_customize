@@ -2243,7 +2243,7 @@
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                        <deployment table="shippingGroup" typecode="12299" />
+                        <deployment table="shippingGroup" typecode="12209" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
