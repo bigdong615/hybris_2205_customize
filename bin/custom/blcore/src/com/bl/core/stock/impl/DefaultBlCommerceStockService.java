@@ -327,9 +327,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	@Override
 	public Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes,
-			final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory) {
+			final WarehouseModel warehouse, final Date startDate, final Date endDate) {
 		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findStockLevelsForProductCodesAndDate(
-				productCodes, warehouse, startDate, endDate, isBufferInventory);
+				productCodes, warehouse, startDate, endDate);
 		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
 				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
 		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);

@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -202,7 +203,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     final List<String> assignedSerials = new ArrayList<>();
     //proceed with below checks
     //1. get all bl consigners, and check quantity
-    final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(allSerialProducts);
+    final Set<BlSerialProductModel> nonBufferProducts = getAllNonBufferProducts(allSerialProducts);
+    final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(nonBufferProducts);
 
     if (blConsignerSerials.size() > 0 ) {
 
@@ -265,7 +267,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
           } else {
 
             final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
-                allSerialProducts);
+                nonBufferProducts);
 
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found {}",
                 nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -281,7 +283,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     } else {
 
       final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
-          allSerialProducts);
+          nonBufferProducts);
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found :: {}",
           nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -303,6 +305,12 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       }
     }
 
+  }
+
+  private Set<BlSerialProductModel> getAllNonBufferProducts(final Collection<BlSerialProductModel> allSerialProducts) {
+    return allSerialProducts.stream()
+        .filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))
+        .collect(Collectors.toSet());
   }
 
   private long getFulfilledQuantity(final SourcingContext context, final AbstractOrderEntryModel entry) {

@@ -44,7 +44,7 @@ public interface BlCommerceStockService
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes, final WarehouseModel warehouse,
-			final Date startDate, final Date endDate, final Boolean isBufferInventory);
+			final Date startDate, final Date endDate);
 
 	/**
 	 * This is to get the stock level status of a SKU

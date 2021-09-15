@@ -246,7 +246,7 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
 
     return blStockLevelDao
         .findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
-            order.getActualRentalEndDate());
+            order.getActualRentalEndDate(), Boolean.FALSE);
   }
 
   /**

@@ -87,11 +87,6 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus";
 
-	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
-			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
-			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " +
-			AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus " + AND + StockLevelModel.BUFFEREDINVENTORY + "} = (?bufferInventory)";
-
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " +
@@ -338,19 +333,13 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
    */
   @Override
   public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(final Set<String> productCodes,
-      final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory) {
+      final WarehouseModel warehouse, final Date startDate, final Date endDate) {
 
     if (null == warehouse) {
       throw new IllegalArgumentException("warehouse cannot be null.");
     } else {
 			FlexibleSearchQuery fQuery = null;
-			if(isBufferInventory == null) {
-				fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY);
-			} else {
-				fQuery = new FlexibleSearchQuery(
-						STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY);
-				fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, isBufferInventory);
-			}
+			fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY);
       fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODES, productCodes);
 			addQueryParameter(startDate, endDate, fQuery);
       fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
@@ -372,7 +361,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
    */
   @Override
   public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
-      final Set<String> serialProductCodes, final Date startDay, final Date endDay) {
+      final Set<String> serialProductCodes, final Date startDay, final Date endDay, final Boolean reservedStatus) {
 
     final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
         SERIAL_STOCK_LEVELS_FOR_DATE_AND_CODES_QUERY);

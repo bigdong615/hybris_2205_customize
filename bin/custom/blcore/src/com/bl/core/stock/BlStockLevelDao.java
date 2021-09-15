@@ -90,11 +90,10 @@ public interface BlStockLevelDao {
 	 * @param warehouse    the warehouse
 	 * @param startDate    the start date
 	 * @param endDate      the end date
-	 * @param isBufferInventory Buffer Inventory Flag
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(final Set<String> productCodes,
-			final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory);
+			final WarehouseModel warehouse, final Date startDate, final Date endDate);
 
 	/**
 	 * It finds the stocks for the given serials and serial from start date to end date
@@ -105,7 +104,7 @@ public interface BlStockLevelDao {
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
-			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay, final Boolean reservedStatus);
 
 	/**
 	 * This method created to find the stock level for extended order based on extend start date and extend end date
