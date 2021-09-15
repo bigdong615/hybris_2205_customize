@@ -167,7 +167,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
 		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
 			return Collections.emptyList();
 		}

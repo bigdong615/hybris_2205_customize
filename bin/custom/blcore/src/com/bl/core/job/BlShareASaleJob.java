@@ -98,7 +98,7 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
           dateFormat.setTimeZone(TimeZone.getTimeZone(BlCoreConstants.SHARE_A_SALE_GMT));
           String date = dateFormat.format(new Date());
 
-          String auth = apiToken + ":" + date + ":" + action + ":" + apiSecret;
+          String auth = apiToken + BlCoreConstants.RATIO + date + BlCoreConstants.RATIO + action + BlCoreConstants.RATIO + apiSecret;
           String authHash = DigestUtils.sha256Hex(auth);
 
           if (makeHttpConnectionToShareASale(url, date, authHash)) {
@@ -152,7 +152,7 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
   private boolean makeHttpConnectionToShareASale(final StringBuilder url, final String date,
       final String authHash)
       throws MalformedURLException {
-    URL urlObject = new URL(url.toString());
+    final URL urlObject = new URL(url.toString());
     BlLogger
         .logFormatMessageInfo(LOGGER, Level.INFO, BlCoreConstants.SHARE_A_SALE_NEW_URL_SENDING_MSG,
             urlObject);
