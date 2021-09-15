@@ -75,6 +75,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY = "inventoryCycleCountScanToolDataModelKey";
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
+    public static final String ICC_SUCCESS_NOTIF = "scanICCSuccess";
 
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
@@ -244,6 +245,11 @@ public class BlInventoryScanLoggingConstants {
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
     public static final String FOR = " for ";
 
+    //Inventory Cycle Count
+    public static final String START_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Start performing BlAuthorizePaymentJob...!!";
+    public static final String FINISHED_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Finished performing BlAuthorizePaymentJob...!!";
+    public static final String FAILED_TO_PERFORM_BL_AUTHORIZE_PAYMENT_JOB_AS_IT_S_WEEKEND = "Failed to perform BlAuthorizePaymentJob as it's weekend!!";
+
     public static final String FETCH_ACTIVE_INVENTORY_CYCLE_COUNT = "Fetch active inventory cycle count record!!";
     public static final String FETCH_ALL_SKUs = "Fetch all active SKUs considering serials status!!";
     public static final String ICC_DAY = "ICC_Day_";
@@ -251,6 +257,16 @@ public class BlInventoryScanLoggingConstants {
     public static final int THIRTY = 30;
     public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
     public static final String DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivating previous cycle count with code: {}";
+    public static final String FAILED_TO_CREATE_INVENTORY_CYCLE_AS_SKU_LIST_IS_EMPTY = "Failed to create inventory Cycle as SKU list is empty!!";
+    public static final String PREVIOUS_INVENTORY_CYCLE_NOT_COMPLETED_WITH_CODE = "Previous Inventory Cycle not completed with code: {}";
+    public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
+    public static final String SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO = "Successfully created new Inventory Cycle count for code:{} from: {} to: {}";
+    public static final String CREATED_INVENTORY_CYCLE_FOR_DATE = "Created {} Inventory Cycle for date: {}";
+
+    public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
+    public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
+    public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
+
 
     private BlInventoryScanLoggingConstants() { }
 
