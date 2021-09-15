@@ -1092,6 +1092,7 @@
 	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
 		<property name="promotionDao" ref="promotionDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 	<!--[BL-663] Added facet on sale on PLP/SLP -->
 	<bean id="blOnSaleFacetNameProvider"
@@ -1441,6 +1442,8 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 
 	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
