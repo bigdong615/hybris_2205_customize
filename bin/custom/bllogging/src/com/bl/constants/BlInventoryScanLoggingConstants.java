@@ -54,6 +54,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String BIN_LOCATION = "FDSHIP01";
     public static final String CARRIER = "CARRIER";
     public static final String BOXING_FEDEX = "FEDEX";
+    public static final String FD_MOBILE_SHELF = "FDSHIPPED";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -144,6 +145,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
+    public static final String FRONT_DESK_SHIPPER_WORKSTATION = "FRONT_DESK_MOBILE_CART";
+ 	public static final String FRONT_DESK_SHIPPING_BIN = "FRONT_DESK_SHIPPING_BIN";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
  	public static final String LAST_SCAN_INVALID_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
@@ -170,6 +173,21 @@ public class BlInventoryScanLoggingConstants {
 	public static final String SHIPPING_CANCEL_ORDER_FAILURE = "blbackoffice.shipping.cancel.order.error.messge";
  	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
  	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
+ 	
+	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
+	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order";
+
+	public static final String FRONT_DESK_NO_ITEM_SCAN_KEY = "blbackoffice.frontdesk.order.noitem.scan.error";
+	public static final String FRONT_DESK_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
+	public static final String FRONT_DESK_TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.frontdesk.order.invalid.scan.error";
+	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE = "blbackoffice.frontdesk.manual.order.review.error.messge";
+	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE = "blbackoffice.frontdesk.cancel.order.error.messge";
+	public static final String FRONT_DESK_INVALID_SCAN_ERROR = "blbackoffice.frontdesk.scan.invalid.scan.error ";
+	public static final String FRONT_DESK_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.frontdesk.serial.missing.error.messge";
+	public static final String FRONT_DESK_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.frontdesk.scan.missing.error.messge";
+	public static final String FRONT_DESK_LOCATION_ERROR_KEY = "blbackoffice.frontdesk.scan.last.location.error";
+	public static final String FRONT_DESK_LAST_INVALID_LOCATION_ERROR = "blbackoffice.frontdesk.scan.last.invalid.location.error";
+	public static final String FRONT_DESK_MANY_LOCATION_ERROR = "blbackoffice.frontdesk.scan.many.location.error";
 
 
  	public static final String DOUBLE_HYPHEN = "--";
@@ -181,6 +199,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SOCKET_ID = "inputObject";
  	public static final String SCANNING_AREA = "scanningArea";
  	public static final String SCAN_TO_BIN = "scanToBin";
+ 	public static final String SCAN_TO_WORKSTATION = "scanToWorkStation";
  	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
  	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";
  	public static final String EMPTY_STRING = "";

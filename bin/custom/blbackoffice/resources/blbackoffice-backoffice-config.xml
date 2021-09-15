@@ -45,6 +45,10 @@
                 <n:type-node id="IncompleteOrdersQueue" code="IncompleteOrdersQueue"/>
              </n:navigation-node>
             <n:type-node id="BlBlackoutDate" code="BlBlackoutDate"/>
+            <n:navigation-node id="Enums">
+                <n:type-node id="RepairReasonsEnum" code="RepairReasonsEnum"/>
+                <n:type-node id="VendorsEnum" code="VendorsEnum"/>
+             </n:navigation-node>
         </n:explorer-tree>
     </context>
 
@@ -1301,6 +1305,7 @@
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
+					<editorArea:attribute qualifier="status"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
@@ -2192,14 +2197,6 @@
 		</y:base>
 	</context>
 	
-	<context type="CustomerResponsibleRepairLog" component="base">
-		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
-			<y:labels>
-				<y:label>@labelService.getObjectLabel(itemtype)+ ' - ' +repairLogStatus</y:label>
-			</y:labels>
-		</y:base>
-	</context>
-	
 	<context type="PartsNeededRepairLog" component="base">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
@@ -2273,25 +2270,29 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
 				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="creationtime" readonly="true"/>
+					<editorArea:attribute qualifier="serialCode" readonly="true"/>
+					<editorArea:attribute qualifier="itemBarcode" readonly="true"/>
 					<editorArea:attribute qualifier="repairTechsForClaim"/>
+					<editorArea:attribute qualifier="selectedGearGaurd" readonly="true"/>
+					<editorArea:attribute qualifier="damageWaiverPaid"/>
 					<editorArea:attribute qualifier="recommendToRepair"/>
-					<editorArea:attribute qualifier="order"/>
+					<editorArea:attribute qualifier="customerResponsible"/>
 					<editorArea:attribute qualifier="lastRepairReturnDay"/>
-					<editorArea:attribute qualifier="repairAssessment"/>
-					<editorArea:attribute qualifier="otherDocument"/>
-					<editorArea:attribute qualifier="repairLogStatus"/>
-					<editorArea:attribute qualifier="overallSpend"/>
-					<editorArea:attribute qualifier="returnOnInvestment"/>
 					<editorArea:attribute qualifier="costForParts"/>
+					<editorArea:attribute qualifier="labourHours"/>
+					<editorArea:attribute qualifier="labourRate"/>
 					<editorArea:attribute qualifier="costForLabor"/>
 					<editorArea:attribute qualifier="totalForPartsAndLaborCost"/>
-					<editorArea:attribute qualifier="itemBarcode"/>
-					<editorArea:attribute qualifier="serialCode"/>
-					<editorArea:attribute qualifier="associatedConsignment"/>
-					<editorArea:attribute qualifier="consignmentEntry"/>
-					<editorArea:attribute qualifier="userId"/>
-					<editorArea:attribute qualifier="damageWaiverPaid"/>
-					<editorArea:attribute qualifier="serialProduct"/>
+					<editorArea:attribute qualifier="customerCharged"/>
+					<editorArea:attribute qualifier="customerCollectionStatus"/>
+					<editorArea:attribute qualifier="otherDocument"/>
+					<editorArea:attribute qualifier="repairLogStatus"/>
+					<editorArea:attribute qualifier="userId" readonly="true"/>
+					<editorArea:attribute qualifier="serialProduct" readonly="true"/>
+					<editorArea:attribute qualifier="order" readonly="true"/>
+					<editorArea:attribute qualifier="associatedConsignment" readonly="true"/>
+					<editorArea:attribute qualifier="consignmentEntry" readonly="true"/>
 				</editorArea:section>
 			</editorArea:tab>
 			<editorArea:tab name="hmc.tab.blRepair.log.tech.eng.tab" position="2">
@@ -2299,10 +2300,17 @@
 					<editorArea:attribute qualifier="repairReasons"/>
 					<editorArea:attribute qualifier="otherRepairReasons"/>
 					<editorArea:attribute qualifier="notesOnIssue"/>
+					<editorArea:attribute qualifier="conditionRating"/>
+					<editorArea:attribute qualifier="lastUserChangedConditionRating" readonly="true"/>
 					<editorArea:attribute qualifier="frequency"/>
 					<editorArea:attribute qualifier="cause"/>
 					<editorArea:attribute qualifier="blame"/>
 					<editorArea:attribute qualifier="issueLocation"/>
+				</editorArea:section>
+			</editorArea:tab>
+			<editorArea:tab name="hmc.tab.blRepair.log.assessment.notes.tab" position="3">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="assessmentNotes"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2314,24 +2322,11 @@
 				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
 					<editorArea:attribute qualifier="repairVendor"/>
 					<editorArea:attribute qualifier="dateSent"/>
+					<editorArea:attribute qualifier="estimateCostApproved"/>
+					<editorArea:attribute qualifier="estimateCostDeclined"/>
+					<editorArea:attribute qualifier="estimateNote"/>
 					<editorArea:attribute qualifier="dateReturned"/>
-				</editorArea:section>
-			</editorArea:tab>
-		</editorArea:editorArea>
-	</context>
-	
-	<context merge-by="type" parent="BlRepairLog" type="CustomerResponsibleRepairLog" component="editor-area">
-		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
-			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
-				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
-					<editorArea:attribute qualifier="customerAlerted"/>
-					<editorArea:attribute qualifier="repairVendor"/>
-					<editorArea:attribute qualifier="dateSent"/>
-					<editorArea:attribute qualifier="dateReturned"/>
-					<editorArea:attribute qualifier="gearGaurdAvailable"/>
-					<editorArea:attribute qualifier="customerChargeCost"/>
-					<editorArea:attribute qualifier="estimateApprovedCost"/>
-					<editorArea:attribute qualifier="customerCharged"/>
+					<editorArea:attribute qualifier="trackingNumber" readonly="true"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2342,7 +2337,7 @@
 			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
 				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
 					<editorArea:attribute qualifier="repairVendor"/>
-					<editorArea:attribute qualifier="subStatus"/>
+					<editorArea:attribute qualifier="partsStatus"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>

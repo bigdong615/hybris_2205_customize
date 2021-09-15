@@ -260,4 +260,12 @@ public interface BlInventoryScanToolService {
 	 * @return List of scanned barcodes with products
 	 */
 	List<String> getSuccessString(final List<String> barcodeList);
+	
+	/**
+	 * method will verify the list of bin barcodes and result into list of failed barcodes that has been failed to update
+	 * @param barcodes as List<String>
+	 * @param allowedLocationList as List<String>
+	 * @return Map<Integer, List<String>>
+	 */
+	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList);
 }

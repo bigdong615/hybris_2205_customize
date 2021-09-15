@@ -1,17 +1,20 @@
 package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
+import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -51,6 +54,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private SearchRestrictionService searchRestrictionService;
   private SessionService sessionService;
   private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
+  private BlDeliveryModeService zoneDeliveryModeService;
+  private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
    * {@inheritDoc}
@@ -69,8 +74,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
-    final SourcingLocation finalSourcingLocation = getBlShippingOptimizationStrategy().getProductAvailabilityForThreeDayGround(
-              context, sourcingLocation);
+
+    final SourcingLocation finalSourcingLocation =
+        isOrderBeingTransferredToOtherWarehouse(context, sourcingLocation.getWarehouse())
+            ?  sourcingLocation : getBlShippingOptimizationStrategy()
+            .getProductAvailabilityForThreeDayGround(context, sourcingLocation);
 
     if(null != finalSourcingLocation.getAllocatedMap()) {
       BlLogger
@@ -129,6 +137,26 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
       allEntrySourceComplete.add(new AtomicBoolean(true));
     }
+  }
+
+  /**
+   * Check whether the order will be sourced and transferred to different warehouse.
+   *
+   * @param context
+   * @param warehouseToBeSourced
+   * @return true if delivery mode is order transfer eligible and order is sourced from other
+   * warehouse
+   */
+  private boolean isOrderBeingTransferredToOtherWarehouse(final SourcingContext context,
+      final WarehouseModel warehouseToBeSourced) {
+
+    final AbstractOrderModel order = context.getOrderEntries().iterator().next().getOrder();
+    final WarehouseModel primaryWarehouse = blDeliveryStateSourcingLocationFilter
+        .applyFilter(order);
+
+    return zoneDeliveryModeService
+        .isEligibleDeliveryModeForOrderTransfer((ZoneDeliveryModeModel) order.getDeliveryMode())
+        && !primaryWarehouse.getCode().equalsIgnoreCase(warehouseToBeSourced.getCode());
   }
 
   /**
@@ -630,4 +658,21 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
   }
 
+  public BlDeliveryModeService getZoneDeliveryModeService() {
+    return zoneDeliveryModeService;
+  }
+
+  public void setZoneDeliveryModeService(
+      final BlDeliveryModeService zoneDeliveryModeService) {
+    this.zoneDeliveryModeService = zoneDeliveryModeService;
+  }
+
+  public BlDeliveryStateSourcingLocationFilter getBlDeliveryStateSourcingLocationFilter() {
+    return blDeliveryStateSourcingLocationFilter;
+  }
+
+  public void setBlDeliveryStateSourcingLocationFilter(
+      final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
+    this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+  }
 }

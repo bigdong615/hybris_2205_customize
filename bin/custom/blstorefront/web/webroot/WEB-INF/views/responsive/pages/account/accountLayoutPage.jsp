@@ -128,7 +128,10 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/verificationImages">
+                   <a href="${baseUrl}/verificationImages"
+                      <c:if test="${blPageType eq 'verificationImages'}">
+                          <c:out value="class=active"/>
+                      </c:if>>
                       <spring:theme code= "text.verification.documents" />
                    </a>
                 </p>

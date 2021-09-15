@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import com.bl.logging.BlLogger;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
+import java.util.Date;
  /**
  * Service implementation class is used to save uploaded document.
  * @author Neeraj Singh
@@ -32,7 +33,7 @@ public class DefaultBlVerificationDocumentService implements BlVerificationDocum
   public void uploadVerificationDocument(final CustomerModel customerModel, final VerificationDocumentMediaModel verificationDocumentMediaModel, final MultipartFile document) {
 
     try {
-      verificationDocumentMediaModel.setCode(customerModel.getName() + BlCoreConstants.HYPHEN + document.getOriginalFilename());
+      verificationDocumentMediaModel.setCode(document.getOriginalFilename() + BlCoreConstants.UNDERSCORE + new Date());
       getModelService().save(verificationDocumentMediaModel);
       verificationDocumentMediaModel.setFolder(getMediaService().getFolder("verificationDocuments"));
       getMediaService().setStreamForMedia(verificationDocumentMediaModel, document.getInputStream(), document.getOriginalFilename(), document.getContentType());
