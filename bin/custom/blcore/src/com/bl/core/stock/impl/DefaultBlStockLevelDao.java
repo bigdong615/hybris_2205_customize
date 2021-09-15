@@ -85,7 +85,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 
 	private static final String STOCK_FOR_UNALLOCATED_PRODUCTS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
-			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
+			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) " + AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus";
 
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
@@ -452,6 +452,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			fQuery.addQueryParameter("productCodes", productCodes);
 			addQueryParameter(startDate, endDate, fQuery);
 			fQuery.addQueryParameter("warehouses", warehouses);
+			fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
 			final List<StockLevelModel> stockLevels = result.getResult();
