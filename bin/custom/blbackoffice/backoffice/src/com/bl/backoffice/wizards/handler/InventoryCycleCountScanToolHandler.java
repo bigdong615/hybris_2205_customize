@@ -5,11 +5,13 @@ import com.bl.backoffice.wizards.util.InventoryCycleCountScanToolData;
 import com.bl.backoffice.wizards.util.InventoryCycleCountScanToolUtil;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.cycle.count.service.BlInventoryCycleCountService;
+import com.bl.core.model.BlInventoryCycleCountScanHistoryModel;
 import com.bl.logging.BlLogger;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -50,18 +52,18 @@ public class InventoryCycleCountScanToolHandler implements com.hybris.cockpitng.
                 flowActionHandlerAdapter.getWidgetInstanceManager().getModel().getValue((String) map.get(
                 BlInventoryScanLoggingConstants.INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY), InventoryCycleCountScanToolData.class);
         if (inventoryCycleCountScanToolData == null) {
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG, StringUtils.EMPTY);
-            this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG, StringUtils.EMPTY);
+            this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
         } else {
-            this.getNotificationService().clearNotifications(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER);
+            this.getNotificationService().clearNotifications(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER);
             final List<String> skuList = inventoryCycleCountScanToolData.getSkusInputField();
             final List<String> serialBarcodes = inventoryCycleCountScanToolData.getSerialBarcodeInputField();
             if (CollectionUtils.isNotEmpty(skuList) && CollectionUtils.isNotEmpty(serialBarcodes)) {
                 this.executeInventoryCycleCount(skuList, serialBarcodes);
             } else {
-                BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG, StringUtils.EMPTY);
-                this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG, StringUtils.EMPTY);
+                this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
                         BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
             }
             this.triggerClear(inventoryCycleCountScanToolData);
@@ -76,9 +78,27 @@ public class InventoryCycleCountScanToolHandler implements com.hybris.cockpitng.
      */
     private void executeInventoryCycleCount(final List<String> skuList, final List<String> serialBarcodes) {
         if(Boolean.TRUE.equals(getBlInventoryCycleCountService().checkIsSKUListMatching(skuList))) {
-
+            try {
+                final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel = this.getBlInventoryCycleCountService()
+                        .executeInventoryCycleCount(serialBarcodes);
+                if(null != blInventoryCycleCountScanHistoryModel) {
+                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.ICC_SUCCESS,
+                       blInventoryCycleCountScanHistoryModel.getInventoryCycleCountCode(),
+                       blInventoryCycleCountScanHistoryModel.getInventoryCycleCountDayCode(),
+                       blInventoryCycleCountScanHistoryModel.getInventoryCycleCountDayDate());
+                    this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
+                            BlInventoryScanLoggingConstants.ICC_SUCCESS_NOTIF, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                }
+            } catch(final ModelSavingException e) {
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.MODEL_SAVING_EXCEPTION, e.getMessage());
+                this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
+                        BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+            }
         } else {
-            //TODO: error msg for sku list
+            //TODO: error msg for sku list create notif config
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SKU_LIST_ERROR, StringUtils.EMPTY);
+            this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
+                    BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
         }
     }
 

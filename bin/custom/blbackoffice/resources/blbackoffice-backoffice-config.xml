@@ -2759,8 +2759,8 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+			<na:notifications eventType="scanICCSuccess" level="SUCCESS" destination="TOPMOST">
+				<na:message>blbackoffice.i.c.c.wizard.notification.barcode.scan.success</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>

@@ -2,23 +2,22 @@ package com.bl.core.inventory.cycle.count.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.InventoryCycleCountStatus;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.inventory.cycle.count.dao.BlInventoryCycleCountDao;
 import com.bl.core.inventory.cycle.count.service.BlInventoryCycleCountService;
-import com.bl.core.model.BlInventoryCycleCountDetailsModel;
-import com.bl.core.model.BlInventoryCycleCountModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
+import com.bl.core.model.*;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Inventory Cycle Count Service
@@ -31,6 +30,9 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
 
     @Autowired
     BlInventoryCycleCountDao blInventoryCycleCountDao;
+
+    @Autowired
+    BlInventoryScanToolDao blInventoryScanToolDao;
 
     @Autowired
     UserService userService;
@@ -85,7 +87,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * {@inheritDoc}
      */
     @Override
-    public void createNextInventoryCycleCount() {
+    public boolean createNextInventoryCycleCount() {
         final Collection<BlProductModel> blProductModelCollection = this.getAllActiveSKUsWithSerialStatus();
         if(CollectionUtils.isNotEmpty(blProductModelCollection)) {
             boolean status = Boolean.TRUE;
@@ -97,8 +99,14 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                 final int perDaySKUs = blProductModelCollection.size() / BlInventoryScanLoggingConstants.THIRTY;
                 final List<List<BlProductModel>> subLists = Lists.partition((List) blProductModelCollection, perDaySKUs);
                 this.createBlInventoryCycleCountModel(activeInventoryCount, subLists, perDaySKUs, blProductModelCollection);
+                return Boolean.TRUE;
+            } else {
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.PREVIOUS_INVENTORY_CYCLE_NOT_COMPLETED_WITH_CODE,
+                        activeInventoryCount.getInventoryCycleCountCode());
+                return status;
             }
         }
+        return Boolean.FALSE;
     }
 
     /**
@@ -139,20 +147,70 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * {@inheritDoc}
      */
     @Override
-    public void executeInventoryCycleCount(final Collection<String> serialBarcodes) {
-        final Collection<BlProductModel> missingList = new ArrayList<>();
-        final Collection<BlProductModel> unexpectedSerialList = new ArrayList<>();
-        final Collection<BlProductModel> allSKUList = this.getInventorySKUList();
-        if(CollectionUtils.isNotEmpty(allSKUList)) {
-            for(final BlProductModel sku : allSKUList) {
-                final Collection<BlSerialProductModel> allSerials = sku.getSerialProducts();
-                if(CollectionUtils.isNotEmpty(allSerials)) {
-                    for(final BlSerialProductModel serial : allSerials) {
-                        //TODO: check missing and unexpected and log history of scanning
+    public BlInventoryCycleCountScanHistoryModel executeInventoryCycleCount(final Collection<String> serialBarcodes) {
+        final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials = new HashMap<>();
+        final List<BlSerialProductModel> missingList = new ArrayList<>();
+
+        for(final BlProductModel sku : this.getInventorySKUList()) {
+            this.makeMissingAndUnexpectedListFromScannedData(serialBarcodes, missingList, scannedSKUsAndSerials,
+                    serialBarcodes, sku);
+        }
+        return this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes);
+    }
+
+    /**
+     * This method will iterate over serials of SKU and check against the scanned data and prepare different lists
+     *
+     * @param serialBarcodes list
+     * @param scannedSKUsAndSerials map
+     * @param missingList list
+     * @param modifiedScannedSerials serials
+     * @param sku activeSKU
+     */
+    private void makeMissingAndUnexpectedListFromScannedData(final Collection<String> serialBarcodes, final List<BlSerialProductModel> missingList,
+                                                             final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials,
+                                                             final Collection<String> modifiedScannedSerials, final BlProductModel sku) {
+        if(CollectionUtils.isNotEmpty(sku.getSerialProducts())) {
+            final List<BlSerialProductModel> successScannedSerials = new ArrayList<>();
+            for(final BlSerialProductModel serial : sku.getSerialProducts()) {
+                if(serialBarcodes.stream().anyMatch(barcode -> barcode.equals(serial.getBarcode()))) {
+                    successScannedSerials.add(serial);
+                    modifiedScannedSerials.remove(serial.getBarcode());
+                } else {
+                    if(!SerialStatusEnum.SHIPPED.equals(serial.getSerialStatus())) {
+                        missingList.add(serial);
                     }
                 }
             }
+            scannedSKUsAndSerials.put(sku, successScannedSerials);
         }
+    }
+
+    /**
+     * This method will log the scan history to DB
+     *
+     * @param scannedSKUsAndSerials mainList
+     * @param missingList missing serials list
+     * @param modifiedScannedSerials unexpected serials list
+     * @return BlInventoryCycleCountScanHistoryModel scanHistory
+     */
+    private BlInventoryCycleCountScanHistoryModel logInventoryCycleCountScanHistory(final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials,
+                                                                                    final List<BlSerialProductModel> missingList,
+                                                                                    final Collection<String> modifiedScannedSerials) {
+        final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel = getModelService()
+                .create(BlInventoryCycleCountScanHistoryModel.class);
+
+        blInventoryCycleCountScanHistoryModel.setScannedSKUsAndSerials(scannedSKUsAndSerials);
+        blInventoryCycleCountScanHistoryModel.setMissingSerialsForScan(missingList);
+        blInventoryCycleCountScanHistoryModel.setUnexpectedScannedSerials((List<BlSerialProductModel>) this.getBlInventoryScanToolDao()
+                .getSerialProductsByBarcode(modifiedScannedSerials));
+        blInventoryCycleCountScanHistoryModel.setScannedUser(userService.getCurrentUser());
+        blInventoryCycleCountScanHistoryModel.setScannedTime(new Date());
+
+        getModelService().save(blInventoryCycleCountScanHistoryModel);
+        getModelService().refresh(blInventoryCycleCountScanHistoryModel);
+
+        return blInventoryCycleCountScanHistoryModel;
     }
 
     /**
@@ -166,17 +224,21 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     private void createBlInventoryCycleCountModel(final BlInventoryCycleCountModel previousInventoryCount,
                                                   final Collection<List<BlProductModel>> subLists, final int perDaySKUs,
                                                   final Collection<BlProductModel> blProductModelCollection) {
-        final BlInventoryCycleCountModel blInventoryCycleCountModel = getModelService().create(BlInventoryCycleCountModel.class);
-        blInventoryCycleCountModel.setCurrentCycleCountStartDate(new Date());
-        if(null == previousInventoryCount) {
-            blInventoryCycleCountModel.setPreviousCycleCountStartDate(null);
-            blInventoryCycleCountModel.setPreviousCycleCountEndDate(null);
-        } else {
-            blInventoryCycleCountModel.setPreviousCycleCountStartDate(previousInventoryCount.getCurrentCycleCountStartDate());
-            blInventoryCycleCountModel.setPreviousCycleCountEndDate(previousInventoryCount.getCurrentCycleCountEndDate());
-        }
-        blInventoryCycleCountModel.setInventoryCycleCountActive(Boolean.TRUE);
         if(CollectionUtils.isNotEmpty(subLists)) {
+            final BlInventoryCycleCountModel blInventoryCycleCountModel = getModelService().create(BlInventoryCycleCountModel.class);
+            blInventoryCycleCountModel.setCurrentCycleCountStartDate(new Date());
+            if(null == previousInventoryCount) {
+                blInventoryCycleCountModel.setPreviousCycleCountStartDate(null);
+                blInventoryCycleCountModel.setPreviousCycleCountEndDate(null);
+            } else {
+                blInventoryCycleCountModel.setPreviousCycleCountStartDate(previousInventoryCount.getCurrentCycleCountStartDate());
+                blInventoryCycleCountModel.setPreviousCycleCountEndDate(previousInventoryCount.getCurrentCycleCountEndDate());
+            }
+            blInventoryCycleCountModel.setInventoryCycleCountActive(Boolean.TRUE);
+
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO,
+                    blInventoryCycleCountModel.getCurrentCycleCountStartDate(), blInventoryCycleCountModel.getCurrentCycleCountEndDate());
+
             final List<BlInventoryCycleCountDetailsModel> allSKUDetailsPerDay = new ArrayList<>();
             final Calendar calendar = Calendar.getInstance();
             int inventoryCycleCountCounter = BlInventoryScanLoggingConstants.ZERO;
@@ -191,8 +253,15 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             blInventoryCycleCountModel.setCurrentCycleCountEndDate(previousDate);
             getModelService().save(blInventoryCycleCountModel);
             getModelService().refresh(blInventoryCycleCountModel);
+
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO,
+                    blInventoryCycleCountModel.getInventoryCycleCountCode(), blInventoryCycleCountModel.getCurrentCycleCountStartDate(),
+                    blInventoryCycleCountModel.getCurrentCycleCountEndDate());
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_TO_CREATE_INVENTORY_CYCLE_AS_SKU_LIST_IS_EMPTY);
         }
     }
+
 
     /**
      * This method will create BlInventoryCycleCountDetailsModel model on inventoryCycleCount
@@ -203,9 +272,8 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * @param list list
      * @return BlInventoryCycleCountDetailsModel model
      */
-    private BlInventoryCycleCountDetailsModel createBlInventoryCycleCountDetailsModel(int inventoryCycleCountCounter,
-                                                                                      final Calendar calendar, Date previousDate,
-                                                         final List<BlProductModel> list) {
+    private BlInventoryCycleCountDetailsModel createBlInventoryCycleCountDetailsModel(int inventoryCycleCountCounter, final Calendar calendar,
+                                                                                      Date previousDate, final List<BlProductModel> list) {
         final BlInventoryCycleCountDetailsModel blInventoryCycleCountDetailsModel = getModelService().create(
                 BlInventoryCycleCountDetailsModel.class);
         blInventoryCycleCountDetailsModel.setInventoryCycleCountDate(this.getNextWorkingDate(previousDate, calendar));
@@ -216,7 +284,11 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         blInventoryCycleCountDetailsModel.setInventoryCycleCountSKUs(list);
         getModelService().save(blInventoryCycleCountDetailsModel);
         getModelService().refresh(blInventoryCycleCountDetailsModel);
+
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.CREATED_INVENTORY_CYCLE_FOR_DATE,
+                blInventoryCycleCountDetailsModel.getInventoryCycleCountCode(), blInventoryCycleCountDetailsModel.getInventoryCycleCountDate());
         return blInventoryCycleCountDetailsModel;
+
     }
 
     /**
@@ -266,5 +338,13 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
 
     public void setInventorySKUList(Collection<BlProductModel> inventorySKUList) {
         this.inventorySKUList = inventorySKUList;
+    }
+
+    public BlInventoryScanToolDao getBlInventoryScanToolDao() {
+        return blInventoryScanToolDao;
+    }
+
+    public void setBlInventoryScanToolDao(BlInventoryScanToolDao blInventoryScanToolDao) {
+        this.blInventoryScanToolDao = blInventoryScanToolDao;
     }
 }

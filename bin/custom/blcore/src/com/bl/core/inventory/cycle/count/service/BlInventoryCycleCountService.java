@@ -1,9 +1,6 @@
 package com.bl.core.inventory.cycle.count.service;
 
-import com.bl.core.model.BlInventoryCycleCountDetailsModel;
-import com.bl.core.model.BlInventoryCycleCountModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.*;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -38,8 +35,10 @@ public interface BlInventoryCycleCountService {
 
     /**
      * This method will create next inventory cycle count if existing ended
+     *
+     * @return true if cycle count creation completed
      */
-    void createNextInventoryCycleCount();
+    boolean createNextInventoryCycleCount();
 
     /**
      * This method will give present SKU list to be get scanned
@@ -59,6 +58,8 @@ public interface BlInventoryCycleCountService {
     /**
      * This method will execute flow for report generation
      * @param serialBarcodes barcodes
+     * @return string message
+     * @return blInventoryCycleCountScanHistoryModel scanHistory
      */
-    void executeInventoryCycleCount(final Collection<String> serialBarcodes);
+    BlInventoryCycleCountScanHistoryModel executeInventoryCycleCount(final Collection<String> serialBarcodes);
 }

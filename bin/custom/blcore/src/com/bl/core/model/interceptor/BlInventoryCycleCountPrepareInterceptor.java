@@ -6,6 +6,11 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 
+/**
+ * Generating key for Inventory Cycle Count
+ *
+ * @author Namrata Lohar
+ */
 public class BlInventoryCycleCountPrepareInterceptor implements PrepareInterceptor<BlInventoryCycleCountModel> {
 
     private KeyGenerator keyGenerator;

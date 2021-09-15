@@ -6132,6 +6132,21 @@ new Integer(0)
                 <description>Contains all inventory cycle count scanning history</description>
                 <deployment table="BlICCScanHistory" typecode="12236"/>
                 <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDayCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Inventory Cycle count Day code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDayDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
                     <attribute qualifier="scannedSKUsAndSerials" type="InventoryCycleCountScanSKUDetails">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
