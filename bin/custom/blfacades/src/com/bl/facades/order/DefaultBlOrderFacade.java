@@ -2,14 +2,17 @@ package com.bl.facades.order;
 
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.CustomerCollectionStatusEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
@@ -96,6 +99,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlDatePickerService blDatePickerService;
   private BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator;
   private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
+  private BlRepairLogDao blRepairLogDao;
 
   /**
    * This method created to add all the products from existing order
@@ -616,6 +620,31 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     am.setMessageCode(messageCode);
     return am;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setResolvedStatusOnRepairLog(final String orderCode)
+  {
+	  try
+	  {
+		  final List<BlRepairLogModel> repairLogForOrderCode = getBlRepairLogDao().getRepairLogForOrderCode(orderCode);
+		  if(CollectionUtils.isNotEmpty(repairLogForOrderCode))
+		  {
+			  repairLogForOrderCode.forEach(repairLog -> {
+				  repairLog.setCustomerCollectionStatus(CustomerCollectionStatusEnum.RESOLVED);
+				  getModelService().save(repairLog);
+				  getModelService().refresh(repairLog);
+			  });
+		  }
+	  }
+	  catch (final Exception exception)
+	  {
+		  BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+				  "Error occured while setting Customer Collection Status to Resolved on Repair Log for order : {}", orderCode);
+	  }
+  }
 
   public BlCartService getBlCartService() {
     return blCartService;
@@ -780,4 +809,22 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
     this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
   }
+
+
+/**
+ * @return the blRepairLogDao
+ */
+public BlRepairLogDao getBlRepairLogDao()
+{
+	return blRepairLogDao;
+}
+
+
+/**
+ * @param blRepairLogDao the blRepairLogDao to set
+ */
+public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
+{
+	this.blRepairLogDao = blRepairLogDao;
+}
 }
