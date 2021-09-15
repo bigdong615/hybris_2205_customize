@@ -323,6 +323,41 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String HYPHEN = "-";
 
+	public static final String RENTAL_ORDER = "isRentalCart";
+	public static final String SHARE_A_SALE = "shareASaleSent";
+	public static final String ORDER_STATUS = "code";
+	public static final String START_SHARE_A_SALE_JOB = "Start performing BlShareASaleJob...";
+	public static final String SHARE_A_SALE_URL = "https://shareasale.com";
+	public static final String SHARE_A_SALE_MERCHANT_ID = "/w.cfm?merchantId=";
+	public static final String SHARE_A_SALE_TOKEN = "&token=";
+	public static final String SHARE_A_SALE_VERSION = "&version=";
+	public static final String SHARE_A_SALE_ACTION = "&action=";
+	public static final String SHARE_A_SALE_DATE = "&date=";
+	public static final String SHARE_A_SALE_ORDER_NUMBER = "&ordernumber=";
+	public static final String SHARE_A_SALE_TRANS_TYPE = "&transtype=";
+	public static final String SHARE_A_SALE_AMOUNT = "&amount=";
+	public static final String SHARE_A_SALE_SUBTOTAL_FORMAT = "%.2f";
+	public static final String SHARE_A_SALE_TRACKING = "&tracking=";
+	public static final String SHARE_A_SALE_TRACKING_S = "-S";
+	public static final String SHARE_A_SALE_STORE_ID = "&storeID=";
+	public static final String SHARE_A_SALE_PER_SALE = "&persale=";
+	public static final String SHARE_A_SALE_NEW_CUSTOMER = "&newcustomer=";
+	public static final String ONE = "1";
+	public static final String SHARE_A_SALE_URL_LINK = "&urllink=";
+	public static final String SHARE_A_SALE_UTF = "UTF-8";
+	public static final String SHARE_A_SALE_COUPON_CODE = "&couponcode=";
+	public static final String SHARE_A_SALE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+	public static final String SHARE_A_SALE_GMT = "GMT";
+	public static final String SHARE_A_SALE_NEW_AC_URL = "shareASale new account url: {}";
+	public static final String SHARE_A_SALE_AUTH_DATE = "x-ShareASale-Date";
+	public static final String SHARE_A_SALE_AUTH = "x-ShareASale-Authentication";
+	public static final String SHARE_A_SALE_JOB_FINISH = "Finished performing BlShareASaleJob...";
+	public static final String SHARE_A_SALE_JOB_ERROR_MSG = "Error occurred while performing BlShareASaleJob";
+	public static final String SHARE_A_SALE_JOB_HTTP_STATUS_MSG = "Unexpected http status: ";
+	public static final String SHARE_A_SALE_JOB_HTTP_CONNECTION_FAILURE = "ShareASale http connection failure: {}";
+	public static final String SHARE_A_SALE_ORDER_CREATION_DATE_FORMAT = "MM/dd/yyyy";
+	public static final String SHARE_A_SALE_NEW_URL_SENDING_MSG = "Sending shareASale new account message: {}";
+	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
 	
 	private BlCoreConstants()
 	{

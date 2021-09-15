@@ -1448,5 +1448,9 @@
 	
 	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
     <bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
-	
+
+	<!--BL-1048-->
+	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
 </beans>
