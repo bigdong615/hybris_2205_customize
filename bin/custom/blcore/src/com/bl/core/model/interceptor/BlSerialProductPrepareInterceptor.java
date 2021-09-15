@@ -7,20 +7,19 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.model.CustomerResponsibleRepairLogModel;
 import com.bl.core.model.InHouseRepairLogModel;
 import com.bl.core.model.PartsNeededRepairLogModel;
 import com.bl.core.model.VendorRepairLogModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.service.BlRepairLogService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -30,9 +29,7 @@ import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -55,6 +52,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BaseStoreService baseStoreService;
 	private BlBufferInventoryService blBufferInventoryService;
 	private BlConsignmentEntryService blConsignmentEntryService;
+	private BlOrderService blOrderService;
+	private BlProductService blProductService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -85,6 +84,22 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
 			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+			setLastUserChangedConditionRating(blSerialProduct, ctx);
+		}
+	}
+	
+	/**
+	 * Sets the last user changed condition rating.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param ctx the ctx
+	 */
+	private void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		if(!ctx.isNew(blSerialProduct) && (ctx.isModified(blSerialProduct, BlSerialProductModel.FUNCTIONALRATING)
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.COSMETICRATING)))
+		{
+			getBlProductService().setLastUserChangedConditionRating(blSerialProduct);
 		}
 	}
 
@@ -405,7 +420,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				{
 					doStatusChangeForMultipleStatuses(itemStatuses, associatedConsignment, ctx);
 				}
-				checkAndUpdateOrderStatus(associatedConsignment.getOrder(), ctx);
+				getBlOrderService().checkAndUpdateOrderStatus(associatedConsignment.getOrder());
 			}
 		}
 	}
@@ -490,117 +505,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	}
 	
 	/**
-	 * Check and update order status.
-	 *
-	 * @param order the order
-	 * @param ctx the ctx
-	 */
-	private void checkAndUpdateOrderStatus(final AbstractOrderModel order, final InterceptorContext ctx)
-	{
-		if(Objects.nonNull(order) && CollectionUtils.isNotEmpty(order.getConsignments()))
-		{
-			final HashSet<ConsignmentStatus> itemStatuses = Sets.newHashSet();
-			order.getConsignments().forEach(consignment -> itemStatuses.add(consignment.getStatus()));
-			if(CollectionUtils.isNotEmpty(itemStatuses)) 
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Statuses found for order containing consignments : {} are {}", 
-						order.getCode(), itemStatuses.toString());
-				if(itemStatuses.size() == 1)
-				{
-					doChangeOrderStatusForSingleStatus(order, ctx, itemStatuses);
-				}
-				else
-				{
-					doChangeOrderStatusForMultipleStatuses(order, ctx, itemStatuses);
-				}
-			}
-			
-		}
-	}
-
-	/**
-	 * Do change order status for single status.
-	 *
-	 * @param order the order
-	 * @param ctx the ctx
-	 * @param itemStatuses the item statuses
-	 */
-	private void doChangeOrderStatusForSingleStatus(final AbstractOrderModel order, final InterceptorContext ctx,
-			final HashSet<ConsignmentStatus> itemStatuses)
-	{
-		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
-
-		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.PARTIALLY_UNBOXED,
-				OrderStatus.UNBOXED,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
-				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS);
-		statusToCheck.forEach(status -> {
-			if(status.toString().equals(consignmentStatus.toString()))
-			{
-				changeStatusOnOrder(order, status, ctx);
-				return;
-			}
-		});
-	}
-	
-	/**
-	 * Do change order status for multiple statuses.
-	 *
-	 * @param order the order
-	 * @param ctx the ctx
-	 * @param itemStatuses the item statuses
-	 */
-	private void doChangeOrderStatusForMultipleStatuses(final AbstractOrderModel order, final InterceptorContext ctx,
-			final HashSet<ConsignmentStatus> itemStatuses)
-	{
-		if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
-		}
-		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR) 
-				&& itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
-		}
-		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
-		}
-		else if(itemStatuses.contains(ConsignmentStatus.INCOMPLETE_MISSING_ITEMS))
-		{
-			changeStatusOnOrder(order, OrderStatus.INCOMPLETE_MISSING_ITEMS, ctx);
-		}
-		else if(itemStatuses.contains(ConsignmentStatus.PARTIALLY_UNBOXED))
-		{
-			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED, ctx);
-		}
-	}
-	
-	/**
-	 * Change status on order.
-	 *
-	 * @param order the order
-	 * @param orderStatus the order status
-	 * @param ctx the ctx
-	 */
-	private void changeStatusOnOrder(final AbstractOrderModel order, final OrderStatus orderStatus,
-			final InterceptorContext ctx)
-	{
-		try
-		{
-			order.setStatus(orderStatus);
-			ctx.getModelService().save(order);
-			ctx.getModelService().refresh(order);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
-					orderStatus,order.getCode());
-		}
-		catch (final ModelSavingException exception)
-		{
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
-					"Error while changing the status on order : {}", order.getCode());
-		}
-	}
-	
-	/**
 	 * Creates the repair log if repair needed.
 	 *
 	 * @param blSerialProduct
@@ -624,11 +528,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
 					getBlRepairLogService().addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct);
-					break;
-				case BlCoreConstants.CUSTOMER_RESPONSIBLE_REPAIR:
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
-							blSerialProduct.getRepairLogType().getCode());
-					getBlRepairLogService().addGeneratedRepairLog(CustomerResponsibleRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.PARTS_NEEDED_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
@@ -683,7 +582,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		if (isEligibleToRemoveSerialFromOrder(blSerialProduct, interceptorContext))
 		{
-			getBlConsignmentEntryService().removeSerialFromConsignmentEntry(blSerialProduct);
+			getBlConsignmentEntryService().removeSerialFromFutureConsignmentEntry(blSerialProduct);
 		}
 	}
 
@@ -788,5 +687,37 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
 	{
 		this.blConsignmentEntryService = blConsignmentEntryService;
+	}
+	
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
+	}
+
+	/**
+	 * @return the blProductService
+	 */
+	public BlProductService getBlProductService()
+	{
+		return blProductService;
+	}
+
+	/**
+	 * @param blProductService the blProductService to set
+	 */
+	public void setBlProductService(BlProductService blProductService)
+	{
+		this.blProductService = blProductService;
 	}
 }

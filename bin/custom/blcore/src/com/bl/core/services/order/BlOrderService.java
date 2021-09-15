@@ -22,4 +22,11 @@ public interface BlOrderService {
    * @return true if the given order contains only aquatech product
    */
   boolean isAquatechProductOrder(final AbstractOrderModel orderModel);
+  
+  /**
+   * Check and update order status.
+   *
+   * @param order the order
+   */
+  public void checkAndUpdateOrderStatus(final AbstractOrderModel order);
 }
