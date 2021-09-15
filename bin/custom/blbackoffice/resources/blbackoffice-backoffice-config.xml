@@ -18,6 +18,12 @@
     <!--Bl Specific custom nodes to be added here -->
     <context component="explorer-tree">
         <n:explorer-tree>
+			<n:navigation-node id="BLProductInventoryCycleCount">
+				<n:navigation-node id="InventoryCycleCountScan"/>
+				<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
+				<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
+				<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
+			</n:navigation-node>
             <n:navigation-node id="BLBackoffice">
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
@@ -31,12 +37,6 @@
                     <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
                     <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
                 </n:navigation-node>
-				<n:navigation-node id="BLProductInventoryCycleCount">
-					<n:navigation-node id="InventoryCycleCountScan"/>
-					<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
-					<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
-					<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
-				</n:navigation-node>
             </n:navigation-node>
 					<n:type-node id="BlOptions" code="BlOptions"/>
 					<n:type-node id="BlDamageWaiverPricing" code="BlDamageWaiverPricing"/>
@@ -2721,6 +2721,203 @@
  </context>
 
 	<!-- BlInventoryCycleCount -->
+	<context component="create-wizard" type="BlInventoryCycleCount" merge-by="replace">
+		<wz:flow id="BlInventoryCycleCountWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="BlInventoryCycleCountPrepare">
+				<wz:initialize property="newBlInventoryCycleCount" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blInventoryCycleCount.essential.label"
+					 sublabel="create.blInventoryCycleCount.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlInventoryCycleCount">
+						<wz:property qualifier="inventoryCycleCountCode"/>
+						<wz:property qualifier="inventoryCycleCountName"/>
+						<wz:property qualifier="inventoryCycleCountProducts"/>
+						<wz:property qualifier="currentCycleCountStartDate"/>
+						<wz:property qualifier="currentCycleCountEndDate"/>
+						<wz:property qualifier="previousCycleCountStartDate"/>
+						<wz:property qualifier="previousCycleCountEndDate"/>
+						<wz:property qualifier="inventoryCycleCountActive"/>
+						<wz:property qualifier="inventoryCycleCountStatus"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlInventoryCycleCount"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BlInventoryCycleCount" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountName"/>
+			<list-view:column qualifier="inventoryCycleCountProducts"/>
+			<list-view:column qualifier="inventoryCycleCountActive"/>
+			<list-view:column qualifier="inventoryCycleCountStatus"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BlInventoryCycleCount" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountName" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountActive" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountStatus" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlInventoryCycleCount" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="inventoryCycleCountCode"/>
+			<ss:field name="inventoryCycleCountName"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="BlInventoryCycleCount" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryCycleCountCode</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context component="create-wizard" type="BLInventoryCycleCountDetails" merge-by="replace">
+		<wz:flow id="BLInventoryCycleCountDetailsWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="BLInventoryCycleCountDetailsPrepare">
+				<wz:initialize property="newBLInventoryCycleCountDetails" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blInventoryCycleCountDetails.essential.label"
+					 sublabel="create.blInventoryCycleCountDetails.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBLInventoryCycleCountDetails">
+						<wz:property qualifier="inventoryCycleCountCode"/>
+						<wz:property qualifier="inventoryCycleCountName"/>
+						<wz:property qualifier="inventoryCycleCountDate"/>
+						<wz:property qualifier="inventoryCycleCountSKUs"/>
+						<wz:property qualifier="inventoryCycleCountDetailStatus"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBLInventoryCycleCountDetails"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BLInventoryCycleCountDetails" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountName"/>
+			<list-view:column qualifier="inventoryCycleCountDate"/>
+			<list-view:column qualifier="inventoryCycleCountSKUs"/>
+			<list-view:column qualifier="inventoryCycleCountDetailStatus"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BLInventoryCycleCountDetails" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountName" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountDate" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountDetailStatus" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BLInventoryCycleCountDetails" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="inventoryCycleCountCode"/>
+			<ss:field name="inventoryCycleCountName"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="BLInventoryCycleCountDetails" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryCycleCountCode</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context component="create-wizard" type="BlInventoryCycleCountScanHistory" merge-by="replace">
+		<wz:flow id="BlInventoryCycleCountScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="BlInventoryCycleCountScanHistoryPrepare">
+				<wz:initialize property="newBlInventoryCycleCountScanHistory" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blInventoryCycleCountScanHistory.essential.label"
+					 sublabel="create.blInventoryCycleCountScanHistory.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlInventoryCycleCountScanHistory">
+						<wz:property qualifier="inventoryCycleCountCode"/>
+						<wz:property qualifier="inventoryCycleCountDayCode"/>
+						<wz:property qualifier="inventoryCycleCountDayDate"/>
+						<wz:property qualifier="scannedSKUsAndSerials"/>
+						<wz:property qualifier="unexpectedScannedSerials"/>
+						<wz:property qualifier="missingSerialsForScan"/>
+						<wz:property qualifier="scannedUser"/>
+						<wz:property qualifier="scannedTime"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlInventoryCycleCountScanHistory"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayDate"/>
+			<list-view:column qualifier="scannedUser"/>
+			<list-view:column qualifier="scannedTime"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BlInventoryCycleCountScanHistory" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountDayDate" selected="true"/>
+				<advanced-search:field name="scannedTime" selected="true"/>
+				<advanced-search:field name="scannedUser" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlInventoryCycleCountScanHistory" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="inventoryCycleCountCode"/>
+			<ss:field name="inventoryCycleCountDayCode"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="BlInventoryCycleCountScanHistory" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryCycleCountCode+ ' - ' +inventoryCycleCountDayCode</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
 	<context type="InventoryCycleCountScan" component="create-wizard">
 		<wz:flow id="InventoryCycleCountScan" title="blbackoffice.inventory.cycle.count.scan.tool.title">
 			<wz:prepare id="userPasswordChangePrepare">

@@ -21,6 +21,8 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -64,6 +66,10 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
                     StringUtils.EMPTY);
         } else {
+            JFrame jFrame = new JFrame();
+
+            GridLayout experimentLayout = new GridLayout(0,2);
+
             final Textbox skuInputField = new Textbox();
             skuInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
             skuInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
