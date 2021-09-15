@@ -41,8 +41,11 @@ Designed by Veneer Studio
 #order #productOptions .dropdown a img, #order #productOptions .dropdown-menu a img { margin-right: 8px; height: 35px; width: auto; }
 #order .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px;  }
 #order .dropdown a.gearguard-plus, .damage-waiver .gearguard-plus { background: url(../assets/gear-guard-plus.png) 6px center no-repeat; background-size: 35px; }
+#order .dropdown a.gearguard-plus, .damage-waiver .gearguard-plus:hover { background: url(../assets/gear-guard-plus.png) 6px center no-repeat !important; background-size: 35px !important; }
 #order .dropdown a.gearguard, .damage-waiver .gearguard { background: url(../assets/gear-guard.png) 6px center no-repeat; background-size: 30px; }
+#order .dropdown a.gearguard, .damage-waiver .gearguard:hover { background: url(../assets/gear-guard.png) 6px center no-repeat !important; background-size: 30px !important; }
 #order .dropdown a.no-gearguard, .damage-waiver .no-gearguard { background: url(../assets/gear-guard-none.png) 6px center no-repeat; background-size: 30px; }
+#order .dropdown a.no-gearguard, .damage-waiver .no-gearguard:hover { background: url(../assets/gear-guard-none.png) 6px center no-repeat !important; background-size: 30px !important; }
 .cartProduct, .shipProduct, .paymentOption, .reviewCart { padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid #d4d3d3; }
 .shipProduct .overline { font-size: 12px; }
 .order-actions { text-align: right; }
@@ -60,7 +63,7 @@ Designed by Veneer Studio
 #orderSummary .input-group input[type=text], #order .input-group input[type=text] { margin: 0; }
 #orderSummary .input-group .btn, #order .input-group .btn{ padding-top: 11px; padding-bottom: 12px; }
 #orderSummary .input-group input:first-child, #order .input-group input:first-child { width: 1%; border: 1px solid #ced4da; border-radius: .25rem; margin-right: 10px; }
-#orderSummary i.icon-support, #order i.icon-support { display: inline-block; width: 12px; height: 12px; background-size: 12px; opacity: .6; }
+#orderSummary i.icon-support, #order i.icon-support { display: inline-block; width:22px; height: 12px; background-size: 12px; opacity: .6; }
 #costSummary .discount { color: #52bfc0; }
 
 .reviewCart .overline { font-size: 12px; }
