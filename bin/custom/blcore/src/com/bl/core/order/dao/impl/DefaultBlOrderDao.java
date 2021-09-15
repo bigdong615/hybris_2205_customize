@@ -158,7 +158,6 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_INCOMPLETE_ORDERS_TO_BE_PROCESSED_QUERY);
 		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
-	//	fQuery.addQueryParameter(BlCoreConstants.STATUS, OrderStatus.MANUAL_REVIEW);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		if (CollectionUtils.isEmpty(result.getResult()))
 		{

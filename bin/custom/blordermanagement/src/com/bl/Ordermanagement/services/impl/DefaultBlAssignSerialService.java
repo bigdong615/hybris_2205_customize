@@ -335,6 +335,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
   }
 
+  /**
+   * It filters the non buffer products
+   * @param allSerialProducts all serial products
+   * @return set of bl serial product instance
+   */
   private Set<BlSerialProductModel> getAllNonBufferProducts(final Collection<BlSerialProductModel> allSerialProducts) {
     return allSerialProducts.stream()
         .filter(serial -> BooleanUtils.isFalse(serial.getIsBufferedInventory()))

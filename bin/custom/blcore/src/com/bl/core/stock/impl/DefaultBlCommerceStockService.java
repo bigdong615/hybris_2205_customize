@@ -348,6 +348,14 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return finalStockLevels;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @param productCodes
+	 * @param warehouses the list of warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return map which is product with quantity
+	 */
 	public Map<String, Long> getStockForUnallocatedProduct(final List<String> productCodes,
 			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate) {
 		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().getStockForUnallocatedProduct(productCodes,
@@ -355,20 +363,10 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final Map<String, Long> productsWithQty = new HashMap<>();
 		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
 				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
-//		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
-//		final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
-//		final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
-//		final Collection<StockLevelModel> finalStockLevels = new ArrayList<>();
 		for(Map.Entry<Object, List<StockLevelModel>> entry : stockLevelsProductWise.entrySet()) {
-//			if(entry.getValue().size() == stayDuration) {
 				final String productCode = entry.getValue().get(0).getProductCode();
 				final Long quantity = ObjectUtils.defaultIfNull(productsWithQty.get(productCode), Long.valueOf(0));
 				productsWithQty.put(productCode, quantity + 1);
-//			} else {
-//				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-//						"No stock found for serial product : {} and date between : {} and {}", entry.getKey(),
-//						startDate, endDate);
-//			}
 		}
 		return productsWithQty;
 	}
