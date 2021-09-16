@@ -175,7 +175,7 @@ public class BlFrontDeskOrderScanController extends DefaultWidgetController
 				&& barcodeSize <= Config.getInt("blbackoffice.max.product.scan", BlInventoryScanLoggingConstants.HUNDERED))
 		{
 			createResponseMsgForScan(
-					getBlInventoryScanToolService().checkLocationWithType(barcodes, BlInventoryScanUtility.getFrontDeskShelfInitial(),
+					getBlInventoryScanToolService().checkLocationWithTypeForFD(barcodes, BlInventoryScanUtility.getFrontDeskShelfInitial(),
 							BlInventoryScanUtility.getFrontDeskAllowedWorkStationLocations()),
 					barcodes);
 		}
