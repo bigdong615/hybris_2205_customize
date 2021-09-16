@@ -57,6 +57,10 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
       BlLogger.logMessage(LOG,Level.INFO,"BlCalculateExternalTaxesStratergy : calculateExternalTaxes : ERROR : Failed to calcualte Tax " ,abstractOrder.getCode());
       BlLogger.logMessage(LOG,Level.ERROR ,"BlCalculateExternalTaxesStratergy : : calculateExternalTaxes : ERROR : " ,e);
       getSessionService().setAttribute(BltaxapiConstants.IS_AVALARA_EXCEPTION , true);
+      abstractOrder.setAvalaraTaxCalculated(Boolean.FALSE);
+      abstractOrder.setTotalTax(0.0);
+      getModelService().save(abstractOrder);
+      getModelService().refresh(abstractOrder);
     }
     finally
     {
