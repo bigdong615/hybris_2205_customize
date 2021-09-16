@@ -3166,6 +3166,14 @@
         <description>This type represents a cron job that pulls the ready to ship consignments and
           mark the flag cleanComplete
         </description>
+        <attributes>
+        <attribute qualifier="shipDate" type="java.util.Date">
+          <defaultvalue>new java.util.Date()</defaultvalue>
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>Optimized Shipping date of consignments for which clean consignment flag will be updated.</description>
+        </attribute>
+        </attributes>
       </itemtype>
       <!--  BL-827 Inventory team clean complete / in-complete orders queue  end -->
 
