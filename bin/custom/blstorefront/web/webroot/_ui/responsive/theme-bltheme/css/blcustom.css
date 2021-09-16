@@ -335,7 +335,7 @@ margin: 0;
 }
 .scroll-over-text{
   overflow-y: scroll;
-  height:160px;
+  height:190px;
  }
 .scroll-over-text::-webkit-scrollbar {
   display: none;

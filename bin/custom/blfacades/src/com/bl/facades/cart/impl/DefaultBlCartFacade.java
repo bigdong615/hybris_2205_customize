@@ -663,7 +663,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			return BlFacadesConstants.NEW_GEAR_CART;
 		}
       else if (CollectionUtils
-				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart()) && !cartModel.isGiftCardOrder()) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
