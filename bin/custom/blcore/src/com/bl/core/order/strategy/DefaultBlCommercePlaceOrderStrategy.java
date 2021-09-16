@@ -138,9 +138,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
       if (existingEntry.isBundleMainEntry() && !existingEntry.isEntryCreated()) {
         final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(existingEntry);
         productReferenceModels.forEach(productReferenceModel -> {
-          final AbstractOrderEntryModel newEntryModel = blOrderService.createBundleOrderEntry(productReferenceModel, orderModel, existingEntry);
-          newEntryModel.setEntryNumber(entryNumber.get());
-          getModelService().save(newEntryModel);
+          final AbstractOrderEntryModel newEntryModel = blOrderService.createBundleOrderEntry(productReferenceModel, orderModel, existingEntry,entryNumber);
           orderEntryModelList.add(newEntryModel);
           entryNumber.getAndIncrement();
         });

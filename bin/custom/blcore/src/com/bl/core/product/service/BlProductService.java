@@ -46,8 +46,8 @@ public interface BlProductService extends ProductService {
 
   /**
    *  This method use to get all bundle entry from given product.
-   * @param existingEntry parent bundle product.
+   * @param product main bundle product.
    * @return list of bundle product reference.
    */
-  List<ProductReferenceModel>  getBundleProductReferenceModel(final ProductModel existingEntry);
+  List<ProductReferenceModel>  getBundleProductReferenceModel(final ProductModel product);
 }

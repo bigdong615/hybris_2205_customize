@@ -4,6 +4,7 @@ import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Order service for various order related functionalities.
@@ -34,7 +35,7 @@ public interface BlOrderService {
   public void checkAndUpdateOrderStatus(final AbstractOrderModel order);
 
   /**
-   * This method used to create entry for given product.
+   * This method used to create entry for given bundle product.
    * @param productReferenceModel reference product from bundle
    * @param orderModel order
    * @param existingEntry main bundle etry
@@ -42,5 +43,5 @@ public interface BlOrderService {
    */
   AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
       final OrderModel orderModel,
-      final AbstractOrderEntryModel existingEntry);
+      final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber);
 }

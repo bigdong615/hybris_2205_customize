@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -174,8 +175,8 @@ public class DefaultBlOrderService implements BlOrderService {
 	@Override
 	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
 			final OrderModel orderModel,
-			final AbstractOrderEntryModel existingEntry){
-		BlLogger.logFormattedMessage(LOG,Level.INFO,"Creating entry for {} ",existingEntry.getProduct().getCode());
+			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
+		BlLogger.logFormattedMessage(LOG,Level.DEBUG,"Creating entry for {} ",existingEntry.getProduct().getCode());
 		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
 		final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
 		newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
@@ -185,6 +186,8 @@ public class DefaultBlOrderService implements BlOrderService {
 		newEntryModel.setBasePrice(0.0d);
 		newEntryModel.setTotalPrice(0.0d);
 		newEntryModel.setUnit(existingEntry.getUnit());
+		newEntryModel.setEntryNumber(entryNumber.get());
+		getModelService().save(newEntryModel);
 		return newEntryModel;
 	}
 
