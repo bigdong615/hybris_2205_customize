@@ -39,12 +39,12 @@ public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageCo
       @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
       @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
       final HttpServletRequest request, final HttpServletResponse response ,
-      @RequestParam(value="cleaBrands" , required = false) final String cleaBrands) throws UnsupportedEncodingException {
+      @RequestParam(value="clearBrands" , required = false) final String clearBrands) throws UnsupportedEncodingException {
     final Map<Object, Object> requestAndResponseMap = new HashMap<>();
     requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
     requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
     if(StringUtils.isNotBlank(searchQuery)){
-     if(parentcategory.equalsIgnoreCase(BlControllerConstants.BRANDS) && searchQuery.split(BlControllerConstants.RATIO).length == 2 && StringUtils.isNotBlank(cleaBrands)) {
+     if(parentcategory.equalsIgnoreCase(BlControllerConstants.BRANDS) && searchQuery.split(BlControllerConstants.RATIO).length == 2 && StringUtils.isNotBlank(clearBrands)) {
        return REDIRECT_PREFIX + BlCoreConstants.RENTAL_CLEAR_ALL;
      }
    }
