@@ -248,6 +248,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				;
 		allocationMap.put(orderEntryModel.getProduct().getCode() + BlOrdermanagementConstants.UNDER_SCORE + orderEntryModel.getEntryNumber(), orderEntryModel.getQuantity());
 		sourcingLocation.setAllocatedMap(allocationMap);
+		sourcingLocation.setContext(context);
 
 		return  blShippingOptimizationStrategy.getProductAvailabilityForThreeDayGround(context,
 				sourcingLocation);
