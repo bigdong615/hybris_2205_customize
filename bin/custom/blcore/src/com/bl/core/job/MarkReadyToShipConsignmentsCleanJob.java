@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -47,17 +48,22 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
   public PerformResult perform(
       final MarkReadyToShipConsignmentsCleanJobModel markReadyToShipConsignmentsCleanJob) {
 
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-        "Start performing MarkReadyToShipConsignmentsCleanJob...");
+    final Date shipDate = (null == markReadyToShipConsignmentsCleanJob.getShipDate() ? new Date()
+        : markReadyToShipConsignmentsCleanJob.getShipDate());
 
     final List<ConsignmentModel> consignmentModels = blConsignmentDao
-        .getReadyToShipConsignmentsForDate(new Date());
+        .getReadyToShipConsignmentsForDate(shipDate);
 
     if (CollectionUtils.isEmpty(consignmentModels)) {
 
       BlLogger.logFormattedMessage(LOG, Level.DEBUG, LogErrorCodeEnum.CRONJOB_ERROR.getCode(),
           "No matching consignments found while performing MarkReadyToShipConsignmentsCleanJob");
     } else {
+
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "Start performing MarkReadyToShipConsignmentsCleanJob...for shipping date : {} and consignment codes : {}",
+          shipDate, consignmentModels.stream().map(ConsignmentModel::getCode).collect(
+              Collectors.toList()));
 
       try {
 
@@ -67,14 +73,31 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
         BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
             "Error occurred while performing MarkReadyToShipConsignmentsCleanJob");
 
-        return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
+        return resetAndReturnResult(markReadyToShipConsignmentsCleanJob, CronJobResult.FAILURE);
       }
 
     }
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Completed performing MarkReadyToShipConsignmentsCleanJob...");
-    return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+
+    return resetAndReturnResult(markReadyToShipConsignmentsCleanJob, CronJobResult.SUCCESS);
+  }
+
+  /**
+   * This method reset the fields to default values and saves the cronjob.
+   *
+   * @param markReadyToShipConsignmentsCleanJob
+   * @param result
+   * @return PerformResult
+   */
+  private PerformResult resetAndReturnResult(
+      final MarkReadyToShipConsignmentsCleanJobModel markReadyToShipConsignmentsCleanJob,
+      final CronJobResult result) {
+
+    markReadyToShipConsignmentsCleanJob.setShipDate(null);
+    this.modelService.save(markReadyToShipConsignmentsCleanJob);
+    return new PerformResult(result, CronJobStatus.FINISHED);
   }
 
   /**
@@ -110,7 +133,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
       if (allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get)) {
 
         BlLogger
-            .logFormatMessageInfo(LOG, Level.DEBUG,
+            .logFormatMessageInfo(LOG, Level.INFO,
                 "Consignment with code {} is marked as clean complete.", consignment.getCode());
       }
 

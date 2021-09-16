@@ -9,6 +9,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -22,6 +23,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -177,8 +179,14 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
-	@Resource(name ="productService")
+  @Resource(name ="productService")
 	ProductService productService;
+
+	@Resource(name = "blRentalDurationCookieGenerator")
+	private BlRentalDurationCookieGenerator blRentalDurationCookieGenerator;
+
+	@Resource(name = "blPromotionService")
+	private BlPromotionService blPromotionService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -816,10 +824,14 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@PostMapping(value = "/voucher/remove")
-	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request)
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request, final HttpServletResponse response)
 	{
 		try
 		{
+			if(blPromotionService.isFreeDayCouponPromoApplied(blCartService.getSessionCart())) {
+				blRentalDurationCookieGenerator.removeCookie(response);
+				blRentalDurationCookieGenerator.addCookie(response, getRentalsDuration().getNumberOfDays());
+			}
 			voucherFacade.releaseVoucher(form.getVoucherCode());
 		}
 		catch (final VoucherOperationException e)

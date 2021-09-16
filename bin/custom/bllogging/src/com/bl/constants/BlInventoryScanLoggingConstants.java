@@ -54,6 +54,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String BIN_LOCATION = "FDSHIP01";
     public static final String CARRIER = "CARRIER";
     public static final String BOXING_FEDEX = "FEDEX";
+    public static final String FD_MOBILE_SHELF = "FDSHIPPED";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -146,6 +147,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
     public static final String FRONT_DESK_SHIPPER_WORKSTATION = "FRONT_DESK_MOBILE_CART";
  	public static final String FRONT_DESK_SHIPPING_BIN = "FRONT_DESK_SHIPPING_BIN";
+ 	public static final String FRONT_DESK_SHIPPED_MOBILE_CART = "FRONT_DESK_SHIPPED_MOBILE_CART";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
  	public static final String LAST_SCAN_INVALID_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";

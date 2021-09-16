@@ -582,7 +582,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		if (isEligibleToRemoveSerialFromOrder(blSerialProduct, interceptorContext))
 		{
-			getBlConsignmentEntryService().removeSerialFromConsignmentEntry(blSerialProduct);
+			getBlConsignmentEntryService().removeSerialFromFutureConsignmentEntry(blSerialProduct);
 		}
 	}
 

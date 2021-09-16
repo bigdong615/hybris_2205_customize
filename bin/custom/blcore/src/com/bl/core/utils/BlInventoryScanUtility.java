@@ -147,10 +147,7 @@ public final class BlInventoryScanUtility
 	{
 		final List<String> defaultLocations = new ArrayList<>();
 
-		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
-		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
-		defaultLocations.add(BlInventoryScanLoggingConstants.MAM);
-		defaultLocations.add(BlInventoryScanLoggingConstants.CAM);
+		defaultLocations.add(BlInventoryScanLoggingConstants.FD_MOBILE_SHELF);
 		return defaultLocations;
 	}
 
@@ -207,6 +204,7 @@ public final class BlInventoryScanUtility
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
 		return shippingAllowedLocation;
 	}
 
@@ -221,6 +219,7 @@ public final class BlInventoryScanUtility
 		fdAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
 		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPER_WORKSTATION);
 		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPED_MOBILE_CART);
 		return fdAllowedLocation;
 	}
 
