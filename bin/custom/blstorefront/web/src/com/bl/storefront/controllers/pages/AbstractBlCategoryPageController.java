@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,9 +50,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
-
-
-    private static final Logger LOG = Logger.getLogger(AbstractBlCategoryPageController.class);
 
     @Resource(name = "cartFacade")
     private BlCartFacade blCartFacade;
