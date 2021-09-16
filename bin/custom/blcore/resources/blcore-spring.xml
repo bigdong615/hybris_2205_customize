@@ -601,6 +601,7 @@
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blRepairLogDao" ref="blRepairLogDao" />
 	</bean>
 
 	<!--Pricing Logic changes-->
