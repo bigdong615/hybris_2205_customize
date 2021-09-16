@@ -6,8 +6,12 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -16,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -32,6 +37,8 @@ public class DefaultBlOrderService implements BlOrderService {
 
   private BlProductService productService;
   private ModelService modelService;
+	@Resource(name="abstractOrderEntryService")
+	private AbstractOrderEntryService abstractOrderEntryService;
 
   /**
    * {@inheritDoc}
@@ -161,6 +168,25 @@ public class DefaultBlOrderService implements BlOrderService {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
+			final OrderModel orderModel,
+			final AbstractOrderEntryModel existingEntry){
+		BlLogger.logFormattedMessage(LOG,Level.INFO,"Creating entry for {} ",existingEntry.getProduct().getCode());
+		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
+		final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
+		newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
+		newEntryModel.setProduct(productReferenceModel.getTarget());
+		newEntryModel.setBundleEntry(Boolean.TRUE);
+		newEntryModel.setBundleProductCode(existingEntry.getProduct().getCode());
+		newEntryModel.setBasePrice(0.0d);
+		newEntryModel.setTotalPrice(0.0d);
+		newEntryModel.setUnit(existingEntry.getUnit());
+		return newEntryModel;
+	}
 
   public BlProductService getProductService() {
     return productService;

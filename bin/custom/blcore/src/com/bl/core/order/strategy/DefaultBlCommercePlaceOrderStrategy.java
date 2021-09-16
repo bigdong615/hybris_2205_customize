@@ -2,8 +2,9 @@ package com.bl.core.order.strategy;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommercePlaceOrderStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
@@ -13,12 +14,10 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,9 +34,10 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
 
-  @Resource(name="abstractOrderEntryService")
-  private AbstractOrderEntryService abstractOrderEntryService;
-
+  @Resource(name = "blOrderService")
+  BlOrderService blOrderService;
+  @Resource(name="productService")
+  BlProductService productService;
   /**
    * This method override to set the order to set as submit for tax
    */
@@ -136,13 +136,9 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
     final AtomicInteger entryNumber = new AtomicInteger(orderModel.getEntries().size());
     orderModel.getEntries().forEach(existingEntry -> {
       if (existingEntry.isBundleMainEntry() && !existingEntry.isEntryCreated()) {
-        final Collection<ProductReferenceModel> productReferenceModels = existingEntry.getProduct()
-            .getProductReferences().stream()
-            .filter(productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
-                .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+        final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(existingEntry);
         productReferenceModels.forEach(productReferenceModel -> {
-          final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
-          populateOrderEntry(productReferenceModel, newEntryModel, existingEntry);
+          final AbstractOrderEntryModel newEntryModel = blOrderService.createBundleOrderEntry(productReferenceModel, orderModel, existingEntry);
           newEntryModel.setEntryNumber(entryNumber.get());
           getModelService().save(newEntryModel);
           orderEntryModelList.add(newEntryModel);
@@ -154,21 +150,5 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
     });
     orderModel.setEntries(orderEntryModelList);
     getModelService().save(orderModel);
-  }
-
-  /**
-   * This method is used to populate created entry data.
-   */
-  private void populateOrderEntry(final ProductReferenceModel productReferenceModel,
-      final AbstractOrderEntryModel newEntryModel,
-      final AbstractOrderEntryModel existingEntry) {
-    final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
-    newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
-    newEntryModel.setProduct(productReferenceModel.getTarget());
-    newEntryModel.setBundleEntry(Boolean.TRUE);
-    newEntryModel.setBundleProductCode(existingEntry.getProduct().getCode());
-    newEntryModel.setBasePrice(0.0d);
-    newEntryModel.setTotalPrice(0.0d);
-    newEntryModel.setUnit(existingEntry.getUnit());
   }
 }

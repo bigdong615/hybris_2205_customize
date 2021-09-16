@@ -1,6 +1,9 @@
 package com.bl.core.services.order;
 
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 
 /**
  * Order service for various order related functionalities.
@@ -11,14 +14,14 @@ public interface BlOrderService {
 
   /**
    * It checks whether the order contains atleast one aquatech product
-   * @param orderModel
+   * @param orderModel order
    * @return true if the given order contains aquatech product
    */
   boolean isAquatechProductsPresentInOrder(final AbstractOrderModel orderModel);
 
   /**
    * It checks whether the order contains only aquatech products
-   * @param orderModel
+   * @param orderModel order
    * @return true if the given order contains only aquatech product
    */
   boolean isAquatechProductOrder(final AbstractOrderModel orderModel);
@@ -29,4 +32,15 @@ public interface BlOrderService {
    * @param order the order
    */
   public void checkAndUpdateOrderStatus(final AbstractOrderModel order);
+
+  /**
+   * This method used to create entry for given product.
+   * @param productReferenceModel reference product from bundle
+   * @param orderModel order
+   * @param existingEntry main bundle etry
+   * @return returning created entry.
+   */
+  AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
+      final OrderModel orderModel,
+      final AbstractOrderEntryModel existingEntry);
 }

@@ -1,12 +1,17 @@
 package com.bl.core.product.service.impl;
 
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.product.impl.DefaultProductService;
 import de.hybris.platform.servicelayer.user.UserService;
 
+import java.util.List;
 import java.util.Objects;
 
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -82,6 +87,23 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModelFromEntry(final AbstractOrderEntryModel parentBundleEntry){
+    return getBundleProductReferenceModel(parentBundleEntry.getProduct());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModel(final ProductModel product){
+    return product.getProductReferences().stream()
+        .filter(productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
+            .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+  }
 /**
  * @return the userService
  */
