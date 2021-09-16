@@ -126,7 +126,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
       return getAllowedCartAdjustmentForProduct(cartModel, productModel, quantityToAdd,
           deliveryPointOfService);
     }*/ //NOSONAR
- if(parameter.getIsFromRentAgainPage()){
+ if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage())){
    return quantityToAdd;
  }
     return DEFAULT_STOCK_QUANTITY;
