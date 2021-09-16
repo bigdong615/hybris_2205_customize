@@ -237,23 +237,21 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			final Map<String, ItemStatusEnum> itemsMap)
 	{
 		final AbstractOrderEntryModel orderEntry = consignmentEntry.getOrderEntry();
-		if (Objects.nonNull(orderEntry) && CollectionUtils.isNotEmpty(orderEntry.getOptions()))
+		if (Objects.nonNull(orderEntry) && CollectionUtils.isNotEmpty(orderEntry.getOptions())
+				&& Objects.nonNull(orderEntry.getOptions().get(0)))
 		{
 			final BlOptionsModel optionsModel = orderEntry.getOptions().get(0);
-			if (Objects.nonNull(optionsModel))
+			if (consignmentEntry.getQuantity() == 1)
 			{
-				if (consignmentEntry.getQuantity() == 1)
+				itemsMap.put(optionsModel.getName(), ItemStatusEnum.NOT_INCLUDED);
+				addProductOptionsToConsignmentEntry(consignmentEntry, optionsModel);
+			}
+			else
+			{
+				for (int i = 1; i <= consignmentEntry.getQuantity(); i++)
 				{
-					itemsMap.put(optionsModel.getName(), ItemStatusEnum.NOT_INCLUDED);
+					itemsMap.put(optionsModel.getName() + BlCoreConstants.DOUBLE_HYPHEN + i, ItemStatusEnum.NOT_INCLUDED);
 					addProductOptionsToConsignmentEntry(consignmentEntry, optionsModel);
-				}
-				else
-				{
-					for (int i = 1; i <= consignmentEntry.getQuantity(); i++)
-					{
-						itemsMap.put(optionsModel.getName() + BlCoreConstants.DOUBLE_HYPHEN + i, ItemStatusEnum.NOT_INCLUDED);
-						addProductOptionsToConsignmentEntry(consignmentEntry, optionsModel);
-					}
 				}
 			}
 		}
