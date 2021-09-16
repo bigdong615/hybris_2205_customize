@@ -1,11 +1,16 @@
 package com.bl.storefront.controllers.pages;
 
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.logging.BlLogger;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "**/rent/category")
 public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageController {
 
+  private static final Logger LOG = Logger.getLogger(BlRentalGearCategoryPageController.class);
 
   /**
    * This method created for getting results of level 2 categories
@@ -32,10 +38,16 @@ public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageCo
       @RequestParam(value = "page", defaultValue = "0") final int page,
       @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
       @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
-      final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
+      final HttpServletRequest request, final HttpServletResponse response ,
+      @RequestParam(value="cleaBrands" , required = false) final String cleaBrands) throws UnsupportedEncodingException {
     final Map<Object, Object> requestAndResponseMap = new HashMap<>();
     requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
     requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
+    if(StringUtils.isNotBlank(searchQuery)){
+     if(parentcategory.equalsIgnoreCase(BlControllerConstants.BRANDS) && searchQuery.split(BlControllerConstants.RATIO).length == 2 && StringUtils.isNotBlank(cleaBrands)) {
+       return REDIRECT_PREFIX + BlCoreConstants.RENTAL_CLEAR_ALL;
+     }
+   }
     return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model,requestAndResponseMap);
   }
 
