@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.google.common.base.Splitter;
@@ -151,7 +152,11 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         populateRequiredDataForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
 
         checkNumberOfFacetSelected(searchPageData , model);
-
+        if(category.getCode().equalsIgnoreCase(BlCoreConstants.RENTAL_GEAR) || category.getCode().equalsIgnoreCase(BlCoreConstants.USED_GEAR_CODE)) {
+            final long totalNumberOfResults =
+                searchPageData.getPagination().getTotalNumberOfResults() - 1;
+            searchPageData.getPagination().setTotalNumberOfResults(totalNumberOfResults);
+        }
         return getViewPage(categorySearch.getCategoryPage());
 
     }
