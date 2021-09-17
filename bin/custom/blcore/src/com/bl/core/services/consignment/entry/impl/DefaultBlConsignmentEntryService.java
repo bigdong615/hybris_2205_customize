@@ -92,11 +92,14 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry)
 	{
-		Long unAllocatedQuantity = ObjectUtils.defaultIfNull(orderEntry.getUnAllocatedQuantity(), Long.valueOf(0));
-		unAllocatedQuantity = unAllocatedQuantity + 1;
-		orderEntry.setUnAllocatedQuantity(unAllocatedQuantity);
-		getModelService().save(orderEntry);
-		getModelService().refresh(orderEntry);
+		if(Objects.nonNull(orderEntry))
+		{
+			Long unAllocatedQuantity = ObjectUtils.defaultIfNull(orderEntry.getUnAllocatedQuantity(), Long.valueOf(0));
+			unAllocatedQuantity = unAllocatedQuantity + 1;
+			orderEntry.setUnAllocatedQuantity(unAllocatedQuantity);
+			getModelService().save(orderEntry);
+			getModelService().refresh(orderEntry);
+		}
 	}
 
 	/**
@@ -130,10 +133,14 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void changeStatusOnConsignment(final ConsignmentModel consignment)
 	{
-		consignment.setStatus(ConsignmentStatus.MANUAL_REVIEW);
-		getModelService().save(consignment);
-		getModelService().refresh(consignment);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Consignment : {} status to MANUAL_REVIEW", consignment.getCode());
+		if(Objects.nonNull(consignment))
+		{
+			consignment.setStatus(ConsignmentStatus.MANUAL_REVIEW);
+			getModelService().save(consignment);
+			getModelService().refresh(consignment);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Consignment : {} status to MANUAL_REVIEW", consignment.getCode());
+		}
+	
 	}
 
 	/**
@@ -144,10 +151,13 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void changeStatusOnOrder(final AbstractOrderModel order)
 	{
-		order.setStatus(OrderStatus.MANUAL_REVIEW);
-		getModelService().save(order);
-		getModelService().refresh(order);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW", order.getCode());
+		if(Objects.nonNull(order))
+		{
+			order.setStatus(OrderStatus.MANUAL_REVIEW);
+			getModelService().save(order);
+			getModelService().refresh(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW", order.getCode());
+		}
 	}
 
 	/**
