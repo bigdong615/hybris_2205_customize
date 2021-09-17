@@ -1163,6 +1163,8 @@
 	<alias alias="productService" name="defaultBlProductService"/>
 	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService">
 		<property name="userService" ref="userService"/>
+		<property name="catalogVersionDao" ref="catalogVersionDao"/>
+		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 	
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->

@@ -40,11 +40,10 @@ public interface BlCommerceStockService
 	 * @param warehouse the warehouse
 	 * @param startDate the start date
 	 * @param endDate the end date
-	 * @param isBufferInventory buffer inventory flag
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes, final WarehouseModel warehouse,
-			final Date startDate, final Date endDate, final Boolean isBufferInventory);
+			final Date startDate, final Date endDate);
 
 	/**
 	 * This is to get the stock level status of a SKU
@@ -212,4 +211,15 @@ public interface BlCommerceStockService
 	 */
 	public Long getAvailableCountForBundle(final BlProductModel productModel, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
+
+	/**
+	 * It gets the product with available quantity
+	 * @param productCodes
+	 * @param warehouses the list of warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return map which is product with quantity
+	 */
+	public Map<String, Long> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
 }

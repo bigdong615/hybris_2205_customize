@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Level;
@@ -326,9 +327,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	@Override
 	public Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes,
-			final WarehouseModel warehouse, final Date startDate, final Date endDate, final Boolean isBufferInventory) {
+			final WarehouseModel warehouse, final Date startDate, final Date endDate) {
 		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findStockLevelsForProductCodesAndDate(
-				productCodes, warehouse, startDate, endDate, isBufferInventory);
+				productCodes, warehouse, startDate, endDate);
 		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
 				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
 		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
@@ -345,6 +346,29 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			}
 		}
 		return finalStockLevels;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @param productCodes the list of product code
+	 * @param warehouses the list of warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return map which is product with quantity
+	 */
+	public Map<String, Long> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate) {
+		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().getStockForUnallocatedProduct(productCodes,
+				warehouses, startDate, endDate);
+		final Map<String, Long> productsWithQty = new HashMap<>();
+		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
+				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
+		for(Map.Entry<Object, List<StockLevelModel>> entry : stockLevelsProductWise.entrySet()) {
+				final String productCode = entry.getValue().get(0).getProductCode();
+				final Long quantity = ObjectUtils.defaultIfNull(productsWithQty.get(productCode), Long.valueOf(0));
+				productsWithQty.put(productCode, quantity + 1);
+		}
+		return productsWithQty;
 	}
 
 	/**
