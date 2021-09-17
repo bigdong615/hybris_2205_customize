@@ -601,6 +601,7 @@
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blRepairLogDao" ref="blRepairLogDao" />
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -1454,5 +1455,10 @@
 	<!--BL-1048-->
 	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
+	<alias name="defaultBlRepairLogDao" alias="blRepairLogDao"/>
+	<bean id="defaultBlRepairLogDao" class="com.bl.core.repair.log.dao.impl.DefaultBlRepairLogDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 </beans>
