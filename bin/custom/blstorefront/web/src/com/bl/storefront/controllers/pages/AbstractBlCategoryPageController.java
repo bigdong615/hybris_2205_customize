@@ -5,7 +5,6 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.google.common.base.Splitter;
