@@ -34,4 +34,27 @@ public interface BlRepairLogService
 	 *           the ctx
 	 */
 	public void setRepairReasonOnRepairLog(final BlRepairLogModel repairLog, final BlSerialProductModel blSerialProduct);
+
+	/**
+	 * Gets the selected gear gaurd from order.
+	 *
+	 * @param blRepairLogModel
+	 *           the bl repair log model
+	 * @param blSerialProductModel
+	 *           the bl serial product model
+	 * @return the selected gear gaurd from order
+	 */
+	public void getSelectedGearGaurdFromOrder(final BlRepairLogModel blRepairLogModel,
+			final BlSerialProductModel blSerialProductModel);
+
+	/**
+	 * Update tracking number on log.
+	 *
+	 * @param blRepairLogModel
+	 *           the bl repair log model
+	 * @param blSerialProductModel
+	 *           the bl serial product model
+	 */
+	public void updateTrackingNumberOnRepairLog(final BlRepairLogModel blRepairLogModel,
+			final BlSerialProductModel blSerialProductModel);
 }

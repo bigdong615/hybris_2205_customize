@@ -57,8 +57,8 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
       final Date startDay = BlDateTimeUtils
           .subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(),
               blackOutDates);
-      final Date endDay = BlDateTimeUtils
-          .addDaysInRentalDates(postDaysToAdd, rentalDateDto.getSelectedToDate(), blackOutDates);
+      final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+          rentalDateDto.getSelectedToDate(), blackOutDates);
 
       cartModel.setActualRentalStartDate(startDay);
       cartModel.setActualRentalEndDate(endDay);

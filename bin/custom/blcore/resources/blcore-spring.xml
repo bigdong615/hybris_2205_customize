@@ -600,6 +600,8 @@
 	<alias name="defaultBlOrderService" alias="blOrderService" />
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="blRepairLogDao" ref="blRepairLogDao" />
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -647,6 +649,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="blOrderService" ref="blOrderService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1089,6 +1093,7 @@
 	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
 		<property name="promotionDao" ref="promotionDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 	<!--[BL-663] Added facet on sale on PLP/SLP -->
 	<bean id="blOnSaleFacetNameProvider"
@@ -1156,7 +1161,11 @@
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
 
 	<alias alias="productService" name="defaultBlProductService"/>
-	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService">
+		<property name="userService" ref="userService"/>
+		<property name="catalogVersionDao" ref="catalogVersionDao"/>
+		<property name="searchRestrictionService" ref="searchRestrictionService"/>
+	</bean>
 	
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
 	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
@@ -1248,6 +1257,7 @@
 	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
 	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
 		<property name="modelService" ref="modelService"/>
+		<property name="blShipmentCreationService" ref="blShipmentCreationService"/>
 	</bean>
 	
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
@@ -1435,6 +1445,21 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+	</bean>
+	
+	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
+    <bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
+
+	<!--BL-1048-->
+	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
+	<alias name="defaultBlRepairLogDao" alias="blRepairLogDao"/>
+	<bean id="defaultBlRepairLogDao" class="com.bl.core.repair.log.dao.impl.DefaultBlRepairLogDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
 	<bean id="blEspEventService" class="com.bl.core.services.esp.order.impl.DefaultBlEspEventService">

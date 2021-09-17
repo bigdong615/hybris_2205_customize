@@ -157,6 +157,7 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blAuthorizePaymentJob;blAuthorizePaymentJob
 ;blBufferInventoryJob;blBufferInventoryJob
 ;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
+;blReshufflerJob;blReshufflerJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
@@ -166,11 +167,13 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blAuthorizePaymentCronJob ;blAuthorizePaymentJob ; ;true;;
 ;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
 ;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
+;blReshufflerCronJob ;blReshufflerJob ; ;true;;
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?
 ;blAuthorizePaymentCronJob; 0 0 0/3 1/1 * ?
 ;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
+;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
  
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
@@ -438,10 +441,11 @@ INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]
                           ; ZACUTO            ; Zacuto            
                           ; ZHIYUN            ; Zhiyun            
                           
-INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] ; name[lang=en]  
-                                        ; MISSING_CHARGE    ; MISSING CHARGE 
-                                        ; LATE_CHARGE       ; LATE CHARGE    
-                                        ; REPAIR_CHARGE     ; REPAIR CHARGE 
+INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]  
+                                        ; MISSING_CHARGE    			; MISSING CHARGE 
+                                        ; LATE_CHARGE       			; LATE CHARGE    
+                                        ; REPAIR_CHARGE     			; REPAIR CHARGE 
+                                        ; CUSTOMER_RESPONSIBLE_REPAIRS	; CUSTOMER RESPONSIBLE REPAIRS
 
  
 INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]                                       
@@ -477,8 +481,8 @@ INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                
                                              
 INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
                               ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
-                              
+                              ; blShareASaleJob            ; blShareASaleJob
                               
 INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
                       ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
-                                             
+                      ; blShareASaleCronJob                  ; blShareASaleJob            ;                                        ; true   ;

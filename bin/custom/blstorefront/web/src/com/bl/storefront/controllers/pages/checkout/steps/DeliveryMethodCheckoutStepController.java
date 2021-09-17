@@ -146,6 +146,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
 
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+
+
+        if(null != getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))){
+            model.addAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION , true);
+            getSessionService().removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 

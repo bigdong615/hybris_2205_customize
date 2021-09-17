@@ -623,6 +623,7 @@
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blOrderAppliedVouchersPopulator" ref="blOrderAppliedVouchersPopulator" />
 		<property name="defaultBlExternalTaxesService" ref="defaultBlExternalTaxesService" />
+		<property name="blOrderService" ref="blOrderService" />
 	</bean>
 
 

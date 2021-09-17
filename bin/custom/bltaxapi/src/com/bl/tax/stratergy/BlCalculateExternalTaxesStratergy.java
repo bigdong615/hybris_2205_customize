@@ -8,6 +8,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.util.TaxValue;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
   private static final Logger LOG = Logger.getLogger(BlCalculateExternalTaxesStratergy.class);
   private BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService;
   private ModelService modelService;
+  private SessionService sessionService;
 
   /**
    * this method created to process the avalara request
@@ -53,7 +55,12 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
     catch (final Exception e)
     {
       BlLogger.logMessage(LOG,Level.INFO,"BlCalculateExternalTaxesStratergy : calculateExternalTaxes : ERROR : Failed to calcualte Tax " ,abstractOrder.getCode());
-      BlLogger.logMessage(LOG,Level.ERROR,"BlCalculateExternalTaxesStratergy : : calculateExternalTaxes : ERROR : " ,e);
+      BlLogger.logMessage(LOG,Level.ERROR ,"BlCalculateExternalTaxesStratergy : : calculateExternalTaxes : ERROR : " ,e);
+      getSessionService().setAttribute(BltaxapiConstants.IS_AVALARA_EXCEPTION , true);
+      abstractOrder.setAvalaraTaxCalculated(Boolean.FALSE);
+      abstractOrder.setTotalTax(0.0);
+      getModelService().save(abstractOrder);
+      getModelService().refresh(abstractOrder);
     }
     finally
     {
@@ -110,5 +117,14 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
 
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
+  }
+
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(SessionService sessionService) {
+    this.sessionService = sessionService;
   }
 }

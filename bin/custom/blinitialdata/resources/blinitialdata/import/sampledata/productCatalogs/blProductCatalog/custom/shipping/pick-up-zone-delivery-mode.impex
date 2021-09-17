@@ -43,8 +43,8 @@ INSERT_UPDATE PointOfService ;name[unique=true]  ; basestore(uid) ;type(code) ;a
                              ;TUTTLE CAMERA POS  ; bl             ; STORE     ; TUTTLE_CAMERA_ADDR ; 33.832430 ; -118.126970  ;
 
 INSERT_UPDATE Warehouse ; code[unique=true] ; name ;  pointsOfService(name) ; vendor(code)[default=default] ; default[default=false];accountNumber
-                        ; warehouse_ca      ; CA   ;  BL SAN CARLOS POS;19E596
-                        ; warehouse_ma      ; MA   ;  BL WALTHAM POS;7077Y7
+                        ; warehouse_ca      ; CA   ;  BL SAN CARLOS POS		;								;						;19E596
+                        ; warehouse_ma      ; MA   ;  BL WALTHAM POS		;								;						;7077Y7
 
 
 INSERT_UPDATE ZoneDeliveryModeValue ; deliveryMode(code)[unique=true] 		; zone(code)[default='usa'][unique=true] ; currency(isocode)[unique=true] ; value  ; minimum[unique=true]  ; fixedAmount[default='false']

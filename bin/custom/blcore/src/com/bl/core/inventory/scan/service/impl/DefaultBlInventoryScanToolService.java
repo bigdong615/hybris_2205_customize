@@ -1,5 +1,6 @@
 package com.bl.core.inventory.scan.service.impl;
 
+import com.bl.core.product.service.BlProductService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -44,6 +45,7 @@ import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
@@ -78,6 +80,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 	private PackagingInfoModel packagingInfoModel;
 	private boolean isLocationDP;
+	
+	@Resource(name = "blOrderService")
+   private BlOrderService blOrderService;
+
+	@Resource(name = "productService")
+	private BlProductService blProductService;
 
 	/**
 	 * {@inheritDoc}
@@ -384,6 +392,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
 				filteredLocationList, memberAllowedLocationList);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int checkLocationWithTypeForFD(final List<String> barcodes, final List<String> defaultLocations,
+									 final List<String> memberAllowedLocationList)
+	{
+		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::contains))
+				.collect(Collectors.toList());
+		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
+				filteredLocationList, memberAllowedLocationList);
+	}
 
 	/**
 	 /**
@@ -421,6 +442,15 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	@Override
 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes)
+	{
+		return getFailedBinBarcodeList(barcodes, Collections.emptyList());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList)
 	{
 		final String subList = barcodes.get(0);
 		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
@@ -475,7 +505,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes)
 	{
 
-		final List<String> subList = new ArrayList<String>(
+		final List<String> subList = new ArrayList<>(
 				barcodes.subList(0, barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 		final Collection<BlSerialProductModel> scannedSerialProduct = getBlInventoryScanToolDao()
 				.getSerialProductsByBarcode(subList);
@@ -564,25 +594,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final List<BlSerialProductModel> scannedSubpartProduct)
 	{
 		final List<BlProductModel> serials = new ArrayList<>();
-		selectedConsignment.getConsignmentEntries().forEach(entry -> {
-			entry.getSerialProducts().forEach(blSerialProduct -> {
+		selectedConsignment.getConsignmentEntries().forEach(entry -> entry.getSerialProducts().forEach(blSerialProduct -> {
 
-				if (blSerialProduct instanceof BlSerialProductModel)
-				{
-					serials.add(blSerialProduct);
-				}
-				else
-				{
-					blSerialProduct.getSerialProducts().forEach(serial -> {
+			if (blSerialProduct instanceof BlSerialProductModel)
+			{
+				serials.add(blSerialProduct);
+			}
+			else
+			{
+				blSerialProduct.getSerialProducts().forEach(serial -> {
 
-						if (serial instanceof BlSerialProductModel && StringUtils.isNotBlank(serial.getBarcode()))
-						{
-							serials.add(serial);
-						}
-					});
-				}
-			});
-		});
+					if (serial instanceof BlSerialProductModel && StringUtils.isNotBlank(serial.getBarcode()))
+					{
+						serials.add(serial);
+					}
+				});
+			}
+		}));
 
 		final Map<String, List<BlProductModel>> missingSerial = isValidSerial(barcodes, scannedSerialProduct, serials,
 				scannedSubpartProduct);
@@ -610,11 +638,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlProductModel> newBarcode = new ArrayList<>(scannedSerialProduct);
 		final List<BlProductModel> lErrorSubParts = new ArrayList<>();
 		final List<String> skuNames = new ArrayList<>();
-		/*
-		 * final List<BlProductModel> scannedBlProduct =
-		 * scannedSubpartProduct.stream().map(BlSerialProductModel::getBlProduct) .collect(Collectors.toList());
-		 */
-
 		newBarcode.removeIf(entryBarcode::contains);
 		entryBarcode.removeIf(scannedSerialProduct::contains);
 		entryBarcode.removeIf(scannedSubpartProduct::contains);
@@ -834,6 +857,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialProduct.setHardAssigned(true);
 			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
+				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);
 			}
 			final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao.findSerialStockLevelForDate(
 					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
@@ -1196,6 +1220,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						.allMatch(pkg -> PackagingInfoStatus.UNBOXED.equals(pkg.getPackagingInfoStatus())))
 				{
 					changeConsignmentStatus(consignmentModel, ConsignmentStatus.UNBOXED);
+					getBlOrderService().checkAndUpdateOrderStatus(consignmentModel.getOrder());
 					BlLogger.logMessage(LOG, Level.DEBUG, "Marked Consignment as Unboxed as all packages are unboxed");
 				}
 			}
@@ -1755,5 +1780,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 		}
 		return resultList;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
 	}
 }

@@ -31,19 +31,19 @@
   </grid>
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
-        <button id="cancel"
-				label="${labels.blbackoffice.order.scan.cancel.button}" 
-				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+       
 	    <button id="scanToBin" 
 				label="${labels.blbackoffice.order.scan.bin.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 	    <button id="scanToTrackingLabel" 
 				label="${labels.blbackoffice.order.scan.verify.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
-
 	    <button id="scanToOutBoundCart" 
 				label="${labels.blbackoffice.order.scan.outbound.cart.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+		 <button id="cancel"
+				label="${labels.blbackoffice.order.scan.cancel.button}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
 
     </div>            	
 </widget>

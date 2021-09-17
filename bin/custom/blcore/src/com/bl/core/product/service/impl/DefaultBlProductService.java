@@ -1,11 +1,20 @@
 package com.bl.core.product.service.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
+import de.hybris.platform.catalog.daos.CatalogVersionDao;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.product.daos.ProductDao;
 import de.hybris.platform.product.impl.DefaultProductService;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.user.UserService;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -24,6 +33,10 @@ import com.bl.logging.BlLogger;
 public class DefaultBlProductService extends DefaultProductService implements BlProductService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlProductService.class);
+  
+  private UserService userService;
+  private CatalogVersionDao catalogVersionDao;
+  private SearchRestrictionService searchRestrictionService;
 
 	/**
 	 * {@inheritDoc}
@@ -50,6 +63,25 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     }
     return isEligible;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setLastUserChangedConditionRating(BlSerialProductModel blSerialProduct)
+  {
+	  final UserModel currentUser = getUserService().getCurrentUser();
+	  if (Objects.nonNull(currentUser))
+	  {
+		  final String currentUserUid = currentUser.getUid();
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
+		  blSerialProduct.setUserChangedConditionRating(currentUserUid);
+	  }
+	  else
+	  {
+		  BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+	  }
+  }
 
   /**
    * {@inheritDoc}
@@ -59,4 +91,79 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 
     return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void changeBufferInvFlagInStagedVersion(final String productCode, final Boolean isBufferInventory) {
+    Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
+        .CATALOG_VALUE, BlCoreConstants.STAGED);
+    if(CollectionUtils.isNotEmpty(catalogModels)) {
+      List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode,
+          catalogModels.iterator().next());
+      if (CollectionUtils.isNotEmpty(products)) {
+        BlSerialProductModel product = products.get(0);
+        product.setIsBufferedInventory(isBufferInventory);
+        getModelService().save(product);
+      }
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
+      final CatalogVersionModel catalogVersionModel) {
+    return getSessionService().executeInLocalView(new SessionExecutionBody()
+    {
+      @Override
+      public Object execute()
+      {
+        try
+        {
+          getSearchRestrictionService().disableSearchRestrictions();
+          return getProductDao().findProductsByCode(catalogVersionModel,
+              productCode);
+        }
+        finally
+        {
+          getSearchRestrictionService().enableSearchRestrictions();
+        }
+      }
+    });
+  }
+
+/**
+ * @return the userService
+ */
+public UserService getUserService()
+{
+	return userService;
+}
+
+/**
+ * @param userService the userService to set
+ */
+public void setUserService(UserService userService)
+{
+	this.userService = userService;
+}
+
+public CatalogVersionDao getCatalogVersionDao() {
+    return catalogVersionDao;
+  }
+
+public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
+  this.catalogVersionDao = catalogVersionDao;
+}
+
+public SearchRestrictionService getSearchRestrictionService() {
+  return searchRestrictionService;
+}
+
+public void setSearchRestrictionService(
+  SearchRestrictionService searchRestrictionService) {
+  this.searchRestrictionService = searchRestrictionService;
+}
+
 }
