@@ -84,7 +84,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Resource(name = "blOrderService")
    private BlOrderService blOrderService;
 
-	@Resource(name = "blProductService")
+	@Resource(name = "productService")
 	private BlProductService blProductService;
 
 	/**
