@@ -2230,6 +2230,12 @@
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity remained un-allocated during sourcing and allocation</description>
             </attribute>
+            <attribute qualifier="splitConsignmentQuantity" type="java.lang.long">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <defaultvalue>0L</defaultvalue>
+              <description>The number of quantity allocated in both warehouses through reshuffler job</description>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>

@@ -35,7 +35,7 @@ public class BlBufferInventoryJob extends AbstractJobPerformable<CronJobModel>
 		}
 		catch (final Exception ex)
 		{
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(),
+			BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(),
 					"Error occurred while performing BlBufferInventoryJob", ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}

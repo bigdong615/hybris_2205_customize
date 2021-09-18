@@ -467,6 +467,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		
 
 		if (isSuccess) {
+		  blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 		    PriceData payBillTotal  = convertDoubleToPriceData(payBillAmount, order);
