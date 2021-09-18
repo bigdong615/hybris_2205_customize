@@ -92,13 +92,15 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry)
 	{
-		if(Objects.nonNull(orderEntry))
+		if (Objects.nonNull(orderEntry))
 		{
 			Long unAllocatedQuantity = ObjectUtils.defaultIfNull(orderEntry.getUnAllocatedQuantity(), Long.valueOf(0));
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Before increasing unAllotedQuantity : {}", unAllocatedQuantity);
 			unAllocatedQuantity = unAllocatedQuantity + 1;
 			orderEntry.setUnAllocatedQuantity(unAllocatedQuantity);
 			getModelService().save(orderEntry);
 			getModelService().refresh(orderEntry);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "After increasing unAllotedQuantity : {}", unAllocatedQuantity);
 		}
 	}
 
@@ -133,14 +135,15 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void changeStatusOnConsignment(final ConsignmentModel consignment)
 	{
-		if(Objects.nonNull(consignment))
+		if (Objects.nonNull(consignment))
 		{
 			consignment.setStatus(ConsignmentStatus.MANUAL_REVIEW);
 			getModelService().save(consignment);
 			getModelService().refresh(consignment);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Consignment : {} status to MANUAL_REVIEW", consignment.getCode());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Consignment : {} status to MANUAL_REVIEW",
+					consignment.getCode());
 		}
-	
+
 	}
 
 	/**
@@ -151,7 +154,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 */
 	private void changeStatusOnOrder(final AbstractOrderModel order)
 	{
-		if(Objects.nonNull(order))
+		if (Objects.nonNull(order))
 		{
 			order.setStatus(OrderStatus.MANUAL_REVIEW);
 			getModelService().save(order);
