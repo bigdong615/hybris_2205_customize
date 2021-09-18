@@ -601,6 +601,7 @@
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blRepairLogDao" ref="blRepairLogDao" />
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -1162,6 +1163,8 @@
 	<alias alias="productService" name="defaultBlProductService"/>
 	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService">
 		<property name="userService" ref="userService"/>
+		<property name="catalogVersionDao" ref="catalogVersionDao"/>
+		<property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 	
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
@@ -1453,6 +1456,12 @@
 	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
+
+	<alias name="defaultBlRepairLogDao" alias="blRepairLogDao"/>
+	<bean id="defaultBlRepairLogDao" class="com.bl.core.repair.log.dao.impl.DefaultBlRepairLogDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
 	<!-- Inventory Cycle count -->
 	<bean id="blInventoryCycleCountJob" name="blInventoryCycleCountJob" class="com.bl.core.job.BlInventoryCycleCountJob">
 		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>

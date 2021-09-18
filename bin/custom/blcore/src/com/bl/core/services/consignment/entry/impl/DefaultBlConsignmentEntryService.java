@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -236,7 +237,8 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			final Map<String, ItemStatusEnum> itemsMap)
 	{
 		final AbstractOrderEntryModel orderEntry = consignmentEntry.getOrderEntry();
-		if (CollectionUtils.isNotEmpty(orderEntry.getOptions()))
+		if (Objects.nonNull(orderEntry) && CollectionUtils.isNotEmpty(orderEntry.getOptions())
+				&& Objects.nonNull(orderEntry.getOptions().get(0)))
 		{
 			final BlOptionsModel optionsModel = orderEntry.getOptions().get(0);
 			if (consignmentEntry.getQuantity() == 1)

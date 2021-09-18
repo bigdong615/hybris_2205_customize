@@ -207,7 +207,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       final Set<String> serialProductCodes) {
 
     return getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
-            order.getActualRentalEndDate());
+            order.getActualRentalEndDate(), Boolean.FALSE);
   }
 
 

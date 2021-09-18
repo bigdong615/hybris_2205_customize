@@ -1,5 +1,6 @@
 package com.bl.core.inventory.scan.service.impl;
 
+import com.bl.core.product.service.BlProductService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -82,6 +83,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	
 	@Resource(name = "blOrderService")
    private BlOrderService blOrderService;
+
+	@Resource(name = "productService")
+	private BlProductService blProductService;
 
 	/**
 	 * {@inheritDoc}
@@ -384,6 +388,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 									 final List<String> memberAllowedLocationList)
 	{
 		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
+				.collect(Collectors.toList());
+		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
+				filteredLocationList, memberAllowedLocationList);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int checkLocationWithTypeForFD(final List<String> barcodes, final List<String> defaultLocations,
+									 final List<String> memberAllowedLocationList)
+	{
+		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::contains))
 				.collect(Collectors.toList());
 		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
 				filteredLocationList, memberAllowedLocationList);
@@ -840,6 +857,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialProduct.setHardAssigned(true);
 			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
+				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);
 			}
 			final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao.findSerialStockLevelForDate(
 					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());

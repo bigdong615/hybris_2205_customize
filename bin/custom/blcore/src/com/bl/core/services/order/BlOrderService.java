@@ -29,4 +29,12 @@ public interface BlOrderService {
    * @param order the order
    */
   public void checkAndUpdateOrderStatus(final AbstractOrderModel order);
+  
+  /**
+   * Sets the resolved status on repair log for order code.
+   *
+   * @param orderCode the new resolved status on repair log
+   */
+  public void setResolvedStatusOnRepairLog(final String orderCode);
+  
 }

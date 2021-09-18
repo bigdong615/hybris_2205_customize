@@ -2162,6 +2162,11 @@
 				<n:type-node code="StockLevel" id="StockLevel"/>
 				<n:type-node code="Warehouse" id="Warehouse"/>
 			</n:navigation-node>
+			<n:navigation-node id="BLProduct Inventory">
+                <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
+                <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
+            </n:navigation-node>
+			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
 			<n:type-node code="CronJob" id="CronJob"/>
