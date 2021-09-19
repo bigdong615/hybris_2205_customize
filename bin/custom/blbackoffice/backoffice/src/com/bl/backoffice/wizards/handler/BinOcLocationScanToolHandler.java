@@ -18,6 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * This class is added for scanning the bin location and
+ * remove reference from serial and parent location
+ * @author Ritika
+ *
+ */
 public class BinOcLocationScanToolHandler implements FlowActionHandler {
 
   private static final Logger LOG = Logger.getLogger(BinOcLocationScanToolHandler.class);
