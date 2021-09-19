@@ -475,6 +475,31 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
+	 * Remove all the related serials and Parent location From Bin
+	 *
+	 * @param blInventoryLocationModel
+	 */
+	@Override
+	public void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel) {
+		Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao().getAllSerialsByBinLocation(blInventoryLocationModel.getCode());
+		if (CollectionUtils.isNotEmpty(serialProductModels)) {
+				serialProductModels.stream().forEach(serial -> {
+					if(StringUtils.isNotBlank(serial.getOcLocation()) && serial.getOcLocation().equals(blInventoryLocationModel.getCode())){
+						serial.setOcLocation(null);
+						serial.setOcLocationDetails(null);
+						modelService.save(serial);
+						modelService.refresh(serial);
+					}
+				});
+			}
+			if (blInventoryLocationModel.getParentInventoryLocation() != null) {
+				blInventoryLocationModel.setParentInventoryLocation(null);
+				modelService.save(blInventoryLocationModel);
+				modelService.refresh(blInventoryLocationModel);
+			}
+		}
+
+	/**
 	 * This method is used to check bin location with type
 	 *
 	 * @param barcodes as barcodes

@@ -89,4 +89,9 @@
 		</cng:add>
 	</cng:list-extender>
 
+	<!-- BL-1010 Bin OcLocation Scan Tool Handler -->
+	<bean id="defaultBinOcLocationScanToolHandler" class="com.bl.backoffice.wizards.handler.BinOcLocationScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
+	</bean>
 </beans>

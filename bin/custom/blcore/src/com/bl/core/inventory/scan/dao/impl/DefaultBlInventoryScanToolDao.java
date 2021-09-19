@@ -161,7 +161,26 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "DefaultBlInventoryScanToolDao" + BlInventoryScanLoggingConstants.FETCH_OUT_TODAYS_ORDER_SERIAL, serial, results.size());
  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
  	}
-    public FlexibleSearchService getFlexibleSearchService() {
+
+	/**
+	 * Get All Serials by Bin Location
+	 *
+	 * @param binLocationId
+	 * @return
+	 */
+	@Override
+	public Collection<BlSerialProductModel> getAllSerialsByBinLocation(String binLocationId) {
+		final String serialsOnLocation = "SELECT {bsp.pk} FROM {BlSerialProduct! as bsp}, {CatalogVersion as cv}, {Catalog as c}, " +
+				"{ArticleApprovalStatus as aas} WHERE {cv.catalog} = {c.pk} and {c.id} = 'blProductCatalog'" +
+				"and {aas.code} = 'approved' and {bsp.ocLocation}= ?binLocationId";
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(serialsOnLocation);
+		query.addQueryParameter("binLocationId", binLocationId);
+		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
+		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC , binLocationId);
+		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+	}
+
+	public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;
     }
 
