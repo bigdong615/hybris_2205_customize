@@ -40,6 +40,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Sets;
 
 /**
  * It is used to assign serial products to sourcing results in context.
@@ -232,8 +233,38 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     //proceed with below checks
     //1. get all bl consigners, and check quantity
     final Set<BlSerialProductModel> nonBufferProducts = getAllNonBufferProducts(allSerialProducts);
-    final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(nonBufferProducts);
+    final Set<BlSerialProductModel> bufferProducts = new HashSet<>(allSerialProducts);
+    bufferProducts.removeAll(nonBufferProducts);
+    if(CollectionUtils.isNotEmpty(nonBufferProducts)) {
+      prioritizeSerialProducts(context, results, warehouse, result, allEntrySourceComplete, entry,
+          quantity,
+          nonBufferProducts, assignedSerials);
+    }
+    if(CollectionUtils.isNotEmpty(bufferProducts) &&
+        !(allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context))) {
+      prioritizeSerialProducts(context, results, warehouse, result, allEntrySourceComplete, entry,
+          quantity,
+          bufferProducts, assignedSerials);
+    }
+  }
 
+  /**
+   * It assigns the serial products as per the priority rule
+   * @param context the context
+   * @param results the results
+   * @param warehouse the warehouse
+   * @param result the result
+   * @param allEntrySourceComplete flag to identify whether sourcing completed or not
+   * @param entry the order entry
+   * @param quantity the quantity
+   * @param allSerialProducts all serial products
+   * @param assignedSerials the assigned serials
+   */
+  public void prioritizeSerialProducts(final SourcingContext context, final Set<SourcingResult> results,
+      final WarehouseModel warehouse, final SourcingResult result, final List<AtomicBoolean> allEntrySourceComplete,
+      final AbstractOrderEntryModel entry, final Long quantity, final Collection<BlSerialProductModel> allSerialProducts,
+      final List<String> assignedSerials) {
+    final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(allSerialProducts);
     if (blConsignerSerials.size() > 0 ) {
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BL consigner serials found {}",
@@ -295,7 +326,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
           } else {
 
             final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
-                nonBufferProducts);
+                allSerialProducts);
 
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found {}",
                 nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -311,7 +342,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     } else {
 
       final Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
-          nonBufferProducts);
+          allSerialProducts);
 
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Non-sale and non-BL Serials found :: {}",
           nonSaleAndNonBLSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
@@ -332,7 +363,6 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         allEntrySourceComplete.add(new AtomicBoolean(isEntrySourced));
       }
     }
-
   }
 
   /**
@@ -452,12 +482,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       createResultAndAssignSerials(context, result, results, entry, warehouse, toAssign);
       return isFulfilledQuantityEqualToEntryQuantity(entry, context, quantity);
     } else {
-
-      final AbstractOrderModel orderModel = entry.getOrder();
-      orderModel.setStatus(OrderStatus.MANUAL_REVIEW);
-      modelService.save(orderModel);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
-      return false;
+      createResultAndAssignSerials(context, result, results, entry, warehouse, Sets.newHashSet(serialProducts));
+      return isFulfilledQuantityEqualToEntryQuantity(entry, context, quantity);
     }
   }
 

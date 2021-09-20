@@ -367,7 +367,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
         SERIAL_STOCK_LEVELS_FOR_DATE_AND_CODES_QUERY);
     fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODES, serialProductCodes);
     addQueryParameter(startDay, endDay, fQuery);
-    fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
+    fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, reservedStatus);
 
     final SearchResult<StockLevelModel> result = getFlexibleSearchService().search(fQuery);
     final List<StockLevelModel> stockLevels = result.getResult();

@@ -16,15 +16,10 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -39,7 +34,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private UserService userService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ISAUTHORISED + "} = ?isAuthorized ";
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'MANUAL_REVIEW'}}) AND {o:" + AbstractOrderModel.ISAUTHORISED
+			+ "} = ?isAuthorized ";
 
 	private static final String GET_ORDERS_BY_CODE_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.CODE + "} = ?code ";
@@ -63,57 +61,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	@Override
 	public List<AbstractOrderModel> getOrdersForAuthorization()
 	{
+		final Date currentDate = Date
+				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		final Date endDate = DateUtils.addDays(currentDate, 1);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_FOR_AUTHORIZATION_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> ordersToAuthorizePayment = result.getResult();
-		final List<AbstractOrderModel> ordersToAuthPayment = new ArrayList<>();
 		if (CollectionUtils.isEmpty(ordersToAuthorizePayment))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No orders found to authorize the payment");
 			return Collections.emptyList();
-		} else {
-			ordersToAuthorizePayment.stream().forEach(order -> {
-				if(checkDifferenceBetweenShippingAndCurrentDate(order)) {
-					ordersToAuthPayment.add(order);
-				}
-			});
 		}
-		return ordersToAuthPayment;
-		
+		return ordersToAuthorizePayment;
 	}
 
-	/**
-	 * It checks the difference between shipping date and current date
-	 * @param order
-	 * @return true if difference between shipping date and current date is 0 or 1
-	 */
-	private boolean checkDifferenceBetweenShippingAndCurrentDate(final AbstractOrderModel order) {
-		final Set<ConsignmentModel> consignments = order.getConsignments();
-		final LocalDateTime currentDate = BlDateTimeUtils.getFormattedDateTime(Date
-				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		final Optional<ConsignmentModel> orderToAuthPayment = consignments.stream().filter(consignmentModel ->
-				isEligibleForPaymentAuthorization(consignmentModel.getOptimizedShippingStartDate(), currentDate)).findFirst();
-				if(orderToAuthPayment.isPresent()) {
-					return true;
-				}
-		return false;
-	}
-
-	/**
-	 * It checks the difference between shipping date and current date
-	 * @param shippingStartDate
-	 * @param currentDate
-	 * @return true if difference between shipping date and current date is 0 or 1
-	 */
-	private boolean isEligibleForPaymentAuthorization(final Date shippingStartDate, final LocalDateTime currentDate) {
-		if(null != shippingStartDate) {
-			final LocalDateTime optimizedShippingStartDate =BlDateTimeUtils.getFormattedDateTime(shippingStartDate);
-			final long DifferenceInDays = ChronoUnit.DAYS.between(currentDate, optimizedShippingStartDate);
-			return DifferenceInDays ==0 || DifferenceInDays == 1;
-		}
-		return false;
-	}
 	/**
 	 * {@inheritDoc}
 	 */
