@@ -160,7 +160,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				modelService.save(stockLevel);
 				modelService.save(serialProduct);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
-						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct);
+						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
 			});
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
 		}
