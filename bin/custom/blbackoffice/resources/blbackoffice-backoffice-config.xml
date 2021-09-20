@@ -706,11 +706,77 @@
         <n:explorer-tree>
             <n:navigation-node id="BLInventoryScan">
                 <n:navigation-node id="WebScanTool"/>
-            </n:navigation-node>            
+            </n:navigation-node>
         </n:explorer-tree>
     </context>
 
-    <!-- BL-110 Web Scan Tool Wizard -->
+ <!-- BL-1060 Bin OcLocation Scan Tool-->
+	<context type="BinOcLocationTool" component="create-wizard">
+		<wz:flow id="BinOcLocationTool" title="blbackoffice.binOcLocation.scan.tool.title">
+			<wz:prepare id="userPasswordChangePrepare">
+				<wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
+			</wz:prepare>
+			<wz:step id="step1" label="blbackoffice.binOcLocation.scan.tool.label">
+				<wz:content>
+					<wz:custom-view id="step1.content.customView" lang="zul">
+						<wz:renderer spring-bean="defaultWebScanToolRenderer">
+							<wz:parameter>
+								<wz:name>webScanToolDataModelKey</wz:name>
+								<wz:value>webScanToolData</wz:value>
+							</wz:parameter>
+						</wz:renderer>
+					</wz:custom-view>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel />
+					<wz:custom label="blbackoffice.binOcLocation.scan.tool.btn.scan" handler="defaultBinOcLocationScanToolHandler" align="left" >
+						<wz:parameter>
+							<wz:name>webScanToolDataModelKey</wz:name>
+							<wz:value>webScanToolData</wz:value>
+						</wz:parameter>
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	<!-- BL-110 Web Scan Tool Wizard Notification-->
+	<context component="notification-area" source="binOcLocScanToolNotification" merge-by="source">
+		<na:notification-area>
+			<na:notifications eventType="binOcLocScanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="mustOneLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.bin.ocLocation.scan.tool.wizard.notification.must.one.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="validBINLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.bin.location.scan.tool.wizard.valid.BIN.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="noRelatedItemsFoundFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.bin.ocLocation.scan.tool.associated.item.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+				<na:message>blbackoffice.bin.ocLocation.scan.tool.wizard.notification.success</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+		</na:notification-area>
+	</context>
+
+
+	<!-- BL-110 Web Scan Tool Wizard -->
     <context type="WebScanTool" component="create-wizard">
         <wz:flow id="WebScanTool" title="blbackoffice.web.scan.tool.title">
             <wz:prepare id="userPasswordChangePrepare">
@@ -2149,6 +2215,9 @@
 			</n:navigation-node>
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
+			<n:navigation-node id="blbinlocationscan_name">
+				<n:navigation-node id="BinOcLocationTool"/>
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
 			<n:type-node code="Consignment" id="Consignment"/>

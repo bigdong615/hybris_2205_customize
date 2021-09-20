@@ -72,7 +72,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   private BlAllocationService blAllocationService;
   private BlStockLevelDao blStockLevelDao;
   private BlConsignmentEntryService blConsignmentEntryService;
-  private BlProductService productService;
+  private BlProductService blProductService;
 
   /**
    * {@inheritDoc}
@@ -715,7 +715,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    */
   private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
 
-    return getProductService().isAquatechProduct(orderEntry.getProduct());
+    return getBlProductService().isAquatechProduct(orderEntry.getProduct());
   }
 
 	/**
@@ -902,12 +902,20 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     this.blConsignmentEntryService = blConsignmentEntryService;
   }
 
-  public BlProductService getProductService() {
-    return productService;
+  /**
+   * @return the blProductService
+   */
+  public BlProductService getBlProductService()
+  {
+    return blProductService;
   }
 
-  public void setProductService(BlProductService productService) {
-    this.productService = productService;
+  /**
+   * @param blProductService the blProductService to set
+   */
+  public void setBlProductService(BlProductService blProductService)
+  {
+    this.blProductService = blProductService;
   }
 
 }
