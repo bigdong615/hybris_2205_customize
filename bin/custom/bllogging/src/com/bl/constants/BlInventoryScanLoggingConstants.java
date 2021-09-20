@@ -243,9 +243,19 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
     public static final String FOR = " for ";
+    public static final String MUST_HAVE_BIN_LOCATION_ID = "A Bin OcLocation Id Must be provided";
+    public static final String LOCATION_NOT_FOUND = "Location Not Found";
+    public static final String BIN_OCLOCATION_NOTIFICATION_HANDLER = "binOcLocScanToolNotification";
+  public static final String BIN_OCLOCATION_TOOL_NOTIFICATION_FAILURE = "binOcLocScanToolNotificationFailure";
+  public static final String MUST_ONE_LOCATION_ERROR_FAILURE = "mustOneLocationErrorFailure";
+  public static final String NO_LOCATION_ERROR_FAILURE = "noLocationErrorFailure";
+  public static final String FETCH_SERIAL_PROD_LOC = "Fetching SerialProducts for input Location: {}";
+  public static final String CONTENT_CLEARED_FROM_BIN = "Content Cleared for the Bin with Id: {}";
+  public static final String NO_RELATED_ITEMS_FOUND = "No related serial or parent Location found to clear";
+  public static final String NO_RELATED_ITEMS_FOUND_FAILURE = "noRelatedItemsFoundFailure";
 
 
-    private BlInventoryScanLoggingConstants() { }
+  private BlInventoryScanLoggingConstants() { }
 
     /**
      * javadoc

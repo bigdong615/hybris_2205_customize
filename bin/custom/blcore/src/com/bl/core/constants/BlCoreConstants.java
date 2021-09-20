@@ -359,21 +359,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_NEW_URL_SENDING_MSG = "Sending shareASale new account message: {}";
 	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
 	public static final String SHARE_A_SALE_COMMA = ",";
-
-	public static final String ESP_EVENT_AUTH_BASE_URL = "esp.event.auth.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.auth.marketingcloudapis.com
-	public static final String ESP_EVENT_REST_BASE_URL = "esp.event.rest.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.rest.marketingcloudapis.com
-	public static final String ESP_EVENT_ACCESS_TOKEN_API = "esp.event.accesstoken.endpoint.url"; //   /v2/token
-	public static final String ESP_EVENT_EVENT_API = "esp.event.event.endpoint.url";//   /interaction/v1/events
-	public static final String ESP_EVENT_CLIENT_ID = "esp.event.client.id";//   lvnx2e631tweqcvn6uup7fjl
-	public static final String ESP_EVENT_CLIENT_SECRET = "esp.event.client.secret";//   82YtBWAokGenYTQf1UuZldBJ
-	public static final String ESP_EVENT_ACCOUNT_ID = "esp.event.account.id";//   515009598
-	public static final String ESP_EVENT_GRANT_TYPE = "esp.event.grant.type";//   client_credentials
-	public static final String ESP_EVENT_ACCESS_SCOPE = "esp.event.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
-
-	public static final String ORDER_CONFIRMATION_EVENT_DEFINITION_KEY = "order.confirmation.event.definition.key";
-	public static final String ORDER_CONFIRMATION_EVENT_TEMPLATE = "order.confirmation.event.template";
-
-
+	public static final String BIN_LOCATION_ID = "binLocationId";
 	private BlCoreConstants()
 	{
 		//empty
