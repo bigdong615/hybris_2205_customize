@@ -1472,6 +1472,25 @@
 
 	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
 		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService"/>
+
+	<alias name="blInventoryCycleCountPrepareInterceptor" alias="blInventoryCycleCountPrepareInterceptor"/>
+	<bean id="blInventoryCycleCountPrepareInterceptor" class="com.bl.core.model.interceptor.BlInventoryCycleCountPrepareInterceptor">
+		<property name="keyGenerator" ref="iccIdGenerator"/>
+	</bean>
+
+	<bean id="iccIdGenerator" class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.inventoryCycleCount.id.name}"/>
+		<property name="digits" value="${keygen.inventoryCycleCount.id.digits}"/>
+		<property name="start" value="${keygen.inventoryCycleCount.id.start}"/>
+		<property name="type" value="${keygen.inventoryCycleCount.id.type}"/>
+		<property name="template" value="${keygen.inventoryCycleCount.id.template}"/>
+	</bean>
+
+	<bean id="blInventoryCycleCountPrepareInterceptorMapping"
+		  class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blInventoryCycleCountPrepareInterceptor"/>
+		<property name="typeCode" value="BlInventoryCycleCount"/>
+	</bean>
 	<!-- End Inventory Cycle Count -->
 
 </beans>

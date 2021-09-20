@@ -402,6 +402,12 @@
           <value code="COMPLETED"/>
       </enumtype>
 
+        <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
+            <value code="REGULAR"/>
+            <value code="MISSING"/>
+            <value code="UNEXPECTED"/>
+        </enumtype>
+
 	  </enumtypes>
 
     <maptypes>
@@ -6062,13 +6068,8 @@ new Integer(0)
                 <attributes>
                     <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false" />
+                        <modifiers read="true" write="false" optional="false" unique="true" initial="true"/>
                         <description>Inventory Cycle count code</description>
-                    </attribute>
-                    <attribute qualifier="inventoryCycleCountName" type="java.lang.String">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true" />
-                        <description>Inventory cycle count name</description>
                     </attribute>
                     <attribute qualifier="currentCycleCountStartDate" type="java.util.Date">
                         <persistence type="property" />
@@ -6124,11 +6125,6 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="false" />
                         <description>Inventory Cycle count code</description>
                     </attribute>
-                    <attribute qualifier="inventoryCycleCountName" type="java.lang.String">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true" />
-                        <description>Inventory cycle count name</description>
-                    </attribute>
                     <attribute qualifier="inventoryCycleCountDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
@@ -6167,20 +6163,40 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true" />
                         <description>current cycle count date</description>
                     </attribute>
-                    <attribute qualifier="scannedSKUsAndSerials" type="InventoryCycleCountScanSKUDetails">
+                    <attribute qualifier="serialNumber" type="java.lang.String">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
-                        <description>Map of scanned SKU along with serials</description>
+                        <description>Serial number</description>
                     </attribute>
-                    <attribute qualifier="unexpectedScannedSerials" type="ModifiedSerialProduct">
+                    <attribute qualifier="barcodeNumber" type="java.lang.String">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
-                        <description>unexpected serials scanned for SKU batch</description>
+                        <description>Barcode number</description>
                     </attribute>
-                    <attribute qualifier="missingSerialsForScan" type="ModifiedSerialProduct">
+                    <attribute qualifier="homeBaseLocation" type="java.lang.String">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
-                        <description>missing serials scanned for SKU batch</description>
+                        <description>Home Base Location</description>
+                    </attribute>
+                    <attribute qualifier="lastOrderNumber" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Last Order Number</description>
+                    </attribute>
+                    <attribute qualifier="productName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Product Name</description>
+                    </attribute>
+                    <attribute qualifier="oc" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory OC Location</description>
+                    </attribute>
+                    <attribute qualifier="ocParent" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory OC Parent Location</description>
                     </attribute>
                     <attribute qualifier="scannedUser" type="User">
                         <persistence type="property"/>
@@ -6191,6 +6207,12 @@ new Integer(0)
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="false" initial="true"/>
                         <description>Time when user scanned inventory</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountSerialStatus" type="InventoryCycleCountSerialStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count serial status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>

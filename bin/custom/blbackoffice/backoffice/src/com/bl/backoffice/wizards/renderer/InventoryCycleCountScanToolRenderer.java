@@ -2,8 +2,6 @@ package com.bl.backoffice.wizards.renderer;
 
 import com.bl.backoffice.wizards.util.InventoryCycleCountScanToolData;
 import com.bl.backoffice.wizards.util.InventoryCycleCountScanToolUtil;
-import com.bl.backoffice.wizards.util.WebScanToolData;
-import com.bl.backoffice.wizards.util.WebScanToolUtil;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.logging.BlLogger;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
@@ -21,23 +19,16 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Map;
 
 /**
- * {javadoc}
+ * Inventory Cycle Count Renderer
  *
  * @author Namrata Lohar
  **/
 public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRenderer {
 
     private static final Logger LOG = Logger.getLogger(InventoryCycleCountScanToolRenderer.class);
-    public static final String ON_CHANGE = "onChange";
-    public static final String RESIZE_NONE_DISPLAY_BLOCK = "resize:none;display:block";
-    public static final String CLEAR = "Clear";
-    public static final String ON_CLICK = "onClick";
-    public static final String DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER = "defaultInventoryCycleCountScanToolRenderer";
 
     private NotificationService notificationService;
     private InventoryCycleCountScanToolUtil inventoryCycleCountScanToolUtil;
@@ -66,18 +57,15 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
                     StringUtils.EMPTY);
         } else {
-            JFrame jFrame = new JFrame();
-
-            GridLayout experimentLayout = new GridLayout(0,2);
-
             final Textbox skuInputField = new Textbox();
             skuInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
             skuInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
             skuInputField.setMultiline(true);
             skuInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
-            skuInputField.setWidth(BlInventoryScanLoggingConstants.HUN_PER);
-            skuInputField.setStyle(RESIZE_NONE_DISPLAY_BLOCK);
-            skuInputField.addEventListener(ON_CHANGE, event -> {
+            skuInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
+            skuInputField.setPlaceholder(BlInventoryScanLoggingConstants.SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST);
+            skuInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SKU);
+            skuInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
                 this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(skuInputField, inventoryCycleCountScanToolData);
                 this.setNewSKUInput(skuInputField);
             });
@@ -88,20 +76,21 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
             barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
             barcodeInputField.setMultiline(true);
             barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
-            barcodeInputField.setWidth(BlInventoryScanLoggingConstants.HUN_PER);
-            barcodeInputField.setStyle(RESIZE_NONE_DISPLAY_BLOCK);
-            barcodeInputField.addEventListener(ON_CHANGE, event -> {
+            barcodeInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
+            barcodeInputField.setPlaceholder(BlInventoryScanLoggingConstants.BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES);
+            barcodeInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SERIAL);
+            barcodeInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
                 this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
                 this.setNewPwdInput(barcodeInputField);
             });
             component.appendChild(barcodeInputField);
 
             final Button clear = new Button();
-            clear.setLabel(CLEAR);
+            clear.setLabel(BlInventoryScanLoggingConstants.CLEAR);
             clear.setVisible(Boolean.FALSE);
             clear.setTabindex(BlInventoryScanLoggingConstants.TWO);
-            clear.setStyle("margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;");
-            clear.addEventListener(ON_CLICK, event -> {
+            clear.setStyle(BlInventoryScanLoggingConstants.MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1);
+            clear.addEventListener(BlInventoryScanLoggingConstants.ON_CLICK, event -> {
                 skuInputField.setValue(StringUtils.EMPTY);
                 barcodeInputField.setValue(StringUtils.EMPTY);
                 this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
@@ -119,7 +108,8 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
     public void triggerClear(final InventoryCycleCountScanToolData inventoryCycleCountScanToolData,
                              final InventoryCycleCountScanToolUtil inventoryCycleCountScanToolUtil) {
         final InventoryCycleCountScanToolRenderer inventoryCycleCountScanToolRenderer = Registry.getApplicationContext()
-                .getBean(DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER, InventoryCycleCountScanToolRenderer.class);
+                .getBean(BlInventoryScanLoggingConstants.DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER,
+                InventoryCycleCountScanToolRenderer.class);
         if(inventoryCycleCountScanToolRenderer != null) {
             final InputElement barcodeInput = inventoryCycleCountScanToolRenderer.getNewPwdInput();
             final InputElement skuInput = inventoryCycleCountScanToolRenderer.getNewSKUInput();

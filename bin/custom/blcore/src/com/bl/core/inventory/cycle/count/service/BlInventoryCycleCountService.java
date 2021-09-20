@@ -3,6 +3,7 @@ package com.bl.core.inventory.cycle.count.service;
 import com.bl.core.model.*;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -59,7 +60,15 @@ public interface BlInventoryCycleCountService {
      * This method will execute flow for report generation
      * @param serialBarcodes barcodes
      * @return string message
-     * @return blInventoryCycleCountScanHistoryModel scanHistory
+     * @return String scanHistory result
      */
-    BlInventoryCycleCountScanHistoryModel executeInventoryCycleCount(final Collection<String> serialBarcodes);
+    String executeInventoryCycleCount(final Collection<String> serialBarcodes);
+
+    String getInventoryDayCode();
+
+    void setInventoryDayCode(final String inventoryDayCode);
+
+    Date getInventoryDayDate();
+
+    void setInventoryDayDate(final Date inventoryDayDate);
 }

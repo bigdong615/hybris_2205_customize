@@ -2736,7 +2736,6 @@
 				<wz:content id="step1.content">
 					<wz:property-list root="newBlInventoryCycleCount">
 						<wz:property qualifier="inventoryCycleCountCode"/>
-						<wz:property qualifier="inventoryCycleCountName"/>
 						<wz:property qualifier="inventoryCycleCountProducts"/>
 						<wz:property qualifier="currentCycleCountStartDate"/>
 						<wz:property qualifier="currentCycleCountEndDate"/>
@@ -2759,7 +2758,6 @@
 	<context type="BlInventoryCycleCount" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountCode"/>
-			<list-view:column qualifier="inventoryCycleCountName"/>
 			<list-view:column qualifier="inventoryCycleCountProducts"/>
 			<list-view:column qualifier="inventoryCycleCountActive"/>
 			<list-view:column qualifier="inventoryCycleCountStatus"/>
@@ -2770,7 +2768,6 @@
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
-				<advanced-search:field name="inventoryCycleCountName" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountActive" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountStatus" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>
@@ -2781,7 +2778,6 @@
 	<context type="BlInventoryCycleCount" component="simple-search" merge-by="replace">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountCode"/>
-			<ss:field name="inventoryCycleCountName"/>
 		</ss:simple-search>
 	</context>
 
@@ -2803,7 +2799,6 @@
 				<wz:content id="step1.content">
 					<wz:property-list root="newBLInventoryCycleCountDetails">
 						<wz:property qualifier="inventoryCycleCountCode"/>
-						<wz:property qualifier="inventoryCycleCountName"/>
 						<wz:property qualifier="inventoryCycleCountDate"/>
 						<wz:property qualifier="inventoryCycleCountSKUs"/>
 						<wz:property qualifier="inventoryCycleCountDetailStatus"/>
@@ -2822,7 +2817,6 @@
 	<context type="BLInventoryCycleCountDetails" component="listview" merge-by="replace">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountCode"/>
-			<list-view:column qualifier="inventoryCycleCountName"/>
 			<list-view:column qualifier="inventoryCycleCountDate"/>
 			<list-view:column qualifier="inventoryCycleCountSKUs"/>
 			<list-view:column qualifier="inventoryCycleCountDetailStatus"/>
@@ -2833,7 +2827,6 @@
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
-				<advanced-search:field name="inventoryCycleCountName" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDate" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDetailStatus" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>
@@ -2844,7 +2837,6 @@
 	<context type="BLInventoryCycleCountDetails" component="simple-search" merge-by="replace">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountCode"/>
-			<ss:field name="inventoryCycleCountName"/>
 		</ss:simple-search>
 	</context>
 
@@ -2868,9 +2860,14 @@
 						<wz:property qualifier="inventoryCycleCountCode"/>
 						<wz:property qualifier="inventoryCycleCountDayCode"/>
 						<wz:property qualifier="inventoryCycleCountDayDate"/>
-						<wz:property qualifier="scannedSKUsAndSerials"/>
-						<wz:property qualifier="unexpectedScannedSerials"/>
-						<wz:property qualifier="missingSerialsForScan"/>
+						<wz:property qualifier="serialNumber"/>
+						<wz:property qualifier="barcodeNumber"/>
+						<wz:property qualifier="homeBaseLocation"/>
+						<wz:property qualifier="lastOrderNumber"/>
+						<wz:property qualifier="productName"/>
+						<wz:property qualifier="oc"/>
+						<wz:property qualifier="ocParent"/>
+						<wz:property qualifier="inventoryCycleCountSerialStatus"/>
 						<wz:property qualifier="scannedUser"/>
 						<wz:property qualifier="scannedTime"/>
 					</wz:property-list>
@@ -2890,6 +2887,14 @@
 			<list-view:column qualifier="inventoryCycleCountCode"/>
 			<list-view:column qualifier="inventoryCycleCountDayCode"/>
 			<list-view:column qualifier="inventoryCycleCountDayDate"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="barcodeNumber"/>
+			<list-view:column qualifier="homeBaseLocation"/>
+			<list-view:column qualifier="lastOrderNumber"/>
+			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="oc"/>
+			<list-view:column qualifier="ocParent"/>
+			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
 			<list-view:column qualifier="scannedUser"/>
 			<list-view:column qualifier="scannedTime"/>
 		</list-view:list-view>
@@ -2963,6 +2968,14 @@
 			</na:notifications>
 			<na:notifications eventType="scanICCSuccess" level="SUCCESS" destination="TOPMOST">
 				<na:message>blbackoffice.i.c.c.wizard.notification.barcode.scan.success</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+					<na:reference placeholder="1" link="true"/>
+					<na:reference placeholder="2" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="scanICCSerialError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.i.c.c.wizard.notification.barcode.scan.serial.error</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>

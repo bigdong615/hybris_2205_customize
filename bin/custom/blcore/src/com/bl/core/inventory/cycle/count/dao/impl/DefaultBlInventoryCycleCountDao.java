@@ -30,7 +30,7 @@ public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao
     @Override
     public BlInventoryCycleCountModel getActiveInventoryCycleCount() {
         final FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlInventoryCycleCount!} WHERE " +
-                "{inventoryCycleCountActive} = 0");
+                "{inventoryCycleCountActive} = 1");
         final List<BlInventoryCycleCountModel> results = getFlexibleSearchService().<BlInventoryCycleCountModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_ACTIVE_INVENTORY_CYCLE_COUNT);
         return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;

@@ -77,6 +77,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
     public static final String ICC_SUCCESS_NOTIF = "scanICCSuccess";
+    public static final String ICC_SERIAL_ERROR_NOTIF = "scanICCSerialError";
 
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
@@ -264,11 +265,23 @@ public class BlInventoryScanLoggingConstants {
     public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
     public static final String SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO = "Successfully created new Inventory Cycle count for code:{} from: {} to: {}";
     public static final String CREATED_INVENTORY_CYCLE_FOR_DATE = "Created {} Inventory Cycle for date: {}";
+    public static final String CHUNKS_FOR_THIRTY_DAYS = "Created Inventory Cycle SKU list for 30 days as: {}";
+    public static final String CALENDER_TIME = "Calender time generated: {}";
 
     public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
     public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
     public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
 
+    public static final String ON_CHANGE = "onChange";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SKU = "resize:none;display:inline-block";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SERIAL = "resize:none;display:block;float:right";
+    public static final String CLEAR = "Clear";
+    public static final String ON_CLICK = "onClick";
+    public static final String DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER = "defaultInventoryCycleCountScanToolRenderer";
+    public static final String WIDTH_FOURTY_EIGHT = "48%";
+    public static final String SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST = "Enter SKU list...";
+    public static final String BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES = "Scan serial barcodes...";
+    public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
 
     private BlInventoryScanLoggingConstants() { }
 
