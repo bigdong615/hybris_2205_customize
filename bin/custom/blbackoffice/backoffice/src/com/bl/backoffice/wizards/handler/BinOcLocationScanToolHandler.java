@@ -49,7 +49,7 @@ public class BinOcLocationScanToolHandler implements FlowActionHandler {
     }
     else {
       this.getNotificationService().clearNotifications(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER);
-      if (CollectionUtils.isNotEmpty(webScanToolData.getBarcodeInputField()) && StringUtils.isNotBlank(webScanToolData.getBarcodeInputField().get(0))) {
+      if (CollectionUtils.isNotEmpty(webScanToolData.getBarcodeInputField()) && webScanToolData.getBarcodeInputField().size() == 1 && StringUtils.isNotBlank(webScanToolData.getBarcodeInputField().get(0))) {
         final String locationId = webScanToolData.getBarcodeInputField().get(0);
         createResponseForScanResult(locationId);
       } else {

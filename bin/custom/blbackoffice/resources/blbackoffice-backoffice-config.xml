@@ -706,7 +706,6 @@
         <n:explorer-tree>
             <n:navigation-node id="BLInventoryScan">
                 <n:navigation-node id="WebScanTool"/>
-                <n:navigation-node id="BinOcLocationTool"/>
             </n:navigation-node>
         </n:explorer-tree>
     </context>
@@ -756,7 +755,7 @@
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="validBINLocationErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.valid.BIN.location.failure</na:message>
+				<na:message>blbackoffice.bin.location.scan.tool.wizard.valid.BIN.location.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
@@ -2216,6 +2215,9 @@
 			</n:navigation-node>
 			<n:navigation-node id="blinventoryscan_name">
 				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
+			<n:navigation-node id="blbinlocationscan_name">
+				<n:navigation-node id="BinOcLocationTool"/>
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
 			<n:type-node code="Consignment" id="Consignment"/>
