@@ -177,8 +177,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
-        if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
-        	parameter.setRetailGear(blProductModel.getRetailGear());
+				if(BooleanUtils.isTrue(blProductModel.isBundleProduct())){
+					parameter.setBundleMainEntry(Boolean.TRUE);
+				}
+				if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+					parameter.setRetailGear(blProductModel.getRetailGear());
 				}
 				if (blProductService.isAquatechProduct(blProductModel)) {
 					parameter.setAqautechProduct(Boolean.TRUE);
