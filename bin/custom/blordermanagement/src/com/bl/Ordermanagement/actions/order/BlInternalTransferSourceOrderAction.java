@@ -16,7 +16,6 @@ import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.jalo.JaloSession;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -39,8 +38,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 
 /**
@@ -50,7 +47,7 @@ import org.springframework.beans.factory.annotation.Required;
 public class BlInternalTransferSourceOrderAction extends AbstractProceduralAction<OrderProcessModel>
 {
 
-	private static final Logger LOG = Logger.getLogger(BlSourceOrderAction.class);
+	private static final Logger LOG = Logger.getLogger(BlInternalTransferSourceOrderAction.class);
 
 	private AllocationService allocationService;
 	private BusinessProcessService businessProcessService;
@@ -99,9 +96,9 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 
 			if (CollectionUtils.isNotEmpty(order.getEntries()))	{
 
-				order.getEntries().stream().forEach( abstractOrderEntryModel -> {
-					sourcingMap.put(abstractOrderEntryModel, abstractOrderEntryModel.getQuantity());
-				});
+				order.getEntries().stream().forEach(abstractOrderEntryModel ->
+						sourcingMap.put(abstractOrderEntryModel, abstractOrderEntryModel.getQuantity())
+				);
 
 				sourcingResult.setAllocation(sourcingMap);
 				sourcingResultSet.add(sourcingResult);
@@ -172,7 +169,6 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 		return businessProcessService;
 	}
 
-	@Required
 	public void setBusinessProcessService(final BusinessProcessService businessProcessService)
 	{
 		this.businessProcessService = businessProcessService;

@@ -70,13 +70,22 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
         }
       }
     } else {
-      if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
-        for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
-          orderEntry.setBasePrice(0.0d);
-    }
-      }
+      setBasePriceToZero(abstractOrderModel);
     }
 
+  }
+
+  /**
+   * To set zero to base price of order entries in case of null rental start date and end date, exa:- internal transfer order
+   * @param abstractOrderModel
+   */
+  private void setBasePriceToZero(final AbstractOrderModel abstractOrderModel) {
+
+    if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+      for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
+        orderEntry.setBasePrice(0.0d);
+      }
+    }
   }
 
   public BlBackOfficePriceService getBlBackOfficePriceService() {
