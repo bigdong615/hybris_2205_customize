@@ -14,7 +14,7 @@
 <c:url var="savedPaymentInfoFormURL" value="/my-account/modify-choose-cc" />
 <input type="hidden" id="js-modify-order-page" name="jsModifyOrderPage" value="true"/>
 <div id="accountContent" class="col-lg-5 offset-lg-1">
-                    <h1>Change Payment</h1>
+                    <h1><spring:theme code="order.myaccount.modify.payment"/></h1>
                     <div class="extend-order">
                         <div class="row">
                             <div class="col-12 mb-3">
