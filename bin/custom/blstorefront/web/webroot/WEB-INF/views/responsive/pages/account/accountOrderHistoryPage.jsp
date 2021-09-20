@@ -67,7 +67,7 @@
                 								</li>
                 								<li>
                 						
-                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                  <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
@@ -177,7 +177,7 @@
                 								<li>
                 								
                 						
-                								<c:if test="${not empty agent.uid && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>

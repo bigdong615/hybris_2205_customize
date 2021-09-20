@@ -81,6 +81,9 @@ import org.apache.log4j.Logger;
 
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
 {
+	
+	private static final double ZERO_PRICE = 0.0;
+	private static final int ZERO = 0;
 
 	private static final Logger LOG = Logger.getLogger(BrainTreeTransactionServiceImpl.class);
 
@@ -131,8 +134,15 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo)
 	{
 		try {
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(orderModel, getCustomFields(),
-					amountToAuthorize, submitForSettlement, paymentInfo);
+			BrainTreeAuthorizationResult result = null;
+			//Added condition for modifyPayment with zero order total (full Gift Card Order)
+			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
+				result = brainTreeAuthorize(orderModel, getCustomFields(),
+						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
+			}else {
+				 result = brainTreeAuthorize(orderModel, getCustomFields(),
+						amountToAuthorize, submitForSettlement, paymentInfo);
+			}
 			if(submitForSettlement) {
 				createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
 				return result.isSuccess();
@@ -332,12 +342,23 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		//		add Level 2 data
 		authorizationRequest.setPurchaseOrderNumber(cart.getCode());
+		BigDecimal authPercentage = BigDecimal.ZERO;
 
-		//		calc taxAmount via percentage of AUTH-amount
-		BigDecimal authPercentage = roundNumberToTwoDecimalPlaces(
-				authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getTotalPrice().doubleValue()));
-		LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
+		//Added condition for modifyPayment with zero order total (full Gift Card Order)
+		if(authAmount != null && (cart.getTotalPrice().compareTo(ZERO_PRICE) == ZERO )) {
+			//		calc taxAmount via percentage of AUTH-amount
+			 authPercentage = roundNumberToTwoDecimalPlaces(
+					authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getGrandTotal().doubleValue()));
+			LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
+		}else{
+				if(authAmount != null) {
+					//		calc taxAmount via percentage of AUTH-amount
+					authPercentage = roundNumberToTwoDecimalPlaces(
+							authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getTotalPrice().doubleValue()));
+					LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
+				}
 
+		}
 		BigDecimal taxSupposed = roundNumberToTwoDecimalPlaces(
 				cart.getTotalTax().doubleValue() * authPercentage.doubleValue() / CONVERT_TO_PERCENTAGE);
 		LOG.info("taxSupposed: " + taxSupposed);
