@@ -62,13 +62,13 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 		removeEntryFromConsignment(orderModel, previousChangedOrderEntrysList);
         orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
      	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
-      try {
+			try {
 				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
-        getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
 				}
-      } catch (CalculationException e) {
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while BlDefaultEditorAreaLogicHandler" , e);
-      }
+			} catch (CalculationException e) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
+			}
       return object;
      }
     return super.performSave(widgetInstanceManager , currentObject);
