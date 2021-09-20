@@ -207,6 +207,14 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				null == entry.getItems() ? new HashMap<>() : entry.getItems();
 
 		itemsMap.put(orderEntry.getProduct().getCode(), ItemStatusEnum.NOT_INCLUDED);
+
+		final List<BlProductModel> products = new ArrayList<>();
+
+		for (int i = 0; i < entry.getQuantity(); i++) {
+			products.add((BlProductModel) orderEntry.getProduct());
+		}
+
+		entry.setSerialProducts(products);
 		entry.setItems(itemsMap);
 
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,

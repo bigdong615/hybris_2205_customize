@@ -111,8 +111,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             ((BlPickUpZoneDeliveryModeModel) order.getDeliveryMode()).getInternalStoreAddress());
       }
 
-      consignment
-          .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
 
       //adding optimized shipping dates, this will be updated in optimized shipping strategy methods
       consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
@@ -124,7 +122,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
       if (isInternalTransferOder(order)) {
         consignment.setInternalTransferConsignment(order.getInternalTransferOrder());
-        consignment.setInternalOrderTransferDate(order.getRentalStartDate());
       }
 
       consignment.setFulfillmentSystemConfig(

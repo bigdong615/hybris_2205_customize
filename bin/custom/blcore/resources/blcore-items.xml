@@ -3018,11 +3018,6 @@
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
           </attribute>
-          <attribute qualifier="internalOrderTransferDate" type="java.util.Date">
-            <description>Date to transfer the internal order to other warehouse.</description>
-            <modifiers read="true" write="true"/>
-            <persistence type="property"/>
-          </attribute>
           <attribute autocreate="true" qualifier="optimizedRentalEndDateChangedByJob" type="boolean">
               <modifiers read="true" write="true" optional="false"/>
               <persistence type="property"/>

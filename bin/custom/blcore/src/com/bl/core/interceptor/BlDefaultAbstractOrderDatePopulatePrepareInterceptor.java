@@ -69,7 +69,14 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
           BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
         }
       }
+    } else {
+      if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+        for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
+          orderEntry.setBasePrice(0.0d);
     }
+      }
+    }
+
   }
 
   public BlBackOfficePriceService getBlBackOfficePriceService() {

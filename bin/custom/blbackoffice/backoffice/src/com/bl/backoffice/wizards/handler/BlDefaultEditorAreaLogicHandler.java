@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -62,7 +63,9 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
         orderModel.getEntries().forEach(abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
      	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
       try {
+				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
         getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+				}
       } catch (CalculationException e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while BlDefaultEditorAreaLogicHandler" , e);
       }
