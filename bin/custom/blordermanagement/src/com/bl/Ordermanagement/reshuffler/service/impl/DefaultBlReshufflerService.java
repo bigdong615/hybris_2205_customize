@@ -282,7 +282,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 						.findSerialStockLevelsForDateAndCodes(productCodes,
 								consignmentModel.getOptimizedShippingStartDate(),
 								consignmentModel.getOptimizedShippingEndDate(), Boolean.TRUE);
-				stocks.forEach(stock -> stock.setReservedStatus(false));
+				stocks.forEach(stock -> {
+				  stock.setReservedStatus(false);
+				  stock.setOrder(null);
+        });
 				this.getModelService().saveAll(stocks);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 						"consignment to delete", consignmentModel);
@@ -674,7 +677,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             entry.getConsignment().getOptimizedShippingEndDate(), Boolean.FALSE);
     if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
         .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
-      serialStocks.forEach(stock -> stock.setReservedStatus(true));
+      serialStocks.forEach(stock -> {
+        stock.setReservedStatus(true);
+        stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+      });
       this.getModelService().saveAll(serialStocks);
     }
   }
