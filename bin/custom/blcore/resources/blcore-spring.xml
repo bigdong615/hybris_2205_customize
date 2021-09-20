@@ -1462,7 +1462,19 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<bean id="blEspEventService" class="com.bl.core.services.esp.order.impl.DefaultBlEspEventService">
+	<bean id="blESPEventRestService" class="com.bl.esp.service.impl.DefaultBlESPEventRestService">
 		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<bean id="blOrderConfirmationRequestPopulator"
+		class="com.bl.core.populators.BlOrderConfirmationRequestPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<bean id="blEspEventService"
+		class="com.bl.core.esp.service.impl.DefaultBlESPEventService">
+		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
+		<property name="blESPEventRestService" ref="blESPEventRestService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 </beans>
