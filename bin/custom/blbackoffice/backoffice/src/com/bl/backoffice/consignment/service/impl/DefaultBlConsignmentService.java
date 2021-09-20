@@ -68,13 +68,12 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 				if (serialProduct instanceof BlSerialProductModel)
 				{
 					final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct;
-					 List<ConsignmentEntryModel> consignmentEntriesForSerialCode = getBlConsignmentDao()
-							.getConsignmentEntriesForSerialCode(blSerialProduct.getCode(), orderEntry.getOrder().getCode());
-					 ConsignmentModel consignmentForSerial = consignmentEntriesForSerialCode.iterator().next().getConsignment();	
+					 ConsignmentModel consignmentForSerialCode = getBlConsignmentDao()
+							.getConsignmentEntriesForSerialCode(blSerialProduct.getPk().toString(), orderEntry.getOrder().getCode());
 					
 					  getBlProductService().updateStockForCancelledProduct(serialProduct,
-					  consignmentForSerial.getOptimizedShippingStartDate(),
-					  consignmentForSerial.getOptimizedShippingEndDate());
+							  consignmentForSerialCode.getOptimizedShippingStartDate(),
+							  consignmentForSerialCode.getOptimizedShippingEndDate());
 					 
 				}
 			}));

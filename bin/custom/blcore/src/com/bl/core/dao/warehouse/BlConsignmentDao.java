@@ -45,6 +45,6 @@ public interface BlConsignmentDao {
 	 *           the serial
 	 * @return the consignment entries for serial code and date
 	 */
-	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode);
+	public ConsignmentModel getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode);
 
 }

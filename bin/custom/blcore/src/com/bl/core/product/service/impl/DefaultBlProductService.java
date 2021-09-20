@@ -162,7 +162,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
 						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct);
 			});
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
 		}
 	}
 

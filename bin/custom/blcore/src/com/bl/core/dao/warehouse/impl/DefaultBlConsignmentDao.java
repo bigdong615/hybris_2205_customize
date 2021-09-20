@@ -159,7 +159,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode)
+	public ConsignmentModel getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode)
 	{
 		
 		Validate.notNull(serialCode, "Serial Product must not be null", null);
@@ -171,16 +171,16 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 		fQuery.addQueryParameter(BlCoreConstants.ORDER_CODE, orderCode);
 		
 		
-		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		final SearchResult<ConsignmentModel> search = getFlexibleSearchService().<ConsignmentModel> search(fQuery);
 		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",serialCode);
-			return Lists.newArrayList();
+			return null;
 		}
-		final List<ConsignmentEntryModel> result = search.getResult();
+		final List<ConsignmentModel> result = search.getResult();
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry found : {} for serial : {}", result,serialCode);
-		return Lists.newArrayList(result);	
+		return result.get(0);	
 	
 	}
 
