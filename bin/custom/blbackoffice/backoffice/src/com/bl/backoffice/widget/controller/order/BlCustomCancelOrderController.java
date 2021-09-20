@@ -76,6 +76,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
 
+import com.bl.backoffice.consignment.service.BlConsignmentService;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.model.BlProductModel;
@@ -193,6 +194,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     
     @Resource(name = "blStockLevelDao")
   	private BlStockLevelDao blStockLevelDao;
+    
+ 	@Resource(name = "defaultBlConsignmentService")
+ 	private BlConsignmentService defaultBlConsignmentService;
 
     /**
      * Init cancellation order form.
@@ -688,15 +692,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
    			if (orderCancelRecordEntryModel != null
    					&& (orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.FULL)))
    			{
-   				updateStockForCancelledOrder(consignments);
+   				getDefaultBlConsignmentService().updateStockForCancelledOrder(consignments);
 
    				return orderCancelRecordEntryModel;
    			}
    			if (orderCancelRecordEntryModel != null
    					&& orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.PARTIAL))
    			{
-   				updateStockForPartialCancelledOrder(consignments);
-
+   				getDefaultBlConsignmentService().updateStockForPartialCancelledOrder(consignments, this.cancelAndRefundEntries);
    				return orderCancelRecordEntryModel;
    			}
    		}
@@ -710,132 +713,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
    		return null;
     }
     
-    /**
-     * method will be used to update stock for partial cancel order
-  	 * @param consignments
-  	 */
-  	private void updateStockForPartialCancelledOrder(final Set<ConsignmentModel> consignments)
-  	{
-  		final List<AbstractOrderEntryModel> consignmentEntryList = new ArrayList<>();
-  		final List<AbstractOrderEntryModel> orderEntryList = new ArrayList<>();
-
-  		getConsignmentEntryList(consignments, consignmentEntryList);
-
-  		getCanclledOrderEntryList(orderEntryList);
-
-  		final boolean isEntryAvailable = orderEntryList.stream().allMatch(consignmentEntryList::contains);
-
-  		if (isEntryAvailable)
-  		{
-  			orderEntryList.forEach(orderEntry -> orderEntry.getSerialProducts().forEach(serialProduct -> {
-  				final ConsignmentModel conisgnmentForSerial = getConisgnmentForSerial(consignments, serialProduct);
-  				updateStockForCancelledProduct(serialProduct, conisgnmentForSerial.getOptimizedShippingStartDate(),
-  						conisgnmentForSerial.getOptimizedShippingEndDate());
-  			}));
-  		}
-  	}
 
  	/**
- 	 * method will be used to  get cancelled order entry
- 	 * @param orderEntryList
- 	 */
- 	private void getCanclledOrderEntryList(final List<AbstractOrderEntryModel> orderEntryList)
- 	{
- 		for (final BlOrderEntryToCancelDto orderEntryToCancelDto : this.cancelAndRefundEntries)
- 		{
- 			orderEntryList.add(orderEntryToCancelDto.getOrderEntry());
- 		}
- 	}
-
- 	/** 
- 	 * method will be used to  get consignmentEntry for cancelled order
- 	 * @param consignments
- 	 * @param consignmentEntryList
- 	 */
- 	private void getConsignmentEntryList(final Set<ConsignmentModel> consignments,
- 			final List<AbstractOrderEntryModel> consignmentEntryList)
- 	{
- 		for (final ConsignmentModel consignment : consignments)
- 		{
- 			consignment.getConsignmentEntries()
- 					.forEach(consignmentEntry -> consignmentEntryList.add(consignmentEntry.getOrderEntry()));
- 		}
- 	}
-
- 	/**
- 	 * method will used to release the stock for cancelled order
- 	 * @param consignments
- 	 */
- 	private void updateStockForCancelledOrder(final Set<ConsignmentModel> consignments)
- 	{
- 		for (final ConsignmentModel consignment : consignments)
- 		{
- 			consignment.getConsignmentEntries()
- 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
- 							.forEach(serialProduct -> updateStockForCancelledProduct(serialProduct,
- 									consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())));
- 		}
- 	}
-
- 	/**
- 	 * method will used to get the consignment for serial
- 	 * @param consignments
- 	 * @param serialProduct
- 	 */
- 	private ConsignmentModel getConisgnmentForSerial(final Set<ConsignmentModel> consignments, final BlProductModel serialProduct)
- 	{
- 		for (final ConsignmentModel consignment : consignments)
- 		{
- 			for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
- 			{
- 				getConsignemtForSerialCode(serialProduct, consignment, consignmentEntry);
- 			}
- 		}
- 		return null;
- 	}
-
-	/** method will be used to return consignment for serial product
-	 * @param serialProduct
-	 * @param consignment
-	 * @param consignmentEntry
-	 */
-	private ConsignmentModel getConsignemtForSerialCode(final BlProductModel serialProduct, final ConsignmentModel consignment,
-			final ConsignmentEntryModel consignmentEntry)
-	{
-		for (final BlProductModel item : consignmentEntry.getSerialProducts())
-		{
-			if (item.getCode().equals(serialProduct.getCode()))
-			{
-				return consignment;
-			}
-		}
-	}
-
- 	/**
- 	 * method will be used to update the stock level for serial
- 	 *
- 	 * @param consignment
- 	 * @param serialProduct
- 	 */
- 	private void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
- 			final Date optimizedShippingEndDate)
- 	{
- 		final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
- 				.findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate  , optimizedShippingEndDate);
- 		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
- 		{
- 			findSerialStockLevelForDate.forEach(stockLevel -> {
- 				stockLevel.setHardAssigned(false);
- 				stockLevel.setReservedStatus(false);
- 				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
- 				modelService.save(stockLevel);
- 				modelService.save(serialProduct);
- 			});
- 			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Stock level updated for serial {}", serialProduct);
- 		}
- 	}
-
-    /**
      * refund and log response
      *
      *  @param totalAmt amount
@@ -1556,4 +1435,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     public void setRefundEntries(List<BlOrderEntryToCancelDto> refundEntries) {
         this.refundEntries = refundEntries;
     }
+
+	/**
+	 * @return the defaultBlConsignmentService
+	 */
+	public BlConsignmentService getDefaultBlConsignmentService()
+	{
+		return defaultBlConsignmentService;
+	}
+
+	/**
+	 * @param defaultBlConsignmentService the defaultBlConsignmentService to set
+	 */
+	public void setDefaultBlConsignmentService(BlConsignmentService defaultBlConsignmentService)
+	{
+		this.defaultBlConsignmentService = defaultBlConsignmentService;
+	}
 }

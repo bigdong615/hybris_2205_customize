@@ -154,6 +154,35 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 				serial.getCode(), fromDate);
 		return Lists.newArrayList(result);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ConsignmentEntryModel> getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode)
+	{
+		
+		Validate.notNull(serialCode, "Serial Product must not be null", null);
+		Validate.notNull(orderCode, "Order must not be null", null);
+		
+		final String consignmentList = "select {c.pk} from {consignment as c join order as o on {c:order}={o:pk} join consignmententry as ce on {ce:consignment}={c:pk}} where {o.code} = ?orderCode AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT(?serialCode,'%'))";
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(consignmentList);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_CODE, serialCode);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_CODE, orderCode);
+		
+		
+		final SearchResult<ConsignmentEntryModel> search = getFlexibleSearchService().<ConsignmentEntryModel> search(fQuery);
+		if (Objects.isNull(search) || CollectionUtils.isEmpty(search.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"DefaultBlConsignmentDao : getConsignmentEntriesForSerialCodeAndDate : No ConsignmentEntry found for serial : {}",serialCode);
+			return Lists.newArrayList();
+		}
+		final List<ConsignmentEntryModel> result = search.getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry found : {} for serial : {}", result,serialCode);
+		return Lists.newArrayList(result);	
+	
+	}
 
   public FlexibleSearchService getFlexibleSearchService() {
     return flexibleSearchService;

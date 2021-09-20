@@ -4,6 +4,7 @@ import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.daos.ProductDao;
 import de.hybris.platform.product.impl.DefaultProductService;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -11,8 +12,11 @@ import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.user.UserService;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +24,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 
 
@@ -37,6 +43,9 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
   private UserService userService;
   private CatalogVersionDao catalogVersionDao;
   private SearchRestrictionService searchRestrictionService;
+  
+	@Resource(name = "blStockLevelDao")
+	private BlStockLevelDao blStockLevelDao;
 
 	/**
 	 * {@inheritDoc}
@@ -132,6 +141,31 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
       }
     });
   }
+  
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
+			final Date optimizedShippingEndDate)
+	{
+		final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
+				.findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
+		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
+		{
+			findSerialStockLevelForDate.forEach(stockLevel -> {
+				stockLevel.setHardAssigned(false);
+				stockLevel.setReservedStatus(false);
+				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
+				modelService.save(stockLevel);
+				modelService.save(serialProduct);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
+						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct);
+			});
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct);
+		}
+	}
+
 
 /**
  * @return the userService
