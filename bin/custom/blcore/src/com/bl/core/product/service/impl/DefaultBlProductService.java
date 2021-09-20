@@ -5,7 +5,6 @@ import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.product.daos.ProductDao;
 import de.hybris.platform.product.impl.DefaultProductService;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;

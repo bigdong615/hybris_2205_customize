@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bl.backoffice.consignment.service.BlConsignmentService;
@@ -28,13 +27,13 @@ import com.bl.core.stock.BlStockLevelDao;
 
 
 /**
+ * ##################### Bl-879 ###################
+ * This service is used for updating the stock level for cancelling the order by CS agent 
+ * 
  * @author Aditi Sharma
- *
  */
 public class DefaultBlConsignmentService implements BlConsignmentService
 {
-	private static final Logger LOGGER = Logger.getLogger(DefaultBlConsignmentService.class);
-
 	@Autowired
 	private transient ModelService modelService;
 
@@ -67,7 +66,7 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 
 				if (serialProduct instanceof BlSerialProductModel)
 				{
-					final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct;
+					final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct; // NOSONAR
 					 ConsignmentModel consignmentForSerialCode = getBlConsignmentDao()
 							.getConsignmentEntriesForSerialCode(blSerialProduct.getPk().toString(), orderEntry.getOrder().getCode());
 					
@@ -98,7 +97,7 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 	}
 
 	/**
-	 * method will be used to get consignmentEntry for cancelled order
+	 * method will get the order entry from consignment and add it to a list
 	 *
 	 * @param consignments
 	 * @param consignmentEntryList

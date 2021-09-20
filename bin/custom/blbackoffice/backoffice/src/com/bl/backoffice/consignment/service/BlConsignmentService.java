@@ -13,6 +13,7 @@ import com.bl.backoffice.widget.controller.order.BlOrderEntryToCancelDto;
 
 
 /**
+ * Interface is created to update the stock for cancelled order
  * @author Aditi Sharma
  *
  */

@@ -27,7 +27,7 @@ public interface BlProductService extends ProductService {
 
   /**
    * It checks the product is aquatech product or not
-   * @param productModel
+   * @param productModel as ProductModel
    * @return true if the product is aquatech product
    */
   boolean isAquatechProduct(final ProductModel productModel);
