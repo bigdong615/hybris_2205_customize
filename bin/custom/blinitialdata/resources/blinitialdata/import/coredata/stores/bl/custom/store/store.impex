@@ -39,6 +39,10 @@ INSERT_UPDATE BaseStore ; uid[unique=true] ; catalogs(id)                       
 #                                       ; bl                       ; pickup
 #                                        ; bl                       ; free-standard-shipping
                                         
+#BL-1052 internal transfer order process code
+UPDATE BaseStore ; uid[unique=true] ; internalTransferProcess
+                 ; $storeUid       ; internaltransfer-order-process
+
 INSERT_UPDATE BaseStore2WarehouseRel;source(uid)[unique=true];target(code)[unique=true]
 ;$storeUid;warehouse_ca
 ;$storeUid;warehouse_ma
