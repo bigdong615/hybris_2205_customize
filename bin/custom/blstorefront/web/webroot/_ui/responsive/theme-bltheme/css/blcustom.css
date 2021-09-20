@@ -109,8 +109,7 @@ padding-left:4px;}
 #globalSearch .input-group span, #productDates .input-group span{
 padding-right:10px;}
 #product-litepicker{padding-left :6px;}
-}
-
+} 
 @media (max-width: 321px){
 #productDates .input-group {
 padding-left:4px;}
@@ -324,7 +323,8 @@ margin: 0;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
-  .expertHelpIcon {margin-top: 4px !important;}
+  .expertHelpIcon {margin-top: 4px !important;}   
+  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; }  
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
