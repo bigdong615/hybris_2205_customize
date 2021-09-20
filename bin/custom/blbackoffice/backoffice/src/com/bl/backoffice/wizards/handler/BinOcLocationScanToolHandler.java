@@ -32,11 +32,10 @@ public class BinOcLocationScanToolHandler implements FlowActionHandler {
   private BlInventoryScanToolService blInventoryScanToolService;
 
   /**
-   *
+   * OOB method which will perform actions on input barcodes form backoffice wizard
    * @param customType
    * @param flowActionHandlerAdapter
    * @param map
-   * OOB method which will perform actions on input barcodes form backoffice wizard
    */
   @Override
   public void perform(final CustomType customType, final FlowActionHandlerAdapter flowActionHandlerAdapter, final Map<String, String> map) {
@@ -65,7 +64,7 @@ public class BinOcLocationScanToolHandler implements FlowActionHandler {
    */
 
   private void createResponseForScanResult(final String locationCode) {
-    BlInventoryLocationModel blInventoryLocation = getBlInventoryScanToolService().getInventoryLocationById(locationCode);
+    final BlInventoryLocationModel blInventoryLocation = getBlInventoryScanToolService().getInventoryLocationById(locationCode);
     if(Objects.nonNull(blInventoryLocation) && InventoryLocationTypeEnum.BIN.equals(blInventoryLocation.getInventoryType())){
       clearBinRelationForParentLocationAndSerial(blInventoryLocation);
     }

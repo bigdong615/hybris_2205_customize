@@ -475,13 +475,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * Remove all the related serials and Parent location From Bin
-	 *
-	 * @param blInventoryLocationModel
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel) {
-		Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao().getAllSerialsByBinLocation(blInventoryLocationModel.getCode());
+		final Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao().getAllSerialsByBinLocation(blInventoryLocationModel.getCode());
 		if (CollectionUtils.isNotEmpty(serialProductModels)) {
 				serialProductModels.stream().forEach(serial -> {
 					if(StringUtils.isNotBlank(serial.getOcLocation()) && serial.getOcLocation().equals(blInventoryLocationModel.getCode())){
@@ -489,10 +487,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 						serial.setOcLocationDetails(null);
 						modelService.save(serial);
 						modelService.refresh(serial);
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Bin Location removed from the serial with code : {}", serial.getCode());
 					}
 				});
 			}
 			if (blInventoryLocationModel.getParentInventoryLocation() != null) {
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Parent Location with code removed from bin location: {}", blInventoryLocationModel.getParentInventoryLocation().getCode());
 				blInventoryLocationModel.setParentInventoryLocation(null);
 				modelService.save(blInventoryLocationModel);
 				modelService.refresh(blInventoryLocationModel);

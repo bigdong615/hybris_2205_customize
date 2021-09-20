@@ -2,6 +2,7 @@ package com.bl.core.inventory.scan.dao.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
@@ -163,21 +164,18 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	}
 
 	/**
-	 * Get All Serials by Bin Location
-	 *
-	 * @param binLocationId
-	 * @return
+	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<BlSerialProductModel> getAllSerialsByBinLocation(String binLocationId) {
+	public Collection<BlSerialProductModel> getAllSerialsByBinLocation(final String binLocationId) {
 		final String serialsOnLocation = "SELECT {bsp.pk} FROM {BlSerialProduct! as bsp}, {CatalogVersion as cv}, {Catalog as c}, " +
 				"{ArticleApprovalStatus as aas} WHERE {cv.catalog} = {c.pk} and {c.id} = 'blProductCatalog'" +
 				"and {aas.code} = 'approved' and {bsp.ocLocation}= ?binLocationId";
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(serialsOnLocation);
-		query.addQueryParameter("binLocationId", binLocationId);
+		query.addQueryParameter(BlCoreConstants.BIN_LOCATION_ID, binLocationId);
 		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
 		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC , binLocationId);
-		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+		return CollectionUtils.isEmpty(results) ? Collections.emptyList() : results;
 	}
 
 	public FlexibleSearchService getFlexibleSearchService() {
