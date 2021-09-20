@@ -12,6 +12,7 @@ import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -97,6 +98,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlDatePickerService blDatePickerService;
   private BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator;
   private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
+  private BlOrderService blOrderService;
 
   /**
    * This method created to add all the products from existing order
@@ -618,6 +620,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     am.setMessageCode(messageCode);
     return am;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setResolvedStatusOnRepairLog(final String orderCode)
+  {
+	  getBlOrderService().setResolvedStatusOnRepairLog(orderCode);
+  }
 
   public BlCartService getBlCartService() {
     return blCartService;
@@ -782,4 +793,21 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
     this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
   }
+
+/**
+ * @return the blOrderService
+ */
+public BlOrderService getBlOrderService()
+{
+	return blOrderService;
+}
+
+
+/**
+ * @param blOrderService the blOrderService to set
+ */
+public void setBlOrderService(BlOrderService blOrderService)
+{
+	this.blOrderService = blOrderService;
+}
 }

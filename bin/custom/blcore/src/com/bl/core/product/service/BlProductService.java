@@ -3,6 +3,7 @@ package com.bl.core.product.service;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import java.util.List;
@@ -50,4 +51,21 @@ public interface BlProductService extends ProductService {
    * @return list of bundle product reference.
    */
   List<ProductReferenceModel>  getBundleProductReferenceModel(final ProductModel product);
+
+  /**
+   * It changes buffer inventory flag in staged version of product model
+   * @param productCode the product code
+   * @param isBufferInventory is buffer inventory flag
+   */
+  void changeBufferInvFlagInStagedVersion(final String productCode, final Boolean isBufferInventory);
+
+  /**
+   * It gets serialProductModel of staged version
+   *
+   * @param productCode the product code
+   * @param catalogVersionModel the catalog version model
+   * @return List<BlSerialProductModel> the blSerialProducts
+   */
+  public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
+      final CatalogVersionModel catalogVersionModel);
 }

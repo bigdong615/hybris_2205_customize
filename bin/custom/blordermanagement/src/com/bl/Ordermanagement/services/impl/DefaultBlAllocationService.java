@@ -286,7 +286,7 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
 
     return blStockLevelDao
         .findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
-            order.getActualRentalEndDate());
+            order.getActualRentalEndDate(), Boolean.FALSE);
   }
 
   /**
@@ -397,7 +397,7 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
    * @param serialProductModels
    *           the serial product models
    */
-  private void setSerialCodesToBillingCharges(final ConsignmentEntryModel consignmentEntry,
+  public void setSerialCodesToBillingCharges(final ConsignmentEntryModel consignmentEntry,
 		  final Set<BlSerialProductModel> serialProductModels)
   {
 	  final Map<String, List<BlItemsBillingChargeModel>> billingCharges = serialProductModels.stream()

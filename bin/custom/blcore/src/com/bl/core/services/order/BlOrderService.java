@@ -44,4 +44,12 @@ public interface BlOrderService {
   AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
       final OrderModel orderModel,
       final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber);
+  
+  /**
+   * Sets the resolved status on repair log for order code.
+   *
+   * @param orderCode the new resolved status on repair log
+   */
+  public void setResolvedStatusOnRepairLog(final String orderCode);
+  
 }
