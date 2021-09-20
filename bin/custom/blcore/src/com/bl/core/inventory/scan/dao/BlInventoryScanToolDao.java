@@ -82,4 +82,13 @@ public interface BlInventoryScanToolDao {
 	  * @return the all consignment out today
 	  */
 	 Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial);
+
+	/**
+	 * Get All Serials by Bin Location
+	 * @param binLocationId
+	 * @return
+	 */
+	 Collection<BlSerialProductModel> getAllSerialsByBinLocation(final String binLocationId);
+
+
 }
