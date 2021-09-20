@@ -191,7 +191,10 @@ public class BlControllerConstants
   public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
 
 	public static final String VERIFICATION_PAGE_IDENTIFIER = "verificationImages";
-  
+
+	public static final String CLEAR_BRANDS = "clearBrands";
+	public static final String BRANDS = "brands";
+
 	private BlControllerConstants()
 	{
 		//empty

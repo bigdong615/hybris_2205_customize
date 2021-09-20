@@ -1,6 +1,9 @@
 package com.bl.core.services.order.impl;
 
+import com.bl.core.enums.CustomerCollectionStatusEnum;
+import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
@@ -32,6 +35,7 @@ public class DefaultBlOrderService implements BlOrderService {
 
   private BlProductService productService;
   private ModelService modelService;
+  private BlRepairLogDao blRepairLogDao;
 
   /**
    * {@inheritDoc}
@@ -160,6 +164,34 @@ public class DefaultBlOrderService implements BlOrderService {
 					"Error while changing the status on order : {}", order.getCode());
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setResolvedStatusOnRepairLog(final String orderCode)
+	{
+		try
+		{
+			final List<BlRepairLogModel> repairLogForOrderCode = getBlRepairLogDao().getRepairLogForOrderCode(orderCode);
+			if (CollectionUtils.isNotEmpty(repairLogForOrderCode))
+			{
+				repairLogForOrderCode.forEach(repairLog -> {
+					repairLog.setCustomerCollectionStatus(CustomerCollectionStatusEnum.RESOLVED);
+					getModelService().save(repairLog);
+					getModelService().refresh(repairLog);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							"Marked Customer Collection Status to RESOLVED on Repair log with PK : {} for Order with code : {}",
+							repairLog.getPk(), orderCode);
+				});
+			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error occured while setting Customer Collection Status to Resolved on Repair Log for order : {}", orderCode);
+		}
+	}
 
 
   public BlProductService getProductService() {
@@ -184,5 +216,21 @@ public ModelService getModelService()
 public void setModelService(ModelService modelService)
 {
 	this.modelService = modelService;
+}
+
+/**
+ * @return the blRepairLogDao
+ */
+public BlRepairLogDao getBlRepairLogDao()
+{
+	return blRepairLogDao;
+}
+
+/**
+ * @param blRepairLogDao the blRepairLogDao to set
+ */
+public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
+{
+	this.blRepairLogDao = blRepairLogDao;
 }
 }

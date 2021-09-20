@@ -38,6 +38,7 @@
 								<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 									<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 									<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
+									<input type="hidden" name="clearBrands" value="${clearBrands}"/>
 									<c:if test="${pageType == 'PRODUCTSEARCH'}">
                                                  <input type="hidden" name="blPageType" value="${blPageType}"/>
                   					</c:if>
@@ -78,6 +79,7 @@
 							<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 								<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 								<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
+								<input type="hidden" name="clearBrands" value="${clearBrands}"/>
 								<c:if test="${pageType == 'PRODUCTSEARCH'}">
                                <input type="hidden" name="blPageType" value="${blPageType}"/>
                                </c:if>

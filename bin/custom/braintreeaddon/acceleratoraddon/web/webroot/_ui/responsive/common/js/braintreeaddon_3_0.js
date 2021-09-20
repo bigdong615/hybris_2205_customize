@@ -250,10 +250,11 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 	}
 });
 
-
-jQuery(document).ready(function () {
-	initializeBTclientSDK();
-});
+if ((typeof addPaymentMethodsPage != 'undefined')) {
+  jQuery(document).ready(function () {
+	  initializeBTclientSDK();
+  });
+}
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
