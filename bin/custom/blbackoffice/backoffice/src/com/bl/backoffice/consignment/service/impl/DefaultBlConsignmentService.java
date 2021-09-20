@@ -92,7 +92,7 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 		{
 			consignment.getConsignmentEntries()
 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts()
-							.forEach(serialProduct -> blProductService.updateStockForCancelledProduct(serialProduct,
+							.forEach(serialProduct -> getBlProductService().updateStockForCancelledProduct(serialProduct,
 									consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())));
 		}
 	}
