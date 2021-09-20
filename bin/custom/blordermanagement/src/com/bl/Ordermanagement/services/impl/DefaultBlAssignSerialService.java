@@ -11,7 +11,6 @@ import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
