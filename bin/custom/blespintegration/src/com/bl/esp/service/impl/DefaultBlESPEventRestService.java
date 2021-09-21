@@ -66,6 +66,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService impleme
             final HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(accessToken);
+            BlLogger.logMessage(LOG , Level.DEBUG ,  "",  "accessToken --->" + accessToken );
             final HttpEntity<OrderConfirmationRequest> orderConfirmationEventRequest = new HttpEntity<>(
                     orderConfirmationRequest, headers);
 

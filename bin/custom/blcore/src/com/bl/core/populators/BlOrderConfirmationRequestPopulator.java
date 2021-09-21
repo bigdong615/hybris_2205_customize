@@ -4,19 +4,24 @@
 package com.bl.core.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
+import com.bl.core.enums.GearGaurdEnum;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.OrderData;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.util.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,10 +31,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 /**
@@ -53,55 +60,64 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
         Assert.notNull(order, "Parameter emailId cannot be null.");
         Assert.notNull(orderConfirmationRequest, "Parameter contactRequest cannot be null.");
 
-        orderConfirmationRequest.setContactKey("test@gmail.com");
-        orderConfirmationRequest.setEventDefinitionKey(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_DEFINITION_KEY));
+        final UserModel userModel = order.getUser();
+        if(Objects.nonNull(userModel)) {
+            orderConfirmationRequest.setContactKey(getRequestValue(userModel.getUid()));
+        }
+            orderConfirmationRequest.setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
+                getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_DEFINITION_KEY)));
         populateData(order, orderConfirmationRequest);
 
     }
 
     private void populateData(final OrderModel orderModel, final OrderConfirmationRequest orderConfirmationRequest) {
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-        OrderData data = new OrderData();
-        data.setOrderid(orderModel.getCode());
-        data.setOldorderid("1153066");
-        data.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE));
-        data.setSubscriberid("718628824577");
-        if (Objects.nonNull(orderModel.getUser())) {
-            data.setEmailaddress(orderModel.getUser().getUid());
-            data.setCustomername(orderModel.getUser().getName());
+        final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+       final OrderData data = new OrderData();
+        data.setOrderid(getRequestValue(orderModel.getCode()));
+        data.setOldorderid(getRequestValue(orderModel.getCode()));
+        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE)));
+       final UserModel userModel = orderModel.getUser();
+        if (Objects.nonNull(userModel)) {
+            data.setSubscriberid(getRequestValue(userModel.getUid()));
+            data.setEmailaddress(getRequestValue(userModel.getUid()));
+            data.setCustomername(getRequestValue(userModel.getName()));
         }
-        data.setType("Rental");
-        data.setReplacement("true");
-        if (Objects.nonNull(orderModel.getStatus())) {
-            data.setStatus(orderModel.getStatus().getCode());
+        data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
+        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()); // is order is replacement
+        data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
+        data.setDateplaced(formatter.format(orderModel.getDate()));
+        if(Objects.nonNull(orderModel.getDeliveryMode())) {
+          final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) orderModel
+              .getDeliveryMode());
+          data.setShippingmethodtype(getRequestValue(delivery.getShippingGroup().getName()));
+          data.setShippingmethod(getRequestValue(delivery.getCarrier().getCode())); // Needs to update this value , throwing max limit exception
+          data.setShippingmethodtext(getRequestValue(delivery.getName()));
         }
-        Date date = orderModel.getDate();
-        data.setDateplaced(formatter.format(date));
-        data.setShippingmethodtype("Recieved");
-        if (Objects.nonNull(orderModel.getDeliveryMode())) {
-            data.setShippingmethod(orderModel.getDeliveryMode().getCode());
-        }
-        data.setShippingmethodtext("test");
-        data.setTrackinginfo("test");
-        data.setItemcost(orderModel.getTotalPrice());
-        data.setDamagewaivercost(orderModel.getTotalDamageWaiverCost());
-        data.setSubtotal(orderModel.getSubtotal());
-        data.getShippingamount(orderModel.getDeliveryCost());
-        data.setTaxamount(orderModel.getTotalTax());
-        data.setDiscountamount(orderModel.getTotalDiscounts());
-        data.setTotalcost(orderModel.getTotalPrice());
-        data.setDiscounttext("test");
-        data.setExpectedshippingdate("test");
-        data.setArrivaldate("test");
-        data.setReturndate("test");
-        data.setActualreturndate("test");
-        data.setRentalduration(2);
+        data.setTrackinginfo(StringUtils.EMPTY);
+        data.setItemcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+        data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
+        data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
+        data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
+        data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
+        data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
+        data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+        data.setDiscounttext(StringUtils.EMPTY);
+        data.setExpectedshippingdate(formatter.format(orderModel.getActualRentalStartDate()));
+        data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
+        data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
+        data.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+
+        final long defaultAddedTimeForExtendRental = BlDateTimeUtils
+            .getDaysBetweenDates(orderModel.getRentalStartDate(), orderModel.getRentalEndDate());
+
+
+        data.setRentalduration(Objects.nonNull(defaultAddedTimeForExtendRental) ? (int) defaultAddedTimeForExtendRental : 0);
         data.setVerificationlevel(1);
-        if (Objects.nonNull(orderModel.getPaymentMode())) {
-            data.setPaymenttype(orderModel.getPaymentMode().getCode());
+        if (Objects.nonNull(orderModel.getPaymentInfo())) {
+            BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+            data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
         }
-        data.setPaymenttext("test");
+        data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
         populateXMLData(orderModel, data);
         orderConfirmationRequest.setData(data);
@@ -123,23 +139,23 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
             try {
                 Document shippingInfoInXMLDocument = createNewXMLDocument();
                 Element root = createRootElementForDocument(shippingInfoInXMLDocument, BlCoreConstants.SHIPPING_ROOT_ELEMENT);
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_FIRST_NAME, shippingAddress.getFirstname());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_LAST_NAME, shippingAddress.getLastname());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ORGANIZATION, shippingAddress.getCompany());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ADDRESS_1, shippingAddress.getLine1());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ADDRESS_2, shippingAddress.getLine2());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_CITY, shippingAddress.getTown());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_STATE, "AK");
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, shippingAddress.getPostalcode());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, shippingAddress.getCellphone());
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, shippingAddress.getEmail());
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_FIRST_NAME, getRequestValue(shippingAddress.getFirstname()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_LAST_NAME, getRequestValue(shippingAddress.getLastname()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ORGANIZATION, getRequestValue(shippingAddress.getCompany()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ADDRESS_1, getRequestValue(shippingAddress.getLine1()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ADDRESS_2, getRequestValue(shippingAddress.getLine2()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_CITY, getRequestValue(shippingAddress.getTown()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_STATE,
+                    Objects.nonNull(shippingAddress.getRegion()) ? shippingAddress.getRegion().getName() : StringUtils.EMPTY);
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, "Mon-Fri: 8:00 AM - 6:00 PM Sat: 10:00 AM - 5:00 PM Sun: Closed");
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, "In the Safeway Shopping Center");
 
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer transformer;
                 transformer = tf.newTransformer();
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 StringWriter writer = new StringWriter();
 
                 //transform document to string
@@ -160,24 +176,34 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
             try {
                 Document billingInfoInXMLDocument = createNewXMLDocument();
                 Element root = createRootElementForDocument(billingInfoInXMLDocument, BlCoreConstants.BILLING_ROOT_ELEMENT);
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_FIRST_NAME, billingAddress.getFirstname());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_LAST_NAME, billingAddress.getLastname());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ORGANIZATION, billingAddress.getCompany());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ADDRESS_1, billingAddress.getLine1());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ADDRESS_2, billingAddress.getLine2());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_CITY, billingAddress.getTown());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_STATE, "AK");
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ZIP_CODE, billingAddress.getPostalcode());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_PHONE, billingAddress.getCellphone());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_EMAIL, billingAddress.getEmail());
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES, "Test");
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_USED, "test");
-                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_BALANCE, "test");
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_FIRST_NAME,
+                    getRequestValue(billingAddress.getFirstname()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_LAST_NAME,
+                    getRequestValue(billingAddress.getLastname()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ORGANIZATION,
+                    getRequestValue(billingAddress.getCompany()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ADDRESS_1,
+                    getRequestValue(billingAddress.getLine1()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ADDRESS_2,
+                    getRequestValue(billingAddress.getLine2()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_CITY,
+                    getRequestValue(billingAddress.getTown()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_STATE,
+                    Objects.nonNull(billingAddress.getRegion()) ? billingAddress.getRegion().getName() : StringUtils.EMPTY);
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ZIP_CODE,
+                    getRequestValue(billingAddress.getPostalcode()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_PHONE,
+                    getRequestValue(billingAddress.getCellphone()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_EMAIL,
+                    getRequestValue(billingAddress.getEmail()));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES,getOrderNotesFromOrderModel(orderModel));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_USED,
+                    String.valueOf(getDoubleValueForRequest(orderModel.getGiftCardAmount())));
+                createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_BALANCE, getGiftCardBalance(orderModel));
 
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer transformer;
                 transformer = tf.newTransformer();
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 StringWriter writer = new StringWriter();
 
                 //transform document to string
@@ -202,16 +228,20 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
                 for (AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
                     Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ORDER_ITEM_ROOT_ELEMENT);
                     if (Objects.nonNull(entryModel.getProduct())) {
-                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE, entryModel.getProduct().getCode());
-                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE, entryModel.getProduct().getName());
+                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                            getRequestValue(entryModel.getProduct().getCode()));
+                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                            getRequestValue(entryModel.getProduct().getName()));
                     }
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO, "Test");
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO, StringUtils.EMPTY);
                     if (Objects.nonNull(entryModel.getBasePrice())) {
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
                     }
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE, "Test");
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, "Test");
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE, String.valueOf(entryModel.getTotalPrice()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
+                        String.valueOf(getDamageWaiverPriceFromEntry(entryModel)));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
+                        String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
                 }
             }
 
@@ -230,6 +260,25 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
         } catch (final Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    /**
+     * To get the request value based
+     * @param value value get from order
+     * @return value to set on request
+     */
+    private String getRequestValue(final String value){
+        return StringUtils.isNotBlank(value) ? value : StringUtils.EMPTY;
+    }
+
+
+    /**
+     * To get the double value for request
+     * @param value value get from order
+     * @return value to be set on request
+     */
+    private Double getDoubleValueForRequest(final Double value) {
+        return value.compareTo(0.0) > 0 ? value : 0.0;
     }
 
     private Document createNewXMLDocument() throws ParserConfigurationException {
@@ -256,6 +305,87 @@ public class BlOrderConfirmationRequestPopulator implements Populator<OrderModel
         rootElement.appendChild(childElement);
         return childElement;
     }
+
+    /**
+     * This method is to get the order notes from order model
+     * @param orderModel ordermodel
+     * @return values to set on request
+     */
+    private String getOrderNotesFromOrderModel(final OrderModel orderModel) {
+     final StringBuilder orderNotes = new StringBuilder();
+
+        if(CollectionUtils.isNotEmpty(orderModel.getOrderNotes())){
+         orderModel.getOrderNotes().forEach(notesModel -> {
+             if(BlCoreConstants.CUSTOMER_CHECKOUT_ORDER_NOTES.equalsIgnoreCase(notesModel.getType().getCode())) {
+                 orderNotes.append(StringUtils.EMPTY + notesModel.getNote());
+             }
+         });
+
+        }
+        return orderNotes.toString();
+    }
+
+
+    /**
+     * This method is to get the gift card details from order model
+     * @param orderModel ordermodel
+     * @return values to set on request
+     */
+    private String getGiftCardBalance(final OrderModel orderModel) {
+       final AtomicReference<String> giftCardBalance = new AtomicReference<>(String.valueOf(0.0));
+        if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
+            orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
+                if(StringUtils.equals(orderModel.getCode() , giftCardMovementModel.getOrder().getCode())) {
+                    giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
+                }
+            }));
+        }
+        return giftCardBalance.get();
+    }
+
+    /**
+     * This method is to get the damage waiver price  from order  entry model
+     * @param abstractOrderEntryModel AbstractOrderEntryModel
+     * @return values to set on request
+     */
+    private Double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel abstractOrderEntryModel) {
+        final AtomicDouble damageWaiverPrice = new AtomicDouble(0.0);
+
+        if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
+            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+        }
+        else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
+            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+        }
+        else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
+            damageWaiverPrice.set(0.0);
+        }
+
+        return damageWaiverPrice.get();
+    }
+
+
+    /**
+     * This method is to get the damage waiver text  from order  entry model
+     * @param abstractOrderEntryModel AbstractOrderEntryModel
+     * @return values to set on request
+     */
+    private String getDamageWaiverName(final AbstractOrderEntryModel abstractOrderEntryModel) {
+        final AtomicReference<String> damageWaiverText = new AtomicReference<>(StringUtils.EMPTY);
+
+        if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
+            damageWaiverText.set(GearGaurdEnum.GEAR_GAURD.getCode());
+        }
+        else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
+            damageWaiverText.set(GearGaurdEnum.GEAR_GAURD_PRO.getCode());
+        }
+        else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
+            damageWaiverText.set(GearGaurdEnum.NONE.getCode());
+        }
+
+        return damageWaiverText.get();
+    }
+
 
     public ConfigurationService getConfigurationService() {
         return configurationService;

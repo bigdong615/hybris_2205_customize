@@ -3,6 +3,7 @@
  */
 package com.bl.core.event;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
@@ -29,6 +30,7 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 	private BusinessProcessService businessProcessService;
 	private BaseStoreService baseStoreService;
 	private ModelService modelService;
+	private DefaultBlESPEventService defaultBlESPEventService;
 
 	/**
 	 * @return the businessProcessService
@@ -90,6 +92,7 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 		final OrderModel order = event.getOrder();
 		ServicesUtil.validateParameterNotNullStandardMessage("event.order", order);
 
+		getDefaultBlESPEventService().sendOrderConfirmation(order);
 		// Try the store set on the Order first, then fallback to the session
 		BaseStoreModel store = order.getStore();
 		if (store == null)
@@ -135,4 +138,15 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 		ServicesUtil.validateParameterNotNullStandardMessage("event.order.site", site);
 		return site.getChannel();
 	}
+
+
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
 }

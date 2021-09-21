@@ -312,7 +312,7 @@ public class OrderData {
 	}
 
 	@JsonProperty("shipping amount")
-	public Double getShippingamount(Double deliveryCost) {
+	public Double getShippingamount() {
 		return shippingamount;
 	}
 
