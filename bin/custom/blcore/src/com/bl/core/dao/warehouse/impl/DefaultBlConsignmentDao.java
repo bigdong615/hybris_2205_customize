@@ -159,7 +159,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ConsignmentModel getConsignmentEntriesForSerialCode(final String serialCode, final String orderCode)
+	public ConsignmentModel getConsignmentForSerialCode(final String serialCode, final String orderCode)
 	{
 		
 		Validate.notNull(serialCode, "Serial Product must not be null", null);

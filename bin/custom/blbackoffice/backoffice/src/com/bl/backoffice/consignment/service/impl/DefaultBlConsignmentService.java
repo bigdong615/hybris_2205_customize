@@ -68,7 +68,7 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 				{
 					final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct; // NOSONAR
 					 ConsignmentModel consignmentForSerialCode = getBlConsignmentDao()
-							.getConsignmentEntriesForSerialCode(blSerialProduct.getPk().toString(), orderEntry.getOrder().getCode());
+							.getConsignmentForSerialCode(blSerialProduct.getPk().toString(), orderEntry.getOrder().getCode());
 					
 					  getBlProductService().updateStockForCancelledProduct(serialProduct,
 							  consignmentForSerialCode.getOptimizedShippingStartDate(),
