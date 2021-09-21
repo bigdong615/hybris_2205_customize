@@ -93,4 +93,9 @@
 	<alias alias="defaultBlConsignmentService" name="defaultBlConsignmentService"/>
     <bean id="defaultBlConsignmentService" class="com.bl.backoffice.consignment.service.impl.DefaultBlConsignmentService"/>
 
+	<!-- BL-1010 Bin OcLocation Scan Tool Handler -->
+	<bean id="defaultBinOcLocationScanToolHandler" class="com.bl.backoffice.wizards.handler.BinOcLocationScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
+	</bean>
 </beans>
