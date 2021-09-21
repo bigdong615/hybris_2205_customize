@@ -2,6 +2,8 @@ package com.bl.core.product.service;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
@@ -38,6 +40,20 @@ public interface BlProductService extends ProductService {
    * @param blSerialProduct the new last user changed condition rating
    */
   void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct);
+
+  /**
+   *  This method use to get all bundle entry from given parent bundle entry.
+   * @param parentBundleEntry parent bundle entry.
+   * @return list of bundle product reference.
+   */
+  public List<ProductReferenceModel> getBundleProductReferenceModelFromEntry(final AbstractOrderEntryModel parentBundleEntry);
+
+  /**
+   *  This method use to get all bundle entry from given product.
+   * @param product main bundle product.
+   * @return list of bundle product reference.
+   */
+  List<ProductReferenceModel>  getBundleProductReferenceModel(final ProductModel product);
 
   /**
    * It changes buffer inventory flag in staged version of product model

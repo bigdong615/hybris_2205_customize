@@ -1,5 +1,8 @@
 package com.bl.core.product.service.impl;
 
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -9,14 +12,12 @@ import de.hybris.platform.product.impl.DefaultProductService;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.user.UserService;
-
+import java.util.stream.Collectors;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -103,6 +104,11 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
   /**
    * {@inheritDoc}
    */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModelFromEntry(final AbstractOrderEntryModel parentBundleEntry) {
+    return getBundleProductReferenceModel(parentBundleEntry.getProduct());
+  }
+
   public void changeBufferInvFlagInStagedVersion(final String productCode, final Boolean isBufferInventory) {
     Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
         .CATALOG_VALUE, BlCoreConstants.STAGED);
@@ -120,6 +126,13 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
   /**
    * {@inheritDoc}
    */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModel(final ProductModel product){
+    return product.getProductReferences().stream()
+        .filter(productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
+            .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+  }
+
   public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
       final CatalogVersionModel catalogVersionModel) {
     return getSessionService().executeInLocalView(new SessionExecutionBody()

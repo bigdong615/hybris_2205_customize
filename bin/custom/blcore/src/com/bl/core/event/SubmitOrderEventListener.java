@@ -3,6 +3,7 @@
  */
 package com.bl.core.event;
 
+import com.bl.core.services.order.BlOrderService;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
@@ -14,6 +15,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import javax.annotation.Resource;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,6 +34,8 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 	private BaseStoreService baseStoreService;
 	private ModelService modelService;
 
+	@Resource(name = "blOrderService")
+	BlOrderService blOrderService;
 	/**
 	 * @return the businessProcessService
 	 */
@@ -150,6 +154,11 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 	 */
 	private void createBusinessProcess(final OrderModel order,
 			final String fulfilmentProcessDefinitionName) {
+
+		// Creating entry for bundle product.
+		if (order.getEntries().stream().anyMatch(entry -> entry.isBundleMainEntry())) {
+			blOrderService.createAndSetBundleOrderEntriesInOrder(order);
+		}
 
 		final String processCode =
 				fulfilmentProcessDefinitionName + "-" + order.getCode() + "-" + System.currentTimeMillis();
