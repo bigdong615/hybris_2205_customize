@@ -515,10 +515,6 @@
                             </editorArea:editor-parameter>
                         </editorArea:attribute>
                     </editorArea:panel>
-                    <editorArea:panel name="warehousingbackoffice.shippingDate.panel">
-                        <editorArea:attribute qualifier="shippingDate"
-                                              label="warehousingbackoffice.consignment.expectedshippingdate" readonly="true"/>
-                    </editorArea:panel>
                     <editorArea:attribute qualifier="carrierDetails" label="warehousingbackoffice.consignment.carrierdetails">
                         <editorArea:editor-parameter>
                             <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
