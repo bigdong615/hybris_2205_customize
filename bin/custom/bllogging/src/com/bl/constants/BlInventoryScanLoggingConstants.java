@@ -253,6 +253,8 @@ public class BlInventoryScanLoggingConstants {
   public static final String CONTENT_CLEARED_FROM_BIN = "Content Cleared for the Bin with Id: {}";
   public static final String NO_RELATED_ITEMS_FOUND = "No related serial or parent Location found to clear";
   public static final String NO_RELATED_ITEMS_FOUND_FAILURE = "noRelatedItemsFoundFailure";
+  public static final String TYPE_NOT_SUPPORTED = "Type Not Supported";
+  public static final String TYPE_NOT_SUPPORTED_ERROR_FAILURE = "typeNotSupportedErrorFailure";
 
 
   private BlInventoryScanLoggingConstants() { }
