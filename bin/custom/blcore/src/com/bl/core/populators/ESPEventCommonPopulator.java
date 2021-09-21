@@ -5,31 +5,12 @@ package com.bl.core.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.ESPEventCommonRequest;
-import com.bl.esp.dto.OrderData;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 
 /**
