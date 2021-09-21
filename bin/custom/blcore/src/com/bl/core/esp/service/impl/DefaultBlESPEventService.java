@@ -1,17 +1,17 @@
 package com.bl.core.esp.service.impl;
 
-import com.bl.core.enums.EspEventTypeEnum;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationResponseWrapper;
-import com.bl.esp.service.BlESPEventRestService;
 import com.bl.core.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
+import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.enums.ESPEventStatus;
+import com.bl.esp.enums.EspEventTypeEnum;
+import com.bl.esp.service.BlESPEventRestService;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
 
 public class DefaultBlESPEventService implements BlESPEventService {
 
@@ -22,24 +22,27 @@ public class DefaultBlESPEventService implements BlESPEventService {
     @Override
     public void sendOrderConfirmation(OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
-            OrderConfirmationRequest orderConfirmationRequest = new OrderConfirmationRequest();
+            final OrderConfirmationRequest orderConfirmationRequest = new OrderConfirmationRequest();
             getBlOrderConfirmationRequestPopulator().populate(orderModel, orderConfirmationRequest);
             // Call send order confirmation ESP Event API
-            OrderConfirmationResponseWrapper orderConfirmationResponseWrapper = getBlESPEventRestService().sendOrderConfirmation(orderConfirmationRequest);
+            final ESPEventResponseWrapper ESPEventResponseWrapper = getBlESPEventRestService().sendOrderConfirmation(orderConfirmationRequest);
             // Save send order confirmation ESP Event Detail
-            persistESPEventDetail(orderConfirmationResponseWrapper, EspEventTypeEnum.ORDER_CONFIRMATION_EVENT);
+            persistESPEventDetail(ESPEventResponseWrapper, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(),
+                ESPEventStatus.SUCCESS);
         }
     }
 
-    private void persistESPEventDetail(OrderConfirmationResponseWrapper orderConfirmationResponseWrapper, EspEventTypeEnum eventTypeEnum) {
-        if (Objects.nonNull(orderConfirmationResponseWrapper)
-                && StringUtils.isNotBlank(orderConfirmationResponseWrapper.getRequestString())
-                && StringUtils.isNotBlank(orderConfirmationResponseWrapper.getResponseString())) {
+    private void persistESPEventDetail(final ESPEventResponseWrapper ESPEventResponseWrapper, final EspEventTypeEnum eventTypeEnum, final String orderCode, final ESPEventStatus status) {
+        if (Objects.nonNull(ESPEventResponseWrapper)
+                && StringUtils.isNotBlank(ESPEventResponseWrapper.getRequestString())
+                && StringUtils.isNotBlank(ESPEventResponseWrapper.getResponseString())) {
             BlStoredEspEventModel blStoredEspEventModel = new BlStoredEspEventModel();
-            blStoredEspEventModel.setEventInstanceId(orderConfirmationResponseWrapper.getEventInstanceId());
-            blStoredEspEventModel.setRequestString(orderConfirmationResponseWrapper.getRequestString());
-            blStoredEspEventModel.setResponseString(orderConfirmationResponseWrapper.getResponseString());
+            blStoredEspEventModel.setEventInstanceId(ESPEventResponseWrapper.getEventInstanceId());
+            blStoredEspEventModel.setRequestString(ESPEventResponseWrapper.getRequestString());
+            blStoredEspEventModel.setResponseString(ESPEventResponseWrapper.getResponseString());
             blStoredEspEventModel.setEventType(eventTypeEnum);
+            blStoredEspEventModel.setStatus(status);
+            blStoredEspEventModel.setOrderCode(orderCode);
             getModelService().save(blStoredEspEventModel);
         }
     }

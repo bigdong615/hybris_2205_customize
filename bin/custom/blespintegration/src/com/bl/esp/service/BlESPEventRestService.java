@@ -1,7 +1,7 @@
 package com.bl.esp.service;
 
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 
 public interface BlESPEventRestService {
     /**
@@ -10,5 +10,5 @@ public interface BlESPEventRestService {
      * @param orderConfirmationRequest
      * @return
      */
-    OrderConfirmationResponseWrapper sendOrderConfirmation(OrderConfirmationRequest orderConfirmationRequest);
+    ESPEventResponseWrapper sendOrderConfirmation(OrderConfirmationRequest orderConfirmationRequest);
 }

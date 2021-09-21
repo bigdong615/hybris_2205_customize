@@ -7,7 +7,7 @@ package com.bl.esp.dto.orderconfirmation;
  *
  *
  */
-public class OrderConfirmationResponseWrapper {
+public class ESPEventResponseWrapper {
   private String eventInstanceId;
   private String requestString;
   private String responseString;
