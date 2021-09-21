@@ -1472,7 +1472,7 @@
 	</bean>
 
 	<bean id="espEventCommonPopulator"
-		class="com.bl.core.populators.ESPEventCommonPopulator">
+		class="com.bl.core.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
