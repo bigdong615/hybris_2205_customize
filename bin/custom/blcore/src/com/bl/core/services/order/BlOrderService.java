@@ -56,5 +56,5 @@ public interface BlOrderService {
    * This method is used to create a separate entry for every product present in the bundle.
    * @param orderModel order
    */
-  public void createEntryForBundleProduct(final OrderModel orderModel);
+  public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel);
 }

@@ -211,7 +211,9 @@ public class DefaultBlOrderService implements BlOrderService {
 	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
 			final OrderModel orderModel,
 			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
-		BlLogger.logFormattedMessage(LOG,Level.DEBUG,"Creating entry for {} ",existingEntry.getProduct().getCode());
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
+				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
 		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
 		final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
 		newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
@@ -225,12 +227,12 @@ public class DefaultBlOrderService implements BlOrderService {
 		getModelService().save(newEntryModel);
 		return newEntryModel;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void createEntryForBundleProduct(final OrderModel orderModel) {
+	public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel) {
 		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
 		orderEntryModelList.addAll(
 				orderModel.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleEntry())

@@ -59,6 +59,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 	@Resource(name="orderRequiresCalculationStrategy")
 	private OrderRequiresCalculationStrategy orderRequiresCalculationStrategy;
+
 	@Resource(name="commonI18NService")
 	private CommonI18NService commonI18NService;
 	/**
@@ -679,6 +680,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 	/**
 	 * This method is overridden to ignore calculation for created bundle entry.
+	 *  @param order
+	 *   @param recalculate
 	 */
 	@Override
 	public Map<TaxValue, Map<Set<TaxValue>, Double>> calculateSubtotal(final AbstractOrderModel order,

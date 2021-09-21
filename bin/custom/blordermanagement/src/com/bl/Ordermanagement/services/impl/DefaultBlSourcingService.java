@@ -69,7 +69,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
     result.setComplete(Boolean.FALSE);
     context.setResult(result);
 
-      List<AbstractOrderEntryModel> entryListForAllocation=   order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
+     final List<AbstractOrderEntryModel> entryListForAllocation=   order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
           Collectors.toList());
     //context.setOrderEntries(order.getEntries()); //NOSONAR
       context.setOrderEntries(entryListForAllocation);

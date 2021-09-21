@@ -157,7 +157,7 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 
 		// Creating entry for bundle product.
 		if (order.getEntries().stream().anyMatch(entry -> entry.isBundleMainEntry())) {
-			blOrderService.createEntryForBundleProduct(order);
+			blOrderService.createAndSetBundleOrderEntriesInOrder(order);
 		}
 
 		final String processCode =
