@@ -1,9 +1,12 @@
 package com.bl.core.product.service;
 
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
+
+import java.util.Date;
 import java.util.List;
 
 
@@ -24,7 +27,7 @@ public interface BlProductService extends ProductService {
 
   /**
    * It checks the product is aquatech product or not
-   * @param productModel
+   * @param productModel as ProductModel
    * @return true if the product is aquatech product
    */
   boolean isAquatechProduct(final ProductModel productModel);
@@ -52,4 +55,17 @@ public interface BlProductService extends ProductService {
    */
   public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
       final CatalogVersionModel catalogVersionModel);
+  
+	/**
+	 * method will be used to update stock for cancelled product
+	 *
+	 * @param serialProduct
+	 *           as Serial Product
+	 * @param optimizedShippingStartDate
+	 *           as Optimized Shipping Start Date
+	 * @param optimizedShippingEndDate
+	 *           as Optimized Shipping End Date
+	 */
+	public void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
+			final Date optimizedShippingEndDate);
 }
