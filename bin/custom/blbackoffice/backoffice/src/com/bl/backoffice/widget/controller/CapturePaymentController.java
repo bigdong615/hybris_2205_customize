@@ -80,7 +80,8 @@ public class CapturePaymentController extends DefaultWidgetController {
     @ViewEvent(componentID = CAPTURE_BUTTON, eventName = Events.ON_CLICK)
     public void capturePayment() {
         BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
-        if (getConsignmentModel().isOrderTransferConsignment()) {
+        if (getConsignmentModel().isOrderTransferConsignment() || getConsignmentModel()
+            .isInternalTransferConsignment()) {
             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
             return;
         }
