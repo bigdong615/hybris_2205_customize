@@ -3,52 +3,49 @@
  */
 package com.bl.core.populators;
 
-import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.ESPEventCommonRequest;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.util.Objects;
-import org.springframework.util.Assert;
 
 
 /**
- * BlOrderConfirmationRequestPopulator
- *
- *
+ * Abstract class for ESPEvent requests. Conversion methods should be implemented in inheriting
+ * class.
  */
-public class ESPEventCommonPopulator implements Populator<OrderModel, ESPEventCommonRequest> {
+public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel, TARGET extends ESPEventCommonRequest> implements
+    Populator<SOURCE, TARGET> {
 
     private ConfigurationService configurationService;
 
     /**
-     * Populate the ESPEventCommonRequest instance with values from the OrderModel.
+     * Populate common attributes with values from the OrderModel.
      *
-     * @param order        the source object
+     * @param orderModel            the source object
      * @param espEventCommonRequest the target to fill
-     * @throws ConversionException if an error occurs
      */
-    @Override
-    public void populate(final OrderModel order, final ESPEventCommonRequest espEventCommonRequest)
-        throws ConversionException {
-        Assert.notNull(order, "Parameter order cannot be null.");
-        Assert.notNull(espEventCommonRequest, "Parameter espEventCommonRequest cannot be null.");
-
-        populateCommonData(order, espEventCommonRequest);
-    }
-
-    private void populateCommonData(final OrderModel orderModel,
+    protected void populateCommonData(final AbstractOrderModel orderModel,
         final ESPEventCommonRequest espEventCommonRequest) {
 
         espEventCommonRequest.setOrderid(orderModel.getCode());
-        espEventCommonRequest.setTemplate(getConfigurationService().getConfiguration()
-            .getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE));
-        espEventCommonRequest.setSubscriberid("718628824577");
         if (Objects.nonNull(orderModel.getUser())) {
             espEventCommonRequest.setEmailaddress(orderModel.getUser().getUid());
+            espEventCommonRequest.setSubscriberid(orderModel.getUser().getUid());
         }
         espEventCommonRequest.setVerificationlevel(1);
+    }
+
+    /**
+     * Populate rental duration with values from the OrderModel.
+     *
+     * @param orderModel the source object
+     */
+    protected long getRentalDuration(final AbstractOrderModel orderModel) {
+
+        return BlDateTimeUtils
+            .getDaysBetweenDates(orderModel.getRentalStartDate(), orderModel.getRentalEndDate());
     }
 
     public ConfigurationService getConfigurationService() {
