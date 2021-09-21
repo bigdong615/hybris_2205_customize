@@ -78,7 +78,8 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 
 			order.setStatus(OrderStatus.READY);
 
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Internal Transfer Order was successfully sourced");
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Internal Transfer Order with code : {} was successfully sourced", order.getCode());
 		}
 
 		getModelService().save(order);
