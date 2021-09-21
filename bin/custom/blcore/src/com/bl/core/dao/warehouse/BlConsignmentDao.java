@@ -38,4 +38,13 @@ public interface BlConsignmentDao {
    */
   List<ConsignmentEntryModel> getConsignmentEntriesForSerialCodeAndDate(final BlSerialProductModel serial, final Date fromDate);
 
+  /**
+	 * Gets the consignment entries for serial code.
+	 *
+	 * @param serial
+	 *           the serial
+	 * @return the consignment entries for serial code and date
+	 */
+	public ConsignmentModel getConsignmentForSerialCode(final String serialCode, final String orderCode);
+
 }
