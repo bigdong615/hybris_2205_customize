@@ -39,6 +39,7 @@ public interface BlOrderService {
    * @param productReferenceModel reference product from bundle
    * @param orderModel order
    * @param existingEntry main bundle etry
+   * @param entryNumber entryNumber
    * @return returning created entry.
    */
   AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
@@ -51,5 +52,9 @@ public interface BlOrderService {
    * @param orderCode the new resolved status on repair log
    */
   public void setResolvedStatusOnRepairLog(final String orderCode);
-  
+  /**
+   * This method is used to create a separate entry for every product present in the bundle.
+   * @param orderModel order
+   */
+  public void createEntryForBundleProduct(final OrderModel orderModel);
 }

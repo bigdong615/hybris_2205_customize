@@ -18,14 +18,17 @@ import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -222,7 +225,33 @@ public class DefaultBlOrderService implements BlOrderService {
 		getModelService().save(newEntryModel);
 		return newEntryModel;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void createEntryForBundleProduct(final OrderModel orderModel) {
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(
+				orderModel.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleEntry())
+						.collect(Collectors.toList()));
+		final AtomicInteger entryNumber = new AtomicInteger(orderModel.getEntries().size());
+		orderModel.getEntries().forEach(existingEntry -> {
+			if (existingEntry.isBundleMainEntry()) {
+				final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(existingEntry);
+				productReferenceModels.forEach(productReferenceModel -> {
+					final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, orderModel, existingEntry,entryNumber);
+					orderEntryModelList.add(newEntryModel);
+					entryNumber.getAndIncrement();
+				});
+			}
+		});
+		orderModel.setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(orderModel.getCalculated())){
+			orderModel.setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(orderModel);
+	}
   public BlProductService getProductService() {
     return productService;
   }

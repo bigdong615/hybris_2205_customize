@@ -2248,12 +2248,6 @@
             <description>Flag to identify if the entry is main bundle product</description>
             <defaultvalue>Boolean.FALSE</defaultvalue>
           </attribute>
-            <attribute qualifier="entryCreated" type="boolean">
-              <persistence type="property"/>
-              <modifiers read="true" write="true" search="true"/>
-              <description>Flag to identify if the new entry for bundle product was already created or not.</description>
-              <defaultvalue>Boolean.FALSE</defaultvalue>
-            </attribute>
             <attribute qualifier="splitConsignmentQuantity" type="java.lang.long">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true"/>
