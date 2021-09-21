@@ -229,6 +229,11 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     }
   }
 
+  /**
+   * It sets the order status to Ready if all the unallocated products are fulfilled
+   * through reshuffler job
+   * @param order the order
+   */
   private void setOrderStatus(final AbstractOrderModel order) {
     final boolean allQuantityFulfilled = order.getEntries().stream().allMatch(entry -> {
         setUnallocatedQtyToZero(entry);
@@ -237,13 +242,23 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     if(allQuantityFulfilled) {
       order.setStatus(OrderStatus.READY);
       getModelService().save(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",
+          order.getCode(), order.getStatus().getCode());
     }
   }
 
+  /**
+   * It sets unallocated quantity to zero if all the unallocated products are fulfilled
+   * @param entry the order entry
+   */
   private void setUnallocatedQtyToZero(final AbstractOrderEntryModel entry) {
     if(entry.getUnAllocatedQuantity() > 0 && entry.getQuantity() == entry.getSerialProducts().size()) {
       entry.setUnAllocatedQuantity(0L);
       getModelService().save(entry);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "All the products are fulfilled of this entry {} for the order {} ",
+          entry, entry.getOrder().getCode());
     }
   }
 
@@ -285,6 +300,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 				stocks.forEach(stock -> {
 				  stock.setReservedStatus(false);
 				  stock.setOrder(null);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+              stock.getSerialProductCode());
         });
 				this.getModelService().saveAll(stocks);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -614,9 +632,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           ).collect(Collectors.toSet());
       entries.forEach( consignmentEntryModel -> {
         final Set<BlSerialProductModel> serialProductModels =
-            null != result.getSerialProductMap() ? result.getSerialProductMap()
-                .get(consignmentEntryModel.getOrderEntry().getEntryNumber()) : new HashSet<>();
-        reserveStocks(serialProductModels, consignmentEntryModel);
+            null == result.getSerialProductMap() ? new HashSet<>() : result.getSerialProductMap()
+                .get(consignmentEntryModel.getOrderEntry().getEntryNumber());
+        reserveStocksForSerialProductsThroughReshuffler(serialProductModels, consignmentEntryModel);
       });
       entries.addAll(consignment.getConsignmentEntries());
       consignment.setConsignmentEntries(entries);
@@ -657,7 +675,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       getBlConsignmentEntryService().setItemsMap(entry, serialProducts);
       getBlAllocationService().setSerialCodesToBillingCharges(entry, serialProducts);
       getModelService().save(entry);
-      reserveStocks(serialProductModels, entry);
+      reserveStocksForSerialProductsThroughReshuffler(serialProductModels, entry);
     }
   }
 
@@ -666,7 +684,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    * @param serialProductModels set of serial product model
    * @param entry the consignment entry
    */
-  public void reserveStocks(final Set<BlSerialProductModel> serialProductModels,
+  public void reserveStocksForSerialProductsThroughReshuffler(final Set<BlSerialProductModel> serialProductModels,
       final ConsignmentEntryModel entry) {
     final Set<String> allocatedProductCodes = new HashSet<>();
     allocatedProductCodes
@@ -680,6 +698,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       serialStocks.forEach(stock -> {
         stock.setReservedStatus(true);
         stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+            stock.getSerialProductCode());
       });
       this.getModelService().saveAll(serialStocks);
     }
@@ -702,8 +723,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
               entry.getProduct().getCode()
                   .equals(skuProduct)).findFirst();
       final AbstractOrderEntryModel orderEntryModel = orderEntry.get();
-      final Long availableQty = isAquatechProductInEntry(orderEntryModel) ? orderEntryModel.getQuantity() :
-          getAvailabilityForProduct(skuProduct, availabilityMap);
+      final Long availableQty = getBlProductService().isAquatechProduct(orderEntryModel.getProduct()) ? orderEntryModel
+          .getQuantity() : getAvailabilityForProduct(skuProduct, availabilityMap);
       final List<BlProductModel> entries = orderEntryModel.getSerialProducts().stream()
           .filter(serialProduct ->
               serialProduct instanceof BlSerialProductModel
@@ -711,17 +732,6 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                   .getCode().equals(warehouseModel.getCode())).collect(Collectors.toList());
       return orderEntryModel.getUnAllocatedQuantity() + entries.size() <= availableQty;
     });
-  }
-
-  /**
-   * Check whether aquatech product is in given order entry.
-   *
-   * @param orderEntry
-   * @return true if aquatech product is in this entry.
-   */
-  private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
-
-    return getBlProductService().isAquatechProduct(orderEntry.getProduct());
   }
 
 	/**
