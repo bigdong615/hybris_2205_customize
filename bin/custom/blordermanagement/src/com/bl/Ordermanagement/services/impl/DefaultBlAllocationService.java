@@ -81,9 +81,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   public ConsignmentModel createConsignment(final AbstractOrderModel order, final String code,
       final SourcingResult result) {
 
-    if (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
+    if (BooleanUtils.isFalse(order.getInternalTransferOrder()) && (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
         .isEmpty(result.getSerialProductMap()) && !blOrderService
-        .isAquatechProductsPresentInOrder(order))) {
+        .isAquatechProductsPresentInOrder(order)))) {
 
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
     }
@@ -111,8 +111,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             ((BlPickUpZoneDeliveryModeModel) order.getDeliveryMode()).getInternalStoreAddress());
       }
 
-      consignment
-          .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
 
       //adding optimized shipping dates, this will be updated in optimized shipping strategy methods
       consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
@@ -122,6 +120,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         flagConsignmentAndSetShippingDateForOrderTransfers(consignment, order, result.getWarehouse());
       }
 
+      if (isInternalTransferOder(order)) {
+        consignment.setInternalTransferConsignment(order.getInternalTransferOrder());
+      }
 
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
@@ -137,7 +138,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
 
-      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
+      if (BooleanUtils.isTrue(order.getIsRentalCart()) || !isInternalTransferOder(order)) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
         if (null != result.getSerialProductMap()) {
@@ -198,6 +199,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
+
+  private boolean isInternalTransferOder(final AbstractOrderModel orderModel) {
+
+    return orderModel.getInternalTransferOrder();
   }
 
   /**
@@ -355,6 +361,10 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
           new ArrayList<>(productModels));   //setting aquatech products from result
 
       setItemsMapForAquatechProducts(entry, productModels);
+    }
+
+    if (isInternalTransferOder(orderEntry.getOrder())) {
+      getBlConsignmentEntryService().setItemsMapForInternalTransferOrders(entry, orderEntry);
     }
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();

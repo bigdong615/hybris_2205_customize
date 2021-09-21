@@ -760,7 +760,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="noRelatedItemsFoundFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="typeNotSupportedErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.bin.ocLocation.scan.tool.associated.item.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -1373,6 +1373,9 @@
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
 					<editorArea:attribute qualifier="status"/>
+					<editorArea:attribute qualifier="optimizedShippingStartDate"/>
+					<editorArea:attribute qualifier="optimizedShippingEndDate"/>
+					<editorArea:attribute qualifier="internalTransferConsignment"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
