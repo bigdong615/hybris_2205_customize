@@ -62,7 +62,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       final Object originalValue = itemModelCtx.getOriginalValue(AbstractOrderModel.CREATECONSIGNMENT);
 
       if (Objects.nonNull(originalValue) && BooleanUtils.isFalse((Boolean) originalValue)
-          && BooleanUtils.isTrue(abstractOrderModel.getInternalTransferOrder())) {
+          && BooleanUtils.isTrue(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
+          .isEmpty(abstractOrderModel.getConsignments())) {
 
         getEventPublishingSubmitOrderStrategy().submitOrder((OrderModel)abstractOrderModel);
       }

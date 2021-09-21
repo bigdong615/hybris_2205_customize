@@ -78,7 +78,7 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 
 			order.setStatus(OrderStatus.READY);
 
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order was successfully sourced");
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Internal Transfer Order was successfully sourced");
 		}
 
 		getModelService().save(order);
@@ -92,7 +92,7 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 			final Set<SourcingResult> sourcingResultSet = new HashSet<>();
 			final SourcingResult sourcingResult = new SourcingResult();
 			sourcingResult.setWarehouse(order.getInternalTransferOrderWarehouse());
-			Map<AbstractOrderEntryModel,Long> sourcingMap = new HashMap<>();
+			final Map<AbstractOrderEntryModel,Long> sourcingMap = new HashMap<>();
 
 			if (CollectionUtils.isNotEmpty(order.getEntries()))	{
 
@@ -111,7 +111,8 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 		}
 
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-				"Order can't be sourced. Order is not an internal transfer order.");
+				"Order can't be sourced. Order code : {} is not an internal transfer order.",
+				order.getCode());
 
 		return null;
 
