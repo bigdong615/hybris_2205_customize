@@ -127,46 +127,6 @@ public class DefaultBlConsignmentService implements BlConsignmentService
 	}
 
 	/**
-	 * method will used to get the consignment for serial
-	 *
-	 * @param consignments
-	 * @param serialProduct
-	 */
-	private ConsignmentModel getConisgnmentForSerial(final Set<ConsignmentModel> consignments, final BlProductModel serialProduct)
-	{
-		for (final ConsignmentModel consignment : consignments)
-		{
-			for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
-			{
-				getConsignemtForSerialCode(serialProduct, consignment, consignmentEntry);
-			}
-		}
-		return null;
-	}
-
-
-
-	/**
-	 * method will be used to return consignment for serial product
-	 *
-	 * @param serialProduct
-	 * @param consignment
-	 * @param consignmentEntry
-	 */
-	private ConsignmentModel getConsignemtForSerialCode(final BlProductModel serialProduct, final ConsignmentModel consignment,
-			final ConsignmentEntryModel consignmentEntry)
-	{
-		for (final BlProductModel item : consignmentEntry.getSerialProducts())
-		{
-			if (item.getCode().equals(serialProduct.getCode()))
-			{
-				return consignment;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * @return the blConsignmentDao
 	 */
 	public BlConsignmentDao getBlConsignmentDao()
