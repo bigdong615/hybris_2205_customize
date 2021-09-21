@@ -12,7 +12,7 @@ import javax.annotation.Generated;
 		"eventInstanceId"
 })
 @Generated("jsonschema2pojo")
-public class OrderConfirmationResponse {
+public class ESPEventResponse {
 
 	@JsonProperty("eventInstanceId")
 	private String eventInstanceId;

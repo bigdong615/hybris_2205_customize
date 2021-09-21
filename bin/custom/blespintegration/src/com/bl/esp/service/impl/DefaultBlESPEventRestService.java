@@ -1,8 +1,8 @@
 package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationResponse;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.ESPEventResponse;
+import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.service.AbstractESPRestService;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
@@ -22,7 +22,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService impleme
     private ConfigurationService configurationService;
 
     @Override
-    public OrderConfirmationResponseWrapper sendOrderConfirmation(
+    public ESPEventResponseWrapper sendOrderConfirmation(
         OrderConfirmationRequest orderConfirmationRequest) {
 
         final String accessToken;
@@ -55,7 +55,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService impleme
      * @param orderConfirmationRequest
      * @return response - OrderConfirmationResponseWrapper
      */
-    private OrderConfirmationResponseWrapper callOrderConfirmationEventAPI(final String accessToken,
+    private ESPEventResponseWrapper callOrderConfirmationEventAPI(final String accessToken,
                                                                            final OrderConfirmationRequest orderConfirmationRequest) {
 
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -78,24 +78,24 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService impleme
                     "Create Order Confirmation Event API request Object : {}", getMapper().writerWithDefaultPrettyPrinter()
                             .writeValueAsString(orderConfirmationEventRequest));
 
-            final OrderConfirmationResponse response = getRestTemplate()
+            final ESPEventResponse response = getRestTemplate()
                     .postForObject(sendOrderConfirmationUrl, orderConfirmationEventRequest,
-                            OrderConfirmationResponse.class);
+                            ESPEventResponse.class);
 
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
                     "Create Order Confirmation Event API response Object : {}",
                     getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
-            OrderConfirmationResponseWrapper orderConfirmationResponseWrapper = new OrderConfirmationResponseWrapper();
-            orderConfirmationResponseWrapper.setRequestString(getMapper().writerWithDefaultPrettyPrinter()
+            ESPEventResponseWrapper ESPEventResponseWrapper = new ESPEventResponseWrapper();
+            ESPEventResponseWrapper.setRequestString(getMapper().writerWithDefaultPrettyPrinter()
                     .writeValueAsString(orderConfirmationEventRequest));
             if (null != response) {
-                orderConfirmationResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter()
+                ESPEventResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter()
                         .writeValueAsString(response));
-                orderConfirmationResponseWrapper.setEventInstanceId(response.getEventInstanceId());
+                ESPEventResponseWrapper.setEventInstanceId(response.getEventInstanceId());
             }
 
-            return orderConfirmationResponseWrapper;
+            return ESPEventResponseWrapper;
 
         } catch (final Exception e) {
 
