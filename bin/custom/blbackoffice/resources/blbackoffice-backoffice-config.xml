@@ -760,7 +760,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="noRelatedItemsFoundFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="typeNotSupportedErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.bin.ocLocation.scan.tool.associated.item.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
