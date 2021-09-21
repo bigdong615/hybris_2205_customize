@@ -1471,6 +1471,11 @@
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
+	<bean id="espEventCommonPopulator"
+		class="com.bl.core.populators.ESPEventCommonPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
 	<bean id="blEspEventService"
 		class="com.bl.core.esp.service.impl.DefaultBlESPEventService">
 		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
