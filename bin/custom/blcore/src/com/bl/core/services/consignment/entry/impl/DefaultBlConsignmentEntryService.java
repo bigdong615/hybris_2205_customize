@@ -197,6 +197,32 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry,
+			final AbstractOrderEntryModel orderEntry) {
+
+		final Map<String, ItemStatusEnum> itemsMap =
+				null == entry.getItems() ? new HashMap<>() : entry.getItems();
+
+		itemsMap.put(orderEntry.getProduct().getCode(), ItemStatusEnum.NOT_INCLUDED);
+
+		final List<BlProductModel> products = new ArrayList<>();
+
+		for (int i = 0; i < entry.getQuantity(); i++) {
+			products.add((BlProductModel) orderEntry.getProduct());
+		}
+
+		entry.setSerialProducts(products);
+		entry.setItems(itemsMap);
+
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Product with code {} added to the products list on consignment entry with consignment code {}",
+				orderEntry.getProduct().getCode(), entry.getConsignment().getCode());
+	}
+
+	/**
 	 * Add subpart product to items map of consignment entry.
 	 *
 	 * @param consignmentEntry
