@@ -1,5 +1,6 @@
 package com.bl.esp.service;
 
+import com.bl.BlloggingStandalone;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.EspAccessTokenRequest;
 import com.bl.esp.dto.EspAccessTokenResponse;
@@ -58,7 +59,8 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
     final String espEventRestEndpointURL = getConfigurationService().getConfiguration().getString(BlespintegrationConstants.ESP_EVENT_EVENT_API);
     if (StringUtils.isBlank(espEventRestBaseURL) || StringUtils.isBlank(espEventRestEndpointURL))
     {
-      // TODO Here create a new exception and throw it from here --> BlESPIntegrationException
+      BlLogger.logMessage(LOG , Level.ERROR , "ESP Event Rest API URL And Endpoint is missing");
+      throw new BlESPIntegrationException("ESP Event Rest API URL And Endpoint is missing" , LogErrorCodeEnum.ESP_EVENT_REST_API_URL_AND_ENDPOINT_IS_MISSING.getCode());
     }
     return new StringBuilder(espEventRestBaseURL).append(espEventRestEndpointURL).toString();
   }
@@ -78,7 +80,7 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
       final EspAccessTokenRequest espAccessTokenRequestObjects = getESPAccessTokenRequest();
       if (StringUtils.isBlank(espAccessTokenRequestObjects.getAccountId()) ||  StringUtils.isBlank(espAccessTokenRequestObjects.getClientId()) || StringUtils.isBlank(espAccessTokenRequestObjects.getClientSecret()) || StringUtils.isBlank(espAccessTokenRequestObjects.getGrantType()) || StringUtils.isBlank(espAccessTokenRequestObjects.getScope())){
         BlLogger.logMessage(LOG , Level.ERROR , "Access token objects are  empty" );
-        throw new BlESPIntegrationException("Access token objects are  empty" , LogErrorCodeEnum.ESP_EVENT_ACCESS_TOKEN_OBJECT_NULL
+        throw new BlESPIntegrationException("Access token objects are  empty" , LogErrorCodeEnum.ESP_EVENT_ACCESS_TOKEN_OBJECT_IS_MISSING
             .getCode()); //
       }
       final HttpEntity<EspAccessTokenRequest> espAccessTokenRequest = new HttpEntity<>(espAccessTokenRequestObjects, headers);
@@ -88,7 +90,7 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
       if (StringUtils.isBlank(espEventBaseURL) || StringUtils.isBlank(espEventAccessTokenURL))
       {
         BlLogger.logMessage(LOG , Level.ERROR , "Event Base URL Or Access token URL  are  empty" );
-        throw new BlESPIntegrationException("Event Base URL Or Access token URL  are  empty" , LogErrorCodeEnum.ESP_EVENT_BASE_URL_OR_ACCESS_TOKEN_URL_NULL
+        throw new BlESPIntegrationException("Event Base URL Or Access token URL  are  empty" , LogErrorCodeEnum.ESP_EVENT_BASE_URL_OR_ACCESS_TOKEN_URL_IS_MISSING
             .getCode());
       }
       final String accessTokenUrl = new StringBuilder(espEventBaseURL).append(espEventAccessTokenURL).toString();
