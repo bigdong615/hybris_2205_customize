@@ -7,6 +7,7 @@
     <collectiontypes>
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
+        <collectiontype code="ICCSkuProductList" elementtype="BlInventoryCycleCountProductDetails" type="list"/>
         <collectiontype code="optionsList" elementtype="BlOptions" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
@@ -6068,7 +6069,7 @@ new Integer(0)
                 <attributes>
                     <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
                         <persistence type="property"/>
-                        <modifiers read="true" write="false" optional="false" unique="true" initial="true"/>
+                        <modifiers read="true" write="true" optional="false" unique="true" initial="true"/>
                         <description>Inventory Cycle count code</description>
                     </attribute>
                     <attribute qualifier="currentCycleCountStartDate" type="java.util.Date">
@@ -6130,7 +6131,7 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true" />
                         <description>current cycle count date</description>
                     </attribute>
-                    <attribute qualifier="inventoryCycleCountSKUs" type="SkuProductList">
+                    <attribute qualifier="inventoryCycleCountSKUs" type="ICCSkuProductList">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
                         <description>current cycle count skus</description>
@@ -6140,6 +6141,28 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true" />
                         <description>cycle count detail status </description>
                         <defaultvalue>em().getEnumerationValue("InventoryCycleCountStatus", "READY")</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountProductDetails" autocreate="true" generate="true">
+                <description>Contains inventory cycle count details</description>
+                <deployment table="BlICCProductDetails" typecode="12239"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountDayCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProductId" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProduct" type="BlProduct">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
                     </attribute>
                 </attributes>
             </itemtype>

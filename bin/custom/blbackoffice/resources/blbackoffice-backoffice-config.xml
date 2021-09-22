@@ -22,6 +22,7 @@
 				<n:navigation-node id="InventoryCycleCountScan"/>
 				<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
 				<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
+				<n:type-node id="BlInventoryCycleCountProductDetails" code="BlInventoryCycleCountProductDetails"/>
 				<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
 			</n:navigation-node>
             <n:navigation-node id="BLBackoffice">
@@ -2768,7 +2769,7 @@
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
-				<advanced-search:field name="inventoryCycleCountActive" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountActive" selected="true" />
 				<advanced-search:field name="inventoryCycleCountStatus" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>
 			</advanced-search:field-list>
@@ -2844,6 +2845,60 @@
 		<y:base>
 			<y:labels>
 				<y:label>inventoryCycleCountCode</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context component="create-wizard" type="BlInventoryCycleCountProductDetails" merge-by="replace">
+		<wz:flow id="BlInventoryCycleCountProductDetailsWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="BlInventoryCycleCountProductDetailsPrepare">
+				<wz:initialize property="newBBlInventoryCycleCountProductDetails" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blInventoryCycleCountProductDetails.essential.label"
+					 sublabel="create.blInventoryCycleCountProductDetails.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlInventoryCycleCountProductDetails">
+						<wz:property qualifier="inventoryCycleCountDayCode"/>
+						<wz:property qualifier="inventoryCycleCountProduct"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlInventoryCycleCountProductDetails"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BlInventoryCycleCountProductDetails" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="inventoryCycleCountDayCode"/>
+			<list-view:column qualifier="inventoryCycleCountProductId"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BlInventoryCycleCountProductDetails" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountProductId" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlInventoryCycleCountProductDetails" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="inventoryCycleCountDayCode"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="BlInventoryCycleCountProductDetails" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryCycleCountProductId</y:label>
 			</y:labels>
 		</y:base>
 	</context>
@@ -2960,8 +3015,8 @@
 
 	<context component="notification-area" source="inventoryCycleCountNotification" merge-by="source">
 		<na:notification-area>
-			<na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+			<na:notifications eventType="iccEmptyInputNotificationFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.i.c.c.wizard.notification.empty.input.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
@@ -2980,8 +3035,19 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
+			<na:notifications eventType="scanICCSerialDBError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.i.c.c.wizard.notification.barcode.scan.serial.db.error</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="iccNoActiveNotificationFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.i.c.c.wizard.notification.barcode.scan.no.active.error</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
 		</na:notification-area>
 	</context>
+	<!-- End BlInventoryCycleCount -->
 </config>
-
-

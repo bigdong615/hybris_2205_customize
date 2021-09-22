@@ -9,7 +9,6 @@ import com.bl.core.inventory.cycle.count.service.BlInventoryCycleCountService;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.*;
 import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,7 +41,8 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     @Autowired
     ModelService modelService;
 
-    private Collection<BlProductModel> inventorySKUList;
+    private Collection<BlInventoryCycleCountProductDetailsModel> inventorySKUList;
+
     private String inventoryDayCode;
     private Date inventoryDayDate;
 
@@ -59,7 +59,17 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      */
     @Override
     public Collection<BlProductModel> getAllActiveSKUsWithSerialStatus() {
-        return getBlInventoryCycleCountDao().getAllActiveSKUsWithSerialStatus();
+        final Collection<BlProductModel> results = getBlInventoryCycleCountDao().getAllActiveSKUsWithSerialStatus();
+        if(CollectionUtils.isNotEmpty(results)) {
+            final Collection<BlProductModel> activeSKUs = new ArrayList<>();
+            for(final BlProductModel sku : results) {
+                if(CollectionUtils.isNotEmpty(sku.getSerialProducts()) && StringUtils.isNotEmpty(sku.getProductId())) {
+                    activeSKUs.add(sku);
+                }
+            }
+            return CollectionUtils.isNotEmpty(activeSKUs) ? activeSKUs : CollectionUtils.EMPTY_COLLECTION;
+        }
+        return CollectionUtils.EMPTY_COLLECTION;
     }
 
     /**
@@ -100,7 +110,12 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                 status = this.isCurrentCycleEnded(activeInventoryCount);
             }
             if(Boolean.TRUE.equals(status)) {
-                final List<List<BlProductModel>> subLists = this.createBatch(blProductModelCollection, BlInventoryScanLoggingConstants.THIRTY);
+                List<List<BlProductModel>> subLists;
+                if(blProductModelCollection.size() < BlInventoryScanLoggingConstants.THIRTY) {
+                    subLists = this.createBatch(blProductModelCollection, blProductModelCollection.size());
+                } else {
+                    subLists = this.createBatch(blProductModelCollection, BlInventoryScanLoggingConstants.THIRTY);
+                }
                 this.createBlInventoryCycleCountModel(activeInventoryCount, subLists);
                 return Boolean.TRUE;
             } else {
@@ -132,19 +147,17 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      */
     @Override
     public boolean checkIsSKUListMatching(final Collection<String> inputList) {
-        final BlInventoryCycleCountDetailsModel blInventoryCycleCountDetailsModel = this.getAllActiveSKUs().orElse(null);
-        //TODO: remove this orElse(null) from here
-        if(blInventoryCycleCountDetailsModel != null && CollectionUtils.isNotEmpty(inputList) && CollectionUtils.isNotEmpty(
-                blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs())) {
-            for(BlProductModel sku : blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs()) {
-                if(inputList.stream().noneMatch(input -> sku.getCode().equals(input))) {
+        final Optional<BlInventoryCycleCountDetailsModel> blInventoryCycleCountDetailsModel = this.getAllActiveSKUs();
+        if(blInventoryCycleCountDetailsModel.isPresent() && CollectionUtils.isNotEmpty(inputList) &&
+            CollectionUtils.isNotEmpty(blInventoryCycleCountDetailsModel.get().getInventoryCycleCountSKUs())) {
+            for(BlInventoryCycleCountProductDetailsModel sku : blInventoryCycleCountDetailsModel.get().getInventoryCycleCountSKUs()) {
+                if(inputList.stream().noneMatch(input -> sku.getInventoryCycleCountProductId().equals(input))) {
                     return Boolean.FALSE;
                 }
             }
-            this.setInventorySKUList(blInventoryCycleCountDetailsModel.getInventoryCycleCountSKUs());
-            this.setInventoryDayCode(blInventoryCycleCountDetailsModel.getInventoryCycleCountCode());
-            this.setInventoryDayDate(blInventoryCycleCountDetailsModel.getInventoryCycleCountDate());
-
+            this.setInventorySKUList(blInventoryCycleCountDetailsModel.get().getInventoryCycleCountSKUs());
+            this.setInventoryDayCode(blInventoryCycleCountDetailsModel.get().getInventoryCycleCountCode());
+            this.setInventoryDayDate(blInventoryCycleCountDetailsModel.get().getInventoryCycleCountDate());
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -157,13 +170,24 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     public String executeInventoryCycleCount(final Collection<String> serialBarcodes) {
         final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials = new HashMap<>();
         final List<BlSerialProductModel> missingList = new ArrayList<>();
-
-        for(final BlProductModel sku : this.getInventorySKUList()) {
+        
+        for(final BlInventoryCycleCountProductDetailsModel sku : this.getInventorySKUList()) {
             this.makeMissingAndUnexpectedListFromScannedData(serialBarcodes, missingList, scannedSKUsAndSerials,
-                    serialBarcodes, sku);
+                    serialBarcodes, sku.getInventoryCycleCountProduct());
         }
-        this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes);
-        return this.getActiveInventoryCycleCount().getInventoryCycleCountCode();
+
+        if(Boolean.TRUE.equals(this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes))) {
+            final Optional<BlInventoryCycleCountDetailsModel> blInventoryCycleCountDetailsModel = this.getAllActiveSKUs();
+            if(blInventoryCycleCountDetailsModel.isPresent()) {
+                final BlInventoryCycleCountDetailsModel detailsModel = blInventoryCycleCountDetailsModel.get();
+                detailsModel.setInventoryCycleCountDetailStatus(InventoryCycleCountStatus.COMPLETED);
+                getModelService().save(detailsModel);
+                getModelService().refresh(detailsModel);
+            }
+            return this.getActiveInventoryCycleCount().getInventoryCycleCountCode();
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
 
     /**
@@ -181,16 +205,31 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         if(CollectionUtils.isNotEmpty(sku.getSerialProducts())) {
             final List<BlSerialProductModel> successScannedSerials = new ArrayList<>();
             for(final BlSerialProductModel serial : sku.getSerialProducts()) {
-                if(serialBarcodes.stream().anyMatch(barcode -> barcode.equals(serial.getBarcode()))) {
-                    successScannedSerials.add(serial);
-                    modifiedScannedSerials.remove(serial.getBarcode());
-                } else {
-                    if(!SerialStatusEnum.SHIPPED.equals(serial.getSerialStatus())) {
-                        missingList.add(serial);
-                    }
-                }
+                this.createMissingAndSuccessScanList(serialBarcodes, missingList, modifiedScannedSerials, successScannedSerials, serial);
             }
             scannedSKUsAndSerials.put(sku, successScannedSerials);
+        }
+    }
+
+    /**
+     * This methid will create missing and success scanned list
+     *
+     * @param serialBarcodes barcodes
+     * @param missingList list
+     * @param modifiedScannedSerials serials
+     * @param successScannedSerials success
+     * @param serial serial
+     */
+    private void createMissingAndSuccessScanList(final Collection<String> serialBarcodes, final List<BlSerialProductModel> missingList,
+                                                 final Collection<String> modifiedScannedSerials, final List<BlSerialProductModel> successScannedSerials,
+                                                 final BlSerialProductModel serial) {
+        if(serialBarcodes.stream().anyMatch(barcode -> barcode.equals(serial.getBarcode()))) {
+            successScannedSerials.add(serial);
+            modifiedScannedSerials.remove(serial.getBarcode());
+        } else {
+            if(!SerialStatusEnum.SHIPPED.equals(serial.getSerialStatus())) {
+                missingList.add(serial);
+            }
         }
     }
 
@@ -202,26 +241,33 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * @param modifiedScannedSerials unexpected serials list
      * @return BlInventoryCycleCountScanHistoryModel scanHistory
      */
-    private void logInventoryCycleCountScanHistory(final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials,
-                                                   final List<BlSerialProductModel> missingList, final Collection<String> modifiedScannedSerials) {
+    private boolean logInventoryCycleCountScanHistory(final Map<BlProductModel, List<BlSerialProductModel>> scannedSKUsAndSerials,
+                                                      final List<BlSerialProductModel> missingList, final Collection<String> modifiedScannedSerials) {
+        boolean successStatus = Boolean.FALSE;
+        boolean missingStatus = Boolean.FALSE;
+        boolean unExpectedStatus = Boolean.FALSE;
+
         if(MapUtils.isNotEmpty(scannedSKUsAndSerials)) {
             final Collection<List<BlSerialProductModel>> allSerials = scannedSKUsAndSerials.values();
             for(final List<BlSerialProductModel> serials : allSerials) {
-                this.generateAndLogICCScanHistory(serials, InventoryCycleCountSerialStatus.REGULAR);
+                successStatus = this.generateAndLogICCScanHistory(serials, InventoryCycleCountSerialStatus.REGULAR);
             }
         }
 
         if(CollectionUtils.isNotEmpty(missingList)) {
-            this.generateAndLogICCScanHistory(missingList, InventoryCycleCountSerialStatus.MISSING);
+            missingStatus = this.generateAndLogICCScanHistory(missingList, InventoryCycleCountSerialStatus.MISSING);
         }
 
         if(CollectionUtils.isNotEmpty(modifiedScannedSerials)) {
             final List<BlSerialProductModel> allUnexpectedSerial = (List<BlSerialProductModel>) this.getBlInventoryScanToolDao()
                     .getSerialProductsByBarcode(modifiedScannedSerials);
             if(CollectionUtils.isNotEmpty(allUnexpectedSerial)) {
-                this.generateAndLogICCScanHistory(allUnexpectedSerial, InventoryCycleCountSerialStatus.UNEXPECTED);
+                unExpectedStatus = this.generateAndLogICCScanHistory(allUnexpectedSerial, InventoryCycleCountSerialStatus.UNEXPECTED);
             }
         }
+
+        return (Boolean.TRUE.equals(successStatus) || Boolean.TRUE.equals(missingStatus) || Boolean.TRUE.equals(unExpectedStatus))
+                    ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /**
@@ -230,8 +276,10 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * @param allSerial serials
      * @param serialStatus status
      */
-    private void generateAndLogICCScanHistory(final List<BlSerialProductModel> allSerial, final InventoryCycleCountSerialStatus serialStatus) {
+    private boolean generateAndLogICCScanHistory(final List<BlSerialProductModel> allSerial, final InventoryCycleCountSerialStatus serialStatus) {
+        boolean status = Boolean.FALSE;
         for(final BlSerialProductModel serial : allSerial) {
+            status = Boolean.TRUE;
             final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel = getModelService()
                     .create(BlInventoryCycleCountScanHistoryModel.class);
 
@@ -251,13 +299,17 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             blInventoryCycleCountScanHistoryModel.setProductName(serial.getBlProduct() != null ? serial.getBlProduct().getName()
                     : serial.getName());
             blInventoryCycleCountScanHistoryModel.setOc(serial.getOcLocation());
-            blInventoryCycleCountScanHistoryModel.setOcParent(serial.getOcLocationDetails() != null ? (serial.getOcLocationDetails()
-                    .getParentInventoryLocation() != null ? serial.getOcLocationDetails().getParentInventoryLocation().getCode()
-                    : StringUtils.EMPTY) : StringUtils.EMPTY);
+            final String ocParentLocation = serial.getOcLocationDetails().getParentInventoryLocation() != null
+                    ? serial.getOcLocationDetails().getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+            blInventoryCycleCountScanHistoryModel.setOcParent(serial.getOcLocationDetails() != null ? ocParentLocation : StringUtils.EMPTY);
 
             getModelService().save(blInventoryCycleCountScanHistoryModel);
             getModelService().refresh(blInventoryCycleCountScanHistoryModel);
+
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_HISTORY,
+                    this.getInventoryDayCode(), blInventoryCycleCountScanHistoryModel.getScannedUser());
         }
+        return status;
     }
 
     /**
@@ -280,7 +332,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             }
             blInventoryCycleCountModel.setInventoryCycleCountActive(Boolean.TRUE);
 
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO,
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO,
                     blInventoryCycleCountModel.getCurrentCycleCountStartDate(), blInventoryCycleCountModel.getCurrentCycleCountEndDate());
 
             final List<BlInventoryCycleCountDetailsModel> allSKUDetailsPerDay = new ArrayList<>();
@@ -299,7 +351,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             getModelService().save(blInventoryCycleCountModel);
             getModelService().refresh(blInventoryCycleCountModel);
 
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO,
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO,
                     blInventoryCycleCountModel.getInventoryCycleCountCode(), blInventoryCycleCountModel.getCurrentCycleCountStartDate(),
                     blInventoryCycleCountModel.getCurrentCycleCountEndDate());
         } else {
@@ -323,10 +375,24 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                 BlInventoryCycleCountDetailsModel.class);
         blInventoryCycleCountDetailsModel.setInventoryCycleCountDate(this.getNextWorkingDate(previousDate, calendar, inventoryCycleCountCounter));
         blInventoryCycleCountDetailsModel.setInventoryCycleCountCode(BlInventoryScanLoggingConstants.ICC_DAY + inventoryCycleCountCounter);
-        blInventoryCycleCountDetailsModel.setInventoryCycleCountSKUs(list);
+        final List<BlInventoryCycleCountProductDetailsModel> blInventoryCycleCountProductDetailsModels = new ArrayList<>();
+        for(BlProductModel productModel : list) {
+            final BlInventoryCycleCountProductDetailsModel blInventoryCycleCountProductDetailsModel = getModelService().create(
+                    BlInventoryCycleCountProductDetailsModel.class);
+            blInventoryCycleCountProductDetailsModel.setInventoryCycleCountProduct(productModel);
+            blInventoryCycleCountProductDetailsModel.setInventoryCycleCountProductId(productModel.getProductId());
+            blInventoryCycleCountProductDetailsModel.setInventoryCycleCountDayCode(blInventoryCycleCountDetailsModel.getInventoryCycleCountCode());
+            getModelService().save(blInventoryCycleCountProductDetailsModel);
+            getModelService().refresh(blInventoryCycleCountProductDetailsModel);
+            blInventoryCycleCountProductDetailsModels.add(blInventoryCycleCountProductDetailsModel);
+
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_FOR_SKU,
+                    blInventoryCycleCountDetailsModel.getInventoryCycleCountCode(), productModel.getProductId());
+        }
+        blInventoryCycleCountDetailsModel.setInventoryCycleCountSKUs(blInventoryCycleCountProductDetailsModels);
         getModelService().save(blInventoryCycleCountDetailsModel);
         getModelService().refresh(blInventoryCycleCountDetailsModel);
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.CREATED_INVENTORY_CYCLE_FOR_DATE,
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.CREATED_INVENTORY_CYCLE_FOR_DATE,
                 blInventoryCycleCountDetailsModel.getInventoryCycleCountCode(), blInventoryCycleCountDetailsModel.getInventoryCycleCountDate());
         return blInventoryCycleCountDetailsModel;
 
@@ -343,23 +409,23 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         final int Length = originalList.size();
         final int chunkSize = Length / batch_size;
         final int residual = Length-chunkSize*batch_size;
-        final List<Integer> list_nums = new ArrayList<>();
+        final List<Integer> listNums = new ArrayList<>();
         for (int i = 0; i < batch_size; i++) {
-            list_nums.add(chunkSize);
+            listNums.add(chunkSize);
         }
         for (int i = 0; i < residual; i++) {
-            list_nums.set(i, list_nums.get(i) + 1);
+            listNums.set(i, listNums.get(i) + 1);
         }
-        final List<Integer> list_index = new ArrayList<>();
+        final List<Integer> listIndex = new ArrayList<>();
         int cumulative = 0;
         for (int i = 0; i < batch_size; i++) {
-            list_index.add(cumulative);
-            cumulative += list_nums.get(i);
+            listIndex.add(cumulative);
+            cumulative += listNums.get(i);
         }
-        list_index.add(cumulative);
+        listIndex.add(cumulative);
         final List<List<BlProductModel>> listOfChunks = new ArrayList<>();
         for (int i = 0; i < batch_size; i++) {
-            listOfChunks.add(new ArrayList<>(originalList).subList(list_index.get(i), list_index.get(i + 1)));
+            listOfChunks.add(new ArrayList<>(originalList).subList(listIndex.get(i), listIndex.get(i + 1)));
         }
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.CHUNKS_FOR_THIRTY_DAYS, listOfChunks);
         return listOfChunks;
@@ -413,14 +479,6 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         this.modelService = modelService;
     }
 
-    public Collection<BlProductModel> getInventorySKUList() {
-        return inventorySKUList;
-    }
-
-    public void setInventorySKUList(final Collection<BlProductModel> inventorySKUList) {
-        this.inventorySKUList = inventorySKUList;
-    }
-
     public BlInventoryScanToolDao getBlInventoryScanToolDao() {
         return blInventoryScanToolDao;
     }
@@ -459,5 +517,13 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     @Override
     public void setInventoryDayDate(final Date inventoryDayDate) {
         this.inventoryDayDate = inventoryDayDate;
+    }
+
+    public Collection<BlInventoryCycleCountProductDetailsModel> getInventorySKUList() {
+        return inventorySKUList;
+    }
+
+    public void setInventorySKUList(final Collection<BlInventoryCycleCountProductDetailsModel> inventorySKUList) {
+        this.inventorySKUList = inventorySKUList;
     }
 }

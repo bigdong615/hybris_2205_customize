@@ -59,11 +59,17 @@ public class InventoryCycleCountScanToolHandler implements com.hybris.cockpitng.
             final List<String> skuList = inventoryCycleCountScanToolData.getSkusInputField();
             final List<String> serialBarcodes = inventoryCycleCountScanToolData.getSerialBarcodeInputField();
             if (CollectionUtils.isNotEmpty(skuList) && CollectionUtils.isNotEmpty(serialBarcodes)) {
-                this.executeInventoryCycleCount(skuList, serialBarcodes);
+                if(this.getBlInventoryCycleCountService().getActiveInventoryCycleCount() != null) {
+                    this.executeInventoryCycleCount(skuList, serialBarcodes);
+                } else {
+                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.PREVIOUS_CYCLE_COUNT_ENDED, StringUtils.EMPTY);
+                    this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
+                            BlInventoryScanLoggingConstants.ICC_NO_ACTIVE_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                }
             } else {
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG, StringUtils.EMPTY);
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.ICC_INPUT_EMPTY_ERROR_NOTIF_MSG, StringUtils.EMPTY);
                 this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
-                        BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+                        BlInventoryScanLoggingConstants.ICC_INPUT_EMPTY_ERROR_NOTIF, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
             }
             this.triggerClear(inventoryCycleCountScanToolData);
         }
@@ -84,9 +90,13 @@ public class InventoryCycleCountScanToolHandler implements com.hybris.cockpitng.
                         this.getBlInventoryCycleCountService().getInventoryDayCode(), this.getBlInventoryCycleCountService()
                                     .getInventoryDayDate());
                     this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
-                            BlInventoryScanLoggingConstants.ICC_SUCCESS_NOTIF, NotificationEvent.Level.FAILURE, result,
+                            BlInventoryScanLoggingConstants.ICC_SUCCESS_NOTIF, NotificationEvent.Level.SUCCESS, result,
                             this.getBlInventoryCycleCountService().getInventoryDayCode(), this.getBlInventoryCycleCountService()
                             .getInventoryDayDate());
+                } else {
+                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.ICC_NO_SERIALS, StringUtils.EMPTY);
+                    this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
+                            BlInventoryScanLoggingConstants.ICC_SERIAL_DB_ERROR_NOTIF, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
                 }
             } catch(final ModelSavingException e) {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.MODEL_SAVING_EXCEPTION, e.getMessage());

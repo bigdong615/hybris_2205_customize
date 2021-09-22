@@ -80,7 +80,7 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
             barcodeInputField.setPlaceholder(BlInventoryScanLoggingConstants.BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES);
             barcodeInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SERIAL);
             barcodeInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
-                this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
+                this.getInventoryCycleCountScanToolUtil().onSerialBarcodeInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
                 this.setNewPwdInput(barcodeInputField);
             });
             component.appendChild(barcodeInputField);
