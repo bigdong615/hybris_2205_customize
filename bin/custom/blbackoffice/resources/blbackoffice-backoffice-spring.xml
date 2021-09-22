@@ -88,6 +88,10 @@
 			<ref bean="blExceptionTranslationHandler"/>
 		</cng:add>
 	</cng:list-extender>
+	
+	<!-- BL-879 OMS&WH - Inventory Availability - Rules to change Limited Availability Serial (Unavailable on certain dates) to Available Serial -->
+	<alias alias="defaultBlConsignmentService" name="defaultBlConsignmentService"/>
+    <bean id="defaultBlConsignmentService" class="com.bl.backoffice.consignment.service.impl.DefaultBlConsignmentService"/>
 
 	<!-- BL-1010 Bin OcLocation Scan Tool Handler -->
 	<bean id="defaultBinOcLocationScanToolHandler" class="com.bl.backoffice.wizards.handler.BinOcLocationScanToolHandler">

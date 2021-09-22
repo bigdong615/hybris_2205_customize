@@ -51,6 +51,6 @@ public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPri
           .setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN);
     }
     BlLogger.logMessage(LOG, Level.WARN, "!Check rental days");
-    return null;
+    return BigDecimal.ZERO;
   }
 }

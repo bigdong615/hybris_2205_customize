@@ -1456,23 +1456,10 @@ $('ul#saved-payment-action-modifyPayment').on('click','li',function(e){
 $(".js--order-modify-payment").on("click", function(e) {
 	 e.preventDefault();
 	 
-		var paymentId = $('#saved-payment-action-modifyPayment').find("button").data("id");
-		var paymentnonce = $('#saved-payment-action-modifyPayment').find("button").data("nonce");
 		var ccEnable = $('#paymentMethodBT').is(':checked');
 		var payPalEnable = $('#paymentMethodPayPal').is(':checked');
 		var paymentInfoId =  $('#paymentId').val();
-		
-		
-	    var buttonData = $(this).find("button").html();
-	    $("#savedCards").html(buttonData);
-	    $("#paymentId").val(paymentId);
-		$("#paymentNonce").val(paymentnonce);
-       var selectedPaymentMethodId	= createHiddenParameter("selectedPaymentMethodId", $("#paymentId").val(paymentId));
-       var selectedPaymentMethodNonce = createHiddenParameter("selectedPaymentMethodNonce", $("#paymentNonce").val(paymentnonce));
-		
 		var formToSubmit = $("#modifyPaymentForm");
-		formToSubmit.append($(selectedPaymentMethodId));
-		formToSubmit.append($(selectedPaymentMethodNonce));
 		
 		if((ccEnable == true && paymentInfoId !='') || payPalEnable == true){
 		formToSubmit.submit();

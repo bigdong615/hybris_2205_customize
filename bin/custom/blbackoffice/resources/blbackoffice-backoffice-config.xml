@@ -760,7 +760,7 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="noRelatedItemsFoundFailure" level="FAILURE" destination="TOPMOST">
+			<na:notifications eventType="typeNotSupportedErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.bin.ocLocation.scan.tool.associated.item.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -1200,7 +1200,8 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
-	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
+	      <list-view:column qualifier="date"/>
+	      <list-view:column qualifier="order"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
 	      <list-view:column qualifier="serialStatus"/>
 	      <list-view:column qualifier="bufferedInventory"/>
@@ -1372,6 +1373,9 @@
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
 					<editorArea:attribute qualifier="status"/>
+					<editorArea:attribute qualifier="optimizedShippingStartDate"/>
+					<editorArea:attribute qualifier="optimizedShippingEndDate"/>
+					<editorArea:attribute qualifier="internalTransferConsignment"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
