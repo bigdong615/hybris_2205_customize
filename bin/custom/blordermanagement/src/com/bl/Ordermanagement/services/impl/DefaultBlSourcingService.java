@@ -14,6 +14,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -66,7 +68,11 @@ public class DefaultBlSourcingService implements BlSourcingService {
     result.setResults(Sets.newHashSet());
     result.setComplete(Boolean.FALSE);
     context.setResult(result);
-    context.setOrderEntries(order.getEntries());
+
+     final List<AbstractOrderEntryModel> entryListForAllocation=   order.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleMainEntry()).collect(
+          Collectors.toList());
+    //context.setOrderEntries(order.getEntries()); //NOSONAR
+      context.setOrderEntries(entryListForAllocation);
 
     blSourcingLocationService.createSourcingLocation(context, blDeliveryStateSourcingLocationFilter.applyFilter(order));
 

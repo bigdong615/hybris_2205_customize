@@ -54,7 +54,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Sourcing is In-complete after tried sourcing from all possible location");
       updateOrderStatusForSourcingIncomplete(sourcingContext);
-
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
     }
   }
 

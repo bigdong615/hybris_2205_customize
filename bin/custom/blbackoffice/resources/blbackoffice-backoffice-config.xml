@@ -1200,7 +1200,8 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
-	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
+	      <list-view:column qualifier="date"/>
+	      <list-view:column qualifier="order"/>
 	      <list-view:column merge-mode="remove" qualifier="available"/>
 	      <list-view:column qualifier="serialStatus"/>
 	      <list-view:column qualifier="bufferedInventory"/>

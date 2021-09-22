@@ -160,7 +160,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
-            serialStocks.forEach(stock -> stock.setReservedStatus(true));
+            serialStocks.forEach(stock -> {
+              stock.setReservedStatus(true);
+              stock.setOrder(order.getCode());
+              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Stock status is changed to {} for the serial product {} for the order {} ", stock.getReservedStatus(),
+                  stock.getSerialProductCode(), stock.getOrder());
+            });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
 
