@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * ICC Default DAO
+ *
  * @author Namrata Lohar
  */
 public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao {

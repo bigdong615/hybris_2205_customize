@@ -6,6 +6,8 @@ import com.bl.core.model.BlProductModel;
 import java.util.Collection;
 
 /**
+ * ICC DAO
+ *
  * @author Namrata Lohar
  */
 public interface BlInventoryCycleCountDao {
