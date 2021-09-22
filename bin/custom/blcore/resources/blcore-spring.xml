@@ -1104,6 +1104,7 @@
 	<bean id="blOrderPrepareInterceptor"
 		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
@@ -1469,6 +1470,11 @@
 
 	<bean id="blOrderConfirmationRequestPopulator"
 		class="com.bl.core.populators.BlOrderConfirmationRequestPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<bean id="espEventCommonPopulator"
+		class="com.bl.core.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
