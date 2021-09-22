@@ -501,9 +501,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void doRefund(final boolean fullRefund, final PaymentTransactionEntryModel captureEntry) {
         if (Boolean.TRUE.equals(fullRefund)) {
-            final double totalAmt = this.getTotalRefundAmount(); //894.62
-            final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue()); //1117.57
-            final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - this.getGiftCardAmount(); // - 450
+            final double totalAmt = this.getTotalRefundAmount(); 
+            final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
+            final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - this.getGiftCardAmount();
             if (refundedAmount < otherPayment) {
                 this.doFullRefundCalculations(captureEntry, totalAmt, refundedAmount, otherPayment);
             } else {
