@@ -44,23 +44,21 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     //((PriceRowModel) ((List)productModel.getEurope1Prices()).get(0)).getDuration()
     if (MapUtils.isEmpty(priceList)) {
       BlLogger.logMessage(LOG, Level.WARN, "! Rental Price not found");
-      return BigDecimal.ZERO;
+      return null;
     }
 
-    long daysDiff = 0l;
+
     // convert String format time to LocalDate type
-    if (null != arrivalDate && null != returnDate) {
     final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
         .toLocalDate();
       final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
           .plusDays(
         BooleanUtils.isTrue(isExtendOrder) ? 1 : 0);
 
-      daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
+    final long daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
     BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,
         "##### Arrival Date : {} Return Date : {} Rental Days : {} ########"
         , arrivalDate.toString(), returnDate.toString(),daysDiff);
-    }
 
     if (priceList.containsKey((int) daysDiff)) {
       return priceList.get((int) daysDiff);
