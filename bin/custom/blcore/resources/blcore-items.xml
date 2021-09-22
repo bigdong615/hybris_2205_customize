@@ -6261,6 +6261,21 @@ new Integer(0)
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Inventory OC Parent Location</description>
                     </attribute>
+                    <attribute qualifier="lastOrderShippedDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Last Order Shipped Date</description>
+                    </attribute>
+                    <attribute qualifier="productStatus" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Product Status</description>
+                    </attribute>
+                    <attribute qualifier="orderStatus" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Order Status</description>
+                    </attribute>
                     <attribute qualifier="scannedUser" type="User">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="false" initial="true"/>

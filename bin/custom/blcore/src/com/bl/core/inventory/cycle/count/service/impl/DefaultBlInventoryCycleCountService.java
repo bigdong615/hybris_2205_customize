@@ -9,6 +9,8 @@ import com.bl.core.inventory.cycle.count.service.BlInventoryCycleCountService;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.*;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -177,13 +179,6 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         }
 
         if(Boolean.TRUE.equals(this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes))) {
-            final Optional<BlInventoryCycleCountDetailsModel> blInventoryCycleCountDetailsModel = this.getAllActiveSKUs();
-            if(blInventoryCycleCountDetailsModel.isPresent()) {
-                final BlInventoryCycleCountDetailsModel detailsModel = blInventoryCycleCountDetailsModel.get();
-                detailsModel.setInventoryCycleCountDetailStatus(InventoryCycleCountStatus.COMPLETED);
-                getModelService().save(detailsModel);
-                getModelService().refresh(detailsModel);
-            }
             return this.getActiveInventoryCycleCount().getInventoryCycleCountCode();
         } else {
             return StringUtils.EMPTY;
@@ -266,8 +261,31 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             }
         }
 
-        return (Boolean.TRUE.equals(successStatus) || Boolean.TRUE.equals(missingStatus) || Boolean.TRUE.equals(unExpectedStatus))
+        this.setDayStatusToCompleted(successStatus, missingStatus, unExpectedStatus);
+        return Boolean.TRUE.equals(successStatus) && (Boolean.FALSE.equals(missingStatus) && Boolean.FALSE.equals(unExpectedStatus))
                     ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /**
+     * This method will set status of ICC_DAY_* as COMPLETED is history logged for the ICC_Day
+     *
+     * @param successStatus success
+     * @param missingStatus missing
+     * @param unExpectedStatus unexpected
+     */
+    private void setDayStatusToCompleted(final boolean successStatus, final boolean missingStatus, final boolean unExpectedStatus) {
+        if(Boolean.TRUE.equals(successStatus) || Boolean.TRUE.equals(missingStatus) || Boolean.TRUE.equals(unExpectedStatus)) {
+            final Optional<BlInventoryCycleCountDetailsModel> blInventoryCycleCountDetailsModel = this.getAllActiveSKUs();
+            if (blInventoryCycleCountDetailsModel.isPresent()) {
+                final BlInventoryCycleCountDetailsModel detailsModel = blInventoryCycleCountDetailsModel.get();
+                detailsModel.setInventoryCycleCountDetailStatus(InventoryCycleCountStatus.COMPLETED);
+                getModelService().save(detailsModel);
+                getModelService().refresh(detailsModel);
+
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SET_INVENTORY_CYCLE_COUNT_DAY_COMPLETED,
+                        this.getInventoryDayCode());
+            }
+        }
     }
 
     /**
@@ -292,16 +310,20 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
             blInventoryCycleCountScanHistoryModel.setScannedTime(new Date());
             blInventoryCycleCountScanHistoryModel.setSerialNumber(serial.getCode());
             blInventoryCycleCountScanHistoryModel.setBarcodeNumber(serial.getBarcode());
-            blInventoryCycleCountScanHistoryModel.setHomeBaseLocation(serial.getSerialHomeLocation() != null ? serial.getSerialHomeLocation()
-                    .getCode() : StringUtils.EMPTY);
+            blInventoryCycleCountScanHistoryModel.setHomeBaseLocation(serial.getWarehouseLocation() == null ? StringUtils.EMPTY
+                    : serial.getWarehouseLocation().getName());
             blInventoryCycleCountScanHistoryModel.setLastOrderNumber(String.valueOf(serial.getOrder() != null ? serial.getOrder()
                     : StringUtils.EMPTY));
             blInventoryCycleCountScanHistoryModel.setProductName(serial.getBlProduct() != null ? serial.getBlProduct().getName()
                     : serial.getName());
             blInventoryCycleCountScanHistoryModel.setOc(serial.getOcLocation());
-            final String ocParentLocation = serial.getOcLocationDetails().getParentInventoryLocation() != null
-                    ? serial.getOcLocationDetails().getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+            final String ocParentLocation = serial.getOcLocationDetails() != null && serial.getOcLocationDetails()
+                    .getParentInventoryLocation() != null ? serial.getOcLocationDetails().getParentInventoryLocation().getCode()
+                    : StringUtils.EMPTY;
             blInventoryCycleCountScanHistoryModel.setOcParent(serial.getOcLocationDetails() != null ? ocParentLocation : StringUtils.EMPTY);
+            blInventoryCycleCountScanHistoryModel.setProductStatus(serial.getSerialStatus() != null ? serial.getSerialStatus().getCode() :
+                    StringUtils.EMPTY);
+            this.setOrderLevelValuesOnScanHistory(serial, blInventoryCycleCountScanHistoryModel);
 
             getModelService().save(blInventoryCycleCountScanHistoryModel);
             getModelService().refresh(blInventoryCycleCountScanHistoryModel);
@@ -310,6 +332,80 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                     this.getInventoryDayCode(), blInventoryCycleCountScanHistoryModel.getScannedUser());
         }
         return status;
+    }
+
+    /**
+     * This method will set some order level attributes on scan history model
+     *
+     * @param serial serial
+     * @param blInventoryCycleCountScanHistoryModel model
+     */
+    private void setOrderLevelValuesOnScanHistory(final BlSerialProductModel serial, final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel) {
+        if(serial.getAssociatedOrder() != null) {
+            final Collection<ConsignmentModel> consignmentModels = serial.getAssociatedOrder().getConsignments();
+            if(CollectionUtils.isNotEmpty(consignmentModels)) {
+                this.setLastOrderShippedDateOnHistory(serial, consignmentModels, blInventoryCycleCountScanHistoryModel);
+            } else {
+                blInventoryCycleCountScanHistoryModel.setLastOrderShippedDate(null);
+            }
+            blInventoryCycleCountScanHistoryModel.setOrderStatus(serial.getAssociatedOrder().getStatus() == null ? StringUtils.EMPTY
+                    : serial.getAssociatedOrder().getStatus().getCode());
+        } else {
+            blInventoryCycleCountScanHistoryModel.setLastOrderShippedDate(null);
+            blInventoryCycleCountScanHistoryModel.setOrderStatus(null);
+        }
+    }
+
+    /**
+     * This method will set LastOrderShippedDate on history
+     *
+     * @param serial serial
+     * @param blInventoryCycleCountScanHistoryModel history
+     * @param consignmentModels consignment
+     */
+    private void setLastOrderShippedDateOnHistory(final BlSerialProductModel serial, final Collection<ConsignmentModel> consignmentModels,
+                                                  final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel) {
+        for(final ConsignmentModel consignmentModel : consignmentModels) {
+            if(CollectionUtils.isNotEmpty(consignmentModel.getConsignmentEntries())) {
+                this.setLOSDate(serial, blInventoryCycleCountScanHistoryModel, consignmentModel);
+            }
+        }
+    }
+
+    /**
+     * This method will set LastOrderShippedDate on history
+     *
+     * @param serial serial
+     * @param blInventoryCycleCountScanHistoryModel history
+     * @param consignmentModel consignment
+     */
+    private void setLOSDate(final BlSerialProductModel serial, final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel,
+                            final ConsignmentModel consignmentModel) {
+        for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+            if(CollectionUtils.isNotEmpty(consignmentEntryModel.getSerialProducts())) {
+                this.setLOSD(serial, blInventoryCycleCountScanHistoryModel, consignmentModel, consignmentEntryModel);
+            }
+        }
+    }
+
+    /**
+     * This method will set LastOrderShippedDate on history
+     *
+     * @param serial serial
+     * @param blInventoryCycleCountScanHistoryModel history
+     * @param consignmentModel consignment
+     * @param consignmentEntryModel consignmentEntry
+     */
+    private void setLOSD(final BlSerialProductModel serial, final BlInventoryCycleCountScanHistoryModel blInventoryCycleCountScanHistoryModel,
+                         final ConsignmentModel consignmentModel, final ConsignmentEntryModel consignmentEntryModel) {
+        for (final BlProductModel serialProductModel : consignmentEntryModel.getSerialProducts()) {
+            if (serialProductModel instanceof BlSerialProductModel && serialProductModel.getProductId()
+                    .equals(serial.getProductId())) {
+                blInventoryCycleCountScanHistoryModel.setLastOrderShippedDate(
+                        consignmentModel.getOptimizedShippingStartDate());
+                break;
+            }
+        }
     }
 
     /**

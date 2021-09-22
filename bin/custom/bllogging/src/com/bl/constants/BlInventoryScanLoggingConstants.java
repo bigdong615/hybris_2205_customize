@@ -281,6 +281,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
     public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_FOR_SKU = "Creating new Inventory Cycle count Product details for day: {} with SKU: {}";
     public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_HISTORY = "Creating new Inventory Cycle count History for day: {} by user: {}";
+    public static final String SET_INVENTORY_CYCLE_COUNT_DAY_COMPLETED = "Setting ICC as COMPLETED for day: {}";
     public static final String SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO = "Successfully created new Inventory Cycle count for code:{} from: {} to: {}";
     public static final String CREATED_INVENTORY_CYCLE_FOR_DATE = "Created {} Inventory Cycle for date: {}";
     public static final String CHUNKS_FOR_THIRTY_DAYS = "Created Inventory Cycle SKU list for 30 days as: {}";
@@ -289,7 +290,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
     public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
     public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
-    public static final String ICC_NO_SERIALS = "Error finding serials in database!!";
+    public static final String ICC_NO_SERIALS = "Please reconcile both of these lists!!";
 
     public static final String ON_CHANGE = "onChange";
     public static final String RESIZE_NONE_DISPLAY_BLOCK_SKU = "resize:none;display:inline-block";

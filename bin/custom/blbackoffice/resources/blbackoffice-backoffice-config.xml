@@ -2995,6 +2995,9 @@
 						<wz:property qualifier="productName"/>
 						<wz:property qualifier="oc"/>
 						<wz:property qualifier="ocParent"/>
+						<wz:property qualifier="lastOrderShippedDate"/>
+						<wz:property qualifier="productStatus"/>
+						<wz:property qualifier="orderStatus"/>
 						<wz:property qualifier="inventoryCycleCountSerialStatus"/>
 						<wz:property qualifier="scannedUser"/>
 						<wz:property qualifier="scannedTime"/>
@@ -3019,7 +3022,10 @@
 			<list-view:column qualifier="barcodeNumber"/>
 			<list-view:column qualifier="homeBaseLocation"/>
 			<list-view:column qualifier="lastOrderNumber"/>
+			<list-view:column qualifier="lastOrderShippedDate"/>
+			<list-view:column qualifier="orderStatus"/>
 			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="productStatus"/>
 			<list-view:column qualifier="oc"/>
 			<list-view:column qualifier="ocParent"/>
 			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
