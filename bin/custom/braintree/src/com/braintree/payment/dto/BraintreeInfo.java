@@ -45,6 +45,10 @@ public class BraintreeInfo
 
     private String braintreeAddressId;
 
+	private boolean isDepositPayment;
+
+	private Double depositAmount;
+
 	public BraintreeInfo()
 	{
 		this.duplicatedPayment = false;
@@ -349,4 +353,22 @@ public class BraintreeInfo
 	public void setIsDefault(Boolean isDefault) {
 		this.isDefault = isDefault;
 	}
+
+
+	public boolean isDepositPayment() {
+		return isDepositPayment;
+	}
+
+	public void setDepositPayment(boolean depositPayment) {
+		isDepositPayment = depositPayment;
+	}
+
+	public Double getDepositAmount() {
+		return depositAmount;
+	}
+
+	public void setDepositAmount(Double depositAmount) {
+		this.depositAmount = depositAmount;
+	}
+
 }

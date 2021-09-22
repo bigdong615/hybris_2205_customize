@@ -40,6 +40,7 @@ public interface BraintreeaddonControllerConstants
     public static final String DELIVERY_MODE = "deliveryMode";
     public static final String PAYMENT_INFO = "paymentInfo";
     public static final String PAY_BILL_SUCCESS_CMS_PAGE = "pay-bill-success";
+    public static final String DEPOSIT_SUCCESS_CMS_PAGE = "deposit-payment-success";
 
     interface Views
     {

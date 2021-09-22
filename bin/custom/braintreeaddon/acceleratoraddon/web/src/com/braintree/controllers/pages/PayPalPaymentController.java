@@ -270,6 +270,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         AddressData hybrisBillingAddress = null;
         final String orderCode = request.getParameter("order_code");
         final String payBillTotal = request.getParameter("payBillTotal");
+        final boolean isDepositPaymentPage = BooleanUtils.toBoolean(request.getParameter("isDepositPaymentPage"));
 		double payBillAmount = Double.parseDouble(payBillTotal);
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
@@ -324,7 +325,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				if (null != order) {
 					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
 							.completeCreateSubscription(
-									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount);
 					if (null != paymentInfo) {
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
 								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
@@ -336,10 +337,20 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				return CheckoutOrderPageErrorPage;
 			}
 			if (isSuccess) {
-				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-				PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
-				orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
-				model.addAttribute("orderData", orderDetails);
+			  final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+        final PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
+        orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
+        model.addAttribute("orderData", orderDetails);
+        if (isDepositPaymentPage)
+        {
+          model.addAttribute("depositAmount", billPayTotal);
+          model.addAttribute("paymentType", "PayPal");
+          final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, depositPaymentSuccessPage);
+          setUpMetaDataForContentPage(model, depositPaymentSuccessPage);
+          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+          return getViewForPage(model);
+        }				
 				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
@@ -352,8 +363,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			} else {
 				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
 			}
-    }
-    
+    }    
     
     @PostMapping(value = "/modify-payment-method")
     public String modifyPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,

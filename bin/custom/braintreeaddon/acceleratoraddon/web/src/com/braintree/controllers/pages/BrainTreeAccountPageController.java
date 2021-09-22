@@ -63,6 +63,8 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import java.math.RoundingMode;
 import java.util.Locale;
+import java.util.Objects;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
@@ -104,6 +106,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
 	private static final int DECIMAL_PRECISION = 2;
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
+	
+	private static final String DEPOSIT_PAYMENT_CMS_PAGE = "deposit-payment";
+	private static final String MY_ACCOUNT_DEPOSIT_PAYMENT = "/my-account/depositPayment/";
 	
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -835,4 +840,90 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
 		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
+	
+  /**
+   * This method is created for the Deposit Payment page.
+   */
+  @GetMapping(value = "/{orderCode}/depositPayment")
+  @RequireHardLogIn
+  public String getDepositPaymentForOrder(@PathVariable(value = ORDER_CODE, required = false) final String orderCode, final Model model)
+      throws CMSItemNotFoundException
+  {
+    final ContentPageModel depositPaymentPage = getContentPageForLabelOrId(DEPOSIT_PAYMENT_CMS_PAGE);
+    storeCmsPageInModel(model, depositPaymentPage);
+    setUpMetaDataForContentPage(model, depositPaymentPage);
+    final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+    model.addAttribute(ORDER_DATA, orderDetails);
+    model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+    setupAdditionalFields(model);
+    return getViewForPage(model);
+  }
+  
+  @PostMapping(value = "/deposit-payment-success")
+  @RequireHardLogIn
+  public String getDepositPaymentForOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String paymentInfoId = request.getParameter("paymentId");
+    final String paymentMethodNonce = request.getParameter("paymentNonce");
+    final String orderCode = request.getParameter(ORDER_CODE);
+    final String depositTotal = request.getParameter("depositOrderTotal");
+    System.out.println(paymentInfoId + " ==== " + paymentMethodNonce + " ==== " + orderCode + " ==== " + depositTotal);
+    try
+    {      
+      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, depositTotal))
+      {
+        boolean isSuccess = false;
+        final double depositOrderTotal = Double.parseDouble(depositTotal);
+        final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+        if (Objects.nonNull(order))
+        {
+          final BrainTreePaymentInfoModel paymentInfo =
+              brainTreeCheckoutFacade.getBrainTreePaymentInfoForCodeToDeposit((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, depositOrderTotal);
+          if (Objects.nonNull(paymentInfo))
+          {
+            isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+                BigDecimal.valueOf(depositOrderTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+          }
+        }
+        if (isSuccess)
+        {
+          final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+          final PriceData billPayTotal  = convertDoubleToPriceData(depositOrderTotal, order);
+          model.addAttribute("orderData", orderDetails);
+          model.addAttribute("depositAmount", billPayTotal);
+          model.addAttribute("paymentType", "Credit Card");
+          final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, payBillSuccessPage);
+          setUpMetaDataForContentPage(model, payBillSuccessPage);
+          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+          return getViewForPage(model);
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while making deposit for order : {} with ammount : {} with PaymentID - {}", orderCode, depositTotal, paymentInfoId);
+    }
+    return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
+  }
+  
+  
+
+
+  /**
+   * Checks if is parameters eligible.
+   *
+   * @param paymentInfoId the payment info id
+   * @param paymentMethodNonce the payment method nonce
+   * @param orderCode the order code
+   * @param depositTotal the deposit total
+   * @return true, if is parameters eligible
+   */
+  private boolean isParametersEligible(String paymentInfoId, String paymentMethodNonce, String orderCode, String depositTotal)
+  {
+    return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId) && StringUtils.isNotBlank(paymentMethodNonce)
+        && StringUtils.isNotBlank(orderCode);
+  }
 }
