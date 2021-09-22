@@ -2,6 +2,7 @@ package com.bl.core.inventory.cycle.count.dao;
 
 import com.bl.core.model.BlInventoryCycleCountModel;
 import com.bl.core.model.BlProductModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.Collection;
 

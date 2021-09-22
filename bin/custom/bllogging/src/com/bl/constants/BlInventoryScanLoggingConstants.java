@@ -303,7 +303,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES = "Scan serial barcodes...";
     public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
     public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
-
+    public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
   private BlInventoryScanLoggingConstants() { }
 
     /**
