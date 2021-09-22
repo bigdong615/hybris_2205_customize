@@ -911,7 +911,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 		}
 
-		if (cardPaymentInfoModel != null && BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		if (BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
 		{
 			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
 		}
@@ -953,6 +953,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				customer.setPaymentInfos(paymentInfoModels);
 				getModelService().save(customer);
 			}
+		}
+		//Added condition to set Default card value if it is true
+		if ( BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
 		}
 
 		return cardPaymentInfoModel;
