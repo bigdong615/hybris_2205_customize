@@ -113,7 +113,6 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
-		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 	<bean id="orderConfirmationEventListener"
 	      class="com.bl.core.event.OrderConfirmationEventListener" parent="abstractAcceleratorSiteEventListener">
@@ -1104,6 +1103,7 @@
 	<bean id="blOrderPrepareInterceptor"
 		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
