@@ -1463,20 +1463,23 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
+	<!--ESP Event Rest Service-->
 	<bean id="blESPEventRestService" class="com.bl.esp.service.impl.DefaultBlESPEventRestService">
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<bean id="blOrderConfirmationRequestPopulator"
-		class="com.bl.core.populators.BlOrderConfirmationRequestPopulator">
-		<property name="configurationService" ref="configurationService"/>
+	<!-- Order Confirmation populator ESP -->
+	<bean id="blOrderConfirmationRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator">
 	</bean>
 
+	<!--ESP Event Common populator -->
 	<bean id="espEventCommonPopulator"
-		class="com.bl.core.populators.ESPEventCommonPopulator" abstract="true">
+		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
+	<!--ESP Event service -->
 	<bean id="blEspEventService"
 		class="com.bl.core.esp.service.impl.DefaultBlESPEventService">
 		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
