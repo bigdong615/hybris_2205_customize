@@ -4,10 +4,10 @@ import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
-import com.bl.esp.order.OrderConfirmationRequest;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -35,13 +35,15 @@ public class DefaultBlESPEventService implements BlESPEventService {
     @Override
     public void sendOrderConfirmation(final OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
-            final OrderConfirmationRequest orderConfirmationRequest = new OrderConfirmationRequest();
-            getBlOrderConfirmationRequestPopulator().populate(orderModel, orderConfirmationRequest);
+            final OrderConfirmationEventRequest orderConfirmationEventRequest = new OrderConfirmationEventRequest();
+            getBlOrderConfirmationRequestPopulator().populate(orderModel,
+                orderConfirmationEventRequest);
             ESPEventResponseWrapper espEventResponseWrapper = null;
             try
             {
                 // Call send order confirmation ESP Event API
-                espEventResponseWrapper = getBlESPEventRestService().sendOrderConfirmation(orderConfirmationRequest);
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderConfirmation(
+                    orderConfirmationEventRequest);
             }catch (final BlESPIntegrationException exception){
                 persistESPEventDetail(null, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(), exception.getMessage());
             }

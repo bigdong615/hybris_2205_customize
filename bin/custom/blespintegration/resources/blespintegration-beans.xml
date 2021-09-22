@@ -10,7 +10,30 @@
 
 <!-- Order Confirmation ESP pojo classes  Starts-->
 
-	<!-- Common Request-->
+	<!-- Order Event common attribute Request Object -->
+	<bean class="com.bl.esp.order.ESPEventCommonRequest" >
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="contactKey" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("contactKey")</annotations>
+		</property>
+		<property name="eventDefinitionKey" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("eventDefinitionKey")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order Confirmation Main Event Request Object-->
+	<bean class="com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+	<!-- Common Request for order data common attributes-->
 	<bean class="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
@@ -27,15 +50,10 @@
 		<property name="emailaddress" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("email address")</annotations>
 		</property>
-		<property name="verificationlevel" type="java.lang.Integer" equals="true">
-			<annotations>@JsonProperty("verification level")</annotations>
-		</property>  <!--Move this one to order confirmation data-->
 	</bean>
 
-
-	<!-- Order Data -->
-
-	<bean class="com.bl.esp.order.OrderConfirmationData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+	<!-- Order Confirmation Event data Request Object -->
+	<bean class="com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
@@ -125,34 +143,6 @@
 		</property>
 		<property name="orderitemsinfo" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("order items info")</annotations>
-		</property>
-	</bean>
-
-
-	<bean class="com.bl.esp.order.ESPEventCommonRequest" >
-	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-	<property name="contactKey" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("contactKey")</annotations>
-	</property>
-	<property name="eventDefinitionKey" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("eventDefinitionKey")</annotations>
-	</property>
-	</bean>
-
-	<bean class="com.bl.esp.order.OrderConfirmationRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
-		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<!--<property name="contactKey" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("contactKey")</annotations>
-		</property>
-		<property name="eventDefinitionKey" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("eventDefinitionKey")</annotations>
-		</property>-->
-		<property name="data" type="com.bl.esp.order.OrderConfirmationData" equals="true">
-			<annotations>@JsonProperty("data")</annotations>
 		</property>
 	</bean>
 

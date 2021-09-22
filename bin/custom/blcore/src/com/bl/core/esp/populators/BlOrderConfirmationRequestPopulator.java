@@ -4,9 +4,10 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.exception.BlESPIntegrationException;
-import com.bl.esp.order.OrderConfirmationData;
-import com.bl.esp.order.OrderConfirmationRequest;
+
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -36,7 +37,7 @@ import org.w3c.dom.Element;
  * This populator created for order confirmation ESP Event
  * @author Manikandan
  */
-public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulator<OrderModel,  OrderConfirmationRequest> {
+public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulator<OrderModel, OrderConfirmationEventRequest> {
 
   private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderConfirmationRequestPopulator.class);
 
@@ -46,30 +47,31 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
      * Populate the OrderConfirmationRequest instance with values from the OrderModel.
      *
      * @param order the source object
-     * @param orderConfirmationRequest the target to fill
+     * @param orderConfirmationEventRequest the target to fill
      * @throws ConversionException if an error occurs
      */
     @Override
-    public void populate(final OrderModel order, final OrderConfirmationRequest orderConfirmationRequest) throws ConversionException {
+    public void populate(final OrderModel order, final OrderConfirmationEventRequest orderConfirmationEventRequest) throws ConversionException {
         Assert.notNull(order, "Parameter emailId cannot be null.");
-        Assert.notNull(orderConfirmationRequest, "Parameter contactRequest cannot be null.");
+        Assert.notNull(orderConfirmationEventRequest, "Parameter contactRequest cannot be null.");
 
         final UserModel userModel = order.getUser();
         if(Objects.nonNull(userModel)) {
-            orderConfirmationRequest.setContactKey(getRequestValue(userModel.getUid()));
+            orderConfirmationEventRequest.setContactKey(getRequestValue(userModel.getUid()));
         }
-            orderConfirmationRequest.setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
+            orderConfirmationEventRequest
+                .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
                 getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_DEFINITION_KEY)));
-        populateOrderData(order, orderConfirmationRequest);
+        populateOrderData(order, orderConfirmationEventRequest);
 
     }
 
   /**
    * This method populate order data from order model
    * @param orderModel orderodel
-   * @param orderConfirmationRequest request to be get updated
+   * @param orderConfirmationEventRequest request to be get updated
    */
-    private void populateOrderData(final OrderModel orderModel, final OrderConfirmationRequest orderConfirmationRequest) {
+    private void populateOrderData(final OrderModel orderModel, final OrderConfirmationEventRequest orderConfirmationEventRequest) {
 
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       final OrderConfirmationData data = new OrderConfirmationData();
@@ -113,7 +115,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
         populateXMLData(orderModel, data);
-        orderConfirmationRequest.setData(data);
+        orderConfirmationEventRequest.setData(data);
     }
 
 
