@@ -17,7 +17,18 @@ public class BlESPIntegrationException extends RuntimeException {
     super(errorMessage, err);
   }
 
-  public String getErrorCode() {
+  public BlESPIntegrationException(String errorMessage, String errorCode) {
+    super(errorMessage);
+    this.errorCode = errorCode;
+  }
+
+  public BlESPIntegrationException(String errorMessage, String errorCode , Throwable throwableError) {
+    super(errorMessage, throwableError);
+    this.errorCode = errorCode;
+  }
+
+
+    public String getErrorCode() {
     return errorCode;
   }
 
