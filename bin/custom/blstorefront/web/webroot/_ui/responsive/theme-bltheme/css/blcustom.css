@@ -109,8 +109,7 @@ padding-left:4px;}
 #globalSearch .input-group span, #productDates .input-group span{
 padding-right:10px;}
 #product-litepicker{padding-left :6px;}
-}
-
+} 
 @media (max-width: 321px){
 #productDates .input-group {
 padding-left:4px;}
@@ -324,7 +323,8 @@ margin: 0;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
-  .expertHelpIcon {margin-top: 4px !important;}
+  .expertHelpIcon {margin-top: 4px !important;}   
+  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; }  
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -674,3 +674,43 @@ p.customer-item-note {
 .savecart-modal .btn-primary{
 color:#fff !important;
 }
+.search-term{text-transform: capitalize;}
+.arrival-notification{background:#fff !important;border: 1px solid #cccccc !important;color: #3d3c3c !important;}
+.arrival-notification:hover{background:none !important;border:1px solid #ccc!important;color: #3d3c3c !important;}
+
+/* THIS PIECE OF CSS IS USED FOR POWER REVIEW ON PDP PROVIDED BY TED STARTS HERE */
+
+/* snippet rules */
+#pr-reviewsnippet { /* move reviews away from badges */
+    margin-top:8px; 
+}    
+.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-stars-container {
+    display:inline;
+}    
+.p-w-r .pr-snippet-rating-decimal { /* hide # box */
+    display:none; 
+}
+.p-w-r .pr-snippet-write-review-link { /* hide summary write link */
+    display:none; 
+}
+.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-read-and-write a {
+    font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    vertical-align:middle;
+    margin: 0 0 15px 5px;
+}
+
+/* read a review rules */
+.pr-snippet-stars pr-snippet-stars-png,
+.p-w-r .pr-read-review, 
+.p-w-r .pr-review-display, 
+.p-w-r .pr-read-review, .p-w-r .pr-review-display, 
+.p-w-r .pr-review-snapshot, .p-w-r .pr-review-display .pr-rd-footer { /* match the page background */
+    background-color: #F3F3F3;
+}
+
+.reviewActions { /* hide design buttons for now */
+    display: none;
+}
+
+/* ENDS HERE */

@@ -2248,6 +2248,24 @@
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity remained un-allocated during sourcing and allocation</description>
             </attribute>
+            <!-- BL-1189:created bundle order entry related specific attribute.-->
+            <attribute qualifier="bundleEntry" type="boolean">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+              <description>flag to identify if the entry is part of bundle product or not</description>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+            </attribute>
+              <attribute qualifier="bundleProductCode" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" search="true"/>
+                <description>Use to identify parent bundle of entry</description>
+              </attribute>
+            <attribute qualifier="bundleMainEntry" type="boolean">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true"/>
+            <description>Flag to identify if the entry is main bundle product</description>
+            <defaultvalue>Boolean.FALSE</defaultvalue>
+          </attribute>
             <attribute qualifier="splitConsignmentQuantity" type="java.lang.long">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true"/>
@@ -2749,6 +2767,23 @@
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                     <description>flag to identify order sent to ShareASale or not</description>
                   </attribute>
+                  <attribute qualifier="createConsignment" type="java.lang.Boolean">
+                    <description>Flag to create consignment via interceptor</description>
+                    <modifiers read="true" write="true" search="false" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                  </attribute>
+                  <attribute qualifier="internalTransferOrderWarehouse" type="Warehouse">
+                    <description>Warehouse required to create the fulfillment workflow for a consignment</description>
+                    <modifiers read="true" write="true" search="false" optional="true" />
+                    <persistence type="property" />
+                  </attribute>
+                  <attribute qualifier="internalTransferOrder" type="java.lang.Boolean">
+                    <description>Flag to identify whether current order is internal transfer or not </description>
+                    <modifiers read="true" write="true" search="false" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                  </attribute>
                 </attributes>
             </itemtype>
 
@@ -3240,6 +3275,11 @@
                    	<description>Flag to enable and disable Saturdays on datepicker</description>
                    	<persistence type="property" />
                    	<defaultvalue>Boolean.TRUE</defaultvalue>
+                  </attribute>
+                  <attribute type="java.lang.String" qualifier="internalTransferProcess">
+                    <persistence type="property"/>
+                    <modifiers read="true" write="true" search="true" initial="true" />
+                    <description>Order Process code for internal Transfer Orders</description>
                   </attribute>
                 </attributes>                
             </itemtype>

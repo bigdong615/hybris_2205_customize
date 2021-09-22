@@ -9,17 +9,26 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -35,6 +44,8 @@ public class DefaultBlOrderService implements BlOrderService {
 
   private BlProductService productService;
   private ModelService modelService;
+	@Resource(name="abstractOrderEntryService")
+	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
 
   /**
@@ -193,7 +204,56 @@ public class DefaultBlOrderService implements BlOrderService {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
+			final OrderModel orderModel,
+			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
+				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
+		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
+		final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
+		newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
+		newEntryModel.setProduct(productReferenceModel.getTarget());
+		newEntryModel.setBundleEntry(Boolean.TRUE);
+		newEntryModel.setBundleProductCode(existingEntry.getProduct().getCode());
+		newEntryModel.setBasePrice(0.0d);
+		newEntryModel.setTotalPrice(0.0d);
+		newEntryModel.setUnit(existingEntry.getUnit());
+		newEntryModel.setEntryNumber(entryNumber.get());
+		getModelService().save(newEntryModel);
+		return newEntryModel;
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel) {
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(
+				orderModel.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleEntry())
+						.collect(Collectors.toList()));
+		final AtomicInteger entryNumber = new AtomicInteger(orderModel.getEntries().size());
+		orderModel.getEntries().forEach(existingEntry -> {
+			if (existingEntry.isBundleMainEntry()) {
+				final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(existingEntry);
+				productReferenceModels.forEach(productReferenceModel -> {
+					final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, orderModel, existingEntry,entryNumber);
+					orderEntryModelList.add(newEntryModel);
+					entryNumber.getAndIncrement();
+				});
+			}
+		});
+		orderModel.setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(orderModel.getCalculated())){
+			orderModel.setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(orderModel);
+	}
   public BlProductService getProductService() {
     return productService;
   }

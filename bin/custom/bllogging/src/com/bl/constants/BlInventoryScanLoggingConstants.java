@@ -250,6 +250,18 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
     public static final String FOR = " for ";
+    public static final String MUST_HAVE_BIN_LOCATION_ID = "A Bin OcLocation Id Must be provided";
+    public static final String LOCATION_NOT_FOUND = "Location Not Found";
+    public static final String BIN_OCLOCATION_NOTIFICATION_HANDLER = "binOcLocScanToolNotification";
+  public static final String BIN_OCLOCATION_TOOL_NOTIFICATION_FAILURE = "binOcLocScanToolNotificationFailure";
+  public static final String MUST_ONE_LOCATION_ERROR_FAILURE = "mustOneLocationErrorFailure";
+  public static final String NO_LOCATION_ERROR_FAILURE = "noLocationErrorFailure";
+  public static final String FETCH_SERIAL_PROD_LOC = "Fetching SerialProducts for input Location: {}";
+  public static final String CONTENT_CLEARED_FROM_BIN = "Content Cleared for the Bin with Id: {}";
+  public static final String NO_RELATED_ITEMS_FOUND = "No related serial or parent Location found to clear";
+  public static final String NO_RELATED_ITEMS_FOUND_FAILURE = "noRelatedItemsFoundFailure";
+  public static final String TYPE_NOT_SUPPORTED = "Type Not Supported";
+  public static final String TYPE_NOT_SUPPORTED_ERROR_FAILURE = "typeNotSupportedErrorFailure";
 
     //Inventory Cycle Count
     public static final String START_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Start performing BlAuthorizePaymentJob...!!";
@@ -291,7 +303,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
     public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
 
-    private BlInventoryScanLoggingConstants() { }
+  private BlInventoryScanLoggingConstants() { }
 
     /**
      * javadoc

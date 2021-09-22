@@ -311,6 +311,8 @@ public class CheckoutController extends AbstractCheckoutController
 		try
 		{
 			orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+		  orderDetails.setEntries(orderFacade.getOrderDetailsForCode(orderCode).getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+					Collectors.toList()));
 		}
 		catch (final UnknownIdentifierException e)
 		{

@@ -270,7 +270,7 @@ public interface BlInventoryScanToolService {
 	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList);
 
 	/**
-	 * This method will verify valid location and return int with appropriate notification 
+	 * This method will verify valid location and return int with appropriate notification
 	 * @param barcodes for serial products
 	 * @param defaultLocations for locations
 	 * @param memberAllowedLocationList for allowed members
@@ -278,4 +278,11 @@ public interface BlInventoryScanToolService {
 	 */
 	public int checkLocationWithTypeForFD(final List<String> barcodes, final List<String> defaultLocations,
 			 final List<String> memberAllowedLocationList);
+
+  /**
+  * Remove all the related serials and Parent location From Bin
+	 * @param blInventoryLocationModel
+	 */
+	void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel);
+
 }
