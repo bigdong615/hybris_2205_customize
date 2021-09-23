@@ -50,16 +50,15 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     long daysDiff = 0l;
     // convert String format time to LocalDate type
     if (null != arrivalDate && null != returnDate) {
-    final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
-        .toLocalDate();
+      final LocalDate arrDate = arrivalDate.toInstant().atZone(ZoneId.systemDefault())
+          .toLocalDate();
       final LocalDate retDate = returnDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-          .plusDays(
-        BooleanUtils.isTrue(isExtendOrder) ? 1 : 0);
+          .plusDays(BooleanUtils.isTrue(isExtendOrder) ? 1 : 0);
 
       daysDiff = ChronoUnit.DAYS.between(arrDate, retDate);
-    BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,
-        "##### Arrival Date : {} Return Date : {} Rental Days : {} ########"
-        , arrivalDate.toString(), returnDate.toString(),daysDiff);
+      BlLogger.logFormattedMessage(LOG, Level.INFO, StringUtils.EMPTY,
+          "##### Arrival Date : {} Return Date : {} Rental Days : {} ########"
+          , arrivalDate.toString(), returnDate.toString(), daysDiff);
     }
 
     if (priceList.containsKey((int) daysDiff)) {

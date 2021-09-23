@@ -1,8 +1,8 @@
 package com.bl.esp.service.impl;
 
+import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
-
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
@@ -13,7 +13,6 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
 
     @Override
     public ESPEventResponseWrapper sendOrderConfirmation(final OrderConfirmationEventRequest orderConfirmationEventRequest) {
-
         final ESPEventResponseWrapper espEventResponseWrapper = super.getTokenAndTriggerEvent(
             orderConfirmationEventRequest);
         return espEventResponseWrapper;
@@ -29,4 +28,12 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         return super.getTokenAndTriggerEvent(
             orderVerificationMoreInfoEventRequest);
     }
-}
+
+    @Override
+    public ESPEventResponseWrapper sendOrderCanceledEvent(
+        OrderCanceledEventRequest orderCanceledRequest) {
+        return super.getTokenAndTriggerEvent(
+            orderCanceledRequest);
+    }
+
+ }

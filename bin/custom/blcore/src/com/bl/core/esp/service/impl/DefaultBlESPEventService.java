@@ -1,11 +1,13 @@
 package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
+import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
@@ -28,6 +30,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private static final Logger LOG = Logger.getLogger(DefaultBlESPEventService.class);
     private BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator;
     private BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator;
+    private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -80,6 +83,28 @@ public class DefaultBlESPEventService implements BlESPEventService {
             // Save send order verification more info ESP Event Detail
             persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_MOREINFO,
                 orderModel.getCode(), null, null);
+        }
+    }
+    /**
+     * This method created to prepare the request and response from ESP service
+     * @param orderModel ordermodel
+     */
+    @Override
+    public void sendOrderCanceledEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderCanceledEventRequest orderCanceledEventRequest = new OrderCanceledEventRequest();
+            getBlOrderCanceledRequestPopulator().populate(orderModel,orderCanceledEventRequest);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try
+            {
+                // Call send order Canceled ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderCanceledEvent(orderCanceledEventRequest);
+            }catch (final BlESPIntegrationException exception){
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(), exception.getMessage());
+            }
+            // Save send order Canceled ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(),null);
+
         }
     }
 
@@ -153,4 +178,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
     public void setModelService(ModelService modelService) {
         this.modelService = modelService;
     }
+
+    public BlOrderCanceledRequestPopulator getBlOrderCanceledRequestPopulator() {
+        return blOrderCanceledRequestPopulator;
+    }
+
+    public void setBlOrderCanceledRequestPopulator(
+        BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator) {
+        this.blOrderCanceledRequestPopulator = blOrderCanceledRequestPopulator;
+    }
+
 }
