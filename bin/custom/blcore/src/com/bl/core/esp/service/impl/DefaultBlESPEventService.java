@@ -58,7 +58,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
      * @param orderModel ordermodel
      */
     @Override
-    public void sendOrderCanceled(OrderModel orderModel) {
+    public void sendOrderCanceledEvent(OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
             final OrderCanceledEventRequest orderCanceledEventRequest = new OrderCanceledEventRequest();
             getBlOrderCanceledRequestPopulator().populate(orderModel,orderCanceledEventRequest);
@@ -66,7 +66,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
             try
             {
                 // Call send order Canceled ESP Event API
-                espEventResponseWrapper = getBlESPEventRestService().sendOrderCanceled(orderCanceledEventRequest);
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderCanceledEvent(orderCanceledEventRequest);
             }catch (final BlESPIntegrationException exception){
                 persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(), exception.getMessage());
             }

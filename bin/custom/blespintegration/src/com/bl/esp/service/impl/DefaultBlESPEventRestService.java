@@ -19,7 +19,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     }
 
     @Override
-    public ESPEventResponseWrapper sendOrderCanceled(
+    public ESPEventResponseWrapper sendOrderCanceledEvent(
         OrderCanceledEventRequest orderCanceledRequest) {
         return super.getTokenAndTriggerEvent(
             orderCanceledRequest);

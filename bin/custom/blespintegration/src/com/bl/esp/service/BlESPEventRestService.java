@@ -18,10 +18,10 @@ public interface BlESPEventRestService<T> {
 
 
     /**
-     * Send Order Canceled by calling Order Canceled ESP Event API
+     * Send Order Canceled Event by calling Order Canceled ESP Event API
      *
      * @param orderCanceledRequest
      * @return
      */
-    ESPEventResponseWrapper sendOrderCanceled(final OrderCanceledEventRequest orderCanceledRequest);
+    ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest);
 }

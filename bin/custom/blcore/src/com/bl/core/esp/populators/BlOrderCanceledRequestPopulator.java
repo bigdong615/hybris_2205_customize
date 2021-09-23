@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author Avani Patel
- * BlOrderCanceledRequestPopulator
+ * This populator is used to populate OrderCanceled Event Request.
  */
 public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderCanceledEventRequest>
 {
@@ -74,7 +74,7 @@ public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<Ord
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 		data.setDateplaced(formatter.format(orderModel.getDate()));
 		data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
-		data.setReason(getRequestValue("test test"));
+		data.setReason(getRequestValue("TODO"));
 		orderConfirmationEventRequest.setData(data);
 	}
 
