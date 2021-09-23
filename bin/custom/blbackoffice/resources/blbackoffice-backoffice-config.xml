@@ -2791,6 +2791,7 @@
          <df:attribute id="disableEndDate" triggeredOn="*" qualifier="rentalEndDate" disabledIf="status.toString()=='SHIPPED'" />
      </df:dynamicForms>
  </context>
+
 </config>
 
 
