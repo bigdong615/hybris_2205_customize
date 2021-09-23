@@ -17,8 +17,8 @@ import org.springframework.util.Assert;
 
 
 /**
- * @author Avani Patel
  * This populator is used to populate OrderCanceled Event Request.
+ * @author Avani Patel
  */
 public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderCanceledEventRequest>
 {
