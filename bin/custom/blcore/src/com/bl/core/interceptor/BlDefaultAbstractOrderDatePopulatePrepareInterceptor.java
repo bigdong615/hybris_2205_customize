@@ -12,6 +12,8 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -56,7 +58,9 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
     if (BooleanUtils.isFalse(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
         && rentalReturnDate != null) {
-      for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
+      List<AbstractOrderEntryModel> entryModelList = abstractOrderModel.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
+          Collectors.toList());
+      for (final AbstractOrderEntryModel orderEntry : entryModelList) {
         //update rental date based on order dates
         // calculating base price after updating effective dates
         try {
