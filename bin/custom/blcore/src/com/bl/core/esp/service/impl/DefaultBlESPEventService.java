@@ -96,7 +96,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 }catch (final BlESPIntegrationException exception){
                     persistESPEventDetail(null, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(), exception.getMessage());
                 }
-                // Save send order Canceled ESP Event Detail
+                // Save send order Payment Declined ESP Event Detail
                 persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(),null);
 
             }
