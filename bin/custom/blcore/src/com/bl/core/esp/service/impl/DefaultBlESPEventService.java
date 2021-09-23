@@ -54,7 +54,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
             persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(),null);
         }
     }
-
+    /**
+     * This method created to prepare the request and response from ESP service
+     * @param orderModel ordermodel
+     */
     @Override
     public void sendOrderCanceled(OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
