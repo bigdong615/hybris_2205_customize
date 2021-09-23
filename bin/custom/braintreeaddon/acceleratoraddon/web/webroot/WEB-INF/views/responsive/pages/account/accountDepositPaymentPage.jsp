@@ -18,7 +18,7 @@
 	<div class="extend-order">
 		<div class="row">
 			<div class="col-12 mb-3">
-				<h5>Order Detail</h5>
+				<h5><spring:theme code="text.account.order.title.details" /></h5>
 			</div>
 		</div>
 		<div class="row">
@@ -34,7 +34,7 @@
 							<b>${orderData.rentalStartDate}</b>
 						</p>
 					</c:if>
-					<p class="body14">Rental Starts</p>
+					<p class="body14"><spring:theme code="text.myaccount.order.rental.Starts" /></p>
 				</div>
 				<div class="col-2 col-md-1 text-center">
 					<img class="rental-arrow"
@@ -51,14 +51,14 @@
 							<b>${orderData.rentalEndDate}</b>
 						</p>
 					</c:if>
-					<p class="body14">Rental Ends</p>
+					<p class="body14"><spring:theme code="text.myaccount.order.rental.ends" /></p>
 				</div>
 			</c:if>
 			<div class="col-12 mt-4">
 				<div class="row">
 					<div class="col-5 col-md-4">
 						<p class="body14">
-							Order #<br> Date Placed<br> Rental Days<br> Cost
+							<spring:theme code="text.myaccount.order" /><br> <spring:theme code="text.myaccount.extend.order.date.placed" /><br> <spring:theme code="text.myaccount.extend.order.rentalDays" /><br> <spring:theme code="text.myaccount.extend.order.cost" />
 						</p>
 					</div>
 					<div class="col-7 col-md-8">
@@ -71,7 +71,7 @@
 					</div>
 				</div>
 			</div>
-			<h5 class="mt-5 mb-4">Items</h5>
+			<h5 class="mt-5 mb-4"><spring:theme code="basket.items" /></h5>
 			<div class="col-12">
 				<c:forEach items="${orderData.entries}" var="cartEntry">
 					<div class="row mb-4 product-block">
@@ -128,7 +128,7 @@
 				</c:forEach>
 
 			</div>
-			<b>Pay with</b>
+			<b><spring:theme code="text.myaccount.extend.order.pay" /></b>
 
 			<div class="accordion" id="paymentOptions">
 				<div class="accordion-item payProduct">
@@ -151,7 +151,7 @@
 							</c:otherwise>
 						</c:choose>
 						<div class="col-11">
-							<b>Credit Card <img
+							<b><spring:theme code="order.myaccount.credit.card" /><img
 								src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png"
 								style="height: 44px; width: auto;"></b>
 							<div class="collapse" id="credit-card-expand"
@@ -236,7 +236,7 @@
 							</c:choose>
 						</div>
 						<div class="col-11">
-							<b>PayPal <img
+							<b><spring:theme code="order.myaccount.paypal" /><img
 								src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png"
 								style="height: 44px; width: auto;"></b>
 							<div class="collapse" id="paypal-expand"
@@ -257,47 +257,6 @@
 						</div>
 					</div>
 				</div>
-
-				<!--Commented this code as of now will be using this in future  -->
-				<%--      <c:if test="${orderData.isPOEnabled}">
-                	<div class="accordion-item payProduct">
-                	  <c:if test="${not empty selectedPoNumber}">
-                    		<input type="hidden" id="isPOPresent" name="isPOPresent" value="true"/>
-                    </c:if>
-                	  <div class="row">
-                			<div class="col-1 text-center">
-                			  <c:choose>
-                        	<c:when test="${disablePayment}">
-                        	
-                        			<button class="btn-checkbox paymentDisabled" type="button" disabled></button>
-                        	</c:when>
-                        	<c:otherwise>
-                        	
-                				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
-                					    data-bs-target="#po-expand" aria-controls="po-expand"
-                					    aria-expanded="false">
-                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
-                						  for="paymentMethodPo"></label>
-                				    </button>
-                				  </c:otherwise>
-                        </c:choose>
-                			</div>
-                			<div class="col-11">
-                				<b><spring:theme code="text.payment.page.po" /></b>
-                				<div class="collapse" id="po-expand"
-                					data-bs-parent="#paymentOptions">
-                				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
-                					<input type="text" class="form-control po-number mt-3" name="extendPoNumberInput" id="extendPoNumberInput" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
-                						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
-                					<input type="text" class="form-control po-number mt-3" name="extendPoNotesInput" id="extendPoNotesInput" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
-                						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
-                          <input type="hidden" id="poSelected" name="poSelected" value=""/>
-                				</form:form>
-                				</div>
-                			</div>
-                		</div>
-                	</div>
-                </c:if> --%>
 				<div class="page-loader-new-layout"></div>
 
 
@@ -319,7 +278,7 @@
 				<div id="allFieldvalidationMessage"></div>
 				<button
 					class="btn btn-sm btn-primary float-end js-order-deposit-payment"
-					type="submit">Deposit</button>
+					type="submit"><spring:theme code="order.myaccount.deposit" /></button>
 			</div>
 			<div id="allFieldvalidationMessage"></div>
 		</div>
@@ -327,13 +286,13 @@
 </div>
 <div class="col-lg-3 d-lg-block sticky-lg-top">
 	<div id="orderSummary" class="card">
-		<h5>Summary</h5>
+		<h5><spring:theme code="order.myaccount.summary" /></h5>
 		<hr>
 
 		<table id="costSummary">
 			<tbody>
 				<tr class="total">
-					<td>Deposit Amount</td>
+					<td><spring:theme code="order.myaccount.deposit.amount" /></td>
 					<td class="text-end"><input type="text" id="deposit-amount"
 						name="deposit-amount" class="get-deposit-value"></td>
 				</tr>
@@ -341,7 +300,7 @@
 		</table>
 		<button
 			class="btn btn-block btn-primary mt-4 js-order-deposit-payment"
-			type="submit">Deposit</button>
+			type="submit"><spring:theme code="order.myaccount.deposit" /></button>
 		<div id="depositPaymentErrorMessage"></div>
 	</div>
 </div>
@@ -368,7 +327,7 @@
 					method="GET">
 					<input type="hidden" id="orderId" name="orderId" value="" />
 
-					<spring:theme code="text.modify.order.credi.card.message" />
+					<spring:theme code="text.deposit.order.credi.card.message" />
 
 					<c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
 					<a href=""

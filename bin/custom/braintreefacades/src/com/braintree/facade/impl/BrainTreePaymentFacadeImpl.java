@@ -9,6 +9,7 @@ import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import com.bl.logging.BlLogger;
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
@@ -51,6 +52,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
@@ -176,11 +178,10 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		BrainTreeCreatePaymentMethodResult result = null;
 		// The below code has been commented out because the credit card details needs to be stored in vault //NOSONAR
 		//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled)) { //NOSONAR
-		BraintreeInfo paymentMethodBrainTreeInfo = null;
-		paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
+		final BraintreeInfo paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
 		result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
 				billingAddress, paymentMethodBrainTreeInfo);
-		LOG.error("result: " + result);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Braintree Payment Method Result : {}", result);
 
 		checkBraintreeResult(result);
 
@@ -198,7 +199,9 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 			isDuplicate = isPaymentMethodDuplicate(brainTreeSubscriptionInfoData, cart, billingAddress);
 		}
 		braintreeInfo.setDepositPayment(isDepositPayment);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Is Deposit Payment : {}", isDepositPayment);
 		braintreeInfo.setDepositAmount(depositAmount);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Deposit Payment Amount : {}", depositAmount);
 		paymentInfo = getBrainTreeTransactionService().createSubscription(billingAddress, customer, braintreeInfo, cart);
 
 

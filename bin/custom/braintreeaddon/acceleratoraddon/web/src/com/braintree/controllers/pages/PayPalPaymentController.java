@@ -340,11 +340,11 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			  final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
         final PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
         orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
-        model.addAttribute("orderData", orderDetails);
+        model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
         if (isDepositPaymentPage)
         {
-          model.addAttribute("depositAmount", billPayTotal);
-          model.addAttribute("paymentType", "PayPal");
+          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);
           final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
           storeCmsPageInModel(model, depositPaymentSuccessPage);
           setUpMetaDataForContentPage(model, depositPaymentSuccessPage);

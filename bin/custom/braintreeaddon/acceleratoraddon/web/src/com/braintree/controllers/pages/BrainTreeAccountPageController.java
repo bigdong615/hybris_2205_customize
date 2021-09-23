@@ -874,11 +874,10 @@ public class BrainTreeAccountPageController extends AbstractPageController
   public String getDepositPaymentForOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
       final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
   {
-    final String paymentInfoId = request.getParameter("paymentId");
-    final String paymentMethodNonce = request.getParameter("paymentNonce");
+    final String paymentInfoId = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_ID);
+    final String paymentMethodNonce = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_NONCE);
     final String orderCode = request.getParameter(ORDER_CODE);
-    final String depositTotal = request.getParameter("depositOrderTotal");
-    System.out.println(paymentInfoId + " ==== " + paymentMethodNonce + " ==== " + orderCode + " ==== " + depositTotal);
+    final String depositTotal = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
     try
     {      
       if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, depositTotal))
@@ -900,9 +899,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
         {
           final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
           final PriceData billPayTotal  = convertDoubleToPriceData(depositOrderTotal, order);
-          model.addAttribute("orderData", orderDetails);
-          model.addAttribute("depositAmount", billPayTotal);
-          model.addAttribute("paymentType", "Credit Card");
+          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.CREDIT_CARD);
           final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
           storeCmsPageInModel(model, payBillSuccessPage);
           setUpMetaDataForContentPage(model, payBillSuccessPage);
