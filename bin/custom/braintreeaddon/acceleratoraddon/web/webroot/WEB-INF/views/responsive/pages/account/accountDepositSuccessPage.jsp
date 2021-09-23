@@ -17,7 +17,7 @@
 
 	<h1><spring:theme code="order.myaccount.deposit.payment.success.deposit.received" /></h1>
 	<hr>
-	<h5 class="mb-5"><spring:theme code="order.myaccount.deposit.payment.success.msg" arguments="${paymentType}"/></h5> <format:price priceData="${depositAmount}" displayFreeForZero="false"/>
+	<h5 class="mb-5"><spring:theme code="order.myaccount.deposit.payment.success.msg" arguments="${paymentType}"/> <format:price priceData="${depositAmount}" displayFreeForZero="false"/></h5> 
 	<div class="confirmation-actions my-5">
 		<a href="${viewOrderAction}" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme code="order.myaccount.deposit.payment.success.view.order" /></a> 
 		<a href="${homePageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme code="order.myaccount.deposit.payment.success.home" /></a>
