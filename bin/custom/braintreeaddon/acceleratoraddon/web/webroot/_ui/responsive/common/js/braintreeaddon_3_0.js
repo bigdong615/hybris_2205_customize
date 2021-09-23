@@ -1524,4 +1524,9 @@ $(".js-order-deposit-payment").on("click", function(e) {
 	}
 });
 
-
+$(".add-cc-form-depositPayment").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form-depositPayment").submit();
+});

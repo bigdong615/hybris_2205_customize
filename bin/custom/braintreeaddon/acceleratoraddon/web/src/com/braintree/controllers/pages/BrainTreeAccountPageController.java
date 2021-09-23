@@ -91,6 +91,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
 	private static final String PAY_BILL = "/payBill";
+	private static final String DEPOSIT_PAYMENT_URL = "/depositPayment";
+	private static final String DEPOSIT_PAYMENT = "depositPayment";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
@@ -391,7 +393,15 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 				getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
 
-		if(StringUtils.isNotBlank(orderCode)) {
+		if(StringUtils.isNotBlank(orderCode) && orderCode.contains(DEPOSIT_PAYMENT))
+		{
+		  String[] split = orderCode.split(BlControllerConstants.RATIO);
+		  if(split.length >= 2)
+		  {
+		    return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + DEPOSIT_PAYMENT_URL;
+		  }
+		}
+		else if(StringUtils.isNotBlank(orderCode)) {
 			String originalOrderCode = orderCode.replace(BlControllerConstants.RATIO + getRedirectionUrl(orderCode), BlControllerConstants.EMPTY);
 			if(getRedirectionUrl(orderCode).equalsIgnoreCase(BlControllerConstants.EXTEND)) {
 				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + originalOrderCode;

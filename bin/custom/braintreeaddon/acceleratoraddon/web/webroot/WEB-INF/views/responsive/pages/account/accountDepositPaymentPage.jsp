@@ -363,7 +363,7 @@
 			</div>
 
 			<div class="modal-body">
-				<form id="payment-add-form-modifyPayment"
+				<form id="payment-add-form-depositPayment"
 					action="${request.contextPath}/my-account/add-payment-method"
 					method="GET">
 					<input type="hidden" id="orderId" name="orderId" value="" />
@@ -372,8 +372,8 @@
 
 					<c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
 					<a href=""
-						class="btn btn-block btn-primary mt-4 add-cc-form-modifyPayment"
-						data-order="${orderData.code}:modifyPayment"><spring:theme
+						class="btn btn-block btn-primary mt-4 add-cc-form-depositPayment"
+						data-order="${orderData.code}:depositPayment"><spring:theme
 							code="text.extend.order.credi.continue" /></a> <br>
 					<p class="text-center mb-0">
 						<a href="#" class="lightteal" aria-label="Close"
