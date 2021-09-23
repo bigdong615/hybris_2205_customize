@@ -1,14 +1,16 @@
 package com.bl.esp.service;
 
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 
-public interface BlESPEventRestService {
+
+public interface BlESPEventRestService<T> {
     /**
      * Send Order Confirmation by calling Order confirmation ESP Event API
      *
-     * @param orderConfirmationRequest
+     * @param orderConfirmationEventRequest
      * @return
      */
-    ESPEventResponseWrapper sendOrderConfirmation(OrderConfirmationRequest orderConfirmationRequest);
+    ESPEventResponseWrapper sendOrderConfirmation(
+        final OrderConfirmationEventRequest orderConfirmationEventRequest);
 }
