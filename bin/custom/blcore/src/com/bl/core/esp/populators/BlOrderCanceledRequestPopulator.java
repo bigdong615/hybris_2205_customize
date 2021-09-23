@@ -74,7 +74,7 @@ public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<Ord
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 		data.setDateplaced(formatter.format(orderModel.getDate()));
 		data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
-		data.setReason(getRequestValue("test")); // TODO Setting dummy value, Once we got the actual value then we set actual value one
+		data.setReason(getRequestValue("test")); // TODO Setting dummy value, once we got the actual value then set actual value one
 		orderConfirmationEventRequest.setData(data);
 	}
 
