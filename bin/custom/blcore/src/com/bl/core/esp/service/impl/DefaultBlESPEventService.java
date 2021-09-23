@@ -58,7 +58,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
      * @param orderModel ordermodel
      */
     @Override
-    public void sendOrderCanceledEvent(OrderModel orderModel) {
+    public void sendOrderCanceledEvent(final OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
             final OrderCanceledEventRequest orderCanceledEventRequest = new OrderCanceledEventRequest();
             getBlOrderCanceledRequestPopulator().populate(orderModel,orderCanceledEventRequest);
