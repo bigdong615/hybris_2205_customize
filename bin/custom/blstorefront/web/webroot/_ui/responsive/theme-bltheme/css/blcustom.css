@@ -317,15 +317,22 @@ margin: 0;
   left: auto!important;
   right: 0 !important;
 }
-@media only screen and (max-width: 767px) and (min-width: 0px){
+@media only screen and (max-width: 768px) and (min-width: 0px){
 .product-sort .dropdown-menu[style] {
     left: inherit !important;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
   .expertHelpIcon {margin-top: 4px !important;}   
-  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; }  
+  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; } 
+  .hide-on-desktop{text-align: left !important;display: block !important;}
+  .hide-on-mobile{display: none;}  
+  .splide__arrows{display:block !important;}
+  #product-thumbnails{display:none !important ;}
 }
+#product-thumbnails{display:block ;}
+.splide__arrows{display:none;}
+.hide-on-desktop{display:none ;}
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
 }
