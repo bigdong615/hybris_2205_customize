@@ -1,6 +1,5 @@
 package com.bl.esp.service;
 
-import com.bl.BlloggingStandalone;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.EspAccessTokenRequest;
 import com.bl.esp.dto.EspAccessTokenResponse;
@@ -8,7 +7,6 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponse;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.order.ESPEventCommonRequest;
-import com.bl.esp.service.impl.DefaultBlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
  */
 public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
 
-  private static final Logger LOG = Logger.getLogger(DefaultBlESPEventRestService.class);
+  private static final Logger LOG = Logger.getLogger(AbstractESPRestService.class);
   private ConfigurationService configurationService;
 
   /**
@@ -177,17 +175,17 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
 
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Create Event API response Object : {}", getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
-      final ESPEventResponseWrapper ESPEventResponseWrapper = new ESPEventResponseWrapper();
-      ESPEventResponseWrapper.setRequestString(requestString);
+      final ESPEventResponseWrapper espEventResponseWrapper = new ESPEventResponseWrapper();
+      espEventResponseWrapper.setRequestString(requestString);
 
       if (null == response) {
         BlLogger.logMessage(LOG , Level.ERROR , "Event Service Response is null" );
         throw new BlESPIntegrationException("Event Service Response is null" , LogErrorCodeEnum.ESP_EVENT_SERVICE_RESPONSE_NULL
             .getCode(), requestString);
       }else {
-        ESPEventResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
-        ESPEventResponseWrapper.setEventInstanceId(response.getEventInstanceId());
-        return ESPEventResponseWrapper;
+        espEventResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
+        espEventResponseWrapper.setEventInstanceId(response.getEventInstanceId());
+        return espEventResponseWrapper;
       }
 
     } catch (final Exception e) {

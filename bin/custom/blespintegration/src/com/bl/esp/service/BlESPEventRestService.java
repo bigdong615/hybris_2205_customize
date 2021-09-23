@@ -7,7 +7,7 @@ import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 
 
-public interface BlESPEventRestService<T> {
+public interface BlESPEventRestService {
     /**
      * Send Order Confirmation by calling Order confirmation ESP Event API
      *
@@ -23,7 +23,7 @@ public interface BlESPEventRestService<T> {
      * @param orderVerificationMoreInfoEventRequest
      * @return
      */
-    ESPEventResponseWrapper verifyOrderForMoreInfo(
+    ESPEventResponseWrapper sendOrderMoreInfoRequiredEvent(
         final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest);
 
     /**
@@ -32,5 +32,6 @@ public interface BlESPEventRestService<T> {
      * @param orderCanceledRequest
      * @return
      */
-    ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest);
+    ESPEventResponseWrapper sendOrderCanceledEvent(
+        final OrderCanceledEventRequest orderCanceledRequest);
 }

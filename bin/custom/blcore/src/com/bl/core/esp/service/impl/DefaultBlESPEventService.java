@@ -1,13 +1,13 @@
 package com.bl.core.esp.service.impl;
 
-import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
-import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
+import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
-import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
@@ -64,7 +64,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
      * @param orderModel
      */
     @Override
-    public void verifyOrderForMoreInfo(final OrderModel orderModel) {
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel) {
         if (Objects.nonNull(orderModel)) {
             final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest = new OrderVerificationMoreInfoEventRequest();
             getBlOrderVerificationMoreInfoRequestPopulator().populate(orderModel,
@@ -74,7 +74,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
             try
             {
                 // Call send order verification more info ESP Event API
-                espEventResponseWrapper = getBlESPEventRestService().verifyOrderForMoreInfo(
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderMoreInfoRequiredEvent(
                     orderVerificationMoreInfoEventRequest);
             }catch (final BlESPIntegrationException exception){
                 persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_MOREINFO,
@@ -100,10 +100,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 // Call send order Canceled ESP Event API
                 espEventResponseWrapper = getBlESPEventRestService().sendOrderCanceledEvent(orderCanceledEventRequest);
             }catch (final BlESPIntegrationException exception){
-                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(), exception.getMessage());
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED, orderModel.getCode(),
+                    exception.getMessage(), exception.getRequestString());
             }
             // Save send order Canceled ESP Event Detail
-            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(),null);
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,
+                orderModel.getCode(), null, null);
 
         }
     }

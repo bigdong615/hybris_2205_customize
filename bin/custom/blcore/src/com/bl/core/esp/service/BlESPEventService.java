@@ -16,7 +16,7 @@ public interface BlESPEventService {
      *
      * @param orderModel
      */
-    public void verifyOrderForMoreInfo(final OrderModel orderModel);
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel);
 
     /**
      * Send Order Canceled Event by calling Order Canceled ESP Event API

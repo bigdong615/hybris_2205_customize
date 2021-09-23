@@ -4,31 +4,16 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationMoreInfoData;
-import com.bl.esp.exception.BlESPIntegrationException;
-import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 
 /**
@@ -38,11 +23,6 @@ import org.w3c.dom.Element;
  */
 public class BlOrderVerificationMoreInfoRequestPopulator extends
     ESPEventCommonPopulator<OrderModel, OrderVerificationMoreInfoEventRequest> {
-
-  private static final Logger LOG = Logger
-      .getLogger(BlOrderVerificationMoreInfoRequestPopulator.class);
-
-  private final String POPULATOR_ERROR = "Error while populating data for ESP Event";
 
   /**
    * Populate the OrderVerificationMoreInfoEventRequest instance with values from the OrderModel.
@@ -107,7 +87,7 @@ public class BlOrderVerificationMoreInfoRequestPopulator extends
     data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
     data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
     data.setRentalduration((int) getRentalDuration(orderModel));
-    data.setVerificationlevel(1); //TODO setting dummy value here, once we get the confirmation, will set the actual value
+    data.setVerificationlevel(1); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
 
     orderVerificationMoreInfoEventRequest.setData(data);
   }

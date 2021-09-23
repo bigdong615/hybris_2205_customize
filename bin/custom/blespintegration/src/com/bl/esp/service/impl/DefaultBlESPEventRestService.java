@@ -12,28 +12,27 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
 
 
     @Override
-    public ESPEventResponseWrapper sendOrderConfirmation(final OrderConfirmationEventRequest orderConfirmationEventRequest) {
-        final ESPEventResponseWrapper espEventResponseWrapper = super.getTokenAndTriggerEvent(
-            orderConfirmationEventRequest);
-        return espEventResponseWrapper;
+    public ESPEventResponseWrapper sendOrderConfirmation(
+        final OrderConfirmationEventRequest orderConfirmationEventRequest) {
+
+        return super.getTokenAndTriggerEvent(orderConfirmationEventRequest);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ESPEventResponseWrapper verifyOrderForMoreInfo(
+    public ESPEventResponseWrapper sendOrderMoreInfoRequiredEvent(
         final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest) {
 
-        return super.getTokenAndTriggerEvent(
-            orderVerificationMoreInfoEventRequest);
+        return super.getTokenAndTriggerEvent(orderVerificationMoreInfoEventRequest);
     }
 
     @Override
     public ESPEventResponseWrapper sendOrderCanceledEvent(
         OrderCanceledEventRequest orderCanceledRequest) {
-        return super.getTokenAndTriggerEvent(
-            orderCanceledRequest);
+
+        return super.getTokenAndTriggerEvent(orderCanceledRequest);
     }
 
  }
