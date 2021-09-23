@@ -911,13 +911,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 		}
 
-		if (BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
-		{
-			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
-		}
+		setDefaultCard(customer, cardPaymentInfoModel);
 
 		return cardPaymentInfoModel;
 	}
+
+	
 
 	@Override
 	public BrainTreePaymentInfoModel createSubscription(final AddressModel billingAddress, final CustomerModel customer,
@@ -954,11 +953,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				getModelService().save(customer);
 			}
 		}
-		//Added condition to set Default card value if it is true
-		if ( BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
-		{
-			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
-		}
+		setDefaultCard(customer, cardPaymentInfoModel);
 
 		return cardPaymentInfoModel;
 	}
@@ -1126,6 +1121,18 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private Map<String, String> getCustomFields()
 	{
 		return customFieldsService.getDefaultCustomFieldsMap();
+	}
+	
+	/**
+	 * This method is used to set Default card 
+	 * @param customer
+	 * @param cardPaymentInfoModel
+	 */
+	private void setDefaultCard(final CustomerModel customer, final BrainTreePaymentInfoModel cardPaymentInfoModel) {
+		if (BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
+		}
 	}
 
 	/**
