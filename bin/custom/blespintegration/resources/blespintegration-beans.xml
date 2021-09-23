@@ -33,6 +33,16 @@
 		</property>
 	</bean>
 
+	<!-- Order Verification more info Main Event Request Object-->
+	<bean class="com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderverification.data.OrderVerificationMoreInfoData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
 	<!-- Common Request for order data common attributes-->
 	<bean class="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
@@ -146,7 +156,90 @@
 		</property>
 	</bean>
 
+	<!-- Order verification more info Event data Request Object -->
+	<bean class="com.bl.esp.dto.orderverification.data.OrderVerificationMoreInfoData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="shippingmethodtype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method type")</annotations>
+		</property>
+		<property name="shippingmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method")</annotations>
+		</property>
+		<property name="expectedshippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("expected shipping date")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("arrival date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("return date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customername")</annotations>
+		</property>
+		<property name="verificationlevel" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+		<property name="verificationtext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+	</bean>
 
 	<!-- Order Confirmation ESP pojo classes  Ends -->
+
+	<!-- Order Canceled Main Event Request Object-->
+	<bean class="com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.ordercanceled.data.OrderCanceledData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+<!-- Order Canceled Event data Request Object -->
+	<bean class="com.bl.esp.dto.ordercanceled.data.OrderCanceledData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="type" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("type")</annotations>
+		</property>
+		<property name="replacement" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("replacement")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="totalcost" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("total cost")</annotations>
+		</property>
+		<property name="reason" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("reason")</annotations>
+		</property>
+	</bean>
+	
+<!-- Order Canceled ESP pojo classes  Ends -->
+
 
 </beans>

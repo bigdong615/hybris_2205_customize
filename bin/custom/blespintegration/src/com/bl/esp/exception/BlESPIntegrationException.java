@@ -8,6 +8,7 @@ package com.bl.esp.exception;
 public class BlESPIntegrationException extends RuntimeException {
 
   private String errorCode;
+  private String requestString;
 
   public BlESPIntegrationException(final String errorMessage) {
     super(errorMessage);
@@ -22,11 +23,25 @@ public class BlESPIntegrationException extends RuntimeException {
     this.errorCode = errorCode;
   }
 
-  public BlESPIntegrationException(final String errorMessage, final String errorCode , final Throwable throwableError) {
+  public BlESPIntegrationException(final String errorMessage, final String errorCode,
+      final String requestString) {
+    super(errorMessage);
+    this.errorCode = errorCode;
+    this.requestString = requestString;
+  }
+
+  public BlESPIntegrationException(final String errorMessage, final String errorCode,
+      final Throwable throwableError) {
     super(errorMessage, throwableError);
     this.errorCode = errorCode;
   }
 
+  public BlESPIntegrationException(final String errorMessage, final String errorCode,
+      final String requestString, final Throwable throwableError) {
+    super(errorMessage, throwableError);
+    this.errorCode = errorCode;
+    this.requestString = requestString;
+  }
 
     public String getErrorCode() {
     return errorCode;
@@ -35,4 +50,13 @@ public class BlESPIntegrationException extends RuntimeException {
   public void setErrorCode(final String errorCode) {
     this.errorCode = errorCode;
   }
+
+  public String getRequestString() {
+    return requestString;
+  }
+
+  public void setRequestString(final String requestString) {
+    this.requestString = requestString;
+  }
+
 }
