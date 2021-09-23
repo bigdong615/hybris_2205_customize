@@ -57,32 +57,10 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
                     StringUtils.EMPTY);
         } else {
-            final Textbox skuInputField = new Textbox();
-            skuInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
-            skuInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
-            skuInputField.setMultiline(true);
-            skuInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
-            skuInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
-            skuInputField.setPlaceholder(BlInventoryScanLoggingConstants.SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST);
-            skuInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SKU);
-            skuInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
-                this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(skuInputField, inventoryCycleCountScanToolData);
-                this.setNewSKUInput(skuInputField);
-            });
+            final Textbox skuInputField = this.getSkuInputField(inventoryCycleCountScanToolData);
             component.appendChild(skuInputField);
 
-            final Textbox barcodeInputField = new Textbox();
-            barcodeInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
-            barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
-            barcodeInputField.setMultiline(true);
-            barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
-            barcodeInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
-            barcodeInputField.setPlaceholder(BlInventoryScanLoggingConstants.BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES);
-            barcodeInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SERIAL);
-            barcodeInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
-                this.getInventoryCycleCountScanToolUtil().onSerialBarcodeInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
-                this.setNewPwdInput(barcodeInputField);
-            });
+            final Textbox barcodeInputField = this.getBarcodeInputField(inventoryCycleCountScanToolData);
             component.appendChild(barcodeInputField);
 
             final Button clear = new Button();
@@ -97,6 +75,50 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
                 this.getInventoryCycleCountScanToolUtil().onSerialBarcodeInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
             });
         }
+    }
+
+    /**
+     * This method will create barcode input field
+     *
+     * @param inventoryCycleCountScanToolData data
+     * @return text box
+     */
+    private Textbox getBarcodeInputField(final InventoryCycleCountScanToolData inventoryCycleCountScanToolData) {
+        final Textbox barcodeInputField = new Textbox();
+        barcodeInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
+        barcodeInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
+        barcodeInputField.setMultiline(true);
+        barcodeInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
+        barcodeInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
+        barcodeInputField.setPlaceholder(BlInventoryScanLoggingConstants.BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES);
+        barcodeInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SERIAL);
+        barcodeInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
+            this.getInventoryCycleCountScanToolUtil().onSerialBarcodeInputFieldTextChanged(barcodeInputField, inventoryCycleCountScanToolData);
+            this.setNewPwdInput(barcodeInputField);
+        });
+        return barcodeInputField;
+    }
+
+    /**
+     * This method will create SKU input field
+     *
+     * @param inventoryCycleCountScanToolData data
+     * @return text box
+     */
+    private Textbox getSkuInputField(final InventoryCycleCountScanToolData inventoryCycleCountScanToolData) {
+        final Textbox skuInputField = new Textbox();
+        skuInputField.setRows(BlInventoryScanLoggingConstants.FIFTEEN);
+        skuInputField.setCols(BlInventoryScanLoggingConstants.FORTY);
+        skuInputField.setMultiline(true);
+        skuInputField.setHeight(BlInventoryScanLoggingConstants.HUN_PER);
+        skuInputField.setWidth(BlInventoryScanLoggingConstants.WIDTH_FOURTY_EIGHT);
+        skuInputField.setPlaceholder(BlInventoryScanLoggingConstants.SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST);
+        skuInputField.setStyle(BlInventoryScanLoggingConstants.RESIZE_NONE_DISPLAY_BLOCK_SKU);
+        skuInputField.addEventListener(BlInventoryScanLoggingConstants.ON_CHANGE, event -> {
+            this.getInventoryCycleCountScanToolUtil().onSKUsInputFieldTextChanged(skuInputField, inventoryCycleCountScanToolData);
+            this.setNewSKUInput(skuInputField);
+        });
+        return skuInputField;
     }
 
     /**
