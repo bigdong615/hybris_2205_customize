@@ -180,6 +180,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       orderModel.setDepositAmountTotal(depositAmountTotal.get());
       getModelService().save(orderModel);
       getModelService().refresh(orderModel);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Deposit Amount Total : {} for order : {}", depositAmountTotal.get(), orderModel.getCode());
     }
   }
 

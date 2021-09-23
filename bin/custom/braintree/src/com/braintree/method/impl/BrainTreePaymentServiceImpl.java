@@ -978,7 +978,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
     catch (final Exception exception)
     {
       BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
-          "Error while getting BraintreePaymentInfoModel for creating deposit for customer : {} and payment info ID ; {}", customer.getContactEmail(),
+          "Error while getting BraintreePaymentInfoModel for creating deposit for customer : {} and payment info ID ; {}", customer.getUid(),
           paymentInfoId);
     }
     return null;
