@@ -1,4 +1,5 @@
 package com.bl.core.esp.service.impl;
+import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
@@ -6,6 +7,7 @@ import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -27,6 +29,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private static final Logger LOG = Logger.getLogger(DefaultBlESPEventService.class);
     private BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
+    private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -73,6 +76,30 @@ public class DefaultBlESPEventService implements BlESPEventService {
             // Save send order Canceled ESP Event Detail
             persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(),null);
 
+        }
+    }
+    /**
+     * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
+     * @param orderModel
+     */
+    @Override
+    public void sendOrderPaymentDeclinedEvent(final OrderModel orderModel) {
+        {
+            if (Objects.nonNull(orderModel)) {
+                final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest = new OrderPaymentDeclinedEventRequest();
+                getBlOrderPaymentDeclinedRequestPopulator().populate(orderModel, orderPaymentDeclinedEventRequest);
+                ESPEventResponseWrapper espEventResponseWrapper = null;
+                try
+                {
+                    // Call send order Payment Declined ESP Event API
+                   espEventResponseWrapper = getBlESPEventRestService().sendOrderPaymentDeclinedEvent(orderPaymentDeclinedEventRequest);
+                }catch (final BlESPIntegrationException exception){
+                    persistESPEventDetail(null, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(), exception.getMessage());
+                }
+                // Save send order Canceled ESP Event Detail
+                persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(),null);
+
+            }
         }
     }
 
@@ -144,5 +171,15 @@ public class DefaultBlESPEventService implements BlESPEventService {
         BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator) {
         this.blOrderCanceledRequestPopulator = blOrderCanceledRequestPopulator;
     }
+
+    public BlOrderPaymentDeclinedRequestPopulator getBlOrderPaymentDeclinedRequestPopulator() {
+        return blOrderPaymentDeclinedRequestPopulator;
+    }
+
+    public void setBlOrderPaymentDeclinedRequestPopulator(
+        BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator) {
+        this.blOrderPaymentDeclinedRequestPopulator = blOrderPaymentDeclinedRequestPopulator;
+    }
+
 
 }

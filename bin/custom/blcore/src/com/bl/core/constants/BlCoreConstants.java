@@ -366,6 +366,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_CONFIRMATION_EVENT_DEFINITION_KEY = "order.confirmation.event.definition.key";
 	public static final String ORDER_CONFIRMATION_EVENT_TEMPLATE = "order.confirmation.event.template";
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE = "order.paymentdeclined.event.template";
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";
