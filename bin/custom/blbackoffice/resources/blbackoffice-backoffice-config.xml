@@ -2791,6 +2791,16 @@
          <df:attribute id="disableEndDate" triggeredOn="*" qualifier="rentalEndDate" disabledIf="status.toString()=='SHIPPED'" />
      </df:dynamicForms>
  </context>
+ 
+ <context merge-by="type" parent="GenericItem" type="Order" component="editorareaactions" principal="techEnguserrole">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.refunddepositaction"
+						  property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
 
 </config>
 
