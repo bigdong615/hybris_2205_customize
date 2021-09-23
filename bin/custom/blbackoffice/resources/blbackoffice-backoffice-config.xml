@@ -2800,7 +2800,7 @@
  </context>
 
 	<!-- BlInventoryCycleCount -->
-	<context component="create-wizard" type="BlInventoryCycleCount" merge-by="replace">
+	<context component="create-wizard" type="BlInventoryCycleCount" merge-by="type">
 		<wz:flow id="BlInventoryCycleCountWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="BlInventoryCycleCountPrepare">
 				<wz:initialize property="newBlInventoryCycleCount" type="ctx.TYPE_CODE"/>
@@ -2829,7 +2829,7 @@
 		</wz:flow>
 	</context>
 
-	<context type="BlInventoryCycleCount" component="listview" merge-by="replace">
+	<context type="BlInventoryCycleCount" component="listview" merge-by="type">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountCode"/>
 			<list-view:column qualifier="inventoryCycleCountProducts"/>
@@ -2838,7 +2838,7 @@
 		</list-view:list-view>
 	</context>
 
-	<context type="BlInventoryCycleCount" component="advanced-search" merge-by="replace">
+	<context type="BlInventoryCycleCount" component="advanced-search" merge-by="type">
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
@@ -2849,7 +2849,7 @@
 		</advanced-search:advanced-search>
 	</context>
 
-	<context type="BlInventoryCycleCount" component="simple-search" merge-by="replace">
+	<context type="BlInventoryCycleCount" component="simple-search" merge-by="type">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountCode"/>
 		</ss:simple-search>
@@ -2863,7 +2863,7 @@
 		</y:base>
 	</context>
 
-	<context component="create-wizard" type="BLInventoryCycleCountDetails" merge-by="replace">
+	<context component="create-wizard" type="BLInventoryCycleCountDetails" merge-by="type">
 		<wz:flow id="BLInventoryCycleCountDetailsWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="BLInventoryCycleCountDetailsPrepare">
 				<wz:initialize property="newBLInventoryCycleCountDetails" type="ctx.TYPE_CODE"/>
@@ -2888,7 +2888,7 @@
 		</wz:flow>
 	</context>
 
-	<context type="BLInventoryCycleCountDetails" component="listview" merge-by="replace">
+	<context type="BLInventoryCycleCountDetails" component="listview" merge-by="type">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountCode"/>
 			<list-view:column qualifier="inventoryCycleCountDate"/>
@@ -2897,7 +2897,7 @@
 		</list-view:list-view>
 	</context>
 
-	<context type="BLInventoryCycleCountDetails" component="advanced-search" merge-by="replace">
+	<context type="BLInventoryCycleCountDetails" component="advanced-search" merge-by="type">
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
@@ -2908,7 +2908,7 @@
 		</advanced-search:advanced-search>
 	</context>
 
-	<context type="BLInventoryCycleCountDetails" component="simple-search" merge-by="replace">
+	<context type="BLInventoryCycleCountDetails" component="simple-search" merge-by="type">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountCode"/>
 		</ss:simple-search>
@@ -2922,7 +2922,7 @@
 		</y:base>
 	</context>
 
-	<context component="create-wizard" type="BlInventoryCycleCountProductDetails" merge-by="replace">
+	<context component="create-wizard" type="BlInventoryCycleCountProductDetails" merge-by="type">
 		<wz:flow id="BlInventoryCycleCountProductDetailsWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="BlInventoryCycleCountProductDetailsPrepare">
 				<wz:initialize property="newBBlInventoryCycleCountProductDetails" type="ctx.TYPE_CODE"/>
@@ -2945,14 +2945,14 @@
 		</wz:flow>
 	</context>
 
-	<context type="BlInventoryCycleCountProductDetails" component="listview" merge-by="replace">
+	<context type="BlInventoryCycleCountProductDetails" component="listview" merge-by="type">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountDayCode"/>
 			<list-view:column qualifier="inventoryCycleCountProductId"/>
 		</list-view:list-view>
 	</context>
 
-	<context type="BlInventoryCycleCountProductDetails" component="advanced-search" merge-by="replace">
+	<context type="BlInventoryCycleCountProductDetails" component="advanced-search" merge-by="type">
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
@@ -2962,7 +2962,7 @@
 		</advanced-search:advanced-search>
 	</context>
 
-	<context type="BlInventoryCycleCountProductDetails" component="simple-search" merge-by="replace">
+	<context type="BlInventoryCycleCountProductDetails" component="simple-search" merge-by="type">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountDayCode"/>
 		</ss:simple-search>
@@ -2976,7 +2976,7 @@
 		</y:base>
 	</context>
 
-	<context component="create-wizard" type="BlInventoryCycleCountScanHistory" merge-by="replace">
+	<context component="create-wizard" type="BlInventoryCycleCountScanHistory" merge-by="type">
 		<wz:flow id="BlInventoryCycleCountScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="BlInventoryCycleCountScanHistoryPrepare">
 				<wz:initialize property="newBlInventoryCycleCountScanHistory" type="ctx.TYPE_CODE"/>
@@ -3013,7 +3013,7 @@
 		</wz:flow>
 	</context>
 
-	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="replace">
+	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="type">
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountCode"/>
 			<list-view:column qualifier="inventoryCycleCountDayCode"/>
@@ -3034,7 +3034,7 @@
 		</list-view:list-view>
 	</context>
 
-	<context type="BlInventoryCycleCountScanHistory" component="advanced-search" merge-by="replace">
+	<context type="BlInventoryCycleCountScanHistory" component="advanced-search" merge-by="type">
 		<advanced-search:advanced-search>
 			<advanced-search:field-list>
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
@@ -3047,7 +3047,7 @@
 		</advanced-search:advanced-search>
 	</context>
 
-	<context type="BlInventoryCycleCountScanHistory" component="simple-search" merge-by="replace">
+	<context type="BlInventoryCycleCountScanHistory" component="simple-search" merge-by="type">
 		<ss:simple-search>
 			<ss:field name="inventoryCycleCountCode"/>
 			<ss:field name="inventoryCycleCountDayCode"/>
