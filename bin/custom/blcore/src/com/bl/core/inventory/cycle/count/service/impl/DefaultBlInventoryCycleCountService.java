@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -31,17 +30,10 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
 
     private static final Logger LOG = Logger.getLogger(DefaultBlInventoryCycleCountService.class);
 
-    @Autowired
-    BlInventoryCycleCountDao blInventoryCycleCountDao;
-
-    @Autowired
-    BlInventoryScanToolDao blInventoryScanToolDao;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    ModelService modelService;
+    private BlInventoryCycleCountDao blInventoryCycleCountDao;
+    private BlInventoryScanToolDao blInventoryScanToolDao;
+    private UserService userService;
+    private ModelService modelService;
 
     private Collection<BlInventoryCycleCountProductDetailsModel> inventorySKUList;
 
@@ -426,8 +418,8 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
      * @param list list
      * @return BlInventoryCycleCountDetailsModel model
      */
-    private BlInventoryCycleCountDetailsModel createBlInventoryCycleCountDetailsModel(int inventoryCycleCountCounter, final Calendar calendar,
-                                                                                      Date previousDate, final List<BlProductModel> list) {
+    private BlInventoryCycleCountDetailsModel createBlInventoryCycleCountDetailsModel(final int inventoryCycleCountCounter, final Calendar calendar,
+                                                                                      final Date previousDate, final List<BlProductModel> list) {
         final BlInventoryCycleCountDetailsModel blInventoryCycleCountDetailsModel = getModelService().create(
                 BlInventoryCycleCountDetailsModel.class);
         blInventoryCycleCountDetailsModel.setInventoryCycleCountDate(this.getNextWorkingDate(previousDate, calendar, inventoryCycleCountCounter));

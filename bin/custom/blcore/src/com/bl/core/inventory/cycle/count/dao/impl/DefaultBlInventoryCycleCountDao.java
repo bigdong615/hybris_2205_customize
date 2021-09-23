@@ -1,24 +1,18 @@
 package com.bl.core.inventory.cycle.count.dao.impl;
 
-import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.cycle.count.dao.BlInventoryCycleCountDao;
 import com.bl.core.model.BlInventoryCycleCountModel;
 import com.bl.core.model.BlProductModel;
-import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
-import de.hybris.platform.util.Config;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,14 +43,14 @@ public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao
      */
     @Override
     public Collection<BlProductModel> getAllActiveSKUsWithSerialStatus() {
-        String queryString = "select {prod.pk}, {version.version}, {cat.id} from {BlProduct as prod}, {ArticleApprovalStatus as status}, " +
+        final String queryString = "select {prod.pk}, {version.version}, {cat.id} from {BlProduct as prod}, {ArticleApprovalStatus as status}, " +
                 "{Catalog as cat}, {CatalogVersion as version} where {prod.approvalStatus} = {status.pk} and {status.code} = 'approved' " +
                 "and {prod.catalogVersion} = {version.pk} and {version.catalog} = {cat.pk} and {cat.id} = 'blProductCatalog' and " +
                 "{version.version} = 'Online'";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(queryString);
         final List<BlProductModel> results = getFlexibleSearchService().<BlProductModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_ALL_SKUs);
-        return CollectionUtils.isNotEmpty(results) ? results : CollectionUtils.EMPTY_COLLECTION;
+        return CollectionUtils.isEmpty(results) ? CollectionUtils.EMPTY_COLLECTION : results;
     }
 
     public FlexibleSearchService getFlexibleSearchService() {

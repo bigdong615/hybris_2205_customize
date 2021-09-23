@@ -278,6 +278,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                             this.getOrderModel().getCode(), e.getMessage());
                 }
             }
+
             final OrderModel order = this.getModelService().get(this.getOrderModel().getPk());
             order.getEntries().forEach(entry -> this.getCockpitEventQueue()
                     .publishEvent(new DefaultCockpitEvent(BlCustomCancelRefundConstants.OBJECTS_UPDATED, entry, (Object) null)));
@@ -297,7 +298,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.refundProcess(null);
         }
     }
-
+    
     /**
      * process the refund
      *
@@ -501,7 +502,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void doRefund(final boolean fullRefund, final PaymentTransactionEntryModel captureEntry) {
         if (Boolean.TRUE.equals(fullRefund)) {
-            final double totalAmt = this.getTotalRefundAmount(); 
+            final double totalAmt = this.getTotalRefundAmount();
             final double refundedAmount = Double.parseDouble(this.totalRefundedAmount.getValue());
             final double otherPayment = this.getOrderModel().getOriginalOrderTotalAmount() - this.getGiftCardAmount();
             if (refundedAmount < otherPayment) {

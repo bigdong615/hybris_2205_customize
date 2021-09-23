@@ -1472,7 +1472,12 @@
 		  class="com.bl.core.inventory.cycle.count.dao.impl.DefaultBlInventoryCycleCountDao"/>
 
 	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
-		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService"/>
+		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService">
+		<property name="blInventoryCycleCountDao" ref="blInventoryCycleCountDao"/>
+		<property name="blInventoryScanToolDao" ref="blInventoryScanToolDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
 
 	<alias name="blInventoryCycleCountPrepareInterceptor" alias="blInventoryCycleCountPrepareInterceptor"/>
 	<bean id="blInventoryCycleCountPrepareInterceptor" class="com.bl.core.model.interceptor.BlInventoryCycleCountPrepareInterceptor">

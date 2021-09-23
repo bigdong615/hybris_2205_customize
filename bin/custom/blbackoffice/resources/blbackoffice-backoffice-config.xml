@@ -2925,7 +2925,7 @@
 	<context component="create-wizard" type="BlInventoryCycleCountProductDetails" merge-by="type">
 		<wz:flow id="BlInventoryCycleCountProductDetailsWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="BlInventoryCycleCountProductDetailsPrepare">
-				<wz:initialize property="newBBlInventoryCycleCountProductDetails" type="ctx.TYPE_CODE"/>
+				<wz:initialize property="newBlInventoryCycleCountProductDetails" type="ctx.TYPE_CODE"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.blInventoryCycleCountProductDetails.essential.label"
 					 sublabel="create.blInventoryCycleCountProductDetails.essential.sublabel">
