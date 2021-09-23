@@ -11,4 +11,10 @@ public interface BlESPEventService {
      */
     public void sendOrderConfirmation(OrderModel orderModel);
 
+    /**
+     * Send Order Canceled by calling Order Canceled ESP Event API
+     *
+     * @param orderModel
+     */
+    public void sendOrderCanceled(OrderModel orderModel);
 }
