@@ -6,7 +6,6 @@ package com.bl.core.esp.populators;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.ordercanceled.data.OrderCanceledData;
-import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 
@@ -24,10 +22,6 @@ import org.springframework.util.Assert;
  */
 public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderCanceledEventRequest>
 {
-	private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderConfirmationRequestPopulator.class);
-
-	private final String POPULATOR_ERROR = "Error while populating data for ESP Event";
-
 	/**
 	 * Populate the OrderCanceledRequest instance with values from the OrderModel.
 	 *

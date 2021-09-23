@@ -6,7 +6,6 @@ import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
