@@ -151,19 +151,23 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
    *
    * @param accessToken
    * @param eventRequest
-   * @return response - OrderConfirmationResponseWrapper
+   * @return response - ESPEventResponseWrapper
    */
   private ESPEventResponseWrapper triggerEvent(final String accessToken,
       final T eventRequest) {
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Event restful service starts.");
 
+    String requestString = StringUtils.EMPTY;
     try {
 
       final HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);
       headers.setBearerAuth(accessToken);
       final HttpEntity<T> orderConfirmationEventRequest = new HttpEntity<T>(eventRequest, headers);
+
+      requestString = getMapper().writerWithDefaultPrettyPrinter()
+          .writeValueAsString(orderConfirmationEventRequest);
 
       final String sendOrderConfirmationUrl = getEventApiURL();
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Triggering Event API request URL : {} ", sendOrderConfirmationUrl);
@@ -174,11 +178,12 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Create Event API response Object : {}", getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
       final ESPEventResponseWrapper ESPEventResponseWrapper = new ESPEventResponseWrapper();
-      ESPEventResponseWrapper.setRequestString(getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(orderConfirmationEventRequest));
+      ESPEventResponseWrapper.setRequestString(requestString);
+
       if (null == response) {
         BlLogger.logMessage(LOG , Level.ERROR , "Event Service Response is null" );
         throw new BlESPIntegrationException("Event Service Response is null" , LogErrorCodeEnum.ESP_EVENT_SERVICE_RESPONSE_NULL
-            .getCode());
+            .getCode(), requestString);
       }else {
         ESPEventResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
         ESPEventResponseWrapper.setEventInstanceId(response.getEventInstanceId());
@@ -187,7 +192,7 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
 
     } catch (final Exception e) {
       BlLogger.logMessage(LOG, Level.ERROR,  "Event API call failed.", e);
-      throw new BlESPIntegrationException("Event API call failed." , LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode());
+      throw new BlESPIntegrationException("Event API call failed." , LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(), requestString);
     }
   }
 

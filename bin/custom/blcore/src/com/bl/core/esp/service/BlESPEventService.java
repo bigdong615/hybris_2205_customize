@@ -11,4 +11,11 @@ public interface BlESPEventService {
      */
     public void sendOrderConfirmation(OrderModel orderModel);
 
+
+    /**
+     * Verify Order by calling Order verification more info ESP Event API
+     *
+     * @param orderModel
+     */
+    public void verifyOrderForMoreInfo(final OrderModel orderModel);
 }
