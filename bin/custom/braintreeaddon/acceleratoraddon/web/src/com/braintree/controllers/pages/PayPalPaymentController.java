@@ -432,6 +432,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				return REDIRECT_TO_ORDER_DETAILS_PAGE + orderCode;
 
 			} else {
+				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+						getLocalizedString("text.account.modify.payment.error"));
 				return REDIRECT_PREFIX  + MY_ACCOUNT_MODIFY_PAYMENT + orderCode;
 			}
     }
