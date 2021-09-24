@@ -137,7 +137,8 @@ public class DefaultBlPaymentService implements BlPaymentService
 			} else {
 				order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
 			}
-			modelService.save(order);
+			getModelService().save(order);
+			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
 		}
 		return false;
