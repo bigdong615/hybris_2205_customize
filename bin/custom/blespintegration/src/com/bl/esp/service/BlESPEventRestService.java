@@ -50,6 +50,14 @@ public interface BlESPEventRestService {
 
 
     /**
+     * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
+     *
+     * @param orderPaymentDeclinedEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderPaymentDeclinedEvent(final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest);
+
+    /**
      * Send Order Exception Event by calling Order Exception ESP Event API
      *
      * @param orderExceptionEventRequest
@@ -65,17 +73,8 @@ public interface BlESPEventRestService {
      * @param orderUnBoxedEventRequest
      * @return
      */
-     ESPEventResponseWrapper sendOrderUnboxed(
+    ESPEventResponseWrapper sendOrderUnboxed(
         final OrderUnBoxedEventRequest orderUnBoxedEventRequest);
 
-    ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest);
-
-    /**
-     * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
-     *
-     * @param orderPaymentDeclinedEventRequest
-     * @return
-     */
-    ESPEventResponseWrapper sendOrderPaymentDeclinedEvent(final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest);
 
 }
