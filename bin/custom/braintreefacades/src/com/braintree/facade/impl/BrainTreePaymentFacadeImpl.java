@@ -9,6 +9,7 @@ import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import com.bl.logging.BlLogger;
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
@@ -51,6 +52,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
@@ -156,6 +158,13 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	public BrainTreePaymentInfoModel completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
 			final CustomerModel customer, final AbstractOrderModel cart, final  boolean isCreditEnabled, final boolean isCheckout)
 	{
+		return completeCreateSubscription(brainTreeSubscriptionInfoData,customer, cart, isCreditEnabled, isCheckout, Boolean.FALSE, Double.valueOf(0.0d));
+	}
+
+	public BrainTreePaymentInfoModel completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
+			final CustomerModel customer, final AbstractOrderModel cart, final  boolean isCreditEnabled, final boolean isCheckout,
+			final boolean isDepositPayment, final Double depositAmount)
+	{
 		BrainTreePaymentInfoModel paymentInfo = null;
 		final AddressData addressData = brainTreeSubscriptionInfoData.getAddressData();
 		if (isNotEmpty(brainTreeSubscriptionInfoData.getCardNumber())) {
@@ -169,15 +178,14 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		BrainTreeCreatePaymentMethodResult result = null;
 		// The below code has been commented out because the credit card details needs to be stored in vault //NOSONAR
 		//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled)) { //NOSONAR
-			BraintreeInfo paymentMethodBrainTreeInfo = null;
-			paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
-			result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
-					billingAddress, paymentMethodBrainTreeInfo);
-			LOG.error("result: " + result);
+		final BraintreeInfo paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
+		result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
+				billingAddress, paymentMethodBrainTreeInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Braintree Payment Method Result : {}", result);
 
-			checkBraintreeResult(result);
+		checkBraintreeResult(result);
 
-			addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, result);
+		addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, result);
 //		} //NOSONAR
 		if (isStoreInVault && StringUtils.isEmpty(customer.getBraintreeCustomerId())) {
 			LOG.debug("... creating customer on the braintree side");
@@ -190,6 +198,10 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		if (isDuplicateCheckPossible(brainTreeSubscriptionInfoData)) {
 			isDuplicate = isPaymentMethodDuplicate(brainTreeSubscriptionInfoData, cart, billingAddress);
 		}
+		braintreeInfo.setDepositPayment(isDepositPayment);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, " Is Deposit Payment : {}", isDepositPayment);
+		braintreeInfo.setDepositAmount(depositAmount);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Deposit Payment Amount : {}", depositAmount);
 		paymentInfo = getBrainTreeTransactionService().createSubscription(billingAddress, customer, braintreeInfo, cart);
 
 
@@ -201,7 +213,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		paymentInfo.setDuplicate(isDuplicate);
 		modelService.save(paymentInfo);
 		setPaymentInfoInCart(cart, paymentInfo, isCheckout);
-		if (BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(getBrainTreeConfigService().getIntent())
+		if (!paymentInfo.isIsDepositPayment() && BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(getBrainTreeConfigService().getIntent())
 				&& result != null && isPayPalCheckout(brainTreeSubscriptionInfoData))
 		{
 			brainTreeTransactionService.createOrderTransaction(cart, result);
@@ -216,7 +228,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	 * @param isCheckout
 	 */
 	private void setPaymentInfoInCart(AbstractOrderModel cart, BrainTreePaymentInfoModel paymentInfo, boolean isCheckout) {
-		if(isCheckout || (cart instanceof OrderModel)) {
+		if((!paymentInfo.isIsDepositPayment()) && (isCheckout || (cart instanceof OrderModel))) {
 			cart.setPaymentInfo(paymentInfo);
 			modelService.save(cart);
 		}
@@ -389,7 +401,9 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 			if(StringUtils.isNotBlank(createPaymentMethodResult.getBraintreeAddressId()))
 			{
 			  brainTreeSubscriptionInfoData.setBraintreeAddressId(createPaymentMethodResult.getBraintreeAddressId());
-			}			
+			}
+			
+			brainTreeSubscriptionInfoData.setIsDefault(createPaymentMethodResult.getIsDefault());
 		}
 	}
 

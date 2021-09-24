@@ -3,6 +3,7 @@ package com.bl.esp.service.impl;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
@@ -26,6 +27,19 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest) {
 
         return super.getTokenAndTriggerEvent(orderVerificationMoreInfoEventRequest);
+    }
+
+    /**
+     * Verify order for coi needed by calling verification_coineeded ESP Event API
+     *
+     * @param orderVerificationCOIneededEventRequest
+     * @return
+     */
+    @Override
+    public ESPEventResponseWrapper sendOrderVerificationCOIRequiredEvent(
+        final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest) {
+
+        return super.getTokenAndTriggerEvent(orderVerificationCOIneededEventRequest);
     }
 
     @Override

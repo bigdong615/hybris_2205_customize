@@ -29,9 +29,7 @@
                     <div class="col-12 col-lg-10 col-xl-9">
                         <div class="row">
                               <div id="productImage" class="col-lg-6 text-center">
-                                <product:productImagePanel galleryImages="${galleryImages}" />
-                              </div>
-                            <div id="productInfo" class="col-lg-5 offset-lg-1">
+                              <div class="hide-on-desktop" id="productInfo">
                             <c:forEach items="${product.categories}" var="categoryData">
                              <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
                               <c:url var="brandUrl" value="${categoryData.url}"/>
@@ -39,7 +37,7 @@
                              </c:if>
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
-                                    <c:choose>
+                                <c:choose>
                                     <c:when test="${not empty disableButton and disableButton == true}">
                                       	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
                                       </c:when>
@@ -57,6 +55,38 @@
                                     </c:choose>
                                     
                                 <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                </div>
+                                <product:productImagePanel galleryImages="${galleryImages}" />
+                              </div>
+                            <div id="productInfo" class="col-lg-5 offset-lg-1">
+                            <div class="hide-on-mobile">
+                            <c:forEach items="${product.categories}" var="categoryData">
+                             <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
+                              <c:url var="brandUrl" value="${categoryData.url}"/>
+                              <p class="overline"><a href="${brandUrl}">${fn:toUpperCase(product.manufacturer)}</a></p>
+                             </c:if>
+                              </c:forEach>
+                                <h1 class="mb-4">${product.displayName}</h1>
+                                <c:choose>
+                                    <c:when test="${not empty disableButton and disableButton == true}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
+                                        <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:otherwise>
+                                         <c:if test ="${product.productTagValues ne null}">
+                                           <span class="badge badge-new">${product.productTagValues}</span>
+                                         </c:if>
+                                      </c:otherwise>
+                                    </c:choose>
+                                    
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                </div>                                   
+
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
