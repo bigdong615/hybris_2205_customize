@@ -1,10 +1,13 @@
 package com.bl.core.service.impl;
 
+import com.bl.core.model.BlProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.service.BlBackOfficePriceService;
 import com.bl.core.strategies.BlProductDynamicPriceStrategy;
 import com.bl.core.util.BlPriceRatioUtil;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.util.PriceValue;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -12,6 +15,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +34,8 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
   private BlProductDynamicPriceStrategy blCustomProductDynamicPriceStrategy;
   private BlPriceRatioUtil blProductPriceRatioUtil;
   private static final Logger LOG = Logger.getLogger(DefaultBlBackOfficePriceService.class);
-
+  @Resource(name = "commercePriceService")
+  private BlCommercePriceService commercePriceService;
   /**
    *  {@inheritDoc}  
    */
@@ -42,7 +47,7 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     final Map<Integer, BigDecimal> priceList = getBlProductPriceRatioUtil()
         .getPriceRatios(productModel);
     //((PriceRowModel) ((List)productModel.getEurope1Prices()).get(0)).getDuration()
-    if (MapUtils.isEmpty(priceList)) {
+    if (MapUtils.isEmpty(priceList) && !((BlProductModel)productModel).isBundleProduct()) {
       BlLogger.logMessage(LOG, Level.WARN, "! Rental Price not found");
       return BigDecimal.ZERO;
     }
@@ -61,6 +66,17 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
           , arrivalDate.toString(), returnDate.toString(), daysDiff);
     }
 
+    if(((BlProductModel)productModel).isBundleProduct()){
+      try {
+        final PriceValue priceValue = commercePriceService.getDynamicBasePriceForBundle(productModel,Long.valueOf(daysDiff).intValue());
+        return BigDecimal.valueOf(priceValue.getValue());
+      }catch(final Exception ex) {
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex,
+            "##### Some error ocure whiling calculating price for bundle product {} whiling saving order ########"
+            , productModel.getCode());
+        return null;
+      }
+    }
     if (priceList.containsKey((int) daysDiff)) {
       return priceList.get((int) daysDiff);
     } else {
