@@ -7,7 +7,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.exception.BlESPIntegrationException;
-
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -41,7 +40,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
 
   private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderConfirmationRequestPopulator.class);
 
-  private final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+  private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
 
   /**
      * Populate the OrderConfirmationRequest instance with values from the OrderModel.
@@ -52,8 +51,8 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
      */
     @Override
     public void populate(final OrderModel order, final OrderConfirmationEventRequest orderConfirmationEventRequest) throws ConversionException {
-        Assert.notNull(order, "Parameter emailId cannot be null.");
-        Assert.notNull(orderConfirmationEventRequest, "Parameter contactRequest cannot be null.");
+        Assert.notNull(order, "Parameter order cannot be null.");
+        Assert.notNull(orderConfirmationEventRequest, "Parameter orderConfirmationEventRequest cannot be null.");
 
         final UserModel userModel = order.getUser();
         if(Objects.nonNull(userModel)) {
@@ -244,7 +243,8 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
                             getRequestValue(entryModel.getProduct().getName()));
                     }
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO, StringUtils.EMPTY);
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
+                        entryModel.getProduct().getPicture().getURL());
                     if (Objects.nonNull(entryModel.getBasePrice())) {
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
                     }

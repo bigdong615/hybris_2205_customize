@@ -4,11 +4,13 @@ package com.bl.esp.service;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
+import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
-import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
-import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 
 
 public interface BlESPEventRestService {
@@ -45,7 +47,9 @@ public interface BlESPEventRestService {
      * @param orderCanceledRequest
      * @return
      */
-    ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest);
+    ESPEventResponseWrapper sendOrderCanceledEvent(
+        final OrderCanceledEventRequest orderCanceledRequest);
+
 
     /**
      * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
@@ -56,6 +60,26 @@ public interface BlESPEventRestService {
     ESPEventResponseWrapper sendOrderPaymentDeclinedEvent(final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest);
 
     /**
+     * Send Order Exception Event by calling Order Exception ESP Event API
+     *
+     * @param orderExceptionEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderException(
+        final OrderExceptionEventRequest orderExceptionEventRequest);
+
+
+    /**
+     * Send Order Unboxed Event by calling Order Unboxed ESP Event API
+     *
+     * @param orderUnBoxedEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderUnboxed(
+        final OrderUnBoxedEventRequest orderUnBoxedEventRequest);
+
+
+    /*
      * Send Order Verification Required by calling Order Verification Required ESP Event API
      *
      * @param verificationRequiredEventRequest
