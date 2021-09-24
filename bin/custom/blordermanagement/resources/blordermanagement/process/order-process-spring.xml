@@ -44,9 +44,6 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
 		<property name="blOrderService" ref="blOrderService"/>
-
-		<property name="blESPEventService" ref="blEspEventService"/>
-
 	</bean>
 	
 	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />
