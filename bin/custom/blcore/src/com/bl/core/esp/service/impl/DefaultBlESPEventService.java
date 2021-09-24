@@ -5,6 +5,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
@@ -12,6 +13,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
@@ -34,6 +36,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private static final Logger LOG = Logger.getLogger(DefaultBlESPEventService.class);
     private BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator;
     private BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator;
+    private BlOrderVerificationCOIneededRequestPopulator blOrderVerificationCOIneededRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
@@ -90,6 +93,35 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 orderModel.getCode(), null, null);
         }
     }
+
+    /**
+     * Verify Order by calling Order verification coi needed ESP Event API
+     *
+     * @param orderModel
+     */
+    @Override
+    public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
+            getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
+                orderVerificationCOIneededEventRequest);
+
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try
+            {
+                // Call send order verification more info ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderVerificationCOIRequiredEvent(
+                    orderVerificationCOIneededEventRequest);
+            }catch (final BlESPIntegrationException exception){
+                persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_COINEEDED,
+                    orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+            }
+            // Save send order verification more info ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_COINEEDED,
+                orderModel.getCode(), null, null);
+        }
+    }
+
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -192,6 +224,15 @@ public class DefaultBlESPEventService implements BlESPEventService {
     public void setBlOrderVerificationMoreInfoRequestPopulator(
         final BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator) {
         this.blOrderVerificationMoreInfoRequestPopulator = blOrderVerificationMoreInfoRequestPopulator;
+    }
+
+    public BlOrderVerificationCOIneededRequestPopulator getBlOrderVerificationCOIneededRequestPopulator() {
+        return blOrderVerificationCOIneededRequestPopulator;
+    }
+
+    public void setBlOrderVerificationCOIneededRequestPopulator(
+        final BlOrderVerificationCOIneededRequestPopulator blOrderVerificationCOIneededRequestPopulator) {
+        this.blOrderVerificationCOIneededRequestPopulator = blOrderVerificationCOIneededRequestPopulator;
     }
 
     public BlESPEventRestService getBlESPEventRestService() {

@@ -5,6 +5,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 
 
@@ -26,6 +27,15 @@ public interface BlESPEventRestService {
      */
     ESPEventResponseWrapper sendOrderMoreInfoRequiredEvent(
         final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest);
+
+    /**
+     * Verify order for coi needed by calling verification_coineeded ESP Event API
+     *
+     * @param orderVerificationCOIneededEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderVerificationCOIRequiredEvent(
+        final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest);
 
     /**
      * Send Order Canceled Event by calling Order Canceled ESP Event API
