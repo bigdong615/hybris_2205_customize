@@ -113,6 +113,7 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 	<bean id="orderConfirmationEventListener"
 	      class="com.bl.core.event.OrderConfirmationEventListener" parent="abstractAcceleratorSiteEventListener">
@@ -1495,7 +1496,22 @@
 		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
 		<property name="blOrderVerificationMoreInfoRequestPopulator" ref="blOrderVerificationMoreInfoRequestPopulator"/>
 		<property name="blOrderCanceledRequestPopulator" ref="blOrderCanceledRequestPopulator"/>
+		<property name="blOrderExceptionsRequestPopulator" ref="blOrderExceptionsRequestPopulator"/>
+		<property name="blOrderUnboxedRequestPopulator" ref="blOrderUnboxedRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
+
+
+	<!-- Order Exception populator ESP -->
+	<bean id="blOrderExceptionsRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator">
+		<property name="productService" ref="productService"/>
+	</bean>
+
+	<!-- Order unboxed populator ESP -->
+	<bean id="blOrderUnboxedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator">
+	</bean>
+
 </beans>

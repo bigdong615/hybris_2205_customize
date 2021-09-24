@@ -24,4 +24,17 @@ public interface BlESPEventService {
      */
     public void sendOrderCanceledEvent(final OrderModel orderModel);
 
+    /**
+     * Send Order Exceptions Event by calling Order Canceled ESP Event API
+     * @param orderModel
+     */
+    void sendOrderExceptions(final OrderModel orderModel) ;
+
+    /**
+     * Send Order Unboxed Event by calling Order Canceled ESP Event API
+     * @param orderModel
+     */
+    void sendOrderUnboxed(final OrderModel orderModel) ;
+
+
 }

@@ -368,6 +368,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_DEFINITION_KEY = "order.verification.moreinfo.event.definition.key";
 	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_TEMPLATE = "order.verification.moreinfo.event.template";
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
+	public static final String ORDER_EXCEPTION_EVENT_DEFINITION_KEY = "order.exception.event.definition.key";
+	public static final String ORDER_EXCEPTION__EVENT_TEMPLATE = "order.exception.event.template";
+	public static final String ORDER_UNBOXED_EVENT_DEFINITION_KEY = "order.unboxed.event.definition.key";
+	public static final String ORDER_UNBOXED__EVENT_TEMPLATE = "order.unboxed.event.template";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
@@ -407,6 +411,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_PRICE = "damagewaiverprice";
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_TEXT = "damagewaivertext";
 	public static final String ORDER_ITEM_TOTAL_PRICE = "totalprice";
+
+	public static final String ITEMS_ROOT_ELEMENT = "itemsinfo";
+	public static final String ITEM_ROOT_ELEMENT = "item";
+	public static final String ITEM_PRODUCT_URL = "producturl";
+	public static final String ITEM_AMOUNT_DUE_ROOT_ELEMENT = "amountdue";
+	public static final String ITEM_NOTES_ROOT_ELEMENT = "notes";
 
   public static final String DATE_PATTERN = "yyyy-MM-dd";
   public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";

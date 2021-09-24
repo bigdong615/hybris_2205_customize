@@ -2,12 +2,16 @@ package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
+import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
@@ -31,6 +35,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator;
     private BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
+    private BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator;
+    private BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -110,7 +116,60 @@ public class DefaultBlESPEventService implements BlESPEventService {
         }
     }
 
-    /**
+
+  /**
+   * This method created to prepare the request and response from Order Exception ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderExceptions(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderExceptionEventRequest orderExceptionEventRequest = new OrderExceptionEventRequest();
+      getBlOrderExceptionsRequestPopulator().populate(orderModel,
+          orderExceptionEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Exception ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderException(
+            orderExceptionEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order exception ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(),null, null);
+    }
+  }
+
+
+
+
+  /**
+   * This method created to prepare the request and response from Order Unboxed ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderUnboxed(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderUnBoxedEventRequest orderUnBoxedEventRequest = new OrderUnBoxedEventRequest();
+      getBlOrderUnboxedRequestPopulator().populate(orderModel,
+          orderUnBoxedEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Unboxed ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderUnboxed(
+            orderUnBoxedEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_UNBOXED,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order Unboxed ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_UNBOXED,orderModel.getCode(),null, null);
+    }
+  }
+
+
+  /**
      * This method created to store the response from ESP for all type of events
      * @param espEventResponseWrapper espEventResponseWrapper
      * @param eventTypeEnum enum type based on events
@@ -189,5 +248,25 @@ public class DefaultBlESPEventService implements BlESPEventService {
         BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator) {
         this.blOrderCanceledRequestPopulator = blOrderCanceledRequestPopulator;
     }
+
+
+  public BlOrderExceptionsRequestPopulator getBlOrderExceptionsRequestPopulator() {
+    return blOrderExceptionsRequestPopulator;
+  }
+
+  public void setBlOrderExceptionsRequestPopulator(
+      BlOrderExceptionsRequestPopulator blOrderExceptionsRequestPopulator) {
+    this.blOrderExceptionsRequestPopulator = blOrderExceptionsRequestPopulator;
+  }
+
+  public BlOrderUnboxedRequestPopulator getBlOrderUnboxedRequestPopulator() {
+    return blOrderUnboxedRequestPopulator;
+  }
+
+  public void setBlOrderUnboxedRequestPopulator(
+      BlOrderUnboxedRequestPopulator blOrderUnboxedRequestPopulator) {
+    this.blOrderUnboxedRequestPopulator = blOrderUnboxedRequestPopulator;
+  }
+
 
 }
