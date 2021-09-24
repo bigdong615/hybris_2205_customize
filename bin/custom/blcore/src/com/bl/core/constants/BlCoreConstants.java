@@ -177,8 +177,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES = "lenses";
 	public static final String CAMERAS = "cameras";
 	public static final String PRODUCTION = "production";
-	public static final String PACKAGE = "package";
-	public static final String GEAR_PACKAGE = "gear package";
+	public static final String PACKAGE= "package";
+	public static final String GEAR_PACKAGE="gear package";
 
 	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
@@ -227,13 +227,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String IS_USED_GEAR_PODUCT = "usedGearProduct";
 
-	public static final String ITEMS_ON_SALE = "Items On Sale";
+  public static final String ITEMS_ON_SALE = "Items On Sale";
 
 	public static final String IS_DISCONTINUED = "isDiscontinued";
 
 	public static final String COMPLETED = "Completed";
 	public static final String CONFIRM_OUTPUT = "confirmOutput";
-
+	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
 	public static final String BL_PRODUCTCATALOG = "blProductCatalog";
@@ -244,9 +244,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String EXTEND_ORDER = "extendOrder";
 
-	public static final String DAMAGE_WAIVER_ERROR = "Total Damage Waiver Cost : {}";
-	public static final String NEW_LINE_CHARACTER = "\n";
-	public static final String CATALOG_VERSION_NAME = "Online";
+	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
+	public static final String NEW_LINE_CHARACTER =  "\n";
+  public static final String CATALOG_VERSION_NAME = "Online";
 
 	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
 	public static final String SUBSCRIPTION_CONTACT_KEY = "contactKey";
@@ -254,24 +254,24 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMAIL_ADDRESSES = "Email Addresses";
 	public static final String HTML_ENABLED = "HTML Enabled";
 
-	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
-
+	
 	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
 	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
 	public static final String CUSTOMER_RESPONSIBLE_REPAIR = "CUSTOMER_RESPONSIBLE_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
-	public static final String ACCEPTED = "ACCEPTED";
+  public static final String ACCEPTED = "ACCEPTED";
 
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";
-	public static final String NEW_GEAR = "newgear";
-	public static final String RETAILGEAR = "retailGear";
-	public static final String BUNDLEPRODUCT = "bundleProduct";
+  public static final String NEW_GEAR = "newgear";
+	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BUNDLEPRODUCT = "bundleProduct" ;
 	public static final String BARCODE = "barcode";
-	public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 
 	public static final String RETURN_REQUEST = "returnRequest";
 	public static final String ASAGENT = "asagent";
@@ -279,7 +279,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ACTING_USER_UID = "ACTING_USER_UID";
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
-	public static final String AQUATECH_BRAND_ID = "9";
+	public static final String AQUATECH_BRAND_ID ="9";
 	public static final String SQL_DATE_FORMAT = "MM-dd-yyyy";
 
 
@@ -293,7 +293,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String COMMON_ERROR_MESSAGE = "unexpected.update.error";
 	public static final String BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR = "BlSerialProductValidateInterceptor";
-
+	
 	public static final String ZERO = "0";
 
 	public static final String BY_DATE = "byDate";
@@ -321,7 +321,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_CODE = "orderCode";
 	public static final String RETURN_DATE = "returnDate";
 	public static final String CONTACTUS_LINK = "contactus";
-
+	
 	public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String HYPHEN = "-";
 
@@ -365,6 +365,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String ORDER_CONFIRMATION_EVENT_DEFINITION_KEY = "order.confirmation.event.definition.key";
 	public static final String ORDER_CONFIRMATION_EVENT_TEMPLATE = "order.confirmation.event.template";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE = "order.paymentdeclined.event.template";
 	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_DEFINITION_KEY = "order.verification.moreinfo.event.definition.key";
 	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_TEMPLATE = "order.verification.moreinfo.event.template";
 
@@ -372,7 +373,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_VERIFICATION_COI_NEEDED_EVENT_TEMPLATE = "order.verification.coineeded.event.template";
 
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
-	public static final String ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE = "order.paymentdeclined.event.template";
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";
@@ -412,9 +413,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_TEXT = "damagewaivertext";
 	public static final String ORDER_ITEM_TOTAL_PRICE = "totalprice";
 
-	public static final String DATE_PATTERN = "yyyy-MM-dd";
-	public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
-	public static final String RENTAL = "Rental";
+  public static final String DATE_PATTERN = "yyyy-MM-dd";
+  public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
+  public static final String RENTAL = "Rental";
 
 	private BlCoreConstants()
 	{
