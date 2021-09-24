@@ -1477,6 +1477,11 @@
 	<bean id="blOrderCanceledRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderCanceledRequestPopulator">
 	</bean>
+	
+	<!-- Order Payment Declined populator ESP -->
+	<bean id="blOrderPaymentDeclinedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator">
+	</bean>
 
 	<!-- Order Verification more info populator ESP -->
 	<bean id="blOrderVerificationMoreInfoRequestPopulator" parent="espEventCommonPopulator"
@@ -1501,6 +1506,7 @@
 		<property name="blOrderVerificationMoreInfoRequestPopulator" ref="blOrderVerificationMoreInfoRequestPopulator"/>
 		<property name="blOrderVerificationCOIneededRequestPopulator" ref="blOrderVerificationCOIneededRequestPopulator"/>
 		<property name="blOrderCanceledRequestPopulator" ref="blOrderCanceledRequestPopulator"/>
+		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>

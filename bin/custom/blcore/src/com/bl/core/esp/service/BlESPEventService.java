@@ -31,4 +31,9 @@ public interface BlESPEventService {
      */
     public void sendOrderCanceledEvent(final OrderModel orderModel);
 
+    /**
+     * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
+     * @param orderModel
+     */
+    public void sendOrderPaymentDeclinedEvent(final OrderModel orderModel);
 }
