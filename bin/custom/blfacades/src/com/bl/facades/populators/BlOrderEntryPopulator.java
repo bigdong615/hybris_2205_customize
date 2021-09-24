@@ -169,6 +169,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		productData.setProductId(blProductModel.getProductId());
 		productData.setIsVideo(blProductModel.getIsVideo());
 		productData.setIsBundle(blProductModel.isBundleProduct());
+		productData.setManufacturerAID(productModel.getManufacturerAID());
 		populateBundleEntryData(blProductModel, productData);
 	}
 
