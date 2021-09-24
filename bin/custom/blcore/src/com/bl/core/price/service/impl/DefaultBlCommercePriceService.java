@@ -7,6 +7,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +50,9 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
 	private BlDatePickerService blDatePickerService;
 	private BaseStoreService baseStoreService;
+
+	@Resource(name="productService")
+	private BlProductService productService;
 
 	/**
 	 * {@inheritDoc}
@@ -129,13 +134,12 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	 */
 	@Override
 	public PriceValue  getDynamicBasePriceForBundle(
-		final ProductModel product,int noOfRentalDays) throws CalculationException
+		final ProductModel product,final int noOfRentalDays) throws CalculationException
 {
 		List<PriceInformation> lPrices = new ArrayList<>();
-		final List<ProductReferenceModel> productReferences = Lists.newArrayList(CollectionUtils.emptyIfNull(((BlProductModel) product)
-				.getProductReferences()));
+	  final List<ProductReferenceModel> productReferences = productService.getBundleProductReferenceModel(product);
 		if (CollectionUtils.isNotEmpty(productReferences)) {
-			productReferences.stream().filter(refer -> ProductReferenceTypeEnum.CONSISTS_OF.equals(refer.getReferenceType())).forEach(productReferenceModel -> {
+			productReferences.forEach(productReferenceModel -> {
 				final ProductModel target = productReferenceModel.getTarget();
 				final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
 				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);

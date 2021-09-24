@@ -541,7 +541,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		double subtotal = 0.0;
 		double totalDamageWaiverCost = 0.0;
-		List<AbstractOrderEntryModel> orderEntryList = order.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
+		final List<AbstractOrderEntryModel> orderEntryList = order.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
 				Collectors.toList());
 		for (final AbstractOrderEntryModel entryModel : orderEntryList)
 		{

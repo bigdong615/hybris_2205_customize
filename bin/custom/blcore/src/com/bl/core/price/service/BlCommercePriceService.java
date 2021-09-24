@@ -79,6 +79,6 @@ public interface BlCommercePriceService extends CommercePriceService
 	 * @throws CalculationException exception
 	 */
 	public PriceValue getDynamicBasePriceForBundle(
-			final ProductModel product,int noOfRentalDays) throws CalculationException;
+			final ProductModel product,final int noOfRentalDays) throws CalculationException;
 
 }

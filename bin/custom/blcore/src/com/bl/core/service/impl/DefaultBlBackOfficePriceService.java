@@ -70,8 +70,8 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
       try {
         final PriceValue priceValue = commercePriceService.getDynamicBasePriceForBundle(productModel,Long.valueOf(daysDiff).intValue());
         return BigDecimal.valueOf(priceValue.getValue());
-      }catch(Exception e) {
-        BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, e,
+      }catch(final Exception ex) {
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, ex,
             "##### Some error ocure whiling calculating price for bundle product {} whiling saving order ########"
             , productModel.getCode());
         return null;
