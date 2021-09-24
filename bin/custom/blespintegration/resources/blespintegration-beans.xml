@@ -241,6 +241,105 @@
 	
 <!-- Order Canceled ESP pojo classes  Ends -->
 
+	<!-- Order Verification COI needed Main Event Request Object-->
+	<bean class="com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderverification.data.OrderVerificationCOIneededData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order verification COI needed Event data Request Object -->
+	<bean class="com.bl.esp.dto.orderverification.data.OrderVerificationCOIneededData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="shippingmethodtype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method type")</annotations>
+		</property>
+		<property name="shippingmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method")</annotations>
+		</property>
+		<property name="expectedshippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("expected shipping date")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("arrival date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("return date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customername")</annotations>
+		</property>
+		<property name="verificationlevel" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+		<property name="coiamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("coi amount")</annotations>
+		</property>
+		<property name="verificationtext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+	</bean>
+	<!-- Order verification COI needed Event  ends -->
+
+<!-- Order Payment Declined Main Event Request Object-->
+	<bean class="com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderpaymentdeclined.data.OrderPaymentDeclinedData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+	
+	<!-- Order Payment Declined Event data Request Object -->
+	<bean class="com.bl.esp.dto.orderpaymentdeclined.data.OrderPaymentDeclinedData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="type" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("type")</annotations>
+		</property>
+		<property name="replacement" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("replacement")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="totalcost" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("total cost")</annotations>
+		</property>
+		<property name="paymenttype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("payment type")</annotations>
+		</property>
+		<property name="paymenttext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("payment text")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order Payment Declined ESP pojo classes  Ends -->
 
 
 	<!-- Order Exception Main Event Request Object-->

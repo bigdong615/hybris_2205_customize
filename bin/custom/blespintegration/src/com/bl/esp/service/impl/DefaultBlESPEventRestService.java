@@ -5,6 +5,8 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
+import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
@@ -30,11 +32,29 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         return super.getTokenAndTriggerEvent(orderVerificationMoreInfoEventRequest);
     }
 
+    /**
+     * Verify order for coi needed by calling verification_coineeded ESP Event API
+     *
+     * @param orderVerificationCOIneededEventRequest
+     * @return
+     */
     @Override
-    public ESPEventResponseWrapper sendOrderCanceledEvent(
-        OrderCanceledEventRequest orderCanceledRequest) {
+    public ESPEventResponseWrapper sendOrderVerificationCOIRequiredEvent(
+        final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest) {
 
-        return super.getTokenAndTriggerEvent(orderCanceledRequest);
+        return super.getTokenAndTriggerEvent(orderVerificationCOIneededEventRequest);
+    }
+
+    @Override
+    public ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest) {
+        return super.getTokenAndTriggerEvent(
+            orderCanceledRequest);
+    }
+
+    @Override
+    public ESPEventResponseWrapper sendOrderPaymentDeclinedEvent(final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest) {
+        return super.getTokenAndTriggerEvent(
+            orderPaymentDeclinedEventRequest);
     }
 
     /**
@@ -55,6 +75,5 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         final OrderUnBoxedEventRequest orderUnBoxedEventRequest) {
         return super.getTokenAndTriggerEvent(orderUnBoxedEventRequest);
     }
-
 
 }

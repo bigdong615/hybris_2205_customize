@@ -113,7 +113,6 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
-		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 	<bean id="orderConfirmationEventListener"
 	      class="com.bl.core.event.OrderConfirmationEventListener" parent="abstractAcceleratorSiteEventListener">
@@ -1478,10 +1477,20 @@
 	<bean id="blOrderCanceledRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderCanceledRequestPopulator">
 	</bean>
+	
+	<!-- Order Payment Declined populator ESP -->
+	<bean id="blOrderPaymentDeclinedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator">
+	</bean>
 
 	<!-- Order Verification more info populator ESP -->
 	<bean id="blOrderVerificationMoreInfoRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator">
+	</bean>
+
+	<!-- Order Verification coi needed populator ESP -->
+	<bean id="blOrderVerificationCOIneededRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator">
 	</bean>
 
 	<!--ESP Event Common populator -->
@@ -1495,9 +1504,11 @@
 		class="com.bl.core.esp.service.impl.DefaultBlESPEventService">
 		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
 		<property name="blOrderVerificationMoreInfoRequestPopulator" ref="blOrderVerificationMoreInfoRequestPopulator"/>
+		<property name="blOrderVerificationCOIneededRequestPopulator" ref="blOrderVerificationCOIneededRequestPopulator"/>
 		<property name="blOrderCanceledRequestPopulator" ref="blOrderCanceledRequestPopulator"/>
 		<property name="blOrderExceptionsRequestPopulator" ref="blOrderExceptionsRequestPopulator"/>
 		<property name="blOrderUnboxedRequestPopulator" ref="blOrderUnboxedRequestPopulator"/>
+		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
