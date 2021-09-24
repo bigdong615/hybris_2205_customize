@@ -40,7 +40,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
 
   private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderConfirmationRequestPopulator.class);
 
-  private final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+  private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
 
   /**
      * Populate the OrderConfirmationRequest instance with values from the OrderModel.

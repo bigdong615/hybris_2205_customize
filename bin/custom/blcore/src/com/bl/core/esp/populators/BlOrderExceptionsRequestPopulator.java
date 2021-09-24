@@ -34,8 +34,8 @@ import org.w3c.dom.Element;
  */
 public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<OrderModel, OrderExceptionEventRequest> {
 
-  private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderConfirmationRequestPopulator.class);
-  private final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+  private static final org.apache.log4j.Logger LOG = Logger.getLogger(BlOrderExceptionsRequestPopulator.class);
+  private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
 
 
   private ProductService productService;
@@ -77,7 +77,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     populateCommonData(orderModel , orderExceptionsData);
     orderExceptionsData.setOldorderid(getRequestValue(orderModel.getCode()));
-    orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION__EVENT_TEMPLATE)));
+    orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExceptionsData.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
     populateOrderItemsInXML(orderModel, orderExceptionsData);
@@ -98,24 +98,27 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
         final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
 
         if(CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
-         orderModel.getConsignments().forEach(consignmentModel -> consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
-           consignmentEntryModel.getBillingCharges().forEach((serialProductCode, blItemsBillingChargeModels) -> blItemsBillingChargeModels.forEach(blItemsBillingChargeModel -> {
-             final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
-             if(BooleanUtils.isFalse(blItemsBillingChargeModel.isBillPaid())){
-               createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
-                   getRequestValue(serialProductCode));
-               createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
-                   getRequestValue(getProductTitle(serialProductCode)));
-               createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_PRODUCT_URL,
-                   getRequestValue(getProductUrl(serialProductCode)));
-               createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
-                   getRequestValue(String.valueOf(blItemsBillingChargeModel.getChargedAmount().add(blItemsBillingChargeModel.getTaxAmount()).
-                       setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE))));
-               createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_NOTES_ROOT_ELEMENT,
-                   getRequestValue(blItemsBillingChargeModel.getUnPaidBillNotes()));
-             }
-           }));
-         }));
+
+          orderModel.getConsignments().forEach(consignmentModel ->
+              consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel ->
+                  consignmentEntryModel.getBillingCharges().forEach((serialProductCode, blItemsBillingChargeModels) ->
+                      blItemsBillingChargeModels.forEach(blItemsBillingChargeModel ->{
+                        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+                        if(BooleanUtils.isFalse(blItemsBillingChargeModel.isBillPaid())){
+                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                              getRequestValue(serialProductCode));
+                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                              getRequestValue(getProductTitle(serialProductCode)));
+                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_PRODUCT_URL,
+                              getRequestValue(getProductUrl(serialProductCode)));
+                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
+                              getRequestValue(String.valueOf(blItemsBillingChargeModel.getChargedAmount().add(blItemsBillingChargeModel.getTaxAmount()).
+                                  setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE))));
+                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_NOTES_ROOT_ELEMENT,
+                              getRequestValue(blItemsBillingChargeModel.getUnPaidBillNotes()));
+                        }
+                          }
+                      ))));
         }
 
         final Transformer transformer = getTransformerFactoryObject();
