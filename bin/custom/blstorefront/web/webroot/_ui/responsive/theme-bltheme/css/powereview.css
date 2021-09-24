@@ -1,0 +1,32 @@
+/* snippet rules */
+#pr-reviewsnippet { /* move reviews away from badges */
+    margin-top:8px; 
+}    
+.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-stars-container {
+    display:inline;
+}    
+.p-w-r .pr-snippet-rating-decimal { /* hide # box */
+    display:none; 
+}
+.p-w-r .pr-snippet-write-review-link { /* hide summary write link */
+    display:none; 
+}
+.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-read-and-write a {
+    font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 400;
+    vertical-align:middle;
+    margin: 0 0 15px 5px;
+}
+
+/* read a review rules */
+.pr-snippet-stars pr-snippet-stars-png,
+.p-w-r .pr-read-review, 
+.p-w-r .pr-review-display, 
+.p-w-r .pr-read-review, .p-w-r .pr-review-display, 
+.p-w-r .pr-review-snapshot, .p-w-r .pr-review-display .pr-rd-footer { /* match the page background */
+    background-color: #F3F3F3;
+}
+
+.reviewActions { /* hide design buttons for now */
+    display: none;
+}

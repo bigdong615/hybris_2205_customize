@@ -32,12 +32,18 @@
 		<div class="row justify-content-center">
 			<div class="col-12 col-lg-11 col-xl-10">
 				<div class="row">
-					<div id="productImage" class="col-lg-5 text-center">
+				<div class="hide-on-desktop" id="productInfo">
+						<p class="overline">${fn:toUpperCase(product.manufacturer)}</p>
+						<h1 class="mb-4">${product.displayName}</h1>
+					</div>
+					<div id="productImage" class="col-lg-5 text-center">										
 						<product:productImagePanel galleryImages="${galleryImages}" />
 					</div>
 					<div id="productInfo" class="col-lg-6 offset-lg-1">
+					<div class="hide-on-mobile">
 						<p class="overline">${fn:toUpperCase(product.manufacturer)}</p>
 						<h1 class="mb-4">${product.displayName}</h1>
+					</div>	
 						<table id="usedProductList">
 							<c:choose>
 								<c:when
