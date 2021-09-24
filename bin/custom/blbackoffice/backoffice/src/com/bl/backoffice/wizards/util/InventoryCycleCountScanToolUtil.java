@@ -1,5 +1,6 @@
 package com.bl.backoffice.wizards.util;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zul.impl.InputElement;
@@ -40,11 +41,11 @@ public class InventoryCycleCountScanToolUtil {
      * method will take input and format the list by next line
      *
      * @param newPwdInput input
-     * @return
+     * @return list
      */
-    private List getFormattedInputList(InputElement newPwdInput) {
+    private List getFormattedInputList(final InputElement newPwdInput) {
         final List modifiableBarcodeInputFieldList = new ArrayList<>();
-        modifiableBarcodeInputFieldList.addAll(Arrays.asList(newPwdInput.getText().split("\n")));
+        modifiableBarcodeInputFieldList.addAll(Arrays.asList(newPwdInput.getText().split(BlInventoryScanLoggingConstants.REGEX_N)));
         if (CollectionUtils.isNotEmpty(modifiableBarcodeInputFieldList)) {
             modifiableBarcodeInputFieldList.removeAll(Collections.singleton(null));
             modifiableBarcodeInputFieldList.removeAll(Collections.singleton(StringUtils.EMPTY));

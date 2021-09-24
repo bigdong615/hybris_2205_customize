@@ -35,7 +35,7 @@ public class DefaultBlInventoryCycleCountDao implements BlInventoryCycleCountDao
                 "{inventoryCycleCountActive} = 1");
         final List<BlInventoryCycleCountModel> results = getFlexibleSearchService().<BlInventoryCycleCountModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_ACTIVE_INVENTORY_CYCLE_COUNT);
-        return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
+        return CollectionUtils.isEmpty(results) ? null : results.get(BlInventoryScanLoggingConstants.ZERO);
     }
 
     /**

@@ -61,7 +61,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                     activeSKUs.add(sku);
                 }
             }
-            return CollectionUtils.isNotEmpty(activeSKUs) ? activeSKUs : CollectionUtils.EMPTY_COLLECTION;
+            return CollectionUtils.isEmpty(activeSKUs) ? CollectionUtils.EMPTY_COLLECTION : activeSKUs;
         }
         return CollectionUtils.EMPTY_COLLECTION;
     }

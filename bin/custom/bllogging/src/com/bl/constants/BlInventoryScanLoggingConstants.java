@@ -289,6 +289,7 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
     public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
+    public static final String EXCEPTION = "Error occurred: {}";
     public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
     public static final String ICC_NO_SERIALS = "Please reconcile both of these lists!!";
 
@@ -304,7 +305,10 @@ public class BlInventoryScanLoggingConstants {
     public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
     public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
     public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
-  private BlInventoryScanLoggingConstants() { }
+
+    public static final String REGEX_N = "\n";
+
+    private BlInventoryScanLoggingConstants() { }
 
     /**
      * javadoc

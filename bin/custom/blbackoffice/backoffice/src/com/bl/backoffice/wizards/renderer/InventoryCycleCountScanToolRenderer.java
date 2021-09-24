@@ -51,8 +51,7 @@ public class InventoryCycleCountScanToolRenderer extends DefaultCustomViewRender
                 .getModel().getValue((String) map.get(BlInventoryScanLoggingConstants.INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY),
                 InventoryCycleCountScanToolData.class);
         if (inventoryCycleCountScanToolData == null) {
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-                    StringUtils.EMPTY);
+            BlLogger.logMessage(LOG, Level.INFO,BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG);
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.ICC_NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
                     StringUtils.EMPTY);

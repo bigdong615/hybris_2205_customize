@@ -66,11 +66,31 @@ public interface BlInventoryCycleCountService {
      */
     String executeInventoryCycleCount(final Collection<String> serialBarcodes);
 
+    /**
+     * This method will return day code
+     *
+     * @return code
+     */
     String getInventoryDayCode();
 
+    /**
+     * This method will set day code
+     *
+     * @param inventoryDayCode code
+     */
     void setInventoryDayCode(final String inventoryDayCode);
 
+    /**
+     * This method will return date
+     *
+     * @return date
+     */
     Date getInventoryDayDate();
 
+    /**
+     * This method will set date
+     *
+     * @param inventoryDayDate code
+     */
     void setInventoryDayDate(final Date inventoryDayDate);
 }

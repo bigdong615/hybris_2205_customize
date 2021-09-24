@@ -36,7 +36,12 @@ public class BlInventoryCycleCountJob extends AbstractJobPerformable<CronJobMode
         if(localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_TO_PERFORM_BL_AUTHORIZE_PAYMENT_JOB_AS_IT_S_WEEKEND);
         } else {
-            this.getBlInventoryCycleCountService().createNextInventoryCycleCount();
+            try {
+                this.getBlInventoryCycleCountService().createNextInventoryCycleCount();
+            } catch(final Exception e) {
+                BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlInventoryScanLoggingConstants.EXCEPTION, e.getMessage());
+                return new PerformResult(CronJobResult.FAILURE, CronJobStatus.ABORTED);
+            }
         }
 
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FINISHED_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB);
