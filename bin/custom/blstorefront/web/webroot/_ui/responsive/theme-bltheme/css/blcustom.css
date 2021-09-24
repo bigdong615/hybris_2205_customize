@@ -327,7 +327,7 @@ margin: 0;
   .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; } 
   .hide-on-desktop{text-align: left !important;display: block !important;}
   .hide-on-mobile{display: none;}  
-  .splide__arrows{display:block !important;}
+  .splide__arrows{display:block !important;z-index: 99999;}
   #product-thumbnails{display:none !important ;}
 }
 #product-thumbnails{display:block ;}
