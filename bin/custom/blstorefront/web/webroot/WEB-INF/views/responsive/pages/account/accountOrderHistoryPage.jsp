@@ -73,6 +73,13 @@
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
+                								<li>
+                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Received' }">
+                								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
+                                 <a href="${depositPaymentAction}">
+                                                        <spring:theme code="order.myaccount.deposit.payment"/> </a>
+                							  </c:if>
+                								</li>
                 							</ul>
                 						</div>
                 					</div>
@@ -181,6 +188,13 @@
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
+                							  </c:if>
+                								</li>
+                								<li>
+                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') }">
+                								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
+                                              <a href="${depositPaymentAction}">
+                                                        <spring:theme code="order.myaccount.deposit.payment"/> </a>
                 							  </c:if>
                 								</li>
                 							</ul>

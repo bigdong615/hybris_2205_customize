@@ -524,8 +524,8 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #theProduct .bookmark { top: 3px; }
 #productImage #product-thumbnails .splide__slide { opacity: .5; transition: .2s; }
 #productImage #product-thumbnails .splide__slide.is-active, #productImage #product-thumbnails .splide__slide:hover { opacity: 1; }
-#productImage .splide .splide__arrows .splide__arrow--prev { margin-left: -40px; }
-#productImage .splide .splide__arrows .splide__arrow--next { margin-right: -40px; }
+#productImage .splide .splide__arrows .splide__arrow--prev { margin-left: -19px; }
+#productImage .splide .splide__arrows .splide__arrow--next { margin-right: -19px; }
 #productImage .splide.is-active .splide__track { z-index: 999; }
 #productImage .splide.is-active .splide__list { margin: 0 auto!important; }
 #productInfo p.overline { font-size: 12px; }

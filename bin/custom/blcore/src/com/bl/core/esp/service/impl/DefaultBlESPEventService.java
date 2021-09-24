@@ -1,13 +1,18 @@
 package com.bl.core.esp.service.impl;
+
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
+import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
-import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -28,6 +33,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
     private static final Logger LOG = Logger.getLogger(DefaultBlESPEventService.class);
     private BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator;
+    private BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
@@ -50,10 +56,38 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 espEventResponseWrapper = getBlESPEventRestService().sendOrderConfirmation(
                     orderConfirmationEventRequest);
             }catch (final BlESPIntegrationException exception){
-                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(), exception.getMessage());
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
             }
             // Save send order confirmation ESP Event Detail
-            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(),null);
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CONFIRM,orderModel.getCode(),null, null);
+        }
+    }
+
+    /**
+     * Verify Order by calling Order verification more info ESP Event API
+     *
+     * @param orderModel
+     */
+    @Override
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest = new OrderVerificationMoreInfoEventRequest();
+            getBlOrderVerificationMoreInfoRequestPopulator().populate(orderModel,
+                orderVerificationMoreInfoEventRequest);
+
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try
+            {
+                // Call send order verification more info ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderMoreInfoRequiredEvent(
+                    orderVerificationMoreInfoEventRequest);
+            }catch (final BlESPIntegrationException exception){
+                persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_MOREINFO,
+                    orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+            }
+            // Save send order verification more info ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_MOREINFO,
+                orderModel.getCode(), null, null);
         }
     }
     /**
@@ -71,10 +105,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 // Call send order Canceled ESP Event API
                 espEventResponseWrapper = getBlESPEventRestService().sendOrderCanceledEvent(orderCanceledEventRequest);
             }catch (final BlESPIntegrationException exception){
-                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(), exception.getMessage());
+                persistESPEventDetail(null, EspEventTypeEnum.ORDER_CANCELED, orderModel.getCode(),
+                    exception.getMessage(), exception.getRequestString());
             }
             // Save send order Canceled ESP Event Detail
-            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,orderModel.getCode(),null);
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_CANCELED,
+                orderModel.getCode(), null, null);
 
         }
     }
@@ -94,10 +130,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
                     // Call send order Payment Declined ESP Event API
                    espEventResponseWrapper = getBlESPEventRestService().sendOrderPaymentDeclinedEvent(orderPaymentDeclinedEventRequest);
                 }catch (final BlESPIntegrationException exception){
-                    persistESPEventDetail(null, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(), exception.getMessage());
+                    persistESPEventDetail(null, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
                 }
                 // Save send order Payment Declined ESP Event Detail
-                persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(),null);
+                persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(),null,null);
 
             }
         }
@@ -111,7 +147,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
      * @param errorMessage error message to store on model
      */
     private void persistESPEventDetail(final ESPEventResponseWrapper espEventResponseWrapper, final EspEventTypeEnum eventTypeEnum,
-        final String orderCode, final String errorMessage) {
+        final String orderCode, final String errorMessage, final String requestString) {
 
         if (null == espEventResponseWrapper)
         {
@@ -119,6 +155,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
             blStoredEspEventModel.setOrderCode(orderCode);
             blStoredEspEventModel.setStatus(ESPEventStatus.FAILURE);
             blStoredEspEventModel.setEventType(eventTypeEnum);
+            blStoredEspEventModel.setRequestString(requestString);
             blStoredEspEventModel.setResponseString(errorMessage);
             getModelService().save(blStoredEspEventModel);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"No response received from {} event for order {} and setting status {} ",eventTypeEnum,orderCode,ESPEventStatus.FAILURE);
@@ -143,8 +180,18 @@ public class DefaultBlESPEventService implements BlESPEventService {
         return blOrderConfirmationRequestPopulator;
     }
 
-    public void setBlOrderConfirmationRequestPopulator(BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator) {
+    public void setBlOrderConfirmationRequestPopulator(
+        BlOrderConfirmationRequestPopulator blOrderConfirmationRequestPopulator) {
         this.blOrderConfirmationRequestPopulator = blOrderConfirmationRequestPopulator;
+    }
+
+    public BlOrderVerificationMoreInfoRequestPopulator getBlOrderVerificationMoreInfoRequestPopulator() {
+        return blOrderVerificationMoreInfoRequestPopulator;
+    }
+
+    public void setBlOrderVerificationMoreInfoRequestPopulator(
+        final BlOrderVerificationMoreInfoRequestPopulator blOrderVerificationMoreInfoRequestPopulator) {
+        this.blOrderVerificationMoreInfoRequestPopulator = blOrderVerificationMoreInfoRequestPopulator;
     }
 
     public BlESPEventRestService getBlESPEventRestService() {
