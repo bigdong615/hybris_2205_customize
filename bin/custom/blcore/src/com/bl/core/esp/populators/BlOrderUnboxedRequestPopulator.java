@@ -11,6 +11,9 @@ import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.Assert;
 
+/**
+ * This populator created to  populate order unboxed event ESP
+ */
 public class BlOrderUnboxedRequestPopulator  extends ESPEventCommonPopulator<OrderModel, OrderUnBoxedEventRequest> {
 
 
@@ -22,7 +25,7 @@ public class BlOrderUnboxedRequestPopulator  extends ESPEventCommonPopulator<Ord
    * @throws ConversionException if an error occurs
    */
   @Override
-  public void populate(OrderModel order, OrderUnBoxedEventRequest orderUnBoxedEventRequest)
+  public void populate(final OrderModel order, final OrderUnBoxedEventRequest orderUnBoxedEventRequest)
       throws ConversionException {
 
     Assert.notNull(order, "Parameter order cannot be null.");
