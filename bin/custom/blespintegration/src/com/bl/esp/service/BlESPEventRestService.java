@@ -4,6 +4,7 @@ package com.bl.esp.service;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 
@@ -42,6 +43,14 @@ public interface BlESPEventRestService {
      * @param orderCanceledRequest
      * @return
      */
-    ESPEventResponseWrapper sendOrderCanceledEvent(
-        final OrderCanceledEventRequest orderCanceledRequest);
+    ESPEventResponseWrapper sendOrderCanceledEvent(final OrderCanceledEventRequest orderCanceledRequest);
+
+    /**
+     * Send Order Payment Declined Event by calling Order Payment Declined ESP Event API
+     *
+     * @param orderPaymentDeclinedEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderPaymentDeclinedEvent(final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest);
+
 }
