@@ -27,6 +27,10 @@
         <collectiontype code="BlockInventoryList" elementtype="BlockInventory" type="list"/>
         
         <collectiontype code="AssessmentNotes" elementtype="Notes" type="list"/>
+        
+        <collectiontype code="DepositPaymentInfoList" elementtype="PaymentInfo" type="list"/>
+        
+        <collectiontype code="DepositPaymentTransactions" elementtype="PaymentTransaction" type="list"/>
 
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
@@ -2789,6 +2793,22 @@
                     <persistence type="property" />
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                   </attribute>
+                  <attribute qualifier="depositPaymentInfo" type="DepositPaymentInfoList">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>List of Payment Info </description>
+                </attribute> 
+                <attribute qualifier="depositPaymentTransactions" type="DepositPaymentTransactions">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>List of Payment Transactions </description>
+                </attribute>                 
+                <attribute qualifier="depositAmountTotal" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true"/>
+                        <description>Total deposit amount of order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                 </attribute>
                 </attributes>
             </itemtype>
 

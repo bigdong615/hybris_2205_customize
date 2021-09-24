@@ -109,7 +109,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             int i = BlInventoryScanLoggingConstants.ZERO;
             for (Map.Entry<String, Long> entry : allocatedMap.entrySet()) {
                 final String key = entry.getKey().substring(0, entry.getKey().lastIndexOf('_'));
-                if (stockLevelsProductWise.get(key).size() >= entry.getValue()) {
+                if (stockLevelsProductWise.get(key) != null && stockLevelsProductWise.get(key).size() >= entry.getValue()) {
                     availabilityMap.put(key, stockLevelsProductWise.get(key));
                 } else {
                     i = BlInventoryScanLoggingConstants.ONE;
