@@ -53,7 +53,7 @@ public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopula
    * @param orderPaymentDeclinedEventRequest request to be get updated
    */
 
-  private void populateOrderPaymentDeclinedData(OrderModel orderModel, OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest) {
+  private void populateOrderPaymentDeclinedData(final OrderModel orderModel, final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest) {
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderPaymentDeclinedData data = new OrderPaymentDeclinedData();
     populateCommonData(orderModel , data);
