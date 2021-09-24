@@ -298,8 +298,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.refundProcess(null);
         }
     }
-
-
+    
     /**
      * process the refund
      *
@@ -594,7 +593,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     Messagebox.OK, Messagebox.ERROR);
         }
     }
-
 
     /**
      * full cancel and refund logs

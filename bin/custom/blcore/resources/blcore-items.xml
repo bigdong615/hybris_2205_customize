@@ -7,6 +7,7 @@
     <collectiontypes>
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
+        <collectiontype code="ICCSkuProductList" elementtype="BlInventoryCycleCountProductDetails" type="list"/>
         <collectiontype code="optionsList" elementtype="BlOptions" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
@@ -30,6 +31,10 @@
         <collectiontype code="DepositPaymentInfoList" elementtype="PaymentInfo" type="list"/>
         
         <collectiontype code="DepositPaymentTransactions" elementtype="PaymentTransaction" type="list"/>
+
+        <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
+
+        <collectiontype code="InventoryCycleCountProducts" elementtype="BlInventoryCycleCountDetails" type="list"/>
 
     </collectiontypes>
 
@@ -396,12 +401,25 @@
 		<value code="RESOLVED" />
     </enumtype>
 
+      <enumtype generate="true" code="InventoryCycleCountStatus" autocreate="true" dynamic="true">
+          <value code="READY"/>
+          <value code="IN_PROCESS"/>
+          <value code="COMPLETED"/>
+      </enumtype>
+
+        <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
+            <value code="REGULAR"/>
+            <value code="MISSING"/>
+            <value code="UNEXPECTED"/>
+        </enumtype>
+
 	  </enumtypes>
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
         <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
+        <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
     </maptypes>
 
 
@@ -1498,6 +1516,11 @@
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated order on serial</description>
+                     </attribute>
+                     <attribute qualifier="associatedShippedConsignment" type="Consignment">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated shipped consignment on serial</description>
                      </attribute>
                      <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
                          <persistence type="property"/>
@@ -6103,6 +6126,200 @@ new Integer(0)
 </itemtype>
   
 </typegroup>
-      
+
+        <typegroup name="BlInventoryCycleCount">
+            <itemtype code="BlInventoryCycleCount" autocreate="true" generate="true" >
+                <description>Contains all inventory cycle count details</description>
+                <deployment table="BlInventoryCycleCount" typecode="12235"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" unique="true" initial="true"/>
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="currentCycleCountStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count start date</description>
+                    </attribute>
+                    <attribute qualifier="currentCycleCountEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count end date</description>
+                    </attribute>
+                    <attribute qualifier="previousCycleCountStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>previous cycle count start date</description>
+                    </attribute>
+                    <attribute qualifier="previousCycleCountEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>previous cycle count end date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProducts" type="InventoryCycleCountProducts">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>cycle count sku with dates </description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountskipDays" type="InventoryCycleCountSkipDays">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count sku with dates </description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountActive" type="boolean">
+                        <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                        <description>flag to identify current running inventory cycle count</description>
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountStatus" type="InventoryCycleCountStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountStatus", "READY")</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountDetails" autocreate="true" generate="true">
+                <description>Contains inventory cycle count details</description>
+                <deployment table="BlICCDetails" typecode="12238"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountSKUs" type="ICCSkuProductList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count skus</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDetailStatus" type="InventoryCycleCountStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count detail status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountStatus", "READY")</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountProductDetails" autocreate="true" generate="true">
+                <description>Contains inventory cycle count details</description>
+                <deployment table="BlICCProductDetails" typecode="12239"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountDayCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" />
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProductId" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountProduct" type="BlProduct">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlInventoryCycleCountScanHistory" autocreate="true" generate="true" >
+                <description>Contains all inventory cycle count scanning history</description>
+                <deployment table="BlICCScanHistory" typecode="12236"/>
+                <attributes>
+                    <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Inventory Cycle count code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDayCode" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Inventory Cycle count Day code</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountDayDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>current cycle count date</description>
+                    </attribute>
+                    <attribute qualifier="serialNumber" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Serial number</description>
+                    </attribute>
+                    <attribute qualifier="barcodeNumber" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Barcode number</description>
+                    </attribute>
+                    <attribute qualifier="homeBaseLocation" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Home Base Location</description>
+                    </attribute>
+                    <attribute qualifier="lastOrderNumber" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Last Order Number</description>
+                    </attribute>
+                    <attribute qualifier="productName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Product Name</description>
+                    </attribute>
+                    <attribute qualifier="oc" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory OC Location</description>
+                    </attribute>
+                    <attribute qualifier="ocParent" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory OC Parent Location</description>
+                    </attribute>
+                    <attribute qualifier="lastOrderShippedDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Last Order Shipped Date</description>
+                    </attribute>
+                    <attribute qualifier="productStatus" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Product Status</description>
+                    </attribute>
+                    <attribute qualifier="orderStatus" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Order Status</description>
+                    </attribute>
+                    <attribute qualifier="scannedUser" type="User">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <description>User who scanned the inventory</description>
+                    </attribute>
+                    <attribute qualifier="scannedTime" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <description>Time when user scanned inventory</description>
+                    </attribute>
+                    <attribute qualifier="inventoryCycleCountSerialStatus" type="InventoryCycleCountSerialStatus">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>cycle count serial status </description>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
 	</itemtypes>
 </items>

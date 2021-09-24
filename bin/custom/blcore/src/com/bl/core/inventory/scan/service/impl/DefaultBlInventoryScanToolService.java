@@ -882,6 +882,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
+			serialProduct.setAssociatedShippedConsignment(consignment);
 			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
 				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);
