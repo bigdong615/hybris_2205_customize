@@ -1,6 +1,8 @@
 package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
+import com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator;
+import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
@@ -9,10 +11,10 @@ import com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
-import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
@@ -39,6 +41,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderVerificationCOIneededRequestPopulator blOrderVerificationCOIneededRequestPopulator;
     private BlOrderCanceledRequestPopulator blOrderCanceledRequestPopulator;
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
+    private BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator;
+    private BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -172,6 +176,50 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendOrderVerificationRequiredEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderVerificationRequiredEventRequest verificationRequiredEventRequest = new OrderVerificationRequiredEventRequest();
+            getBlOrderVerificationRequiredRequestPopulator().populate(orderModel,
+                verificationRequiredEventRequest);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try {
+                // Call send order verification required ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderVerificationRequiredEvent(
+                    verificationRequiredEventRequest);
+            } catch (final BlESPIntegrationException exception) {
+                persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_REQUIRED,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+            }
+            // Save send order verification required ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_REQUIRED,orderModel.getCode(),null,null);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendOrderVerificationCompletedEvent(final OrderModel orderModel) {
+        if (Objects.nonNull(orderModel)) {
+            final OrderVerificationCompletedEventRequest verificationCompletedEventRequest = new OrderVerificationCompletedEventRequest();
+            getBlOrderVerificationCompletedRequestPopulator().populate(orderModel,
+                verificationCompletedEventRequest);
+            ESPEventResponseWrapper espEventResponseWrapper = null;
+            try {
+                // Call send order verification completed ESP Event API
+                espEventResponseWrapper = getBlESPEventRestService().sendOrderVerificationCompletedEvent(
+                    verificationCompletedEventRequest);
+            } catch (final BlESPIntegrationException exception) {
+                persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_COMPLETED,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+            }
+            // Save send order verification completed ESP Event Detail
+            persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_COMPLETED,orderModel.getCode(),null,null);
+        }
+    }
+
+    /**
      * This method created to store the response from ESP for all type of events
      * @param espEventResponseWrapper espEventResponseWrapper
      * @param eventTypeEnum enum type based on events
@@ -269,5 +317,21 @@ public class DefaultBlESPEventService implements BlESPEventService {
         this.blOrderPaymentDeclinedRequestPopulator = blOrderPaymentDeclinedRequestPopulator;
     }
 
+    public BlOrderVerificationRequiredRequestPopulator getBlOrderVerificationRequiredRequestPopulator() {
+        return blOrderVerificationRequiredRequestPopulator;
+    }
 
+    public void setBlOrderVerificationRequiredRequestPopulator(
+        BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator) {
+        this.blOrderVerificationRequiredRequestPopulator = blOrderVerificationRequiredRequestPopulator;
+    }
+
+    public BlOrderVerificationCompletedRequestPopulator getBlOrderVerificationCompletedRequestPopulator() {
+        return blOrderVerificationCompletedRequestPopulator;
+    }
+
+    public void setBlOrderVerificationCompletedRequestPopulator(
+        BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator) {
+        this.blOrderVerificationCompletedRequestPopulator = blOrderVerificationCompletedRequestPopulator;
+    }
 }
