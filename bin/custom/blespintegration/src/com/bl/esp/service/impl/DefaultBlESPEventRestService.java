@@ -5,9 +5,11 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
-import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
+import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
 import com.bl.esp.service.BlESPEventRestService;
@@ -67,6 +69,12 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     }
 
 
+    public ESPEventResponseWrapper sendOrderVerificationRequiredEvent(
+        final OrderVerificationRequiredEventRequest verificationRequiredEventRequest) {
+        return super.getTokenAndTriggerEvent(
+            verificationRequiredEventRequest);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -76,4 +84,9 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         return super.getTokenAndTriggerEvent(orderUnBoxedEventRequest);
     }
 
+    public ESPEventResponseWrapper sendOrderVerificationCompletedEvent(
+        final OrderVerificationCompletedEventRequest verificationCompletedEventRequest) {
+        return super.getTokenAndTriggerEvent(
+            verificationCompletedEventRequest);
+    }
 }

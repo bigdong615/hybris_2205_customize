@@ -372,6 +372,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_VERIFICATION_COI_NEEDED_EVENT_DEFINITION_KEY = "order.verification.coineeded.event.definition.key";
 	public static final String ORDER_VERIFICATION_COI_NEEDED_EVENT_TEMPLATE = "order.verification.coineeded.event.template";
 
+	public static final String ORDER_VERIFICATION_REQUIRED_EVENT_DEFINITION_KEY = "order.verification.required.event.definition.key";
+	public static final String ORDER_VERIFICATION_REQUIRED_EVENT_TEMPLATE = "order.verification.required.event.template";
+	public static final String ORDER_VERIFICATION_COMPLETED_EVENT_DEFINITION_KEY = "order.verification.completed.event.definition.key";
+	public static final String ORDER_VERIFICATION_COMPLETED_EVENT_TEMPLATE = "order.verification.completed.event.template";
+
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
 
 	public static final String ORDER_EXCEPTION_EVENT_DEFINITION_KEY = "order.exception.event.definition.key";

@@ -49,4 +49,18 @@ public interface BlESPEventService {
      * @param orderModel
      */
     public void sendOrderPaymentDeclinedEvent(final OrderModel orderModel);
+
+    /**
+     * Send Order Verification Required by calling Order Verification ESP Event API
+     *
+     * @param orderModel
+     */
+    public void sendOrderVerificationRequiredEvent(final OrderModel orderModel);
+
+    /**
+     * Send Order Verification Completed by calling Order Verification ESP Event API
+     *
+     * @param orderModel
+     */
+    public void sendOrderVerificationCompletedEvent(final OrderModel orderModel);
 }

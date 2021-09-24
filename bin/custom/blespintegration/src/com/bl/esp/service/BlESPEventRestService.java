@@ -6,9 +6,11 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
-import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
+import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
+import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 
 
 public interface BlESPEventRestService {
@@ -77,4 +79,21 @@ public interface BlESPEventRestService {
         final OrderUnBoxedEventRequest orderUnBoxedEventRequest);
 
 
+    /*
+     * Send Order Verification Required by calling Order Verification Required ESP Event API
+     *
+     * @param verificationRequiredEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderVerificationRequiredEvent(
+        final OrderVerificationRequiredEventRequest verificationRequiredEventRequest);
+
+    /**
+     * Send Order Verification Completed by calling Order Verification Completed ESP Event API
+     *
+     * @param verificationCompletedEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderVerificationCompletedEvent(
+        final OrderVerificationCompletedEventRequest verificationCompletedEventRequest);
 }

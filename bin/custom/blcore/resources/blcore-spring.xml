@@ -1493,6 +1493,16 @@
 		class="com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator">
 	</bean>
 
+	<!-- Order Verification Required populator ESP -->
+	<bean id="blOrderVerificationRequiredRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator">
+	</bean>
+
+	<!-- Order Verification Completed populator ESP -->
+	<bean id="blOrderVerificationCompletedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator">
+	</bean>
+
 	<!--ESP Event Common populator -->
 	<bean id="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
@@ -1509,6 +1519,8 @@
 		<property name="blOrderExceptionsRequestPopulator" ref="blOrderExceptionsRequestPopulator"/>
 		<property name="blOrderUnboxedRequestPopulator" ref="blOrderUnboxedRequestPopulator"/>
 		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
+		<property name="blOrderVerificationRequiredRequestPopulator" ref="blOrderVerificationRequiredRequestPopulator"/>
+		<property name="blOrderVerificationCompletedRequestPopulator" ref="blOrderVerificationCompletedRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
