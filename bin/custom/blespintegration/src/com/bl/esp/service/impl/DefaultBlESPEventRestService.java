@@ -1,6 +1,7 @@
 package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
@@ -10,14 +11,14 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
 import com.bl.esp.service.BlESPEventRestService;
 
 public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEventCommonRequest> implements BlESPEventRestService {
 
-
-    @Override
+   @Override
     public ESPEventResponseWrapper sendOrderConfirmation(
         final OrderConfirmationEventRequest orderConfirmationEventRequest) {
 
@@ -89,4 +90,17 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
         return super.getTokenAndTriggerEvent(
             verificationCompletedEventRequest);
     }
+
+  @Override
+  public ESPEventResponseWrapper sendOrderReadyForPickupEvent(final OrderReadyForPickupEventRequest orderReadyForPickupEventRequest) {
+    return super.getTokenAndTriggerEvent(
+        orderReadyForPickupEventRequest);
+  }
+
+  @Override
+  public ESPEventResponseWrapper sendOrderNewShippingEvent(final OrderNewShippingEventRequest orderNewShippingEventRequest) {
+    return super.getTokenAndTriggerEvent(
+        orderNewShippingEventRequest);
+  }
+
 }

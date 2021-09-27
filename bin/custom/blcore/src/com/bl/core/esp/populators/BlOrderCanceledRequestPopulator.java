@@ -45,7 +45,7 @@ public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<Ord
 			orderCanceledEventRequest.setContactKey(getRequestValue(userModel.getUid()));
 		}
 		orderCanceledEventRequest.setEventDefinitionKey(getRequestValue(
-				getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_DEFINITION_KEY)));
+				getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CANCELED_EVENT_DEFINITION_KEY)));
 		populateOrderCanceledData(order, orderCanceledEventRequest);
 
 	}
