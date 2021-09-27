@@ -80,7 +80,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
-	@ViewEvent(componentID = "generateInboundLabel", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+	/**
+	 * this method will be used to generate return shipment
+	 */
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.GENERATE_INBOUND_LABEL, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void generateInboundLabel()
 	{
 		final List<PackagingInfoModel> packages = selectedConsignment.getPackaginginfos();
@@ -91,7 +94,6 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 		{
 			createShipmentForSelectedWarehouse(packages, activeWarehouseList);
 		}
-
 		else
 		{
 			createShipmentForOptimizedWarehouse(packages);
@@ -99,7 +101,10 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	}
 
-	@ViewEvent(componentID = "warehouseCombobox", eventName = "onChange")
+	/**
+	 * method will be called when any value change for warehouse combobox
+	 */
+	@ViewEvent(componentID = BlInventoryScanLoggingConstants.WAREHOUSE_COMBOBOX, eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeWarehouse()
 	{
 		final String selectedWarehouse = this.warehouseCombobox.getSelectedItem().getValue();
@@ -145,6 +150,8 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	}
 
 	/**
+	 * this method will be used to start shipment process for return shipment
+	 *
 	 * @param packages
 	 * @param stateWarehouse
 	 */

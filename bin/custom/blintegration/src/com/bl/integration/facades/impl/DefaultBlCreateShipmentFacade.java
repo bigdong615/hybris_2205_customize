@@ -117,10 +117,13 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 */
 	private void saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
 	{
+		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
+		
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment generated for package {} with tracking id {}", packagingInfo,shipmentPackage.getTrackingNumber());
 		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
-		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
+		
 		packagingInfo.setTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
 		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());
