@@ -602,6 +602,7 @@
 		<property name="productService" ref="productService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="blRepairLogDao" ref="blRepairLogDao" />
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--Pricing Logic changes-->

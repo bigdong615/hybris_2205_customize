@@ -1,6 +1,8 @@
 package com.bl.core.services.order.impl;
 
 import com.bl.core.enums.CustomerCollectionStatusEnum;
+import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.dao.BlRepairLogDao;
@@ -47,6 +49,7 @@ public class DefaultBlOrderService implements BlOrderService {
 	@Resource(name="abstractOrderEntryService")
 	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
+	private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * {@inheritDoc}
@@ -168,6 +171,11 @@ public class DefaultBlOrderService implements BlOrderService {
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
 					orderStatus,order.getCode());
+
+			// To call Order Unboxed ESP event service
+			if(OrderStatus.UNBOXED.equals(orderStatus)) {
+				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
+			}
 		}
 		catch (final ModelSavingException exception)
 		{
@@ -293,4 +301,14 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 {
 	this.blRepairLogDao = blRepairLogDao;
 }
+
+	public DefaultBlESPEventService getDefaultBlESPEventService() {
+		return defaultBlESPEventService;
+	}
+
+	public void setDefaultBlESPEventService(
+			DefaultBlESPEventService defaultBlESPEventService) {
+		this.defaultBlESPEventService = defaultBlESPEventService;
+	}
+
 }
