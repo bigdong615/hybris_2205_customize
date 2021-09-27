@@ -98,4 +98,29 @@
 		<property name="notificationService" ref="notificationService"/>
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
+
+	<!--BlInventoryCycleCount-->
+	<!-- Inventory Cycle Count Tool Data -->
+	<alias name="defaultInventoryCycleCountScanToolData" alias="inventoryCycleCountScanToolData"/>
+	<bean id="defaultInventoryCycleCountScanToolData"
+		  class="com.bl.backoffice.wizards.util.InventoryCycleCountScanToolData" scope="prototype"/>
+
+	<!-- Inventory Cycle Count Tool Util -->
+	<alias name="defaultInventoryCycleCountScanToolUtil" alias="inventoryCycleCountScanToolUtil"/>
+	<bean id="defaultInventoryCycleCountScanToolUtil"
+		  class="com.bl.backoffice.wizards.util.InventoryCycleCountScanToolUtil">
+	</bean>
+
+	<!-- Inventory Cycle Count Tool Renderer -->
+	<bean id="defaultInventoryCycleCountScanToolRenderer" class="com.bl.backoffice.wizards.renderer.InventoryCycleCountScanToolRenderer">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="inventoryCycleCountScanToolUtil" ref="inventoryCycleCountScanToolUtil"/>
+	</bean>
+
+	<!-- Inventory Cycle Count Tool Handler -->
+	<bean id="defaultInventoryCycleCountScanToolHandler" class="com.bl.backoffice.wizards.handler.InventoryCycleCountScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
+	</bean>
+	<!-- End Inventory Cycle Count Tool-->
 </beans>

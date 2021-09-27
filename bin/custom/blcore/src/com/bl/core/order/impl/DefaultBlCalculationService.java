@@ -541,7 +541,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		double subtotal = 0.0;
 		double totalDamageWaiverCost = 0.0;
-		for (final AbstractOrderEntryModel entryModel : order.getEntries())
+		final List<AbstractOrderEntryModel> orderEntryList = order.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
+				Collectors.toList());
+		for (final AbstractOrderEntryModel entryModel : orderEntryList)
 		{
 			resetAllValuesForExtendOrder(entryModel , defaultAddedTimeForExtendRental);
 			super.calculateTotals(entryModel , true);
@@ -568,9 +570,14 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
-		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
+		final PriceValue pv;
+		if(entry.isBundleMainEntry()){
+			pv = commercePriceService.getDynamicBasePriceForBundle(product,defaultAddedTimeForExtendRental);
+		}else {
+			 pv = getPriceForSkuOrSerial(order, entry, product);
+		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
+		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);

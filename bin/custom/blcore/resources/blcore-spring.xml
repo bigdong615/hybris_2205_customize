@@ -1449,17 +1449,54 @@
 		<property name="sessionService" ref="sessionService"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
-	
+
 	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
-    <bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
+	<bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
 
 	<!--BL-1048-->
 	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
-	
+
 	<alias name="defaultBlRepairLogDao" alias="blRepairLogDao"/>
 	<bean id="defaultBlRepairLogDao" class="com.bl.core.repair.log.dao.impl.DefaultBlRepairLogDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+
+	<!-- Inventory Cycle count -->
+	<bean id="blInventoryCycleCountJob" name="blInventoryCycleCountJob" class="com.bl.core.job.BlInventoryCycleCountJob">
+		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
+	</bean>
+
+	<bean id="blInventoryCycleCountDao" name="blInventoryCycleCountDao"
+		  class="com.bl.core.inventory.cycle.count.dao.impl.DefaultBlInventoryCycleCountDao"/>
+
+	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
+		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService">
+		<property name="blInventoryCycleCountDao" ref="blInventoryCycleCountDao"/>
+		<property name="blInventoryScanToolDao" ref="blInventoryScanToolDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<alias name="blInventoryCycleCountPrepareInterceptor" alias="blInventoryCycleCountPrepareInterceptor"/>
+	<bean id="blInventoryCycleCountPrepareInterceptor" class="com.bl.core.model.interceptor.BlInventoryCycleCountPrepareInterceptor">
+		<property name="keyGenerator" ref="iccIdGenerator"/>
+	</bean>
+
+	<bean id="iccIdGenerator" class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.inventoryCycleCount.id.name}"/>
+		<property name="digits" value="${keygen.inventoryCycleCount.id.digits}"/>
+		<property name="start" value="${keygen.inventoryCycleCount.id.start}"/>
+		<property name="type" value="${keygen.inventoryCycleCount.id.type}"/>
+		<property name="template" value="${keygen.inventoryCycleCount.id.template}"/>
+	</bean>
+
+	<bean id="blInventoryCycleCountPrepareInterceptorMapping"
+		  class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blInventoryCycleCountPrepareInterceptor"/>
+		<property name="typeCode" value="BlInventoryCycleCount"/>
+	</bean>
+	<!-- End Inventory Cycle Count -->
+
 </beans>
