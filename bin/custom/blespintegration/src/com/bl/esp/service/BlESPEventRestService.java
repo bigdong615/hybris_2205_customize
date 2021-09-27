@@ -106,7 +106,7 @@ public interface BlESPEventRestService {
    * Send Order deposit Event by calling Order Deposit ESP Event API
    * @param  orderDepositRequest
    */
-   ESPEventResponseWrapper sendOrderDeposit(OrderDepositRequest orderDepositRequest);
+   ESPEventResponseWrapper sendOrderDepositEvent(final OrderDepositRequest orderDepositRequest);
     /**
      * Send Order Ready For pickup Event by calling Order Ready For pickup ESP Event API
      *

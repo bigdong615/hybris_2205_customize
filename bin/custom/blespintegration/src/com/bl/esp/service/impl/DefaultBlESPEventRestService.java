@@ -97,7 +97,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
      * {@inheritDoc}
      */
     @Override
-    public ESPEventResponseWrapper sendOrderDeposit(final OrderDepositRequest orderDepositRequest) {
+    public ESPEventResponseWrapper sendOrderDepositEvent(final OrderDepositRequest orderDepositRequest) {
         return super.getTokenAndTriggerEvent(orderDepositRequest);
     }
 

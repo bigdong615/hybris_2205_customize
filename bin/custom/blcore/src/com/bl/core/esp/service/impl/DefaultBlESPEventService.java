@@ -19,7 +19,6 @@ import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
@@ -339,7 +338,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderDeposit(final OrderModel orderModel) {
+  public void sendOrderDepositEvent(final OrderModel orderModel) {
     if (Objects.nonNull(orderModel)) {
       final OrderDepositRequest orderDepositRequest = new OrderDepositRequest();
       getBlOrderDepositRequestPopulator().populate(orderModel,
@@ -348,7 +347,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
       try
       {
         // Call send order deposit ESP Event API
-        espEventResponseWrapper = getBlESPEventRestService().sendOrderDeposit(orderDepositRequest);
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderDepositEvent(orderDepositRequest);
       }catch (final BlESPIntegrationException exception){
         persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_DEPOSIT,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
       }
