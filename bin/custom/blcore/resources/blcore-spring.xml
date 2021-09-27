@@ -602,6 +602,7 @@
 		<property name="productService" ref="productService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="blRepairLogDao" ref="blRepairLogDao" />
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -1531,6 +1532,7 @@
 		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
 		<property name="blOrderVerificationRequiredRequestPopulator" ref="blOrderVerificationRequiredRequestPopulator"/>
 		<property name="blOrderVerificationCompletedRequestPopulator" ref="blOrderVerificationCompletedRequestPopulator"/>
+		<property name="blOrderDepositRequestPopulator" ref="blOrderDepositRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="blOrderReadyForPickupRequestPopulator" ref="blOrderReadyForPickupRequestPopulator"/>
 		<property name="blOrderNewShippingRequestPopulator" ref="blOrderNewShippingRequestPopulator"/>
@@ -1584,5 +1586,11 @@
 		<property name="typeCode" value="BlInventoryCycleCount"/>
 	</bean>
 	<!-- End Inventory Cycle Count -->
+
+	<!-- Order Deposit populator ESP -->
+	<bean id="blOrderDepositRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderDepositRequestPopulator">
+	</bean>
+
 
 </beans>

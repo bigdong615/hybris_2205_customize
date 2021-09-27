@@ -1,13 +1,13 @@
 package com.bl.core.services.order.impl;
 
 import com.bl.core.enums.CustomerCollectionStatusEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
-
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -17,13 +17,11 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -47,6 +45,7 @@ public class DefaultBlOrderService implements BlOrderService {
 	@Resource(name="abstractOrderEntryService")
 	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
+	private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * {@inheritDoc}
@@ -168,6 +167,11 @@ public class DefaultBlOrderService implements BlOrderService {
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
 					orderStatus,order.getCode());
+
+			// To call Order Unboxed ESP event service
+			if(OrderStatus.UNBOXED.equals(orderStatus)) {
+				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
+			}
 		}
 		catch (final ModelSavingException exception)
 		{
@@ -293,4 +297,14 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 {
 	this.blRepairLogDao = blRepairLogDao;
 }
+
+	public DefaultBlESPEventService getDefaultBlESPEventService() {
+		return defaultBlESPEventService;
+	}
+
+	public void setDefaultBlESPEventService(
+			DefaultBlESPEventService defaultBlESPEventService) {
+		this.defaultBlESPEventService = defaultBlESPEventService;
+	}
+
 }

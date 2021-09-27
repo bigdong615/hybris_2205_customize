@@ -5,6 +5,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
@@ -98,6 +99,14 @@ public interface BlESPEventRestService {
      */
     ESPEventResponseWrapper sendOrderVerificationCompletedEvent(
         final OrderVerificationCompletedEventRequest verificationCompletedEventRequest);
+
+
+
+  /**
+   * Send Order deposit Event by calling Order Deposit ESP Event API
+   * @param  orderDepositRequest
+   */
+   ESPEventResponseWrapper sendOrderDepositEvent(final OrderDepositRequest orderDepositRequest);
     /**
      * Send Order Ready For pickup Event by calling Order Ready For pickup ESP Event API
      *

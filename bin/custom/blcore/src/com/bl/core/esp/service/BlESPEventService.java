@@ -63,6 +63,12 @@ public interface BlESPEventService {
      * @param orderModel
      */
     public void sendOrderVerificationCompletedEvent(final OrderModel orderModel);
+
+    /**
+     *  Send Order Deposit by calling Order Deposit ESP Event API
+     * @param orderModel ordermodel
+     */
+    void sendOrderDepositEvent(final OrderModel orderModel);
     /**
      * Send Order Ready For Pickup Event by calling Order Ready For Pickup ESP Event API
      * @param orderModel
@@ -74,6 +80,4 @@ public interface BlESPEventService {
      * @param orderModel
      */
     public void sendOrderNewShippingEvent(final OrderModel orderModel);
-
-
 }
