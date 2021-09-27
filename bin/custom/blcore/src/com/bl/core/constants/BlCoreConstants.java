@@ -384,6 +384,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_UNBOXED_EVENT_DEFINITION_KEY = "order.unboxed.event.definition.key";
 	public static final String ORDER_UNBOXED_EVENT_TEMPLATE = "order.unboxed.event.template";
 
+	public static final String ORDER_DEPOSIT_EVENT_DEFINITION_KEY = "order.deposit.event.definition.key";
+	public static final String ORDER_DEPOSIT_EVENT_TEMPLATE = "order.deposit.event.template";
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";

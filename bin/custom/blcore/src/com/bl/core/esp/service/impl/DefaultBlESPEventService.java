@@ -3,6 +3,7 @@ package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
+import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator;
@@ -15,6 +16,7 @@ import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
+import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
@@ -50,6 +52,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderPaymentDeclinedRequestPopulator blOrderPaymentDeclinedRequestPopulator;
     private BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator;
     private BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator;
+    private BlOrderDepositRequestPopulator blOrderDepositRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -279,7 +282,34 @@ public class DefaultBlESPEventService implements BlESPEventService {
         }
     }
 
-    /**
+
+
+  /**
+   * This method created to prepare the request and response from Order Deposit ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderDeposit(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderDepositRequest orderDepositRequest = new OrderDepositRequest();
+      getBlOrderDepositRequestPopulator().populate(orderModel,
+          orderDepositRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order deposit ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderDeposit(orderDepositRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.VERIFICATION_DEPOSIT,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order deposit ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.VERIFICATION_DEPOSIT,orderModel.getCode(),null, null);
+    }
+  }
+
+
+
+  /**
      * This method created to store the response from ESP for all type of events
      * @param espEventResponseWrapper espEventResponseWrapper
      * @param eventTypeEnum enum type based on events
@@ -413,4 +443,13 @@ public class DefaultBlESPEventService implements BlESPEventService {
         BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator) {
         this.blOrderVerificationCompletedRequestPopulator = blOrderVerificationCompletedRequestPopulator;
     }
+
+  public BlOrderDepositRequestPopulator getBlOrderDepositRequestPopulator() {
+    return blOrderDepositRequestPopulator;
+  }
+
+  public void setBlOrderDepositRequestPopulator(
+      BlOrderDepositRequestPopulator blOrderDepositRequestPopulator) {
+    this.blOrderDepositRequestPopulator = blOrderDepositRequestPopulator;
+  }
 }

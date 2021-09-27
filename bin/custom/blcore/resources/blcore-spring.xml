@@ -1521,6 +1521,7 @@
 		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
 		<property name="blOrderVerificationRequiredRequestPopulator" ref="blOrderVerificationRequiredRequestPopulator"/>
 		<property name="blOrderVerificationCompletedRequestPopulator" ref="blOrderVerificationCompletedRequestPopulator"/>
+		<property name="blOrderDepositRequestPopulator" ref="blOrderDepositRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
@@ -1572,5 +1573,11 @@
 		<property name="typeCode" value="BlInventoryCycleCount"/>
 	</bean>
 	<!-- End Inventory Cycle Count -->
+
+	<!-- Order Deposit populator ESP -->
+	<bean id="blOrderDepositRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderDepositRequestPopulator">
+	</bean>
+
 
 </beans>
