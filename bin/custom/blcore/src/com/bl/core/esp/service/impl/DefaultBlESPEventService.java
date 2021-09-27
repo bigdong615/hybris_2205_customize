@@ -169,7 +169,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
      */
     @Override
     public void sendOrderPaymentDeclinedEvent(final OrderModel orderModel) {
-        {
             if (Objects.nonNull(orderModel)) {
                 final OrderPaymentDeclinedEventRequest orderPaymentDeclinedEventRequest = new OrderPaymentDeclinedEventRequest();
                 getBlOrderPaymentDeclinedRequestPopulator().populate(orderModel, orderPaymentDeclinedEventRequest);
@@ -185,7 +184,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
                 persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PAYMENTDECLINED,orderModel.getCode(),null,null);
 
             }
-        }
+
     }
     /**
      * Send Order Ready For Pickup Event by calling Order Ready For Pickup ESP Event API

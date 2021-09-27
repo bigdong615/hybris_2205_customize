@@ -49,19 +49,19 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 	 * @throws ConversionException if an error occurs
 	 */
 	@Override
-	public void populate(final OrderModel order, final OrderReadyForPickupEventRequest OrderReadyForPickupEventRequest) throws ConversionException
+	public void populate(final OrderModel order, final OrderReadyForPickupEventRequest orderReadyForPickupEventRequest) throws ConversionException
 	{
 		Assert.notNull(order, "Parameter emailId cannot be null.");
-		Assert.notNull(OrderReadyForPickupEventRequest, "Parameter contactRequest cannot be null.");
+		Assert.notNull(orderReadyForPickupEventRequest, "Parameter contactRequest cannot be null.");
 
 		final UserModel userModel = order.getUser();
 		if(Objects.nonNull(userModel)) {
-			OrderReadyForPickupEventRequest.setContactKey(getRequestValue(userModel.getUid()));
+			orderReadyForPickupEventRequest.setContactKey(getRequestValue(userModel.getUid()));
 		}
-		OrderReadyForPickupEventRequest
+		orderReadyForPickupEventRequest
 				.setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
 						getString(BlCoreConstants.ORDER_READYFORPICKUP_EVENT_DEFINITION_KEY)));
-		populateOrderReadyForPickupData(order, OrderReadyForPickupEventRequest);
+		populateOrderReadyForPickupData(order, orderReadyForPickupEventRequest);
 	}
 	/**
 	 * This method populate Ready For Pickup data from order model
