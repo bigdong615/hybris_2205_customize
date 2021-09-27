@@ -378,6 +378,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_VERIFICATION_COMPLETED_EVENT_TEMPLATE = "order.verification.completed.event.template";
 
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
+	public static final String ORDER_READYFORPICKUP_EVENT_TEMPLATE = "order.readyforpickup.event.template";
+	public static final String ORDER_CANCELED_EVENT_DEFINITION_KEY="order.canceled.event.definition.key";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_DEFINITION_KEY="order.paymentdeclined.event.definition.key";
+	public static final String ORDER_READYFORPICKUP_EVENT_DEFINITION_KEY="order.readyforpickup.event.definition.key";
+	public static final String ORDER_NEWSHIPPING_EVENT_TEMPLATE = "order.newshipping.event.template";
+	public static final String ORDER_RNEWSHIPPING_EVENT_DEFINITION_KEY="order.newshipping.event.definition.key";
 
 	public static final String ORDER_EXCEPTION_EVENT_DEFINITION_KEY = "order.exception.event.definition.key";
 	public static final String ORDER_EXCEPTION_EVENT_TEMPLATE = "order.exception.event.template";

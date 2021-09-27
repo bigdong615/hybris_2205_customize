@@ -1483,6 +1483,16 @@
 	<bean id="blOrderPaymentDeclinedRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator">
 	</bean>
+	
+	<!-- Order Ready For pickup populator ESP -->
+	<bean id="blOrderReadyForPickupRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator">
+	</bean>
+	
+	<!-- Order New shipping populator ESP -->
+	<bean id="blOrderNewShippingRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator">
+	</bean>
 
 	<!-- Order Verification more info populator ESP -->
 	<bean id="blOrderVerificationMoreInfoRequestPopulator" parent="espEventCommonPopulator"
@@ -1524,6 +1534,8 @@
 		<property name="blOrderVerificationCompletedRequestPopulator" ref="blOrderVerificationCompletedRequestPopulator"/>
 		<property name="blOrderDepositRequestPopulator" ref="blOrderDepositRequestPopulator"/>
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
+		<property name="blOrderReadyForPickupRequestPopulator" ref="blOrderReadyForPickupRequestPopulator"/>
+		<property name="blOrderNewShippingRequestPopulator" ref="blOrderNewShippingRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 

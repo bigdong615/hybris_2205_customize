@@ -2,6 +2,7 @@ package com.bl.esp.service;
 
 
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
@@ -12,6 +13,7 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
 
 
 public interface BlESPEventRestService {
@@ -105,4 +107,20 @@ public interface BlESPEventRestService {
    * @param  orderDepositRequest
    */
    ESPEventResponseWrapper sendOrderDeposit(OrderDepositRequest orderDepositRequest);
+    /**
+     * Send Order Ready For pickup Event by calling Order Ready For pickup ESP Event API
+     *
+     * @param orderReadyForPickupEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderReadyForPickupEvent(final OrderReadyForPickupEventRequest orderReadyForPickupEventRequest);
+
+    /**
+     * Send Order New Shipping Event by calling Order New Shipping ESP Event API
+     *
+     * @param orderNewShippingEventRequest
+     * @return
+     */
+    ESPEventResponseWrapper sendOrderNewShippingEvent(final OrderNewShippingEventRequest orderNewShippingEventRequest);
+
 }
