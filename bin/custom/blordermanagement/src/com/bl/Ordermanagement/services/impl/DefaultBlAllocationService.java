@@ -160,7 +160,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
-            serialStocks.forEach(stock -> {
+
+            final Collection<StockLevelModel> serialStocksForOptimizedDates = blStockLevelDao
+                .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
+                    consignment.getOptimizedShippingStartDate(),
+                    consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
+
+            serialStocksForOptimizedDates.forEach(stock -> {
               stock.setReservedStatus(true);
               stock.setOrder(order.getCode());
               BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
