@@ -16,7 +16,7 @@ CKEDITOR.editorConfig = function(config) {
 		{ name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
 		{ name: 'about', items: [ 'About' ] }
 	];
-};
+
 	config.contentsCss = 'widgetClasspathResource/widgets/editors/wysiwygEditor/validationstyles.css';
 
 	// replace part of CKEditor base path to allow load skin from wysiwyg widget directory
