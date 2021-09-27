@@ -39,7 +39,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
     orderDepositRequest
         .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
             getString(BlCoreConstants.ORDER_DEPOSIT_EVENT_DEFINITION_KEY)));
-    populateOrderData(orderModel, orderDepositRequest);
+    populateOrderDepositData(orderModel, orderDepositRequest);
 
   }
 
@@ -50,7 +50,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
    * @param orderModel orderodel
    * @param orderDepositRequest request to be get updated
    */
-  private void populateOrderData(final OrderModel orderModel, final OrderDepositRequest orderDepositRequest) {
+  private void populateOrderDepositData(final OrderModel orderModel, final OrderDepositRequest orderDepositRequest) {
 
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderDepositData data = new OrderDepositData();

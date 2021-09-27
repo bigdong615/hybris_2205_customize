@@ -65,7 +65,7 @@ public interface BlESPEventService {
     public void sendOrderVerificationCompletedEvent(final OrderModel orderModel);
 
     /**
-     *  Send Order Deposit by calling Order confirmation ESP Event AP
+     *  Send Order Deposit by calling Order Deposit ESP Event AP
      * @param orderModel ordermodel
      */
     void sendOrderDeposit(final OrderModel orderModel);
