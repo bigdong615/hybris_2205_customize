@@ -90,7 +90,7 @@ public class BLUpsShippingDataPopulator
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData);
+		final ShipmentData upsShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, null);
 		upsRequestData.setShipment(upsShipmentData);
 		return upsRequestData;
 
@@ -102,12 +102,13 @@ public class BLUpsShippingDataPopulator
 	 * @param packagingInfo
 	 * @return
 	 */
-	public UpsShippingRequestData populateUPSReturnShipmentRequest(final PackagingInfoModel packagingInfo)
+	public UpsShippingRequestData populateUPSReturnShipmentRequest(final PackagingInfoModel packagingInfo,
+			final WarehouseModel warehouseModel)
 	{
 		final UpsShippingRequestData upsReturnRequestData = new UpsShippingRequestData();
 		final ShipmentData shipmentData = new ShipmentData();
 
-		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData);
+		final ShipmentData upsReturnShipmentData = populateUpsShipmentRequestData(packagingInfo, shipmentData, warehouseModel);
 
 		/** Creating return service Data **/
 
@@ -128,16 +129,21 @@ public class BLUpsShippingDataPopulator
 	 * @param upsRequestData
 	 * @param shipmentData
 	 */
-	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData)
+	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
+			final WarehouseModel stateWarehouse)
 	{
 		final WarehouseModel warehouse = packagingInfo.getConsignment().getWarehouse();
 		AddressModel shipperAddress = new AddressModel();
 
 		/** Creating Shipper Data **/
 
-		if (warehouse != null && warehouse.getPointsOfService() != null)
+		if (stateWarehouse == null && warehouse != null && warehouse.getPointsOfService() != null)
 		{
 			shipperAddress = warehouse.getPointsOfService().iterator().next().getAddress();
+		}
+		else if (stateWarehouse != null && stateWarehouse.getPointsOfService() != null)
+		{
+			shipperAddress = stateWarehouse.getPointsOfService().iterator().next().getAddress();
 		}
 		final AddressData addressData = addressConverter.convert(shipperAddress);
 
@@ -185,8 +191,6 @@ public class BLUpsShippingDataPopulator
 
 		return shipmentData;
 	}
-
-
 
 	/**
 	 * method will be used to populate shipper address data

@@ -3,6 +3,7 @@
  */
 package com.bl.integration.facades;
 
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.text.ParseException;
@@ -31,5 +32,5 @@ public interface BlCreateShipmentFacade
 	 * @param packagingInfo
 	 *           as Package Info
 	 */
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo);
+	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel);
 }

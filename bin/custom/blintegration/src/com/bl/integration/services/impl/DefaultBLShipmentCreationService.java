@@ -101,9 +101,6 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			final UPSShipmentCreateResponse upsResponse = getBlUPSShipmentCreateResponsePopulator()
 					.convertUPSResponse(upsShipmentResponse);
 
-			BlLogger.logMessage(LOG, Level.INFO, "UPS Response " + "Shipment Number " + upsResponse.getShipmentIdentificationNumber()
-					+ "Label URL" + upsResponse.getLabelURL());
-
 			upsShipmentResponseData.setStatusCode(upsResponse.getStatusCode());
 			upsShipmentResponseData.setStatusMessage(upsResponse.getStatusMessage());
 			return upsResponse;

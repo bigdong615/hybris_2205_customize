@@ -20,6 +20,7 @@
          <requires-extension name="warehousingfacades"/>  
         <requires-extension name="blfacades"/>
          <requires-extension name="blintegration"/>
+         <requires-extension name="blordermanagement"/>
 
       <coremodule generated="true" manager="com.bl.blbackoffice.jalo.BLbackofficeManager" packageroot="com.bl.blbackoffice"/>
                 		
