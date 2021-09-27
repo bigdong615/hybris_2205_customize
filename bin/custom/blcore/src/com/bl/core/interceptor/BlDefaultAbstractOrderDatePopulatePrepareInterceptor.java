@@ -12,6 +12,8 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -53,9 +55,12 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
       rentalReturnDate = abstractOrderModel.getRentalEndDate();
     }
 
-    if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
+    if (BooleanUtils.isFalse(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
+        .isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
         && rentalReturnDate != null) {
-      for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
+      final List<AbstractOrderEntryModel> entryModelList = abstractOrderModel.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
+          Collectors.toList());
+      for (final AbstractOrderEntryModel orderEntry : entryModelList) {
         //update rental date based on order dates
         // calculating base price after updating effective dates
         try {
@@ -68,6 +73,23 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
         } catch (final ParseException e) {
           BlLogger.logMessage(LOG, Level.ERROR, "Error while parsing the product price : ", e);
         }
+      }
+    } else if (BooleanUtils.isTrue(abstractOrderModel.getInternalTransferOrder())) {
+      setBasePriceToZero(abstractOrderModel);
+    }
+  }
+
+  /**
+   * To set zero to base price of order entries in case of null rental start date and end date,
+   * exa:- internal transfer order
+   *
+   * @param abstractOrderModel
+   */
+  private void setBasePriceToZero(final AbstractOrderModel abstractOrderModel) {
+
+    if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+      for (final AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
+        orderEntry.setBasePrice(0.0d);
       }
     }
   }

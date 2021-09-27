@@ -44,7 +44,7 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     final AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next()
         .getOrder();
-    final Set<String> productCodes = order.getEntries().stream()
+    final Set<String> productCodes = order.getEntries().stream().filter(entry -> !entry.isBundleMainEntry())
         .map(entry -> entry.getProduct().getCode()).collect(Collectors.toSet());
 
     final Collection<StockLevelModel> stockLevels = blCommerceStockService

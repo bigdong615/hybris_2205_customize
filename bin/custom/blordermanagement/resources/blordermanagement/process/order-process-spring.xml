@@ -33,11 +33,10 @@
 		<property name="addressConverter" ref="deliveryAddressGeocodeConverter"/>
 	</bean>
 		
-	<!--<bean id="sourceOrderAction" class="com.bl.Ordermanagement.actions.order.SourceOrderAction" parent="abstractAction">
-		<property name="sourcingService" ref="sourcingService"/>
+	<bean id="blInternalTransferSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlInternalTransferSourceOrderAction" parent="abstractAction">
 		<property name="allocationService" ref="allocationService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
-	</bean>-->
+	</bean>
 
 	<bean id="blSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlSourceOrderAction" parent="abstractAction">
 		<property name="blSourcingService" ref="blSourcingService"/>

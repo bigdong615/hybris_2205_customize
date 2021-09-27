@@ -1,9 +1,84 @@
 package com.bl.backoffice.widget.controller.order;
 
+import static org.apache.log4j.Level.DEBUG;
+
+import de.hybris.platform.basecommerce.enums.CancelReason;
+import de.hybris.platform.basecommerce.enums.RefundReason;
+import de.hybris.platform.basecommerce.enums.ReturnAction;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import de.hybris.platform.ordercancel.OrderCancelException;
+import de.hybris.platform.ordercancel.OrderCancelRequest;
+import de.hybris.platform.ordercancel.OrderCancelService;
+import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.payment.AdapterException;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.returns.ReturnService;
+import de.hybris.platform.returns.model.RefundEntryModel;
+import de.hybris.platform.returns.model.ReturnRequestModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.Locales;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zk.ui.event.SelectEvent;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Doublebox;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
+import org.zkoss.zul.ListModelArray;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Messagebox.Button;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Textbox;
+import org.zkoss.zul.impl.InputElement;
+
+import com.bl.backoffice.consignment.service.BlConsignmentService;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.result.BrainTreeRefundTransactionResult;
@@ -21,54 +96,6 @@ import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 import com.hybris.cockpitng.util.notifications.NotificationService;
-import de.hybris.platform.basecommerce.enums.CancelReason;
-import de.hybris.platform.basecommerce.enums.RefundReason;
-import de.hybris.platform.basecommerce.enums.ReturnAction;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.OrderEntryModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.order.CalculationService;
-import de.hybris.platform.order.exceptions.CalculationException;
-import de.hybris.platform.ordercancel.*;
-import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
-import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.payment.enums.PaymentTransactionType;
-import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
-import de.hybris.platform.returns.ReturnService;
-import de.hybris.platform.returns.model.RefundEntryModel;
-import de.hybris.platform.returns.model.ReturnRequestModel;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.user.UserService;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.Locales;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.InputEvent;
-import org.zkoss.zk.ui.event.SelectEvent;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.*;
-import org.zkoss.zul.Messagebox.Button;
-import org.zkoss.zul.impl.InputElement;
-
-import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.apache.log4j.Level.*;
 
 /**
  * ##################### Bl-986, Bl-987, Bl-988 ###################
@@ -159,6 +186,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
     @Resource
     private BrainTreeTransactionService brainTreeTransactionService;
+    
+    @Resource(name = "blStockLevelDao")
+  	private BlStockLevelDao blStockLevelDao;
+    
+ 	@Resource(name = "defaultBlConsignmentService")
+ 	private BlConsignmentService defaultBlConsignmentService;
 
     /**
      * Init cancellation order form.
@@ -265,8 +298,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.refundProcess(null);
         }
     }
-
-
+    
     /**
      * process the refund
      *
@@ -562,7 +594,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         }
     }
 
-
     /**
      * full cancel and refund logs
      *
@@ -646,24 +677,37 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @return true if cancellation success
      */
     private OrderCancelRecordEntryModel cancelOrder() {
-        try {
-            final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.getOrderCancelService().requestOrderCancel(
-                    this.buildCancelRequest(), this.getUserService().getCurrentUser());
-            if(orderCancelRecordEntryModel != null && (orderCancelRecordEntryModel.getCancelResult().getCode().equals(
-                    BlCustomCancelRefundConstants.FULL) || orderCancelRecordEntryModel.getCancelResult().getCode().equals(
-                    BlCustomCancelRefundConstants.PARTIAL))) {
-                return orderCancelRecordEntryModel;
-            }
-        } catch (final OrderCancelException e) {
-            BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY, BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR
-            + StringUtils.SPACE + this.getOrderModel().getCode());
-            Messagebox.show(this.getLabel(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR), BlCustomCancelRefundConstants.FAILURE,
-                    Messagebox.OK, Messagebox.ERROR);
-        }
-        return null;
-    }
+   		try
+   		{
+   			final OrderCancelRecordEntryModel orderCancelRecordEntryModel = this.getOrderCancelService()
+   					.requestOrderCancel(this.buildCancelRequest(), this.getUserService().getCurrentUser());
+   			final Set<ConsignmentModel> consignments = this.getOrderModel().getConsignments();
+   			if (orderCancelRecordEntryModel != null
+   					&& (orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.FULL)))
+   			{
+   				getDefaultBlConsignmentService().updateStockForCancelledOrder(consignments);
 
-    /**
+   				return orderCancelRecordEntryModel;
+   			}
+   			if (orderCancelRecordEntryModel != null
+   					&& orderCancelRecordEntryModel.getCancelResult().getCode().equals(BlCustomCancelRefundConstants.PARTIAL))
+   			{
+   				getDefaultBlConsignmentService().updateStockForPartialCancelledOrder(consignments, this.cancelAndRefundEntries);
+   				return orderCancelRecordEntryModel;
+   			}
+   		}
+   		catch (final OrderCancelException e)
+   		{
+   			BlLogger.logFormattedMessage(LOGGER, DEBUG, StringUtils.EMPTY,
+   					BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR + StringUtils.SPACE + this.getOrderModel().getCode());
+   			Messagebox.show(BlCustomCancelRefundConstants.CANCELORDER_CONFIRM_ERROR, BlCustomCancelRefundConstants.FAILURE,
+   					Messagebox.OK, Messagebox.ERROR);
+   		}
+   		return null;
+    }
+    
+
+ 	/**
      * refund and log response
      *
      *  @param totalAmt amount
@@ -1384,4 +1428,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     public void setRefundEntries(List<BlOrderEntryToCancelDto> refundEntries) {
         this.refundEntries = refundEntries;
     }
+
+	/**
+	 * @return the defaultBlConsignmentService
+	 */
+	public BlConsignmentService getDefaultBlConsignmentService()
+	{
+		return defaultBlConsignmentService;
+	}
+
+	/**
+	 * @param defaultBlConsignmentService the defaultBlConsignmentService to set
+	 */
+	public void setDefaultBlConsignmentService(BlConsignmentService defaultBlConsignmentService)
+	{
+		this.defaultBlConsignmentService = defaultBlConsignmentService;
+	}
 }

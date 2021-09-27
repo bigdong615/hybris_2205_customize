@@ -475,6 +475,33 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel) {
+		final Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao().getAllSerialsByBinLocation(blInventoryLocationModel.getCode());
+		final BlInventoryLocationModel parentInventoryLocation = blInventoryLocationModel.getParentInventoryLocation();
+		if (CollectionUtils.isNotEmpty(serialProductModels)) {
+				serialProductModels.stream().forEach(serial -> {
+					if(StringUtils.isNotBlank(serial.getOcLocation()) && serial.getOcLocation().equals(blInventoryLocationModel.getCode())){
+						serial.setOcLocation(null);
+						serial.setOcLocationDetails(null);
+						modelService.save(serial);
+						modelService.refresh(serial);
+						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Bin Location removed from the serial with code : {}", serial.getCode());
+					}
+				});
+			}
+
+		if (parentInventoryLocation != null) {
+				blInventoryLocationModel.setParentInventoryLocation(null);
+				modelService.save(blInventoryLocationModel);
+				modelService.refresh(blInventoryLocationModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Parent Location with code removed from bin location: {}", parentInventoryLocation.getCode());
+			}
+		}
+
+	/**
 	 * This method is used to check bin location with type
 	 *
 	 * @param barcodes as barcodes
@@ -855,6 +882,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
+			serialProduct.setAssociatedShippedConsignment(consignment);
 			if(BooleanUtils.isTrue(serialProduct.getIsBufferedInventory())) {
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
 				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);

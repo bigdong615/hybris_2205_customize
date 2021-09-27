@@ -194,7 +194,36 @@
 			<setting key="expression" type="String" value="#root?.id EQ 'UnboxingScanTool'"/>
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
-	</widget-extension>	
+	</widget-extension>
+
+	<!-- Bin OcLocation Scan Tool Section -->
+	<widget-extension widgetId="mainSlot">
+		<widget id="BinOcLocationTool_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+				slotId="cockpitWidgetChildrenInvisible" template="false">
+			<widget id="BinOcLocationTool_propertyextractor"
+					widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+					slotId="cockpitWidgetChildrenInvisible" template="false">
+				<setting key="expression" type="String" value="id"/>
+				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+			</widget>
+			<setting key="expression" type="String" value="#root?.id EQ 'BinOcLocationTool'"/>
+			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+		</widget>
+	</widget-extension>
+
+	<!--Inventory Cycle Count-->
+	<widget-extension widgetId="mainSlot">
+		<widget id="InventoryCycleCountScan_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+				slotId="cockpitWidgetChildrenInvisible" template="false">
+			<widget id="InventoryCycleCountScan_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+					slotId="cockpitWidgetChildrenInvisible" template="false">
+				<setting key="expression" type="String" value="id"/>
+				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+			</widget>
+			<setting key="expression" type="String" value="#root?.id EQ 'InventoryCycleCountScan'"/>
+			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+		</widget>
+	</widget-extension>
 
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="WebScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="WebScanTool_conditionevaluator" outputId="true" targetWidgetId="WebScanTool_propertyextractor" inputId="genericInput"/>
@@ -215,4 +244,14 @@
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="UnboxingScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="UnboxingScanTool_conditionevaluator" outputId="true" targetWidgetId="UnboxingScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="UnboxingScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+
+	<!-- BinOcLocation Scan Tool Section -->
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="BinOcLocationTool_conditionevaluator" inputId="input"/>
+	<widget-connection sourceWidgetId="BinOcLocationTool_conditionevaluator" outputId="true" targetWidgetId="BinOcLocationTool_propertyextractor" inputId="genericInput"/>
+	<widget-connection sourceWidgetId="BinOcLocationTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+
+	<!-- Inventory Cycle Count Tool Section -->
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="InventoryCycleCountScan_conditionevaluator" inputId="input"/>
+	<widget-connection sourceWidgetId="InventoryCycleCountScan_conditionevaluator" outputId="true" targetWidgetId="InventoryCycleCountScan_propertyextractor" inputId="genericInput"/>
+	<widget-connection sourceWidgetId="InventoryCycleCountScan_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
 </widgets>

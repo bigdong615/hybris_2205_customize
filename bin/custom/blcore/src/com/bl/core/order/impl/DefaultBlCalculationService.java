@@ -27,10 +27,14 @@ import de.hybris.platform.util.PriceValue;
 import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -53,6 +57,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 	private static final ThreadLocal<Boolean> saveOrderEntryUnneeded = new ThreadLocal<>();
 
+	@Resource(name="orderRequiresCalculationStrategy")
+	private OrderRequiresCalculationStrategy orderRequiresCalculationStrategy;
+
+	@Resource(name="commonI18NService")
+	private CommonI18NService commonI18NService;
 	/**
 	 * Reset all values of entry before calculation.
 	 *
@@ -97,7 +106,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			double totalOptionCost = 0.0;
 			double subtotal = 0.0;
 			double totalDamageWaiverCost = 0.0;
-			for (final AbstractOrderEntryModel e : order.getEntries()) {
+			final List<AbstractOrderEntryModel> entries =order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
+					Collectors.toList());
+			for (final AbstractOrderEntryModel e : entries) {
 				recalculateOrderEntryIfNeeded(e, forceRecalculate);
 				subtotal += e.getTotalPrice().doubleValue();
 				if(!BlCoreConstants.AQUATECH_BRAND_ID.equals(e.getProduct().getManufacturerAID())) {
@@ -530,7 +541,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		double subtotal = 0.0;
 		double totalDamageWaiverCost = 0.0;
-		for (final AbstractOrderEntryModel entryModel : order.getEntries())
+		final List<AbstractOrderEntryModel> orderEntryList = order.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
+				Collectors.toList());
+		for (final AbstractOrderEntryModel entryModel : orderEntryList)
 		{
 			resetAllValuesForExtendOrder(entryModel , defaultAddedTimeForExtendRental);
 			super.calculateTotals(entryModel , true);
@@ -557,9 +570,14 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
 		entry.setTaxValues(entryTaxes);
 		final AbstractOrderModel order = entry.getOrder();
-		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
+		final PriceValue pv;
+		if(entry.isBundleMainEntry()){
+			pv = commercePriceService.getDynamicBasePriceForBundle(product,defaultAddedTimeForExtendRental);
+		}else {
+			 pv = getPriceForSkuOrSerial(order, entry, product);
+		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
+		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
@@ -667,7 +685,58 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		return basePrice;
 	}
 
+	/**
+	 * This method is overridden to ignore calculation for created bundle entry.
+	 *  @param order
+	 *   @param recalculate
+	 */
+	@Override
+	public Map<TaxValue, Map<Set<TaxValue>, Double>> calculateSubtotal(final AbstractOrderModel order,
+			final boolean recalculate)
+	{
+		if (recalculate || orderRequiresCalculationStrategy.requiresCalculation(order))
+		{
+			double subtotal = 0.0;
+			// entry grouping via map { tax code -> Double }  // NOSONAR
+			final List<AbstractOrderEntryModel> entries = order.getEntries().stream().filter(entry-> !entry.isBundleEntry()).collect(
+					Collectors.toList());
+			final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap = new LinkedHashMap<TaxValue, Map<Set<TaxValue>, Double>>(
+					entries.size() * 2);
 
+			for (final AbstractOrderEntryModel entry : entries)
+			{
+				calculateTotals(entry, recalculate);
+				final double entryTotal = entry.getTotalPrice().doubleValue();
+				subtotal += entryTotal;
+				// use un-applied version of tax values!!!
+				final Collection<TaxValue> allTaxValues = entry.getTaxValues();
+				final Set<TaxValue> relativeTaxGroupKey = getUnappliedRelativeTaxValues(allTaxValues);
+				for (final TaxValue taxValue : allTaxValues)
+				{
+					addEntryTaxValue(taxValueMap, entry, entryTotal, relativeTaxGroupKey, taxValue);
+				}
+			}
+			// store subtotal
+			subtotal = commonI18NService.roundCurrency(subtotal, order.getCurrency().getDigits().intValue());
+			order.setSubtotal(Double.valueOf(subtotal));
+			return taxValueMap;
+		}
+		return Collections.emptyMap();
+	}
+
+	private void addEntryTaxValue(final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap,
+			final AbstractOrderEntryModel entry,
+			final double entryTotal, final Set<TaxValue> relativeTaxGroupKey, final TaxValue taxValue)
+	{
+		if (taxValue.isAbsolute())
+		{
+			addAbsoluteEntryTaxValue(entry.getQuantity().longValue(), taxValue.unapply(), taxValueMap);
+		}
+		else
+		{
+			addRelativeEntryTaxValue(entryTotal, taxValue.unapply(), relativeTaxGroupKey, taxValueMap);
+		}
+	}
 
 	/**
 	 * @return the commercePriceService
