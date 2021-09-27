@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 
 /**
  * This populator is used to populate PaymentDeclined Event Request.
- * @author Administrator
+ * @author Avani Patel
  *
  */
 public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderPaymentDeclinedEventRequest>
@@ -43,7 +43,7 @@ public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopula
     }
     orderConfirmationEventRequest
         .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
-            getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_DEFINITION_KEY)));
+            getString(BlCoreConstants.ORDER_PAYMENT_DECLINED_EVENT_DEFINITION_KEY)));
 
     populateOrderPaymentDeclinedData(order, orderConfirmationEventRequest);
   }
