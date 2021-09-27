@@ -401,17 +401,6 @@
 		        <value code="RESOLVED" />
       </enumtype>
 
-	<enumtype generate="true" code="CustomerCollectionStatusEnum" autocreate="true" dynamic="true">
-        <value code="NOT_STARTED" />
-		<value code="BILL_CREATED" />
-		<value code="FIRST_FOLLOW_UP_SENT" />
-		<value code="SECOND_FOLLOW_UP_SENT" />
-		<value code="PASSED_TO_RECOVERY" />
-		<value code="EXCEPTION_MADE" />
-		<value code="BLACKLISTED" />
-		<value code="RESOLVED" />
-    </enumtype>
-
       <enumtype generate="true" code="InventoryCycleCountStatus" autocreate="true" dynamic="true">
           <value code="READY"/>
           <value code="IN_PROCESS"/>
@@ -6140,7 +6129,7 @@ new Integer(0)
         <typegroup name="BlInventoryCycleCount">
             <itemtype code="BlInventoryCycleCount" autocreate="true" generate="true" >
                 <description>Contains all inventory cycle count details</description>
-                <deployment table="BlInventoryCycleCount" typecode="12235"/>
+                <deployment table="BlInventoryCycleCount" typecode="12240"/>
                 <attributes>
                     <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
                         <persistence type="property"/>
