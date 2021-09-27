@@ -1319,6 +1319,8 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		orderDetails.setIsExtendOrderPage(true);
 		model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());

@@ -59,6 +59,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
     public static final String NOTIFICATION_HANDLER = "webSanToolNotification";
+    public static final String ICC_NOTIFICATION_HANDLER = "inventoryCycleCountNotification";
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE = "oneBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE = "maxBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE = "maxBarcodeLimitEQErrorFailure";
@@ -71,9 +72,15 @@ public class BlInventoryScanLoggingConstants {
     public static final String LAST_SCAN_ERROR_FAILURE = "lastScanErrorFailure";
     public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
+    public static final String ICC_NO_ACTIVE_NOTIFICATION_FAILURE = "iccNoActiveNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
+    public static final String INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY = "inventoryCycleCountScanToolDataModelKey";
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
+    public static final String ICC_INPUT_EMPTY_ERROR_NOTIF = "iccEmptyInputNotificationFailure";
+    public static final String ICC_SUCCESS_NOTIF = "scanICCSuccess";
+    public static final String ICC_SERIAL_ERROR_NOTIF = "scanICCSerialError";
+    public static final String ICC_SERIAL_DB_ERROR_NOTIF = "scanICCSerialDBError";
 
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
@@ -256,8 +263,52 @@ public class BlInventoryScanLoggingConstants {
   public static final String TYPE_NOT_SUPPORTED = "Type Not Supported";
   public static final String TYPE_NOT_SUPPORTED_ERROR_FAILURE = "typeNotSupportedErrorFailure";
 
+    //Inventory Cycle Count
+    public static final String START_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Start performing BlAuthorizePaymentJob...!!";
+    public static final String FINISHED_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Finished performing BlAuthorizePaymentJob...!!";
+    public static final String FAILED_TO_PERFORM_BL_AUTHORIZE_PAYMENT_JOB_AS_IT_S_WEEKEND = "Failed to perform BlAuthorizePaymentJob as it's weekend!!";
 
-  private BlInventoryScanLoggingConstants() { }
+    public static final String FETCH_ACTIVE_INVENTORY_CYCLE_COUNT = "Fetch active inventory cycle count record!!";
+    public static final String FETCH_ALL_SKUs = "Fetch all active SKUs considering serials status!!";
+    public static final String ICC_DAY = "ICC_Day_";
+    public static final int TWENTY_NINE = 29;
+    public static final int THIRTY = 30;
+    public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
+    public static final String PREVIOUS_CYCLE_COUNT_ENDED = "No active inventory cycle found!!";
+    public static final String DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivating previous cycle count with code: {}";
+    public static final String FAILED_TO_CREATE_INVENTORY_CYCLE_AS_SKU_LIST_IS_EMPTY = "Failed to create inventory Cycle as SKU list is empty!!";
+    public static final String PREVIOUS_INVENTORY_CYCLE_NOT_COMPLETED_WITH_CODE = "Previous Inventory Cycle not completed with code: {}";
+    public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
+    public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_FOR_SKU = "Creating new Inventory Cycle count Product details for day: {} with SKU: {}";
+    public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_HISTORY = "Creating new Inventory Cycle count History for day: {} by user: {}";
+    public static final String SET_INVENTORY_CYCLE_COUNT_DAY_COMPLETED = "Setting ICC as COMPLETED for day: {}";
+    public static final String SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO = "Successfully created new Inventory Cycle count for code:{} from: {} to: {}";
+    public static final String CREATED_INVENTORY_CYCLE_FOR_DATE = "Created {} Inventory Cycle for date: {}";
+    public static final String CHUNKS_FOR_THIRTY_DAYS = "Created Inventory Cycle SKU list for 30 days as: {}";
+    public static final String CALENDER_TIME = "Calender time generated: {}";
+
+    public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
+    public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
+    public static final String EXCEPTION = "Error occurred: {}";
+    public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
+    public static final String ICC_NO_SERIALS = "Please reconcile both of these lists!!";
+
+    public static final String ON_CHANGE = "onChange";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SKU = "resize:none;display:inline-block";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SERIAL = "resize:none;display:block;float:right";
+    public static final String CLEAR = "Clear";
+    public static final String ON_CLICK = "onClick";
+    public static final String DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER = "defaultInventoryCycleCountScanToolRenderer";
+    public static final String WIDTH_FOURTY_EIGHT = "48%";
+    public static final String SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST = "Enter SKU list...";
+    public static final String BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES = "Scan serial barcodes...";
+    public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
+    public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
+    public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
+
+    public static final String REGEX_N = "\n";
+
+    private BlInventoryScanLoggingConstants() { }
 
     /**
      * javadoc
