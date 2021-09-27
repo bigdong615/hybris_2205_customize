@@ -93,7 +93,7 @@ gtag('config', googleAnalyticsTrackingId);
 
 	<c:when test="${pageType == 'ORDERCONFIRMATION'}">
 		<c:set var="orderCode" value="${ycommerce:encodeJavaScript(orderData.code)}"/>
-    <c:set var="coupanCodes" value=""/>
+    <c:set var="couponCodes" value=""/>
     <c:forEach items='${orderData.appliedVouchers}' var='voucher' varStatus='status'>
       <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
     </c:forEach>
