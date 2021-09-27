@@ -677,7 +677,21 @@
 		<property name="shippingmethod" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("shipping method")</annotations>
 		</property>
-
+		<property name="shippingmethodtext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method text")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("arrival date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("return date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customername")</annotations>
+		</property>
 		<property name="tracking" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tracking")</annotations>
 		</property>
