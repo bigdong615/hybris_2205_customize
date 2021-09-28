@@ -3,7 +3,9 @@ package com.bl.core.esp.service.impl;
 
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
 import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
+import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -27,7 +29,9 @@ import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
+import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
+import com.bl.esp.dto.shipped.OrderShippedEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -59,6 +63,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderVerificationRequiredRequestPopulator blOrderVerificationRequiredRequestPopulator;
     private BlOrderVerificationCompletedRequestPopulator blOrderVerificationCompletedRequestPopulator;
     private BlOrderDepositRequestPopulator blOrderDepositRequestPopulator;
+    private BlOrderShippedRequestPopulator blOrderShippedRequestPopulator;
+    private BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -233,6 +239,54 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
         }
     }
+
+  /**
+   * Send Order Shipped by calling Order Shipped ESP Event API
+   *
+   * @param orderModel
+   */
+  @Override
+  public void sendOrderShippedEvent(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderShippedEventRequest orderShippedEventRequest = new OrderShippedEventRequest();
+      getBlOrderShippedRequestPopulator().populate(orderModel,
+          orderShippedEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try {
+        // Call send order shipped ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderShippedEvent(
+            orderShippedEventRequest);
+      } catch (final BlESPIntegrationException exception) {
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_SHIPPED,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+      }
+      // Save send order shipped ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_SHIPPED,orderModel.getCode(),null,null);
+    }
+  }
+
+  /**
+   * Send Order PickedUp by calling Order PickedUp ESP Event API
+   *
+   * @param orderModel
+   */
+  @Override
+  public void sendOrderPickedUpEvent(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderPickedUpEventRequest orderPickedUpEventRequest = new OrderPickedUpEventRequest();
+      getBlOrderPickedUpRequestPopulator().populate(orderModel,
+          orderPickedUpEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try {
+        // Call send order pickedup ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderPickedUpEvent(
+            orderPickedUpEventRequest);
+      } catch (final BlESPIntegrationException exception) {
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_PICKEDUP,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+      }
+      // Save send order pickedup ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PICKEDUP,orderModel.getCode(),null,null);
+    }
+  }
 
 
   /**
@@ -520,5 +574,23 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderDepositRequestPopulator(
       BlOrderDepositRequestPopulator blOrderDepositRequestPopulator) {
     this.blOrderDepositRequestPopulator = blOrderDepositRequestPopulator;
+  }
+
+  public BlOrderShippedRequestPopulator getBlOrderShippedRequestPopulator() {
+    return blOrderShippedRequestPopulator;
+  }
+
+  public void setBlOrderShippedRequestPopulator(
+      BlOrderShippedRequestPopulator blOrderShippedRequestPopulator) {
+    this.blOrderShippedRequestPopulator = blOrderShippedRequestPopulator;
+  }
+
+  public BlOrderPickedUpRequestPopulator getBlOrderPickedUpRequestPopulator() {
+    return blOrderPickedUpRequestPopulator;
+  }
+
+  public void setBlOrderPickedUpRequestPopulator(
+      BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator) {
+    this.blOrderPickedUpRequestPopulator = blOrderPickedUpRequestPopulator;
   }
 }
