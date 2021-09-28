@@ -299,8 +299,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     return defaultBlESPEventService;
   }
 
-  public void setDefaultBlESPEventService(
-      DefaultBlESPEventService defaultBlESPEventService) {
+  public void setDefaultBlESPEventService(final DefaultBlESPEventService defaultBlESPEventService) {
     this.defaultBlESPEventService = defaultBlESPEventService;
   }
 

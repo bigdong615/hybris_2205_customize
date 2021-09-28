@@ -624,8 +624,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     return blExtendOrderRequestPopulator;
   }
 
-  public void setBlExtendOrderRequestPopulator(
-      BlExtendOrderRequestPopulator blExtendOrderRequestPopulator) {
+  public void setBlExtendOrderRequestPopulator(final BlExtendOrderRequestPopulator blExtendOrderRequestPopulator) {
     this.blExtendOrderRequestPopulator = blExtendOrderRequestPopulator;
   }
 }
