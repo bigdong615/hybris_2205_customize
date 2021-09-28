@@ -9,7 +9,6 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class BlPriceRatioUtil {
       // calculate Rental price rows based on number of days and save it on product price rows
       for (BlStandardPricingRatioModel pr : priceRatio)
       {
-        priceList.put(Integer.parseInt(pr.getDuration().toString()),  new BigDecimal(basePriceRow.get().getPrice()).multiply(new BigDecimal(pr.getPricingRatio())).setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN));
+        priceList.put(Integer.parseInt(pr.getDuration().toString()), (BigDecimal.valueOf(basePriceRow.get().getPrice()).multiply(BigDecimal.valueOf(pr.getPricingRatio()))).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
       }
       return priceList;
     }
