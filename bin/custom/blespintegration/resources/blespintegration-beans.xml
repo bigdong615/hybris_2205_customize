@@ -702,6 +702,75 @@
 
 	<!-- Order New Shipping ESP pojo classes  Ends -->
 
+
+	<!-- Order Deposit Main Event Request Object-->
+	<bean class="com.bl.esp.dto.orderextension.OrderExtensionRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderextension.data.OrderExtensionData" equals="true">
+		</property>
+	</bean>
+
+	<!--Order Deposit required ESP-->
+	<bean class="com.bl.esp.dto.orderextension.data.OrderExtensionData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="type" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("type")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="itemcost" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("item cost")</annotations>
+		</property>
+		<property name="damagewaivercost" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("damage waiver cost")</annotations>
+		</property>
+		<property name="subtotal" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("subtotal")</annotations>
+		</property>
+		<property name="shippingamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("shipping amount")</annotations>
+		</property>
+		<property name="taxamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("tax amount")</annotations>
+		</property>
+		<property name="discountamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("discount amount")</annotations>
+		</property>
+		<property name="totalcost" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("total cost")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("arrival date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("return date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customername")</annotations>
+		</property>
+		<property name="extensionamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("extension amount")</annotations>
+		</property>
+		<property name="orderitems" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order items")</annotations>
+		</property>
+	</bean>
+
+
 	<!-- Order Shipped Event data Object -->
 	<bean class="com.bl.esp.dto.shipped.data.OrderShippedEventData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>

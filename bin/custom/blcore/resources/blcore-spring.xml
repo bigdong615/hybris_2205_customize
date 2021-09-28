@@ -1185,6 +1185,7 @@
 		<property name="customerAccountService" ref="customerAccountService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--Coupon for rental extend order -->
@@ -1538,6 +1539,7 @@
 		<property name="blOrderNewShippingRequestPopulator" ref="blOrderNewShippingRequestPopulator"/>
 		<property name="blOrderShippedRequestPopulator" ref="blOrderShippedRequestPopulator"/>
 		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
+		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1602,6 +1604,11 @@
 	<!-- Order Pickedup populator ESP -->
 	<bean id="blOrderPickedUpRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator">
+	</bean>
+
+	<!-- Extend Order populator ESP -->
+	<bean id="blExtendOrderRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlExtendOrderRequestPopulator">
 	</bean>
 
 </beans>

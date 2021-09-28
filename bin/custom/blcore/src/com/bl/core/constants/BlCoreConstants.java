@@ -393,6 +393,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_DEPOSIT_EVENT_DEFINITION_KEY = "order.deposit.event.definition.key";
 	public static final String ORDER_DEPOSIT_EVENT_TEMPLATE = "order.deposit.event.template";
 
+	public static final String ORDER_EXTENSION_EVENT_DEFINITION_KEY = "order.extension.event.definition.key";
+	public static final String ORDER_EXTENSION_EVENT_TEMPLATE = "order.extension.event.template";
+
 	public static final String ORDER_SHIPPED_EVENT_DEFINITION_KEY = "order.shipped.event.definition.key";
 	public static final String ORDER_SHIPPED_EVENT_TEMPLATE = "order.shipped.event.template";
 	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";

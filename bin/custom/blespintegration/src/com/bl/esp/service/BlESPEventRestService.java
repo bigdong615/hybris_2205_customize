@@ -7,6 +7,7 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
+import com.bl.esp.dto.orderextension.OrderExtensionRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -140,4 +141,12 @@ public interface BlESPEventRestService {
    */
   ESPEventResponseWrapper sendOrderPickedUpEvent(
       final OrderPickedUpEventRequest orderPickedUpEventRequest);
+
+
+
+  /**
+   * Send Extend Order Event by calling Extend Order ESP Event API
+   * @param  orderExtensionRequest
+   */
+  ESPEventResponseWrapper sendExtendOrderEvent(final OrderExtensionRequest orderExtensionRequest);
 }
