@@ -1,10 +1,11 @@
 #% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs rush-delivery-mode.impex =========================");
 
 # Currencies
-$usCurrency=USD
+$usCurrency = USD
 
-INSERT_UPDATE Zone ; code[unique=true] ; countries(isocode)                                                                                                                              
-                   ; usa               ; US                                                                                                                                   
+INSERT_UPDATE Zone; code[unique = true]; countries(isocode)
+                  ; usa                ; US
+
 
 INSERT_UPDATE BlRushDeliveryMode; code[unique = 'true']             ; shippingCostCode(code) ; shippingMethodId	; name                                      ; carrier(code); shippingMethodType(code); numberOfDaysToSkip; daysToSkip(code); cutOffTime ; shippingGroup(code)   	; deliveryType(code); active[default='true'] ; net[default='true'] ; warehouse(code) ; businessTypeDelivery[default='false'] ; payByCustomer[default='true']
                                 ; RUSH_SAN_CARLOS_9_To_12           ;                        ; 41                  ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 07:20      ; SAME_DAY_DELIVERY     	; SF                ;                        ;    				   ; warehouse_ca    ; 									     ;
@@ -41,4 +42,3 @@ INSERT_UPDATE ZoneDeliveryModeValue ; deliveryMode(code)[unique=true] ; zone(cod
                                     ; RUSH_NYC_NEXT_DAY_12_To_3_BL    ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
                                     ; RUSH_NYC_NEXT_DAY_3_To_6_BL     ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
                                     ; RUSH_NYC_NEXT_DAY_4_30_To_7_30_BL;                                       ; $usCurrency                    ; 99     ; 0					 ; true
-                                    

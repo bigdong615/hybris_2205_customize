@@ -9,6 +9,13 @@ import com.braintreegateway.PaymentMethod;
 public class BrainTreePaymentMethodResult extends BrainTreeCreatePaymentMethodResult
 {
 	private PaymentMethod paymentMethod;
+	private Boolean isDefault;
+	
+	public BrainTreePaymentMethodResult( final PaymentMethod paymentMethod, Boolean isDefault) {
+		super();
+		this.paymentMethod = paymentMethod;
+		this.isDefault = isDefault;
+	}
 
 	public BrainTreePaymentMethodResult()
 	{

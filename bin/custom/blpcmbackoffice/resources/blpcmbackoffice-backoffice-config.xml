@@ -70,6 +70,7 @@
 					<wz:assign property="newBlProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
 					<wz:assign property="newBlProduct.supercategories" value="T(com.hybris.cockpitng.util.ListJoiner).join(newBlProduct.supercategories, ctx?.actionContext?.supercategories)"/>
 					<wz:assign property="newBlProduct.procurementCost" value="0.0"/>
+					<wz:assign property="newBlProduct.manufacturerName" value="Other"/>
 				</wz:prepare>
 				<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 					<wz:content id="step1.content">
@@ -87,6 +88,7 @@
 							<wz:property qualifier="forSaleBasePrice"/>
 							<wz:property qualifier="mpn"/>
 							<wz:property qualifier="upc"/>
+							<wz:property qualifier="manufacturerName"/>
 							<wz:property qualifier="manufacturerAID"/>
 							<wz:property qualifier="numberSystem"/>
 						</wz:property-list>
@@ -115,6 +117,7 @@
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.general">
 					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
+					<ea:attribute qualifier="manufacturerName"/>
 					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
 					<ea:attribute qualifier="displayName" label="label.pcmbackoffice.displayname"/>
 					<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
@@ -131,9 +134,10 @@
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.useddetails">
 					<ea:attribute qualifier="forSale"/>
-					<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg" label="lebel.pcmbackoffice.useddescription"/>
+					<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.useddescription"/>
 					<ea:attribute qualifier="usedGearVideosLink" />
 					<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="onSale"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -173,12 +177,7 @@
 				<ea:section name="label.pcmbackoffice.general">
 					<ea:attribute qualifier="constrained"/>
 				</ea:section>
-				<ea:section name="label.pcmbackoffice.dimensions">
-					<ea:attribute qualifier="weight"/>
-					<ea:attribute qualifier="length"/>
-					<ea:attribute qualifier="width"/>
-				</ea:section>
-				<ea:section name="hmc.section.product.pricesdiscounts">
+				<ea:section name="hmc.section.product.purchasing">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
 						<ea:attribute description="hmc.text.product.pg"
 							editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
@@ -188,8 +187,8 @@
 								<ea:value>europe1PricesListView</ea:value>
 							</ea:editor-parameter>
 							<ea:editor-parameter>
-								<ea:name>configurableFlowConfigCtx</ea:name>
-								<ea:value>create-wizard-no-save</ea:value>
+								<ea:name>isNestedObjectCreationDisabled</ea:name>
+								<ea:value>true</ea:value>
 							</ea:editor-parameter>
 							<ea:editor-parameter>
 								<ea:name>inlineEditing</ea:name>
@@ -201,28 +200,15 @@
 					<ea:attribute qualifier="maxOrderQuantity"/>
 					<ea:attribute qualifier="forSaleBasePrice"/>
 					<ea:attribute qualifier="priceQuantity"/>
+					<ea:attribute qualifier="forSaleDiscount"/>
 					<ea:attribute description="hmc.text.product.pg" qualifier="Europe1PriceFactory_PPG"/>
 					<ea:attribute qualifier="unit"/>
 				</ea:section>
-				<ea:section name="hmc.section.product.discounts">
-					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
-						<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
-							qualifier="europe1Discounts">
-							<ea:editor-parameter>
-								<ea:name>listConfigContext</ea:name>
-								<ea:value>europe1DiscountsListView</ea:value>
-							</ea:editor-parameter>
-							<ea:editor-parameter>
-								<ea:name>inlineEditing</ea:name>
-								<ea:value>true</ea:value>
-							</ea:editor-parameter>
-						</ea:attribute>
-					</ea:panel>
-					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
-						<ea:attribute qualifier="forSaleDiscount"/>
-					</ea:panel>
-					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
-					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
+				<ea:section name="label.pcmbackoffice.dimensions">
+					<ea:attribute qualifier="weight"/>
+					<ea:attribute qualifier="length"/>
+					<ea:attribute qualifier="width"/>
+					<ea:attribute qualifier="height"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.multimedia" position="18">
@@ -240,7 +226,7 @@
 					<ea:attribute qualifier="galleryImages"/>
 				</ea:section>
 			</ea:tab>
-			<ea:tab name="hmc.tab.product.serials" position="22">
+			<ea:tab name="hmc.tab.product.serials.subparts" position="22">
 				<ea:section description="hmc.text.serials" name="hmc.section.product.serials">
 					<ea:attribute qualifier="serialProducts">
 						<ea:editor-parameter>
@@ -249,9 +235,28 @@
 						</ea:editor-parameter>
 					</ea:attribute>
 				</ea:section>
+					<ea:section description="hmc.text.supbparts" name="hmc.section.product.subparts">
+						<ea:attribute qualifier="subParts">
+							<ea:editor-parameter>
+								<ea:name>configurableFlowConfigCtx</ea:name>
+								<ea:value>create-wizard-no-save</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:section>
+				<ea:section description="hmc.text.options" name="hmc.section.product.options">
+						<ea:attribute qualifier="options">
+							<ea:editor-parameter>
+								<ea:name>configurableFlowConfigCtx</ea:name>
+								<ea:value>create-wizard-no-save</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
-				<ea:section name="hmc.section.product.extendedattributes">
+				<ea:section name="hmc.section.product.coresettings">
+					<ea:attribute qualifier="numberSystem"/>
+					<ea:attribute qualifier="productId"/>
+					<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
 					<ea:attribute qualifier="scheduled"/>
 					<ea:attribute qualifier="video"/>
 					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)" label="label.pcmbackoffice.alternativeproduct"/>
@@ -272,21 +277,6 @@
 					<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
-				</ea:section>
-				<ea:section name="hmc.section.product.coresettings">
-					<ea:attribute qualifier="numberSystem"/>
-					<ea:attribute qualifier="productId"/>
-				</ea:section>
-				<ea:section name="hmc.section.product.ids">
-					<ea:attribute qualifier="manufacturerName"/>
-				</ea:section>
-				<ea:section name="hmc.section.product.keywords">
-					<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
-				</ea:section>
-			</ea:tab>
-			<ea:tab name="hmc.tab.shipping" position="30">
-				<ea:section name="hmc.product.shipping">
-					<ea:attribute qualifier="height"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
@@ -315,6 +305,7 @@
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+				<wz:assign property="newBlSerialProduct.manufacturerName" value="Other"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -326,13 +317,13 @@
 						<wz:property qualifier="approvalStatus"/>
 						<wz:property qualifier="serialStatus"/>
 						<wz:property qualifier="catalogVersion"/>
-						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="blProduct" />
 						<wz:property qualifier="procurementCost"/>
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
-						<wz:property qualifier="conditionRatingOverallScore"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="cosmeticRating"/>
 						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="manufacturerAID"/>
@@ -363,6 +354,7 @@
 				<wz:assign property="newBlSerialProduct.productType" value="ctx.parentObject.productType"/>
 				<wz:assign property="newBlSerialProduct.manufacturerAID" value="ctx.parentObject.manufacturerAID"/>
 				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+				<wz:assign property="newBlSerialProduct.manufacturerName" value="Other"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -374,14 +366,16 @@
 						<wz:property qualifier="approvalStatus"/>
 						<wz:property qualifier="serialStatus"/>
 						<wz:property qualifier="catalogVersion"/>
-						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="blProduct" />
 						<wz:property qualifier="procurementCost"/>
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
-						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="manufacturerName"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
@@ -394,8 +388,8 @@
 		</wz:flow>
 	</context>
 
-	<!--BlSerialProduct  editor Area Specific to Blpcmbackoffice -->
-	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="blpcmbackoffice"
+	<!--BlSerial Product editor Area Specific to Blpcmbackoffice -->
+	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="pcmbackoffice"
 		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
@@ -517,7 +511,7 @@
 					<ea:attribute qualifier="numberSystem"/>
 					<ea:attribute qualifier="productType"/>
 				</ea:section>
-			</ea:tab>
+				</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
 				<ea:section name="hmc.product.sections.customerreviews">
 					<ea:attribute qualifier="averageRating"/>
@@ -535,6 +529,5 @@
 			</ea:tab>
 		</ea:editorArea>
 	</context>
-
 
 </config>

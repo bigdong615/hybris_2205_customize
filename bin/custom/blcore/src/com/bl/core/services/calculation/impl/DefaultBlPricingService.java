@@ -9,6 +9,7 @@ import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlPricingLogicModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class has implementation of methods related to duration prices
@@ -34,6 +37,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 public class DefaultBlPricingService implements BlPricingService {
 
+  private static final Logger LOG = Logger.getLogger(DefaultBlPricingService.class);
   private GenericDao<BlPricingLogicModel> blPricingGenericDao;
   private GenericDao<PriceRowModel> priceRowGenericDao;
   private ModelService modelService;
@@ -229,6 +233,23 @@ public class DefaultBlPricingService implements BlPricingService {
     return bigDecimal.doubleValue();
   }
 
+  /**
+   * Get the min promotion price for serial
+   * @param serialProductPrice
+   * @param ugPromotionDiscount
+   * @return
+   */
+  @Override
+  public BigDecimal getSerialPromotionPrice(final BigDecimal serialProductPrice, final Integer ugPromotionDiscount) {
+
+    if (serialProductPrice != null && serialProductPrice.compareTo(BigDecimal.ZERO) > 0)
+    {
+      final BigDecimal serialPromotionPrice = serialProductPrice.subtract(serialProductPrice.multiply(new BigDecimal(ugPromotionDiscount)).divide(new BigDecimal(100))).setScale(BlCoreConstants.DECIMAL_PRECISION, RoundingMode.UP);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Promotion price for serial product is : {}", serialPromotionPrice);
+      return serialPromotionPrice;
+    }
+    return  BigDecimal.ZERO;
+  }
 
   public ModelService getModelService() {
     return modelService;
@@ -279,4 +300,5 @@ public class DefaultBlPricingService implements BlPricingService {
       GenericDao<PriceRowModel> priceRowGenericDao) {
     this.priceRowGenericDao = priceRowGenericDao;
   }
+
 }

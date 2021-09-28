@@ -5,6 +5,7 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
@@ -13,6 +14,7 @@ import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
@@ -38,6 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -80,7 +83,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "blRentalDateCookieGenerator")
 	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
-	
+
+	@Resource(name = "blEmailSubscriptionFacade")
+	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
+
 	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -240,6 +246,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			if(paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+			}
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}
@@ -265,7 +274,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	{
 		final String securityCode = placeOrderForm.getSecurityCode();
 		boolean invalid = false;
-
+		if (BooleanUtils.isTrue(getCheckoutFlowFacade().getCheckoutCart().getHasGiftCart()))
+		{
+			return invalid;
+		}
+		
 		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
 		{
 			GlobalMessages.addErrorMessage(model, "checkout.deliveryAddress.notSelected");

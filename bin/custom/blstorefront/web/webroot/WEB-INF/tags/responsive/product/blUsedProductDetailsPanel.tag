@@ -11,6 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:url value="/cart/usedgearadd" var="addToCartUrl" />
+
 <div class="page-loader-new-layout">
 	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
 		title="Loading.." id="new_loading_Img" />
@@ -67,9 +68,9 @@
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
-												
+												<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
-													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
+													<tr class="${(loop.index >= 3 ? 'hide-product-row ' : '')} <c:if test="${hasPromotion}"> noborder</c:if>">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
 															data-cosmetic="${serialProduct.cosmeticRating}"
@@ -114,8 +115,17 @@
 																</c:otherwise>
 															</c:choose>
 														</td>
-													</tr>
-												</c:if>
+						                <c:if test="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}">
+						                   <tr class=" ${loop.index >= 3 ? 'hide-product-row ' : ''}">
+                                  <td colspan="2">
+                                     <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>
+                                  </td>
+                                  <td colspan="3" class="text-start textGold">
+                                        <strong><format:price	priceData="${serialProduct.serialPromotionPrice}" />&nbsp;&nbsp;${fn:escapeXml(serialProduct.ugPromotionMessage)} </strong>
+                                  </td>
+                               </tr>
+                            </c:if>
+                        </c:if>
 											</c:forEach>
 										</form:form>
 									</tbody>
@@ -131,8 +141,9 @@
 						<c:if test="${product.forRent}">
 							<c:url var="rentUrl" value="/rent/product/${product.code}" />
 							<!--  BL:573 and  572 mt-4 added -->
-							<a href="${rentUrl}"
-								class="btn btn-sm btn-secondary float-end mt-4"><spring:theme
+							<a href="${rentUrl}" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+                data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental"
+								class="btn btn-sm btn-secondary float-end mt-4 js-pdplinkUrl"><spring:theme
 									code="pdp.product.rent.instead.button.text" /></a>
 							</p>
 						</c:if>

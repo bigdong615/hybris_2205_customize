@@ -13,7 +13,6 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
-import com.braintree.command.request.BrainTreeCreatePaymentMethodRequest;
 import com.braintree.command.request.BrainTreeFindMerchantAccountRequest;
 import com.braintree.command.request.beans.BrainTreeLineItemBean;
 import com.braintree.command.result.BrainTreeAuthorizationResult;
@@ -37,6 +36,8 @@ import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
 import com.google.common.collect.Lists;
+
+import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -50,7 +51,6 @@ import de.hybris.platform.core.model.order.price.DiscountModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
-import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.payment.PaymentService;
 import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -73,8 +73,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 
 
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
@@ -82,8 +84,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 	private static final Logger LOG = Logger.getLogger(BrainTreeTransactionServiceImpl.class);
 
-	private final static int DEFAULT_CURRENCY_DIGIT = 2;
-	private final static int MAX_PRODUCT_NAME_FOR_NON_PAYPAL_WITH_LEVEL2LEVEL3_DATA = 35;
+	private static final int DEFAULT_CURRENCY_DIGIT = 2;
+	private static final int MAX_PRODUCT_NAME_FOR_NON_PAYPAL_WITH_LEVEL2LEVEL3_DATA = 35;
+	private static final int CONVERT_TO_PERCENTAGE = 100;
 
 	private CartService cartService;
 	private ModelService modelService;
@@ -97,7 +100,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private BrainTreeConfigService brainTreeConfigService;
 	private CustomFieldsService customFieldsService;
 	private BraintreeSubmitForSettlementService braintreeSubmitForSettlementService;
-
+	private CustomerAccountService customerAccountService;
+	
 	@Override
 	public boolean createAuthorizationTransaction()
 	{
@@ -110,7 +114,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		final CartModel cart = cartService.getSessionCart();
 		try {
 			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
-				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE);
+				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR,
@@ -123,12 +127,18 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel)
+	public boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel, final BigDecimal
+			amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo)
 	{
 		try {
 			final BrainTreeAuthorizationResult result = brainTreeAuthorize(orderModel, getCustomFields(),
-					getTotalAmount(orderModel, null), Boolean.FALSE);
-			return handleAuthorizationResult(result, orderModel);
+					amountToAuthorize, submitForSettlement, paymentInfo);
+			if(submitForSettlement && paymentInfo != null) {
+				createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
+				return result.isSuccess();
+			} else {
+				return handleAuthorizationResult(result, orderModel);
+			}
 		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR,
 					"Error occurred while creating authorization for the order {}", orderModel.getCode(), ex);
@@ -152,7 +162,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		PaymentTransactionEntryModel paymentTransactionEntry = null;
 		if (result.isSuccess())
 		{
-			paymentTransactionEntry = createTransactionEntry(PaymentTransactionType.AUTHORIZATION, cart, result);
+			paymentTransactionEntry = createTransactionEntry(PaymentTransactionType.AUTHORIZATION, cart, result, null);
 			saveIntent(cart);
 			savePaymentTransaction(paymentTransactionEntry, cart);
 			if (result.getAndroidPayDetails() != null)
@@ -190,13 +200,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	 * @return BrainTreeAuthorizationResult
 	 */
 	private BrainTreeAuthorizationResult brainTreeAuthorize(final AbstractOrderModel cart, Map<String, String> customFields,
-			BigDecimal totalAmount, final Boolean submitForSettlement)
+			BigDecimal totalAmount, final Boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo)
 	{
-
 		final CustomerModel customer = (CustomerModel) cart.getUser();
 
 		BrainTreeAuthorizationRequest authorizationRequest = prepareAuthorizationRequest(cart, customer, customFields,
-				totalAmount, submitForSettlement);
+				totalAmount, submitForSettlement, paymentInfo);
 
 		final BrainTreeAuthorizationResult brainTreeAuthorizationResult = (BrainTreeAuthorizationResult) brainTreePaymentService
 				.authorize(authorizationRequest, customer);
@@ -219,10 +228,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	}
 
 	private BrainTreeAuthorizationRequest prepareAuthorizationRequest(AbstractOrderModel cart, CustomerModel customer,
-			Map<String, String> customFields, BigDecimal authAmount, final Boolean submitForSettlement)
+			Map<String, String> customFields, BigDecimal authAmount, final Boolean submitForSettlement,
+			BrainTreePaymentInfoModel paymentInfo)
 	{
-		final PaymentInfoModel paymentInfo = cart.getPaymentInfo();
-
+		if(null == paymentInfo) {
+			paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
+		}
 		final String braintreeCustomerId = customer.getBraintreeCustomerId();
 		validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
 		String methodNonce = null;
@@ -247,11 +258,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		if (paymentInfo instanceof BrainTreePaymentInfoModel)
 		{
-			methodNonce = ((BrainTreePaymentInfoModel) paymentInfo).getNonce();
-			deviceData = ((BrainTreePaymentInfoModel) paymentInfo).getDeviceData();
-			paymentType = ((BrainTreePaymentInfoModel) paymentInfo).getPaymentProvider();
-			usePaymentMethodToken = ((BrainTreePaymentInfoModel) paymentInfo).getUsePaymentMethodToken();
-			paymentMethodToken = ((BrainTreePaymentInfoModel) paymentInfo).getPaymentMethodToken();
+			methodNonce = paymentInfo.getNonce();
+			deviceData = paymentInfo.getDeviceData();
+			paymentType = paymentInfo.getPaymentProvider();
+			usePaymentMethodToken = paymentInfo.getUsePaymentMethodToken();
+			paymentMethodToken = paymentInfo.getPaymentMethodToken();
 			if (PAYPAL_INTENT_ORDER.equals(getBrainTreeConfigService().getIntent()))
 			{
 				storeInVault = false;
@@ -261,26 +272,25 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				storeInVault = getBrainTreeConfigService().getStoreInVaultIgnoringIntent();
 			}
 
-			if (((BrainTreePaymentInfoModel) paymentInfo).getLiabilityShifted() != null)
+			if (paymentInfo.getLiabilityShifted() != null)
 			{
-				liabilityShifted = ((BrainTreePaymentInfoModel) paymentInfo).getLiabilityShifted();
+				liabilityShifted = paymentInfo.getLiabilityShifted();
 			}
 			if (BraintreeConstants.VENMO_CHECKOUT.equalsIgnoreCase(paymentType) &&
 					StringUtils.isNotBlank(getBrainTreeConfigService().getVenmoProfileId()))
 			{
 				venmoProfileId = getBrainTreeConfigService().getVenmoProfileId();
 			}
-			threeDSecureConfiguration = ((BrainTreePaymentInfoModel) paymentInfo).getThreeDSecureConfiguration();
-			advancedFraudTools = ((BrainTreePaymentInfoModel) paymentInfo).getAdvancedFraudTools();
-			isSkip3dSecureLiabilityResult = ((BrainTreePaymentInfoModel) paymentInfo).getIsSkip3dSecureLiabilityResult();
-			creditCardStatementName = ((BrainTreePaymentInfoModel) paymentInfo).getCreditCardStatementName();
-			merchantAccountIdForCurrentSite = ((BrainTreePaymentInfoModel) paymentInfo).getMerchantAccountIdForCurrentSite();
-			brainTreeChannel = ((BrainTreePaymentInfoModel) paymentInfo).getBrainTreeChannel();
-			shipsFromPostalCode = ((BrainTreePaymentInfoModel) paymentInfo).getShipsFromPostalCode();
+			threeDSecureConfiguration =  paymentInfo.getThreeDSecureConfiguration();
+			advancedFraudTools = paymentInfo.getAdvancedFraudTools();
+			isSkip3dSecureLiabilityResult = paymentInfo.getIsSkip3dSecureLiabilityResult();
+			creditCardStatementName = paymentInfo.getCreditCardStatementName();
+			merchantAccountIdForCurrentSite = paymentInfo.getMerchantAccountIdForCurrentSite();
+			brainTreeChannel = paymentInfo.getBrainTreeChannel();
+			shipsFromPostalCode = paymentInfo.getShipsFromPostalCode();
 		}
 
 		final AddressModel shippingAddress;
-		final AddressModel billingAddress;
 		shippingAddress = cart.getDeliveryAddress();
 
 		final BillingInfo shippingInfo = billingAddressConverter.convert(shippingAddress);
@@ -301,18 +311,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		authorizationRequest.setCreditCardStatementName(creditCardStatementName);
 		authorizationRequest.setVenmoProfileId(venmoProfileId);
 
-		if (shippingAddress != null)
-		{
-			authorizationRequest.setBrainTreeAddressId(shippingAddress.getBrainTreeAddressId());
-		}
-
-		if (cart.getPaymentInfo().getBillingAddress() != null)
-		{
-			billingAddress = cart.getPaymentInfo().getBillingAddress();
-			authorizationRequest.setBrainTreeBilligAddressId(billingAddress.getBrainTreeAddressId());
-			final BillingInfo billingInfo = billingAddressConverter.convert(billingAddress);
-			authorizationRequest.setBillingInfo(billingInfo);
-		}
+		setAddressInPaymentInfo(authorizationRequest, shippingAddress, cart.getPaymentInfo());
 
 		if (StringUtils.isNotEmpty(merchantAccountIdForCurrentSite))
 		{
@@ -336,20 +335,83 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		//		calc taxAmount via percentage of AUTH-amount
 		BigDecimal authPercentage = roundNumberToTwoDecimalPlaces(
-				authAmount.doubleValue() * 100 / (cart.getTotalPrice().doubleValue()));
+				authAmount.doubleValue() * CONVERT_TO_PERCENTAGE / (cart.getTotalPrice().doubleValue()));
 		LOG.info("authPercentage: " + authPercentage + ", as double: " + authPercentage.doubleValue());
 
 		BigDecimal taxSupposed = roundNumberToTwoDecimalPlaces(
-				cart.getTotalTax().doubleValue() * authPercentage.doubleValue() / 100);
+				cart.getTotalTax().doubleValue() * authPercentage.doubleValue() / CONVERT_TO_PERCENTAGE);
 		LOG.info("taxSupposed: " + taxSupposed);
-		authorizationRequest.setTaxAmountAuthorize(new Double(taxSupposed.doubleValue()));
+		authorizationRequest.setTaxAmountAuthorize(taxSupposed.doubleValue());
 
 		//		add Level 3 data
 		LOG.info("cart.getDeliveryCost: " + cart.getDeliveryCost());
 		authorizationRequest.setShippingAmount(cart.getDeliveryCost());
 
+		LOG.info("shipsFromPostalCode: " + shipsFromPostalCode);
+		authorizationRequest.setShipsFromPostalCode(shipsFromPostalCode);
+
+		setDeliveryAddress(cart.getDeliveryAddress(), authorizationRequest);
+
+		setLineItem(cart, paymentInfo, authorizationRequest);
+
+		return authorizationRequest;
+	}
+
+	/**
+	 * It sets the delivery address  in auth request
+	 * @param deliveryAddress
+	 * @param authorizationRequest
+	 */
+	private void setDeliveryAddress(final AddressModel deliveryAddress,
+			final BrainTreeAuthorizationRequest authorizationRequest) {
+		if (deliveryAddress != null)
+		{
+			LOG.info("Delivery PostalCode: " + deliveryAddress.getPostalcode());
+			authorizationRequest.setShippingPostalCode(deliveryAddress.getPostalcode());
+
+			if (deliveryAddress.getCountry() != null)
+			{
+				LOG.info("Delivery CountryISO: " + deliveryAddress.getCountry().getIsocode());
+				String alpha3Country = new Locale("en", deliveryAddress.getCountry().getIsocode()).getISO3Country();
+				authorizationRequest.setShippingCountryCodeAlpha3(alpha3Country);
+			}
+		}
+	}
+
+	/**
+	 * It sets the address in auth request
+	 * @param authorizationRequest
+	 * @param shippingAddress
+	 * @param paymentInfo
+	 */
+	private void setAddressInPaymentInfo(final BrainTreeAuthorizationRequest authorizationRequest, final AddressModel
+			shippingAddress, final PaymentInfoModel paymentInfo) {
+		if (shippingAddress != null)
+		{
+			authorizationRequest.setBrainTreeAddressId(shippingAddress.getBrainTreeAddressId());
+		}
+
+		if (paymentInfo.getBillingAddress() != null)
+		{
+			final AddressModel billingAddress = paymentInfo.getBillingAddress();
+			authorizationRequest.setBrainTreeBilligAddressId(billingAddress.getBrainTreeAddressId());
+			final BillingInfo billingInfo = billingAddressConverter.convert(billingAddress);
+			authorizationRequest.setBillingInfo(billingInfo);
+		}
+	}
+
+	/**
+	 * It sets the order entries in auth reqest
+	 * @param cart
+	 * @param paymentInfo
+	 * @param authorizationRequest
+	 */
+	private void setLineItem(final AbstractOrderModel cart, final BrainTreePaymentInfoModel paymentInfo,
+			final BrainTreeAuthorizationRequest authorizationRequest) {
+		List<BrainTreeLineItemBean> lineItems = new ArrayList<>();
+		boolean enableLevel2Level3Data = getBrainTreeConfigService().getConfigurationService().getConfiguration()
+				.getBoolean(PROPERTY_LEVEL2_LEVEL3);
 		LOG.info("cart.getDiscounts: " + cart.getDiscounts());
-		Double discountAmount = new Double(0d);
 		double orderDiscountAmountSum = 0d;
 		for (DiscountModel dm : cart.getDiscounts())
 		{
@@ -357,28 +419,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			orderDiscountAmountSum = Double.sum(orderDiscountAmountSum, Math.abs(dm.getValue().doubleValue()));
 		}
 		LOG.info("orderDiscountAmountSum: " + orderDiscountAmountSum);
-		authorizationRequest.setDiscountAmount(new Double(orderDiscountAmountSum));
-
-		LOG.info("shipsFromPostalCode: " + shipsFromPostalCode);
-		authorizationRequest.setShipsFromPostalCode(shipsFromPostalCode);
-
-		if (cart.getDeliveryAddress() != null)
-		{
-			LOG.info("Delivery PostalCode: " + cart.getDeliveryAddress().getPostalcode());
-			authorizationRequest.setShippingPostalCode(cart.getDeliveryAddress().getPostalcode());
-
-			if (cart.getDeliveryAddress().getCountry() != null)
-			{
-				LOG.info("Delivery CountryISO: " + cart.getDeliveryAddress().getCountry().getIsocode());
-				String alpha3Country = new Locale("en", cart.getDeliveryAddress().getCountry().getIsocode()).getISO3Country();
-				authorizationRequest.setShippingCountryCodeAlpha3(alpha3Country);
-			}
-		}
-
-
-		List<BrainTreeLineItemBean> lineItems = new ArrayList<>();
-		boolean enableLevel2Level3Data = getBrainTreeConfigService().getConfigurationService().getConfiguration()
-				.getBoolean(PROPERTY_LEVEL2_LEVEL3);
+		authorizationRequest.setDiscountAmount(orderDiscountAmountSum);
 		for (AbstractOrderEntryModel entry : cart.getEntries())
 		{
 			BrainTreeLineItemBean lineItem = new BrainTreeLineItemBean();
@@ -388,7 +429,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 			if (paymentInfo instanceof BrainTreePaymentInfoModel)
 			{
-				String paymentProvider = ((BrainTreePaymentInfoModel) paymentInfo).getPaymentProvider();
+				String paymentProvider = paymentInfo.getPaymentProvider();
 				if (enableLevel2Level3Data && (!PAY_PAL_EXPRESS_CHECKOUT.equals(paymentProvider) || !PAYPAL_PAYMENT.equals(paymentProvider)))
 				{
 					name = StringUtils.abbreviate(name, MAX_PRODUCT_NAME_FOR_NON_PAYPAL_WITH_LEVEL2LEVEL3_DATA);
@@ -429,7 +470,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 			orderDiscountAmountSum = Double.sum(itemDiscountAmountSum, orderDiscountAmountSum);
 			LOG.info("orderDiscountAmountSum: " + orderDiscountAmountSum);
-			authorizationRequest.setDiscountAmount(new Double(orderDiscountAmountSum));
+			authorizationRequest.setDiscountAmount(orderDiscountAmountSum);
 
 			String productCode = entry.getProduct().getCode();
 			lineItem.setProductCode(productCode);
@@ -440,13 +481,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			lineItems.add(lineItem);
 		}
 		authorizationRequest.setLineItems(lineItems);
-
-		return authorizationRequest;
 	}
 
 	private BigDecimal roundNumberToTwoDecimalPlaces(final double number)
 	{
-		return new BigDecimal(number).setScale(2, RoundingMode.HALF_UP);
+		return BigDecimal.valueOf(number).setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP);
 	}
 
 	protected BigDecimal calculateTotalAmount(final AbstractOrderModel cart)
@@ -457,32 +496,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	@Override
 	public boolean createPaymentMethodTokenForOrderReplenishment()
 	{
-		final CustomerModel customer = checkoutCustomerStrategy.getCurrentUserForCheckout();
-		final PaymentInfoModel paymentInfo = cartService.getSessionCart().getPaymentInfo();
-		if (paymentInfo instanceof BrainTreePaymentInfoModel)
-		{
-			if (!((BrainTreePaymentInfoModel) paymentInfo).getUsePaymentMethodToken().booleanValue())
-			{
-				final BrainTreeCreatePaymentMethodRequest request = new BrainTreeCreatePaymentMethodRequest(null,
-						((BrainTreePaymentInfoModel) paymentInfo).getNonce(), customer.getBraintreeCustomerId());
-
-				final BrainTreeCreatePaymentMethodResult result = brainTreePaymentService.createPaymentMethod(request);
-				if (result != null)
-				{
-					((BrainTreePaymentInfoModel) paymentInfo).setPaymentMethodToken(result.getPaymentMethodToken());
-					((BrainTreePaymentInfoModel) paymentInfo).setUsePaymentMethodToken(Boolean.TRUE);
-					modelService.save(paymentInfo);
-				}
-
-			}
-		}
-		else
-		{
-			throw new AdapterException("Error during creation payment method for replenishment.");
-		}
-
+		brainTreePaymentService.createPaymentMethodTokenForOrderReplenishment();
 		return createAuthorizationTransaction();
-
 	}
 
 	@Override
@@ -491,9 +506,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	{
 		PaymentTransactionEntryModel transactionEntry = null;
 		final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
-				getTotalAmount(cart, totalAmount), Boolean.FALSE);
+				getTotalAmount(cart, totalAmount), Boolean.FALSE, null);
 
-		transactionEntry = createTransactionEntry(PaymentTransactionType.AUTHORIZATION, cart, result);
+		transactionEntry = createTransactionEntry(PaymentTransactionType.AUTHORIZATION, cart, result, null);
 
 		if (!result.isSuccess())
 		{
@@ -509,11 +524,16 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	@Override
 	public PaymentTransactionEntryModel createAuthorizationTransaction(final OrderModel order, BigDecimal totalAmount)
 	{
-		PaymentTransactionEntryModel transactionEntry = null;
 		final BrainTreeAuthorizationResult result = brainTreeAuthorize(order, getCustomFields(),
-				getTotalAmount(order, totalAmount), Boolean.TRUE);
+				getTotalAmount(order, totalAmount), Boolean.TRUE, null);
 
-		transactionEntry = createTransactionEntry(PaymentTransactionType.CAPTURE, order, result);
+		return createCaptureTransactionEntry(order, result, null);
+	}
+
+	private PaymentTransactionEntryModel createCaptureTransactionEntry(final OrderModel order,
+			final BrainTreeAuthorizationResult result, final BrainTreePaymentInfoModel paymentInfo) {
+		final PaymentTransactionEntryModel transactionEntry = createTransactionEntry(
+				PaymentTransactionType.CAPTURE, order, result, paymentInfo);
 
 		if (!result.isSuccess())
 		{
@@ -526,7 +546,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
 		{
 			getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
-			getBrainTreePaymentTransactionService().continueOrderProcess(order);
+//			getBrainTreePaymentTransactionService().continueOrderProcess(order); //NOSONAR
 		}
 		else
 		{
@@ -726,7 +746,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 					transaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
 					transaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
 
-					if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
+					if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
 					{
 						BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
 						transaction.setRequestToken(paymentInfo.getNonce());
@@ -746,7 +766,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
 			braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
 
-			if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
+			if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
 			{
 				BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
 				braintreePaymentTransaction.setRequestToken(paymentInfo.getNonce());
@@ -772,20 +792,15 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	}
 
 	private PaymentTransactionEntryModel createTransactionEntry(final PaymentTransactionType type, final AbstractOrderModel cart,
-			final BrainTreeAuthorizationResult result)
+			final BrainTreeAuthorizationResult result, BrainTreePaymentInfoModel paymentInfo)
 	{
 		PaymentTransactionEntryModel paymentTransactionEntry = null;
-		for (PaymentTransactionModel paymentTransactionModel : cart.getPaymentTransactions())
-		{
-			if (!paymentTransactionModel.getEntries().isEmpty())
-			{
-				for (PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel.getEntries())
-				{
-					if (paymentTransactionEntryModel.getRequestId().equals(FAKE_REQUEST_ID))
-					{
-						paymentTransactionEntry = paymentTransactionEntryModel;
-						break;
-					}
+		for (PaymentTransactionModel paymentTransactionModel : cart.getPaymentTransactions()) {
+			for (PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel
+					.getEntries()) {
+				if (paymentTransactionEntryModel.getRequestId().equals(FAKE_REQUEST_ID)) {
+					paymentTransactionEntry = paymentTransactionEntryModel;
+					break;
 				}
 			}
 		}
@@ -795,10 +810,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			paymentTransactionEntry = modelService.create(PaymentTransactionEntryModel.class);
 		}
 
-		final PaymentInfoModel paymentInfo = cart.getPaymentInfo();
+		if(null == paymentInfo) {
+			paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
+		}
 		if (paymentInfo instanceof BrainTreePaymentInfoModel)
 		{
-			paymentTransactionEntry.setRequestToken(((BrainTreePaymentInfoModel) paymentInfo).getNonce());
+			paymentTransactionEntry.setRequestToken(paymentInfo.getNonce());
 		}
 
 		paymentTransactionEntry.setType(type);
@@ -861,7 +878,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		LOG.info("[BT PaymentInfo] Created card payment info with id: " + cardPaymentInfoModel.getCode());
 		LOG.info("[BT PaymentInfo] Created billing address with id: " + billingAddress.getPk());
 
-		final List<PaymentInfoModel> paymentInfoModels = new ArrayList<PaymentInfoModel>(customer.getPaymentInfos());
+		final List<PaymentInfoModel> paymentInfoModels = new ArrayList<>(customer.getPaymentInfos());
 
 		if (!paymentInfoModels.contains(cardPaymentInfoModel))
 		{
@@ -871,6 +888,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				customer.setPaymentInfos(paymentInfoModels);
 				getModelService().save(customer);
 			}
+		}
+
+		if (cardPaymentInfoModel != null && BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
 		}
 
 		return cardPaymentInfoModel;
@@ -886,6 +908,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		final BrainTreePaymentInfoModel cardPaymentInfoModel = createCreditCardPaymentInfo(billingAddress, customer, braintreeInfo,
 				abstractOrderModel);
+
 		if(StringUtils.isNotBlank(braintreeInfo.getBraintreeAddressId()))
 		{
 		  billingAddress.setBrainTreeAddressId(braintreeInfo.getBraintreeAddressId());
@@ -899,7 +922,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		LOG.info("[BT PaymentInfo] Created card payment info with id: " + cardPaymentInfoModel.getCode());
 		LOG.info("[BT PaymentInfo] Created billing address with id: " + billingAddress.getPk());
 
-		final List<PaymentInfoModel> paymentInfoModels = new ArrayList<PaymentInfoModel>(customer.getPaymentInfos());
+		final List<PaymentInfoModel> paymentInfoModels = new ArrayList<>(customer.getPaymentInfos());
 
 		if (!paymentInfoModels.contains(cardPaymentInfoModel))
 		{
@@ -924,7 +947,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		paymentTransactionEntryModel.setTransactionStatusDetails(TransactionStatusDetails.SUCCESFULL.name());
 		paymentTransactionEntryModel.setRequestId(result.getPaymentMethodToken());
 		paymentTransactionEntryModel.setTime(new Date());
-		paymentTransactionEntryModel.setAmount(new BigDecimal(cart.getTotalPrice()).setScale(2, RoundingMode.HALF_UP));
+		paymentTransactionEntryModel.setAmount(new BigDecimal(cart.getTotalPrice()).setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
 		paymentTransactionEntryModel.setCurrency(cart.getCurrency());
 		paymentTransactionEntryModel.setRequestToken(result.getRequestToken());
 		final String code = BRAINTREE_PROVIDER_NAME + "_cart_" + cart.getCode() + "_stamp_" + System.currentTimeMillis();
@@ -958,6 +981,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		cardPaymentInfoModel.setImageSource(braintreeInfo.getImageSource());
 		cardPaymentInfoModel.setExpirationMonth(braintreeInfo.getExpirationMonth());
 		cardPaymentInfoModel.setExpirationYear(braintreeInfo.getExpirationYear());
+		
+		//Added check to handle add New CC from payment page
+		if(braintreeInfo.getIsDefault() == null) {
+			cardPaymentInfoModel.setIsDefault(false);
+		}else{
+			cardPaymentInfoModel.setIsDefault(braintreeInfo.getIsDefault());
+		}
+
 		if (StringUtils.isNotEmpty(customerModel.getBraintreeCustomerId()))
 		{
 			cardPaymentInfoModel.setCustomerId(customerModel.getBraintreeCustomerId());
@@ -1003,7 +1034,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			final CustomerModel customerModel, final BraintreeInfo braintreeInfo, final AbstractOrderModel abstractOrderModel)
 	{
 
+
 		BrainTreePaymentInfoModel cardPaymentInfoModel = createCreditCardPaymentInfo(billingAddress, customerModel, braintreeInfo);
+
 		if (!(abstractOrderModel instanceof OrderModel))
 		{
 			cardPaymentInfoModel
@@ -1037,21 +1070,18 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		PaymentTransactionModel braintreePaymentTransaction = null;
 		paymentTransactions = Lists.newArrayList();
 
-		if (braintreePaymentTransaction == null)
-		{
-			braintreePaymentTransaction = modelService.create(PaymentTransactionModel.class);
-			braintreePaymentTransaction.setRequestId(paymentTransactionEntry.getRequestId());
-			braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
-			braintreePaymentTransaction.setPlannedAmount(paymentTransactionEntry.getAmount().setScale(2, RoundingMode.HALF_UP));
+		braintreePaymentTransaction = modelService.create(PaymentTransactionModel.class);
+		braintreePaymentTransaction.setRequestId(paymentTransactionEntry.getRequestId());
+		braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
+		braintreePaymentTransaction
+				.setPlannedAmount(paymentTransactionEntry.getAmount().setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
 
-			if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
-			{
-				BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
-				braintreePaymentTransaction.setInfo(paymentInfo);
-			}
-			modelService.save(braintreePaymentTransaction);
-			paymentTransactions.add(braintreePaymentTransaction);
+		if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {
+			BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
+			braintreePaymentTransaction.setInfo(paymentInfo);
 		}
+		modelService.save(braintreePaymentTransaction);
+		paymentTransactions.add(braintreePaymentTransaction);
 
 		paymentTransactionEntrys = Lists.newArrayList();
 
@@ -1242,4 +1272,16 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BraintreeSubmitForSettlementService braintreeSubmitForSettlementService) {
 		this.braintreeSubmitForSettlementService = braintreeSubmitForSettlementService;
 	}
+
+	public CustomerAccountService getCustomerAccountService() {
+		return customerAccountService;
+	}
+
+	public void setCustomerAccountService(CustomerAccountService customerAccountService) {
+		this.customerAccountService = customerAccountService;
+	}
+
+	
+	
+	
 }

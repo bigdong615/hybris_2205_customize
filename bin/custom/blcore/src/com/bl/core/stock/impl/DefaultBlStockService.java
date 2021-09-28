@@ -394,6 +394,17 @@ public class DefaultBlStockService implements BlStockService
 	}
 
 	/**
+	 * This method created to get stock level for serial products
+	 * @param serialCode
+	 * @param startDate
+	 * @param endDate
+	 */
+	public void findStockLevelForExtendOrderSerialProducts(final String serialCode , final Date startDate , final Date endDate){
+		getBlStockLevelDao().findSerialStockLevelForDate(serialCode, startDate, endDate);
+	}
+
+
+	/**
 	 * @return the modelService
 	 */
 	public ModelService getModelService()

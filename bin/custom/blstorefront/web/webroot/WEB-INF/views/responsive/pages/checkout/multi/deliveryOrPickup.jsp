@@ -71,7 +71,7 @@
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
                             <c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                                                          <div class="notification notification-error">
+                                                          <div class="notification notification-error js-promo-error">
                                                                   ${fn:escapeXml(errorMsg)}
                                                            </div>
                                                          </c:if>
@@ -105,6 +105,7 @@
             </div>
         </div>
     </section>
+    <cart:damageWaiverInfo/>
 <div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">

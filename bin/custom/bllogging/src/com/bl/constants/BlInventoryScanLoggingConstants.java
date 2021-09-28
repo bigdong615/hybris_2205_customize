@@ -10,8 +10,8 @@ import java.util.List;
  * Scanning specific response messages
  */
 public class BlInventoryScanLoggingConstants {
-    
-    public static final int ZERO = 0;
+
+	public static final int ZERO = 0;
     public static final double ZERO_FIVE = 0.5;
     public static final int ONE = 1;
     public static final int TWO = 2;
@@ -24,6 +24,8 @@ public class BlInventoryScanLoggingConstants {
     public static final int FORTY = 40;
 
     public static final String HUN_PER = "100%";
+    public static final String SAVING = "Saving ";
+    public static final String SPACE = ": ";
 
     public static final String SAMPLE1 = "sample1%";
     public static final String SAMPLE2 = "sample2%";
@@ -40,6 +42,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String BOS = "BOS";
     public static final String IN_HOUSE = "In House Scrapped Items";
     public static final String UNKNOWN = "Unknown Carrier";
+    
+    public static final String MAW = "MAW";
+    public static final String CAW = "CAW";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -54,9 +59,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
 
-    public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: ";
+    public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
-    public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: ";
+    public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
     public static final String LAST_SCAN_ERROR_FAILURE_MSG = "Last scan must be a location";
@@ -66,9 +71,59 @@ public class BlInventoryScanLoggingConstants {
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String SCAN_STRING = "Scan data: ";
 
-    public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
-    public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
-    public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
+    public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: {}";
+    public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: {}";
+    public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: {}";
+    
+    public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
+    public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
+    public static final String VIP_WORKSTATION_TECH_ENG = "VIP_WORKSTATION_TECH_ENG";
+    public static final String CLEAN_PRIORITY_GEAR_CART = "CLEAN_PRIORITY_GEAR_CART";
+    public static final String CLEAN_GEAR_MOBILE_CART = "CLEAN_GEAR_MOBILE_CART";
+    public static final String REPAIR_SHELF = "REPAIR_SHELF";
+    public static final String MISSING_BARCODE_ITEMS = "MISSING_BARCODE_ITEMS";
+    public static final String SOMETHING_WENT_WRONG = "SOMETHING_WENT_WRONG";
+    public static final String WRONG_ITEM_CLEAN_CART = "WRONG_ITEM_CLEAN_CART";
+    public static final String WRONG_ITEM_CLEAN_PRIORITY_CART = "WRONG_ITEM_CLEAN_PRIORITY_CART";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String LOG_SOMETHING_WENT_WRONG = "SOMETHING WENT WRONG";
+    public static final String SCAN_ERROR_FAILURE = "somethingWentWrong";
+    public static final String WRONG_CLEAN_CART_LOCATION = "Should Move To Clean Priority Cart";
+    public static final String CLEAN_CART_SCAN_ERROR_FAILURE = "cleanCartScanError";
+    public static final String WRONG_CLEAN_PRIORITY_CART_LOCATION = "Should Move To Clean Cart";
+    public static final String CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE = "cleanPriorityCartScanError";
+    public static final String CAR = "CAR";
+    public static final String MAR = "MAR";
+    public static final String CAM = "CAM";
+    public static final String MAM = "MAM";
+    public static final String CLEAN_FRONT_DESK_CART = "CLEAN_FRONT_DESK_CART";
+    public static final String CLEAN_GEAR_AISLE_IN_CAGE = "CLEAN_GEAR_AISLE_IN_CAGE";
+    public static final String CLEAN_GEAR_CAGE = "CLEAN_GEAR_CAGE";
+    public static final String CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART = "CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART";
+    public static final String CLEAN_GEAR_SHIPPING_MOBILE_CART = "CLEAN_GEAR_SHIPPING_MOBILE_CART";
+    public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
+    public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
+    public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
+    
+    public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";
+    public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE = "unboxPkgMissingErrorFailure";
+    public static final String UNBOX_SAN_TOOL_DPC_FAILURE = "unboxInvalidDPLocationErrorFailure";
+    public static final String UNBOX_SAN_TOOL_DPC_WARNING = "unboxInvalidDPLocationErrorWarning";
+    public static final String UNBOX_SAN_TOOL_DC_FAILURE = "unboxInvalidDCLocationErrorFailure";
+    public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE_MSG = "Scanned serials not exist on any of the package: ";
+    public static final String UNBOX_SAN_TOOL_DPC_FAILURE_MSG = "Please, place this item to the dirty priority shelf: ";
+    public static final String UNBOX_SAN_TOOL_DC_FAILURE_MSG = "Please, place this item to the dirty cart shelf: ";
+    public static final String FETCH_PACKAGE_DETAILS = "Fetching PackagingDetails for serial barcodes {} and found {} packages.";
+    public static final String FETCH_OUT_ORDER_DETAILS = "Fetching OUT orders for today. Found {} orders";
+    public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: {} and found {} orders";
+    public static final String FETCH_OUT_TODAYS_ORDER_SERIAL = "Fetching OUT todays orders for serial: {} and found {} orders";
+    
+    public static final String UNBOXING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
+    public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_TECH_ENG";
+    public static final String DIRTY_PRIORITY_GEAR = "DIRTY_PRIORITY_GEAR";
+    public static final String DIRTY_PRIORITY_MOBILE_CART = "DIRTY_PRIORITY_MOBILE_CART";
+    public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
+    public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -90,4 +145,5 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(IN_HOUSE);
         return defaultLocations;
     }
+    
 }

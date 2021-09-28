@@ -209,4 +209,19 @@ public interface BrainTreePaymentService extends PaymentMethod
 	WebhookNotification getWebhookNotification(BrainTreeWebhookNotificationRequest webhookNotificationRequest);
 
 	PayPalAccount getPaymentMethodFromBTByToken(final String paymentMethodToken);
+
+	/**
+	 * It fetches the payment info model by payment info id
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce);
+
+	/**
+	 * It creates payment method
+	 */
+	public void createPaymentMethodTokenForOrderReplenishment();
 }

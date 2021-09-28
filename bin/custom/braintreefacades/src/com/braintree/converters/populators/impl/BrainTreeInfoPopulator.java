@@ -37,6 +37,7 @@ public class BrainTreeInfoPopulator implements Populator<BrainTreeSubscriptionIn
 		target.setCardholderName(brainTreeSubscriptionInfoData.getCardholder());
 		target.setIntent(brainTreeSubscriptionInfoData.getIntent());
 		target.setAmount(brainTreeSubscriptionInfoData.getAmount());
+	    target.setIsDefault(brainTreeSubscriptionInfoData.getIsDefault());
     target.setBraintreeAddressId(brainTreeSubscriptionInfoData.getBraintreeAddressId());
 	}
 }

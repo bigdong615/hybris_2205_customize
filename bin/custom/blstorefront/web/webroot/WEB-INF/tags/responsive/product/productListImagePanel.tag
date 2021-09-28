@@ -7,6 +7,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ attribute name="productType" required="false"
 	type="java.lang.String"%>
+	<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <!-- BL-926: Added new file for condition as per Gift Card requirement --> 	
 <c:choose>
 	<c:when test="${productType eq 'RentalGearProduct' }">
@@ -18,7 +19,7 @@
 
 </c:choose>
 <c:choose>
-	<c:when test="${product.code eq 'bl_giftcard'}">
+	<c:when test="${product.productType eq 'GIFTCARD'}">
 		<div class="gift-card-plp">
 			<c:choose>
 				<c:when test="${not empty product.images}">
@@ -26,9 +27,9 @@
 						<c:if test="${mediaLi.format eq 'product'}">
 							<c:url value="${mediaLi.url}" var="primaryImageUrl" />
 							<c:set value="this is alternate" var="altTextHtml" />
-							<li class="splide__slide""><c:url var="rentUrl"
-									value="${productTypeUrl}/${product.code}" /> <a
-								href="${rentUrl}"> <img
+							<li class="splide__slide""><c:url var="giftCardUrl" value="${productTypeUrl}/${product.code}" />
+									 <a href="${giftCardUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
+                      data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="Gift Cart"> <img
 									src="${fn:escapeXml(primaryImageUrl)}" />
 							</a></li>
 						</c:if>
@@ -55,10 +56,10 @@
 									<c:url value="${mediaLi.url}" var="primaryImageUrl" />
 									<c:set value="this is alternate" var="altTextHtml" />
 									<li class="splide__slide"">
-										<!-- BL-534--> <c:url var="rentUrl"
-											value="${productTypeUrl}/${product.code}" /> <a
-										href="${rentUrl}"> <img
-											src="${fn:escapeXml(primaryImageUrl)}" />
+										<!-- BL-534--> <c:url var="rentUrl" value="${productTypeUrl}/${product.code}" />
+										<a href="${rentUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+                          data-productName="${product.displayName}" data-productType="${productType eq 'RentalGearProduct' ? 'rental' : 'used gear' }">
+										<img	src="${fn:escapeXml(primaryImageUrl)}" />
 									</a>
 									</li>
 								</c:if>

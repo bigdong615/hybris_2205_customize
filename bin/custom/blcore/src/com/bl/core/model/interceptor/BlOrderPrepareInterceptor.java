@@ -2,12 +2,14 @@ package com.bl.core.model.interceptor;
 
 
 import com.bl.core.model.NotesModel;
+import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,21 +26,25 @@ import org.apache.log4j.Logger;
 public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrderModel> {
 
   private static final Logger LOG = Logger.getLogger(BlOrderPrepareInterceptor.class);
+  private BlOrderNoteService blOrderNoteService;
 
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 
-    final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
-    if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES) && CollectionUtils
-        .isNotEmpty(consignmentModels)) {
-
+     final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
+    if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
+		if (CollectionUtils.isNotEmpty(consignmentModels)) {
         //set order notes
         setConsignmentsInNotes(abstractOrderModel, consignmentModels, interceptorContext);
+      }
+      //Setting consolidated Notes on order which can be used to display order notes in backoffice view
+      getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
     }
-
+       
   }
 
+  
   /**
    * Update consignment in order notes.
    *
@@ -58,6 +64,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     interceptorContext.getModelService().saveAll(orderNotesFromOrder);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignments are set in to Order order Notes");
+  }
+
+  public BlOrderNoteService getBlOrderNoteService() {
+    return blOrderNoteService;
+  }
+
+  public void setBlOrderNoteService(BlOrderNoteService blOrderNoteService) {
+    this.blOrderNoteService = blOrderNoteService;
   }
 
 }

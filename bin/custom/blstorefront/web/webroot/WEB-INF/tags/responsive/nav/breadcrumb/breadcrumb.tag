@@ -16,6 +16,7 @@
 			<c:when test="${status.last}">
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
       <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+      <c:if test="${product.productType ne 'GIFTCARD'}">
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
              <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
              <c:choose>
@@ -29,6 +30,7 @@
              </c:otherwise>
             </c:choose>
       </form>
+      </c:if>
       </sec:authorize>
 			</c:when>
 			<c:when test="${breadcrumb.url eq '#'}">

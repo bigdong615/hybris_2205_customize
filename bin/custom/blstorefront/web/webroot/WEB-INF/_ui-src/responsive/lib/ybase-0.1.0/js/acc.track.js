@@ -1,16 +1,20 @@
 ACC.track = {
-	trackAddToCart: function (productCode, quantity, cartData)
+	trackAddToCart: function (productCode, productName,productBrand,productType,productCategory,quantity)
 	{
 		window.mediator.publish('trackAddToCart',{
 			productCode: productCode,
+			productName : productName,
 			quantity: quantity,
-			cartData: cartData
+			productBrand: productBrand,
+			productType : productType,
+			productCategory : productCategory
 		});
 	},
-	trackRemoveFromCart: function(productCode, initialCartQuantity)
+	trackRemoveFromCart: function(productCode, productName, initialCartQuantity)
 	{
 		window.mediator.publish('trackRemoveFromCart',{
 			productCode: productCode,
+			productName: productName,
 			initialCartQuantity: initialCartQuantity
 		});
 	},

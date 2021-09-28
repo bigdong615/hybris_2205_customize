@@ -5,12 +5,23 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
+import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -23,21 +34,21 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.AddressValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.EmailValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.PasswordValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.ProfileValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.verification.AddressVerificationResultHandler;
-import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
+import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.i18n.I18NFacade;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
-import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
@@ -47,20 +58,27 @@ import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commercefacades.user.data.TitleData;
 import de.hybris.platform.commercefacades.user.exceptions.PasswordMismatchException;
+import de.hybris.platform.commercefacades.voucher.VoucherFacade;
+import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentGivenException;
 import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentWithdrawnException;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.enums.CountryType;
+import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
-import com.bl.storefront.controllers.ControllerConstants;
-
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,14 +87,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -88,12 +107,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
@@ -159,11 +179,12 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String BOOKMARKS_CMS_PAGE = "bookmarks";
 	private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
+	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
+	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
+	public static final String ERROR_MSG_TYPE = "errorMsg";
+
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
-
-	@Resource(name = "orderFacade")
-	private OrderFacade orderFacade;
 
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
@@ -207,11 +228,36 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "blAddressDataUtil")
 	private AddressDataUtil addressDataUtil;
 
+	@Resource(name = "blOrderFacade")
+	private BlOrderFacade blOrderFacade;
+
 	@Resource(name = "wishlistFacade")
 	private BlWishListFacade wishlistFacade;
 
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "bruteForceAttackHandler")
+	private BruteForceAttackHandler bruteForceAttackHandler;
+
+	@Resource(name = "voucherFacade")
+	private VoucherFacade voucherFacade;
+
+	@Resource(name = "defaultBlCouponFacade")
+	private DefaultBlCouponFacade defaultBlCouponFacade;
+
+
+	@Resource(name = "brainTreeCheckoutFacade")
+	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
+
+	@Resource
+	private BrainTreeTransactionService brainTreeTransactionService;
+
+	@Resource(name = "blCommerceStockService")
+	private BlCommerceStockService blCommerceStockService;
+
+	@Resource(name = "cartService")
+	private BlCartService blCartService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -322,33 +368,34 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(value = "/orders", method = RequestMethod.GET)
+	@GetMapping(value = "/orders")
 	@RequireHardLogIn
 	public String orders(@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
 			@RequestParam(value = "sort", required = false) final String sortCode, final Model model) throws CMSItemNotFoundException
 	{
 		// Handle paged search results
-		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode); // NOSONAR
-		final SearchPageData<OrderHistoryData> searchPageData = orderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
+		final int pageZie = Config.getInt("orderhistory.page.size" , 8);
+		final PageableData pageableData = createPageableData(page, pageZie, sortCode, showMode); // NOSONAR
+		final SearchPageData<OrderHistoryData> searchPageData = blOrderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);
 		storeCmsPageInModel(model, orderHistoryPage);
-		setUpMetaDataForContentPage(model, orderHistoryPage);
+			setUpMetaDataForContentPage(model, orderHistoryPage);
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.orderHistory"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(value = "/order/" + ORDER_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@GetMapping(value = "/order/" + ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String order(@PathVariable("orderCode") final String orderCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		try
 		{
-			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-			model.addAttribute("orderData", orderDetails);
+			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
 			breadcrumbs.add(new Breadcrumb("/my-account/orders",
@@ -360,7 +407,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		catch (final UnknownIdentifierException e)
 		{
-			LOG.warn("Attempted to load a order that does not exist or is not visible", e);
+			BlLogger.logMessage(LOG, Level.ERROR , "Attempted to load a order that does not exist or is not visible", e);
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "system.error.page.not.found", null);
 			return REDIRECT_TO_ORDER_HISTORY_PAGE;
 		}
@@ -368,6 +415,14 @@ public class AccountPageController extends AbstractSearchPageController
 		storeCmsPageInModel(model, orderDetailPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setUpMetaDataForContentPage(model, orderDetailPage);
+		model.addAttribute(BlControllerConstants.PAGE_TYPE, BlControllerConstants.ORDER_DETAILS);
+		if(null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries())) {
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+		}
+		else {
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
+		}
 		return getViewForPage(model);
 	}
 
@@ -377,7 +432,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String getProductVariantMatrixForResponsive(@PathVariable("orderCode") final String orderCode,
 			@RequestParam("productCode") final String productCode, final Model model)
 	{
-		final OrderData orderData = orderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
+		final OrderData orderData = blOrderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
 
 		final Map<String, ReadOnlyOrderGridData> readOnlyMultiDMap = orderGridFormFacade.getReadOnlyOrderGridForProductInOrder(
 				productCode, Arrays.asList(ProductOption.BASIC, ProductOption.CATEGORIES), orderData);
@@ -463,7 +518,7 @@ public class AccountPageController extends AbstractSearchPageController
 			try
 			{
 				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -475,13 +530,11 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
 			}
 		}
 
@@ -1090,4 +1143,233 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-}
+	/**
+	 * This method used for renting the order again from order details page
+	 */
+	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel ,
+			final HttpServletRequest request) throws CommerceCartModificationException {
+
+		 boolean isAddProductToCartAllowed;
+
+		  if(StringUtils.isNotEmpty(orderCode)) {
+			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel);
+			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
+				return BlControllerConstants.REDIRECT_CART_URL;
+			}
+			else {
+				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_ORDER + orderCode;
+			}
+		}
+		 return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_ORDER + orderCode;
+	}
+
+	/**
+	 * This method created for extend only rental orders from MyAccount Page
+	 */
+	@GetMapping(value = "/extendRent/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
+			throws CMSItemNotFoundException {
+
+		// To remove seesion if current order and session order when mismatch
+		if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() &&
+				! StringUtils.containsIgnoreCase(orderCode , BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode())){
+			BlExtendOrderUtils.removeCurrentExtendOrderToSession();
+		}
+
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setIsExtendOrderPage(true);
+		model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		setupAdditionalFields(model); //Add braintree detils
+		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
+		storeCmsPageInModel(model, extendOrderDetailPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setUpMetaDataForContentPage(model, extendOrderDetailPage);
+		return getViewForPage(model);
+	}
+
+
+	/**
+	 * This method created for seleting the new return for extend order
+	 */
+	@GetMapping(value = "/extendDate")
+	public String setExtendRenatalEndDate(@RequestParam(value = "extendEndDate", defaultValue = "") final String selectedEndDate,
+			@RequestParam(value = "orderEndDate", defaultValue = "") final String orderEndDate,
+			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request,
+			final HttpServletResponse response, final Model model, final RedirectAttributes redirectModel) throws CommerceCartModificationException {
+
+		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+
+		model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+
+		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
+		{
+			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		}
+		return Account.AccountOrderExtendSummaryPage;
+	}
+
+
+	/**
+	 * This method is created to apply the voucher from extend order page
+	 */
+	@PostMapping(value = "/voucher/apply")
+	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
+			final HttpServletRequest request, final RedirectAttributes redirectAttributes , final Model model)
+	{
+		try
+		{
+			if (bindingResult.hasErrors())
+			{
+				model.addAttribute(BlControllerConstants.EXTEND_ORDER ,
+						getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
+			}
+			else
+			{
+				final String ipAddress = request.getRemoteAddr();
+				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
+				{
+					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , BlControllerConstants.COUPON_INVALID );
+				}
+				else
+				{
+					final String referer = request.getHeader(BlControllerConstants.REFERER);
+					final List<String> errorList = new ArrayList<>();
+					final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
+					model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+
+					if(CollectionUtils.isNotEmpty(errorList)) {
+						model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
+								getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID  , null , getI18nService().getCurrentLocale()));
+					}
+					else
+					{
+						model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+					}
+				}
+			}
+		}
+		catch (final VoucherOperationException e)
+		{
+			model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
+					getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
+			if (LOG.isDebugEnabled())
+			{
+				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
+			}
+		}
+
+		return Account.AccountOrderExtendSummaryPage;
+	}
+
+
+	/**
+	 * To set the payment details for extend rental page
+	 */
+	private void setupAdditionalFields(final Model model)
+	{
+		String clientToken = StringUtils.EMPTY;
+
+		try
+		{
+			clientToken = brainTreeCheckoutFacade.generateClientToken();
+		}
+		catch (final AdapterException exception)
+		{
+			BlLogger.logMessage(LOG , Level.ERROR , "[ExtendOrderController] Error during token generation!" , exception);
+		}
+
+		model.addAttribute(BlControllerConstants.CLIENT_TOKEN, clientToken);
+	}
+
+	/**
+	 * To extend the order once payment is captured
+	 */
+
+	@PostMapping(value = "/extendOrder/"+  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	public String placeExtendOrder(@PathVariable(value = "orderCode" ,required = false) final String orderCode ,
+			final HttpServletRequest request, final HttpServletResponse response, final Model model)
+			throws CMSItemNotFoundException {
+
+		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
+		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
+
+		String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
+		String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
+
+		boolean isSuccess = false;
+		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
+
+			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
+
+			if(null != orderModel) {
+
+				if(StringUtils.isNotBlank(poNumber)) {
+						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
+						if(BooleanUtils.isTrue(isSuccess)){
+							model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PO);
+						}
+					}
+				else {
+
+					// Needs to uncomment below code once Payment related PR merged
+				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+						.getBrainTreePaymentInfoForCode(
+								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
+				if(null != paymentInfo) {
+
+					isSuccess = brainTreeTransactionService
+							.createAuthorizationTransactionOfOrder(orderModel,
+									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
+				}
+				if(BooleanUtils.isTrue(isSuccess)){
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.CREDIT_CARD);}
+				}
+			}
+
+			if(isSuccess) {
+				blOrderFacade.updateOrderExtendDetails(orderModel); //to update extend order details to DB
+				final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
+				model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
+				final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
+				storeCmsPageInModel(model, extendOrderConfirmation);
+				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+				setUpMetaDataForContentPage(model, extendOrderConfirmation);
+				return getViewForPage(model);
+			}
+
+		}
+			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
+	}
+
+
+	/**
+	 * This method created to remove the applied voucher from extend order page
+	 */
+	@PostMapping(value = "/voucher/remove")
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel ,
+			final HttpServletRequest request , final Model model)
+	{
+		try
+		{
+			final String referer = request.getHeader(BlControllerConstants.REFERER);
+			final OrderData orderData = defaultBlCouponFacade.releaseVoucherForExtendOrder(form.getVoucherCode() , referer);
+			model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		}
+		catch (final VoucherOperationException e)
+		{
+			if (LOG.isDebugEnabled())
+			{
+				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
+			}
+
+		}
+		return Account.AccountOrderExtendSummaryPage;
+	}
+
+	}

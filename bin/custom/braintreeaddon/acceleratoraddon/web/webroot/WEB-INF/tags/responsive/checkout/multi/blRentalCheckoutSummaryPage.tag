@@ -246,12 +246,11 @@
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
             	modelAttribute="placeOrderForm">
             	<b><spring:theme code="text.review.page.order.notes" /></b>
-            	<input type="text" class="form-control order-notes" name="orderNotes"
-            		id="notes"
+            	<input type="text" class="form-control order-notes" name="orderNotes"	id="notes"
             		placeholder="<spring:theme code="text.review.page.order.notes.placeholder"/>"
             		min="1" max="1000" maxlength="1000" value="${cartData.orderNotes}" />
-            	<%--this commented code is for newsletter--%>
-            	<%--<input type="checkbox" class="form-control" checked="checked" id="newsletter"><label for="newsletter"><span class="gray80">Receive emails with discounts, tips and gear news</span></label>--%>
+             <input type="checkbox" name="newsLetterSubscriptionOpted" value="true" checked="checked" id="newsletter"/>
+            	<label for="newsletter"><span class="gray80"><spring:theme code="text.review.page.newsletter.checkbox.label" /></span></label>
             	<hr class="mt-5">
             	<div class="reviewCart">
             		<h5 class="mb-4">

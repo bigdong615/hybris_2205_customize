@@ -1,0 +1,44 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Products
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs newgear.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$superCategories=supercategories(code, $catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+$productType=productType(code)[default='PRODUCT']
+$numberSystem=numberSystem(code)[default='NONE']
+
+INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories         ;retailGear;retailGearPrice ; name[lang=en] ; displayName     ; procurementCost[default=0]  ; procurementSource [default='NA']  ; mpn[default='NA']; upc[default='NA'];$productType  ;$numberSystem          ; forRent[default=false]  ; forSale[default=false]  ; level1Required[default=false] ; level2Required[default=false]  ;scheduled [default=false]; isVideo[default=false] ; manufacturerAID[default='NA'] ; manufacturerName[default='Other'] ; retailPrice[default=0] ;subpartQuantity[default=0];unit(code)[default='pieces']
+;;;sensor_cleaning;newgear;true;45;sensor_cleaning;sensor_cleaning
+;;;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards;newgear;true;19.38;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards
+;;;BorrowLenses_com_microfiber_lens_cleaning_cloth;newgear;true;1.85;BorrowLenses_com_microfiber_lens_cleaning_cloth;BorrowLenses_com_microfiber_lens_cleaning_cloth
+;;;General_Brand_Gaffer_Cloth_Tape_Matte_Black_2_x_12_Yards;newgear;true;5.95;General_Brand_Gaffer_Cloth_Tape_Matte_Black_2_x_12_Yards;General_Brand_Gaffer_Cloth_Tape_Matte_Black_2_x_12_Yards
+;;;Lenspen_Sensor_Cleaning_Kit;newgear;true;45.95;Lenspen_Sensor_Cleaning_Kit;Lenspen_Sensor_Cleaning_Kit
+;;;Transcend_32GB_SDHC_Memory_Card_Class_10_UHS_I;newgear;true;20.99;Transcend_32GB_SDHC_Memory_Card_Class_10_UHS_I;Transcend_32GB_SDHC_Memory_Card_Class_10_UHS_I
+;;;Transcend_16GB_SDHC_Memory_Card_Class_10_UHS_I;newgear;true;9.99;Transcend_16GB_SDHC_Memory_Card_Class_10_UHS_I;Transcend_16GB_SDHC_Memory_Card_Class_10_UHS_I
+;;;Lowepro_Event_Messenger_100;newgear;true;49.95;Lowepro_Event_Messenger_100;Lowepro_Event_Messenger_100
+;;;Giottos_Rocket_Air_Blower_Medium;newgear;true;10.38;Giottos_Rocket_Air_Blower_Medium;Giottos_Rocket_Air_Blower_Medium
+;;;General-Brand-ProGaffer-Vinyl-Tape-Orange--2-x-50-Yards;newgear;true;21;General-Brand-ProGaffer-Vinyl-Tape-Orange--2-x-50-Yards;General-Brand-ProGaffer-Vinyl-Tape-Orange--2-x-50-Yards
+;;;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas;newgear;true;130;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas
+;;;BL-Sports-Performance-Cap;newgear;true;8;BL-Sports-Performance-Cap;BL-Sports-Performance-Cap
+;;;BL-Beanie;newgear;true;6.75;BL-Beanie;BL-Beanie
+;;;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale;newgear;true;499;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale
+;;;Retired-Pelican-1490;newgear;true;158.95;Retired-Pelican-1490;Retired-Pelican-1490
+;;;Retired-Pelican-1120;newgear;true;30.95;Retired-Pelican-1120;Retired-Pelican-1120
+;;;Retired-Pelican-1150;newgear;true;34.95;Retired-Pelican-1150;Retired-Pelican-1150
+;;;Retired-HPRC-2400E-Hard-Case;newgear;true;89.13;Retired-HPRC-2400E-Hard-Case;Retired-HPRC-2400E-Hard-Case
+;;;Retired-Pelican-1400NF;newgear;true;77.95;Retired-Pelican-1400NF;Retired-Pelican-1400NF
+;;;Retired-Pelican-iM2075;newgear;true;51.95;Retired-Pelican-iM2075;Retired-Pelican-iM2075
+;;;Retired-SKB-Case;newgear;true;49.99;Retired-SKB-Case;Retired-SKB-Case
+;;;Retired-Pelican-iM2306;newgear;true;89.95;Retired-Pelican-iM2306;Retired-Pelican-iM2306
+;;;Retired-SKB-1610-10-Case;newgear;true;117.99;Retired-SKB-1610-10-Case;Retired-SKB-1610-10-Case
+;;;Retired-SKB-Military-Case;newgear;true;119;Retired-SKB-Military-Case;Retired-SKB-Military-Case
+;;;Retired-RED-Case;newgear;true;495;Retired-RED-Case;Retired-RED-Case
+;;;KEH-D610-30120314;newgear;true;1597;KEH-D610-30120314;KEH-D610-30120314
+;;;Retired-Pelican-1200;newgear;true;45.95;Retired-Pelican-1200;Retired-Pelican-1200
