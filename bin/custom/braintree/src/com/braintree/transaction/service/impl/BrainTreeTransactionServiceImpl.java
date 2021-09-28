@@ -173,7 +173,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
   private void addTotalDepositedAmountOnOrder(final AbstractOrderModel orderModel, final BrainTreePaymentInfoModel paymentInfo, 
       BrainTreeAuthorizationResult result)
   {
-    if(result.isSuccess() && paymentInfo.isIsDepositPayment())
+    if(result.isSuccess() && Objects.nonNull(paymentInfo) && BooleanUtils.isTrue(paymentInfo.isIsDepositPayment()))
     {
       final AtomicDouble depositAmountTotal = new AtomicDouble(ObjectUtils.defaultIfNull(orderModel.getDepositAmountTotal(), Double.valueOf(0.0d)));
       depositAmountTotal.addAndGet(paymentInfo.getDepositAmount());

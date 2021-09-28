@@ -1536,6 +1536,8 @@
 		<property name="blESPEventRestService" ref="blESPEventRestService"/>
 		<property name="blOrderReadyForPickupRequestPopulator" ref="blOrderReadyForPickupRequestPopulator"/>
 		<property name="blOrderNewShippingRequestPopulator" ref="blOrderNewShippingRequestPopulator"/>
+		<property name="blOrderShippedRequestPopulator" ref="blOrderShippedRequestPopulator"/>
+		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1592,5 +1594,14 @@
 		class="com.bl.core.esp.populators.BlOrderDepositRequestPopulator">
 	</bean>
 
+	<!-- Order Shipped  populator ESP -->
+	<bean id="blOrderShippedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderShippedRequestPopulator">
+	</bean>
+
+	<!-- Order Pickedup populator ESP -->
+	<bean id="blOrderPickedUpRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator">
+	</bean>
 
 </beans>
