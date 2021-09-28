@@ -75,7 +75,9 @@
 	<bean id="orderManualCheckedAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.OrderManualCheckedAction" parent="abstractOrderAction"/>
 
 	<!-- Consignment Subprocess Completion Action -->
-	<bean id="verifyOrderCompletionAction" class="com.bl.Ordermanagement.actions.order.VerifyOrderCompletionAction" parent="abstractAction"/>
+	<bean id="verifyOrderCompletionAction" class="com.bl.Ordermanagement.actions.order.VerifyOrderCompletionAction" parent="abstractAction">
+	<property name="blEspEventService" ref="blEspEventService"/>
+	</bean>
 	
 	<!-- Cancellation Actions -->
 	<bean id="cancelOrderAction" class="com.bl.Ordermanagement.actions.order.cancel.CancelOrderAction" parent="abstractAction">

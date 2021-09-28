@@ -1105,6 +1105,7 @@
 		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
+		<property name="blEspEventService" ref="blEspEventService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
