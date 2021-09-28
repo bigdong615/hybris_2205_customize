@@ -3410,6 +3410,11 @@
                         <persistence type="property" />
                         <description>It holds information about Package status to track package journey</description>
                     </attribute>										  
+          <attribute qualifier="latePackageDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This date refers to the late return date of this package.</description>
+          </attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>

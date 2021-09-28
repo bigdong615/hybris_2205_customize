@@ -30,8 +30,8 @@ gtag('config', googleAnalyticsTrackingId);
 		<c:set var="stockStatus" value="${empty stockStatus ? 'Item In Stock' : 'Item Out of Stock'}" />
 
     gtag('event', 'view_item', {
-       'event_category': 'engagement',
-       'event_label' : 'Product',
+       'event_category': 'Product View',
+       'event_label' : '${product.code}',
       "items": [
         {
           "id": "${product.code}",
@@ -53,7 +53,7 @@ gtag('config', googleAnalyticsTrackingId);
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
 						gtag('event', 'view_item_list', {
-							"event_category": "engagement",
+							"event_category": "Category View",
 							"event_label": "${ycommerce:encodeJavaScript(listName)}",
 							"items": [
               				<c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
@@ -93,8 +93,13 @@ gtag('config', googleAnalyticsTrackingId);
 
 	<c:when test="${pageType == 'ORDERCONFIRMATION'}">
 		<c:set var="orderCode" value="${ycommerce:encodeJavaScript(orderData.code)}"/>
-
+    <c:set var="couponCodes" value=""/>
+    <c:forEach items='${orderData.appliedVouchers}' var='voucher' varStatus='status'>
+      <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+    </c:forEach>
 		gtag('event', 'purchase', {
+		  "event_category": "Order Confirmation",
+    	"event_label": "${orderCode}",
 		  "transaction_id": "${orderCode}",
 		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
 		  "value": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
@@ -125,10 +130,8 @@ gtag('config', googleAnalyticsTrackingId);
 					</c:if>
 			  </c:forEach>
 			],
+				"coupon": "${ycommerce:encodeJavaScript(couponCodes)}"
 
-			<c:if test="${not empty orderData.appliedVouchers}">
-				"coupon": "${ycommerce:encodeJavaScript(orderData.appliedVouchers[0])}"
-			</c:if>
 		});
 	</c:when>
 	<c:otherwise>
@@ -137,8 +140,8 @@ gtag('config', googleAnalyticsTrackingId);
 
 function trackAddToCart_google(productCode, productName,quantity,productBrand,productType,productCategory) {
 	gtag('event', 'add_to_cart', {
-	   "event_category": "ecommerce",
-     "event_label": "Cart",
+	   "event_category": "Cart",
+     "event_label": "Add to Cart",
 	   "currency" : "USD",
 	   "value": quantity,
 	  "items": [
@@ -155,8 +158,8 @@ function trackAddToCart_google(productCode, productName,quantity,productBrand,pr
 
 function trackRemoveFromCart(productCode,productName,initialQuantity) {
 	gtag('event', 'remove_from_cart', {
-	 "event_category": "ecommerce",
-   "event_label": "RemoveFromCart",
+	 "event_category": "Cart",
+   "event_label": "Remove From Cart",
 	  "currency" : "USD",
     "items": [
       {
@@ -189,8 +192,9 @@ window.mediator.subscribe('productClick_gtm', function(data) {
 	}
 });
 function trackProductClick(productCode, productName,brand,productType) {
-	gtag('event', 'select_content', {
-	  "event_category": "engagement",
+	gtag('event', 'product_click', {
+	  "event_category": "Product",
+	  "event_label": productCode,
     "content_type": "product",
     "items": [
       {
@@ -211,7 +215,7 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 });
 
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
-	gtag('event', 'select_content', {
+	gtag('event', 'select_date', {
       'event_category': 'Search Rental Date',
       'event_label': daysInAdvance,
       'value' : lengthOfRental
@@ -223,7 +227,7 @@ window.mediator.subscribe('trackSearch', function(data) {
 });
 
 function trackSearchClick(searchText) {
-	gtag('event', 'select_content', {
+	gtag('event', 'select_search', {
       'event_category': 'Search',
       'event_label': searchText
 	});
@@ -285,7 +289,7 @@ window.mediator.subscribe('applyCreditCart', function(data) {
  function trackCreditCart(paymentError){
     gtag('event', 'cardPayment', {
     'event_label': paymentError,
-    'event_category': 'Checkout',
+    'event_category': 'Checkout [Billing]',
     'non_interaction': true
   });
  }
@@ -300,7 +304,7 @@ window.mediator.subscribe('applyPayPal', function(data) {
 function trackPayPalClick(paymentError) {
   gtag('event', 'PayPalPayment', {
    'event_label': paymentError,
-   'event_category': 'Checkout',
+   'event_category': 'Checkout [Billing]',
    'non_interaction': true
   });
 }
@@ -315,7 +319,7 @@ window.mediator.subscribe('applyPO', function(data) {
 function trackPOClick(paymentError) {
    gtag('event', 'POPayment', {
    'event_label': paymentError,
-   'event_category': 'Checkout',
+   'event_category': 'Checkout [Billing]',
    'non_interaction': true
  });
 }
@@ -328,9 +332,9 @@ window.mediator.subscribe('changeDamageWaiver', function(data) {
 });
 
 function trackChangeDamageWaiverClick(productCode,damageWaiverType) {
-   gtag('event', 'ChangeDamageWaiver', {
-   'event_label': damageWaiverType,
+   gtag('event', 'Change Damage Waiver', {
    'event_category': 'Cart',
+   'event_label': damageWaiverType,
     'value' : productCode
  });
 }
