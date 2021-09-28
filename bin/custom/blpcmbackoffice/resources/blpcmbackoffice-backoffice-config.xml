@@ -409,9 +409,10 @@
 					<ea:attribute qualifier="approvalStatus"/>
 					<ea:attribute qualifier="blProduct"/>
 					<ea:attribute qualifier="forSale"/>
+					<ea:attribute qualifier="onlineDate"/>
+					<ea:attribute qualifier="offlineDate"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.general">
-					<ea:attribute qualifier="barcode"/>
 					<ea:attribute qualifier="assetNumber" label="label.pcmbackoffice.blserial.assetNumber"/>
 					<ea:attribute qualifier="assetStatus" label="label.pcmbackoffice.blserial.assetStatus"/>
 					<ea:attribute qualifier="dateFirstActive" label="label.pcmbackoffice.blserial.dateFirstActive"/>
@@ -421,20 +422,6 @@
 					<ea:attribute qualifier="noDaysRented" label="label.pcmbackoffice.blserial.noDaysRented"/>
 					<ea:attribute qualifier="notes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.blserial.notes"/>
 					<ea:attribute qualifier="orderNumberRecord" label="label.pcmbackoffice.blserial.orderNumberRecord"/>
-				</ea:section>
-			</ea:tab>
-			<ea:tab name="hmc.tab.product.properties" position="2">
-				<ea:section name="hmc.product.descriptions">
-					<ea:panel colspan="2" name="panel.proddescription" rowspan="2">
-						<ea:attribute
-							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
-							qualifier="description"/>
-						<ea:attribute qualifier="condition"/>
-					</ea:panel>
-				</ea:section>
-				<ea:section name="hmc.section.catalog_and_validity">
-					<ea:attribute qualifier="onlineDate"/>
-					<ea:attribute qualifier="offlineDate"/>
 				</ea:section>
 			</ea:tab>
 			<ea:customTab name="hmc.tab.attribute" position="6"
