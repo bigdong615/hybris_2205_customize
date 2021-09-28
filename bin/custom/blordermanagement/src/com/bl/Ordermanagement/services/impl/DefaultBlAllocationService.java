@@ -176,7 +176,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
 
-            this.getModelService().saveAll(serialStocks);
+            this.getModelService().saveAll(serialStocksForOptimizedDates);
 
             return consignment;
 
