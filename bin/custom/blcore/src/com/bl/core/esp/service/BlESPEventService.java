@@ -80,4 +80,16 @@ public interface BlESPEventService {
      * @param orderModel
      */
     public void sendOrderNewShippingEvent(final OrderModel orderModel);
+
+    /**
+     * Send Order Shipped by calling Order Shipped ESP Event API
+     * @param orderModel
+     */
+    public void sendOrderShippedEvent(final OrderModel orderModel);
+
+    /**
+     * Send Order PickedUp by calling Order PickedUp ESP Event API
+     * @param orderModel
+     */
+    public void sendOrderPickedUpEvent(final OrderModel orderModel);
 }
