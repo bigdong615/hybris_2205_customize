@@ -590,6 +590,7 @@
 			<annotations>@JsonProperty("photo or info")</annotations>
 		</property>
 	</bean>
+
 	<!-- Order Ready For Pickup ESP pojo classes  Ends -->
 
 	<!-- Order New Shipping Main Event Request Object-->
@@ -711,7 +712,6 @@
 		</property>
 	</bean>
 
-	<!--Order Deposit required ESP-->
 	<!--Order Deposit required ESP-->
 	<bean class="com.bl.esp.dto.orderextension.data.OrderExtensionData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
@@ -838,75 +838,31 @@
 		<property name="status" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("status")</annotations>
 		</property>
-		<property name="dateplaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("date placed")</annotations>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
 		</property>
-		<property name="itemcost" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("item cost")</annotations>
+		<property name="shippingMethodType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
 		</property>
-		<property name="damagewaivercost" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("damage waiver cost")</annotations>
+		<property name="shippingMethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
 		</property>
-		<property name="subtotal" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("subtotal")</annotations>
+		<property name="shippingMethodText" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Text")</annotations>
 		</property>
-		<property name="shippingamount" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("shipping amount")</annotations>
+		<property name="arrivalDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
 		</property>
-		<property name="taxamount" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("tax amount")</annotations>
+		<property name="returnDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
 		</property>
-		<property name="discountamount" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("discount amount")</annotations>
+		<property name="rentalDuration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("Rental Duration")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("total cost")</annotations>
+		<property name="customerName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer Name")</annotations>
 		</property>
-		<property name="arrivaldate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("arrival date")</annotations>
-		</property>
-		<property name="returndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("return date")</annotations>
-		</property>
-		<property name="rentalduration" type="java.lang.Integer" equals="true">
-			<annotations>@JsonProperty("rental duration")</annotations>
-		</property>
-		<property name="customername" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("customername")</annotations>
-		</property>
-		<property name="extensionamount" type="java.lang.Double" equals="true">
-			<annotations>@JsonProperty("extension amount")</annotations>
-		</property>
-		<property name="orderitems" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("order items")</annotations>
-		</property>
-
-	<property name="datePlaced" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Date Placed")</annotations>
-	</property>
-	<property name="shippingMethodType" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Shipping Method Type")</annotations>
-	</property>
-	<property name="shippingMethod" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Shipping Method")</annotations>
-	</property>
-	<property name="shippingMethodText" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Shipping Method Text")</annotations>
-	</property>
-	<property name="arrivalDate" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Arrival Date")</annotations>
-	</property>
-	<property name="returnDate" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Return Date")</annotations>
-	</property>
-	<property name="rentalDuration" type="java.lang.Integer" equals="true">
-		<annotations>@JsonProperty("Rental Duration")</annotations>
-	</property>
-	<property name="customerName" type="java.lang.String" equals="true">
-		<annotations>@JsonProperty("Customer Name")</annotations>
-	</property>
-</bean>
-
+	</bean>
 	<!-- Order Picked up Event data Object End-->
 
 	<!-- Order Shipped Event Request Object-->
