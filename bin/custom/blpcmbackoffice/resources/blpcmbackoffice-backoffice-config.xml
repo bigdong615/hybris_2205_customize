@@ -501,11 +501,20 @@
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
+				<ea:section name="hmc.section.product.coresettings">
+				<ea:attribute qualifier="numberSystem"/>
+				<ea:attribute qualifier="productId"/>
+				<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
+				</ea:section>
 				<ea:section name="hmc.section.product.extendedattributes">
 					<ea:attribute qualifier="isArchived"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.opssettings">
 					<ea:attribute qualifier="serialStatus" />
+					<ea:attribute qualifier="reserveRatio"/>
+					<ea:attribute qualifier="skuFirmwareVersion"/>
+					<ea:attribute qualifier="scheduled"/>
+					<ea:attribute qualifier="video"/>
 					<ea:attribute qualifier="inventoryLocationId" label="label.pcmbackoffice.blserial.inventoryLocationId"/>
 			  	<ea:attribute qualifier="isBufferedInventory" label="label.pcmbackoffice.blserial.isBufferedInventory"/>
 					<ea:attribute qualifier="lastLocationScanParent" label="label.pcmbackoffice.blserial.lastLocationScanParent"/>
