@@ -3411,6 +3411,11 @@
                         <persistence type="property" />
                         <description>It holds information about Package status to track package journey</description>
                     </attribute>										  
+          <attribute qualifier="latePackageDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This date refers to the late return date of this package.</description>
+          </attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>
@@ -6130,7 +6135,7 @@ new Integer(0)
         <typegroup name="BlInventoryCycleCount">
             <itemtype code="BlInventoryCycleCount" autocreate="true" generate="true" >
                 <description>Contains all inventory cycle count details</description>
-                <deployment table="BlInventoryCycleCount" typecode="12235"/>
+                <deployment table="BlInventoryCycleCount" typecode="12240"/>
                 <attributes>
                     <attribute qualifier="inventoryCycleCountCode" type="java.lang.String">
                         <persistence type="property"/>

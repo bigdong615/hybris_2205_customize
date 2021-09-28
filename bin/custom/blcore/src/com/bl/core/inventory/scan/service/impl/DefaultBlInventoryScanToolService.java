@@ -1,6 +1,7 @@
 package com.bl.core.inventory.scan.service.impl;
 
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.utils.BlDateTimeUtils;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -1302,6 +1303,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 							consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
 					serialProductModel
 							.setConsignmentEntry(getConsignmentEntryFromConsignment(consignmentModel, serialProductModel.getCode()));
+
+					updateNumberOfRentedDaysForReturnedSerials(consignmentModel, serialProductModel);
+
 					performLocationUpdateOnSerial(blInventoryLocationModel, dirtyPrioritySerialList, dirtySerialList, serialProductModel);
 				}
 			}
@@ -1309,6 +1313,36 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		errorList.put(BlInventoryScanLoggingConstants.FOUR, dirtySerialList);
 		errorList.put(BlInventoryScanLoggingConstants.FIVE, dirtyPrioritySerialList);
 		return errorList;
+	}
+
+	/**
+	 * This method will calculate and set the number of days rented for the serial
+	 *
+	 * @param serialProductModel the bl serial product model
+	 * @param consignmentModel   the consignment model
+	 */
+	private void updateNumberOfRentedDaysForReturnedSerials(
+			final ConsignmentModel consignmentModel,
+			final BlSerialProductModel serialProductModel) {
+
+		final long daysRentedEarlier =
+				null != serialProductModel.getNoDaysRented() ? serialProductModel.getNoDaysRented() : 0;
+		final PackagingInfoModel packagingInfo = consignmentModel.getPackagingInfo();
+		final AbstractOrderModel orderModel = consignmentModel.getOrder();
+
+		long daysRented = 0;
+
+		if (null != packagingInfo && null != orderModel) {
+
+			final Date latePackageDate =
+					null != packagingInfo.getLatePackageDate() ? packagingInfo.getLatePackageDate()
+							: orderModel.getRentalEndDate();
+
+			daysRented = BlDateTimeUtils
+					.getDaysBetweenDates(orderModel.getRentalStartDate(), latePackageDate);
+		}
+
+		serialProductModel.setNoDaysRented(daysRentedEarlier + daysRented);
 	}
 
 	/**

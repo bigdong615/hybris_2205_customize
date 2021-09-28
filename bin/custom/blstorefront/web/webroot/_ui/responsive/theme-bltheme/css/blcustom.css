@@ -329,6 +329,7 @@ margin: 0;
   .hide-on-mobile{display: none;}  
   .splide__arrows{display:block !important;z-index: 99999;}
   #product-thumbnails{display:none !important ;}
+  .splide {margin-bottom: 18px;}
 }
 #product-thumbnails{display:block ;}
 .splide__arrows{display:none;}
