@@ -435,6 +435,11 @@
 					<ea:attribute qualifier="noDaysRented" label="label.pcmbackoffice.blserial.noDaysRented"/>
 					<ea:attribute qualifier="notes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.blserial.notes"/>
 					<ea:attribute qualifier="orderNumberRecord" label="label.pcmbackoffice.blserial.orderNumberRecord"/>
+					<ea:attribute qualifier="barcode"/>
+					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
+					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
+					<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
+					<ea:attribute qualifier="onSale"/>
 				</ea:section>
 			</ea:tab>
 			<ea:customTab name="hmc.tab.attribute" position="6"
@@ -463,6 +468,7 @@
 					<ea:attribute qualifier="finalSalePrice" label="label.pcmbackoffice.blserial.finalSalePrice"/>
 					<ea:attribute qualifier="forSaleBasePrice" label="label.pcmbackoffice.blserial.forSaleBasePrice"/>
 					<ea:attribute qualifier="incentivizedPrice" label="label.pcmbackoffice.blserial.incentivizedPrice"/>
+					<ea:attribute qualifier="constrained"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
@@ -477,6 +483,12 @@
 				<ea:section name="hmc.section.product.discounts">
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
+				</ea:section>
+				<ea:section name="label.pcmbackoffice.dimensions">
+					<ea:attribute qualifier="weight"/>
+					<ea:attribute qualifier="length"/>
+					<ea:attribute qualifier="width"/>
+					<ea:attribute qualifier="height"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.multimedia" position="18">
@@ -533,11 +545,13 @@
 					<ea:attribute qualifier="purchaseOrder" label="label.pcmbackoffice.blserial.purchaseOrder"/>
 					<ea:attribute qualifier="procurementSource"/>
 					<ea:attribute qualifier="retailPrice" label="label.pcmbackoffice.blserial.retailPrice"/>
+					<ea:attribute qualifier="staffPick"/>
+					<ea:attribute qualifier="mostPopular"/>
+					<ea:attribute qualifier="greatValue" />
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
 					<ea:attribute qualifier="mpn"/>
 					<ea:attribute qualifier="upc"/>
-					<ea:attribute qualifier="manufacturerAID"/>
 					<ea:attribute qualifier="numberSystem"/>
 					<ea:attribute qualifier="productType"/>
 				</ea:section>
