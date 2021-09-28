@@ -1383,6 +1383,8 @@
 					<editorArea:attribute qualifier="optimizedShippingStartDate"/>
 					<editorArea:attribute qualifier="optimizedShippingEndDate"/>
 					<editorArea:attribute qualifier="internalTransferConsignment"/>
+					<editorArea:attribute qualifier="actualShippingDateToCustomer"/>
+					<editorArea:attribute qualifier="orderTransferConsignment"/>
 				</editorArea:section>
 				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
 					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
