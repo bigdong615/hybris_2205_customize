@@ -92,4 +92,10 @@ public interface BlESPEventService {
      * @param orderModel
      */
     public void sendOrderPickedUpEvent(final OrderModel orderModel);
+
+    /**
+     *  Send Extend Order by calling Extend OrderESP Event API
+     * @param orderModel ordermodel
+     */
+    void sendExtendOrderEvent(final OrderModel orderModel);
 }

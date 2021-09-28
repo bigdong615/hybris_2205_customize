@@ -590,7 +590,6 @@
 			<annotations>@JsonProperty("photo or info")</annotations>
 		</property>
 	</bean>
-
 	<!-- Order Ready For Pickup ESP pojo classes  Ends -->
 
 	<!-- Order New Shipping Main Event Request Object-->
@@ -881,7 +880,32 @@
 		<property name="orderitems" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("order items")</annotations>
 		</property>
-	</bean>
+
+	<property name="datePlaced" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Date Placed")</annotations>
+	</property>
+	<property name="shippingMethodType" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Shipping Method Type")</annotations>
+	</property>
+	<property name="shippingMethod" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Shipping Method")</annotations>
+	</property>
+	<property name="shippingMethodText" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Shipping Method Text")</annotations>
+	</property>
+	<property name="arrivalDate" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Arrival Date")</annotations>
+	</property>
+	<property name="returnDate" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Return Date")</annotations>
+	</property>
+	<property name="rentalDuration" type="java.lang.Integer" equals="true">
+		<annotations>@JsonProperty("Rental Duration")</annotations>
+	</property>
+	<property name="customerName" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Customer Name")</annotations>
+	</property>
+</bean>
 
 	<!-- Order Picked up Event data Object End-->
 
