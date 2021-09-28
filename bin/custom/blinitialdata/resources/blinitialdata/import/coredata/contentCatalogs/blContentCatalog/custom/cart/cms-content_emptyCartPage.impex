@@ -29,6 +29,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; SocialMediaSectionSlot           ;                                                                     ;                           ; wide
                               ; TopHeaderSlot                 ;                                                                                    ;                          ; wide
                               ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                              ; MobileMiniCartSlot                ;                                                                  ;                           ; minicart
 
 
 ###  Define ContentSlot For Template  ###
@@ -47,6 +48,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; SocialMediaSectionSlot-EmptyCartPage        ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                      ;                          ; TopHeaderSlot-EmptyCartPage          ; TopHeaderSlot                 ;                                                                                        ; TopHeaderSlot                              ; true
                                      ;                         ; MyAccountSlot-EmptyCartPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                     ;                         ; MobileMiniCartSlot-EmptyCartPage             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 
