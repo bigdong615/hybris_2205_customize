@@ -55,14 +55,14 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo) throws ParseException
+	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
 
-		if (delivertCarrier.getCode().equalsIgnoreCase(CarrierEnum.UPS.getCode()))
+		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
@@ -73,8 +73,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			getBlShipmentCreationService()
-					.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
+			createFedExShipment(packagingInfo);
 		}
 	}
 
@@ -93,7 +92,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
 
-		if (delivertCarrier.getCode().equalsIgnoreCase(CarrierEnum.UPS.getCode()))
+		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService().createUPSShipment(
 					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel));
@@ -104,9 +103,19 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			getBlShipmentCreationService()
-					.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
+			createFedExShipment(packagingInfo);
 		}
+	}
+
+	/**
+	 * method will be used to create fedExShipment
+	 *
+	 * @param packagingInfo
+	 */
+	private void createFedExShipment(final PackagingInfoModel packagingInfo)
+	{
+		getBlShipmentCreationService()
+				.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
 	}
 
 	/**
@@ -118,12 +127,13 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	private void saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
 	{
 		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
-		
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment generated for package {} with tracking id {}", packagingInfo,shipmentPackage.getTrackingNumber());
+
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment generated for package {} with tracking id {}", packagingInfo,
+				shipmentPackage.getTrackingNumber());
 		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
-		
+
 		packagingInfo.setTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
 		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());

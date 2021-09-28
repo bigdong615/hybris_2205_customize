@@ -14,7 +14,7 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
 /**
- * This action class is responsible to find the consignment and to create shipment for the same
+ * This action class is responsible to find the consignment for creating shipment
  *
  * @author Aditi Sharma
  *

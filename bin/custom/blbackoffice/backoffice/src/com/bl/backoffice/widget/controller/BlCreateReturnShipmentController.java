@@ -49,7 +49,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	@Resource(name = "blDeliveryStateSourcingLocationFilter")
 	private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
-	private ListModelList warehouseList = new ListModelList();
+	private ListModelList<String> warehouseList = new ListModelList<>();
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
@@ -169,9 +169,9 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 *
 	 * @return valueList
 	 */
-	private List getWarehouseList()
+	private List<String> getWarehouseList()
 	{
-		final List valueList = new ArrayList();
+		final List<String> valueList = new ArrayList<>();
 		valueList.add(BlintegrationConstants.DEFAULT_WAREHOUSE_CODE);
 		valueList.add(BlintegrationConstants.WAREHOUSE_MA);
 		valueList.add(BlintegrationConstants.WAREHOUSE_CA);

@@ -40,6 +40,8 @@ import com.bl.integration.fedex.shipment.pojo.Weight;
 
 
 /**
+ * this class is responsible to populate request data for fedEx
+ *
  * @author Aditi Sharma
  *
  */
@@ -49,7 +51,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	{
 		final FedExShipmentRequest fedExShipmentRequest = new FedExShipmentRequest();
 
-		fedExShipmentRequest.setAccountNumber("400000002");
+		fedExShipmentRequest.setAccountNumber(fedExShipmentReqData.getShipper().getAccountNumber());
 
 		/** Creating Service Data **/
 		final Service serviceType = new Service();
@@ -152,7 +154,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		/** Creating Package Data **/
 		final FedExPackageData packageData = fedExShipmentReqData.getPackages().get(0);
 
-		final List<Package> packagesList = new ArrayList<Package>();
+		final List<Package> packagesList = new ArrayList<>();
 
 		final Package packageType = new Package();
 

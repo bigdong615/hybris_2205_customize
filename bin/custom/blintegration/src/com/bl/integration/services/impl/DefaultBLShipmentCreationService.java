@@ -74,6 +74,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	@Value("${blintegration.fedex.shipment.url}")
 	private String fedExapiURL;
 
+	@Value("${blintegration.fedex.shipment.password}")
+	private String fedExapiPassword;
+
 	@Value("${blintegration.ups.shipment.endpoint.url}")
 	private String endpointURL;
 
@@ -175,6 +178,8 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	}
 
 	/**
+	 * method will be used to create fedEx shipment response
+	 *
 	 * @param fedExShipemtnReq
 	 * @return
 	 */
@@ -185,12 +190,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		URIBuilder builder;
 		try
 		{
-			builder = new URIBuilder("https://wsbeta.fedex.com:443/web-services");
+			builder = new URIBuilder(fedExapiURL);
 			final URI uri = builder.build();
 			final HttpPost request = new HttpPost(uri);
-			request.setHeader("Content-Type", "application/json");
-			request.setHeader(BlintegrationConstants.X_API_KEY, "N4jviY6D0v5uY6iU");
-			request.setHeader("Authorization", "kv7rLvEgVZrovN0I5OI87r07f");
+			request.setHeader(BlintegrationConstants.CONTENT_TYPE, "application/json");
+			request.setHeader(BlintegrationConstants.X_API_KEY, fedExapiKey);
+			request.setHeader(BlintegrationConstants.AUTHORIZATION, fedExapiPassword);
 
 			final Gson gson = new Gson();
 			final String json = gson.toJson(fedExShipemtnReq);
@@ -202,12 +207,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		catch (final URISyntaxException uriException)
 		{
-			BlLogger.logMessage(LOG, Level.INFO, uriException.getMessage());
+			BlLogger.logMessage(LOG, Level.DEBUG, uriException.getMessage());
 		}
 
 		catch (final IOException io)
 		{
-			BlLogger.logMessage(LOG, Level.INFO, io.getMessage());
+			BlLogger.logMessage(LOG, Level.DEBUG, io.getMessage());
 		}
 
 		return null;
@@ -216,6 +221,8 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 
 	/**
+	 * method will be used to populate response data for exception
+	 *
 	 * @param upsShipmentResponseData
 	 * @param ex
 	 */
@@ -227,6 +234,8 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	}
 
 	/**
+	 * method will be used to create shipment response for UPS
+	 *
 	 * @param shipmentRequest
 	 * @param upsSecurity
 	 * @throws ShipmentErrorMessage
@@ -235,7 +244,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			throws ShipmentErrorMessage
 	{
 		ShipService shipService = null;
-		final QName qname = new QName(qName, "ShipService");
+		final QName qname = new QName(qName, BlintegrationConstants.Q_NAME_CODE);
 		shipService = new ShipService(getServiceURL(), qname);
 
 		final ShipPortType shipPort = shipService.getShipPort();
@@ -250,6 +259,11 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 	}
 
+	/**
+	 * method will be used to get teh service URL
+	 *
+	 * @return
+	 */
 	private URL getServiceURL()
 	{
 		return this.getClass().getClassLoader().getResource(Config.getString(wsdlLocation, "META-INF/wsdl/Ship.wsdl"));

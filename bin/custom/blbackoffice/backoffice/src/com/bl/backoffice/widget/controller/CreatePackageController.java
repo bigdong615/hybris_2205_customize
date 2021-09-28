@@ -167,7 +167,7 @@ public class CreatePackageController extends DefaultWidgetController
 			this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
 			serials.add(serialProduct);
 		}
-		this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
+		this.serialEntries.setModel(new ListModelList<>(serials));
 		final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
 		final PackagingInfoData packagingInfoData = packageBox.get(0);
 		packageBox.addToSelection(packagingInfoData);

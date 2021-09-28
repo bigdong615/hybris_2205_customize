@@ -13,10 +13,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.facades.shipment.data.DimensionsTypeData;
@@ -35,6 +36,8 @@ import com.bl.integration.constants.BlintegrationConstants;
 
 
 /**
+ * This class is responsible to populate shipment data
+ *
  * @author Aditi Sharma
  *
  */
@@ -137,13 +140,13 @@ public class BLUpsShippingDataPopulator
 
 		/** Creating Shipper Data **/
 
-		if (stateWarehouse == null && warehouse != null && warehouse.getPointsOfService() != null)
+		if (Objects.isNull(stateWarehouse) && Objects.nonNull(warehouse) && Objects.nonNull(warehouse.getPointsOfService()))
 		{
-			shipperAddress = warehouse.getPointsOfService().iterator().next().getAddress();
+			shipperAddress = getWarehouseAddress(warehouse);
 		}
-		else if (stateWarehouse != null && stateWarehouse.getPointsOfService() != null)
+		else if (Objects.nonNull(stateWarehouse) && Objects.nonNull(stateWarehouse.getPointsOfService()))
 		{
-			shipperAddress = stateWarehouse.getPointsOfService().iterator().next().getAddress();
+			shipperAddress = getWarehouseAddress(stateWarehouse);
 		}
 		final AddressData addressData = addressConverter.convert(shipperAddress);
 
@@ -203,7 +206,7 @@ public class BLUpsShippingDataPopulator
 	private void populateShipperAddressData(final WarehouseModel warehouse, final AddressData addressData,
 			final ShipperData shipperData, final AddressData shipperAddressData)
 	{
-		if (warehouse != null && warehouse.getAccountNumber() != null)
+		if (Objects.nonNull(warehouse) && Objects.nonNull(warehouse.getAccountNumber()))
 		{
 			shipperData.setShipperNumber(warehouse.getAccountNumber());
 		}
@@ -212,7 +215,7 @@ public class BLUpsShippingDataPopulator
 		shipperAddressData.setTown(addressData.getTown());
 		shipperAddressData.setPhone(addressData.getPhone());
 
-		if (addressData.getCountry() != null && addressData.getCountry().getIsocode() != null)
+		if (Objects.nonNull(addressData.getCountry()) && Objects.nonNull(addressData.getCountry().getIsocode()))
 		{
 			final CountryData countryData = new CountryData();
 			countryData.setIsocode(addressData.getCountry().getIsocode());
@@ -236,7 +239,7 @@ public class BLUpsShippingDataPopulator
 	{
 		upsPaymentInformation.setType(paymentInfoType);
 
-		if (warehouse != null && warehouse.getAccountNumber() != null)
+		if (Objects.nonNull(warehouse) && Objects.nonNull(warehouse.getAccountNumber()))
 		{
 			upsPaymentInformation.setAccountNumber(warehouse.getAccountNumber());
 		}
@@ -251,7 +254,7 @@ public class BLUpsShippingDataPopulator
 	private void populateUpsShipmentServiceData(final PackagingInfoModel packagingInfo,
 			final UpsShipmentServiceData upsShipmentServiceData)
 	{
-		if (packagingInfo.getConsignment().getOptimizedShippingType() != null
+		if (Objects.nonNull(packagingInfo.getConsignment().getOptimizedShippingType())
 				&& StringUtils.isNotBlank(packagingInfo.getConsignment().getOptimizedShippingType().getCode()))
 		{
 			upsShipmentServiceData.setCode(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeCode());
@@ -294,14 +297,14 @@ public class BLUpsShippingDataPopulator
 		shipToAddressData.setTown(shipToAddress.getTown());
 		shipToAddressData.setPhone(shipToAddress.getPhone());
 
-		if (shipToAddress.getRegion() != null && shipToAddress.getRegion().getIsocodeShort() != null)
+		if (Objects.nonNull(shipToAddress.getRegion()) && Objects.nonNull(shipToAddress.getRegion().getIsocodeShort()))
 		{
 			final RegionData shipToRegionData = new RegionData();
 			shipToRegionData.setIsocodeShort(shipToAddress.getRegion().getIsocodeShort());
 			shipToAddressData.setRegion(shipToRegionData);
 		}
 
-		if (shipToAddress.getCountry() != null && shipToAddress.getCountry().getIsocode() != null)
+		if (Objects.nonNull(shipToAddress.getCountry()) && Objects.nonNull(shipToAddress.getCountry().getIsocode()))
 		{
 			final CountryData shipToCountryData = new CountryData();
 			shipToCountryData.setIsocode(shipToAddress.getCountry().getIsocode());
@@ -313,15 +316,16 @@ public class BLUpsShippingDataPopulator
 		shipToPhone.setNumber(shipToAddress.getPhone());
 
 		final ShipToData shipToData = new ShipToData();
-		if (shipToAddressData.getCompanyName() != null)
+		if (Objects.nonNull(shipToAddressData.getCompanyName()))
 		{
 			shipToData.setName(shipToAddressData.getCompanyName());
 		}
 		else
 		{
-			shipToData.setName(shipToAddressData.getFirstName().concat(" ").concat(shipToAddressData.getLastName()));
+			shipToData.setName(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()));
 		}
-		shipToData.setAttentionName(shipToAddressData.getFirstName().concat(" ").concat(shipToAddressData.getLastName()));
+		shipToData
+				.setAttentionName(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()));
 		shipToData.setPhone(shipToPhone);
 		shipToData.setAddress(shipToAddressData);
 		return shipToData;
@@ -364,5 +368,14 @@ public class BLUpsShippingDataPopulator
 		packageDataList.add(packageData);
 	}
 
-
+	/**
+	 * this method is used to get warehouse address
+	 *
+	 * @param warehouse
+	 * @return AddressModel
+	 */
+	private AddressModel getWarehouseAddress(final WarehouseModel warehouse)
+	{
+		return warehouse.getPointsOfService().iterator().next().getAddress();
+	}
 }

@@ -45,6 +45,7 @@ import com.ups.xmlschema.xoltws.ship.v1.ShipperType;
 
 
 /**
+ * this class is responsible to populate request data for UPS
  * @author Aditi Sharma
  *
  */
@@ -60,6 +61,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	private String labelSpecCode;
 
 	/**
+	 * method will be used to convert UPS shipment request
 	 * @param upsShipmentRequest
 	 * @return
 	 */
@@ -182,6 +184,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipper data
 	 * @param shipper
 	 * @param shipperData
 	 */
@@ -217,6 +220,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipTo data
 	 * @param shipTo
 	 * @param shipToData
 	 */
@@ -249,6 +253,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipFrom data
 	 * @param shipFrom
 	 * @param shipFromData
 	 */
@@ -282,6 +287,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate paymentInfo data
 	 * @param upsPaymentInformation
 	 *
 	 */
@@ -299,6 +305,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate serviceType data
 	 * @param serviceType
 	 * @param serviceData
 	 */
