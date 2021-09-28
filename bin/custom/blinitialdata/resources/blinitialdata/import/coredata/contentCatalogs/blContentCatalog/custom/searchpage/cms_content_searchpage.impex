@@ -64,7 +64,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarMobileSlot       ;                                                                                    ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
-
+                             ; MobileMiniCartSlot            ;                                                                                    ;                           ; minicart
 
 # Search Results Empty Page Template
 INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $contentCV)[unique = true][default = 'SearchResultsEmptyPageTemplate']; validComponentTypes(code); compTypeGroup(code)
@@ -89,6 +89,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarMobileSlot       ;                                                                                     ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                            ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'SearchResultsGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -117,6 +118,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterCopyRightslot-searchGrid           ; FooterCopyRightslot           ;                                                                                        ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-searchGrid         ; SocialMediaSectionSlot        ;                                                                                        ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-searchGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                    ;                         ; MobileMiniCartSlot-searchGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 
@@ -146,6 +148,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterCopyRightslot-searchempty           ; FooterCopyRightslot           ;                                                                                         ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-searchempty         ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-searchempty                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                    ;                         ; MobileMiniCartSlot-searchempty             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 
