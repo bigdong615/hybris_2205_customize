@@ -8,6 +8,7 @@
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
 <%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
+<spring:url value="/my-account/order" var="orderDetailsUrl" htmlEscape="false"/>
 
 <c:choose>
 <c:when test="${!orderData.hasGiftCart}">
@@ -33,8 +34,23 @@
                                                     <b>${orderData.rentalStartDate}</b>
                                                   </p>
                                            </c:if>
-                                        <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
-                                    </div>
+									<c:choose>
+										<c:when
+											test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+											<p class="body14">
+												<spring:theme
+													code="text.review.page.date.start.delivery.pickup.order.history" />
+											</p>
+										</c:when>
+										<c:otherwise>
+											<p class="body14">
+												<spring:theme
+													code="text.myaccount.order.date.start.delivery"
+													arguments="${orderData.deliveryMode.carrier}" />
+											</p>
+										</c:otherwise>
+									</c:choose>
+								</div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
                                     </div>
@@ -46,8 +62,23 @@
                                         <c:if test="${orderData.isRentalActive eq false}">
                                           <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
                                         </c:if>
-                                        <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
-                                    </div>
+
+									<c:choose>
+										<c:when
+											test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+											<p class="body14">
+												<spring:theme
+													code="text.review.page.date.end.delivery.pickup.order.history" />
+											</p>
+										</c:when>
+										<c:otherwise>
+											<p class="body14">
+												<spring:theme code="text.myaccount.order.date.end.delivery"
+													arguments="${orderData.deliveryMode.carrier}" />
+											</p>
+										</c:otherwise>
+									</c:choose>
+								</div>
                                 </div>
                             </div>
                           </c:if>
@@ -58,6 +89,10 @@
                                         <spring:theme code="text.account.orderHistory.orderStatus"/> <br>
                                         <spring:theme code="text.account.orderHistory.datePlaced"/> <br>
                                         <spring:theme code="text.myaccount.order"/><br>
+                                        
+                                        <c:if test="${orderData.isReplacementOrder eq true}">
+                                        <b>	<spring:theme code="text.myaccount.order.replacementFor"/> </b><br>
+                                        </c:if>
                                         <spring:theme code="text.myaccount.order.tracking"/>
                                         </p>
                                     </div>
@@ -66,6 +101,10 @@
                                             ${orderData.status}<br>
                                             ${orderData.orderedFormatDate}<br>
                                             ${fn:escapeXml(orderData.code)}<br>
+
+                                            <c:if test="${orderData.isReplacementOrder eq true}">
+                                            <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
+                                            </c:if>
                                             N/A
                                         </p>
                                     </div>
@@ -140,7 +179,15 @@
                                						</c:choose>
                                						</c:if>
                                							<spring:theme code="text.review.page.your.rental.total"/>
-                               							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" /></p>
+                               							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
+                               							<c:if test="${not empty cartEntry.product.bundleProductReference}">
+                                             	<ul class="checklist mt-4">
+                                                  <c:forEach items="${cartEntry.product.bundleProductReference}" var="bundleItems">
+                                                  <li>${bundleItems.productReferenceName}</li>
+                                                  </c:forEach>
+                                              </ul>
+                                           </c:if>
+                               							</p>
                                					</div>
                                				</div>
                                    </c:forEach>
@@ -196,6 +243,7 @@
                             							</c:choose>
                             						</div>
 
+                            <c:if test="${orderData.isReplacementOrder ne true}">
                             <div class="reviewCart">
                             <c:choose>
                              <c:when test="${not empty orderData.paymentInfo}">
@@ -213,7 +261,9 @@
                                    	</div>
                                    	<div class="col-10 col-md-5">
                                    		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
-                                   		<div class="row">
+                                   		
+                                   		<!--Commented below code to resolved BL-1107 -->
+                                   		<%-- <div class="row">
                                    			<div class="col-6">
                                    				<p class="body14">
                                    					<spring:theme code="text.review.page.payment.amount" />
@@ -224,7 +274,7 @@
                                    					<format:price priceData="${orderData.totalPriceWithTax}" />
                                    				</p>
                                    			</div>
-                                   		</div>
+                                   		</div> --%>
                                    	</div>
                                    	<div class="col-12 col-md-5">
                                    	  <div class="po-order-notes">
@@ -245,12 +295,16 @@
                                   </c:otherwise>
                                 </c:choose>
                             </div>
+                            </c:if>
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
-                               <c:if test="${orderData.isRentalCart}">
+                                                          
+                             
+                             
+                            <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
-
+                            
                             <c:choose>
                             <c:when test="${isUsedGearCartActive eq true}">
                                      <a href="#" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#rentAgainPopUp">
@@ -263,6 +317,13 @@
 
                             </c:otherwise>
                            </c:choose>
+                           
+                           <c:if test="${asmUser}"> 
+                             	<c:set var="orderAction" value="/returnOrder" ></c:set>
+							 	<a id="replaceProduct" href="${orderDetailsUrl}${orderAction}/${orderData.code}" class="btn btn-sm btn-primary" data-order-id="${orderData.code}">
+							 		<spring:theme code="text.myaccount.order.return.request"/>
+							 	</a>
+							</c:if>
                           </div>
                             </c:if>
 
@@ -279,12 +340,19 @@
                                     <tbody>
                                         <tr>
                                             <td class="gray80">
-                                              <c:if test="${orderData.isRentalCart}">
-                                            <spring:theme code="text.myaccount.order.rental.cost"/>
-                                             </c:if>
-                                              <c:if test="${!orderData.isRentalCart}">
-                                                               Item Cost
-                                              </c:if>
+                                            <c:choose>
+                                             <c:when  test="${orderData.isNewGearOrder eq true}">
+                                                <spring:theme code="text.checkout.multi.newgear.order.summary.cost"/>
+                                             </c:when>
+                                             <c:when test="${orderData.isRentalCart}">
+                                               <spring:theme code="text.myaccount.order.rental.cost"/>
+                                              </c:when>
+                                             <c:when  test="${!orderData.isRentalCart}">
+                                                 Item Cost
+                                              </c:when>
+                                              <c:otherwise>
+                                              </c:otherwise>
+                                              </c:choose>
                                             </td>
                                             <td class="text-end"> <format:price priceData="${orderData.subTotal}"/></td>
                                         </tr>
@@ -293,7 +361,15 @@
                                             <td class="gray80"><spring:theme code="text.myaccount.order.rental.damege.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                             <td class="text-end"><format:price priceData="${orderData.totalDamageWaiverCost}"/></td>
                                         </tr>
-                                        </c:if>
+                                        <c:if test="${orderData.totalOptionsCost.value gt 0}">
+				<tr>
+					<td class="gray80"><spring:theme
+							code="text.cart.rental.options" /> </td>
+					<td class="text-end"><format:blPrice
+							priceData="${orderData.totalOptionsCost}" /></td>
+				</tr>
+				</c:if>
+                                            </c:if>
                                         <tr>
                                             <td class="gray80"><spring:theme code="text.myaccount.order.shipping.text"/></td>
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
@@ -307,7 +383,14 @@
                                             <spring:theme code="text.myaccount.order.tax.used"/>
                                             </c:if>
                                             </td>
+                                            <c:choose>
+                                            <c:when test="${orderData.isReplacementOrder eq true}">
+                                            <td class="text-end"> $0.00 </td>
+                                            </c:when>
+                                            <c:otherwise>
                                             <td class="text-end"><format:blPrice priceData="${orderData.taxAvalaraCalculated}" /></td>
+                                            </c:otherwise>
+                                            </c:choose>
                                         </tr>
                                          <c:if test="${orderData.totalDiscounts.value > 0}">
                                         <tr class="discount">
@@ -337,6 +420,10 @@
                                       </c:choose>
                                 </c:if>
                             </div>
+                            <c:if test="${not empty orderData.customerOwnedOrderNote}">
+	                            <p class="customer-item-note"><spring:theme code="text.myaccount.order.level.note"/></p>
+	                            <div class="notification-order-note notification-order-note-warning">${orderData.customerOwnedOrderNote} </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

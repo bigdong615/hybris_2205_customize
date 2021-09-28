@@ -4,11 +4,15 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.promotionengineservices.dao.PromotionDao;
 import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
 import de.hybris.platform.promotionengineservices.model.RuleBasedOrderEntryAdjustActionModel;
 import de.hybris.platform.promotionengineservices.model.RuleBasedPromotionModel;
+import de.hybris.platform.promotions.PromotionsService;
 import de.hybris.platform.promotions.model.AbstractPromotionActionModel;
+import de.hybris.platform.promotions.model.PromotionGroupModel;
+import de.hybris.platform.promotions.result.PromotionOrderResults;
 import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -18,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +39,7 @@ public class DefaultBlPromotionService implements BlPromotionService {
   private static final Logger LOG = Logger.getLogger(DefaultBlPromotionService.class);
   private PromotionDao promotionDao;
   private BaseStoreService baseStoreService;
+  private PromotionsService promotionsService;
 
 
   @Override
@@ -120,6 +126,25 @@ public class DefaultBlPromotionService implements BlPromotionService {
         currentDate.getTime() <= endDate.getTime();
   }
 
+  /**
+   * is extended coupon code promotion applied on cart
+   * @param cartModel
+   * @return
+   */
+  public boolean isFreeDayCouponPromoApplied(final CartModel cartModel){
+    final PromotionGroupModel blPromoGroup = getPromotionDao().findPromotionGroupByCode(BlCoreConstants.BL_PROMO_GROUP);
+    final PromotionOrderResults promotionResults = getPromotionsService().getPromotionResults(cartModel);
+    if (blPromoGroup != null && CollectionUtils.isNotEmpty(blPromoGroup.getPromotionSourceRules())) {
+      final Date currentDate = new Date();
+      final Optional<PromotionSourceRuleModel> couponExtendedRentalDayPromotion = blPromoGroup.getPromotionSourceRules().stream().filter(promotionSourceRuleModel -> promotionSourceRuleModel.getCode().contains(BlCoreConstants.BL_EXTENDED_RENTAL_DAYS_PROMOCODE) && RuleStatus.PUBLISHED.equals(promotionSourceRuleModel.getStatus()) && promotionSourceRuleModel.getConditions().contains(BlCoreConstants.QUALIFYING_COUPONS)).findAny();
+      final boolean isCouponPromotionActiveInBackend = couponExtendedRentalDayPromotion.isPresent()  && couponExtendedRentalDayPromotion.get().getStartDate() != null
+          && couponExtendedRentalDayPromotion.get().getEndDate() != null && currentDate.getTime() >= couponExtendedRentalDayPromotion.get().getStartDate().getTime() && currentDate.getTime() <= couponExtendedRentalDayPromotion.get().getEndDate().getTime();
+      final boolean orderResult = Objects.nonNull(promotionResults) ? promotionResults.getFiredOrderPromotions().stream().anyMatch( promotionResult -> promotionResult.getPromotion().getCode().equals(couponExtendedRentalDayPromotion.get().getCode())) : Boolean.FALSE;
+      return  isCouponPromotionActiveInBackend && orderResult;
+    }
+    return false;
+  }
+
   public PromotionDao getPromotionDao() {
     return promotionDao;
   }
@@ -134,5 +159,13 @@ public class DefaultBlPromotionService implements BlPromotionService {
 
   public void setBaseStoreService(BaseStoreService baseStoreService) {
     this.baseStoreService = baseStoreService;
+  }
+
+  public PromotionsService getPromotionsService() {
+    return promotionsService;
+  }
+
+  public void setPromotionsService(PromotionsService promotionsService) {
+    this.promotionsService = promotionsService;
   }
 }

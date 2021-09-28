@@ -1,15 +1,12 @@
 package com.bl.Ordermanagement.filters;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlStateWarehouseMappingModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.warehousing.sourcing.filter.SourcingFilterResultOperator;
-import de.hybris.platform.warehousing.sourcing.filter.impl.AbstractBaseSourcingLocationFilter;
-import java.util.Collection;
-import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -28,7 +25,11 @@ public class BlDeliveryStateSourcingLocationFilter {
    */
   public WarehouseModel applyFilter(final AbstractOrderModel order) {
 
-    if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
+    if (order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel
+        && null != ((ZoneDeliveryModeModel) order.getDeliveryMode()).getWarehouse()) {
+
+      return ((ZoneDeliveryModeModel) order.getDeliveryMode()).getWarehouse();
+    } else if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
         && null != order.getDeliveryAddress().getRegion().getIsocodeShort()) {
       final String stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
 
@@ -45,6 +46,7 @@ public class BlDeliveryStateSourcingLocationFilter {
       BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Warehouse not found for state code : {}", stateCode);
       return null;
     }
+
     BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "State code and delivery address is null");
     return null;
   }

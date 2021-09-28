@@ -23,8 +23,8 @@
 	<!--Security config for checkout - it has its own login page-->
 	<security:http pattern="/checkout/**">
         <security:anonymous username="anonymous" granted-authority="ROLE_ANONYMOUS" />
-		<security:access-denied-handler error-page="/login"/>
-		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/login" />
+		<security:access-denied-handler error-page="/"/>
+		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/" />
 		<security:intercept-url pattern="/**" requires-channel="https" />
 		<security:csrf token-repository-ref="csrfTokenRepository" request-matcher-ref="csrfProtectionMatcher"/>
 		<security:custom-filter before="CSRF_FILTER" ref="logoutFilter" />
@@ -172,8 +172,7 @@
 		<set>
 			<value>/guest/*</value>
 			<value>/orderConfirmation/*</value>
-			<value>/login</value>
-			<value>/login/checkout</value>
+			<value>/</value>
 		</set>
 	</property>
 	<property name="pathMatcher" ref="defaultPathMatcher" />
@@ -208,7 +207,7 @@
         <property name="bruteForceAttackCounter" ref="bruteForceAttackCounter" />
 		<property name="restrictedPages">
 			<list>
-				<value>/login</value>
+				<value>/</value>
 			</list>
 		</property>
 		<property name="listRedirectUrlsForceDefaultTarget">
@@ -239,7 +238,7 @@
 		<property name="redirectStrategy" ref="commerceRedirectStrategy"/>
 		<property name="restrictedPages">
 			<list>
-				<value>/login/checkout</value>
+				<value>/</value>
 			</list>
 		</property>
 		<property name="listRedirectUrlsForceDefaultTarget">
@@ -285,7 +284,7 @@
  		<constructor-arg name="logoutSuccessHandler" ref="logoutSuccessHandler" />
  		<constructor-arg name="handlers">
  			<list>
-				<bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+				<bean class="com.bl.storefront.security.BlSecurityContextLogoutHandler" />
  				<ref bean="rememberMeServices" />
  			</list>
  		</constructor-arg>

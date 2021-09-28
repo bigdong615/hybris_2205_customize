@@ -27,34 +27,35 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 
 	private static final ArrayList<String> productPageFields = new ArrayList<>(
 			Arrays.asList("isBuy", "productCategory", "ProductName", "productSKU",
-					 "prodid", "rentalDays"));
+					 "prodid", "rental_days","prodOutOfStock"));
 
 	private static final  ArrayList<String> cartPageFields = new ArrayList<>(
 			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy",
 					"productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays")); // NOSONAR
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days" ,"out_of_stock_for_rental_dates","out_of_stock_for_quantity")); // NOSONAR
 
 
   private static final  ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
-      Arrays.asList("userEmail", "userFirstName", "userLastName",
+      Arrays.asList("user_email", "userFirstName", "userLastName",
 					"cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","orderID","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays","order_tax","isVideo")); // NOSONAR
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days","order_tax","isVideo")); // NOSONAR
 
 
 	private static final ArrayList<String> checkoutShippingPage = new ArrayList<>(
 			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days"));
 
 	private static final ArrayList<String> checkoutBillingPage = new ArrayList<>(
 			Arrays.asList( "cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rental_days"));
 
 	private static final ArrayList<String> allPageFields = new ArrayList<>(
-			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account","utag_main_mycookie"
+			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","accountID"
 			));
 
 	private static final ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList(
-			"product_price", "product_quantity", "page_category_name", "product_brand","couponCode","quantity","unit_price","prodid","isVideo"));
+			"product_price", "product_quantity", "page_category_name", "product_brand","couponCode","quantity","unit_price","prodid","isVideo"
+	     ,"out_of_stock_for_rental_dates","out_of_stock_for_quantity"));
 
 	private TealiumContext context;
 

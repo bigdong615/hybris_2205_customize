@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<config xmlns="http://www.hybris.com/cockpit/config"
+	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+	xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+
+	<!-- blcustomersupportbackoffice UI configuration should be provided here -->
+
+	<!--<context component="component-code" module="blcustomersupportbackoffice">-->
+		<!--Please check documentation for code snippets for specific components-->
+	<!--</context>-->
+
+	<context merge-by="type" type="OrderEntry" component="create-wizard">
+		<wz:flow id="orderEntryWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="orderEntryPrepare">
+				<wz:initialize property="orderEntry" type="ctx.TYPE_CODE"/>
+				<wz:assign property="orderEntry.order" value="ctx.parentObject"/>
+				<wz:assign property="orderEntry.rentalStartDate" value="ctx.parentObject.rentalStartDate"/>
+				<wz:assign property="orderEntry.rentalReturnDate" value="ctx.parentObject.rentalEndDate"/>
+			</wz:prepare>
+			<wz:step id="orderEntryStep1" label="create.discountrow.essential.label">
+				<wz:content id="step1.content">
+					<wz:property-list root="orderEntry">
+						<wz:property qualifier="order"/>
+						<wz:property qualifier="product" validate="false" />
+						<wz:property qualifier="unit"/>
+						<wz:property qualifier="quantity"/>
+						<wz:property qualifier="basePrice"/>
+						<wz:property qualifier="rentalStartDate" readonly="true"/>
+						<wz:property qualifier="rentalReturnDate" readonly="true"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="orderEntryStep1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="orderEntry"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="OrderEntry" component="configurableFlowDynamicForms">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" modelProperty="orderEntry">
+			<df:attribute id="setBasePrice" disabledIf="product==null" qualifier="basePrice" triggeredOn="product" computedValue="@blBackOfficePriceService.getProductPrice(product,rentalStartDate,rentalReturnDate , false)"/>
+		</df:dynamicForms>
+	</context>
+
+</config>

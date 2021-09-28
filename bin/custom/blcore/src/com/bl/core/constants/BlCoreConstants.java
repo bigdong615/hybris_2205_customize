@@ -13,6 +13,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 {
 	public static final String EXTENSIONNAME = "blcore";
 
+
 	// implement here constants used by this extension
 	public static final String QUOTE_BUYER_PROCESS = "quote-buyer-process";
 	public static final String QUOTE_SALES_REP_PROCESS = "quote-salesrep-process";
@@ -22,6 +23,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUOTE_EXPIRED_EMAIL_PROCESS = "quote-expired-email-process";
 	public static final String QUOTE_POST_CANCELLATION_PROCESS = "quote-post-cancellation-process";
 	public static final String EMPTY_STRING = "";
+	public static final int PRECISION = 2;
+
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
 
@@ -84,12 +87,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
 	public static final String RESERVED_STATUS = "reservedStatus";
+	public static final String BUFFER_INVENTORY = "bufferInventory";
+	public static final String BASE_STORE_ID = "bl";
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
+	public static final int END_MILLI_SECONDS = 999;
 	public static final int START_HOURS = 0;
 	public static final int START_MINUTES = 0;
 	public static final int START_SECONDS = 0;
+	public static final int START_MILLI_SECONDS = 0;
 	public static final long MAX_TOTAL = 20L;
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
@@ -106,9 +113,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DEFAULT_ZONE_ID = "UTC";
 	public static final String COOKIE_NAME_FOR_DATE = "selectedDate";
+	public static final String COOKIE_NAME_FOR_DURATION = "selectedDuration";
+	public static final String SELECTED_DURATION = "selectedDuration";
 	public static final int PAIR_OF_DATES = 2;
 	public static final String SEPARATOR = "\\|";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
+	public static final String SELECTED_DURATION_MAP = "selectedDurationMap";
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
 	public static final String SELECTED_DATE = "selectedDate";
 
@@ -167,6 +177,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES = "lenses";
 	public static final String CAMERAS = "cameras";
 	public static final String PRODUCTION = "production";
+	public static final String PACKAGE= "package";
+	public static final String GEAR_PACKAGE="gear package";
 
 	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
@@ -174,7 +186,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
-	public static final String HYPHEN = "-";
+	public static final String UNDERSCORE = "_";
+	public static final String DOUBLE_HYPHEN = "--";
 
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
 	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
@@ -247,11 +260,108 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
 	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
-	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
+	public static final String CUSTOMER_RESPONSIBLE_REPAIR = "CUSTOMER_RESPONSIBLE_REPAIR";
 	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
 	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
+  public static final String ACCEPTED = "ACCEPTED";
+
+	public static final String HARD_ASSIGNED = "hardAssign";
+	public static final String SOFT_ASSIGNED = "softAssign";
+  public static final String NEW_GEAR = "newgear";
+	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BUNDLEPRODUCT = "bundleProduct" ;
+	public static final String BARCODE = "barcode";
+  public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
+
+	public static final String RETURN_REQUEST = "returnRequest";
+	public static final String ASAGENT = "asagent";
+	public static final String REQUEST = "request";
+	public static final String ACTING_USER_UID = "ACTING_USER_UID";
+	public static final String ASM_SESSION_PARAMETER = "ASM";
+	public static final String MISSING_CHARGE = "MISSING_CHARGE";
+	public static final String AQUATECH_BRAND_ID ="9";
+	public static final String SQL_DATE_FORMAT = "MM-dd-yyyy";
 
 
+	public static final String DRIVING_LICENSE = "drivingLicense";
+	public static final String UTILITY_BILL = "utilityBill";
+	public static final String INSURANCE_CERTIFICATE = "insuranceCertificate";
+	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
+	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
+
+	public static final String TOTAL_PRICE = "Total Price : {}";
+
+	public static final String COMMON_ERROR_MESSAGE = "unexpected.update.error";
+	public static final String BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR = "BlSerialProductValidateInterceptor";
+	
+	public static final String ZERO = "0";
+
+	public static final String BY_DATE = "byDate";
+	public static final String BY_ORDER_NUMBER = "byOrderNumber";
+	public static final String CUSTOMER = "customer";
+	public static final String STORE = "store";
+	public static final String FILTER_STATUS_LIST = "filterStatusList";
+	public static final String STATUS_LIST = "statusList";
+
+	public static final int TWO_DAYS = 2;
+	public static final int ONE_DAY = 1;
+
+	public static final String STATUS1 = "status1";
+	public static final String STATUS2 = "status2";
+
+	public static final String BL_PROMO_GROUP = "blPromoGrp";
+	public static final String BL_EXTENDED_RENTAL_DAYS_PROMOCODE = "EXTENDEDRENTALDAYS";
+	public static final String QUALIFYING_COUPONS = "y_qualifying_coupons";
+	public static final String CONTACTUS_NAV_LINK = "ContactUsNavLink";
+
+	public static final String BL_BLACKOUT_DATE_MODEL = "BlBlackoutDateModel";
+	public static final String FROM_DATE = "fromDate";
+	public static final String SERIAL = "serial";
+	public static final String SERIAL_CODE = "serialCode";
+	public static final String ORDER_CODE = "orderCode";
+	public static final String RETURN_DATE = "returnDate";
+	public static final String CONTACTUS_LINK = "contactus";
+	
+	public static final String QUERY_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String HYPHEN = "-";
+
+	public static final String RENTAL_ORDER = "isRentalCart";
+	public static final String SHARE_A_SALE = "shareASaleSent";
+	public static final String ORDER_STATUS = "code";
+	public static final String START_SHARE_A_SALE_JOB = "Start performing BlShareASaleJob...";
+	public static final String SHARE_A_SALE_URL = "https://shareasale.com";
+	public static final String SHARE_A_SALE_MERCHANT_ID = "/w.cfm?merchantId=";
+	public static final String SHARE_A_SALE_TOKEN = "&token=";
+	public static final String SHARE_A_SALE_VERSION = "&version=";
+	public static final String SHARE_A_SALE_ACTION = "&action=";
+	public static final String SHARE_A_SALE_DATE = "&date=";
+	public static final String SHARE_A_SALE_ORDER_NUMBER = "&ordernumber=";
+	public static final String SHARE_A_SALE_TRANS_TYPE = "&transtype=";
+	public static final String SHARE_A_SALE_AMOUNT = "&amount=";
+	public static final String SHARE_A_SALE_SUBTOTAL_FORMAT = "%.2f";
+	public static final String SHARE_A_SALE_TRACKING = "&tracking=";
+	public static final String SHARE_A_SALE_TRACKING_S = "-S";
+	public static final String SHARE_A_SALE_STORE_ID = "&storeID=";
+	public static final String SHARE_A_SALE_PER_SALE = "&persale=";
+	public static final String SHARE_A_SALE_NEW_CUSTOMER = "&newcustomer=";
+	public static final String ONE = "1";
+	public static final String SHARE_A_SALE_URL_LINK = "&urllink=";
+	public static final String SHARE_A_SALE_UTF = "UTF-8";
+	public static final String SHARE_A_SALE_COUPON_CODE = "&couponcode=";
+	public static final String SHARE_A_SALE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+	public static final String SHARE_A_SALE_GMT = "GMT";
+	public static final String SHARE_A_SALE_NEW_AC_URL = "shareASale new account url: {}";
+	public static final String SHARE_A_SALE_AUTH_DATE = "x-ShareASale-Date";
+	public static final String SHARE_A_SALE_AUTH = "x-ShareASale-Authentication";
+	public static final String SHARE_A_SALE_JOB_FINISH = "Finished performing BlShareASaleJob...";
+	public static final String SHARE_A_SALE_JOB_ERROR_MSG = "Error occurred while performing BlShareASaleJob";
+	public static final String SHARE_A_SALE_JOB_HTTP_STATUS_MSG = "Unexpected http status: ";
+	public static final String SHARE_A_SALE_JOB_HTTP_CONNECTION_FAILURE = "ShareASale http connection failure: {}";
+	public static final String SHARE_A_SALE_ORDER_CREATION_DATE_FORMAT = "MM/dd/yyyy";
+	public static final String SHARE_A_SALE_NEW_URL_SENDING_MSG = "Sending shareASale new account message: {}";
+	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
+	public static final String SHARE_A_SALE_COMMA = ",";
+	public static final String BIN_LOCATION_ID = "binLocationId";
 	private BlCoreConstants()
 	{
 		//empty

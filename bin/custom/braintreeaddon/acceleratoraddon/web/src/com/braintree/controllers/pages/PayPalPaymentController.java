@@ -6,7 +6,7 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_HAED_ERROR;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
-
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
@@ -51,6 +51,7 @@ import java.math.BigDecimal;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -62,6 +63,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.commercefacades.order.OrderFacade;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+import java.math.RoundingMode;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.core.enums.OrderStatus;
 
 
 @Controller
@@ -69,10 +78,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PayPalPaymentController extends AbstractCheckoutController
 {
 	protected static final String REDIRECT_URL_CART = REDIRECT_PREFIX + BraintreeaddonWebConstants.CART_URL;
-	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String DEVICE_DATA = "device_data";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
+	private static final int DECIMAL_PRECISION = 2;
+	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
+	private static final String REDIRECT_TO_ORDER_DETAILS_PAGE = REDIRECT_PREFIX + "/my-account/order/";
 
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -113,6 +124,15 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@Resource
 	private BrainTreeTransactionService brainTreeTransactionService;
 
+	
+	@Resource(name = "orderFacade")
+	private OrderFacade orderFacade;
+
+	@Resource(name = "priceDataFactory")
+	private PriceDataFactory priceDataFactory;
+
+	@Resource(name = "modelService")
+	private ModelService modelService;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -248,6 +268,10 @@ public class PayPalPaymentController extends AbstractCheckoutController
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
         PayPalExpressResponse payPalExpressResponse = null;
         AddressData hybrisBillingAddress = null;
+        final String orderCode = request.getParameter("order_code");
+        final String payBillTotal = request.getParameter("payBillTotal");
+        final boolean isDepositPaymentPage = BooleanUtils.toBoolean(request.getParameter("isDepositPaymentPage"));
+		double payBillAmount = Double.parseDouble(payBillTotal);
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
         } catch (final IllegalArgumentException exeption) {
@@ -288,32 +312,137 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		 else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
 		 {
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
-		 }
-		 else
-		 {
+		 } else {
 			 LOG.warn("No billing address provide by Pay Pal. Use empty billing address...");
 			 hybrisBillingAddress = new AddressData();
 			 hybrisBillingAddress.setEmail(payPalEmail);
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
 		 }
-
+			boolean isSuccess = false;
+			AbstractOrderModel order = null;
+			try {
+				order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+				if (null != order) {
+					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
+							.completeCreateSubscription(
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount);
+					if (null != paymentInfo) {
+						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+					}
+				}
+			} catch (final Exception exception) {
+				final String errorMessage = getLocalizedString("braintree.billing.general.error");
+				handleErrors(errorMessage, model);
+				return CheckoutOrderPageErrorPage;
+			}
+			if (isSuccess) {
+			  final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+        final PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
+        orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
+        model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+        if (isDepositPaymentPage)
+        {
+          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);
+          final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, depositPaymentSuccessPage);
+          setUpMetaDataForContentPage(model, depositPaymentSuccessPage);
+          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+          return getViewForPage(model);
+        }				
+				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+				storeCmsPageInModel(model, payBillSuccessPage);
+				setUpMetaDataForContentPage(model, payBillSuccessPage);
+				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PAY_PAL);
+				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+						ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+				return getViewForPage(model);
+			} else {
+				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
+			}
+    }    
+    
+    @PostMapping(value = "/modify-payment-method")
+    public String modifyPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
+			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
+                                   final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
+        PayPalExpressResponse payPalExpressResponse = null;
+        AddressData hybrisBillingAddress = null;
+        final String orderCode = request.getParameter("order_code");
+        String modifiedOrderTotal = request.getParameter("modifyOrderTotal");
+		double modifyOrderTotal = Double.parseDouble(modifiedOrderTotal);
         try {
-            brainTreePaymentFacade.completeCreateSubscription(subscriptionInfo, false);
-        } catch (final Exception exception) {
-            final String errorMessage = getLocalizedString("braintree.billing.general.error");
-            handleErrors(errorMessage, model);
+            payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
+        } catch (final IllegalArgumentException exeption) {
+            handleErrors(exeption.getMessage(), model);
             return CheckoutOrderPageErrorPage;
         }
-        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-                getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
-        return REDIRECT_TO_PAYMENT_INFO_PAGE;
+
+        String payPalEmail = payPalExpressResponse.getDetails().getEmail();
+
+        String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+
+        final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
+				  paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
+
+        final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
+		 if (payPalBillingAddress != null)
+		 {
+			 hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
+					 payPalExpressResponse.getDetails(), payPalBillingAddress);
+			 hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 }
+		 else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
+		 {
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 } else {
+			 LOG.warn("No billing address provide by Pay Pal. Use empty billing address...");
+			 hybrisBillingAddress = new AddressData();
+			 hybrisBillingAddress.setEmail(payPalEmail);
+			 subscriptionInfo.setAddressData(hybrisBillingAddress);
+		 }
+			boolean isSuccess = false;
+			AbstractOrderModel order = null;
+			try {
+				order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+				if (null != order) {
+					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
+							.completeCreateSubscription(
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false);
+					if (null != paymentInfo) {
+						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+								BigDecimal.valueOf(modifyOrderTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+					}
+				}
+			} catch (final Exception exception) {
+				final String errorMessage = getLocalizedString("braintree.billing.general.error");
+				handleErrors(errorMessage, model);
+				return CheckoutOrderPageErrorPage;
+			}
+			if (isSuccess) {
+				order.setStatus(OrderStatus.SHIPPED);
+				order.setIsCaptured(Boolean.TRUE);
+				modelService.save(order);
+				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+						getLocalizedString("text.account.modify.payment.success"));
+				return REDIRECT_TO_ORDER_DETAILS_PAGE + orderCode;
+
+			} else {
+				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+						getLocalizedString("text.account.modify.payment.error"));
+				return REDIRECT_PREFIX  + MY_ACCOUNT_MODIFY_PAYMENT + orderCode;
+			}
     }
 
 	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
 	public String doInitializeMiniCartPaypalShortcut() throws CMSItemNotFoundException, JsonGenerationException,
-            JsonMappingException, IOException
+	                                                           JsonMappingException, IOException
 	{
 		return buildPayPalMiniCartResponse();
 	}
@@ -438,7 +567,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		 OrderModel order = null;
 		try {
 			order = brainTreePaymentFacade.gerExtendOrderFromOrderCode(orderCode);
-			if(null != order) {
+			if(null != order && BooleanUtils.isTrue(order.getIsExtendedOrder())) {
 				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
 						.completeCreateSubscription(subscriptionInfo,
 								(CustomerModel) order.getUser(), order, false, false);
@@ -463,6 +592,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			setUpMetaDataForContentPage(model, extendOrderConfirmation);
 			return getViewForPage(model);
 		} else {
+			GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.paypal.error"));
 			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
 		}
 	}
@@ -486,5 +616,12 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private String getSessionCartUserUid()
 	{
 		return cartService.getSessionCart().getUser().getUid();
+	}
+
+	/**
+	 * This method converts double to price data
+	 */
+	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
+		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
 }

@@ -3,9 +3,12 @@ package com.bl.Ordermanagement.actions.order;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
+import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -23,13 +26,16 @@ import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -44,6 +50,8 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private BusinessProcessService businessProcessService;
   private BlSourcingService blSourcingService;
   private AllocationService allocationService;
+  private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
+  private BlOrderService blOrderService;
 
   /**
    * {@inheritDoc}
@@ -54,27 +62,31 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Process: {} in step {}",
         process.getCode(), getClass().getSimpleName());
     final OrderModel order = process.getOrder();
-    boolean isSourcingSuccessful;
+
     SourcingResults results = null;
 
     try {
       results = getSourcingResults(order);
-      isSourcingSuccessful = true;
+
     } catch (final IllegalArgumentException e) {
 
-      isSourcingSuccessful = false;
       setOrderSuspendedStatus(order);
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
-          "Could not create SourcingResults. Changing order status to SUSPENDED", e);
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), e,
+          "Could not create SourcingResults. Changing order status to SUSPENDED for order code {}", order.getCode());
+
     } catch (final BlSourcingException ex) {
 
-      isSourcingSuccessful = false;
+      setOrderToManualReviewStatus(order);
+      BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), ex,
+          " Changing order status to MANUAL_REVIEW for order code {}", order.getCode());
+    } catch (final Exception e) {
+
       setOrderSuspendedStatus(order);
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
-          ex.getMessage() + " Changing order status to SUSPENDED", ex);
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e,
+          " Changing order status to SUSPENDED for order code {}", order.getCode());
     }
 
-    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
+    if (null != results && CollectionUtils.isNotEmpty(results.getResults())) {  //NOSONAR
       try {
         final Collection<ConsignmentModel> consignments = getAllocationService()
             .createConsignments(process.getOrder(),
@@ -83,25 +95,38 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
         order.setStatus(OrderStatus.READY);
+
+        if (order.getEntries().stream()
+            .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
+
+          setOrderToManualReviewStatus(order);
+        } else {
         getModelService().save(order);
+        }
 
       } catch (final AmbiguousIdentifierException ex) {
 
         setOrderSuspendedStatus(order);
-        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-            LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
-            "Cancelling consignment since only one fulfillment system configuration is allowed per consignment.",
-            ex);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR,
+            LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
+            "Cancelling consignment since only one fulfillment system configuration is allowed per consignment. Order code {}",
+            order.getCode());
       } catch (final BlSourcingException ex) {
 
-        setOrderSuspendedStatus(order);
-        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
-            ex.getMessage() + " Changing order status to SUSPENDED", ex);
+        setOrderToManualReviewStatus(order);
+        BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
+            " Changing order status to MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
       } catch (final BlShippingOptimizationException soe) {
 
         setOrderSuspendedStatus(order);
-        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe.getMessage() +
-                " Changing order status to SUSPENDED due to shipping optimization", soe);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe,
+                " Changing order status to SUSPENDED due to shipping optimization for order code {}", order.getCode());
+      }
+      catch (final Exception e) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CONSIGNMENT_CREATION_ERROR.getCode(), e,
+            " Changing order status to SUSPENDED due to error for order code {}", order.getCode());
       }
     }
 
@@ -115,8 +140,60 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    */
   private SourcingResults getSourcingResults(final OrderModel order) {
 
-    return BooleanUtils.isTrue(order.getIsRentalCart()) ? blSourcingService.sourceOrder(order)
-        : getResultsForUsedGearOrder(order);
+    SourcingResults results = null;
+    if (order.getIsRentalCart().booleanValue()) {
+
+      if (blOrderService.isAquatechProductOrder(order)) {
+        results =  getResultsForOrderWithOnlyAquatechProducts(order);
+      } else {
+        results = blSourcingService.sourceOrder(order);
+      }
+    } else{
+      results = getResultsForUsedGearOrder(order);
+    }
+
+    return results;
+  }
+
+  /**
+   * Create sourcing result if order is only with aquatech products.
+   *
+   * @param order - the order.
+   * @return SourcingResults
+   */
+  private SourcingResults getResultsForOrderWithOnlyAquatechProducts(final OrderModel order) {
+
+    final SourcingResults results = new SourcingResults();
+    final Set<SourcingResult> resultSet = new HashSet<>();
+    final SourcingResult sourcingResult = new SourcingResult();
+
+    for (AbstractOrderEntryModel entry : order.getEntries()) {
+
+      final WarehouseModel warehouseModel = blDeliveryStateSourcingLocationFilter.applyFilter(order);
+
+      final List<BlProductModel> aquatechProductsToAssign = new ArrayList<>();
+      for (int i = 0; i < entry.getQuantity(); i++){
+        aquatechProductsToAssign.add((BlProductModel) entry.getProduct());
+      }
+
+      final Map<Integer, List<BlProductModel>> resultAquatechProductMap =
+          (null != sourcingResult.getAquatechProductMap()) ? new HashMap<>(sourcingResult.getAquatechProductMap()) : new HashMap<>();
+      resultAquatechProductMap.put(entry.getEntryNumber(), aquatechProductsToAssign);
+
+      final Map<AbstractOrderEntryModel, Long> resultAllocationMap =
+          (null != sourcingResult.getAllocation()) ? new HashMap<>(sourcingResult.getAllocation())
+              : new HashMap<>();
+      resultAllocationMap.put(entry, (long) aquatechProductsToAssign.size());
+
+      sourcingResult.setAquatechProductMap(resultAquatechProductMap);
+      sourcingResult.setAllocation(resultAllocationMap);
+      sourcingResult.setWarehouse(warehouseModel);
+      resultSet.add(sourcingResult);
+    }
+
+    results.setResults(resultSet);
+
+    return results;
   }
 
   /**
@@ -149,6 +226,12 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     }
 
     results.setResults(resultSet);
+
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    calendar.add(Calendar.DATE, BlOrdermanagementConstants.TWO);
+    order.setActualRentalStartDate(calendar.getTime());
+    blSourcingService.updateShippingDatesForInternalTransfers(order, results);
 
     return results;
   }
@@ -184,11 +267,26 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     resultSet.add(sourcingResult);
   }
 
+  /**
+   * Set order status to SUSPENDED.
+   *
+   * @param order - order
+   */
   private void setOrderSuspendedStatus(final OrderModel order) {
 
     order.setStatus(OrderStatus.SUSPENDED);
     getModelService().save(order);
+  }
 
+  /**
+   * Set order status to MANUAL_REVIEW.
+   *
+   * @param order - order
+   */
+  private void setOrderToManualReviewStatus(final OrderModel order) {
+
+    order.setStatus(OrderStatus.MANUAL_REVIEW);
+    getModelService().save(order);
   }
 
   /**
@@ -197,7 +295,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param consignments - list of consignments; never <tt>null</tt>
    * @param process      - order process model
    */
-  protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
+  public void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
       final OrderProcessModel process) {
 
     for (final ConsignmentModel consignment : consignments) {
@@ -236,5 +334,22 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
   public void setAllocationService(final AllocationService allocationService) {
     this.allocationService = allocationService;
+  }
+
+  public BlDeliveryStateSourcingLocationFilter getBlDeliveryStateSourcingLocationFilter() {
+    return blDeliveryStateSourcingLocationFilter;
+  }
+
+  public void setBlDeliveryStateSourcingLocationFilter(
+      final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
+    this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+  }
+
+  public BlOrderService getBlOrderService() {
+    return blOrderService;
+  }
+
+  public void setBlOrderService(final BlOrderService blOrderService) {
+    this.blOrderService = blOrderService;
   }
 }

@@ -1,10 +1,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
       <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-content savecart-modal">
+      <div class="modal-header" style="display: inline-block; text-align: center; padding: 19px 0px !important; height: 66px;">
       <h5>Wait!</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style=" top:26px;"></button>
           </div>
       <div class="modal-body">
          <p>

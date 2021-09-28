@@ -1,28 +1,5 @@
 package com.bl.core.stock.impl;
 
-import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
-import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.exceptions.BusinessException;
-import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
-import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
-import de.hybris.platform.servicelayer.model.ModelService;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
@@ -32,6 +9,26 @@ import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.stock.BlStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.exceptions.BusinessException;
+import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
+import de.hybris.platform.servicelayer.model.ModelService;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -176,12 +173,79 @@ public class DefaultBlStockService implements BlStockService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void findAndUpdateStockRecordsForParticularDuration(final BlSerialProductModel blSerialProduct,
-			final boolean reservedStatus, final Date startDate, final Date endDate)
-	{
-		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findSerialStockLevelForDate(blSerialProduct.getCode(),
-				startDate, endDate);
-		stockLevels.forEach(stockLevel -> saveStockRecord(stockLevel, reservedStatus));
+	public boolean isActiveStatus(final SerialStatusEnum currentStatus) {
+		switch (currentStatus.getCode()) {
+			case "ACTIVE":
+			case "PARTIALLY_UNBOXED":
+			case "UNBOXED":
+			case "RECEIVED_OR_RETURNED":
+			case "BOXED":
+			case "SHIPPED":
+			case "IN_HOUSE":
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isInactiveStatus(final SerialStatusEnum currentStatus) {
+		switch (currentStatus.getCode()) {
+			case "REPAIR":
+			case "REPAIR_IN_HOUSE":
+			case "REPAIR_SEND_TO_VENDOR":
+			case "REPAIR_PARTS_NEEDED":
+			case "REPAIR_AWAITING_QUOTES":
+			case "LOST":
+			case "LOST_IN_TRANSIT":
+			case "LOST_IN_HOUSE":
+			case "LOST_UNDER_INVESTIGATION":
+			case "STOLEN":
+			case "STOLEN_PAID_IN_FULL":
+			case "STOLEN_PAID_SOME":
+			case "STOLEN_NOT_PAID":
+			case "STOLEN_PAID_12_PERCENT":
+			case "SCRAPPED":
+			case "ARCHIVED":
+			case "REPAIR_NEEDED":
+			case "PARTS_NEEDED":
+			case "SOLD":
+			case "ADDED_TO_CART":
+			case "LATE":
+				return Boolean.TRUE;
+			default:
+		}
+		return Boolean.FALSE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @param warehouseModel the warehouse model
+	 */
+	public void reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel) {
+		warehouseModel.getBlockInventory().stream().forEach(blockInventoryModel -> {
+			if(BlDateTimeUtils.getFormattedStartDay(blockInventoryModel.getStartDate()).before(
+					BlDateTimeUtils.getFormattedEndDay(blockInventoryModel.getEndDate()))) {
+			final Date startDate = blockInventoryModel.getStartDate();
+			final Date currentDate = Date
+					.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			if (!(startDate.before(currentDate))) {
+				final Collection<StockLevelModel> stockLevels = getBlStockLevelDao()
+						.reserveProductsBelongToWHForSpecifiedDate(
+								warehouseModel, startDate, blockInventoryModel.getEndDate());
+				stockLevels.forEach(stockLevelModel -> {
+					stockLevelModel.setReservedStatus(Boolean.TRUE);
+				});
+				this.getModelService().saveAll(stockLevels);
+			}
+		} else {
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start date should be before end date for Block "
+									+ "Inventory of warehouse {} ", warehouseModel.getCode());
+			}
+		});
 	}
 
 	/**
@@ -286,7 +350,8 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void createStockForActiveSerials(final LocalDate formattedStartDate, final LocalDate formattedEndDate,
 			final BlSerialProductModel serial) {
-		if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
+		if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
+				&& null != serial.getWarehouseLocation())
 		{
 			if (Boolean.FALSE.equals(serial.getForRent()))
 			{
@@ -313,7 +378,8 @@ public class DefaultBlStockService implements BlStockService
 		{
 			for (final BlSerialProductModel serial : skuProduct.getSerialProducts())
 			{
-				if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
+				if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
+						&& null != serial.getWarehouseLocation())
 				{
 					final Date stockDate = Boolean.FALSE.equals(serial.getForRent()) ? null : date;
 					createStockLevelForSerial(serial, stockDate);
@@ -381,6 +447,14 @@ public class DefaultBlStockService implements BlStockService
 		stockLevel.setAvailable(0);
 		stockLevel.setSerialProductCode(serial.getCode());
 		stockLevel.setSerialStatus(serial.getSerialStatus());
+		if(isInactiveStatus(serial.getSerialStatus())) {
+			stockLevel.setReservedStatus(Boolean.TRUE);
+		} else {
+			stockLevel.setReservedStatus(Boolean.FALSE);
+		}
+		if(null != serial.getIsBufferedInventory()) {
+			stockLevel.setBufferedInventory(serial.getIsBufferedInventory());
+		}
 		try
 		{
 			getModelService().save(stockLevel);
@@ -395,12 +469,38 @@ public class DefaultBlStockService implements BlStockService
 
 	/**
 	 * This method created to get stock level for serial products
-	 * @param serialCode
-	 * @param startDate
-	 * @param endDate
+	 * @param serialCode the serial product code
+	 * @param startDate the rental start date
+	 * @param endDate the rental end date
 	 */
 	public void findStockLevelForExtendOrderSerialProducts(final String serialCode , final Date startDate , final Date endDate){
-		getBlStockLevelDao().findSerialStockLevelForDate(serialCode, startDate, endDate);
+		getBlStockLevelDao().findSerialStockLevelForDateFromNonBufferInv(serialCode, startDate, endDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @param blSerialProduct serial product
+	 */
+	public void findAndUpdateBufferInvInStockRecords(final BlSerialProductModel blSerialProduct) {
+			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
+					blSerialProduct);
+			stockLevels.forEach(stockLevel -> {
+				stockLevel.setBufferedInventory(blSerialProduct.getIsBufferedInventory());
+				getModelService().save(stockLevel);
+			});
+	}
+
+	/**
+	 * It checks whether the product is buffer inventory or not
+	 * @param serialProductModel
+	 * @param blSerialProductModel
+	 * @return true if the product is buffer inventory
+	 */
+	private boolean isBufferInvProduct(final BlSerialProductModel serialProductModel,
+			final BlSerialProductModel blSerialProductModel) {
+		return blSerialProductModel.getCode().equals(serialProductModel.getCode()) ? (null != blSerialProductModel
+				.getIsBufferedInventory() && blSerialProductModel.getIsBufferedInventory()) : (null != serialProductModel
+				.getIsBufferedInventory() && serialProductModel.getIsBufferedInventory());
 	}
 
 

@@ -7,6 +7,7 @@ import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.OrderModel;
 
 import java.math.BigDecimal;
+import org.apache.commons.lang.BooleanUtils;
 
 
 /**
@@ -45,5 +46,9 @@ public class BlOrderPopulator extends OrderPopulator
         target.setGiftCardDiscount(giftDiscount);
       }
     }
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
+    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
   }
 }

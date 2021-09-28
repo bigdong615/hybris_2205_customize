@@ -44,16 +44,16 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     final AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next()
         .getOrder();
-    final Set<String> productCodes = order.getEntries().stream()
+    final Set<String> productCodes = order.getEntries().stream().filter(entry -> !entry.isBundleMainEntry())
         .map(entry -> entry.getProduct().getCode()).collect(Collectors.toSet());
 
     final Collection<StockLevelModel> stockLevels = blCommerceStockService
         .getStockForProductCodesAndDate(productCodes,
             source, order.getActualRentalStartDate(), order.getActualRentalEndDate());
 
-    if (CollectionUtils.isNotEmpty(stockLevels)) {
+    if(CollectionUtils.isNotEmpty(stockLevels)) {
       final Map<String, List<StockLevelModel>> availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Populating availability map, serial products  size = {} found for product codes {} from date {} to date {} from warehouse {}",
           stockLevels.size(), productCodes, order.getActualRentalStartDate(),
           order.getActualRentalEndDate(), source.getName());

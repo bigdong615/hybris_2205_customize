@@ -8,6 +8,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * {javadoc}
@@ -209,6 +210,15 @@ public interface BlDeliveryModeService {
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone,final boolean payByCustomer)
             throws ParseException;
 
+    /**
+     * Get delivery mode data for new gear.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     * @throws ParseException
+     */
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,final boolean payByCustomer)
+        throws ParseException;
 
     /**
      * This method will fetch the partner-pickup-zone from DB who has delivery-modes associated to it from dao
@@ -321,4 +331,21 @@ public interface BlDeliveryModeService {
      * @return model
      */
     OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
+    
+    /**
+     * Check shipping blackout.
+     *
+     * @param lDeliveryModeAndGroupCode the l delivery mode and group code
+     * @return true, if successful
+     */
+    public boolean isShippingOnBlackoutDate(final List<String> lDeliveryModeAndGroupCode);
+
+    /**
+     * This method will check whether the given delivery mode is suitable for internal transfer order.
+     *
+     * @param deliveryModeModel
+     * @return true if the delivery mode supports internal transfer
+     */
+    boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
+
 }

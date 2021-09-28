@@ -1,7 +1,10 @@
 package com.bl.core.datepicker.impl;
 
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlBlackoutDateModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -16,13 +19,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -40,6 +41,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	private static final Logger LOG = Logger.getLogger(DefaultBlDatePickerService.class);
 	private SessionService sessionService;
 	private BaseStoreService baseStoreService;
+	private BlBlackoutDatesDao blBlackoutDatesDao;
 
 	/**
 	 * {@inheritDoc}
@@ -49,15 +51,19 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			throws JsonProcessingException
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DATE);
-		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()))
+		final Cookie durationDayCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DURATION);
+		if (null != selectedDateCookie && StringUtils.isNotEmpty(selectedDateCookie.getValue()) && null != durationDayCookie && StringUtils.isNotEmpty(durationDayCookie.getValue()))
 		{
 			final String date = selectedDateCookie.getValue();
 			final String[] lSelectedDates = date.split(BlCoreConstants.SEPARATOR);
+			final String rentalDuration = durationDayCookie.getValue();
 			if (lSelectedDates.length == BlCoreConstants.PAIR_OF_DATES)
 			{
 				final RentalDateDto rentalDateDto = new RentalDateDto();
 				rentalDateDto.setSelectedFromDate(lSelectedDates[0]);
 				rentalDateDto.setSelectedToDate(lSelectedDates[1]);
+				// duration days fixed picked from date picker
+				rentalDateDto.setSelectedDays(rentalDuration);
 				return rentalDateDto;
 			}
 		}
@@ -71,6 +77,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public void removeRentalDatesFromSession()
 	{
 		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date {} removed from session", BlCoreConstants.SELECTED_DATE_MAP);
 	}
 
@@ -116,18 +123,23 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public RentalDateDto getRentalDatesFromSession()
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		final Map<String, String> selectedDuration = getSessionService().getAttribute(BlCoreConstants.SELECTED_DURATION_MAP);
 		if (null != rentalDate)
 		{
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
+			final String selectedDurationDays = selectedDuration.get(BlCoreConstants.SELECTED_DURATION);
 			if (null != startDate && null != endDate)
 			{
 				date.setSelectedFromDate(startDate);
 				date.setSelectedToDate(endDate);
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
-								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT).plusDays(1))));
+								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
+				if(org.apache.commons.lang.StringUtils.isNotBlank(selectedDurationDays)) {
+					date.setSelectedDays(selectedDurationDays);
+				}
 				return date;
 			}
 		}
@@ -138,26 +150,43 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Date> getListOfBlackOutDates()
+	public List<Date> getAllBlackoutDatesForGivenType(final BlackoutDateTypeEnum blackoutDateType)
 	{
 		try
 		{
-			if (Objects.nonNull(getBaseStoreService().getCurrentBaseStore())
-					&& CollectionUtils.isNotEmpty(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()))
-			{
-				return getBaseStoreService().getCurrentBaseStore().getBlackOutDates().stream()
-						.map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime()).collect(Collectors.toList());
-			}
+			final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
+					.getAllBlackoutDatesForGivenType(blackoutDateType);
+			final List<Date> blackoutDates = allBlackoutDatesForGivenType.stream().map(
+					BlBlackoutDateModel::getBlackoutDate)
+					.collect(Collectors.toList()).stream().map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime())
+					.collect(Collectors.toList());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Blackout dates found for type {} is {}", blackoutDateType.toString(),
+					blackoutDates);
+			return blackoutDates;
 		}
 		catch (final Exception exception)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, "", "Error while getting list of black out dates from current base store",
-					exception);
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY, "Error while getting list of black out dates", exception);
 		}
 
 		return Lists.newArrayList();
 	}
-	
+
+	/**
+	 * It sets the date picker date into session
+	 *
+	 * @param selectedDuration the selected Duration
+	 */
+	@Override
+	public void addSelectedRentalDurationIntoSession(final String selectedDuration) {
+		final Map<String, String> selectedDurationMap = new HashMap<>();
+		selectedDurationMap.put(BlCoreConstants.SELECTED_DURATION, selectedDuration);
+		getSessionService().setAttribute(BlCoreConstants.SELECTED_DURATION_MAP, selectedDurationMap);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected duration {} set into session", selectedDuration);
+	}
+
+
+
 	/**
 	 * @return the sessionService
 	 */
@@ -189,6 +218,22 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public void setBaseStoreService(BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
+	}
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
 	}
 
 }

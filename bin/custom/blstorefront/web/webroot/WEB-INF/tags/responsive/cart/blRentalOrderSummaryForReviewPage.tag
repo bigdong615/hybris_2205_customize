@@ -44,6 +44,14 @@
 							priceData="${cartData.totalDamageWaiverCost}" />
 				</td>
 			</tr>
+			<c:if test="${cartData.totalOptionsCost.value gt 0}">
+				<tr>
+					<td class="gray80"><spring:theme
+							code="text.cart.rental.options" /> </td>
+					<td class="text-end" id="cart-shipping-options"><format:blPrice
+							priceData="${cartData.totalOptionsCost}" /></td>
+				</tr>
+				</c:if>
 			<tr>
 				<td class="gray80"><spring:theme
 						code="text.checkout.multi.order.summary.shipping" /></td>
@@ -86,11 +94,27 @@
 		<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 			modelAttribute="placeOrderForm">
 
-			<button id="placeOrderSummary" type="button"
-				class="btn btn-block btn-primary mt-4">
-				<spring:theme code="checkout.summary.placeOrder"
-					text="Place Your Order" />
-			</button>
+			<c:choose>
+				<c:when test="${isCustomerHasUnPaidBillOrders}">
+					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
+						data-bs-target="#unpaidBill" 
+						class="btn btn-block btn-primary mt-4"> <spring:theme
+							code="checkout.summary.placeOrder" text="Place Your Order" />
+					</a>
+				</c:when>
+				<c:otherwise>
+					<button id="placeOrderSummary" type="button"
+						class="btn btn-block btn-primary mt-4">
+						<spring:theme code="checkout.summary.placeOrder"
+							text="Place Your Order" />
+					</button>
+				</c:otherwise>
+			</c:choose>
+
+
+
 		</form:form>
 	</div>
 </div>
+
+

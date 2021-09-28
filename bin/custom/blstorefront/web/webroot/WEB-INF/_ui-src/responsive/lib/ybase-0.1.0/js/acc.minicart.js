@@ -1,5 +1,5 @@
 ACC.minicart = {
-	
+
 	_autoload: [
 		"bindMiniCart"
 	],

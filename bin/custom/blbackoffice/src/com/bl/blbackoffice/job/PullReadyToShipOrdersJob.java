@@ -51,27 +51,36 @@ public class PullReadyToShipOrdersJob extends
     //compare both dates
     if (pullReadyToShipOrdersCronJob.getShipDate().before(currentDate)) {
       shipDate = currentDate;
-      } else {
+    } else {
       shipDate = pullReadyToShipOrdersCronJob.getShipDate();
-      }
+    }
 
-    //remove the existing ReadyToShipOrderItem models for the specified shipping date
-    blReadyToShipOrderItemService.removeReadyToShipOrderItemsForDateAndWareshouse(shipDate,
-        pullReadyToShipOrdersCronJob.getWarehouse());
+    //remove the existing ReadyToShipOrderItem models for the specified warehouse
+    blReadyToShipOrderItemService
+        .removeReadyToShipOrderItemsForWarehouse(pullReadyToShipOrdersCronJob.getWarehouse());
 
     final List<ConsignmentModel> consignmentModels = blConsignmentDao
         .getReadyToShipConsignmentsForDate(shipDate);
 
     if (CollectionUtils.isNotEmpty(consignmentModels)) {
 
-     final List<ConsignmentModel> filteredConsignmentModels = consignmentModels.stream().filter(
+      final List<ConsignmentModel> filteredConsignmentModels = consignmentModels.stream().filter(
           consignmentModel -> consignmentModel.getWarehouse() == pullReadyToShipOrdersCronJob
               .getWarehouse()).collect(Collectors.toList());
 
       try {
-      // create fresh order items and store in DB
-        blReadyToShipOrderItemService.createReadyToShipOrderItems(filteredConsignmentModels,
-          pullReadyToShipOrdersCronJob.getMembersCount());
+
+        if (CollectionUtils.isNotEmpty(filteredConsignmentModels)) {
+
+          blReadyToShipOrderItemService.createReadyToShipOrderItems(filteredConsignmentModels,
+              pullReadyToShipOrdersCronJob.getMembersCount());
+        } else {
+          BlLogger.logFormattedMessage(LOG, Level.INFO,
+              "PullReadyToShipOrdersJob :- No consignments found for shipping on {} for warehouse {}",
+              shipDate.toString(), pullReadyToShipOrdersCronJob
+                  .getWarehouse().getCode());
+        }
+
       } catch (final Exception ex) {
 
         BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
@@ -79,7 +88,12 @@ public class PullReadyToShipOrdersJob extends
         return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.FAILURE);
       }
 
-      }
+    } else {
+
+      BlLogger.logFormattedMessage(LOG, Level.INFO,
+          "PullReadyToShipOrdersJob :- No consignments found for shipping on {} for warehouse {}",
+          shipDate.toString(), pullReadyToShipOrdersCronJob.getWarehouse().getCode());
+    }
 
     BlLogger
         .logFormatMessageInfo(LOG, Level.INFO, "Successfully executed PullReadyToShipOrdersJob...");

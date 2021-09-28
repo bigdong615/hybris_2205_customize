@@ -1,7 +1,7 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
-import com.bl.core.constants.GeneratedBlCoreConstants.Attributes.StockLevel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -38,6 +38,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
   private BlCommerceStockService blCommerceStockService;
   private BlSourcingLocationService blSourcingLocationService;
   private BaseStoreService baseStoreService;
+  private BlProductService productService;
 
   /**
    * This is to source the order
@@ -55,7 +56,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
       
        sourcingLocation.setCompleteSourcePossible(true);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Complete sourcing possible from primary warehouse {}",
           sourcingLocation.getWarehouse().getCode());
     } else {
       final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
@@ -70,7 +71,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
           if (isSourcingNoSplittingPossible(sourcingContext, otherSourcingLocation)) {
             
             otherSourcingLocation.setCompleteSourcePossible(true);
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Complete sourcing possible from other warehouse {}",
                 otherSourcingLocation.getWarehouse().getCode());
             break;
           }
@@ -105,20 +106,37 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       final SourcingLocation sourcingLocation) {
 
     sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-      final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(orderEntry) ? orderEntry.getQuantity()
+          : getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+
       if (availableQty.longValue() != 0l) {
         populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
             availableQty);
       }
+
     });
 
     return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
-      final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
+
+      final Long availableQty = isAquatechProductInEntry(entry) ? entry.getQuantity()
+          : getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
   }
 
   /**
+   * Check whether aquatech product is in given order entry.
+   *
+   * @param orderEntry
+   * @return true if aquatech product is in this entry.
+   */
+  private boolean isAquatechProductInEntry(final AbstractOrderEntryModel orderEntry) {
+
+    return productService.isAquatechProduct(orderEntry.getProduct());
+  }
+
+    /**
    * Populate context with allocatedQuantity.
    * @param sourcingContext
    * @param sourcingLocation
@@ -136,6 +154,10 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
 
     allocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), allocatableQty);
     sourcingLocation.setAllocatedMap(allocatedMap);
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Sourcing Location with warehouse {} has allocatedMap =  {}",
+        sourcingLocation.getWarehouse().getCode(), allocatedMap.toString());
+
     unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), oldUnAllocatedQty - allocatableQty);
     sourcingContext.setUnallocatedMap(unAllocatedMap);
   }
@@ -154,14 +176,14 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     if (MapUtils.isNotEmpty(sourcingLocation.getAvailabilityMap())
         && sourcingLocation.getAvailabilityMap().get(productModel.getCode()) != null) {
      List<StockLevelModel> stockLevelList = sourcingLocation.getAvailabilityMap().get(productModel.getCode());
-      Set<String> serialProductCodes = stockLevelList.stream().map(stock -> stock.getSerialProductCode()).collect(
-          Collectors.toSet());
+      final Set<String> serialProductCodes = stockLevelList.stream()
+          .map(StockLevelModel::getSerialProductCode).collect(Collectors.toSet());
 
       stockLevel = Long.valueOf(serialProductCodes.size());
 
     }
 
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} found for product code {} from warehouse {} ",
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stock size {} found for product code {} from warehouse {} ",
         stockLevel.intValue(), productModel.getCode(), sourcingLocation.getWarehouse().getCode());
 
     return stockLevel;
@@ -192,4 +214,11 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     this.baseStoreService = baseStoreService;
   }
 
+  public BlProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(BlProductService productService) {
+    this.productService = productService;
+  }
 }

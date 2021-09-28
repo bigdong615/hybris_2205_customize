@@ -3,13 +3,18 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.product.data.AvailabilityMessage;
@@ -18,6 +23,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -36,13 +42,13 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateQuantityForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCartFormValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.CommerceSaveCartParameterData;
-import de.hybris.platform.commercefacades.order.data.CommerceSaveCartResultData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -54,10 +60,12 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.product.ProductService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -112,6 +120,7 @@ public class CartPageController extends AbstractCartPageController
 	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	private static final String REDIRECT_QUOTE_EDIT_URL = REDIRECT_PREFIX + "/quote/%s/edit/";
 	private static final String REDIRECT_QUOTE_VIEW_URL = REDIRECT_PREFIX + "/my-account/my-quotes/%s/";
+	private static final String REDIRECT_EMPTY_CART = REDIRECT_PREFIX+"/cart/emptyCart";
 
 
 	private static final Logger LOG = Logger.getLogger(CartPageController.class);
@@ -167,6 +176,18 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "blGiftCardFacade")
 	private BlGiftCardFacade blGiftCardFacade;
 
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+
+  @Resource(name ="productService")
+	ProductService productService;
+
+	@Resource(name = "blRentalDurationCookieGenerator")
+	private BlRentalDurationCookieGenerator blRentalDurationCookieGenerator;
+
+	@Resource(name = "blPromotionService")
+	private BlPromotionService blPromotionService;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -180,10 +201,22 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@GetMapping
-	public String showCart(final Model model) throws CMSItemNotFoundException
-	{
+	public String showCart(final Model model) throws CMSItemNotFoundException{
+		checkDatesIsBlackoutDate(model);
+		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
+		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
+					((AssistedServiceSession) getSessionService()
+							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
+				return REDIRECT_EMPTY_CART;
+			}
+		}
+		if(Objects.nonNull(cartModel)){
+		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel);
+		}
+
 		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -192,13 +225,52 @@ public class CartPageController extends AbstractCartPageController
 				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
 			}
 		}
-		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		if(Objects.nonNull(cartModel) && BooleanUtils.isTrue(isCartForReplacementOrder(cartModel))){
+			cartModel.setCalculated(Boolean.TRUE);
+			model.addAttribute("isReplacementOrderCart" , true);
+		}
+		else {
+			if(null != getSessionService().getAttribute(BlControllerConstants.RETURN_REQUEST)) {
+				getSessionService().removeAttribute(BlControllerConstants.RETURN_REQUEST);
+			}
+			getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		}
 		if(StringUtils.isNotEmpty(removedEntries)) {
 			GlobalMessages
 					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
 							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
 		}
+
+
+		if(null != sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(sessionService.getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))) {
+			sessionService.removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
+		}
+
 		return prepareCartUrl(model);
+	}
+	
+	/**
+	 * Check selected rental dates is blackout date.
+	 *
+	 * @param model the model
+	 */
+	private void checkDatesIsBlackoutDate(final Model model)
+	{
+		final RentalDateDto rentalDatesFromSession = blDatePickerService.getRentalDatesFromSession();
+		if(Objects.nonNull(rentalDatesFromSession) && StringUtils.isNotBlank(rentalDatesFromSession.getSelectedFromDate())
+				&& StringUtils.isNotBlank(rentalDatesFromSession.getSelectedToDate()))
+		{
+			final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
+			if(blCartService.isSelectedDateIsBlackoutDate(rentalStartDate, BlackoutDateTypeEnum.RENTAL_START_DATE))
+			{
+				GlobalMessages.addErrorMessage(model, "blackout.rental.start.date.error");
+			}
+			final Date rentalEndDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
+			if(blCartService.isSelectedDateIsBlackoutDate(rentalEndDate, BlackoutDateTypeEnum.RENTAL_END_DATE))
+			{
+				GlobalMessages.addMessage(model,GlobalMessages.ERROR_MESSAGES_HOLDER , "blackout.rental.end.date.error", new Object[]{getRentalsDuration().getSelectedToDate()});
+			}
+		}
 	}
 
 	protected String prepareCartUrl(final Model model) throws CMSItemNotFoundException
@@ -360,18 +432,28 @@ public class CartPageController extends AbstractCartPageController
 		else if (getCartFacade().hasEntries())
 		{
 			try
-			{				
+			{
+				final CartModel cartModel = blCartService.getSessionCart();
 				if (removeEntry)
 				{
-					final CartModel cartModel = blCartService.getSessionCart();
 					Optional<AbstractOrderEntryModel> findEntry = cartModel.getEntries().stream().filter(entry -> entry.getEntryNumber() == entryNumber).findFirst();
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-
+					//Added condition to update gift card purchase status when remove from cart
+					if(BooleanUtils.isTrue(cartModel.isGiftCardOrder()))
+					{
+						blCartService.updateGiftCardPurchaseStatus(cartModel);
+				  }
+          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          {
+            blCartService.updateNewGearPurchaseStatus(cartModel);
+          }
 					//Added condition to change serial status when entry remove from cart
 					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
+				}else if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
 				{
@@ -475,9 +557,14 @@ public class CartPageController extends AbstractCartPageController
 	private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
 	{
 		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore().getWarehouses();
-		final List<Date> blackOutDates = blDatePickerService.getListOfBlackOutDates();
+		final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
 		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
 		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
+		BlProductModel productModel = (BlProductModel)productService.getProductForCode(productCode);
+		if(productModel.isBundleProduct()){
+			return blCommerceStockService.getAvailableCountForBundle(
+					productModel, warehouseModelList, startDay, endDay);
+		}
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
 	}
 
@@ -518,10 +605,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		super.prepareDataForPage(model);
 
-		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
-		{
-			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
-		}
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 
 		// Because DefaultSiteConfigService.getProperty() doesn't set default boolean value for undefined property,
 		// this property key was generated to use Config.getBoolean() method
@@ -530,6 +614,7 @@ public class CartPageController extends AbstractCartPageController
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.cart"));
 		model.addAttribute("pageType", PageType.CART.name());
 		final CartData cartData = getCartFacade().getSessionCart();
+		model.addAttribute(BlControllerConstants.RENTAL_DATE, getRentalsDuration());
 		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
@@ -642,25 +727,19 @@ public class CartPageController extends AbstractCartPageController
 		else
 		{
 			final CommerceSaveCartParameterData commerceSaveCartParameterData = new CommerceSaveCartParameterData();
-			commerceSaveCartParameterData.setName(form.getName());
+			commerceSaveCartParameterData.setName(form.getName().trim());
 			commerceSaveCartParameterData.setDescription(form.getDescription());
 			commerceSaveCartParameterData.setEnableHooks(true);
 			try
 			{
-				final CommerceSaveCartResultData saveCartData = saveCartFacade.saveCart(commerceSaveCartParameterData);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "basket.save.cart.on.success",
-						new Object[]
-						{ saveCartData.getSavedCartData().getName() });
+				saveCartFacade.saveCart(commerceSaveCartParameterData);
 			}
 			catch (final CommerceSaveCartException csce)
 			{
-				LOG.error(csce.getMessage(), csce);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "basket.save.cart.on.error",
-						new Object[]
-						{ form.getName() });
+				BlLogger.logMessage(LOG , Level.DEBUG , "Error while saveCart method ", csce);
 			}
 		}
-		return REDIRECT_CART_URL;
+		return BlControllerConstants.REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
 
 	@GetMapping(value = "/export", produces = "text/csv")
@@ -745,10 +824,14 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@PostMapping(value = "/voucher/remove")
-	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request)
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request, final HttpServletResponse response)
 	{
 		try
 		{
+			if(blPromotionService.isFreeDayCouponPromoApplied(blCartService.getSessionCart())) {
+				blRentalDurationCookieGenerator.removeCookie(response);
+				blRentalDurationCookieGenerator.addCookie(response, getRentalsDuration().getNumberOfDays());
+			}
 			voucherFacade.releaseVoucher(form.getVoucherCode());
 		}
 		catch (final VoucherOperationException e)
@@ -859,6 +942,7 @@ public class CartPageController extends AbstractCartPageController
 		if(BooleanUtils.isTrue(cartData.getIsRentalCart()))
 		{
 			getBlCartFacade().checkAvailabilityForRentalCart(cartData);
+			getBlCartFacade().checkAquatechRentalDates(cartData);
 		}
 		if (CollectionUtils.isEmpty(cartData.getEntries())) {
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
@@ -891,6 +975,36 @@ public class CartPageController extends AbstractCartPageController
 		try
 		{	
 			getBlCartFacade().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
+			return getCartPageRedirectUrl();
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
+					"Error while updating Damage Waiver with the entry number : {}", entryNumber);
+			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.waiver.fail");
+		}
+		return prepareCartUrl(model);
+	}
+	
+	/**
+	 * Update cart entry with the selected options on cart page.
+	 *
+	 * @param entryNumber the entry number
+	 * @param bloptions the bloptions
+	 * @param model the model
+	 * @param request the request
+	 * @param redirectModel the redirect model
+	 * @return the string
+	 * @throws CMSItemNotFoundException the CMS item not found exception
+	 */
+	@PostMapping(path="/updateBlOptions")
+	public String updateCartEntryBlOptions(@RequestParam("entryNumber") final long entryNumber, 
+			@RequestParam("bloptions") final String bloptions, final Model model,
+			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	{
+		try
+		{	
+			getBlCartFacade().updateCartEntrySelectedOption(entryNumber, bloptions);
 			return getCartPageRedirectUrl();
 		}
 		catch (final Exception exception)
@@ -959,17 +1073,34 @@ public class CartPageController extends AbstractCartPageController
 		{
 			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
 		}
+		else if(blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
+				BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_START_DATE)
+				|| blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
+						BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_END_DATE))
+		{
+			return BlControllerConstants.BLACKOUT_DATE_FOUND;
+		}
 		else
 		{
+			final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
+			final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(null == cartModel.getRentalStartDate() && null == cartModel.getRentalEndDate()) {
-				final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
-				final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
+				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
+			} else if(!(cartModel.getRentalStartDate().compareTo(startDate) == 0) ||
+					!(cartModel.getRentalEndDate().compareTo(endDate) == 0)) {
 				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 			}
-			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
-			{
+
+			final String currentDateString = BlDateTimeUtils.convertDateToStringDate(new Date(),
+					BlCoreConstants.SQL_DATE_FORMAT);
+			final int daysDifference = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDateString,
+					rentalDateDto.getSelectedFromDate());
+
+			if ((blCartService.isAquatechProductsPresentInCart()
+					&& daysDifference < BlCoreConstants.TWO_DAYS) || BooleanUtils
+					.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto))) {
 				return BlControllerConstants.STOCK_FAILURE_RESULT;
 			}
 		}
@@ -1061,6 +1192,11 @@ public class CartPageController extends AbstractCartPageController
 	private String getFormattedDate(final Date date)
 	{
 		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
+	}
+
+	private boolean isCartForReplacementOrder(final CartModel cartModel) {
+		return  BlReplaceMentOrderUtils.isReplaceMentOrder() &&
+				Objects.nonNull(cartModel.getReturnRequestForOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST);
 	}
 
 	/**

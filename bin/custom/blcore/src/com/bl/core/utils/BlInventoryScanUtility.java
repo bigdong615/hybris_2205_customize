@@ -112,7 +112,43 @@ public final class BlInventoryScanUtility
 	{
 		final List<String> repairLocations = new ArrayList<>();
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CLEAN_MOBILE_CART);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CABINET);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_SHELF);
+		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_LAUNDRY_BIN);
 		return repairLocations;
+	}
+
+	/**
+	 * Gets the shipping work station locations.
+	 *
+	 * @return defaultLocations for shipping
+	 */
+	public static List<String> getShippingWorkstationInitial()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+
+		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.BOXING_FEDEX);
+		defaultLocations.add(BlInventoryScanLoggingConstants.UPS);
+		return defaultLocations;
+	}
+
+	/**
+	 * Gets the front desk shelf locations.
+	 *
+	 * @return defaultLocations for front desk
+	 */
+
+	public static List<String> getFrontDeskShelfInitial()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+
+		defaultLocations.add(BlInventoryScanLoggingConstants.FD_MOBILE_SHELF);
+		return defaultLocations;
 	}
 
 	/**
@@ -143,6 +179,48 @@ public final class BlInventoryScanUtility
 		defaultLocations.addAll(getDirtyPriorityCartLocations());
 
 		return defaultLocations;
+	}
+
+	/**
+	 * javadoc
+	 *
+	 * @return List<String> for default locations
+	 */
+	public static List<String> getDefaultBinLocation()
+	{
+		final List<String> defaultBinLocation = new ArrayList<>();
+		defaultBinLocation.add(BlInventoryScanLoggingConstants.BIN);
+		return defaultBinLocation;
+	}
+
+	/**
+	 * Gets the tech eng repair locations.
+	 *
+	 * @return the tech eng repair locations
+	 */
+	public static List<String> getShippingAllowedLocations()
+	{
+		final List<String> shippingAllowedLocation = new ArrayList<>();
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		return shippingAllowedLocation;
+	}
+
+	/**
+	 * Gets the front desk allowed working station locations.
+	 *
+	 * @return fdAllowedLocation
+	 */
+	public static List<String> getFrontDeskAllowedWorkStationLocations()
+	{
+		final List<String> fdAllowedLocation = new ArrayList<>();
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPER_WORKSTATION);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		fdAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPED_MOBILE_CART);
+		return fdAllowedLocation;
 	}
 
 	/**

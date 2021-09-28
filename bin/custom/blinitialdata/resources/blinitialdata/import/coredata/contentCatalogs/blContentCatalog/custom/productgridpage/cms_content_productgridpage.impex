@@ -41,12 +41,15 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]     ; n
                          ;                          ; FooterSlot             ; Footer                          ; true
                          ;                          ; HeaderLinksSlot        ; Header links                    ; true
                          ;                          ; SearchBoxBl            ; Search Box                      ; true
+                         ;                          ; BlRentalGearBanner     ; Rental Gear Banner              ; true
+                         ;                          ; BlUsedGearBanner       ; Used Gear Banner                ; true
                          ;                          ; TopHeaderSlot          ; Top Header                      ; true
                          ;                          ; BottomHeaderSlot       ; Bottom Header                   ; true
                          ;                          ; ProductLeftRefinements ; Refinements                     ; true
                          ;                          ; ProductGridSlot        ; Product List                    ; true
                          ;                          ; PlaceholderContentSlot ; Placeholder for Addon tag files ; true
                          ;                         ; SocialMediaSectionSlot  ; Social Media Section Slot       ; true
+                         ;                         ; MobileMiniCartSlot      ;                                 ; true
 
 
 
@@ -54,6 +57,8 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; SiteLogo                      ;                                                                              ;                          ; logo
                              ; HeaderLinks                   ;                                                                              ;                          ; headerlinks
                              ; SearchBoxBl                   ;                                                                              ;                          ; searchbox
+                             ; BlRentalGearBanner            ;                                                                              ;                          ; 
+                             ; BlUsedGearBanner              ;                                                                              ;                          ; 
                              ; MiniCart                      ;                                                                              ;                          ; minicart
                              ; NavigationBar                 ;                                                                              ;                          ; navigation
                              ; Section1                      ;                                                                              ;                          ; wide
@@ -71,6 +76,8 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarSlot             ;                                                                              ;                          ; navigation
                              ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                             ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -81,6 +88,8 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                          ; Footer-productGridPage                    ; Footer                        ;                                                                                  ; FooterSlot                                 ; true
                                     ;                          ; HeaderLinks-productGridPage               ; HeaderLinks                   ;                                                                                  ; HeaderLinksSlot                            ; true
                                     ;                          ; SearchBox-productGridPage                 ; SearchBoxBl                   ;                                                                                  ; SearchBoxBl                                ; true
+                                    ;                          ; RentalGearBanner-productGridPage   	   ; BlRentalGearBanner            ;                                                                                  ; BlRentalGearBanner                         ; true
+                                    ;                          ; UsedGearBanner-productGridPage     	   ; BlUsedGearBanner              ;                                                                                  ; BlUsedGearBanner                           ; true
                                     ;                          ; TopHeaderSlot-productGridPage             ; TopHeaderSlot                 ;                                                                                  ; TopHeaderSlot                              ; true
                                     ;                          ; BottomHeaderSlot-productGridPage          ; BottomHeaderSlot              ;                                                                                  ; BottomHeaderSlot                           ; true
                                     ;                          ; ProductLeftRefinemnts-productGridPage     ; ProductLeftRefinements        ;                                                                                  ; ProductLeftRefinements                     ; true
@@ -98,6 +107,8 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                          ; FooterSubscriptionSlot-productGrid        ; FooterSubscriptionSlot        ;                                                                                  ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-productGrid           ; FooterCopyRightslot           ;                                                                                  ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
+                                    ;                         ; MyAccountSlot-productGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                    ;                         ; MobileMiniCartSlot-productGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 

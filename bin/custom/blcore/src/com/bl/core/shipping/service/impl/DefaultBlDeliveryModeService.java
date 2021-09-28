@@ -1,6 +1,36 @@
 package com.bl.core.shipping.service.impl;
 
-import com.bl.core.model.*;
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.blackout.date.dao.BlBlackoutDatesDao;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.CarrierEnum;
+import com.bl.core.model.BlBlackoutDateModel;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.OptimizedShippingMethodModel;
+import com.bl.core.model.PartnerPickUpStoreModel;
+import com.bl.core.model.ShippingCostModel;
+import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.model.ShippingOptimizationModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.shipping.dao.BlDeliveryModeDao;
+import com.bl.core.shipping.service.BlDeliveryModeService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.fexEx.data.SameDayCityReqData;
+import com.bl.facades.fexEx.data.SameDayCityResData;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.integration.services.BlFedExSameDayService;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -14,47 +44,32 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
-
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.StockResult;
-import com.bl.core.enums.CarrierEnum;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.shipping.dao.BlDeliveryModeDao;
-import com.bl.core.shipping.service.BlDeliveryModeService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.fexEx.data.SameDayCityReqData;
-import com.bl.facades.fexEx.data.SameDayCityResData;
-import com.bl.integration.services.BlFedExSameDayService;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -80,12 +95,18 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private BlCartService blCartService;
 
     private BaseStoreService baseStoreService;
+    
+    private BlBlackoutDatesDao blBlackoutDatesDao;
 
     @Value("${shipping.sf.zip.code}")
     private String sf;
 
     @Value("${shipping.nyc.zip.code}")
     private String nyc;
+    
+    private BlDatePickerService blDatePickerService;
+
+    private BlProductService productService;
 
     /**
      * {@inheritDoc}
@@ -96,7 +117,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<ShippingGroupModel> getAllShippingGroups() {
         return getBlZoneDeliveryModeDao().getAllShippingGroups();
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -149,7 +170,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         }
         return allDeliveryModes;
     }
-
 
     /**
      * {@inheritDoc}
@@ -284,7 +304,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(final String rentalStart,
                                                                                                                 final String rentalEnd,
                                                                                                                 final boolean payByCustomer) {
-        return getPartnerPickUpDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer).stream()
+   	 return getPartnerPickUpDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer).stream()
                 .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
     }
 
@@ -349,6 +369,30 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
 
     /**
+     * Get delivery Zone for new Gear product.
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,
+        final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
+            .getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+            final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>();
+            blPickUpZoneDeliveryModeModels.forEach(blPickUpZoneDeliveryModeModel ->{
+                if(blPickUpZoneDeliveryModeModel.isWarehousePickUp()){
+                    newBlPickUpZoneDeliveryModeModels.add(blPickUpZoneDeliveryModeModel);
+                }
+            });
+            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
+                : Collections.emptyList();
+
+        }
+        return Collections.emptyList();
+    }
+    /**
      * This method will check conditions for partner delivery locations
      *
      * @param blPickUpZoneDeliveryModeModels collection to remove unwanted records
@@ -386,7 +430,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                       final String rentalStart, final String rentalEnd,
                                                                       final boolean payByCustomer) {
 
-        return getBlZoneDeliveryModeDao().getBlRushDeliveryModes(deliveryMode, pstCutOffTime, payByCustomer).stream()
+   	 return getBlZoneDeliveryModeDao().getBlRushDeliveryModes(deliveryMode, pstCutOffTime, payByCustomer).stream()
                 .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
     }
 
@@ -523,16 +567,27 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             } else {
                 abstractOrderEntryModels = order.getEntries();
             }
-            for (final AbstractOrderEntryModel entry : abstractOrderEntryModels) {
-                final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                if (blSerialProduct != null) {
+            for (Iterator<AbstractOrderEntryModel> iterator = abstractOrderEntryModels.iterator(); iterator.hasNext();)
+				{
+					final AbstractOrderEntryModel entry = iterator.next();
+					final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                
                     totalWeight = getBigDecimal(totalWeight, entry);
-                    sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
-                            * entry.getQuantity().intValue()));
-                    maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                    maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                }
-            }
+                    if(blSerialProduct instanceof BlSerialProductModel) {
+                        final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+
+                        sumWidth = getSumWidth(sumWidth, ((blProduct.getWidth() != null ? blProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                                * entry.getQuantity().intValue()));
+                        maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blProduct.getLength());
+                    }else if(null != blSerialProduct) {
+                        sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
+                                * entry.getQuantity().intValue()));
+                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+                    }
+                
+				}
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total weight: {} ", totalWeight.doubleValue());
@@ -571,7 +626,13 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
 
-        weight = totalWeight.doubleValue() + weight;
+        if(!(blSerialProduct instanceof BlSerialProductModel)) {
+            weight = totalWeight.doubleValue() + weight;
+        }else {
+            if (!(((BlSerialProductModel) entry.getProduct()).getBlProduct().getCode().equals(((BlSerialProductModel) blSerialProduct).getBlProduct().getCode()))) {
+                weight = totalWeight.doubleValue() + weight;
+            }
+        }
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);
         } else {
@@ -724,24 +785,188 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
         if (Objects.nonNull(deliveryModeModel)) {
-            final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
-            final Date rentalStartDate = getRentalStartDate(rentalStart, numberOfDaysToSkip);
-            final Date rentalEndDate = getRentalEndDate(rentalEnd, numberOfDaysToSkip);
-            final Set<WarehouseModel> lWareHouses = Objects.nonNull(deliveryModeModel.getWarehouse())
-                    ? Sets.newHashSet(deliveryModeModel.getWarehouse())
-                    : Sets.newHashSet(getBaseStoreService().getCurrentBaseStore().getWarehouses());
+
+            final int preDaysToDeduct = Integer.parseInt(deliveryModeModel.getPreReservedDays());
+
+            final int postDaysToAdd = Integer.parseInt(deliveryModeModel.getPostReservedDays());
+
+            final List<Date> holidayBlackoutDates = getBlDatePickerService()
+                .getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+
+            final Date rentalStartDate = BlDateTimeUtils
+                .subtractDaysInRentalDates(preDaysToDeduct, rentalStart, holidayBlackoutDates);
+            final Date rentalEndDate = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+                rentalEnd, holidayBlackoutDates);
+
+
+            final LocalDate rentalStartLocalDate = rentalStartDate.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
+            final LocalDate todayLocalDate = new Date().toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+            if (!isRentalStartDateBlackoutDate(rentalStartDate, holidayBlackoutDates) && (
+                rentalStartLocalDate.isAfter(todayLocalDate) || (
+                rentalStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+                        .compareTimeWithCutOff(deliveryModeModel.getCutOffTime())))) {
+
+            if (isEligibleDeliveryModeForOrderTransfer(deliveryModeModel)) {
+
+                isAvailable.set(
+                    checkAvailabilityForPossibleOrderTransferOrders(deliveryModeModel,
+                            rentalStartDate, rentalEndDate, holidayBlackoutDates));
+
+            } else {
+                final Set<WarehouseModel> lWareHouses =
+                    Objects.nonNull(deliveryModeModel.getWarehouse())
+                        ? Sets.newHashSet(deliveryModeModel.getWarehouse())
+                        : Sets.newHashSet(
+                            getBaseStoreService().getCurrentBaseStore().getWarehouses());
+
+                final CartModel cartModel = getBlCartService().getSessionCart();
+                cartModel.getEntries().forEach(cartEntry -> {
+
+                    final StockResult stockForEntireDuration =
+                        ((BlProductModel) cartEntry.getProduct()).isBundleProduct()
+                            ? getBlCommerceStockService()
+                            .getStockForBundleProduct((BlProductModel) cartEntry.getProduct(),
+                                lWareHouses, rentalStartDate, rentalEndDate)
+                            : getBlCommerceStockService()
+                                .getStockForEntireDuration(cartEntry.getProduct().getCode(),
+                                    lWareHouses, rentalStartDate, rentalEndDate);
+
+                    if (!productService.isAquatechProduct(cartEntry.getProduct())
+                            && stockForEntireDuration.getAvailableCount() < cartEntry
+                            .getQuantity()) {
+
+                            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                                "Stock not sufficient for Actual rental start date : {} and actual rental end date : {} for product : {} for delivery mode : {}",
+                                rentalStartDate, rentalEndDate, cartEntry.getProduct().getCode(),
+                                deliveryModeModel.getCode());
+
+                        isAvailable.set(Boolean.FALSE);
+                        return;
+                    }
+
+                });
+
+                return isAvailable.get();
+            }
+            }  else {
+
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                    "Rental Dates not eligible for new Actual rental start date : {} and rental end date : {} for delivery mode : {}",
+                    rentalStartDate, rentalEndDate, deliveryModeModel.getCode());
+
+                isAvailable.set(Boolean.FALSE);
+                return isAvailable.get();
+            }
+        }
+        return isAvailable.get();
+    }
+
+    /**
+     * This method is to check the the given rental start date is itself a blackout date
+     *
+     * @param rentalStartDate
+     * @param listOfBlackOutDates
+     * @return true if it is a blackout date
+     */
+    private boolean isRentalStartDateBlackoutDate(final Date rentalStartDate,
+        final Collection<Date> listOfBlackOutDates) {
+
+        final boolean rentalDateBlackoutDate = listOfBlackOutDates.stream()
+            .anyMatch(date -> DateUtils.isSameDay(date, rentalStartDate));
+
+        if (rentalDateBlackoutDate) {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                "Rental start Date : {} is a blackout date, so not eligible for renting.",
+                rentalStartDate);
+        }
+
+        return rentalDateBlackoutDate;
+    }
+
+    /**
+     * This method is to check the stock availability in different warehouses, in case of internal
+     * trnasfer orders
+     *
+     * @param deliveryModeModel
+     * @param rentalStartDate
+     * @param rentalEndDate
+     * @return true if stock available
+     */
+    private boolean checkAvailabilityForPossibleOrderTransferOrders(
+        final ZoneDeliveryModeModel deliveryModeModel, final Date rentalStartDate,
+        final Date rentalEndDate, final List<Date> holidayBlackoutDates) {
+
+        final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
+
+            final Set<WarehouseModel> selectedWareHouse = Sets
+                .newHashSet(deliveryModeModel.getWarehouse());
+
+            final Set<WarehouseModel> otherWareHouse = getBaseStoreService().getCurrentBaseStore()
+                .getWarehouses().stream().filter(warehouse -> !warehouse.getCode()
+                    .equalsIgnoreCase(deliveryModeModel.getWarehouse().getCode())).collect(
+                    Collectors.toSet());
+
             final CartModel cartModel = getBlCartService().getSessionCart();
             cartModel.getEntries().forEach(cartEntry -> {
-                final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
-                        cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
-                if (stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
-                    isAvailable.set(Boolean.FALSE);
-                    return;
+
+                final StockResult stockForEntireDuration =
+                    ((BlProductModel) cartEntry.getProduct()).isBundleProduct()
+                        ? getBlCommerceStockService()
+                        .getStockForBundleProduct((BlProductModel) cartEntry.getProduct(),
+                            selectedWareHouse, rentalStartDate, rentalEndDate)
+                        : getBlCommerceStockService()
+                            .getStockForEntireDuration(cartEntry.getProduct().getCode(),
+                                selectedWareHouse, rentalStartDate, rentalEndDate);
+
+                if (!productService.isAquatechProduct(cartEntry.getProduct())
+                    && stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+
+                    //here not available, so check in other warehouse  with +1 start date
+                    final Date newStartDate = BlDateTimeUtils
+                        .getDateWithSubtractedDays(1, rentalStartDate, holidayBlackoutDates);
+
+                    final LocalDate newStartLocalDate = newStartDate.toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
+                    final LocalDate todayLocalDate = new Date().toInstant()
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
+
+                    if (newStartLocalDate.isAfter(todayLocalDate) || (
+                        newStartLocalDate.isEqual(todayLocalDate) && BlDateTimeUtils
+                            .compareTimeWithCutOff(deliveryModeModel.getCutOffTime()))) {
+
+                        final StockResult stockForEntireDurationOtherWarehouse = getBlCommerceStockService()
+                            .getStockForEntireDuration(
+                                cartEntry.getProduct().getCode(), otherWareHouse, newStartDate,
+                                rentalEndDate);
+                        if (stockForEntireDurationOtherWarehouse.getAvailableCount() < cartEntry
+                            .getQuantity()) {
+
+                            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                                "Stock is not available for order transfer(+1)  rental start date : {} and actual rental end date : {} for product : {} for delivery mode : {}",
+                                newStartDate, rentalEndDate, cartEntry.getProduct().getCode(),
+                                deliveryModeModel.getCode());
+
+                            //change the start date with +1 order transfer
+                            isAvailable.set(Boolean.FALSE);
+                            return;
+                        }
+                    } else {
+
+                        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                            "New Actual rental start date : {} become past date than : {} for delivery mode : {}",
+                            newStartDate, new Date(), deliveryModeModel.getCode());
+
+                        isAvailable.set(Boolean.FALSE);
+                        return;
+                    }
+
                 }
 
             });
-            return isAvailable.get();
-        }
+
         return isAvailable.get();
     }
 
@@ -773,43 +998,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return getBlZoneDeliveryModeDao().getOptimizedShippingMethod(code);
     }
 
-    /**
-     * Gets the rental start date by subtracting number of days to skip for selected delivery mode.
-     *
-     * @param rentalStartDate    the rental start date
-     * @param numberOfDaysToSkip the number of days to skip
-     * @return the rental start date
-     */
-    private Date getRentalStartDate(final String rentalStartDate, final int numberOfDaysToSkip) {
-        LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalStartDate, BlCoreConstants.DATE_FORMAT);
-        int subtractedDays = 0;
-        while (subtractedDays < numberOfDaysToSkip) {
-            startDate = startDate.minusDays(1);
-            if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-                ++subtractedDays;
-            }
-        }
-        return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
-
-    /**
-     * Gets the rental end date by adding number of days to skip for selected delivery mode..
-     *
-     * @param rentalEndDate     the rental end date
-     * @param numberOfDaysToAdd the number of days to add
-     * @return the rental end date
-     */
-    private Date getRentalEndDate(final String rentalEndDate, final int numberOfDaysToAdd) {
-        LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalEndDate, BlCoreConstants.DATE_FORMAT);
-        int addedDays = 0;
-        while (addedDays < numberOfDaysToAdd) {
-            endDate = endDate.plusDays(1);
-            if (!(endDate.getDayOfWeek() == DayOfWeek.SATURDAY || endDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-                ++addedDays;
-            }
-        }
-        return Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
 
     /**
      * {@inheritDoc}
@@ -829,6 +1017,146 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes() {
         return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isShippingOnBlackoutDate(final List<String> lDeliveryModeAndGroupCode)
+	 {
+   	 final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
+		 if(Objects.isNull(rentalDatesFromSession))
+		 {
+			 BlLogger.logMessage(LOG, Level.ERROR, "No Rental dates found in session");
+			 return Boolean.TRUE;
+		 }
+		 final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT);
+		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All shipping method and group codes : {}", lDeliveryModeAndGroupCode);
+		 final List<BlBlackoutDateModel> allBlackoutDatesForShippingMethods = getBlackOutDates(lDeliveryModeAndGroupCode);
+		 if(CollectionUtils.isEmpty(allBlackoutDatesForShippingMethods))
+		 {
+			 return Boolean.FALSE;
+		 }
+		 final Map<String, List<BlBlackoutDateModel>> groupedDeliveryMethods = getGroupedBlackoutDatesMap(
+				 allBlackoutDatesForShippingMethods);
+		 final AtomicBoolean isShippingIsBlocked = new AtomicBoolean(Boolean.FALSE);
+		 for (final String deliveryCode : lDeliveryModeAndGroupCode)
+		 {
+			 final List<BlBlackoutDateModel> deliveryBlackOutList = getBlackoutDatesForCode(groupedDeliveryMethods, deliveryCode);
+			 if(CollectionUtils.isNotEmpty(deliveryBlackOutList))
+			 {
+				 removeRentalEndBlackoutDates(deliveryBlackOutList);
+				 final List<Date> lBlackoutDate = getListOfDates(deliveryBlackOutList);
+				 checkIfDatesIsSame(rentalStartDate, lBlackoutDate, isShippingIsBlocked);
+				 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Is Blackout date present for code : {} is {}", deliveryCode,
+						 isShippingIsBlocked.get());
+				 if (isShippingIsBlocked.get())
+				 {
+					 break;
+				 } 
+			 }
+		 }
+		 return isShippingIsBlocked.get();
+	 }
+
+	 /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isEligibleDeliveryModeForOrderTransfer(
+        final ZoneDeliveryModeModel deliveryModeModel) {
+
+        return ((deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
+            .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
+            .contains(deliveryModeModel.getCode()))
+            || deliveryModeModel instanceof BlRushDeliveryModeModel);
+    }
+
+    /**
+	  * Gets the list of dates.
+	  *
+	  * @param blackoutDates
+	  *           the blackout dates
+	  * @return the list of dates
+	  */
+	 private List<Date> getListOfDates(final List<BlBlackoutDateModel> blackoutDates)
+	 {
+		 return blackoutDates.stream().map(BlBlackoutDateModel::getBlackoutDate).collect(Collectors.toList());
+	 }
+
+	 /**
+	  * Gets the black out dates.
+	  *
+	  * @param shippingGroupOrMethodCodes
+	  *           the shipping group or method codes
+	  * @return the black out dates
+	  */
+	 private List<BlBlackoutDateModel> getBlackOutDates(final List<String> shippingGroupOrMethodCodes)
+	 {
+		 return getBlBlackoutDatesDao().getAllBlackoutDatesForShippingMethods(shippingGroupOrMethodCodes);
+	 }
+
+	 /**
+	  * Gets the grouped blackout dates map.
+	  *
+	  * @param allBlackoutDatesForShippingGroup
+	  *           the all blackout dates for shipping group
+	  * @return the grouped blackout dates map
+	  */
+	 private Map<String, List<BlBlackoutDateModel>> getGroupedBlackoutDatesMap(
+			 final List<BlBlackoutDateModel> allBlackoutDatesForShippingGroup)
+	 {
+		 return allBlackoutDatesForShippingGroup.stream()
+				 .collect(Collectors.groupingBy(blackoutDate -> blackoutDate.getBlockedShippingMethod().toString()));
+	 }
+
+	 /**
+	  * Gets the blackout dates for code.
+	  *
+	  * @param groupedShippingGroups
+	  *           the grouped shipping groups
+	  * @param code
+	  *           the code
+	  * @return the blackout dates for code
+	  */
+	 private ArrayList<BlBlackoutDateModel> getBlackoutDatesForCode(
+			 final Map<String, List<BlBlackoutDateModel>> groupedShippingGroups, final String code)
+	 {
+		 return Lists.newArrayList(CollectionUtils.emptyIfNull(groupedShippingGroups.get(code)));
+	 }
+
+	 /**
+	  * Removes the rental end blackout dates.
+	  *
+	  * @param deliveryBlackOutList
+	  *           the delivery black out list
+	  */
+	 private void removeRentalEndBlackoutDates(final List<BlBlackoutDateModel> deliveryBlackOutList)
+	 {
+		 deliveryBlackOutList.removeIf(delivery -> BlackoutDateTypeEnum.RENTAL_END_DATE.equals(delivery.getBlackoutDateType()));
+	 }
+
+	 /**
+	  * Check if dates is same.
+	  *
+	  * @param rentalStartDate
+	  *           the rental start date
+	  * @param lBlackoutDate
+	  *           the l blackout date
+	  * @param isDateIsBlocked
+	  *           the is date is blocked
+	  */
+	 private void checkIfDatesIsSame(final Date rentalStartDate, final List<Date> lBlackoutDate,
+			 final AtomicBoolean isDateIsBlocked)
+	 {
+		 for(final Date bDate : lBlackoutDate)
+		 {
+			 if (DateUtils.isSameDay(rentalStartDate, bDate))
+			 {
+				 isDateIsBlocked.set(Boolean.TRUE);
+				 break;
+			 }
+		 }
+	 }
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
@@ -894,5 +1222,45 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     public void setBaseStoreService(final BaseStoreService baseStoreService) {
         this.baseStoreService = baseStoreService;
+    }
+
+	/**
+	 * @return the blBlackoutDatesDao
+	 */
+	public BlBlackoutDatesDao getBlBlackoutDatesDao()
+	{
+		return blBlackoutDatesDao;
+	}
+
+	/**
+	 * @param blBlackoutDatesDao the blBlackoutDatesDao to set
+	 */
+	public void setBlBlackoutDatesDao(BlBlackoutDatesDao blBlackoutDatesDao)
+	{
+		this.blBlackoutDatesDao = blBlackoutDatesDao;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
+	}
+
+    public BlProductService getProductService() {
+        return productService;
+    }
+
+    public void setProductService(BlProductService productService) {
+        this.productService = productService;
     }
 }

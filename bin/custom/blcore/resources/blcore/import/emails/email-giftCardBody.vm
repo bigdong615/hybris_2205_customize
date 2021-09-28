@@ -101,29 +101,55 @@
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 16px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
 																																					${ctx.messages.getMessage('giftEmailSalutation')}
 																																					${ctx.custname},</p>
-
+																																					
+																																				#if( ${ctx.isPurchased} )
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
+																																					${ctx.messages.getMessage('giftEmailParagraph5', ${ctx.amount}, ${ctx.senderName})}
+																																				</p>
+																																				#else
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
 																																					${ctx.messages.getMessage('giftEmailParagraph1', ${ctx.amount})}
 																																					<a href="${ctx.secureBaseUrl}">${ctx.messages.getMessage('giftEmailSiteName')}</a>
+																																				 #if( ${ctx.msg} != "" )
 																																					${ctx.messages.getMessage('giftEmailFor')}
-																																					%%REASON%%.
+																																					${ctx.msg}
+																																				  #end																																
 																																				</p>
-
+																																				#end									
+                                                                                                                                                
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 600; font-style: normal; text-align: center">${ctx.messages.getMessage('giftEmailCode')}
 																																					${ctx.code}</p>
+																																					
+																																					
+																																				#if( ${ctx.isPurchased} )
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 600; font-style: normal; text-align: center">
+																																					${ctx.msg}<br /></p>
+																																			    <p style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
+																																					${ctx.messages.getMessage('giftEmailParagraph2ForPurchased')}
+																																				</p>
+																																				#else
 
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
 																																					${ctx.messages.getMessage('giftEmailParagraph2')}
 																																				</p>
-
+																																				#end
+																																				#if( ${ctx.isPurchased} )
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
+																																					${ctx.messages.getMessage('giftEmailParagraph6', ${ctx.code})}
+																																				</p>
+																																				#else
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
 																																					${ctx.messages.getMessage('giftEmailParagraph3', ${ctx.code})}
 																																				</p>
-
+																																				#end
+																																				
 																																				<p
 																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
 																																					${ctx.messages.getMessage('giftEmailParagraph4')}
@@ -212,10 +238,10 @@
 																											<div
 																												style="margin-top: 10px; padding: 4px 8px; font-family: helvetica, arial, sans-serif; text-align: center; background-color: #ededf0;">
 																												<a
-																													href="${ctx.secureBaseUrl}/content/contact_info"
+																													href="${ctx.secureBaseUrl}/contactus"
 																													style="font-family: sans-serif; text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailHelp')}</a>
 																												| <a
-																													href="${ctx.secureBaseUrl}/AccountHistory.do"
+																													href="${ctx.secureBaseUrl}/my-account/orders"
 																													style="text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailMyAccount')}</a>
 																											</div>
 

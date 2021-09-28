@@ -1,5 +1,8 @@
 package com.bl.core.order.hook.impl;
 
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.cart.BlCartService;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -7,9 +10,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.servicelayer.model.ModelService;
-
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlSerialProductModel;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 /**
@@ -23,6 +24,7 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 {
 
 	private ModelService modelService;
+	private BlCartService blCartService;
 
 	/**
 	 * {@inheritDoc}
@@ -43,6 +45,9 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 				if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus()))
 				{
 					blSerialProductModel.setSerialStatus(SerialStatusEnum.SOLD);
+					getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.SOLD);
+					blSerialProductModel.setHardAssigned(true);
+					setBufferInventoryFlag(blSerialProductModel);
 					getModelService().save(blSerialProductModel);
 					getModelService().refresh(order);
 				}
@@ -50,6 +55,15 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 		}
 	}
 
+	/**
+	 * It sets buffer inventory flag as false if it's true
+	 * @param blSerialProductModel
+	 */
+	private void setBufferInventoryFlag(final BlSerialProductModel blSerialProductModel) {
+		if(BooleanUtils.isTrue(blSerialProductModel.getIsBufferedInventory())) {
+			blSerialProductModel.setIsBufferedInventory(Boolean.FALSE);
+		}
+	}
 
 
 	/**
@@ -89,5 +103,12 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 		this.modelService = modelService;
 	}
 
+	public BlCartService getBlCartService() {
+		return blCartService;
+	}
+
+	public void setBlCartService(BlCartService blCartService) {
+		this.blCartService = blCartService;
+	}
 
 }

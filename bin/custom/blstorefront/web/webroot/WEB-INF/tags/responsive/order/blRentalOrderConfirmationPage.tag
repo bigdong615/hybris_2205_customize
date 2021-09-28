@@ -50,7 +50,7 @@
             <form action="${printOrderConfirmationUrl}" id="printOrderConfirmationForm" method="GET">
               <input type="hidden" id="orderCode" name="orderCode" value="${orderCode}"/>
             </form>
-						<a href="#" class="mx-2" alt="Print Order" id="printOrderConfirmation"> <i
+						<a href="#" class="mx-2 js-print-quote" alt="Print Order" id="printOrderConfirmation" data-pagetype="${pageType}"> <i
 							class="icon-print"></i>
 						</a>
 					</div>
@@ -60,7 +60,7 @@
 	</div>
 </section>
 <!-- Featured Stories Section -->
-<div id="stories" class="row justify-content-center">
+<div id="stories" class="row justify-content-center mt-5">
 	<div class="col-lg-11 col-xl-9">
 		<h5>
 			<cms:pageSlot

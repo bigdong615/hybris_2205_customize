@@ -1,29 +1,39 @@
 package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
-
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import java.math.RoundingMode;
+import de.hybris.platform.core.model.c2l.CurrencyModel;
 
 /**
  * This Populator created to populate order details
@@ -48,9 +58,21 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     //Check gift card purchase order
     if(source.isGiftCardOrder()){
+   	 final Optional<AbstractOrderEntryModel> giftCardOrder = source.getEntries().stream().findFirst();
+   	 if(giftCardOrder.isPresent()){
+   		 
+   		 target.setRecipientEmail(giftCardOrder.get().getRecipientEmail());
+   		 target.setRecipientName(giftCardOrder.get().getRecipientName());
+   	 }
    	 target.setIsRentalCart(Boolean.FALSE);
    	 target.setHasGiftCart(Boolean.TRUE);
-   	
+    }
+
+    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+      target.setIsReplacementOrder(true);
+    }
+    if(null != source.getReturnRequestForOrder()) {
+      target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
     }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
@@ -62,6 +84,43 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(source.getUser() instanceof CustomerModel){
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
+
+    // To Populate Gift Card Details
+    populateGiftCardDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
+      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    }
+    
+ // BL-1134 to add total discount with gift cart discount to display on summary section
+    Double totalPromotionDiscount = 0.0;
+    Double totalGiftCardDiscount = 0.0;
+    if(null != source.getTotalDiscounts()){
+      totalPromotionDiscount = source.getTotalDiscounts();
+    }
+    if(null != source.getGiftCardAmount()){
+      totalGiftCardDiscount = source.getGiftCardAmount();
+    }
+    final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+    target.setTotalDiscounts(createPrice(source , totalDiscount));
+
+    if (CollectionUtils.isNotEmpty(source.getGiftCard()) && !source.isGiftCardOrder())
+    {
+      final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+      for (final GiftCardModel giftCardModel : source.getGiftCard())
+      {
+        final BLGiftCardData blGiftCardData = new BLGiftCardData();
+        blGiftCardData.setCode(giftCardModel.getCode());
+        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+        //rounding off double value to 2 decimal places
+        BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+        blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
+        blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
+        blGiftCardDataList.add(blGiftCardData);
+      }
+      target.setGiftCardData(blGiftCardDataList);
+    }
+
+    
   }
 
   /**
@@ -78,7 +137,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setRentalFormattedEndDate(
           convertDateToString(updateRentalDatesIfOrderIsExtended(source), BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
-          .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
+          .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source))));
 
       target.setIsRentalStartDateActive(new Date().before(source.getRentalStartDate()));
       target.setIsRentalEndDateActive(new Date().before(updateRentalDatesIfOrderIsExtended(source)));
@@ -105,6 +164,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
+    if(source.getTotalOptionsCost() != null){
+      target.setTotalOptionsCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalOptionsCost() ,
+          BlFacadesConstants.OPTION_FIELD), source));
+    }
 
   }
 
@@ -137,7 +200,11 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
        final ExtendOrderData extendOrderData = new ExtendOrderData();
        extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
        extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
-       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + BlFacadesConstants.DAYS);
+       String suffix = BlFacadesConstants.DAYS;
+       if(extendOrderModel.getTotalExtendDays() <= 1) {
+         suffix = BlFacadesConstants.DAY;
+       }
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + suffix);
        extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
        extendOrderDataList.add(extendOrderData);
       }
@@ -179,10 +246,33 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
           orderNotes = notesModel.getNote();
         }
       }
+      populateCustomerOwnedNote(notesModelList, orderData);
     }
 
     orderData.setOrderNotes(orderNotes);
   }
+  
+  /**
+	 * Populate customer owned note.
+	 *
+	 * @param notesModelList
+	 *           the notes model list
+	 * @param orderData
+	 *           the order data
+	 */
+	private void populateCustomerOwnedNote(final List<NotesModel> notesModelList, final OrderData orderData)
+	{
+		final List<NotesModel> filteredNoteList = notesModelList.stream()
+				.filter(note -> note.getType().equals(NotesEnum.CUSTOMER_OWNED_ITEMS_NOTES)).collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(filteredNoteList))
+		{
+			if (filteredNoteList.size() >= BlFacadesConstants.TWO)
+			{
+				Collections.sort(filteredNoteList, (note1,note2) -> note1.getCreationtime().compareTo(note2.getCreationtime()));
+			}
+			orderData.setCustomerOwnedOrderNote(filteredNoteList.get(filteredNoteList.size() - BlFacadesConstants.ONE).getNote());
+		}
+	}
 
   /**
    * This method is created to update the rental end date , if order is extended
@@ -262,6 +352,75 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     || DateUtils.isSameDay(updateRentalDatesIfOrderIsExtended(orderModel), date);
   }
 
+
+  /**
+   * This method created to populate the gift card details for order details
+   */
+
+  private void populateGiftCardDetails(final OrderModel source, final OrderData target)
+  {
+    final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+    if(CollectionUtils.isNotEmpty(source.getGiftCard())) {
+      for(final GiftCardModel giftCardModel : source.getGiftCard()){
+        final BLGiftCardData blGiftCardData = new BLGiftCardData();
+        blGiftCardData.setCode(giftCardModel.getCode());
+        for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
+          if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
+            setGiftCardData(giftCardMovementModel , blGiftCardData , blGiftCardDataList , source);
+          }
+        }
+      }
+
+    }
+    target.setGiftCardData(blGiftCardDataList);
+  }
+
+  /**
+   * This method added for setting gift card details for order details page
+   * @param giftCardMovementModel giftCardMovementModel used for order
+   * @param blGiftCardData blGiftCardData
+   * @param blGiftCardDataList blGiftCardDataList to show on order page
+   * @param source orderModel
+   */
+  private void setGiftCardData(final GiftCardMovementModel giftCardMovementModel , final BLGiftCardData blGiftCardData ,
+      final List<BLGiftCardData> blGiftCardDataList, final OrderModel source ){
+    Double balanceAmount = 0.0;
+    Double amount = 0.0;
+    if(null != giftCardMovementModel.getBalanceAmount()) {
+      balanceAmount = giftCardMovementModel.getBalanceAmount();
+    }
+    if(null != giftCardMovementModel.getAmount()){
+      amount = giftCardMovementModel.getAmount();
+    }
+    blGiftCardData.setBalanceamount(convertDoubleToPriceData(balanceAmount , source));
+    blGiftCardData.setRedeemamount(convertDoubleToPriceData(amount , source));
+    blGiftCardDataList.add(blGiftCardData);
+  }
+
+  
+ /**
+ * @param source for the order
+ * @param val for the price
+ * @return PriceData
+ */
+private PriceData createPrice(final AbstractOrderModel source, final Double val)
+  {
+    if (source == null)
+    {
+      throw new IllegalArgumentException("source order must not be null");
+    }
+
+    final CurrencyModel currency = source.getCurrency();
+    if (currency == null)
+    {
+      throw new IllegalArgumentException("source order currency must not be null");
+    }
+
+    // Get double value, handle null as zero
+    final double priceValue = val != null ? val.doubleValue() : 0d;
+
+    return getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(priceValue), currency);
+  }
 
   public PriceDataFactory getPriceDataFactory() {
     return priceDataFactory;

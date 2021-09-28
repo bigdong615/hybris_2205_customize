@@ -238,15 +238,26 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 		else
 		{
-			if (getBlInventoryScanToolService().getStatusOfLocationDP())
+			if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FOUR))
 			{
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_FAILURE, errorSerialList);
+				final Collection<String> dirtyErrorSerialList = unboxingResultMap.get(BlInventoryScanLoggingConstants.FOUR);
+				if (CollectionUtils.isNotEmpty(dirtyErrorSerialList) && (getBlInventoryScanToolService().getStatusOfLocationDP()
+						|| !getBlInventoryScanToolService().getStatusOfLocationDC()))
+				{
+					addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE_MSG,
+							BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE, NOTIFICATION_LEVEL_WARNING, dirtyErrorSerialList);
+				}
 			}
-			else
+			if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FIVE))
 			{
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE, NOTIFICATION_LEVEL_FAILURE, errorSerialList);
+				final Collection<String> dirtyPriorityErrorSerialList = unboxingResultMap.get(BlInventoryScanLoggingConstants.FIVE);
+				if (CollectionUtils.isNotEmpty(dirtyPriorityErrorSerialList)
+						&& !getBlInventoryScanToolService().getStatusOfLocationDP())
+				{
+					addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
+							BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING,
+							dirtyPriorityErrorSerialList);
+				}
 			}
 		}
 	}

@@ -22,7 +22,6 @@ import com.ups.xmlschema.xoltws.common.v1.RequestType;
 import com.ups.xmlschema.xoltws.common.v1.TransactionReferenceType;
 import com.ups.xmlschema.xoltws.ship.v1.BillShipperType;
 import com.ups.xmlschema.xoltws.ship.v1.DimensionsType;
-import com.ups.xmlschema.xoltws.ship.v1.LabelDeliveryType;
 import com.ups.xmlschema.xoltws.ship.v1.LabelImageFormatType;
 import com.ups.xmlschema.xoltws.ship.v1.LabelSpecificationType;
 import com.ups.xmlschema.xoltws.ship.v1.LabelStockSizeType;
@@ -30,7 +29,6 @@ import com.ups.xmlschema.xoltws.ship.v1.PackageType;
 import com.ups.xmlschema.xoltws.ship.v1.PackageWeightType;
 import com.ups.xmlschema.xoltws.ship.v1.PackagingType;
 import com.ups.xmlschema.xoltws.ship.v1.PaymentInfoType;
-import com.ups.xmlschema.xoltws.ship.v1.ReturnServiceType;
 import com.ups.xmlschema.xoltws.ship.v1.ServiceType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipAddressType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipFromType;
@@ -41,7 +39,6 @@ import com.ups.xmlschema.xoltws.ship.v1.ShipUnitOfMeasurementType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentChargeType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentType;
-import com.ups.xmlschema.xoltws.ship.v1.ShipmentType.ShipmentServiceOptions;
 import com.ups.xmlschema.xoltws.ship.v1.ShipperType;
 
 
@@ -113,14 +110,6 @@ public class BLUPSShipmentCreateRequestPopulator
 		populateServiceType(serviceType, shipmentData.getService());
 		shipmentType.setService(serviceType);
 
-		/** Creating Service Options Data **/
-		final ShipmentServiceOptions shpServiceOptions = new ShipmentServiceOptions();
-
-		final LabelDeliveryType labelDelivery = new LabelDeliveryType();
-		labelDelivery.setLabelLinksIndicator(BlintegrationConstants.LABEL_INDICATOR);
-		shpServiceOptions.setLabelDelivery(labelDelivery);
-		shipmentType.setShipmentServiceOptions(shpServiceOptions);
-
 		/** Creating Package Data **/
 
 		final List<PackageType> packageList = shipmentType.getPackage();
@@ -156,17 +145,6 @@ public class BLUPSShipmentCreateRequestPopulator
 		pkg1.setPackageWeight(pkgWeight);
 		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
 		packageList.add(pkg1);
-
-		/** Creating Return Service Data **/
-
-		final ReturnServiceType returnService = new ReturnServiceType();
-		if (shipmentData.getReturnService() != null && shipmentData.getReturnService().getCode() != null)
-		{
-			returnService.setCode(shipmentData.getReturnService().getCode());
-			returnService.setDescription(shipmentData.getReturnService().getDescription());
-		}
-
-		shipmentType.setReturnService(returnService);
 
 		/** Creating LabelSpecification Data **/
 		final LabelSpecificationType labelSpecType = new LabelSpecificationType();

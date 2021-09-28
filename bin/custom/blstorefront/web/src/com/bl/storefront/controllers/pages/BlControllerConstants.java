@@ -4,9 +4,9 @@ public class BlControllerConstants
 {
 
 	public static final String FORM_GLOBAL_ERROR = "form.global.error";
-	public static final String VALIDATE_CHECKPWD_EQUALS = "validation.checkPwd.equals";
-	public static final String REGISTER_CHECKPWD_INVALID = "register.checkPwd.invalid";
-	public static final String REGISTER_PWD_INVALID = "register.pwd.invalid";
+	public static final String VALIDATE_CHECKPASSWORD_EQUALS = "validation.checkPwd.equals";
+	public static final String REGISTER_CHECKPASSWORD_INVALID = "register.checkPwd.invalid";
+	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
 	public static final int PASSWORD_MIN_LENGTH = 6;
 	public static final int PASSWORD_MAX_LENGTH = 255;
@@ -46,7 +46,8 @@ public class BlControllerConstants
 	public static final String SUCCESS = "success";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
 	public static final String SELECTED_DATE = "selectedDate";
-	
+	public static final String SELECTED_DURATION = "selectedDuration";
+
 	public static final int PAGE_SIZE = 100;
 	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
 	public static final String PASSWORD_STRING = "pwd";
@@ -55,6 +56,7 @@ public class BlControllerConstants
   public static final String HOME_PAGE_URL = "/";
 	public static final String RENTAL_DATE_FAILURE_RESULT = "rentalDateNotSelected";
 	public static final String STOCK_FAILURE_RESULT = "stockNotAvailable";
+	public static final String BLACKOUT_DATE_FOUND = "blackoutDateFound";
 	public static final String ERROR = "error";
 
 	public static final String REQUEST = "request";
@@ -65,6 +67,9 @@ public class BlControllerConstants
 	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
+	public static final String ACCOUNT_DEACTIVATED = "login.error.account.deactivate.title";
+	public static final String ACCOUNT_DEACTIVATED_MSG ="Account deactivated for user {}";
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT_MSG =  "Login email or password is invalid for user {}";
 
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
@@ -75,6 +80,7 @@ public class BlControllerConstants
 	
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
+	public static final String DISABLE_BUTTON = "disableButton";
 
 	public static final int SKIP_TWO_DAYS = 2;
 	public static final String TRUE_STRING = "true";
@@ -160,6 +166,34 @@ public class BlControllerConstants
 	public static final String PAY_PAL = "payPal";
 	public static final String SUCCESS_MSG_TYPE = "successMsgEmail";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
+
+	public static final String MY_ACCOUNT_SAVED_CARTS_URL = "/my-account/saved-carts";
+	public static final String REDIRECT_TO_SAVED_CARTS_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_SAVED_CARTS_URL;
+	public static final String SAVED_CART_SUCCESS = "saved_cart_success";
+	public static final String RENAMED_CART_CODE = "renamed_cart_code";
+	public static final String SAVED_CART_MESSAGE = "text.saved.cart.success";
+
+	public static final String RETURN_REQUEST = "returnRequest";
+
+	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
+	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
+
+	public static final String EXTEND = "extendOrder";
+	public static final String EMPTY = "";
+	public static final String PAY_BILL = "payBill";
+	public static final String REDIRECT_TO_HOME_URL ="redirect:/";
+	public static final String IS_NEW_GEAR_CATEGORY ="isNewGearCategory";
+  public static final String USED_CATEGORY_CODE = "usedgear";
+  public static final String USED_CATEGORY_PREFIX_URL = "/buy/category/";
+  public static final String ENABLE_SATURDAYS = "enableSaturdays";
+  public static final String MODIFYPAYMENT = "modifyPayment";
+
+  public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
+
+	public static final String VERIFICATION_PAGE_IDENTIFIER = "verificationImages";
+
+	public static final String CLEAR_BRANDS = "clearBrands";
+	public static final String BRANDS = "brands";
 
 	private BlControllerConstants()
 	{

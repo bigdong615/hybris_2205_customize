@@ -17,4 +17,13 @@ public interface BlSourcingService extends SourcingService {
    * @return SourcingResults The SourcingResults
    */
   public SourcingResults sourceOrder(final AbstractOrderModel order);
+
+  /**
+   * This method updates the actual rental start date for internal transfer cases.
+   *
+   * @param order the order
+   * @param result the result
+   */
+  public void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
+      final SourcingResults result);
 }

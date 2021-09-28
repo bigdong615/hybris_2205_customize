@@ -9,6 +9,7 @@ ACC.account = {
 		$(document).on("click", ".js-login-popup", function (e) {
 			e.preventDefault();
 			var serialClick = $(this).data('click');
+			var productCode = $(this).attr('data-product-code');
 			$('#signIn').html("");
 			$.ajax({
 				url: $(this).data("link"),
@@ -16,6 +17,8 @@ ACC.account = {
 					$('#signIn').html(result);
 					$('#serialClick').val(serialClick);
 					$('#serialSignUp').attr("data-serial", serialClick);
+					$('.js-selected-product').val(productCode);
+					$('#serialSignUp').attr("data-product-code", productCode);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -25,6 +28,7 @@ ACC.account = {
 		$(document).on("click", ".js-signUp-popup", function (e) {
 			e.preventDefault();
 			var serialClick = $(this).data('serial');
+			var productCode = $(this).data('product-code');
 			$('#signUp').html("");
 			$.ajax({
 				url: $(this).data("link"),
@@ -32,6 +36,8 @@ ACC.account = {
 					$('#signUp').html(result);
 					$('#serialClickSignUP').val(serialClick);
 					$('#serialSignInInstead').attr("data-click", serialClick);
+					$('#bookmarkClickSignUP').val(productCode);
+         	$('#serialSignInInstead').attr("data-product-code", productCode);
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
@@ -90,13 +96,30 @@ ACC.account = {
 							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
 							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
-							if(serialId == "" || serialId  == undefined)
+							var productCode = $('#signUppopup-validation').find('input[name="bookmarkClickSignUP"]').val();
+							if((serialId == "" || serialId  == undefined) && (productCode == "" || productCode  == undefined))
 							{
+							var pageType=$('.js-page-type').val();
+              if(pageType == null || pageType == undefined){
+               pageType = '';
+              	}
+              	// Track Tealium event for successful register.
+              	var userId =$('#register-form-id').val();
+              	utag.link({
+                   "tealium_event"    : "user_register",
+                   "user_email"     : '"'+userId+'"',
+                    "newRegistration" : "1"
+                      });
 							window.mediator.publish('registerClick',{
-                   userId: $('#register-form-id').val()
+                   userId: userId,
+                   pageType:pageType
                  });
 								location.reload();
+							}else if(!(productCode == "" || productCode  == undefined)){
+							addingProductToBookMark(productCode);
+              $("#signUp").hide();
 							}else{
+
 								$("#doReload").val("true");
 								$('.' + serialId).click();
 							}	
@@ -156,12 +179,24 @@ ACC.account = {
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or Password was incorrect");
-						} else {
+						} 
+						else if(response === 'login.error.account.deactivate.title') 
+						{
+							$("#errorMessages_login").removeClass("d-none");
+							$("#errorMessages_login").html(ACC.deActivateAccount.login);
+						}
+						else {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
-							if(serialId == "" || serialId  == undefined)
+							var productCode = $('#login-popup-validation').find('input[name="js-selected-product"]').val();
+							if((serialId == "" || serialId  == undefined) && (productCode == "" || productCode == undefined))
 							{
+							var pageType=$('.js-page-type').val();
+               if(pageType == null || pageType == undefined){
+                 pageType = '';
+             	}
 							 window.mediator.publish('loginClick',{
-                    userId: $('#j_username').val()
+                    userId: $('#j_username').val(),
+                     pageType:pageType
                   });
 								location.reload();
 							}
@@ -170,6 +205,7 @@ ACC.account = {
 					},
 					complete: function(){
 						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+						var productCode = $('#login-popup-validation').find('input[name="js-selected-product"]').val();
 						if(serialId == "" || serialId  == undefined)
 						{
 							/*do nothing*/
@@ -178,6 +214,13 @@ ACC.account = {
 							$('.' + serialId).click();
 							$("#signIn").hide();
 						}
+						if(productCode == "" || productCode  == undefined)
+            	{
+            	/*do nothing*/
+            	}else{
+            	addingProductToBookMark(productCode);
+            	$("#signIn").hide();
+            	}
 					},					
 					error: function (e) {
 						// do nothing

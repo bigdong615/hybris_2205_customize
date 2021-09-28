@@ -5,6 +5,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.AddressTypeEnum;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.OptimizedShippingTypeEnum;
@@ -25,13 +26,20 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.service.AbstractBusinessService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessService implements BlShippingOptimizationStrategy {
 
@@ -52,7 +60,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                 final AbstractOrderModel order = orderEntryModel.get().getOrder();
                 return order != null ? getUpdatedSourcingLocation(sourcingLocation, order, BlDateTimeUtils.subtractDaysInRentalDates(
                         BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
-                        getBlDatePickerService().getListOfBlackOutDates())) : setFalseSourcingLocation(sourcingLocation);
+                        getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY))) : setFalseSourcingLocation(sourcingLocation);
             }
         }
         return setFalseSourcingLocation(sourcingLocation);
@@ -101,7 +109,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             int i = BlInventoryScanLoggingConstants.ZERO;
             for (Map.Entry<String, Long> entry : allocatedMap.entrySet()) {
                 final String key = entry.getKey().substring(0, entry.getKey().lastIndexOf('_'));
-                if (stockLevelsProductWise.get(key).size() >= entry.getValue()) {
+                if (stockLevelsProductWise.get(key) != null && stockLevelsProductWise.get(key).size() >= entry.getValue()) {
                     availabilityMap.put(key, stockLevelsProductWise.get(key));
                 } else {
                     i = BlInventoryScanLoggingConstants.ONE;
@@ -131,10 +139,10 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             sourcingLocation.setAvailabilityMap(availabilityMap);
             sourcingLocation.getContext().getOrderEntries().iterator().next().getOrder().setActualRentalStartDate(
                     BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(
-                            order.getRentalStartDate()),getBlDatePickerService().getListOfBlackOutDates()));
+                            order.getRentalStartDate()),getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)));
             sourcingLocation.getContext().getOrderEntries().iterator().next().getOrder().setActualRentalEndDate(
                     BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(
-                            order.getRentalEndDate()), getBlDatePickerService().getListOfBlackOutDates()));
+                            order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)));
             return sourcingLocation;
         } else {
             return setFalseSourcingLocation(sourcingLocation);
@@ -157,8 +165,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         }
         return getBlCommerceStockService().getStockForProductCodesAndDate(newProductCodes, sourcingLocation.getWarehouse(),
                 BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
-                        getBlDatePickerService().getListOfBlackOutDates()), BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS,
-                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getListOfBlackOutDates()));
+                        getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)), BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS,
+                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)));
     }
 
     /**
@@ -180,14 +188,22 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     public boolean generateShipmentLabelForConsignment(final ConsignmentModel consignmentModel) {
         if (!BlDateTimeUtils.compareTimeWithCutOff(consignmentModel.getWarehouse().getCutOffTime())) {
             final Date rentalStartDate = consignmentModel.getOrder().getRentalStartDate();
+            final String rentalStringStartDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder()
+                    .getRentalStartDate(), BlCoreConstants.DATE_FORMAT);
+            final String rentalEndDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(),
+                    BlCoreConstants.DATE_FORMAT);
             final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOptimizedShippingStartDate(),
                     rentalStartDate, consignmentModel.getWarehouse().getCutOffTime());
-            return getOptimizedShippingMethod(consignmentModel, BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder()
-                            .getRentalStartDate(), BlCoreConstants.DATE_FORMAT),
-                    BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(), BlCoreConstants.DATE_FORMAT),
-                    result, consignmentModel.getOptimizedShippingType(),
-                    getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()),
-                    getAddressZip(consignmentModel.getShippingAddress()));
+            if(OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.getCode().equals(consignmentModel.getOptimizedShippingMethodType().getCode())) {
+                if (result >= BlInventoryScanLoggingConstants.TWO) {
+                    return checkTwoDayAir(consignmentModel, rentalStringStartDate, rentalEndDate);
+                } else {
+                    return checkNextDayAir(consignmentModel, rentalStringStartDate, rentalEndDate);
+                }
+            } else {
+                return getOptimizedShippingMethod(consignmentModel, rentalStringStartDate, rentalEndDate, result, consignmentModel.getOptimizedShippingType(),
+                        getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()));
+            }
         }
         BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Consignment :" + consignmentModel.getCode() + " can't be optimized as warehouse " +
                 "cutOff time is not passed yet");
@@ -204,13 +220,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      * @param optimizedShippingMethodEnum code
      * @param carrierId                   UPS/FEDEX
      * @param warehouseCode               CA/MA
-     * @param addressZip                  code
      * @return true if success
      */
     private boolean getOptimizedShippingMethod(final ConsignmentModel consignmentModel, final String rentalStartDate,
                                                final String rentalEndDate, final int result,
                                                final OptimizedShippingMethodModel optimizedShippingMethodEnum, final int carrierId,
-                                               final int warehouseCode, final String addressZip) {
+                                               final int warehouseCode) {
+   	 final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
         if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
             return checkTwoDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode())) {
@@ -254,7 +270,12 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
             return checkOvernightGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else {
-            return checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate);
+
+            setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
+                consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+
+            //return checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate);
+            return false;
         }
     }
 
@@ -266,7 +287,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         return BlDateTimeUtils.isDateFallsOnBlackOutDate(Objects.requireNonNull(BlDateTimeUtils.convertStringDateToDate(
                 BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN)),
-                getBlDatePickerService().getListOfBlackOutDates());
+                getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY));
     }
 
     /**
@@ -286,7 +307,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
                 carrierId, warehouseCode, customerZip, BlInventoryScanLoggingConstants.THREE, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
-            final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+            final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()
                     + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -316,7 +337,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
                 carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
-            final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+            final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
                     OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode() + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -346,7 +367,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
                 carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
-            final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+            final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
                     OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode() + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, result, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -369,8 +390,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private boolean checkTwoDayAir(final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final AddressModel shippingAddress = consignmentModel.getOrder().getDeliveryAddress();
-        final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
-        if (shippingAddress != null && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
+        final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+        if (shippingAddress != null && shippingAddress.getAddressType() != null 
+      		  && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode()
                     + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, BlInventoryScanLoggingConstants.TWO, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -396,8 +418,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private boolean checkNextDayAir(final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final AddressModel shippingAddress = consignmentModel.getOrder().getDeliveryAddress();
-        final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
-        if (shippingAddress != null && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
+        final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+        if (shippingAddress != null &&  shippingAddress.getAddressType() != null 
+      		  && AddressTypeEnum.BUSINESS.getCode().equals(shippingAddress.getAddressType().getCode())) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING + OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode()
                     + BlInventoryScanLoggingConstants.SPACE + consignmentModel.getCode());
             setOptimizedDetailsOnConsignment(consignmentModel, BlInventoryScanLoggingConstants.TWO, BlDateTimeUtils.subtractDaysInRentalDates(
@@ -427,6 +450,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
         if (result != BlInventoryScanLoggingConstants.ZERO) {
             final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
+            consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
             if(optimizedShippingType != null) {
                 if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
                     consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
@@ -438,6 +462,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             }
         } else {
             consignmentModel.setOptimizedShippingType(null);
+            consignmentModel.setOptimizedShippingMethodType(null);
         }
         getModelService().save(consignmentModel);
         getModelService().refresh(consignmentModel);

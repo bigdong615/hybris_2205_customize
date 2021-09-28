@@ -12,6 +12,8 @@ import de.hybris.platform.cms2.servicelayer.services.CMSSiteService;
 import de.hybris.platform.commerceservices.enums.UiExperienceLevel;
 import de.hybris.platform.commerceservices.i18n.CommerceCommonI18NService;
 import de.hybris.platform.core.model.c2l.LanguageModel;
+
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.util.UiThemeUtils;
 
 import javax.annotation.Resource;
@@ -110,6 +112,7 @@ public class UiThemeResourceBeforeViewHandler implements BeforeViewHandler
 		modelAndView.addObject("addOnCommonCssPaths", uiThemeUtils.getAddOnCommonCSSPaths(request));
 		modelAndView.addObject("addOnThemeCssPaths", uiThemeUtils.getAddOnThemeCSSPaths(request));
 		modelAndView.addObject("addOnJavaScriptPaths", uiThemeUtils.getAddOnJSPaths(request));
+		modelAndView.addObject(BlControllerConstants.ENABLE_SATURDAYS, !baseStore.isDisableSaturdays());
 	}
 	
 	/**

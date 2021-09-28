@@ -4,11 +4,13 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
@@ -41,16 +43,25 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -100,9 +111,19 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
                 model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
             }
+            final ZoneDeliveryModeModel zoneDeliveryModeData = (ZoneDeliveryModeModel) cartModel.getDeliveryMode();
+            if(zoneDeliveryModeData != null) {
+                model.addAttribute("shippingMethod", zoneDeliveryModeData.getShippingGroup().getCode()+ BlCoreConstants.HYPHEN
+                        +zoneDeliveryModeData.getCode());
+            }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
+
+        if((boolean) getSessionService().getAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED)) {
+            model.addAttribute("previousPage", Boolean.TRUE);
+        }
+
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -119,8 +140,44 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && Objects.nonNull(cartModel) &&
+            Objects.nonNull(cartModel.getReturnRequestForOrder())){
+            model.addAttribute("isReplacementOrderCart" , true);
+        }
+
         model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+
+
+        if(null != getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION) && BooleanUtils.isTrue(getSessionService().getAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION))){
+            model.addAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION , true);
+            getSessionService().removeAttribute(BlControllerConstants.IS_AVALARA_EXCEPTION);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+    }
+
+    /**
+     * javadoc
+     * This method will send address for back traversal scenario
+     * @param model model
+     * @param redirectAttributes attr
+     * @return AddressData
+     */
+    @GetMapping(value = "/checkAddressWithCartAddress")
+    @RequireHardLogIn
+    @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
+    @ResponseBody
+    public AddressData checkAddressWithCartAddress(final Model model, final RedirectAttributes redirectAttributes) {
+        final AddressData cartAddressData = getCheckoutFacade().getCheckoutCart() != null ? getCheckoutFacade().getCheckoutCart()
+                .getDeliveryAddress() : null;
+        if(cartAddressData != null) {
+            final List<AddressData> addressData = getUserFacade().getAddressBook();
+            for(final AddressData address : addressData) {
+                if(cartAddressData.getId().equals(address.getId())) {
+                    return address;
+                }
+            }
+        }
+        return cartAddressData;
     }
 
     @GetMapping(value = "/chooseShippingDelivery")
@@ -134,10 +191,19 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                                                             @RequestParam(value = "partnerZone", defaultValue = "")
                                                                                 final String partnerZone) {
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
-        final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
-                shippingGroup, partnerZone, true);
-        model.addAttribute(CART_DATA, cartData);
-        model.addAttribute("deliveryMethods", deliveryModes);
+
+        boolean isPayByCustomer = true;
+
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) &&
+            Objects.nonNull(blCartService.getSessionCart().getReturnRequestForOrder())) {
+                isPayByCustomer = false;
+                model.addAttribute("isReplacementOrderCart", true);
+        }
+        Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade()
+                .getSupportedDeliveryModes(
+                    shippingGroup, partnerZone, isPayByCustomer);
+            model.addAttribute(CART_DATA, cartData);
+            model.addAttribute("deliveryMethods", deliveryModes);
         return deliveryModes;
     }
 
@@ -377,6 +443,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
  	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
  	 		 && getCheckoutFacade().checkAvailabilityForDeliveryMode(selectedDeliveryMethod) ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
  	 }
+    
+    @GetMapping(value = "/checkShippingBlackout")
+ 	 @ResponseBody
+ 	 public String checkShippingBlackout(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
+ 			final Model model) 
+ 	 {
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 		 && getCheckoutFacade().isShippingOnBlackoutDate(selectedDeliveryMethod) ? BlControllerConstants.ERROR : BlControllerConstants.SUCCESS;
+ 	 }
 
     /**
      * Will set the delivery address
@@ -422,9 +497,36 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
     }
 
+
+    @GetMapping(value = "/selectReplacementAddress")
+    @RequireHardLogIn
+    @ResponseBody
+    public String doSelectDeliveryAddressForOrderReplaceMent(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+        @RequestParam("shippingGroup") final String shippingGroup,
+        @RequestParam("deliveryMode") final String deliveryMode,
+        @RequestParam("rushZip") final String rushZip,
+        @RequestParam("businessType") final boolean businessType,
+        final RedirectAttributes redirectAttributes) {
+        if (StringUtils.isNotBlank(selectedAddressCode)) {
+            final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                if (pinError != null) {
+                    return pinError;
+                }
+                setDeliveryAddress(selectedAddressData);
+            }
+        }
+        return SUCCESS;
+    }
+
+
     protected String getBreadcrumbKey() {
         return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
     }
+
 
     protected CheckoutStep getCheckoutStep() {
         return getCheckoutStep(DELIVERY_METHOD);
@@ -438,4 +540,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
         this.checkoutFacade = checkoutFacade;
     }
+
+
+
 }

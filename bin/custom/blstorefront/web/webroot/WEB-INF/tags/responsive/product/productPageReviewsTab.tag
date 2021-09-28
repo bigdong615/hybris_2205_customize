@@ -8,6 +8,12 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<spring:eval expression="T(de.hybris.platform.util.Config).getParameter('powerreviews.merchant.groupid')"
+					var="merchantGroupId" scope="page" />
+<spring:eval expression="T(de.hybris.platform.util.Config).getParameter('powerreviews.merchant.id')"
+					var="merchantID" scope="page" />
+<spring:eval expression="T(de.hybris.platform.util.Config).getParameter('powerreviews.merchant.api')"
+					var="merchantAPI_Key" scope="page" />					
 <c:set value="${ycommerce:productImage(product, 'product')}" var="primaryImage"/>
 
 <c:if test="${not empty primaryImage.url}">
@@ -30,14 +36,15 @@
 	pwr(
 			"render",
 			{
-				api_key : '54a82048-9c20-4a13-a01b-dd5b0415a965',
+				api_key : '${merchantAPI_Key}',
 				locale : 'en_US',
-				merchant_group_id : '2120371445',
-				merchant_id : '1415200746',
+				merchant_group_id : '${merchantGroupId}',
+				merchant_id : '${merchantID}',
 				page_id : '${product.code}',
 				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
 				REVIEW_DISPLAY_SNAPSHOT_TYPE : 'SIMPLE',
 				REVIEW_DISPLAY_PAGINATION_TYPE : 'VERTICAL',
+				style_sheet: '${fn:escapeXml(themeResourcePath)}/css/powereview.css',
 
 				product : {
 					name : '${product.name}',

@@ -40,13 +40,23 @@
 	<div class="container">
 		<div id="cartSteps" class="row justify-content-center">
 			<div class="col-xl-10">
-				<span class="step1 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.your.rental" /></span> <span
-					class="step2 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.delivery.or.pickup" /></span> <span
-					class="step3 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.payment" /></span> <span class="step4 active"><i
-					class="number">4</i> <spring:theme code="text.review.page.review" /></span>
+			    <a href="${cartPageUrl}" class="text-decoration-none">
+				    <span class="step1 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.your.rental" /></span>
+				</a>
+				<a href="${shippingPageUrl}" class="text-decoration-none">
+					<span class="step2 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.delivery.or.pickup" /></span>
+			    </a>
+			    <a href="${paymentPageUrl}" class="text-decoration-none">
+					<span class="step3 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.payment" /></span>
+				</a>
+				<a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+					<span class="step4 active"><i class="number">4</i>
+					    <spring:theme code="text.review.page.review" />
+					</span>
+			    </a>
 			</div>
 		</div>
 		<div class="row justify-content-center">
@@ -154,6 +164,13 @@
 											<spring:theme code="text.review.page.your.rental.total" />
 											<format:price priceData="${cartEntry.totalPrice}"
 												displayFreeForZero="true" />
+												<c:if test="${not empty cartEntry.product.bundleProductReference}">
+												<ul class="checklist mt-4">
+                           <c:forEach items="${cartEntry.product.bundleProductReference}" var="bundleItems">
+                             <li>  ${bundleItems.productReferenceName}</li>
+                            </c:forEach>
+                        </ul>
+                        </c:if>
 										</p>
 									</div>
 								</div>
@@ -243,15 +260,17 @@
 						<c:if test="${not empty cartData.giftCardData}">
 							<multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}" />
 						</c:if>
+						 
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
             	modelAttribute="placeOrderForm">
+				<div class="reviewCart">
             	<b><spring:theme code="text.review.page.order.notes" /></b>
             	<input type="text" class="form-control order-notes" name="orderNotes"	id="notes"
             		placeholder="<spring:theme code="text.review.page.order.notes.placeholder"/>"
             		min="1" max="1000" maxlength="1000" value="${cartData.orderNotes}" />
              <input type="checkbox" name="newsLetterSubscriptionOpted" value="true" checked="checked" id="newsletter"/>
             	<label for="newsletter"><span class="gray80"><spring:theme code="text.review.page.newsletter.checkbox.label" /></span></label>
-            	<hr class="mt-5">
+            	</div>
             	<div class="reviewCart">
             		<h5 class="mb-4">
             			<spring:theme code="text.review.page.rental.terms.agreement.title" />
@@ -267,15 +286,29 @@
             		<b><spring:theme code="text.review.page.terms.check" /></b>
             	</div>
             	<div class="cart-actions">
+          
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
-            		<button id="placeOrder" type="button"
+			<c:choose>
+				<c:when test="${isCustomerHasUnPaidBillOrders}">
+					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
+						data-bs-target="#unpaidBill" 
+						class="btn btn-sm btn-primary float-end"> <spring:theme
+							code="checkout.summary.placeOrder" text="Place Your Order" />
+					</a>
+				</c:when>
+				<c:otherwise>
+					<button id="placeOrder" type="button"
             			class="btn btn-sm btn-primary float-end">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
             		</button>
+				</c:otherwise>
+			</c:choose>          			
+            		
               </div>
 						</form:form>
+					 
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
 						<cart:blRentalOrderSummaryForReviewPage cartData="${cartData}"
@@ -295,7 +328,7 @@
 							<spring:theme code="text.shipping.change.or.cancellation.message" />
 						</div>
 						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
+							<a href="${printReviewUrl}" alt="Print Order" class="js-print-quote" data-pagetype="${pageType}"> <i
 								class="icon-print"></i>
 							</a>
 						</div>
@@ -324,7 +357,7 @@
 					type="hidden" value="" id="clickedSection">
 				<p class="body14">
 					<spring:theme
-						code="shipping.interception.change.date.warning.message" />
+						code="shipping.interception.change.warning.message" />
 				</p>
 				<a href="#" class="btn btn-primary btn-block my-4"
 					id="continueChanges"> <spring:theme
@@ -374,3 +407,31 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="modal fade" id="unpaidBill" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="text.message.summary.place.attention"/></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+          
+           
+           It looks like you have an outstanding bill. Please head to your Account to view & pay this bill before renting again. <br>
+
+             Have a question or concern? Contact <a href="#">customer support</a> and we'll figure it out.
+              
+                 <c:url value="/my-account/orders" var="orderPageUrl" />
+                <a href="${orderPageUrl}" class="btn btn-block btn-primary mt-4"><spring:theme code="text.message.summary.place.button"/></a>
+               <br>
+            <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
+                 <spring:theme code="basket.save.cart.action.cancel"/> </a></p>
+          
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>

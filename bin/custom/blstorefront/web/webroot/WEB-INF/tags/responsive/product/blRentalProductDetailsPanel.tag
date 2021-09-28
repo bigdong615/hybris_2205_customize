@@ -29,9 +29,7 @@
                     <div class="col-12 col-lg-10 col-xl-9">
                         <div class="row">
                               <div id="productImage" class="col-lg-6 text-center">
-                                <product:productImagePanel galleryImages="${galleryImages}" />
-                              </div>
-                            <div id="productInfo" class="col-lg-5 offset-lg-1">
+                              <div class="hide-on-desktop" id="productInfo">
                             <c:forEach items="${product.categories}" var="categoryData">
                              <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
                               <c:url var="brandUrl" value="${categoryData.url}"/>
@@ -39,8 +37,11 @@
                              </c:if>
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
-                                    <c:choose>
-                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+                                <c:choose>
+                                    <c:when test="${not empty disableButton and disableButton == true}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
                                         <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
                                       </c:when>
                                       <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
@@ -54,6 +55,38 @@
                                     </c:choose>
                                     
                                 <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                </div>
+                                <product:productImagePanel galleryImages="${galleryImages}" />
+                              </div>
+                            <div id="productInfo" class="col-lg-5 offset-lg-1">
+                            <div class="hide-on-mobile">
+                            <c:forEach items="${product.categories}" var="categoryData">
+                             <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
+                              <c:url var="brandUrl" value="${categoryData.url}"/>
+                              <p class="overline"><a href="${brandUrl}">${fn:toUpperCase(product.manufacturer)}</a></p>
+                             </c:if>
+                              </c:forEach>
+                                <h1 class="mb-4">${product.displayName}</h1>
+                                <c:choose>
+                                    <c:when test="${not empty disableButton and disableButton == true}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
+                                        <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:otherwise>
+                                         <c:if test ="${product.productTagValues ne null}">
+                                           <span class="badge badge-new">${product.productTagValues}</span>
+                                         </c:if>
+                                      </c:otherwise>
+                                    </c:choose>
+                                    
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                </div>                                   
+
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
@@ -70,13 +103,23 @@
                                      </c:choose>
                                  </div>
                                  </c:when>
-                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <c:when test="${product.isUpcoming eq 'true' && !product.isBundle}">
                                 <div id="pickupDelivery">
                                   <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
                                 </div>
                                 </c:when>
+
                                 <c:otherwise>
-                                 <div id="productDates">
+								<c:if test="${product.isBundle}">
+									<spring:theme code="text.bundle.pdp.include" />
+									<ul>
+										<c:forEach items="${product.bundleProductReference}"
+											var="bundleReference">
+											<li>${bundleReference.productReferenceName}<br /></li>
+										</c:forEach>
+									</ul>
+								</c:if>
+								<div id="productDates">
                                       <div class="input-group">
                                         <span class="rental-dates d-md-inline"><i class="icon-calendar"></i> <spring:theme code="pdp.rental.dates.label.text" /></span>
                                         <input type="text" id="product-litepicker" class="form-control d-none d-md-inline-block" placeholder="Select dates...">
@@ -89,26 +132,29 @@
 	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
 	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate and not empty disableButton and disableButton == true}">
+	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 </c:choose>
-	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+	                                 <a href="#" class="pickupDeliveryLink" data-bs-toggle="modal" data-bs-target="#pickup-delivery-options"><spring:theme code="pdp.pickup.section.text"/></a>
                                  </p>
                                   </div>
                                   </c:otherwise>
                                    </c:choose>
-                                   <c:if test = "{product.isDiscontinued ne 'true'}">
+                                   <c:if test = "${product.isDiscontinued ne 'true'}">
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
-                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
+                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<c:choose><c:when test="${rentalDate.numberOfDays eq 1}"><spring:theme code="pdp.rental.product.recommendation.section.day.rental.text"/></c:when><c:otherwise><spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></c:otherwise></c:choose></span>
                                 </div>
                                 </c:if>
                                 <!--BL-628: Notify Me-->
                                 <c:choose >
                                  <c:when test="${product.isDiscontinued eq 'true'}">
                                  </c:when>
-                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <c:when test="${product.isUpcoming eq 'true' && !product.isBundle}">
                                 <spring:theme code="text.stock.notification.subscribe.title" var="colorBoxTitle" />
                                 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                                    <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-login-popup"   data-link="<c:url value='/login/loginpopup'/>"

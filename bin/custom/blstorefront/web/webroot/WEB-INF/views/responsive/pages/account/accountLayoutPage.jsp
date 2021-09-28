@@ -22,8 +22,15 @@
        <c:if test ="${pageType ne 'orderDetails'}">
           <div id="accountMenu" class="col-lg-3 sticky-lg-top">
              <h6 class="mb-4">
-                <spring:theme code="account.customer.name.prefix"/>
-                &nbsp; ${user.name}!
+                <c:choose>
+                  <c:when test="${not empty user.name}" >
+                     <spring:theme code="account.customer.name.prefix"/>
+                     &nbsp; ${user.name}!
+                  </c:when>
+                  <c:otherwise>
+                     <spring:theme code="account.salutation.text.name"/>
+                  </c:otherwise>
+                </c:choose>
              </h6>
              <div id="accountMobileNav" class="d-block d-lg-none dropdown my-4">
                 <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="accountMobile" data-bs-toggle="dropdown" aria-expanded="false">
@@ -75,9 +82,9 @@
              <div class="d-none d-lg-block">
                 <p>
                    <a href="${baseUrl}/orders"
-                          <c:if test="${fn:startsWith(pageTitle, 'Order History')}">
-                              <c:out value="class=active"/>
-                          </c:if>>
+                   <c:if test="${fn:startsWith(pageTitle, 'Order History') || extendOrderData ne null || cmsPage.uid eq 'pay-bill-success'}">
+                     <c:out value="class=active"/>
+                 </c:if>>
                              <spring:theme code= "text.orders"/>
                    </a>
                 </p>
@@ -128,7 +135,10 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/verificationImages">
+                   <a href="${baseUrl}/verificationImages"
+                      <c:if test="${blPageType eq 'verificationImages'}">
+                          <c:out value="class=active"/>
+                      </c:if>>
                       <spring:theme code= "text.verification.documents" />
                    </a>
                 </p>

@@ -2,7 +2,6 @@ package com.bl.core.stock;
 
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +36,17 @@ public interface BlStockLevelDao {
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findSerialStockLevelForDate(final String serialProductCode,
+			final Date startDate, final Date endDate);
+
+	/**
+	 * It finds the stock for the given sku and serial from start date to end date
+	 *
+	 * @param serialProductCode
+	 * @param startDate         the rental start date
+	 * @param endDate           the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findSerialStockLevelForDateFromNonBufferInv(final String serialProductCode,
 			final Date startDate, final Date endDate);
 
 	/**
@@ -92,7 +102,7 @@ public interface BlStockLevelDao {
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
-			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay, final Boolean reservedStatus);
 
 	/**
 	 * This method created to find the stock level for extended order based on extend start date and extend end date
@@ -100,4 +110,45 @@ public interface BlStockLevelDao {
 	Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
 			final Date startDay, final Date endDay);
 
+	/**
+	 * It checks whether the product is available in present date to be marked as buffer inventory
+	 * @param serialProductCode
+	 * @param startDay
+	 * @param endDay
+	 * @return Collection<StockLevelModel> list of stock level model
+	 */
+	public Collection<StockLevelModel> checkProductAvailabilityForCurrentDate(final String serialProductCode,
+			final Date startDay, final Date endDay);
+
+	/**
+	 * It checks whether the product is available in present date to be marked as buffer inventory
+	 * @param warehouseModel the warehouse model
+	 * @param startDay the start day
+	 * @param endDay the end day
+	 * @return Collection<StockLevelModel> list of stock level model
+	 */
+	public Collection<StockLevelModel> reserveProductsBelongToWHForSpecifiedDate(final WarehouseModel warehouseModel,
+			final Date startDay, final Date endDay);
+
+	/**
+	 * It finds all the stocks for the given serials and serial from start date to end date
+	 *
+	 * @param serialProductCodes
+	 * @param startDay           the rental start date
+	 * @param endDay             the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findALLSerialStockLevelsForDateAndCodes(
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
+
+	/**
+	 * It gets the stock
+	 * @param productCodes list of product code
+	 * @param warehouses list of warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return list of stock level model
+	 */
+	public Collection<StockLevelModel> getStockForUnallocatedProduct(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
 }

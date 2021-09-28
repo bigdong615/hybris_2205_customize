@@ -2,6 +2,8 @@ package com.bl.core.services.strategy.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.BlOptionsModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -17,9 +19,11 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 /** This class is used to get available stock and modify cart entry.
@@ -100,10 +104,30 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
       final AbstractOrderEntryModel entryToUpdate,
       final long actualAllowedQuantityChange, final long newQuantity,
       final Integer maxOrderQuantity) {
-      return super.modifyEntry(cartModel, entryToUpdate, actualAllowedQuantityChange, newQuantity,
-        maxOrderQuantity);
-  }
 
+		CommerceCartModification modifyEntry = super.modifyEntry(cartModel, entryToUpdate, actualAllowedQuantityChange, newQuantity,
+        maxOrderQuantity);
+		updateOptionEntry(modifyEntry.getEntry());
+		return modifyEntry;
+  }
+	/**
+	 * Update options on entry 
+	 * @param AbstractOrderEntryModel
+	 *           the orderEntry
+	 */
+private void updateOptionEntry(final AbstractOrderEntryModel orderEntry){
+  	if(CollectionUtils.isNotEmpty(orderEntry.getOptions())){
+			final BlOptionsModel optionsModel = orderEntry.getOptions().iterator().next();
+			final Integer quantity = Integer.parseInt(orderEntry.getQuantity().toString());
+			List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
+			for(int i = 0 ; i < quantity ; i++){
+				selectOptionList.add(optionsModel);
+			}
+			orderEntry.setOptions(selectOptionList);
+			getModelService().save(orderEntry);
+			getModelService().refresh(orderEntry);
+		}
+	}
   /**
    * {@InheritDoc}
    */
@@ -130,9 +154,10 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
               BlCoreConstants.DATE_FORMAT);
       final Date endDay = BlDateTimeUtils
           .convertStringDateToDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
-
-      stockLevel = getBlCommerceStockService()
-          .getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
+			stockLevel = ((BlProductModel) productModel).isBundleProduct() ? getBlCommerceStockService()
+					.getAvailableCountForBundle(((BlProductModel) productModel), warehouseModelList, startDay,
+							endDay) : getBlCommerceStockService()
+					.getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
 
       // this is to update the quantity as per availability.
       newTotalQuantityAfterStockLimit = Math.min(newTotalQuantity, stockLevel);

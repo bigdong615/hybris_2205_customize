@@ -199,6 +199,7 @@
 		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blPromotionService" ref="blPromotionService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 
@@ -266,6 +267,9 @@
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
 	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
+	    <property name="priceDataFactory" ref="priceDataFactory"/>
+	    <property name="commonI18NService" ref="commonI18NService"/>
+			<property name="productService" ref="productService"/>
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
@@ -306,6 +310,8 @@
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="cmsComponentService" ref="cmsComponentService" />
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->
@@ -343,6 +349,7 @@
         <property name="baseStoreService" ref="baseStoreService"/>
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
+        <property name="productService" ref="productService"/>
     </bean>
 	
 	<alias name="defaultStockConverter" alias="stockConverter"/>
@@ -450,6 +457,7 @@
 		<property name="brainTreeCheckoutFacade" ref="brainTreeCheckoutFacade"/>
 		<property name="checkoutFacade" ref="checkoutFacade"/>
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy"/>
+		<property name="blCartService" ref="cartService"/>
 	</bean>
 
 	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>
@@ -614,6 +622,8 @@
 		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blOrderAppliedVouchersPopulator" ref="blOrderAppliedVouchersPopulator" />
+		<property name="defaultBlExternalTaxesService" ref="defaultBlExternalTaxesService" />
+		<property name="blOrderService" ref="blOrderService" />
 	</bean>
 
 
@@ -690,6 +700,20 @@
 		<property name="blDefaultExtendOrderConverter" ref="blDefaultExtendOrderConverter"/>
 	</bean>
 
+	<!--BL-772 Added for verification document -->
+	<alias name="verificationDocumentReversePopulator" alias="verificationDocumentPopulator"/>
+	<bean id="verificationDocumentReversePopulator" class="com.bl.facades.populators.BlVerificationDocumentReversePopulator">
+	</bean>
+
+	<alias name="verificationDocumentConverter" alias="verificationDocumentConverter"/>
+	<bean id="verificationDocumentConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.core.model.VerificationDocumentMediaModel" />
+		<property name="populators">
+			<list>
+				<ref bean="verificationDocumentPopulator"/>
+				</list>
+		</property>
+	</bean>
 	<!--Added for extend order coupon promotion -->
 
 	<bean id="blDefaultExtendOrderConverter" parent="abstractPopulatingConverter">
@@ -702,5 +726,23 @@
 		</property>
 	</bean>
 
+	<bean id="blVerificationDocumentFacade" class="com.bl.facades.customer.impl.DefaultBlVerificationDocumentFacade">
+		<property name="blVerificationDocumentService" ref="blVerificationDocumentService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="verificationDocumentConverter" ref="verificationDocumentConverter"/>
+	</bean>
+
+	<!-- BL-82 Added to override OOB Method for AutoSuggestion -->
+
+		<alias name="defaultBlSolrProductSearchFacade" alias="productSearchFacade"/>
+		<bean id="defaultBlSolrProductSearchFacade"
+			class="com.bl.facades.solrfacetsearch.impl.DefaultBlSolrProductSearchFacade" parent="defaultSolrProductSearchFacade">
+			<property name="blProductSearchService" ref="commerceProductSearchService"/>
+		</bean>
+
+
+	<alias name="defaultBlReturnOrderFacade" alias="blReturnOrderFacade" />
+    <bean id="defaultBlReturnOrderFacade" class="com.bl.facades.order.DefaultBlReturnOrderFacade" />
 
 </beans>

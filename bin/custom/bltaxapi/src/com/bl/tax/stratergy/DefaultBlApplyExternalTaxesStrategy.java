@@ -5,16 +5,22 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import de.hybris.platform.externaltax.impl.DefaultApplyExternalTaxesStrategy;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class is created for calculating the external taxes
  * @author Manikandan
  */
 public class DefaultBlApplyExternalTaxesStrategy extends DefaultApplyExternalTaxesStrategy {
+
+  private ModelService modelService;
 
   /**
    * this method oevrrides to calculate line item and shipping taxes
@@ -24,11 +30,37 @@ public class DefaultBlApplyExternalTaxesStrategy extends DefaultApplyExternalTax
     if (!Boolean.TRUE.equals(order.getNet())) {
       throw new IllegalStateException(
           "Order " + order.getCode() + " must be of type NET to apply external taxes to it.");
-    } else {
+    } else if(BooleanUtils.isTrue(order.isUnPaidBillPresent())) {
+      applyEntryTaxesForPayBill(order, externalTaxes);
+    }
+    else {
       final BigDecimal entryTaxSum = applyEntryTaxes(order, externalTaxes);
       final BigDecimal shippingTaxSum = super.applyShippingCostTaxes(order, externalTaxes);
       setTotalTax(order, entryTaxSum.add(shippingTaxSum));
     }
+  }
+
+  /**
+   * It sets the calculated tax on billing charges entry of consignment
+   * @param order
+   * @param taxDoc
+   */
+  private void applyEntryTaxesForPayBill(final AbstractOrderModel order,
+      final ExternalTaxDocument taxDoc) {
+    AtomicInteger i = new AtomicInteger(0);
+    order.getConsignments()
+        .forEach(consignment -> consignment.getConsignmentEntries()
+            .forEach(consignmentEntry -> consignmentEntry
+                .getBillingCharges()
+                .forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
+                  if (BooleanUtils.isFalse(billing.isBillPaid())) {
+                    final List<TaxValue> taxesForOrderEntry = taxDoc.getTaxesForOrderEntry(i.get());
+                    billing.setTaxAmount(BigDecimal.valueOf(taxesForOrderEntry.get(0).getValue()));
+                    getModelService().save(billing);
+                    i.set(i.incrementAndGet());
+                  }
+                }))));
+
   }
 
   /**
@@ -75,6 +107,14 @@ public class DefaultBlApplyExternalTaxesStrategy extends DefaultApplyExternalTax
         order.setTotalTax(CoreAlgorithms.round(totalTaxSum.doubleValue(), digits));
       }
     }
+  }
+
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(ModelService modelService) {
+    this.modelService = modelService;
   }
 }
 

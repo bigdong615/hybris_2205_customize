@@ -155,6 +155,9 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blStockCreationJob;blStockCreationJob
 ;blAutomatedStockCreationJob;blAutomatedStockCreationJob
 ;blAuthorizePaymentJob;blAuthorizePaymentJob
+;blBufferInventoryJob;blBufferInventoryJob
+;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
+;blReshufflerJob;blReshufflerJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
@@ -162,9 +165,15 @@ INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLan
 INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
 ;blAuthorizePaymentCronJob ;blAuthorizePaymentJob ; ;true;;
+;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
+;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
+;blReshufflerCronJob ;blReshufflerJob ; ;true;;
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?
+;blAuthorizePaymentCronJob; 0 0 0/3 1/1 * ?
+;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
+;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
  
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
@@ -197,6 +206,17 @@ INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sess
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;WalthamMorningPullCronJob; 0 0 6 * * ?
                      ;SanCarlosMorningPullCronJob; 0 0 6 * * ?
+
+
+#BL-827 Inventory clean complete/in-complete order queue
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
+                             ;markConsignmentsCleanJob;markConsignmentsCleanJob
+
+INSERT_UPDATE MarkReadyToShipConsignmentsCleanJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active
+                                                 ;markReadyToShipConsignmentsCleanJob;markConsignmentsCleanJob; ;true
+
+INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
+                     ;markReadyToShipConsignmentsCleanJob; 0 0/30 * * * ?
 
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]
@@ -269,6 +289,7 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
                                               ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
                                               ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; CARRIER					              ; Carrier                         
                                               ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
                                               ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
                                               ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
@@ -300,7 +321,12 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CHECKED_GEAR_WORKSTATION          ; VIP Checked Gear Workstation                     
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
-                                              
+                                              ; REPAIR_SHELF                          ; Repair Shelf                                     
+                                              ; REPAIR_CLEAN_MOBILE_CART              ; Repair Clean Mobile Cart                         
+                                              ; REPAIR                                ; Repair                                           
+                                              ; REPAIR_CABINET                        ; Repair Cabinet                                   
+                                              ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
+                                              ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                         
 
 INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;COMPACT;COMPACT
@@ -333,4 +359,130 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 ; WIFI_ISSUES                     ; Wifi issues      
                                 
 INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
-                                ; GIFTCARD                        ; Gift Card                     
+                                ; GIFTCARD                        ; Gift Card 
+                                ; PACKAGE                          ;   package                      
+#Media folder for verification documents
+INSERT_UPDATE MediaFolder;qualifier[unique=true];path[unique=true]
+;verificationDocuments;verificationDocuments
+
+# BL-799 Enum values for Vendors Enum
+INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]     
+                          ; ARRI              ; Arri              
+                          ; ABELCINE          ; AbelCine          
+                          ; APUTURE           ; Aputure           
+                          ; ANTON_BAUER       ; Anton Bauer       
+                          ; ATOMOS            ; Atomos            
+                          ; BLACKMAGIC        ; Blackmagic        
+                          ; CRIS              ; CRIS              
+                          ; CANON             ; Canon             
+                          ; CELESTRON         ; Celestron         
+                          ; CONVERGENT_DESIGN ; Convergent Design 
+                          ; CORE_SWX          ; Core SWX          
+                          ; DJI               ; DJI               
+                          ; DENECKE           ; Denecke           
+                          ; DIGITAL_SPUTNIK   ; Digital Sputnik   
+                          ; DIGITRON          ; Digitron          
+                          ; EARTEC            ; Eartec            
+                          ; EDELKRONE         ; Edelkrone         
+                          ; ESPSON            ; Espson            
+                          ; ELITE_ROKINON     ; Elite-Rokinon     
+                          ; FIILEX            ; Fiilex            
+                          ; FREEFLY           ; Freefly           
+                          ; FUJIFILM          ; Fujifilm          
+                          ; GLIDECAM          ; Glidecam          
+                          ; GOPRO             ; GoPro             
+                          ; GIGAPAN           ; Gigapan           
+                          ; HASSELBLAD        ; Hasselblad        
+                          ; HIVE_LIGHTING     ; Hive Lighting     
+                          ; IKAN              ; Ikan              
+                          ; INTELLYTECH       ; Intellytech       
+                          ; K_TEK             ; K-Tek             
+                          ; KESSLER_CRANE     ; Kessler Crane     
+                          ; KINOFLO           ; KinoFlo           
+                          ; LECTROSONICS      ; Lectrosonics      
+                          ; LITEPANELS        ; Litepanels        
+                          ; LOWEL             ; Lowel             
+                          ; LPADESIGNS        ; LPADesigns        
+                          ; LEICA             ; Leica             
+                          ; MANFROTTO         ; Manfrotto         
+                          ; MARSHALL          ; Marshall          
+                          ; MCR               ; MCR               
+                          ; MICRON            ; Micron            
+                          ; MILLER            ; Miller            
+                          ; NIKON             ; Nikon             
+                          ; NIVIE             ; Nivie             
+                          ; PAUL_C_BUFF       ; Paul C. Buff      
+                          ; PANASONIC         ; Panasonic         
+                          ; PHOTOVILLAGE      ; PhotoVillage      
+                          ; PROFOTO           ; Profoto           
+                          ; QUASAR_SCIENCE    ; Quasar Science    
+                          ; RED               ; Red               
+                          ; REDROCK           ; Redrock           
+                          ; RHINO             ; Rhino             
+                          ; SENNHEISER        ; Sennheiser        
+                          ; SMH_ELECTRONICS   ; SMH Electronics   
+                          ; SONY              ; Sony              
+                          ; SACHTLER          ; Sachtler          
+                          ; SAMSON            ; Samson            
+                          ; SCHNEIDER         ; Schneider         
+                          ; SHURE             ; Shure             
+                          ; SMALLHD           ; SmallHD           
+                          ; SOUND_DEVICES     ; Sound Devices     
+                          ; SYRP              ; Syrp              
+                          ; TAMRON            ; Tamron            
+                          ; TIFFEN_STEADICAM  ; Tiffen Steadicam  
+                          ; TASCAM            ; Tascam            
+                          ; TERADEK           ; Teradek           
+                          ; TILTA             ; Tilta             
+                          ; VITEC             ; Vitec             
+                          ; WESTCOTT          ; Westcott          
+                          ; WOODEN_CAMERA     ; Wooden Camera     
+                          ; ZEISS             ; Zeiss             
+                          ; ZACUTO            ; Zacuto            
+                          ; ZHIYUN            ; Zhiyun            
+                          
+INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]  
+                                        ; MISSING_CHARGE    			; MISSING CHARGE 
+                                        ; LATE_CHARGE       			; LATE CHARGE    
+                                        ; REPAIR_CHARGE     			; REPAIR CHARGE 
+                                        ; CUSTOMER_RESPONSIBLE_REPAIRS	; CUSTOMER RESPONSIBLE REPAIRS
+
+ 
+INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]                                       
+                                             ; FEDEX_SAT_DELIVERY_BL                   ; FedEx Saturday Delivery on BL                       
+                                             ; FEDEX_STANDARD_ROUND_TRIP               ; FedEx Standard Round Trip                           
+                                             ; FEDEX_OVERNIGHT_ROUND_TRIP              ; FedEx Overnight Round Trip                          
+                                             ; UPS_STANDARD_ROUND_TRIP                 ; UPS Standard Round Trip                             
+                                             ; UPS_STANDARD_AM_ROUND_TRIP              ; UPS Standard Am Round Trip                          
+                                             ; UPS_OVERNIGHT_SAVER_ROUND_TRIP          ; Test UPS Overnight Saver Round Trip                 
+                                             ; UPS_OVERNIGHT_ROUND_TRIP                ; UPS Overnight Round Trip                            
+                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP          ; Ups Store Overnight Round Trip                      
+                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP        ; Ups Store Standard Am Round Trip                    
+                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP    ; Ups Store Overnight Saver Round Trip                
+                                             ; UPS_STORE_STANDARD_ROUND_TRIP           ; Ups Store Standard Round Trip                       
+                                             ; BL_SAN_CARLOS                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office) 
+                                             ; COLORTEK                                ; Pick-up in Boston, MA (Colortek)                    
+                                             ; FOTO_EXPRESS                            ; Pick-up in San Jose, CA (Foto Express)              
+                                             ; WEBCAM                                  ; Pick-up in Philadelphia, PA (WEBBCAM)               
+                                             ; BL_WALTHAM                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)    
+                                             ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)             
+                                             ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)          
+                                             ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)          
+                                             ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL                       
+                                             ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL                        
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL                              
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_SAT_BL   ; FEDEX Overnight AM Saturday on BL                   
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_SAT_BL     ; Ups Overnight AM Saturday on BL                     
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL                            
+                                             ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL                      
+                                             ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL                         
+                                             ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
+                                             ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
+                                             
+INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
+                              ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
+                              ; blShareASaleJob            ; blShareASaleJob
+                              
+INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
+                      ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
+                      ; blShareASaleCronJob                  ; blShareASaleJob            ;                                        ; true   ;

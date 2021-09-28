@@ -40,13 +40,21 @@
 	<div class="container">
 		<div id="cartSteps" class="row justify-content-center">
 			<div class="col-xl-10">
-				<span class="step1 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.your.rental" /></span> <span
-					class="step2 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.delivery.or.pickup" /></span> <span
-					class="step3 complete"><i class="icon-check"></i> <spring:theme
-						code="text.review.page.payment" /></span> <span class="step4 active"><i
-					class="number">4</i> <spring:theme code="text.review.page.review" /></span>
+			    <a href="${cartPageUrl}" class="text-decoration-none">
+				    <span class="step1 complete"><i class="icon-check"></i> <spring:theme
+						code="text.checkout.multi.order.UsedGear" /></span>
+				</a>
+				<span class="step2 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.delivery.or.pickup" /></span>
+				<a href="${paymentPageUrl}" class="text-decoration-none">
+					<span class="step3 complete"><i class="icon-check"></i> <spring:theme
+						code="text.review.page.payment" /></span>
+				</a>
+				<a href="#" onClick="window.location.reload(true)" class="text-decoration-none">
+					<span class="step4 active"><i class="number">4</i>
+					    <spring:theme code="text.review.page.review" />
+					</span>
+			    </a>
 			</div>
 		</div>
 		<div class="row justify-content-center">
@@ -62,11 +70,8 @@
 							<div class="row">
 								<c:forEach items="${allItems}" var="cartEntry">
 									<div class="col-md-2 text-center mt-3">
-										<c:set
-											value="/blstorefront/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg"
-											var="altTextHtml1" />
-										<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-											title="${altText}" title="${altText}" />
+											<product:productPrimaryImage product="${cartEntry.product}"
+											format="thumbnail" />
 									</div>
 
 									<div class="col-md-6 mt-3">
@@ -100,9 +105,8 @@
 													placeholder="<spring:theme code='giftcard.PurchaseForm.email.placeholder' />"
 													name="email">
 												<textarea class="form-control mt-2 mb-4"
-													value="${entry.recipientMessage}"
 													placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />"
-													name="message"></textarea>
+													name="message">${entry.recipientMessage}</textarea>
 											</div>
 										</form:form>
 									</div>
@@ -128,7 +132,7 @@
 						</c:if>
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 							modelAttribute="placeOrderForm">
-							<div style="display: none;">
+							
 						<b><spring:theme code="text.review.page.order.notes" /></b>
 							 <input type="text" class="form-control order-notes"
 								name="orderNotes" id="notes"
@@ -139,7 +143,7 @@
 								value="true" checked="checked" id="newsletter" />
 							<label for="newsletter"><span class="gray80"><spring:theme
 										code="text.review.page.newsletter.checkbox.label" /></span></label>
-							<hr class="mt-5"></div>
+							<hr class="mt-5">
 							<div class="reviewCart">
 								<h5 class="mb-4">
 									<spring:theme
@@ -182,14 +186,7 @@
 								</c:if>
 							</c:forEach>
 						</c:if>
-						<div class="notification notification-tip check">
-							<spring:theme code="text.shipping.change.or.cancellation.message" />
-						</div>
-						<div class="order-actions my-4">
-							<a href="${printReviewUrl}" alt="Print Order"> <i
-								class="icon-print"></i>
-							</a>
-						</div>
+						
 					</div>
 				</div>
 			</div>

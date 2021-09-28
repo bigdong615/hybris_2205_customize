@@ -23,6 +23,13 @@
          <div class="col-md-7 mt-3">
            <a href="${fn:escapeXml(productUrl)}" class="js-pdplinkUrl" data-productCode="${entry.product.code}" data-brand="${entry.product.manufacturer}"
              data-productName="${ycommerce:sanitizeHTML(entry.product.name)}" data-productType="rental"><b>${entry.product.name}</b></a>
+             <c:if test="${not empty entry.product.bundleProductReference}">
+             <ul class="checklist mt-4">
+             <c:forEach items="${entry.product.bundleProductReference}" var="bundleItems">
+              <li>  ${bundleItems.productReferenceName}</li>
+             </c:forEach>
+             </ul>
+             </c:if>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
@@ -35,7 +42,16 @@
            </form:form>
          </div>
          <div class="col-md-3 mt-3 text-md-end">
-             <b><format:price priceData="${entry.totalPrice}" displayFreeForZero="true" /></span></b>
+             <b>
+             <c:choose>
+             <c:when test="${isReplacementOrderCart eq true}">
+              <format:price priceData="${entry.totalPrice}"/>
+             </c:when>
+             <c:otherwise>
+             <format:price priceData="${entry.totalPrice}" displayFreeForZero="true" />
+             </c:otherwise>
+             </c:choose>
+             </span></b>
              <c:url value="/cart/update" var="cartUpdateFormAction"/>
            <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                                             modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
@@ -66,6 +82,7 @@
      </div>
 
      <%-- This section will be covered in BL-462 --%>
+     <c:if test="${fn:containsIgnoreCase(entry.product.manufacturerAID, '9') == false}">
      <div id="damageOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/><a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
@@ -89,16 +106,37 @@
              </c:choose>
                
                <ul class="dropdown-menu damage-wavier damage-Waiver-update" aria-labelledby="coverageOptions1">
-                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro">
+                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end"><format:price priceData="${entry.gearGuardProFullWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard">
+                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end"><format:price priceData="${entry.gearGuardWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard"><spring:theme code="text.damage.waiver"/></a></li>
+                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard" data-product-code="${entry.product.code}"><spring:theme code="text.damage.waiver"/></a></li>
                </ul>
              </div>
          </div>
      </div>
-     <%-- It will be handled in BL-463 --%>
+     </c:if>
+     <c:if test="${not empty entry.option}">
+	<div id="damageOptions" class="row mt-3">
+		<div class="col-md-10 offset-md-2 rental-bl-options">
+			<p class="body14 mb-1"><spring:theme code="text.cart.rental.options"/></p>
+			<div class="dropdown">
+				<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
+                 ${entry.option.optionName} <c:if test="${not empty entry.option.optionPrice}"><span class="float-end"><format:price
+								priceData="${entry.option.optionPrice}" /></span></c:if></a>
+				<ul class="dropdown-menu damage-wavier bl-options-update"
+					aria-labelledby="coverageOptions1">
+					<c:forEach items="${entry.option.subOptions}" var="subOptions">
+						<li><a class="dropdown-item" href="#" href="#" data-id="${subOptions.optionCode}" data-entry="${entry.entryNumber}" data-product-code="${entry.product.code}">${subOptions.optionName} </a><span class="float-end"><format:price
+								priceData="${subOptions.optionPrice}" /></span></li>
+					</c:forEach>
+				</ul>
+			</div>
+		</div>
+	</div>
+</c:if>
+
+	<%-- It will be handled in BL-463 --%>
      <%--<div id="productOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.options"/></p>
@@ -121,10 +159,10 @@
              <%--<div class="notification notification-warning">This is a product warning.</div>--%>
              <c:choose>
              	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
-             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${not empty entry.availabilityMessage }">
-             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}"/></div>
+             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}" htmlEscape= "false"/></div>
              	</c:when>
              	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
              		<div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>

@@ -81,6 +81,12 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; creditCarts                  ; Credit Carts Pages              ; AccountPageTemplate                 ; creditCarts
                           ;                         ;update-email                  ;Update Email Page                ;AccountPageTemplate                  ;update-email
                           ;                         ;order                         ;Order Details Page                ;AccountPageTemplate                 ;order
+                          ;                         ;returnOrder                   ;Return Order Details Page         ;AccountPageTemplate                 ;returnOrder
                           ;                         ;extendRentalOrderDetails      ;Extend Rental Order Details Page  ; AccountPageTemplate                ;extendRentalOrderDetails
                           ;                         ;extendRentalOrderConfirmation ;Extend Rental Order Confirmation Page;AccountPageTemplate               ;extendRentalOrderConfirmation
-
+	                      ;							; pay-bill					   ;Bill Payment Page				 ;AccountPageTemplate				   ; pay-bill
+						  ;							; pay-bill-success			   ;Bill Payment Success Page		 ;AccountPageTemplate				   ; pay-bill-success
+                          ;                         ; modify-payment               ;Modify Payment Page              ;AccountPageTemplate                  ; modify-payment
+                          ;                         ; deposit-payment               ; Deposit Payment Page                  ; AccountPageTemplate            ; deposit-payment               
+                          ;                         ; deposit-payment-success       ; Deposit Payment Success Page          ; AccountPageTemplate            ; deposit-payment-success       
+                          

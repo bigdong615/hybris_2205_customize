@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -65,49 +66,62 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
-			final SerialProductData serialProductData = new SerialProductData();
-			if(getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel))
-			{
-				serialProductData.setCosmeticRating(Float.parseFloat(serialProductModel.getCosmeticRating().getCode()));
-				serialProductData.setFunctionalRating(Float.parseFloat(serialProductModel.getFunctionalRating().getCode()));
-			}
-			else
-			{
-				serialProductData.setCosmeticRating(0.0f);
-				serialProductData.setFunctionalRating(0.0f);
-			}
-			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
-			serialProductData.setSerialId(serialProductModel.getProductId());
-			populateSerialPromotionData(serialProductModel,serialProductData);
-			//onSale changes
-			serialProductData.setOnSale(serialProductModel.getOnSale() != null && serialProductModel.getOnSale());
-			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
-			{
-				serialProductData.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
-			}
-			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getIncentivizedPrice()))
-			{
-				serialProductData.setFinalIncentivizedPrice(getProductPriceData(serialProductModel.getIncentivizedPrice()));
-				target.setHasIncentivizedPrice(Boolean.TRUE);
-			}
+					if(BooleanUtils.isTrue(serialProductModel.getForSale())) {
+						final SerialProductData serialProductData = new SerialProductData();
+						if (getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel)) {
+							serialProductData.setCosmeticRating(
+									Float.parseFloat(serialProductModel.getCosmeticRating().getCode()));
+							serialProductData.setFunctionalRating(
+									Float.parseFloat(serialProductModel.getFunctionalRating().getCode()));
+						} else {
+							serialProductData.setCosmeticRating(0.0f);
+							serialProductData.setFunctionalRating(0.0f);
+						}
+						serialProductData
+								.setConditionRating(serialProductModel.getConditionRatingOverallScore());
+						serialProductData.setSerialId(serialProductModel.getProductId());
+						populateSerialPromotionData(serialProductModel, serialProductData);
+						//onSale changes
+						serialProductData.setOnSale(
+								serialProductModel.getOnSale() != null && serialProductModel.getOnSale());
+						if (PredicateUtils.notNullPredicate()
+								.evaluate(serialProductModel.getFinalSalePrice())) {
+							serialProductData
+									.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
+						}
+						if (PredicateUtils.notNullPredicate()
+								.evaluate(serialProductModel.getIncentivizedPrice())) {
+							serialProductData.setFinalIncentivizedPrice(
+									getProductPriceData(serialProductModel.getIncentivizedPrice()));
+							target.setHasIncentivizedPrice(Boolean.TRUE);
+						}
 
-			//Added Check for serial product
-			if(BooleanUtils.isTrue(source.getForRent()))
-			{
-			   final boolean isUsedGearSerialNotAssignedToRentalOrder = blCommerceStockService
-					.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getProductId(), source.getCode());
-			  serialProductData.setIsSerialNotAssignedToRentalOrder(isUsedGearSerialNotAssignedToRentalOrder);
-			}
-			//Added Serial status for used gear product
-			if (serialProductModel.getSerialStatus() != null)
-			{
-				serialProductData.setSerialStatus(serialProductModel.getSerialStatus());
-			}
-			serialProductDataList.add(serialProductData);
+						//Added Check for serial product
+						if (BooleanUtils.isTrue(source.getForRent())) {
+							final boolean isUsedGearSerialNotAssignedToRentalOrder = blCommerceStockService
+									.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getProductId(),
+											source.getCode());
+							serialProductData
+									.setIsSerialNotAssignedToRentalOrder(isUsedGearSerialNotAssignedToRentalOrder);
+						}
+						//Added Serial status for used gear product
+						if (serialProductModel.getSerialStatus() != null) {
+							serialProductData.setSerialStatus(serialProductModel.getSerialStatus());
+						}
+						serialProductData.setSerialSoftAssignedOrHardAssigned(
+								BooleanUtils.isFalse((Objects.isNull(serialProductModel.getHardAssigned())
+										? Boolean.FALSE : serialProductModel.getHardAssigned())) &&
+										BooleanUtils.isFalse(Objects.isNull(serialProductModel.getSoftAssigned())
+												? Boolean.FALSE : serialProductModel
+												.getSoftAssigned()));  // To display the serial if hard assigned and soft assigned as false
+
+						serialProductDataList.add(serialProductData);
+					}
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
 	}
+
 
 	/**
 	 * populate the promotion message for category wide promotion and price

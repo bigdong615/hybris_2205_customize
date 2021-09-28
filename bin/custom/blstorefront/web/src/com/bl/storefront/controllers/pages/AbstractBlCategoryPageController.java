@@ -14,6 +14,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCategoryPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
+import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.catalog.model.KeywordModel;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.model.pages.CategoryPageModel;
@@ -27,7 +28,10 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -120,9 +124,17 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 searchQuery = getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE);
             }
         }
-
+        String blPageType;
+        if (category.getCode().equals(BlCoreConstants.NEW_GEAR)){
+            if(getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null || ((AssistedServiceSession)getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent()==null){
+                return BlControllerConstants.REDIRECT_TO_HOME_URL;
+            }
+            blPageType=BlCoreConstants.USED_GEAR_CODE;
+        }else{
+            blPageType= category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE;
+        }
         final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
-            sortCode, categoryPage , category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE);
+            sortCode, categoryPage , blPageType);
 
         ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData = null;
         try
@@ -137,6 +149,13 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         populateModelAttributeForCategory(model ,categorySearch , categoryCode , searchPageData , category, showMode , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST));
         populateRequiredDataForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
+
+        checkNumberOfFacetSelected(searchPageData , model);
+        if(category.getCode().equalsIgnoreCase(BlCoreConstants.RENTAL_GEAR) || category.getCode().equalsIgnoreCase(BlCoreConstants.USED_GEAR_CODE)) {
+            final long totalNumberOfResults =
+                searchPageData.getPagination().getTotalNumberOfResults() - 1;
+            searchPageData.getPagination().setTotalNumberOfResults(totalNumberOfResults);
+        }
         return getViewPage(categorySearch.getCategoryPage());
 
     }
@@ -144,7 +163,15 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      *  this method is created for adding model attribute to rental and used gear category
      */
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
-        if(category.isRentalCategory()){
+
+        if(BlCoreConstants.NEW_GEAR.equals(category.getCode())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
+            final String currentCartType = blCartFacade.identifyCartType();
+            if(StringUtils.isNotEmpty(currentCartType)){
+                model.addAttribute(currentCartType,true);
+            }
+        }
+        else if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
             final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
@@ -350,6 +377,27 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 Collectors.toSet()));
         final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
         setUpMetaData(model, metaKeywords, metaDescription);
+    }
+
+
+    /**
+     * This method created to set model for clear all
+     * @param searchPageData searchpagedata
+     * @param model model
+     */
+    private void checkNumberOfFacetSelected(final ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData , final Model model) {
+        final AtomicInteger numberOfFacetSelected = new AtomicInteger();
+            final List<String> facetNameList = new ArrayList<>();
+            searchPageData.getFacets().forEach(searchStateDataFacetData -> searchStateDataFacetData.getValues().forEach(searchStateDataFacetValueData -> {
+                if(searchStateDataFacetValueData.isSelected()) {
+                    facetNameList.add(searchStateDataFacetValueData.getCode());
+                    numberOfFacetSelected.getAndIncrement();
+                }
+            }));
+
+            if(numberOfFacetSelected.intValue() == 1) {
+                model.addAttribute(BlControllerConstants.CLEAR_BRANDS, facetNameList.get(0));
+            }
     }
 
 }

@@ -40,7 +40,7 @@ public class BlMarkDirtyPrioritySerialsJob extends AbstractJobPerformable<CronJo
 		try
 		{
 			getBlInventoryScanToolService().flagAllDirtyPrioritySerialsOfConsignment();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "BlMarkDirtyPrioritySerialsJob finished successfully");
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlMarkDirtyPrioritySerialsJob finished successfully");
 		}
 		catch (final Exception exception)
 		{

@@ -16,16 +16,17 @@ $siteResource=jar:com.bl.initialdata.constants.blInitialDataConstants&/blinitial
 $lang=en
  
  
-INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                             ; url ; &linkRef                     ; linkName            ; category(code, $productCV) ; target(code)[default='sameWindow'] ;  ;  
-                               ;                         ; AccountBookmarksLink         ; Account Bookmarks Link           ; /my-account/bookmarks ; AccountBookmarksLink         ; Bookmark            ;                            ;                                    ;  ;  ;
-                               ;                         ; AccountSavedCartsLink        ; Account Saved Carts Link         ; /my-account/saved-carts ; AccountSavedCartsLink        ; Saved Carts         ;                            ;                                    ;  ;  ;
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                             ; url ; &linkRef                     ; linkName            ; category(code, $productCV) ; target(code)[default='sameWindow'] ;  ;
                                ;                         ; AccountOrderHistoryLink      ; Account Order History Link       ; /my-account/orders ; AccountOrderHistoryLink      ; Order History       ;                            ;                                    ;  ;  ;
                                ;                         ; AccountAddressesLink         ; Account Addresses Link           ; /my-account/address-book ; AccountAddressesLink         ; Addresses           ;                            ;                                    ;  ;  ;
-                               ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; /my-account/payment-details ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;  
-                               ;                         ; AccountVerificaionImagesLink ; Account Verification Images Link ; "#" ; AccountVerificaionImagesLink ; Verification Images ;                            ;                                    ;  ;  ;  
-                               ;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;
-                               ;                         ;AccountChangePasswordLink     ; Account Change Password Link     ; /my-account/update-password       ; AccountChangePasswordLink         ; Change Password            ;                            ;                                    ;  ;  ;
                                ;                         ;AccountChangeEmailLink        ; Account Change Email Link        ; /my-account/update-email ; AccountChangeEmailLink         ; Change Email            ;                            ;                                    ;  ;  ;
+                               ;                         ;AccountChangePasswordLink     ; Account Change Password Link     ; /my-account/update-password       ; AccountChangePasswordLink         ; Change Password            ;                            ;                                    ;  ;  ;
+                               ;                         ; AccountSavedCartsLink        ; Account Saved Carts Link         ; /my-account/saved-carts ; AccountSavedCartsLink        ; Saved Carts         ;                            ;                                    ;  ;  ;
+                               ;                         ; AccountBookmarksLink         ; Account Bookmarks Link           ; /my-account/bookmarks ; AccountBookmarksLink         ; Bookmarks            ;                            ;                                    ;  ;  ;
+                               ;                         ; AccountVerificaionImagesLink ; Account Verification Images Link ; /my-account/verificationImages ; AccountVerificaionImagesLink ; Verification Documents ;                            ;                                    ;  ;  ;
+                               ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; /my-account/payment-details ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;
+
+                              #;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;
 
 
 
@@ -33,16 +34,17 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; n
                                 ; AccountNavNode   ;                         ; Account Nav Node Link ; BLNavNode               ;                      ; AccountNavNode ;                          
                                 
                                 
-INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                  ; $contentCV[unique=true] ; name                                   ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
-                                 ; AccountBookmarksLinkEntry         ;                         ; Account Bookmarks Link Entry           ; AccountNavNode           ; AccountBookmarksLink                                   
-                                 ; AccountSavedCartsLinkEntry        ;                         ; Account Saved Carts Link Entry         ; AccountNavNode           ; AccountSavedCartsLink                                  
-                                 ; AccountOrderHistoryLinkEntry      ;                         ; Account Order History Link Entry       ; AccountNavNode           ; AccountOrderHistoryLink                                
-                                 ; AccountAddressesLinkEntry         ;                         ; Account Addresses Link Entry           ; AccountNavNode           ; AccountAddressesLink                                   
-                                 ; AccountCreditCardsLinkEntry       ;                         ; Account Credit Cards Link Entry        ; AccountNavNode           ; AccountCreditCardsLink                                 
-                                 ; AccountVerificaionImagesLinkEntry ;                         ; Account Verification Images Link Entry ; AccountNavNode           ; AccountVerificaionImagesLink                           
-                                 ; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink
-                                 ; AccountChangePasswordLinkEntry    ;                         ; Account Change Password Link Entry     ; AccountNavNode           ; AccountChangePasswordLink
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                  ; $contentCV[unique=true] ; name                                   ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
+                                 ; AccountOrderHistoryLinkEntry      ;                         ; Account Order History Link Entry       ; AccountNavNode           ; AccountOrderHistoryLink
+                                 ; AccountAddressesLinkEntry         ;                         ; Account Addresses Link Entry           ; AccountNavNode           ; AccountAddressesLink
                                  ; AccountChangeEmailLinkEntry       ;                         ; Account Change Email Link Entry        ; AccountNavNode           ; AccountChangeEmailLink
+                                 ; AccountChangePasswordLinkEntry    ;                         ; Account Change Password Link Entry     ; AccountNavNode           ; AccountChangePasswordLink
+                                 ; AccountSavedCartsLinkEntry        ;                         ; Account Saved Carts Link Entry         ; AccountNavNode           ; AccountSavedCartsLink
+                                 ; AccountBookmarksLinkEntry         ;                         ; Account Bookmarks Link Entry           ; AccountNavNode           ; AccountBookmarksLink
+                                 ; AccountVerificaionImagesLinkEntry ;                         ; Account Verification Images Link Entry ; AccountNavNode           ; AccountVerificaionImagesLink
+                                 ; AccountCreditCardsLinkEntry       ;                         ; Account Credit Cards Link Entry        ; AccountNavNode           ; AccountCreditCardsLink
+
+                                #; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink
 
 
 
@@ -65,7 +67,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true] ; template(uid,$contentCV)[uni
                               
                               
 ###  Define ContentSlot For Template  ###
-INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]          ; position[unique=true] ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]          ; position[unique=true] ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
                                      ;                         ; MyAccountSlot-LandingPage ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true           
                                      
                                      

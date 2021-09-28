@@ -38,6 +38,7 @@ import com.braintreegateway.CreditCard;
 import com.braintreegateway.PayPalAccount;
 import com.braintreegateway.WebhookNotification;
 import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -224,4 +225,25 @@ public interface BrainTreePaymentService extends PaymentMethod
 	 * It creates payment method
 	 */
 	public void createPaymentMethodTokenForOrderReplenishment();
+
+	/**
+	 * This method is used to update payment info
+	 * @param customer For the current customer
+	 * @param paymentInfoId for the current order
+	 * @return payment info
+	 */
+	BrainTreePaymentInfoModel completeCreateSubscriptionForModifyPayment(final CustomerModel customer, final String paymentInfoId,final AbstractOrderModel order);
+	
+	/**
+	 * It fetches the payment info model by payment info id to make deposit.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @param depositAmount the deposit amount
+	 * @return BrainTreePaymentInfoModel
+	 */
+  public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCodeToDeposit(final CustomerModel customer, final String
+      paymentInfoId, final String nonce, final Double depositAmount);
+
 }

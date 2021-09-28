@@ -17,3 +17,9 @@ UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; ti
                    ;                         ;verificationImages            ; "Verification Images"
                    ;                         ; creditCarts                  ; "Credit Carts"
                    ;                         ;update-email                  ;"Update Email Page"
+                   ;						 ; pay-bill					    ;"Bill Payment Page"				 
+				   ;						 ; pay-bill-success			    ;"Bill Payment Success Page"
+				   ;                         ; modify-payment               ;"Modify Payment Page"
+                   ;                         ; deposit-payment         		; "Deposit Payment Page"         
+                   ;                         ; deposit-payment-success 		; "Deposit Payment Success Page" 
+				           		 

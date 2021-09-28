@@ -8,10 +8,12 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.util.TaxValue;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -24,6 +26,7 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
   private static final Logger LOG = Logger.getLogger(BlCalculateExternalTaxesStratergy.class);
   private BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService;
   private ModelService modelService;
+  private SessionService sessionService;
 
   /**
    * this method created to process the avalara request
@@ -42,15 +45,22 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
       if (abstractOrder.getDeliveryAddress().getCountry().getIsocode().equalsIgnoreCase(resolveCountry))
       {
         taxResponse = getDefaultBlAvalaraTaxService().process(abstractOrder);
-        abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
-        getModelService().save(abstractOrder);
-        getModelService().refresh(abstractOrder);
+        if(BooleanUtils.isFalse(abstractOrder.isUnPaidBillPresent())) {
+          abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
+          getModelService().save(abstractOrder);
+          getModelService().refresh(abstractOrder);
+        }
       }
     }
     catch (final Exception e)
     {
       BlLogger.logMessage(LOG,Level.INFO,"BlCalculateExternalTaxesStratergy : calculateExternalTaxes : ERROR : Failed to calcualte Tax " ,abstractOrder.getCode());
-      BlLogger.logMessage(LOG,Level.ERROR,"BlCalculateExternalTaxesStratergy : : calculateExternalTaxes : ERROR : " ,e);
+      BlLogger.logMessage(LOG,Level.ERROR ,"BlCalculateExternalTaxesStratergy : : calculateExternalTaxes : ERROR : " ,e);
+      getSessionService().setAttribute(BltaxapiConstants.IS_AVALARA_EXCEPTION , true);
+      abstractOrder.setAvalaraTaxCalculated(Boolean.FALSE);
+      abstractOrder.setTotalTax(0.0);
+      getModelService().save(abstractOrder);
+      getModelService().refresh(abstractOrder);
     }
     finally
     {
@@ -107,5 +117,14 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
 
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
+  }
+
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(SessionService sessionService) {
+    this.sessionService = sessionService;
   }
 }

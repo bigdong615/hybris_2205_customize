@@ -1,14 +1,13 @@
 package com.bl.core.inventory.scan.dao;
 
-import com.bl.core.model.BlInventoryLocationModel;
-import com.bl.core.model.BlInventoryScanConfigurationModel;
-import com.bl.core.model.BlSerialProductModel;
-
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.Collection;
+
+import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlInventoryScanConfigurationModel;
+import com.bl.core.model.BlSerialProductModel;
 
 /**
  * 
@@ -42,6 +41,14 @@ public interface BlInventoryScanToolDao {
      * 
      */
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
+    
+    /**
+     * This method will get the packageInfo by tracking id
+     * @param scannedItem
+     * @return PackagingInfoModel
+     * method will fetch PackagInfo by tracking id
+     */
+    PackagingInfoModel getPackageInfoByCode(final String scannedItem);
 
  	/**
 	  * Gets the list of packages for serials.
@@ -75,4 +82,13 @@ public interface BlInventoryScanToolDao {
 	  * @return the all consignment out today
 	  */
 	 Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial);
+
+	/**
+	 * Get All Serials by Bin Location
+	 * @param binLocationId
+	 * @return
+	 */
+	 Collection<BlSerialProductModel> getAllSerialsByBinLocation(final String binLocationId);
+
+
 }

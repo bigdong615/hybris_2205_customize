@@ -1,7 +1,24 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.bufferinventory.service.BlBufferInventoryService;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.RepairTypeEnum;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
-
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.InHouseRepairLogModel;
+import com.bl.core.model.PartsNeededRepairLogModel;
+import com.bl.core.model.VendorRepairLogModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.repair.log.service.BlRepairLogService;
+import com.bl.core.services.calculation.BlPricingService;
+import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.order.BlOrderService;
+import com.bl.core.stock.BlStockService;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
@@ -9,27 +26,16 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.RepairTypeEnum;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.jalo.BlSerialProduct;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.services.calculation.BlPricingService;
-import com.bl.core.stock.BlStockService;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -42,6 +48,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	/** The bl pricing service. */
 	private BlPricingService blPricingService;
 	private BlStockService blStockService;
+	private BlRepairLogService blRepairLogService;
+	private BaseStoreService baseStoreService;
+	private BlBufferInventoryService blBufferInventoryService;
+	private BlConsignmentEntryService blConsignmentEntryService;
+	private BlOrderService blOrderService;
+	private BlProductService blProductService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -58,16 +70,85 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
-		//Intercepting the change in serialStatus and changing the consignment status accordingly if available
-		doStatusChangeOnConsignment(blSerialProduct, ctx);
-		createRepairLogIfRepairNeeded(blSerialProduct, ctx);
-		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
-		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
-		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
-		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		if(Objects.nonNull(blSerialProduct))
+		{
+			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
+			doStatusChangeOnConsignment(blSerialProduct, ctx);
+			createRepairLogIfRepairNeeded(blSerialProduct, ctx);
+			//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
+			calculateFinalSalePriceForSerial(blSerialProduct, ctx);
+			//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
+			calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
+			updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+			updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+			updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
+			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
+			setLastUserChangedConditionRating(blSerialProduct, ctx);
+		}
+	}
+	
+	/**
+	 * Sets the last user changed condition rating.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param ctx the ctx
+	 */
+	private void setLastUserChangedConditionRating(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		if(!ctx.isNew(blSerialProduct) && (ctx.isModified(blSerialProduct, BlSerialProductModel.FUNCTIONALRATING)
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.COSMETICRATING)))
+		{
+			getBlProductService().setLastUserChangedConditionRating(blSerialProduct);
+		}
+	}
+
+	/**
+	 * It updates stock records when buffer inventory flag is changed
+	 * @param blSerialProduct serial product
+	 * @param ctx interceptor context
+	 * @throws InterceptorException interceptor exception when the serial
+	 * product can not be marked as buffer inventory
+	 */
+	private void updateStockRecordsForBufferInventoryFlag(BlSerialProductModel blSerialProduct, InterceptorContext ctx)
+			throws InterceptorException {
+		final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.ISBUFFEREDINVENTORY);
+		if (null != initialValue && ctx.isModified(blSerialProduct,
+				BlSerialProductModel.ISBUFFEREDINVENTORY)) {
+			if(initialValue.equals(Boolean.FALSE)) {
+				final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(
+						BlCoreConstants.BASE_STORE_ID);
+				if (null != baseStore) {
+					final Integer minQtyForBufferInv = baseStore.getMinQtyForBufferInventory();
+					final Integer minQtyForBufferInventory = (null != minQtyForBufferInv &&
+							minQtyForBufferInv > 0) ? minQtyForBufferInv : 0;
+					updateBufferInvInStockRecords(minQtyForBufferInventory, blSerialProduct);
+				} else {
+					throw new InterceptorException(
+							"Can't mark this serial product as buffer inventory");
+				}
+			} else {
+				getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
+			}
+		}
+	}
+
+	/**
+	 * It updates the stock records for buffer inventory flag if the SKU
+	 * product is eligible to have buffer inventory
+	 * @param minQtyForBufferInventory
+	 * @param blSerialProduct
+	 * @throws InterceptorException
+	 */
+	private void updateBufferInvInStockRecords(final Integer minQtyForBufferInventory,
+			final BlSerialProductModel blSerialProduct) throws InterceptorException {
+		if(getBlBufferInventoryService().minQtyEligibleForBufferInv(minQtyForBufferInventory,
+				blSerialProduct.getBlProduct())) {
+			getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
+		} else {
+			throw new InterceptorException(
+					"Can't mark this serial product as buffer inventory");
+		}
 	}
 
 	/**
@@ -84,8 +165,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.WAREHOUSELOCATION);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
-					blSerialProduct.getWarehouseLocation() != null &&
-					blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
+					blSerialProduct.getWarehouseLocation() != null) {
 					getBlStockService().findAndUpdateWarehouseInStockRecords(blSerialProduct);
 			}
 		} catch(final Exception ex) {
@@ -107,7 +187,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void updateStockRecordsOnForRentFlagUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
-			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) 
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlProductModel.FORRENT)
 					&& isEligibleForStockUpdate(blSerialProduct)) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
 				}
@@ -138,15 +218,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 * @param ctx
 	 *           the ctx
 	 */
-	private void updateStockRecordsOnSerialStatusUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+		private void updateStockRecordsOnSerialStatusUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
-				if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
-					updateStockRecordsAsAvailable(blSerialProduct, initialValue);
-				} else if(SerialStatusEnum.ACTIVE.equals(initialValue)){
+
+				if(getBlStockService().isActiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
+						.isInactiveStatus((SerialStatusEnum) initialValue)){
+					getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
+				}
+				 else if(getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()) && getBlStockService()
+						.isActiveStatus((SerialStatusEnum) initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
+				} else if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
+					createStockRecordsForNewProducts(blSerialProduct, initialValue);
 				}
 			}
 		} catch(final Exception ex) {
@@ -163,15 +249,26 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 *           the bl serial product
 	 * @param initialValue
 	 */
-	private void updateStockRecordsAsAvailable(final BlSerialProductModel blSerialProduct, final Object initialValue) {
+	private void updateStockRecordsAsUnavailable(final BlSerialProductModel blSerialProduct, final Object initialValue) {
 		if (initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) && null != blSerialProduct.getWarehouseLocation()
 				&& Boolean.TRUE.equals(blSerialProduct.getForRent()))
 		{
 			getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
 		}
-		else
+	}
+
+	/**
+	 * It creates the stock records for new products
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param initialValue
+	 */
+	private void createStockRecordsForNewProducts(final BlSerialProductModel blSerialProduct, final Object initialValue) {
+		if (initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) && null != blSerialProduct.getWarehouseLocation()
+				&& Boolean.TRUE.equals(blSerialProduct.getForRent()))
 		{
-			getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
+			getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
 		}
 	}
 
@@ -296,7 +393,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void doStatusChangeOnConsignment(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		if (Objects.nonNull(blSerialProduct) && Objects.nonNull(blSerialProduct.getAssociatedConsignment())
+		if (Objects.nonNull(blSerialProduct.getAssociatedConsignment())
 				&& Objects.nonNull(blSerialProduct.getSerialStatus())
 				&& ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS))
 		{
@@ -323,6 +420,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				{
 					doStatusChangeForMultipleStatuses(itemStatuses, associatedConsignment, ctx);
 				}
+				getBlOrderService().checkAndUpdateOrderStatus(associatedConsignment.getOrder());
 			}
 		}
 	}
@@ -338,7 +436,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void doStatusChangeForSingleStatus(final SerialStatusEnum serialStatus, final ConsignmentModel associatedConsignment,
 			final InterceptorContext ctx)
 	{
-		if (serialStatus.equals(SerialStatusEnum.RECEIVED_OR_RETURNED))
+		if (serialStatus.equals(SerialStatusEnum.RECEIVED_OR_RETURNED) || serialStatus.equals(SerialStatusEnum.IN_HOUSE))
 		{
 			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.COMPLETED, ctx);
 		}
@@ -363,7 +461,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void doStatusChangeForMultipleStatuses(final HashSet<SerialStatusEnum> itemStatuses,
 			final ConsignmentModel associatedConsignment, final InterceptorContext ctx)
 	{
-		if (itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.PARTS_NEEDED)))
+		if(itemStatuses.size() == BlCoreConstants.STATUS_LIST_SIZE_TWO 
+				&& itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.RECEIVED_OR_RETURNED, SerialStatusEnum.IN_HOUSE)))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.COMPLETED, ctx);
+		}
+		else if (itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.PARTS_NEEDED)))
 		{
 			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
 		}
@@ -404,12 +507,14 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	/**
 	 * Creates the repair log if repair needed.
 	 *
-	 * @param blSerialProduct the bl serial product
-	 * @param ctx the ctx
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param ctx
+	 *           the ctx
 	 */
 	private void createRepairLogIfRepairNeeded(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		if (Objects.nonNull(blSerialProduct) && isEligibleForRepairLogCreation(blSerialProduct, ctx)
+		if (isEligibleForRepairLogCreation(blSerialProduct, ctx)
 				&& isRepairLogTypeAvailable(blSerialProduct))
 		{
 			switch (blSerialProduct.getRepairLogType().getCode())
@@ -417,22 +522,17 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				case BlCoreConstants.IN_HOUSE_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Inhouse Report log implementation
+					getBlRepairLogService().addGeneratedRepairLog(InHouseRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.VENDOR_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Vendor Report log implementation
-					break;
-				case BlCoreConstants.CUSTOMER_BLAME_REPAIR:
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
-							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Customer Blame Report log implementation
+					getBlRepairLogService().addGeneratedRepairLog(VendorRepairLogModel.class, blSerialProduct);
 					break;
 				case BlCoreConstants.PARTS_NEEDED_REPAIR:
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.CREATING_REPAIR_LOG_MESSAGE,
 							blSerialProduct.getRepairLogType().getCode());
-					//To-Do create Parts Needed Report log implementation
+					getBlRepairLogService().addGeneratedRepairLog(PartsNeededRepairLogModel.class, blSerialProduct);
 					break;
 				default:
 					BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
@@ -454,7 +554,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		return (ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)
 				|| ctx.isModified(blSerialProduct, BlSerialProductModel.REPAIRLOGTYPE))
-				&& SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus());
+				&& (SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus())
+						|| SerialStatusEnum.PARTS_NEEDED.equals(blSerialProduct.getSerialStatus()));
 	}
 
 	/**
@@ -468,6 +569,36 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		return Objects.nonNull(blSerialProduct.getRepairLogType())
 				&& BooleanUtils.negate(RepairTypeEnum.NONE.equals(blSerialProduct.getRepairLogType()))
 				&& SerialStatusEnum.REPAIR_NEEDED.equals(blSerialProduct.getSerialStatus());
+	}
+	
+	/**
+	 * Removes the serial assigned to future order.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param interceptorContext the interceptor context
+	 */
+	private void removeSerialAssignedToFutureOrder(final BlSerialProductModel blSerialProduct,
+			final InterceptorContext interceptorContext)
+	{
+		if (isEligibleToRemoveSerialFromOrder(blSerialProduct, interceptorContext))
+		{
+			getBlConsignmentEntryService().removeSerialFromFutureConsignmentEntry(blSerialProduct);
+		}
+	}
+
+	/**
+	 * Checks if is eligible to remove serial from order.
+	 *
+	 * @param blSerialProduct the bl serial product
+	 * @param interceptorContext the interceptor context
+	 * @return true, if is eligible to remove serial from order
+	 */
+	private boolean isEligibleToRemoveSerialFromOrder(final BlSerialProductModel blSerialProduct, final InterceptorContext interceptorContext)
+	{
+		return interceptorContext.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)
+				&& Objects.nonNull(blSerialProduct.getSerialStatus())
+				&& (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED)
+						|| blSerialProduct.getSerialStatus().equals(SerialStatusEnum.PARTS_NEEDED));
 	}
 
 	/**
@@ -509,4 +640,84 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		this.blStockService = blStockService;
 	}
 
+	/**
+	 * @return the blRepairLogService
+	 */
+	public BlRepairLogService getBlRepairLogService()
+	{
+		return blRepairLogService;
+	}
+
+	/**
+	 * @param blRepairLogService the blRepairLogService to set
+	 */
+	public void setBlRepairLogService(BlRepairLogService blRepairLogService)
+	{
+		this.blRepairLogService = blRepairLogService;
+	}
+
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	public BlBufferInventoryService getBlBufferInventoryService() {
+		return blBufferInventoryService;
+	}
+
+	public void setBlBufferInventoryService(
+			BlBufferInventoryService blBufferInventoryService) {
+		this.blBufferInventoryService = blBufferInventoryService;
+	}
+
+	/**
+	 * @return the blConsignmentEntryService
+	 */
+	public BlConsignmentEntryService getBlConsignmentEntryService()
+	{
+		return blConsignmentEntryService;
+	}
+
+	/**
+	 * @param blConsignmentEntryService the blConsignmentEntryService to set
+	 */
+	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
+	{
+		this.blConsignmentEntryService = blConsignmentEntryService;
+	}
+	
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
+	}
+
+	/**
+	 * @return the blProductService
+	 */
+	public BlProductService getBlProductService()
+	{
+		return blProductService;
+	}
+
+	/**
+	 * @param blProductService the blProductService to set
+	 */
+	public void setBlProductService(BlProductService blProductService)
+	{
+		this.blProductService = blProductService;
+	}
 }

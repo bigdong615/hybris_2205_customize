@@ -13,6 +13,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -29,7 +30,10 @@ import com.bl.integration.services.BlUPSAddressValidatorService;
 import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
 import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
@@ -61,6 +65,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -83,8 +88,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
+    
+ 	 @Resource(name = "brainTreeTransactionService")
+ 	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
-    private BlGiftCardFacade blGiftCardFacade;
+    private BlCartService blCartService;
+	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -146,7 +155,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                                                                             final boolean payByCustomer) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
+            if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+                return getDeliveryModeDataForNewGear(shippingGroup, partnerZone, payByCustomer);
+            }
+            else if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
             } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
                 return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
@@ -158,14 +170,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     /**
-	 * @param shippingGroup
-	 * @param partnerZone
-	 * @param payByCustomer
-	 * @return
-	 */
+     * @param shippingGroup
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
     private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(final String shippingGroup,
-                                                                                  final String partnerZone,
-                                                                                  final boolean payByCustomer){
+        final String partnerZone,
+        final boolean payByCustomer){
         final List modifiableZoneList = new ArrayList<>();
         if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
@@ -227,6 +239,29 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         }
         return modifiableZoneList;
     }
+
+    /**
+     * Get delivery mode data for new gear.
+     * New Gear needed only pickup option.
+     * @param shippingGroup
+     * @param partnerZone
+     * @param payByCustomer
+     * @return
+     */
+    private Collection<? extends DeliveryModeData> getDeliveryModeDataForNewGear(final String shippingGroup,
+        final String partnerZone,
+        final boolean payByCustomer){
+        final List modifiableZoneList = new ArrayList<>();
+          if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModesForNewGear(partnerZone, payByCustomer), modifiableZoneList);
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
+
 
     /**
      * javadoc
@@ -419,6 +454,28 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         return Collections.emptyList();
     }
 
+    /**
+     * Get delivery Zone for new Gear product.
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeData> getPartnerZoneDeliveryModesForNewGear(final String partnerZone,final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels;
+        try {
+            blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeService().getPartnerZoneDeliveryModesForNewGear(
+                partnerZone,payByCustomer);
+            if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+                final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData = new ArrayList<>();
+                for (BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+                    getResultantPartnerDeliveryMethods(resultDeliveryData, blPickUpZoneDeliveryModeModel);
+                }
+                return resultDeliveryData;
+            }
+        } catch (ParseException e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while parsing dates ", e);
+        }
+        return Collections.emptyList();
+    }
     /**
      * This method will get the partner delivery methods
      *
@@ -684,10 +741,10 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * @return true if same
      */
     private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
-        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
-            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+        if(addressRequestData.getLine1().trim().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().trim().equalsIgnoreCase(addressResponseData.getTown()) &&
             addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
-            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+            checkNumberEquality(addressRequestData.getPostalCode().trim(), addressResponseData.getPostalCode())) {
                         return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -765,6 +822,34 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 		{
 			return Boolean.TRUE;
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isShippingOnBlackoutDate(final String deliveryModeCode)
+	{
+		final CartModel cartModel = getCart();
+		if (BooleanUtils.isTrue(cartModel.getIsRentalCart()))
+		{
+			final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
+			if(PredicateUtils.instanceofPredicate(ZoneDeliveryModeModel.class).evaluate(deliveryModeModel))
+			{
+				final List<String> lDeliveryModeAndGroupCode = Lists.newArrayList();
+				final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel)deliveryModeModel);
+				final String devliveryModeCode = delivery.getCode();
+				lDeliveryModeAndGroupCode.add(devliveryModeCode);
+				if(Objects.nonNull(delivery.getShippingGroup()))
+				{
+					final String shippingGroupCode = delivery.getShippingGroup().getCode();
+					lDeliveryModeAndGroupCode.add(shippingGroupCode);
+				}
+				return getBlZoneDeliveryModeService().isShippingOnBlackoutDate(lDeliveryModeAndGroupCode);
+			}	
+			return Boolean.FALSE;
+		}
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -847,7 +932,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return null;
         }
     }
-    
+    /**
+    	  * To create the auth transaction of the order
+    	  * @param cartModel the cart
+        * @param amountToAuthorize the amount
+        * @param submitForSettlement
+        * @param paymentInfo the payment info
+        * @return true if successful
+     */
+    @Override
+   public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
+   	 
+   	 return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(cartModel,amountToAuthorize, submitForSettlement, paymentInfo);
+    }
     /**
      * {@inheritDoc}
      */
@@ -895,7 +992,42 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
   }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateOrderTypes() {
+        blCartService.updateOrderTypes();
+}
+  
   /**
+   * It saves Gift Card Purchase Form
+   * @param GiftCardPurchaseForm the giftCardPurchaseForm
+   */
+    @Override
+    public boolean updateGiftCardPurchaseForm(final GiftCardPurchaseForm giftCardPurchaseForm) {
+      try {
+          final CartModel cartModel = getCartService().getSessionCart();
+          if(Objects.nonNull(cartModel)){
+              cartModel.getEntries().forEach(cartEntry -> {
+                  cartEntry.setRecipientName(giftCardPurchaseForm.getName());
+                  cartEntry.setRecipientEmail(giftCardPurchaseForm.getEmail());
+                  cartEntry.setRecipientMessage(giftCardPurchaseForm.getMessage());
+                  getModelService().save(cartEntry);
+                  getModelService().refresh(cartEntry);
+              });
+              getModelService().save(cartModel);
+              getModelService().refresh(cartModel);
+              return Boolean.TRUE;
+          }
+          return Boolean.FALSE;
+      }catch(final Exception exception){
+          BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "Error while saving gift card purchase form", StringUtils.EMPTY);
+          return Boolean.FALSE;
+      }
+   }
+
+    /**
      * Gets the price value.
      *
      * @param priceData the price data
@@ -1032,5 +1164,32 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     public void setBlCheckoutCartCalculationStrategy(
         CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
+    }
+ 	 
+    /**
+	 * @return the brainTreeTransactionService
+	 */
+	public BrainTreeTransactionServiceImpl getBrainTreeTransactionService()
+	{
+		return brainTreeTransactionService;
+	}
+
+	/**
+	 * @param brainTreeTransactionService the brainTreeTransactionService to set
+	 */
+	public void setBrainTreeTransactionService(BrainTreeTransactionServiceImpl brainTreeTransactionService)
+	{
+		this.brainTreeTransactionService = brainTreeTransactionService;
+	}
+
+    public BlCartService getBlCartService() {
+        return blCartService;
+    }
+
+    /**
+     * @param blCartService the blCartService to set
+     */
+    public void setBlCartService(final BlCartService blCartService) {
+        this.blCartService = blCartService;
     }
 }

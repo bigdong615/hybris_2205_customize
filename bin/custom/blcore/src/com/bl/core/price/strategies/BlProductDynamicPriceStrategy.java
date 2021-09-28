@@ -42,4 +42,15 @@ public interface BlProductDynamicPriceStrategy
 	 */
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue,
 			final Long selectedNumberOfDays);
+	/**
+	 * Creates the new price information.
+	 *
+	 * @param defaultPriceInformation
+	 *           the default price information
+	 * @param priceForNumberOfDays
+	 *           the price for number of days
+	 * @return the price information
+	 */
+	public PriceInformation createNewPriceInformation(final PriceInformation defaultPriceInformation,
+			final BigDecimal priceForNumberOfDays);
 }

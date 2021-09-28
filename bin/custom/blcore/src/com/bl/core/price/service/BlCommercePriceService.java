@@ -2,8 +2,11 @@ package com.bl.core.price.service;
 
 import de.hybris.platform.commerceservices.price.CommercePriceService;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
+import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.util.PriceValue;
 import java.math.BigDecimal;
 
 
@@ -34,6 +37,17 @@ public interface BlCommercePriceService extends CommercePriceService
 	 *           the is constrained product
 	 * @param priceValue
 	 *           the price value
+	 * @return the dynamic price data for product
+	 */
+	public BigDecimal getDynamicPriceDataForBundleProduct(final Boolean isConstrainedProduct, final ProductModel product);
+
+	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct
+	 *           the is constrained product
+	 * @param priceValue
+	 *           the price value
 	 * @param rentalDays
 	 *         the rentalDays
 	 * @return the dynamic price data for product
@@ -47,5 +61,24 @@ public interface BlCommercePriceService extends CommercePriceService
 	 * @return the dynamic price data for product
 	 */
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays);
+
+	PriceInformation getWebPriceForTax(final ProductModel product , final AbstractOrderModel abstractOrderModel);
+
+	/**
+	 * Gets dynamic price data for rental bundle product.
+	 * @param product product
+	 * @return the dynamic price data for bundle product
+	 */
+	 PriceInformation getWebPriceForBundleProduct(final ProductModel product);
+
+	/**
+	 * Gets dynamic price data for rental bundle product for given rental days.
+	 * @param product product
+	 * @param noOfRentalDays rental days
+	 * @return price
+	 * @throws CalculationException exception
+	 */
+	public PriceValue getDynamicBasePriceForBundle(
+			final ProductModel product,final int noOfRentalDays) throws CalculationException;
 
 }

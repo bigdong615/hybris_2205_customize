@@ -31,6 +31,7 @@
     <property name="userName" value="${bl.security.http.basic.auth.username}"/>
     <property name="password" value="${bl.security.http.basic.auth.password}"/>
     <property name="blResponseDetailsAndLoggingPopulator" ref="blResponseDetailsAndLoggingPopulator"/>
+    <property name="blPayBillTaxResponsePopulator" ref="blPayBillTaxResponsePopulator"/>
   </bean>
 
   <!--Added for Avalara Request and Response -->
@@ -39,7 +40,6 @@
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
     <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
-
   </bean>
 
   <!--Added for creating request for avalar tax -->
@@ -65,6 +65,7 @@
     class="com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy" scope="tenant">
     <property name="defaultBlAvalaraTaxService" ref="defaultBlAvalaraTaxService"/>
     <property name="modelService" ref="modelService"/>
+    <property name="sessionService" ref="sessionService"/>
   </bean>
 
   <!--Override OOB startegy to use custom condition for calculating tax -->
@@ -87,12 +88,17 @@
 
   <bean id="blResponseDetailsAndLoggingPopulator" class="com.bl.tax.populators.BlResponseDetailsAndLoggingPopulator"/>
 
-  <bean id="blAvalaraTaxCalculationService" class="com.bl.tax.service.impl.BlAvalaraTaxCalculationService"/>
+  <bean id="blAvalaraTaxCalculationService" class="com.bl.tax.service.impl.BlAvalaraTaxCalculationService" />
 
   <!--Added to calculate tax by overriding OOB strategy-->
   
   <alias name="defaultBlApplyExternalTaxesStrategy" alias="applyExternalTaxesStrategy"/>
-  <bean id="defaultBlApplyExternalTaxesStrategy" class="com.bl.tax.stratergy.DefaultBlApplyExternalTaxesStrategy"/>
+  <bean id="defaultBlApplyExternalTaxesStrategy" class="com.bl.tax.stratergy.DefaultBlApplyExternalTaxesStrategy">
+  	 <property name="modelService" ref="modelService"/>
+  </bean>
 
+  <bean id="blPayBillTaxResponsePopulator" class="com.bl.tax.populators.BlPayBillTaxResponsePopulator">
+    <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
+  </bean>
 
 </beans>

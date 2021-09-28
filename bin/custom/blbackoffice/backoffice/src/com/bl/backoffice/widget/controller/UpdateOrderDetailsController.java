@@ -142,7 +142,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	@Autowired
 	CalculationService calculationService;
 
-	private Converter<RegionModel, RegionData> regionConverter;
+	private transient Converter<RegionModel, RegionData> regionConverter;
 
 	private ListModelList<RegionData> listModelList = new ListModelList<>();
 
@@ -151,7 +151,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private ListModelList isPickupStore = new ListModelList();
 	private ListModelList isUpsStore = new ListModelList();
 
-	final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
+	private final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
 
 	boolean isDeliveryModeChange = false;
 
@@ -193,10 +193,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		this.contactNo.setValue(deliveryAddress.getPhone1());
 		this.countryCode
 				.setValue(deliveryAddress.getCountry().getName() + " " + "[" + deliveryAddress.getCountry().getIsocode() + "]");
-		this.pickupPersonFName.setValue(getOrderModel().getPickUpPersonFirstName());
-		this.pickupPersonLName.setValue(getOrderModel().getPickUpPersonLastName());
-		this.pickUpPersonEmail.setValue(getOrderModel().getPickUpPersonEmail());
-		this.pickUpPersonPhone.setValue(getOrderModel().getPickUpPersonPhone());
 
 		isPickupStore();
 
@@ -217,14 +213,20 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		for (final RegionData isoCodeList : regionForIso)
 		{
-			if (regionCode.trim().equals(isoCodeList.getIsocode()))
+			if (StringUtils.isNotBlank(regionCode))
 			{
-				final RegionData regionData = i18NFacade.getRegion(COUNTRY_CODE, regionCode.trim());
-
-				listModelList.addToSelection(regionData);
-				regionCombobox.setModel(listModelList);
-				showNotify("Changed to: " + regionCode, regionCombobox);
-				break;
+				if (regionCode.trim().equals(isoCodeList.getIsocode()))
+				{
+					final RegionData regionData = i18NFacade.getRegion(COUNTRY_CODE, regionCode.trim());
+					listModelList.addToSelection(regionData);
+					regionCombobox.setModel(listModelList);
+					showNotify("Changed to: " + regionCode, regionCombobox);
+					break;
+				}
+			}
+			else
+			{
+				throw new WrongValueException(regionCombobox, this.getLabel("blbackoffice.updateshipping.inValid.regionCode"));
 			}
 		}
 
@@ -335,9 +337,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
-					Messagebox.show("Selected shipping method service is not applicable for added zip code" + "----"
-							+ this.deliveryModeCombobox.getValue() + "-" + this.postalCode.getValue());
-
+					Messagebox.show("Selected shipping method service is not applicable for added zip code");
 					throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
 				}
 			}
@@ -379,7 +379,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		addressModel.setLine2(this.line2.getValue());
 		addressModel.setPostalcode(this.postalCode.getValue());
 		addressModel.setTown(this.town.getValue());
-		addressModel.setCellphone(this.contactNo.getValue());
+		addressModel.setPhone1(this.contactNo.getValue());
 		final String regionCode = StringUtils.substringBetween(this.regionCombobox.getValue().trim(), "[", "]");
 		try
 		{

@@ -147,6 +147,27 @@ jQuery(document).ready(function ($) {
 	if($("#isAddressPresent") != '' && $("#isAddressPresent").val() != '' && $("#isAddressPresent").val() === 'true')
 	{
 		$("#billing-address-saved").addClass("show");
+        $('#billing-address-saved a').each(function() {            
+            var optionText = this.text;
+            var newOption = optionText.substring(0,58);
+            if(screen.width<600){
+                var newOption = optionText.substring(0,35);
+            }
+            if(optionText > optionText.substring(0,64)){
+                jQuery(this).text(newOption + '..');
+            }
+        }); 
+        
+        $('.for-credit-card a').each(function() {            
+            var optionText = this.text;
+            var newOption = optionText.substring(0,51);
+            if(screen.width<600){
+                var newOption = optionText.substring(0,35);
+            }
+            if(optionText > optionText.substring(0,59)){
+                jQuery(this).text(newOption + '..');
+            }
+        });
 	}
 	if($("#savePaymentInfo").length == 1)
 	{
@@ -229,10 +250,11 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 	}
 });
 
-
-jQuery(document).ready(function () {
-	initializeBTclientSDK();
-});
+if ((typeof addPaymentMethodsPage != 'undefined')) {
+  jQuery(document).ready(function () {
+	  initializeBTclientSDK();
+  });
+}
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
@@ -929,6 +951,7 @@ function createHostedFields(clientInstance) {
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
 							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 							var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
+							var orderId = createHiddenParameter("orderCode", $("#orderId").val());
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
 							submitForm.append($(paymentNonce));
@@ -954,6 +977,7 @@ function createHostedFields(clientInstance) {
 							submitForm.append($(cardDetails));
 							submitForm.append($(cardholder));
 							submitForm.append($(defaultCard));
+							submitForm.append($(orderId));
 							submitForm.submit();
 						}
 					});
@@ -1083,6 +1107,16 @@ $('ul.selectSavedBillingAddress').on('click','li',function(e){
 	var selectedBillingAddressId = $(this).find("a").data('id');
 	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
 	$("#savedAddresses").html(selectedBillingAddressFormattedData);
+    $('#savedAddresses').each(function() {            
+        var optionText = this.text;
+        var newOption = optionText.substring(0,42);
+        if(screen.width<600){
+            var newOption = optionText.substring(0,35);
+        }
+        if(optionText > optionText.substring(0,42)){
+            jQuery(this).text(newOption + '..');
+        }
+    });
 	$("#savedBillingAddressId").val(selectedBillingAddressId);
 	$("#billing-address-form-expand").removeClass("show");
 	$("#paymentAddNewAddress").show();
@@ -1098,10 +1132,11 @@ $('#submit_silentOrderPostForm').click(function () {
 	var savedPoForm = $("#submitSavedPoForm");
   var poNumber = savedPoForm.find('input[id="poNumber"]').val();
   var poNotes = savedPoForm.find('input[id="poNotes"]').val();
-  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {
+  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {     
   	var validationDiv = $(
-  			'<div class="notification notification-warning mb-4" />').text(
+  			'<div class="notification notification-error mb-4" />').text(
   			ACC.ccError.poNumber);
+    $('#poNumber').addClass('error');       
   	$('#validationMessage').append(validationDiv);
   } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
   	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
@@ -1113,7 +1148,7 @@ $('#submit_silentOrderPostForm').click(function () {
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);
 	}
 	
-	if(ccEnable == false && giftcardApplied != '')
+	if((typeof editPaymentMethodsPage == 'undefined') && ccEnable == false && giftcardApplied != '')
 	{
 		allFieldValidation(ACC.ccError.onlyGCSelected);
 	}
@@ -1208,14 +1243,17 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	$('.page-loader-new-layout').show();
 	if($("#paymentMethodPayPal").is(":checked"))
 	{
+    ACC.track.trackPaymentSelection('PayPal Payment');
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
-	  $('.page-loader-new-layout').hide();
-    var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
+	  $('.page-loader-new-layout').hide();     
+    var validationDiv = $('<div class="notification notification-error mb-4" />').text(ACC.ccError.poNumber);
+    $('#poNumber').addClass('error'); 
     $('#validationMessage').append(validationDiv);
   }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
+    ACC.track.trackPaymentSelection('PO Payment');
       savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
-      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);     
       savedPoForm.submit();
   }
 	else
@@ -1230,6 +1268,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		}
 		else
 		{
+		ACC.track.trackPaymentSelection('Credit Cart Payment');
 			var savedCardForm = $("#submitSavedCardForm");
 			var formToSubmit = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
 			var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
@@ -1276,19 +1315,86 @@ $(".edit-cc-form").on("click",function(e){
 	$("#braintree-payment-edit-form").submit();
 });
 
+$(".js-po-extend-order").on("click", function(e) {
+	e.preventDefault();
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var poEnable = $('#paymentMethodPo').is(':checked');
+	var paymentInfoId =  $('#paymentId').val();
+	
+	if((ccEnable == true && paymentInfoId !='') || payPalEnable == true || poEnable == true ){
+	
+	var extendPoNumber1 = $("#extendPoNumberInput").val();
+	var extendPoNotes1 = $("#extendPoNotesInput").val();
+	
+	if (poEnable == true && extendPoNumber1 == '') {
+		var validationDiv = $(
+			'<div class="notification notification-error mb-4" />').text(
+			ACC.ccError.poNumber);
+	    $('#validationMessage').append(validationDiv);
+		
+    }else{
+    	$("#extendPoNumber").val(extendPoNumber1);
+		$("#extendPoNotes").val(extendPoNotes1);
+   
+	$("#payBillForm").submit();
+    }
+	}
+	else{
+		  allFieldValidation(ACC.ccError.allFieldsNotSelected);
+		}
+});
 
-/*$(".edit-save-click").on("click",function(e){
+
+
+
+if((typeof editPaymentMethodsPage != 'undefined'))
+{	
+$("#submit_silentOrderPostForm").on("click",function(e) {
 	e.preventDefault();
 	var savedCardForm = $("#braintree-payment-form");
-	//var expMonth = savedCardForm.find('input[id="expirationMonth"]').val());
-	var expMonth = document.getElementById('expirationMonth').val();
-	alert(expMonth);
-    var expYear = savedCardForm.find('input[id="expirationYear"]').val());
-    var expirationDate = createHiddenParameter("expirationDate", expMonth / expYear);
-	alert(expirationDate);
-    savedCardForm.submit();
-});*/
+	var expMonth = savedCardForm.find('input[id="expirationMonth"]').val();
+	var expYear = savedCardForm.find('input[id="expirationYear"]').val();
+	var cvv = savedCardForm.find('input[id="cvv"]').val();
+	if(expMonth == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardMonth);
+		$("#expirationMonth").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+	}
+	if(expYear == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardYear);
+		$("#expirationYear").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+		
+	}
+	if(cvv == "")
+	{
+		hasNoError = false;
+		$('#submit_silentOrderPostForm').removeAttr("disabled");
+		$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+		creditCardValidation(ACC.ccError.cardCVV);
+		$("#cvv").addClass("crs-error-field");
+		$('.page-loader-new-layout').hide();
+		
+	}
+	if(expMonth != "" && expYear != "" && cvv !="" ){
+	       var expirationDate = createHiddenParameter("expirationDate", (expMonth.concat('/', expYear)));
+	       var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
+	       savedCardForm.append($(expirationDate));
+           savedCardForm.append($(defaultCard));
+           savedCardForm.submit();
+	    }
+});
 
+}
 
 $(".delete-link").on("click",function(e){
 	e.preventDefault();
@@ -1321,4 +1427,106 @@ $(".js-set-default-card").on("click",function(e){
         }
 });
     
+});
+
+
+$(".add-cc-form").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form").submit();
+});
+
+
+$('ul#saved-payment-action-modifyPayment').on('click','li',function(e){
+	 e.preventDefault();
+	 
+		var paymentId = $(this).find("button").data("id");
+		
+		var paymentnonce = $(this).find("button").data("nonce");
+		
+	    var buttonData = $(this).find("button").html();
+	    $("#savedCards").html(buttonData);
+	    $("#paymentId").val(paymentId);
+		$("#paymentNonce").val(paymentnonce);
+        
+});
+
+
+$(".js--order-modify-payment").on("click", function(e) {
+	 e.preventDefault();
+	 
+		var ccEnable = $('#paymentMethodBT').is(':checked');
+		var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+		var paymentInfoId =  $('#paymentId').val();
+		var formToSubmit = $("#modifyPaymentForm");
+		
+		if((ccEnable == true && paymentInfoId !='') || payPalEnable == true){
+		formToSubmit.submit();
+		}
+		else{
+			allFieldValidation(ACC.ccError.allFieldsNotSelected);
+		}
+});
+
+
+$(".add-cc-form-modifyPayment").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form-modifyPayment").submit();
+});
+
+$("#deposit-amount").on("input", function(evt) {
+	$('#validationMessage').empty();
+	$('#depositPaymentErrorMessage').empty();
+	var self = $(this);
+	self.val(self.val().replace(/[^0-9\.]/g, ''));
+	if ((evt.which != 46 || self.val().indexOf('.') != -1)  && (evt.which < 48 || evt.which > 57))
+	{
+		evt.preventDefault();
+	}
+	if(self.val().indexOf('.') == 0 || self.val().split(".").length > 2)
+	{
+		$('#depositPaymentErrorMessage').empty();
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#depositPaymentErrorMessage').append(validationDiv);
+	}
+});
+
+$(".js-order-deposit-payment").on("click", function(e) {
+	e.preventDefault();
+	$('#validationMessage').empty();
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var paymentInfoId = $('#paymentId').val();
+	var depositAmount = $("#deposit-amount").val();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if ((ccEnable == true && paymentInfoId != '') || payPalEnable == true) 
+	{
+		$("#depositOrderTotal").val(depositAmount);
+		var formToSubmit = $("#depositPaymentForm");
+		formToSubmit.submit();
+	}
+	else 
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Select payment method');
+		$('#validationMessage').append(validationDiv);
+	}
+});
+
+$(".add-cc-form-depositPayment").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form-depositPayment").submit();
 });

@@ -15,13 +15,18 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
 
     if ((typeof addPaymentMethodsPage != 'undefined')) {
         payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/add-payment-method");
-    } else {
+    } 
+   else {
         payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/express");
     }
 
     if($('#js-extend-order-page').val() == 'true'){
            payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/extendOrder-payment");
     }
+    
+    if($('#js-modify-order-page').val() == 'true'){
+        payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/modify-payment-method");
+ }
 
     if ($(CONST.SAVE_PAYMENT_INFO_ID + ':' + CONST.PROP_CHECKED).val() === CONST.TRUE || forceVault === true) {
         isSavePaymentInfo = createHiddenParameter("isSaved", CONST.TRUE);
@@ -40,8 +45,27 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     payPalForm.append($(extendOrderCode));
     var extendOrderPage = createHiddenParameter("extend_order_page", $("#js-extend-order-page").val());
     payPalForm.append($(extendOrderPage));
-
-
+    var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
+    var amountToBePaid = '';
+    var isDepositPaymentPage = false;
+    if($("#deposit-amount").length == 1)
+    {
+      amountToBePaid = $("#deposit-amount").val();
+      isDepositPaymentPage = true;
+    }
+    else
+    {
+      amountToBePaid = $("#payBillTotal").val();
+      isDepositPaymentPage = false;
+    }
+    var payBillTotal = createHiddenParameter("payBillTotal", amountToBePaid);
+    var modifyOrderTotal = createHiddenParameter("modifyOrderTotal", $("#modifyOrderTotal").val());
+    var isDeposit = createHiddenParameter("isDepositPaymentPage", isDepositPaymentPage);
+    
+    payPalForm.append($(modifyOrderTotal));
+    payPalForm.append($(payBillTotal));
+    payPalForm.append($(orderCode));
+	payPalForm.append($(isDeposit));
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));
     payPalForm.append($(paymentType));
