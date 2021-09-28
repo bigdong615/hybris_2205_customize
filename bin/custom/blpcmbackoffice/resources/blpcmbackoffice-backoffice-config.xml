@@ -455,6 +455,8 @@
 			<ea:tab name="hmc.tab.product.prices" position="14">
 				<ea:section name="label.pcmbackoffice.general">
 					<ea:attribute qualifier="trackingNumber" label="label.pcmbackoffice.blserial.trackingNumber"/>
+					<ea:attribute qualifier="cosmeticRating"/>
+					<ea:attribute qualifier="functionalRating"/>
 					<ea:attribute qualifier="conditionRatingOverallScore" label="label.pcmbackoffice.blserial.conditionRatingOverallScore"/>
 					<ea:attribute qualifier="conditions" label="label.pcmbackoffice.blserial.conditions"/>
 					<ea:attribute qualifier="dateOfSale" label="label.pcmbackoffice.blserial.dateOfSale"/>
@@ -531,11 +533,25 @@
 					<ea:attribute qualifier="productType"/>
 				</ea:section>
 				</ea:tab>
+			<ea:tab name="hmc.tab.order.invoice" position="30">
+				<ea:section name="hmc.product.order.section">
+					<ea:attribute qualifier="associatedConsignment"/>
+					<ea:attribute qualifier="associatedOrder"/>
+					<ea:attribute qualifier="hardAssigned"/>
+					<ea:attribute qualifier="gearRated"/>
+					<ea:attribute qualifier="repairReasons"/>
+					<ea:attribute qualifier="otherRepairReasons"/>
+					<ea:attribute qualifier="dirtyPriorityStatus"/>
+					<ea:attribute qualifier="testingStatus"/>
+					<ea:attribute qualifier="repairLogType"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.inventory">
+					<ea:attribute qualifier="ocLocationDetails"/>
+				</ea:section>
+			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
 				<ea:section name="hmc.product.sections.customerreviews">
 					<ea:attribute qualifier="averageRating"/>
-					<ea:attribute qualifier="cosmeticRating"/>
-					<ea:attribute qualifier="functionalRating"/>
 					<ea:attribute qualifier="numberOfReviews"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 						qualifier="productReviews">
