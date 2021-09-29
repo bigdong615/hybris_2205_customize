@@ -6,6 +6,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceDeliveryModeStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
@@ -13,6 +14,9 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * DefaultBlCommerceDeliveryModeStrategy for setting delivery mode and actual rental dates.
@@ -21,7 +25,7 @@ import java.util.List;
  */
 public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDeliveryModeStrategy {
 
-
+  private static final Logger LOG = Logger.getLogger(DefaultBlCommerceDeliveryModeStrategy.class);
   private BlDatePickerService blDatePickerService;
 
   /**
@@ -40,17 +44,28 @@ public class DefaultBlCommerceDeliveryModeStrategy extends DefaultCommerceDelive
 
     final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-    final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
+
+    final int preDaysToDeduct =
+        StringUtils.isNotBlank(deliveryModeModel.getPreReservedDays()) ? Integer
+            .parseInt(deliveryModeModel.getPreReservedDays()) : 0;
+
+    final int postDaysToAdd =
+        StringUtils.isNotBlank(deliveryModeModel.getPostReservedDays()) ? Integer
+            .parseInt(deliveryModeModel.getPostReservedDays()) : 0;
 
     if (null != rentalDateDto) {
       final Date startDay = BlDateTimeUtils
-          .subtractDaysInRentalDates(numberOfDaysToSkip, rentalDateDto.getSelectedFromDate(),
+          .subtractDaysInRentalDates(preDaysToDeduct, rentalDateDto.getSelectedFromDate(),
               blackOutDates);
-      final Date endDay = BlDateTimeUtils
-          .addDaysInRentalDates(numberOfDaysToSkip, rentalDateDto.getSelectedToDate(),
-              blackOutDates);
+      final Date endDay = BlDateTimeUtils.getFinalEndDateConsideringPostBlackoutDates(postDaysToAdd,
+          rentalDateDto.getSelectedToDate(), blackOutDates);
+
       cartModel.setActualRentalStartDate(startDay);
       cartModel.setActualRentalEndDate(endDay);
+
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "Actual rental start date : {} and actual rental end date : {} set in cart with id : {} for delivery mode : {}",
+          startDay, endDay, cartModel.getCode(), deliveryModeModel.getCode());
     }
 
     cartModel.setDeliveryMode(deliveryModeModel);

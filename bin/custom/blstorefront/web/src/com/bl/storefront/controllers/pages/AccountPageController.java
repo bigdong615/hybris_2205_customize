@@ -102,6 +102,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -432,6 +433,8 @@ public class AccountPageController extends AbstractSearchPageController
 		try
 		{
 			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+					Collectors.toList()));
 			model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
@@ -475,7 +478,8 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam("productCode") final String productCode, final Model model)
 	{
 		final OrderData orderData = blOrderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
-
+		orderData.setEntries(orderData.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		final Map<String, ReadOnlyOrderGridData> readOnlyMultiDMap = orderGridFormFacade.getReadOnlyOrderGridForProductInOrder(
 				productCode, Arrays.asList(ProductOption.BASIC, ProductOption.CATEGORIES), orderData);
 		model.addAttribute("readOnlyMultiDMap", readOnlyMultiDMap);
@@ -542,6 +546,7 @@ public class AccountPageController extends AbstractSearchPageController
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getEmailValidator().validate(updateEmailForm, bindingResult);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
 		final CustomerModel currentUser = (CustomerModel) userService.getCurrentUser();
 		String returnAction = REDIRECT_TO_UPDATE_EMAIL_PAGE;
 
@@ -716,6 +721,7 @@ public class AccountPageController extends AbstractSearchPageController
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getPasswordValidator().validate(updatePasswordForm, bindingResult);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_PASSWORD_PAGE_IDENTIFIER);
 		if (!bindingResult.hasErrors())
 		{
 			if (updatePasswordForm.getNewPassword().equals(updatePasswordForm.getCheckNewPassword()))
@@ -1183,6 +1189,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
 		VerificationDocumentForm verificationDocumentForm = new VerificationDocumentForm();
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlControllerConstants.VERIFICATION_PAGE_IDENTIFIER);
     model.addAttribute("verificationDocumentForm",verificationDocumentForm);
 		Map<String, List<VerificationDocumentMediaModel>> uploadedDocumentFromCustomer = 	blVerificationDocumentFacade.getListOfDocumentFromCustomer();
 		model.addAttribute(UPLOADEDDOCUMENT,uploadedDocumentFromCustomer);
@@ -1312,6 +1319,8 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		orderDetails.setIsExtendOrderPage(true);
 		model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());

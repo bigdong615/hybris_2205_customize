@@ -18,11 +18,8 @@
 <hr>
 <c:if test="${empty addressData}">
 <div class="notification no-orders">
-    <p><strong><spring:theme code="text.account.addressBook.noSavedAddresses" /></strong></p>
-     <p><spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text1"/>&nbsp;
-     <a href="add-address">
-     <spring:theme code="text.account.addressBook.noSavedAddresses.addAddressButton"/>
-     </a>&nbsp;<spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text2"/></p>
+    <p><strong><spring:theme code="text.account.addressBook.noSavedAddresses"/></strong></p>
+     <p><spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text1"/>&nbsp;<a href="add-address"><spring:theme code="text.account.addressBook.noSavedAddresses.addAddressButton"/></a>&nbsp;<spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text2"/></p>
    </div>
 </c:if>
 <c:if test="${not empty addressData}">

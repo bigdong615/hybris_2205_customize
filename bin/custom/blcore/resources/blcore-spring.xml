@@ -600,6 +600,9 @@
 	<alias name="defaultBlOrderService" alias="blOrderService" />
 	<bean id="defaultBlOrderService" class="com.bl.core.services.order.impl.DefaultBlOrderService">
 		<property name="productService" ref="productService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="blRepairLogDao" ref="blRepairLogDao" />
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--Pricing Logic changes-->
@@ -617,6 +620,12 @@
 	<bean name="defaultBlPricingGenericDao"
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
 		<constructor-arg value="BlPricingLogic"/>
+	</bean>
+	<!--BL-849 : Allocation - Optimize Item Return Warehouse -->
+	<alias name="defaultBlWarehouseGenericDao" alias="blWarehouseGenericDao"/>
+	<bean name="defaultBlWarehouseGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="Warehouse"/>
 	</bean>
 	<alias name="defaultPriceRowGenericDao" alias="priceRowGenericDao"/>
 	<bean name="defaultPriceRowGenericDao"
@@ -647,6 +656,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blBufferInventoryService" ref="blBufferInventoryService"/>
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="blOrderService" ref="blOrderService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -918,6 +929,7 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 				<property name="blCommerceStockService" ref="blCommerceStockService"/>
 				<property name="productService" ref="productService"/>
+				<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
     </bean>
 
 	<!-- BL-626 Email Subscription changes-->
@@ -1088,6 +1100,7 @@
 	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
 		<property name="promotionDao" ref="promotionDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="promotionsService" ref="promotionsService"/>
 	</bean>
 	<!--[BL-663] Added facet on sale on PLP/SLP -->
 	<bean id="blOnSaleFacetNameProvider"
@@ -1097,6 +1110,8 @@
 	<bean id="blOrderPrepareInterceptor"
 		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
+		<property name="blEspEventService" ref="blEspEventService"/>
 	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
@@ -1155,7 +1170,11 @@
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
 
 	<alias alias="productService" name="defaultBlProductService"/>
-	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService">
+		<property name="userService" ref="userService"/>
+		<property name="catalogVersionDao" ref="catalogVersionDao"/>
+		<property name="searchRestrictionService" ref="searchRestrictionService"/>
+	</bean>
 	
 	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
 	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
@@ -1173,6 +1192,7 @@
 		<property name="customerAccountService" ref="customerAccountService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--Coupon for rental extend order -->
@@ -1247,6 +1267,7 @@
 	<alias name="defaultBlRepairLogService" alias="blRepairLogService"/>
 	<bean id="defaultBlRepairLogService" class="com.bl.core.repair.log.service.impl.DefaultBlRepairLogService">
 		<property name="modelService" ref="modelService"/>
+		<property name="blShipmentCreationService" ref="blShipmentCreationService"/>
 	</bean>
 	
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
@@ -1442,5 +1463,167 @@
 	<bean id="defaultBlConsignmentEntryService" class="com.bl.core.services.consignment.entry.impl.DefaultBlConsignmentEntryService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
+
+	<bean id="blCalculateCostForLaborHandler" class="com.bl.core.model.handler.BlCalculateCostForLaborHandler"/>
+	<bean id="blRepairLogSerialConditionRatingHandler" class="com.bl.core.model.handler.BlRepairLogSerialConditionRatingHandler"/>
+
+	<!--BL-1048-->
+	<bean id="blShareASaleJob" class="com.bl.core.job.BlShareASaleJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+	<alias name="defaultBlRepairLogDao" alias="blRepairLogDao"/>
+	<bean id="defaultBlRepairLogDao" class="com.bl.core.repair.log.dao.impl.DefaultBlRepairLogDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<!--ESP Event Rest Service-->
+	<bean id="blESPEventRestService" class="com.bl.esp.service.impl.DefaultBlESPEventRestService">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!-- Order Confirmation populator ESP -->
+	<bean id="blOrderConfirmationRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator">
+	</bean>
+	
+	<!-- Order Canceled populator ESP -->
+	<bean id="blOrderCanceledRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderCanceledRequestPopulator">
+	</bean>
+	
+	<!-- Order Payment Declined populator ESP -->
+	<bean id="blOrderPaymentDeclinedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator">
+	</bean>
+	
+	<!-- Order Ready For pickup populator ESP -->
+	<bean id="blOrderReadyForPickupRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator">
+	</bean>
+	
+	<!-- Order New shipping populator ESP -->
+	<bean id="blOrderNewShippingRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator">
+	</bean>
+
+	<!-- Order Verification more info populator ESP -->
+	<bean id="blOrderVerificationMoreInfoRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator">
+	</bean>
+
+	<!-- Order Verification coi needed populator ESP -->
+	<bean id="blOrderVerificationCOIneededRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator">
+	</bean>
+
+	<!-- Order Verification Required populator ESP -->
+	<bean id="blOrderVerificationRequiredRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator">
+	</bean>
+
+	<!-- Order Verification Completed populator ESP -->
+	<bean id="blOrderVerificationCompletedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator">
+	</bean>
+
+	<!--ESP Event Common populator -->
+	<bean id="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<!--ESP Event service -->
+	<bean id="blEspEventService"
+		class="com.bl.core.esp.service.impl.DefaultBlESPEventService">
+		<property name="blOrderConfirmationRequestPopulator" ref="blOrderConfirmationRequestPopulator"/>
+		<property name="blOrderVerificationMoreInfoRequestPopulator" ref="blOrderVerificationMoreInfoRequestPopulator"/>
+		<property name="blOrderVerificationCOIneededRequestPopulator" ref="blOrderVerificationCOIneededRequestPopulator"/>
+		<property name="blOrderCanceledRequestPopulator" ref="blOrderCanceledRequestPopulator"/>
+		<property name="blOrderExceptionsRequestPopulator" ref="blOrderExceptionsRequestPopulator"/>
+		<property name="blOrderUnboxedRequestPopulator" ref="blOrderUnboxedRequestPopulator"/>
+		<property name="blOrderPaymentDeclinedRequestPopulator" ref="blOrderPaymentDeclinedRequestPopulator"/>
+		<property name="blOrderVerificationRequiredRequestPopulator" ref="blOrderVerificationRequiredRequestPopulator"/>
+		<property name="blOrderVerificationCompletedRequestPopulator" ref="blOrderVerificationCompletedRequestPopulator"/>
+		<property name="blOrderDepositRequestPopulator" ref="blOrderDepositRequestPopulator"/>
+		<property name="blESPEventRestService" ref="blESPEventRestService"/>
+		<property name="blOrderReadyForPickupRequestPopulator" ref="blOrderReadyForPickupRequestPopulator"/>
+		<property name="blOrderNewShippingRequestPopulator" ref="blOrderNewShippingRequestPopulator"/>
+		<property name="blOrderShippedRequestPopulator" ref="blOrderShippedRequestPopulator"/>
+		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
+		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+
+	<!-- Order Exception populator ESP -->
+	<bean id="blOrderExceptionsRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator">
+		<property name="productService" ref="productService"/>
+	</bean>
+
+	<!-- Order unboxed populator ESP -->
+	<bean id="blOrderUnboxedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator">
+	</bean>
+
+	<!-- Inventory Cycle count -->
+	<bean id="blInventoryCycleCountJob" name="blInventoryCycleCountJob" class="com.bl.core.job.BlInventoryCycleCountJob">
+		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
+	</bean>
+
+	<bean id="blInventoryCycleCountDao" name="blInventoryCycleCountDao"
+		  class="com.bl.core.inventory.cycle.count.dao.impl.DefaultBlInventoryCycleCountDao"/>
+
+	<bean id="blInventoryCycleCountService" name="blInventoryCycleCountService"
+		  class="com.bl.core.inventory.cycle.count.service.impl.DefaultBlInventoryCycleCountService">
+		<property name="blInventoryCycleCountDao" ref="blInventoryCycleCountDao"/>
+		<property name="blInventoryScanToolDao" ref="blInventoryScanToolDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<alias name="blInventoryCycleCountPrepareInterceptor" alias="blInventoryCycleCountPrepareInterceptor"/>
+	<bean id="blInventoryCycleCountPrepareInterceptor" class="com.bl.core.model.interceptor.BlInventoryCycleCountPrepareInterceptor">
+		<property name="keyGenerator" ref="iccIdGenerator"/>
+	</bean>
+
+	<bean id="iccIdGenerator" class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.inventoryCycleCount.id.name}"/>
+		<property name="digits" value="${keygen.inventoryCycleCount.id.digits}"/>
+		<property name="start" value="${keygen.inventoryCycleCount.id.start}"/>
+		<property name="type" value="${keygen.inventoryCycleCount.id.type}"/>
+		<property name="template" value="${keygen.inventoryCycleCount.id.template}"/>
+	</bean>
+
+	<bean id="blInventoryCycleCountPrepareInterceptorMapping"
+		  class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blInventoryCycleCountPrepareInterceptor"/>
+		<property name="typeCode" value="BlInventoryCycleCount"/>
+	</bean>
+	<!-- End Inventory Cycle Count -->
+
+	<!-- Order Deposit populator ESP -->
+	<bean id="blOrderDepositRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderDepositRequestPopulator">
+	</bean>
+
+	<!-- Order Shipped  populator ESP -->
+	<bean id="blOrderShippedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderShippedRequestPopulator">
+	</bean>
+
+	<!-- Order Pickedup populator ESP -->
+	<bean id="blOrderPickedUpRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator">
+	</bean>
+
+	<!-- Extend Order populator ESP -->
+	<bean id="blExtendOrderRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlExtendOrderRequestPopulator">
+	</bean>
+
 </beans>

@@ -260,4 +260,29 @@ public interface BlInventoryScanToolService {
 	 * @return List of scanned barcodes with products
 	 */
 	List<String> getSuccessString(final List<String> barcodeList);
+	
+	/**
+	 * method will verify the list of bin barcodes and result into list of failed barcodes that has been failed to update
+	 * @param barcodes as List<String>
+	 * @param allowedLocationList as List<String>
+	 * @return Map<Integer, List<String>>
+	 */
+	public Map<Integer, List<String>> getFailedBinBarcodeList(final List<String> barcodes, final List<String> allowedLocationList);
+
+	/**
+	 * This method will verify valid location and return int with appropriate notification
+	 * @param barcodes for serial products
+	 * @param defaultLocations for locations
+	 * @param memberAllowedLocationList for allowed members
+	 * @return int
+	 */
+	public int checkLocationWithTypeForFD(final List<String> barcodes, final List<String> defaultLocations,
+			 final List<String> memberAllowedLocationList);
+
+  /**
+  * Remove all the related serials and Parent location From Bin
+	 * @param blInventoryLocationModel
+	 */
+	void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel);
+
 }

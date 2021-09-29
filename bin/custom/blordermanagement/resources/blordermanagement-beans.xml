@@ -30,7 +30,7 @@
 	<bean class="de.hybris.platform.warehousing.data.sourcing.SourcingResult">
 		<property name="serialProductMap" type="java.util.Map&lt;Integer, java.util.Set&lt;com.bl.core.model.BlSerialProductModel>>"/>
 		<property name="threeDayGroundAvailability" type="boolean" />
-		<property name="internalTransferConsignment" type="boolean"/>
+		<property name="orderTransferConsignment" type="boolean"/>
 		<property name="aquatechProductMap" type="java.util.Map&lt;Integer, java.util.List&lt;com.bl.core.model.BlProductModel>>"/>
 	</bean>
 

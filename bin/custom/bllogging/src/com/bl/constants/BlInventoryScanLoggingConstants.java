@@ -54,10 +54,12 @@ public class BlInventoryScanLoggingConstants {
     public static final String BIN_LOCATION = "FDSHIP01";
     public static final String CARRIER = "CARRIER";
     public static final String BOXING_FEDEX = "FEDEX";
+    public static final String FD_MOBILE_SHELF = "FDSHIPPED";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
     public static final String NOTIFICATION_HANDLER = "webSanToolNotification";
+    public static final String ICC_NOTIFICATION_HANDLER = "inventoryCycleCountNotification";
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE = "oneBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE = "maxBarcodeLimitErrorFailure";
     public static final String MAX_BARCODE_LIMIT_EQ_ERROR_FAILURE = "maxBarcodeLimitEQErrorFailure";
@@ -70,9 +72,15 @@ public class BlInventoryScanLoggingConstants {
     public static final String LAST_SCAN_ERROR_FAILURE = "lastScanErrorFailure";
     public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
+    public static final String ICC_NO_ACTIVE_NOTIFICATION_FAILURE = "iccNoActiveNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
+    public static final String INVENTORY_CYCLE_COUNT_SCAN_TOOL_DATA_MODEL_KEY = "inventoryCycleCountScanToolDataModelKey";
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE = "validBINLocationErrorFailure";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE = "validParentLocationErrorFailure";
+    public static final String ICC_INPUT_EMPTY_ERROR_NOTIF = "iccEmptyInputNotificationFailure";
+    public static final String ICC_SUCCESS_NOTIF = "scanICCSuccess";
+    public static final String ICC_SERIAL_ERROR_NOTIF = "scanICCSerialError";
+    public static final String ICC_SERIAL_DB_ERROR_NOTIF = "scanICCSerialDBError";
 
     public static final String ONE_ITEM_SCAN_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN";
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
@@ -144,6 +152,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
+    public static final String FRONT_DESK_SHIPPER_WORKSTATION = "FRONT_DESK_MOBILE_CART";
+ 	public static final String FRONT_DESK_SHIPPING_BIN = "FRONT_DESK_SHIPPING_BIN";
+ 	public static final String FRONT_DESK_SHIPPED_MOBILE_CART = "FRONT_DESK_SHIPPED_MOBILE_CART";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
  	public static final String LAST_SCAN_INVALID_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
@@ -170,6 +181,21 @@ public class BlInventoryScanLoggingConstants {
 	public static final String SHIPPING_CANCEL_ORDER_FAILURE = "blbackoffice.shipping.cancel.order.error.messge";
  	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
  	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
+ 	
+	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
+	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order";
+
+	public static final String FRONT_DESK_NO_ITEM_SCAN_KEY = "blbackoffice.frontdesk.order.noitem.scan.error";
+	public static final String FRONT_DESK_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
+	public static final String FRONT_DESK_TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.frontdesk.order.invalid.scan.error";
+	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE = "blbackoffice.frontdesk.manual.order.review.error.messge";
+	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE = "blbackoffice.frontdesk.cancel.order.error.messge";
+	public static final String FRONT_DESK_INVALID_SCAN_ERROR = "blbackoffice.frontdesk.scan.invalid.scan.error ";
+	public static final String FRONT_DESK_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.frontdesk.serial.missing.error.messge";
+	public static final String FRONT_DESK_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.frontdesk.scan.missing.error.messge";
+	public static final String FRONT_DESK_LOCATION_ERROR_KEY = "blbackoffice.frontdesk.scan.last.location.error";
+	public static final String FRONT_DESK_LAST_INVALID_LOCATION_ERROR = "blbackoffice.frontdesk.scan.last.invalid.location.error";
+	public static final String FRONT_DESK_MANY_LOCATION_ERROR = "blbackoffice.frontdesk.scan.many.location.error";
 
 
  	public static final String DOUBLE_HYPHEN = "--";
@@ -181,8 +207,11 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SOCKET_ID = "inputObject";
  	public static final String SCANNING_AREA = "scanningArea";
  	public static final String SCAN_TO_BIN = "scanToBin";
+ 	public static final String GENERATE_INBOUND_LABEL = "generateInboundLabel";
+ 	public static final String SCAN_TO_WORKSTATION = "scanToWorkStation";
  	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
  	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";
+ 	public static final String WAREHOUSE_COMBOBOX = "warehouseCombobox";
  	public static final String EMPTY_STRING = "";
  	public static final String LAST_SCANNED_ITEM = "lastScannedItem";
     public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";
@@ -223,7 +252,63 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SERIAL_HARD_ASSIGN = "Serial {} is hard assigned to true ";
     public static final String FOR = " for ";
+    public static final String MUST_HAVE_BIN_LOCATION_ID = "A Bin OcLocation Id Must be provided";
+    public static final String LOCATION_NOT_FOUND = "Location Not Found";
+    public static final String BIN_OCLOCATION_NOTIFICATION_HANDLER = "binOcLocScanToolNotification";
+  public static final String BIN_OCLOCATION_TOOL_NOTIFICATION_FAILURE = "binOcLocScanToolNotificationFailure";
+  public static final String MUST_ONE_LOCATION_ERROR_FAILURE = "mustOneLocationErrorFailure";
+  public static final String NO_LOCATION_ERROR_FAILURE = "noLocationErrorFailure";
+  public static final String FETCH_SERIAL_PROD_LOC = "Fetching SerialProducts for input Location: {}";
+  public static final String CONTENT_CLEARED_FROM_BIN = "Content Cleared for the Bin with Id: {}";
+  public static final String NO_RELATED_ITEMS_FOUND = "No related serial or parent Location found to clear";
+  public static final String NO_RELATED_ITEMS_FOUND_FAILURE = "noRelatedItemsFoundFailure";
+  public static final String TYPE_NOT_SUPPORTED = "Type Not Supported";
+  public static final String TYPE_NOT_SUPPORTED_ERROR_FAILURE = "typeNotSupportedErrorFailure";
 
+    //Inventory Cycle Count
+    public static final String START_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Start performing BlAuthorizePaymentJob...!!";
+    public static final String FINISHED_PERFORMING_BL_AUTHORIZE_PAYMENT_JOB = "Finished performing BlAuthorizePaymentJob...!!";
+    public static final String FAILED_TO_PERFORM_BL_AUTHORIZE_PAYMENT_JOB_AS_IT_S_WEEKEND = "Failed to perform BlAuthorizePaymentJob as it's weekend!!";
+
+    public static final String FETCH_ACTIVE_INVENTORY_CYCLE_COUNT = "Fetch active inventory cycle count record!!";
+    public static final String FETCH_ALL_SKUs = "Fetch all active SKUs considering serials status!!";
+    public static final String ICC_DAY = "ICC_Day_";
+    public static final int TWENTY_NINE = 29;
+    public static final int THIRTY = 30;
+    public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
+    public static final String PREVIOUS_CYCLE_COUNT_ENDED = "No active inventory cycle found!!";
+    public static final String DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivating previous cycle count with code: {}";
+    public static final String FAILED_TO_CREATE_INVENTORY_CYCLE_AS_SKU_LIST_IS_EMPTY = "Failed to create inventory Cycle as SKU list is empty!!";
+    public static final String PREVIOUS_INVENTORY_CYCLE_NOT_COMPLETED_WITH_CODE = "Previous Inventory Cycle not completed with code: {}";
+    public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
+    public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_FOR_SKU = "Creating new Inventory Cycle count Product details for day: {} with SKU: {}";
+    public static final String CREATING_NEW_PRODUCT_INVENTORY_CYCLE_COUNT_HISTORY = "Creating new Inventory Cycle count History for day: {} by user: {}";
+    public static final String SET_INVENTORY_CYCLE_COUNT_DAY_COMPLETED = "Setting ICC as COMPLETED for day: {}";
+    public static final String SUCCESSFULLY_CREATED_NEW_INVENTORY_CYCLE_COUNT_FOR_CODE_FROM_TO = "Successfully created new Inventory Cycle count for code:{} from: {} to: {}";
+    public static final String CREATED_INVENTORY_CYCLE_FOR_DATE = "Created {} Inventory Cycle for date: {}";
+    public static final String CHUNKS_FOR_THIRTY_DAYS = "Created Inventory Cycle SKU list for 30 days as: {}";
+    public static final String CALENDER_TIME = "Calender time generated: {}";
+
+    public static final String SKU_LIST_ERROR = "Entered list of SKU not matching with DB!!";
+    public static final String MODEL_SAVING_EXCEPTION = "Error while saving model: {}";
+    public static final String EXCEPTION = "Error occurred: {}";
+    public static final String ICC_SUCCESS = "Successfully in logging report for InventoryCycleCountCode: {} for day: {} with date: {}. Please Check Scan History!!";
+    public static final String ICC_NO_SERIALS = "Please reconcile both of these lists!!";
+
+    public static final String ON_CHANGE = "onChange";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SKU = "resize:none;display:inline-block";
+    public static final String RESIZE_NONE_DISPLAY_BLOCK_SERIAL = "resize:none;display:block;float:right";
+    public static final String CLEAR = "Clear";
+    public static final String ON_CLICK = "onClick";
+    public static final String DEFAULT_INVENTORY_CYCLE_COUNT_SCAN_TOOL_RENDERER = "defaultInventoryCycleCountScanToolRenderer";
+    public static final String WIDTH_FOURTY_EIGHT = "48%";
+    public static final String SKU_INPUT_PLACEHOLDER_ENTER_SKU_LIST = "Enter SKU list...";
+    public static final String BARCODE_INPUT_PLACEHOLDER_SCAN_SERIAL_BARCODES = "Scan serial barcodes...";
+    public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
+    public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
+    public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
+
+    public static final String REGEX_N = "\n";
 
     private BlInventoryScanLoggingConstants() { }
 

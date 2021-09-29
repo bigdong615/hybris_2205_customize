@@ -12,6 +12,7 @@ import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -62,6 +63,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -96,6 +98,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlDatePickerService blDatePickerService;
   private BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator;
   private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
+  private BlOrderService blOrderService;
 
   /**
    * This method created to add all the products from existing order
@@ -111,8 +114,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     if(null != cartModel && CollectionUtils.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
       return false;
     }
-
-    for (final AbstractOrderEntryModel lEntryModel : orderModel.getEntries())
+    final List<AbstractOrderEntryModel> entries = orderModel.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
+        Collectors.toList());
+    for (final AbstractOrderEntryModel lEntryModel : entries)
     {
         final ProductModel lProductModel = lEntryModel.getProduct();
         addToCart(lProductModel, lEntryModel.getQuantity().intValue(), lEntryModel);
@@ -616,6 +620,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     am.setMessageCode(messageCode);
     return am;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setResolvedStatusOnRepairLog(final String orderCode)
+  {
+	  getBlOrderService().setResolvedStatusOnRepairLog(orderCode);
+  }
 
   public BlCartService getBlCartService() {
     return blCartService;
@@ -780,4 +793,21 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
     this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
   }
+
+/**
+ * @return the blOrderService
+ */
+public BlOrderService getBlOrderService()
+{
+	return blOrderService;
+}
+
+
+/**
+ * @param blOrderService the blOrderService to set
+ */
+public void setBlOrderService(BlOrderService blOrderService)
+{
+	this.blOrderService = blOrderService;
+}
 }

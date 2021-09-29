@@ -1,0 +1,70 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+
+INSERT_UPDATE DynamicProcessDefinition;code[unique=true];active;content
+                                      ;internaltransfer-order-process;true;"<process xmlns='http://www.hybris.de/xsd/processdefinition' start='sourceOrder'
+name='internaltransfer-order-process' processClass='de.hybris.platform.orderprocessing.model.OrderProcessModel'>
+
+<action id='sourceOrder' bean='blInternalTransferSourceOrderAction'>
+    <transition name='OK' to='waitForOrderAction'/>
+</action>
+
+<!-- Wait to perform action on Order -->
+<wait id='waitForOrderAction' prependProcessCode='true' then='failed'>
+    <case event='OrderActionEvent'>
+        <choice id='consignmentProcessEnded' then='verifyOrderCompletion'/>
+        <choice id='cancelOrder' then='processOrderCancellation'/>
+        <choice id='cancelled' then='success'/>
+        <choice id='reSource' then='sourceOrder'/>
+        <choice id='putOnHold' then='putOrderOnHold'/>
+    </case>
+</wait>
+
+<!-- Wait for order cancellation to be completed -->
+<action id='processOrderCancellation' bean='processOrderCancellationAction'>
+    <transition name='OK' to='verifyOrderCompletion'/>
+    <transition name='WAIT' to='waitForOrderAction'/>
+    <transition name='SOURCING' to='sourceOrder'/>
+</action>
+
+<action id='verifyOrderCompletion' bean='verifyOrderCompletionAction'>
+    <transition name='OK' to='postTaxes'/>
+    <transition name='WAIT' to='waitForOrderAction'/>
+    <transition name='CANCELLED' to='success'/>
+</action>
+
+<action id='putOrderOnHold' bean='putOrderOnHoldAction'>
+    <transition name='OK' to='waitForOrderAction'/>
+</action>
+
+<!-- Tax and Payment -->
+<action id='postTaxes' bean='postTaxesAction'>
+    <transition name='OK' to='takePayment'/>
+</action>
+
+<action id='takePayment' bean='takePaymentAction'>
+    <transition name='OK' to='completeOrder'/>
+    <transition name='NOK' to='sendPaymentFailedNotification'/>
+</action>
+
+<action id='completeOrder' bean='completeOrderAction'>
+    <transition name='OK' to='success'/>
+</action>
+
+<action id='sendPaymentFailedNotification' bean='sendPaymentFailedNotificationAction'>
+    <transition name='OK' to='failed'/>
+</action>
+
+<end id='error' state='ERROR'>Order process error.</end>
+<end id='failed' state='FAILED'>Order process failed.</end>
+<end id='success' state='SUCCEEDED'>Order process completed.</end>
+
+</process>"

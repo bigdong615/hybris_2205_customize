@@ -50,6 +50,7 @@
 		<property name="isNewGearInStock" type="boolean"/>
 		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="specifications" type="java.lang.String"/>
+		<property name="manufacturerAID" type="java.lang.String"/>
   </bean>
 
 
@@ -131,7 +132,7 @@
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	<property name="option" type="com.bl.facades.product.data.BlOptionData"/>
 		<property name="aqautechProduct" type="boolean"/>
-	
+		<property name="bundleEntry" type="boolean" />
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -347,6 +348,7 @@
             <property name="recipientMessage" type="java.lang.String"/>
       <property name="retailGear" type="java.lang.Boolean"/>
 		<property name="aqautechProduct" type="boolean"/>
+		<property name="bundleMainEntry" type="boolean"/>
 	</bean>
 
 

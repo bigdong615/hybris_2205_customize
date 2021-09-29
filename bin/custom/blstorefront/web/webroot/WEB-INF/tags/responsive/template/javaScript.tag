@@ -592,7 +592,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight  : 380,
                                              } );
@@ -629,7 +629,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );
@@ -919,7 +919,7 @@
              var primarySlider = new Splide( '#product-slider', {
                  type       : 'fade',
                  pagination : false,
-                 arrows     : false,
+                 arrows     : true,
                  keyboard   : false,
                  fixedHeight : 380,
              } );
@@ -952,7 +952,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );
@@ -1057,7 +1057,7 @@
              var primarySlider = new Splide( '#product-slider', {
                  type       : 'fade',
                  pagination : false,
-                 arrows     : false,
+                 arrows     : true,
                  keyboard   : false,
                  fixedHeight : 380,
              } );
@@ -1090,7 +1090,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );

@@ -28,8 +28,8 @@ INSERT_UPDATE PromotionGroup ; Identifier[unique=true] ;
                              ; $promoGrp               ;  
                              
 # Base Store                 
-INSERT_UPDATE BaseStore ; uid[unique=true] ; catalogs(id)                           ; currencies(isocode) ; net  ; taxGroup(code) ; storelocatorDistanceUnit(code) ; defaultCurrency(isocode) ; languages(isocode) ; defaultLanguage(isocode) ; deliveryCountries(isocode) ; billingCountries(isocode) ; submitOrderProcessCode ; pickupInStoreMode(code) ; customerAllowedToIgnoreSuggestions  ; paymentProvider  ; checkoutFlowGroup  ; usedGearCartTimer ; vipOrderThreshold
-                        ; $storeUid        ; $productCatalog,$classificationCatalog ; $currencies         ; $net ; jp-taxes       ; km                             ; $defaultCurrency         ; $languages         ; $defaultLanguage         ; $deliveryCountries         ; $billingCountries         ; $orderProcessCode      ; $pickupInStoreMode      ; $customerAllowedToIgnoreSuggestions ; $paymentProvider ; $checkoutFlowGroup ;  900 ; 500
+INSERT_UPDATE BaseStore ; uid[unique=true] ; catalogs(id)                           ; currencies(isocode) ; net  ; taxGroup(code) ; storelocatorDistanceUnit(code) ; defaultCurrency(isocode) ; languages(isocode) ; defaultLanguage(isocode) ; deliveryCountries(isocode) ; billingCountries(isocode) ; submitOrderProcessCode ; pickupInStoreMode(code) ; customerAllowedToIgnoreSuggestions  ; paymentProvider  ; checkoutFlowGroup  ; usedGearCartTimer ; vipOrderThreshold ;internalTransferProcess
+                        ; $storeUid        ; $productCatalog,$classificationCatalog ; $currencies         ; $net ; jp-taxes       ; km                             ; $defaultCurrency         ; $languages         ; $defaultLanguage         ; $deliveryCountries         ; $billingCountries         ; $orderProcessCode      ; $pickupInStoreMode      ; $customerAllowedToIgnoreSuggestions ; $paymentProvider ; $checkoutFlowGroup ;  900 ; 500 ; internaltransfer-order-process
                         
 #INSERT_UPDATE BaseStore2DeliveryModeRel ; source(uid)[unique=true] ; target(code)[unique=true]
 #                                        ; bl                       ; premium-net
@@ -39,6 +39,7 @@ INSERT_UPDATE BaseStore ; uid[unique=true] ; catalogs(id)                       
 #                                       ; bl                       ; pickup
 #                                        ; bl                       ; free-standard-shipping
                                         
+
 INSERT_UPDATE BaseStore2WarehouseRel;source(uid)[unique=true];target(code)[unique=true]
 ;$storeUid;warehouse_ca
 ;$storeUid;warehouse_ma

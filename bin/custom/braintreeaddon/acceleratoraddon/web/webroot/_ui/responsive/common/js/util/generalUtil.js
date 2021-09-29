@@ -46,13 +46,26 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     var extendOrderPage = createHiddenParameter("extend_order_page", $("#js-extend-order-page").val());
     payPalForm.append($(extendOrderPage));
     var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
-    var payBillTotal = createHiddenParameter("payBillTotal", $("#payBillTotal").val());
+    var amountToBePaid = '';
+    var isDepositPaymentPage = false;
+    if($("#deposit-amount").length == 1)
+    {
+      amountToBePaid = $("#deposit-amount").val();
+      isDepositPaymentPage = true;
+    }
+    else
+    {
+      amountToBePaid = $("#payBillTotal").val();
+      isDepositPaymentPage = false;
+    }
+    var payBillTotal = createHiddenParameter("payBillTotal", amountToBePaid);
     var modifyOrderTotal = createHiddenParameter("modifyOrderTotal", $("#modifyOrderTotal").val());
+    var isDeposit = createHiddenParameter("isDepositPaymentPage", isDepositPaymentPage);
     
     payPalForm.append($(modifyOrderTotal));
     payPalForm.append($(payBillTotal));
     payPalForm.append($(orderCode));
-
+	payPalForm.append($(isDeposit));
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));
     payPalForm.append($(paymentType));

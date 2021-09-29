@@ -100,6 +100,7 @@
         <property name="blSourcingStrategyService" ref="blSourcingStrategyService"/>
         <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
         <property name="modelService" ref="modelService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 
     <alias name="defaultBlAllocationService" alias="allocationService" />
@@ -109,6 +110,8 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
         <property name="blOrderService" ref="blOrderService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+        <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
     </bean>
 
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
@@ -150,6 +153,8 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="modelService" ref="modelService"/>
         <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
+        <property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+        <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
     </bean>
 
     <alias name="defaultBlNoSplittingStrategy" alias="blNoSplittingStrategy"/>
@@ -178,6 +183,24 @@
 	<bean id="blOrderEntryValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blOrderEntryValidateInterceptor"/>
 		<property name="typeCode" value="OrderEntry"/>
+	</bean>
+	
+	<bean id="blReshufflerJob" class="com.bl.Ordermanagement.job.BlReshufflerJob" parent="abstractJobPerformable">
+		<property name="blReshufflerService" ref="blReshufflerService"/>
+	</bean>
+	
+	<alias alias="blReshufflerService" name="defaultBlReshufflerService"/>
+	<bean id="defaultBlReshufflerService" class="com.bl.Ordermanagement.reshuffler.service.impl.DefaultBlReshufflerService">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="blAssignSerialService" ref="blAssignSerialService"/>
+		<property name="blAllocationService" ref="allocationService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao" />
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 
 </beans>

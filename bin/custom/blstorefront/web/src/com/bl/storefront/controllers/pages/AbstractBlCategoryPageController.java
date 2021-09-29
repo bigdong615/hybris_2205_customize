@@ -7,7 +7,6 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -29,7 +28,10 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -147,6 +149,13 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         populateModelAttributeForCategory(model ,categorySearch , categoryCode , searchPageData , category, showMode , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST));
         populateRequiredDataForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
+
+        checkNumberOfFacetSelected(searchPageData , model);
+        if(category.getCode().equalsIgnoreCase(BlCoreConstants.RENTAL_GEAR) || category.getCode().equalsIgnoreCase(BlCoreConstants.USED_GEAR_CODE)) {
+            final long totalNumberOfResults =
+                searchPageData.getPagination().getTotalNumberOfResults() - 1;
+            searchPageData.getPagination().setTotalNumberOfResults(totalNumberOfResults);
+        }
         return getViewPage(categorySearch.getCategoryPage());
 
     }
@@ -368,6 +377,27 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 Collectors.toSet()));
         final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
         setUpMetaData(model, metaKeywords, metaDescription);
+    }
+
+
+    /**
+     * This method created to set model for clear all
+     * @param searchPageData searchpagedata
+     * @param model model
+     */
+    private void checkNumberOfFacetSelected(final ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData , final Model model) {
+        final AtomicInteger numberOfFacetSelected = new AtomicInteger();
+            final List<String> facetNameList = new ArrayList<>();
+            searchPageData.getFacets().forEach(searchStateDataFacetData -> searchStateDataFacetData.getValues().forEach(searchStateDataFacetValueData -> {
+                if(searchStateDataFacetValueData.isSelected()) {
+                    facetNameList.add(searchStateDataFacetValueData.getCode());
+                    numberOfFacetSelected.getAndIncrement();
+                }
+            }));
+
+            if(numberOfFacetSelected.intValue() == 1) {
+                model.addAttribute(BlControllerConstants.CLEAR_BRANDS, facetNameList.get(0));
+            }
     }
 
 }

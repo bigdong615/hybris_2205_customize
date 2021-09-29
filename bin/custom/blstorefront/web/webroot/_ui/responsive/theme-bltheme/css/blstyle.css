@@ -93,11 +93,11 @@ nav, .alert-promo { z-index: 1030; } /* was 1999 - interfered with modal */
 .submenu ul li a { text-decoration: none; color: #3d3c3c; }
 .submenu ul li a:hover { color: #e64b4f; }
 /* BL-571 */
-.submenu div div:not(:last-child) { padding-right: 80px; }
+.submenu div div:not(:last-child) { padding-right: 8px; }
 .submenu div div .phone-number { text-decoration: none; }
 .dropdown-menu i, .mm-menu i { display: inline-block; margin-right: 15px; height: 20px; width: 20px; }
 .navbar-nav .nav-item:nth-child(1) .dropdown-menu h5 i { background: url(../assets/icon-brands.svg) center no-repeat; }
-.navbar-nav .nav-item:nth-child(2) .dropdown-menu h5 i { background: url(../assets/icon-camera.svg) center no-repeat; }
+.navbar-nav .nav-item:nth-child(2) .dropdown-menu h5 i { background: url(../assets/icon-brands.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(3) .dropdown-menu h5 i { background: url(../assets/icon-lenses.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(4) .dropdown-menu h5 i { background: url(../assets/icon-equipment.svg) center no-repeat; }
 .navbar-nav .nav-item:nth-child(5) .dropdown-menu h5 i { background: url(../assets/icon-usedgear.svg) center no-repeat; }
@@ -215,7 +215,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .btn-close { padding-left: 32px; background: url(../assets/icon-close.svg) 12px 14px no-repeat; opacity: 1; width: auto; height: auto; }
 .btn-close:hover { opacity: 1; }
 .btn-filter { margin: 0 4px 8px; color: #32a3a4; border: 1px solid #52bfc0; padding: 6px 16px 6px 32px; background: #e0f0f1 url(../assets/icon-close-filter.svg) 12px 10px no-repeat; }
-.btn-filter:hover { color: #32a3a4; background-color: #d0e8ea; }
+.btn-filter:hover { color: #32a3a4 !important; background-color: #d0e8ea !important;border: 1px solid #52bfc0 !important; }
 
 /* Notifications */
 .notification { margin-top: 20px; display: block; padding: 16px; border-left: 4px solid; border-radius: 6px; padding-left: 50px; background-position: 12px 18px; background-repeat: no-repeat; font-size: 14px; }
@@ -458,7 +458,7 @@ ul.checklist li:before { opacity: .5; content: ''; display: block; position: abs
 #mobileFilter h6 a.filter-button { text-decoration: none; color: #3d3c3c; padding-left: 40px; background: url(../assets/icon-filter.svg) no-repeat left center; }
 .clear-filters { float: right; font-size: 14px; color: #3d3c3c; display:inline-block; padding-top: 2px; }
 hr { background-color: #D4D3D3; opacity: 1; }
-#productFilter .filter-expand { display: block; color: #3d3c3c; text-decoration: none; }
+#productFilter .filter-expand { display: block; color: #3d3c3c; text-decoration: none;text-transform: capitalize; }
 #productFilter .filter-expand, #filter-menu .filter-expand { background: url(../assets/icon-filter-open.svg) right center no-repeat; }
 #productFilter .filter-expand[aria-expanded="true"], #filter-menu .filter-expand[aria-expanded="true"] { background: url(../assets/icon-filter-close.svg) right center no-repeat; }
 #productFilter .checkbox-list, #filter-menu .checkbox-list { list-style: none; padding-left: 20px; }
@@ -524,8 +524,8 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #theProduct .bookmark { top: 3px; }
 #productImage #product-thumbnails .splide__slide { opacity: .5; transition: .2s; }
 #productImage #product-thumbnails .splide__slide.is-active, #productImage #product-thumbnails .splide__slide:hover { opacity: 1; }
-#productImage .splide .splide__arrows .splide__arrow--prev { margin-left: -40px; }
-#productImage .splide .splide__arrows .splide__arrow--next { margin-right: -40px; }
+#productImage .splide .splide__arrows .splide__arrow--prev { margin-left: -19px; }
+#productImage .splide .splide__arrows .splide__arrow--next { margin-right: -19px; }
 #productImage .splide.is-active .splide__track { z-index: 999; }
 #productImage .splide.is-active .splide__list { margin: 0 auto!important; }
 #productInfo p.overline { font-size: 12px; }
@@ -582,7 +582,7 @@ footer .input-group input[type=text] { margin-top: 0; margin-bottom: 0; border-r
 footer .col-md-4 p { padding-left: 20px; }
 footer #copyright p, footer #copyright p a { color: white; }
 footer #copyright p { opacity: .3; }
-footer .social a { opacity: 1; transition: .2s; margin-right: 15px; }
+footer .social a { opacity: 1; transition: .2s; margin-right: 15px;text-decoration: none; }
 footer .social a:hover { opacity: .7; }
 
 /* Modals */

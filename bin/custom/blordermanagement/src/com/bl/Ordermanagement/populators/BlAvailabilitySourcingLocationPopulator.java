@@ -9,7 +9,6 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.context.populator.SourcingLocationPopulator;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,34 +44,13 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     final AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next()
         .getOrder();
-    final Set<String> productCodes = order.getEntries().stream()
+    final Set<String> productCodes = order.getEntries().stream().filter(entry -> !entry.isBundleMainEntry())
         .map(entry -> entry.getProduct().getCode()).collect(Collectors.toSet());
 
-    Collection<StockLevelModel> stockLevels = blCommerceStockService
+    final Collection<StockLevelModel> stockLevels = blCommerceStockService
         .getStockForProductCodesAndDate(productCodes,
-            source, order.getActualRentalStartDate(), order.getActualRentalEndDate(), Boolean.FALSE);
+            source, order.getActualRentalStartDate(), order.getActualRentalEndDate());
 
-    final Set<String> productCodesWithStock = new HashSet<>();
-    final Set<String> skuProductCodes = new HashSet<>(productCodes);
-    if (CollectionUtils.isNotEmpty(stockLevels)) {
-      stockLevels.stream().forEach(stockLevelModel ->
-          productCodesWithStock.add(stockLevelModel.getProductCode()));
-      skuProductCodes.removeAll(productCodesWithStock);
-      if(CollectionUtils.isNotEmpty(skuProductCodes)) {
-        //It searches from buffer inventory if it's not available in main inventory
-        final Collection<StockLevelModel> stockLevelFromBufferInv =  blCommerceStockService
-            .getStockForProductCodesAndDate(skuProductCodes,
-                source, order.getActualRentalStartDate(), order.getActualRentalEndDate(), Boolean.TRUE);
-        if(CollectionUtils.isNotEmpty(stockLevelFromBufferInv)) {
-          stockLevels.addAll(stockLevelFromBufferInv);
-        }
-      }
-    } else {
-      //It searches from buffer inventory if it's not available in main inventory
-      stockLevels = blCommerceStockService
-          .getStockForProductCodesAndDate(productCodes,
-              source, order.getActualRentalStartDate(), order.getActualRentalEndDate(), Boolean.TRUE);
-    }
     if(CollectionUtils.isNotEmpty(stockLevels)) {
       final Map<String, List<StockLevelModel>> availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,

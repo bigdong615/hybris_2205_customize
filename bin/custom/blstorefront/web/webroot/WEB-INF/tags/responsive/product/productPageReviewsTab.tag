@@ -44,6 +44,7 @@
 				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
 				REVIEW_DISPLAY_SNAPSHOT_TYPE : 'SIMPLE',
 				REVIEW_DISPLAY_PAGINATION_TYPE : 'VERTICAL',
+				style_sheet: '${fn:escapeXml(themeResourcePath)}/css/powereview.css',
 
 				product : {
 					name : '${product.name}',

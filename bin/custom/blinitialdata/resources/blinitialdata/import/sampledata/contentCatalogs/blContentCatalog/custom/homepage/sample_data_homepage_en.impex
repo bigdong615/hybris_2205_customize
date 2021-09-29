@@ -125,17 +125,17 @@ UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=tr
                                        ;                         ; RotatingHomePageImagesComponent3 ; pexels-cottonbro-59671434.mp4    
                                        
 UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; $picture[lang=$lang] ; urlLink                         ; imagetitle[lang=$lang] 
-                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ; "/Cameras/c/cameras"            ; Camera                 
-                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ; "/Brands/Sony/c/Sony"           ; Sony                   
-                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ; "/Brands/Panasonic/c/Panasonic" ; Panasonic              
-                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ; "/Brands/Nikon/c/nikon"         ; Nikon                  
-                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ; "/Brands/Kodak/c/kodak"         ; Kodak                  
-                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ; "/Cameras/c/cameras"            ; Camera                 
+                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ; "/rent/category/cameras"            ; Camera
+                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ; "/rent/category/brands/Sony"           ; Sony
+                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ; "/rent/category/brands/Panasonic" ; Panasonic
+                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ; "/rent/category/brands/nikon"         ; Nikon
+                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ; "/rent/category/brands/canon"         ; Kodak
+                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ; "/rent/category/cameras"            ; Camera
                                            
 UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]        ; urlLink                  ; brandImageTitle[lang=$lang] 
-                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      ; "/Canon/c/canon"         ; Canon                       
-                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/Sony/c/Sony"           ; Sony                        
-                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/Nikon/c/nikon"         ; Nikon                       
-                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/DJI/c/DJI"             ; DJI                         
-                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/Panasonic/c/Panasonic" ; Panasonic
+                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      ; "/rent/category/brands/canon"         ; Canon
+                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/rent/category/brands/Sony"           ; Sony
+                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/rent/category/brands/nikon"         ; Nikon
+                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/rent/category/brands/DJI"             ; DJI
+                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/rent/category/brands/Panasonic" ; Panasonic
 

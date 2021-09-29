@@ -44,7 +44,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
       final CustomerModel customer = (CustomerModel) cartModel.getUser();
       validateParameterNotNull(customer, "Customer model cannot be null");
-
       final OrderModel orderModel = getOrderService().createOrderFromCart(cartModel);
       if (orderModel != null)
       {
@@ -62,7 +61,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
         // clear the promotionResults that where cloned from cart PromotionService.transferPromotionsToOrder will copy them over bellow.
         orderModel.setAllPromotionResults(Collections.<PromotionResultModel> emptySet());
-
         getModelService().saveAll(customer, orderModel);
 
         if (cartModel.getPaymentInfo() != null && cartModel.getPaymentInfo().getBillingAddress() != null)

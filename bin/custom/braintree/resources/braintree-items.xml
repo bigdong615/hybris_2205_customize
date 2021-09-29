@@ -208,6 +208,18 @@
 					<persistence type="property"></persistence>
 					<modifiers read="true" write="true" optional="true" />
 				</attribute>
+				
+				<attribute qualifier="depositAmount" type="java.lang.Double">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>Total deposit amount of order.</description>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                 </attribute>
+                 <attribute qualifier="isDepositPayment" type="boolean">
+              	         <description>It describes whether this payment info is for deposit payment</description>
+                         <persistence type="property" />
+                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
 			</attributes>
 		</itemtype>
 

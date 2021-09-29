@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -103,6 +104,7 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
             saveRecord(blProduct);
             setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, bufferInvPercentage);
           } else {
+            markSerialProductsAsBuffer(blProduct, onlineCatalog);
             setSerialProductsBufferInv(blProduct, onlineCatalog);
             setBufferInvPercentInOnlineVersion(blProduct, onlineCatalog);
           }
@@ -121,6 +123,20 @@ public class DefaultBlBufferInventoryService implements BlBufferInventoryService
           setBufferInvPercentInOnlineVersionProduct(blProduct, onlineCatalog, Double.valueOf(0.0));
         }
       }
+  }
+
+  /**
+   * It clones if buffer inventory flag from staged to online version of the product
+   * @param blProduct
+   * @param onlineCatalog
+   */
+  private void markSerialProductsAsBuffer(final BlProductModel blProduct, final CatalogVersionModel onlineCatalog) {
+    blProduct.getSerialProducts().forEach(serialProduct -> {
+      if(Objects.nonNull(serialProduct.getIsBufferedInventory())) {
+        markBufferProductInOnlineVersion(serialProduct.getCode(), onlineCatalog,
+            serialProduct.getIsBufferedInventory());
+      }
+    });
   }
 
   /**

@@ -36,21 +36,28 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       final InterceptorContext interceptorContext) throws InterceptorException {
 
     final AbstractOrderModel abstractOrderModel = consignmentModel.getOrder();
-    final Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(
-        abstractOrderModel.getConsignments());
-    otherConsignmentModels.remove(consignmentModel);
-    final List<NotesModel> orderNotesFromConsignment = consignmentModel.getOrderNotes();
 
-    if (interceptorContext.isModified(consignmentModel, ConsignmentModel.ORDERNOTES)) {
-      if (CollectionUtils.isNotEmpty(orderNotesFromConsignment)) {
-        setOrderAndOtherConsignmentsInNotes(abstractOrderModel, otherConsignmentModels,
-            orderNotesFromConsignment, interceptorContext);
+    if (null != abstractOrderModel) {
+
+      final Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(
+          abstractOrderModel.getConsignments());
+      otherConsignmentModels.remove(consignmentModel);
+
+      final List<NotesModel> orderNotesFromConsignment = consignmentModel.getOrderNotes();
+
+      if (interceptorContext.isModified(consignmentModel, ConsignmentModel.ORDERNOTES)) {
+        if (CollectionUtils.isNotEmpty(orderNotesFromConsignment)) {
+          setOrderAndOtherConsignmentsInNotes(abstractOrderModel, otherConsignmentModels,
+              orderNotesFromConsignment, interceptorContext);
+        }
+        //Setting consolidated Notes on order which can be used to display order notes in backoffice view
+        getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
+        interceptorContext.getModelService().save(abstractOrderModel);
       }
-      //Setting consolidated Notes on order which can be used to display order notes in backoffice view
-      getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
-      interceptorContext.getModelService().save(abstractOrderModel);
     }
+
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
+
   }
 
   /**

@@ -23,8 +23,8 @@
         <requires-extension name="wishlist"/>
         <requires-extension name="promotionengineservices"/>
         <requires-extension name="couponservices"/>
-	 <requires-extension name="warehousing"/>
-
+        <requires-extension name="warehousing"/>
+        <requires-extension name="blespintegration"/>
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		
     

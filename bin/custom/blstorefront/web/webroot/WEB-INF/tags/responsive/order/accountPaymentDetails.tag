@@ -23,7 +23,7 @@
 		<div class="col-10 col-md-5">
 			<b class="body14 gray100">${cardName}</b>
 			<div class="row">
-				<div class="col-6">
+				<div class="col-4">
 					<p class="body14">
 						<c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'BrainTreePayPalExpress') == false }">
 						<spring:theme code="text.review.page.payment.ending" /><br>
@@ -31,7 +31,7 @@
 						</c:if>
 					</p>
 				</div>
-				<div class="col-6">
+				<div class="col-8">
 					<p class="body14 gray80">
 						<c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'BrainTreePayPalExpress') == false }">
 						${fn:escapeXml(paymentInfo.cardNumber)}<br>

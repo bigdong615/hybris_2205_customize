@@ -250,10 +250,11 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 	}
 });
 
-
-jQuery(document).ready(function () {
-	initializeBTclientSDK();
-});
+if ((typeof addPaymentMethodsPage != 'undefined')) {
+  jQuery(document).ready(function () {
+	  initializeBTclientSDK();
+  });
+}
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
@@ -1455,23 +1456,10 @@ $('ul#saved-payment-action-modifyPayment').on('click','li',function(e){
 $(".js--order-modify-payment").on("click", function(e) {
 	 e.preventDefault();
 	 
-		var paymentId = $('#saved-payment-action-modifyPayment').find("button").data("id");
-		var paymentnonce = $('#saved-payment-action-modifyPayment').find("button").data("nonce");
 		var ccEnable = $('#paymentMethodBT').is(':checked');
 		var payPalEnable = $('#paymentMethodPayPal').is(':checked');
 		var paymentInfoId =  $('#paymentId').val();
-		
-		
-	    var buttonData = $(this).find("button").html();
-	    $("#savedCards").html(buttonData);
-	    $("#paymentId").val(paymentId);
-		$("#paymentNonce").val(paymentnonce);
-       var selectedPaymentMethodId	= createHiddenParameter("selectedPaymentMethodId", $("#paymentId").val(paymentId));
-       var selectedPaymentMethodNonce = createHiddenParameter("selectedPaymentMethodNonce", $("#paymentNonce").val(paymentnonce));
-		
 		var formToSubmit = $("#modifyPaymentForm");
-		formToSubmit.append($(selectedPaymentMethodId));
-		formToSubmit.append($(selectedPaymentMethodNonce));
 		
 		if((ccEnable == true && paymentInfoId !='') || payPalEnable == true){
 		formToSubmit.submit();
@@ -1489,5 +1477,56 @@ $(".add-cc-form-modifyPayment").on("click",function(e){
     $("#payment-add-form-modifyPayment").submit();
 });
 
+$("#deposit-amount").on("input", function(evt) {
+	$('#validationMessage').empty();
+	$('#depositPaymentErrorMessage').empty();
+	var self = $(this);
+	self.val(self.val().replace(/[^0-9\.]/g, ''));
+	if ((evt.which != 46 || self.val().indexOf('.') != -1)  && (evt.which < 48 || evt.which > 57))
+	{
+		evt.preventDefault();
+	}
+	if(self.val().indexOf('.') == 0 || self.val().split(".").length > 2)
+	{
+		$('#depositPaymentErrorMessage').empty();
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#depositPaymentErrorMessage').append(validationDiv);
+	}
+});
 
+$(".js-order-deposit-payment").on("click", function(e) {
+	e.preventDefault();
+	$('#validationMessage').empty();
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var paymentInfoId = $('#paymentId').val();
+	var depositAmount = $("#deposit-amount").val();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if ((ccEnable == true && paymentInfoId != '') || payPalEnable == true) 
+	{
+		$("#depositOrderTotal").val(depositAmount);
+		var formToSubmit = $("#depositPaymentForm");
+		formToSubmit.submit();
+	}
+	else 
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Select payment method');
+		$('#validationMessage').append(validationDiv);
+	}
+});
 
+$(".add-cc-form-depositPayment").on("click",function(e){
+	e.preventDefault();
+	var id = $(this).data("order");
+	var orderId = $("#orderId").val(id);
+    $("#payment-add-form-depositPayment").submit();
+});

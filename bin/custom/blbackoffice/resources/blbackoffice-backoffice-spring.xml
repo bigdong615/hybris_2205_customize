@@ -88,5 +88,39 @@
 			<ref bean="blExceptionTranslationHandler"/>
 		</cng:add>
 	</cng:list-extender>
+	
+	<!-- BL-879 OMS&WH - Inventory Availability - Rules to change Limited Availability Serial (Unavailable on certain dates) to Available Serial -->
+	<alias alias="defaultBlConsignmentService" name="defaultBlConsignmentService"/>
+    <bean id="defaultBlConsignmentService" class="com.bl.backoffice.consignment.service.impl.DefaultBlConsignmentService"/>
 
+	<!-- BL-1010 Bin OcLocation Scan Tool Handler -->
+	<bean id="defaultBinOcLocationScanToolHandler" class="com.bl.backoffice.wizards.handler.BinOcLocationScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
+	</bean>
+
+	<!--BlInventoryCycleCount-->
+	<!-- Inventory Cycle Count Tool Data -->
+	<alias name="defaultInventoryCycleCountScanToolData" alias="inventoryCycleCountScanToolData"/>
+	<bean id="defaultInventoryCycleCountScanToolData"
+		  class="com.bl.backoffice.wizards.util.InventoryCycleCountScanToolData" scope="prototype"/>
+
+	<!-- Inventory Cycle Count Tool Util -->
+	<alias name="defaultInventoryCycleCountScanToolUtil" alias="inventoryCycleCountScanToolUtil"/>
+	<bean id="defaultInventoryCycleCountScanToolUtil"
+		  class="com.bl.backoffice.wizards.util.InventoryCycleCountScanToolUtil">
+	</bean>
+
+	<!-- Inventory Cycle Count Tool Renderer -->
+	<bean id="defaultInventoryCycleCountScanToolRenderer" class="com.bl.backoffice.wizards.renderer.InventoryCycleCountScanToolRenderer">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="inventoryCycleCountScanToolUtil" ref="inventoryCycleCountScanToolUtil"/>
+	</bean>
+
+	<!-- Inventory Cycle Count Tool Handler -->
+	<bean id="defaultInventoryCycleCountScanToolHandler" class="com.bl.backoffice.wizards.handler.InventoryCycleCountScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
+	</bean>
+	<!-- End Inventory Cycle Count Tool-->
 </beans>

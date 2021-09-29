@@ -324,6 +324,10 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Warehouse.blockInventory;+;+;+;-;
 ;;;ExportAllDirtyPrioritySerials;+;+;+;+
 ;;;CronJob;+;+;-;-
+;;;BlInventoryLocationScanHistory;+;-;-;-
+;;;BlInventoryLocation;+;-;-;-
+;;;SavedValues;+;-;-;-
+;;;SavedValueEntry;+;-;-;-
 
 $END_USERRIGHTS;;;;
 

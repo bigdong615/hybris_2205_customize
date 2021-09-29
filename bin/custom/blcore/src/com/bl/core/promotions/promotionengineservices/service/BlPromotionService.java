@@ -1,6 +1,7 @@
 package com.bl.core.promotions.promotionengineservices.service;
 
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.promotions.model.AbstractPromotionActionModel;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -30,5 +31,11 @@ public interface BlPromotionService {
    */
   void addCouponCodeToVouchers(final Collection<AbstractPromotionActionModel> actions,final String actionCouponCode, final List<AbstractOrderEntryModel> entries, Map<String, BigDecimal> amountMap, Collection<String> vouchers);
 
+  /**
+   * is extended coupon code promotion applied on cart
+   * @param cartModel
+   * @return
+   */
+  boolean isFreeDayCouponPromoApplied(final CartModel cartModel);
 
-}
+  }

@@ -397,7 +397,7 @@ ACC.cart = {
         }
         else {
           $("#errorMessages_voucher").removeClass("d-none");
-            $("#errorMessages_voucher").html("Please enter your coupon code and click apply");
+            $("#errorMessages_voucher").html("Please enter your coupon code and click apply.");
             $(".js-voucher-code-text").addClass("error");
         }
     },

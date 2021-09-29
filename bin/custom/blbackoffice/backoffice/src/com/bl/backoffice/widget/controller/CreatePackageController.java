@@ -10,6 +10,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
@@ -120,26 +121,33 @@ public class CreatePackageController extends DefaultWidgetController
 	public void initReallocationConsignmentForm(final ConsignmentModel consignment)
 	{
 		setConsignment(consignment);
-		if (!ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(consignment.getStatus()))
+		try
 		{
-		this.consignmentCode.setValue(consignment.getCode());
-		this.customerName.setValue(consignment.getOrder().getUser().getUid());
-		this.serialEntry.setChecked(false);
-		if (!CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
-		{
-			getListOfPackedSerials(consignment);
+			if (!ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(consignment.getStatus()))
+			{
+				this.consignmentCode.setValue(consignment.getCode());
+				this.customerName.setValue(consignment.getOrder().getUser().getUid());
+				this.serialEntry.setChecked(false);
+				if (!CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
+				{
+					getListOfPackedSerials(consignment);
 
-			if (CollectionUtils.isNotEmpty(this.allSerialProducts))
-			{
-				createShipmentPackage();
-			}
-			else
-			{
-				this.sendOutput(OUT_CONFIRM, COMPLETE);
-				Messagebox.show("All Serials are assigned to the package, " + "hence no Serials are available", "Info", Messagebox.OK,
-						"icon");
+					if (CollectionUtils.isNotEmpty(this.allSerialProducts))
+					{
+						createShipmentPackage();
+					}
+					else
+					{
+						this.sendOutput(OUT_CONFIRM, COMPLETE);
+						Messagebox.show("All Serials are assigned to the package, " + "hence no Serials are available", "Info",
+								Messagebox.OK, "icon");
+					}
+				}
 			}
 		}
+		catch (final Exception e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occour for {} ", e);
 		}
 	}
 
@@ -159,7 +167,7 @@ public class CreatePackageController extends DefaultWidgetController
 			this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
 			serials.add(serialProduct);
 		}
-		this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
+		this.serialEntries.setModel(new ListModelList<>(serials));
 		final ListModelList<PackagingInfoData> packageBox = new ListModelList<>(createPackageCombobox());
 		final PackagingInfoData packagingInfoData = packageBox.get(0);
 		packageBox.addToSelection(packagingInfoData);
@@ -288,8 +296,8 @@ public class CreatePackageController extends DefaultWidgetController
 			packagingData.setLength(this.packageLength.getValue());
 			packagingData.setWidth(this.packageWidth.getValue());
 			packagingData.setGrossWeight(this.totalWeight.getValue());
-			packagingData.setDimensionUnit("In");
-			packagingData.setWeightUnit("lb");
+			packagingData.setDimensionUnit(BlintegrationConstants.DIMENSION_UNIT);
+			packagingData.setWeightUnit(BlintegrationConstants.WEIGHT_UNIT);
 
 			final PackagingInfoModel packagingInfo = getBlWarehousingConsignmentFacade()
 					.createPackagingInformationOnConsignment(this.consignment.getCode(), packagingData);

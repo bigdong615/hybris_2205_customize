@@ -475,7 +475,7 @@ else
              }
          });
      } else {
-         showErrorNotification('Please enter valid zipCode!!', false);
+         showErrorNotification('Please enter a valid zipcode.', false);
          $('.page-loader-new-layout').hide();
      }
   }
@@ -1254,7 +1254,7 @@ else
         notification += '<div class="notification notification-error"> You are missing ' + len + ' required fields.' +
                              '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
      }
-     notification += '</div>';
+     notification += '</div>' + '<br>';
      $('#showErrorForInputValidation').html(notification);
      $('#showErrorForInputValidation').show();
   }

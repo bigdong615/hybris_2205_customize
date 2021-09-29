@@ -65,6 +65,7 @@
     class="com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy" scope="tenant">
     <property name="defaultBlAvalaraTaxService" ref="defaultBlAvalaraTaxService"/>
     <property name="modelService" ref="modelService"/>
+    <property name="sessionService" ref="sessionService"/>
   </bean>
 
   <!--Override OOB startegy to use custom condition for calculating tax -->

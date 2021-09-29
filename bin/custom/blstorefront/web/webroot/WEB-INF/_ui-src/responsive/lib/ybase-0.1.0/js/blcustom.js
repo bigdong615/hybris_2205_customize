@@ -1244,3 +1244,9 @@ function hideShorting(){
           }
       });
  });
+
+ const mediaQuery = window.matchMedia('(min-width: 769px)')
+ if (mediaQuery.matches) {
+	 var div = document.getElementById('pr-reviewsnippet');
+	 div.remove();
+ }

@@ -41,5 +41,6 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final int QTY  = 1;
 	public static final String ISO_CODE = "tax.calcualtion.country.isocode";
 	public static final String CAPTURE = "Capture";
+	public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
 
 }

@@ -518,6 +518,20 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			paymentInfoId, final String nonce) {
 		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
+	
+	/**
+	 * It gets payment info model by payment info id for Deposit.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the payment method nonce
+	 * @param depositAmount the deposit amount
+	 * @return BrainTreePaymentInfoModel
+	 */
+  public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCodeToDeposit(final CustomerModel customer, final String
+      paymentInfoId, final String nonce, final double depositAmount) {
+    return brainTreePaymentService.getBrainTreePaymentInfoForCodeToDeposit(customer, paymentInfoId, nonce, depositAmount);
+  }
 
 	/**
 	 * It sets the order and consignment status and payBill flag as true on successful payment

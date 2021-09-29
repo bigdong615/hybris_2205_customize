@@ -4,6 +4,7 @@
 package com.bl.integration.services;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
@@ -37,4 +38,15 @@ public interface BLShipmentCreationService
 	 * @return boolean
 	 */
 	public boolean checkOrderStatus(final ConsignmentModel consignment);
+	
+	/**
+	 * Gets the package for serial.
+	 *
+	 * @param consignment
+	 *           the consignment
+	 * @param serialCode
+	 *           the serial code
+	 * @return the package for serial
+	 */
+	PackagingInfoModel getPackageForSerial(final ConsignmentModel consignment, final String serialCode);
 }

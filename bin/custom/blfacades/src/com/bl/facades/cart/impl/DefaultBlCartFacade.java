@@ -178,8 +178,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
-        if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
-        	parameter.setRetailGear(blProductModel.getRetailGear());
+				if(BooleanUtils.isTrue(blProductModel.isBundleProduct())){
+					parameter.setBundleMainEntry(Boolean.TRUE);
+				}
+				if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+					parameter.setRetailGear(blProductModel.getRetailGear());
 				}
 				if (blProductService.isAquatechProduct(blProductModel)) {
 					parameter.setAqautechProduct(Boolean.TRUE);
@@ -664,7 +667,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			return BlFacadesConstants.NEW_GEAR_CART;
 		}
       else if (CollectionUtils
-				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart()) && !cartModel.isGiftCardOrder()) {
 			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {

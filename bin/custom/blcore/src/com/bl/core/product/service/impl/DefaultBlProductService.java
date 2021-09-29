@@ -1,18 +1,33 @@
 package com.bl.core.product.service.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.catalog.daos.CatalogVersionDao;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.product.impl.DefaultProductService;
-
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.user.UserService;
+import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
-
+import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 
 
@@ -24,6 +39,13 @@ import com.bl.logging.BlLogger;
 public class DefaultBlProductService extends DefaultProductService implements BlProductService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlProductService.class);
+  
+  private UserService userService;
+  private CatalogVersionDao catalogVersionDao;
+  private SearchRestrictionService searchRestrictionService;
+  
+	@Resource(name = "blStockLevelDao")
+	private BlStockLevelDao blStockLevelDao;
 
 	/**
 	 * {@inheritDoc}
@@ -50,6 +72,25 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
     }
     return isEligible;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setLastUserChangedConditionRating(BlSerialProductModel blSerialProduct)
+  {
+	  final UserModel currentUser = getUserService().getCurrentUser();
+	  if (Objects.nonNull(currentUser))
+	  {
+		  final String currentUserUid = currentUser.getUid();
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
+		  blSerialProduct.setUserChangedConditionRating(currentUserUid);
+	  }
+	  else
+	  {
+		  BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+	  }
+  }
 
   /**
    * {@inheritDoc}
@@ -59,4 +100,116 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 
     return BlCoreConstants.AQUATECH_BRAND_ID.equals(productModel.getManufacturerAID());
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModelFromEntry(final AbstractOrderEntryModel parentBundleEntry) {
+    return getBundleProductReferenceModel(parentBundleEntry.getProduct());
+  }
+
+  public void changeBufferInvFlagInStagedVersion(final String productCode, final Boolean isBufferInventory) {
+    Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
+        .CATALOG_VALUE, BlCoreConstants.STAGED);
+    if(CollectionUtils.isNotEmpty(catalogModels)) {
+      List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode,
+          catalogModels.iterator().next());
+      if (CollectionUtils.isNotEmpty(products)) {
+        BlSerialProductModel product = products.get(0);
+        product.setIsBufferedInventory(isBufferInventory);
+        getModelService().save(product);
+      }
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<ProductReferenceModel> getBundleProductReferenceModel(final ProductModel product){
+    return product.getProductReferences().stream()
+        .filter(productReferenceModel -> ProductReferenceTypeEnum.CONSISTS_OF
+            .equals(productReferenceModel.getReferenceType())).collect(Collectors.toList());
+  }
+
+  public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
+      final CatalogVersionModel catalogVersionModel) {
+    return getSessionService().executeInLocalView(new SessionExecutionBody()
+    {
+      @Override
+      public Object execute()
+      {
+        try
+        {
+          getSearchRestrictionService().disableSearchRestrictions();
+          return getProductDao().findProductsByCode(catalogVersionModel,
+              productCode);
+        }
+        finally
+        {
+          getSearchRestrictionService().enableSearchRestrictions();
+        }
+      }
+    });
+  }
+  
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
+			final Date optimizedShippingEndDate)
+	{
+		final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
+				.findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
+		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
+		{
+			findSerialStockLevelForDate.forEach(stockLevel -> {
+				stockLevel.setHardAssigned(false);
+				stockLevel.setReservedStatus(false);
+				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
+				getModelService().save(stockLevel);
+				getModelService().save(serialProduct);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
+						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
+			});
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}", serialProduct.getCode());
+		}
+	}
+
+
+/**
+ * @return the userService
+ */
+public UserService getUserService()
+{
+	return userService;
+}
+
+/**
+ * @param userService the userService to set
+ */
+public void setUserService(UserService userService)
+{
+	this.userService = userService;
+}
+
+public CatalogVersionDao getCatalogVersionDao() {
+    return catalogVersionDao;
+  }
+
+public void setCatalogVersionDao(CatalogVersionDao catalogVersionDao) {
+  this.catalogVersionDao = catalogVersionDao;
+}
+
+public SearchRestrictionService getSearchRestrictionService() {
+  return searchRestrictionService;
+}
+
+public void setSearchRestrictionService(
+  SearchRestrictionService searchRestrictionService) {
+  this.searchRestrictionService = searchRestrictionService;
+}
+
 }

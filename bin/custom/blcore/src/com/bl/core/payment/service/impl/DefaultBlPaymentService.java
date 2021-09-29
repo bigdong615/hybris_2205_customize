@@ -13,9 +13,11 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -47,7 +49,8 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public void authorizePaymentForOrders()
 	{
 		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
-		ordersToAuthorizePayment.forEach(order -> {
+		final Set<AbstractOrderModel> ordersToAuthPayment = new HashSet<>(ordersToAuthorizePayment);
+		ordersToAuthPayment.forEach(order -> {
 			if(order.getTotalPrice() > 0) {
 				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
 						BigDecimal.valueOf(order.getTotalPrice()), Boolean.FALSE, null);
@@ -115,7 +118,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 						}
 					})));
 			order.getConsignments().forEach(consignment -> {
-				consignment.setStatus(ConsignmentStatus.SHIPPED);
+				consignment.setStatus(ConsignmentStatus.BL_SHIPPED);
 				getModelService().save(consignment);
 				getModelService().refresh(consignment);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for consignment {}",consignment.getStatus(),consignment.getCode());

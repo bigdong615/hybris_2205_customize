@@ -61,7 +61,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -312,6 +311,8 @@ public class CheckoutController extends AbstractCheckoutController
 		try
 		{
 			orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+		  orderDetails.setEntries(orderFacade.getOrderDetailsForCode(orderCode).getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+					Collectors.toList()));
 		}
 		catch (final UnknownIdentifierException e)
 		{
@@ -411,9 +412,6 @@ public class CheckoutController extends AbstractCheckoutController
 
 		if(cartModel != null) {
 			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
-			if (checkGcEndDate(locale, giftCardModel)) {
-				return BlControllerConstants.ERROR;
-			}
 			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
 					.getGiftCardData();
 			final List<String> giftCardDataList = new ArrayList<>();
@@ -432,19 +430,6 @@ public class CheckoutController extends AbstractCheckoutController
 			}
 		}
 		return BlControllerConstants.ERROR;
-	}
-// Check end date for gift card
-	private boolean checkGcEndDate(Locale locale, GiftCardModel giftCardModel) {
-		if (giftCardModel != null) {
-			int endDate = giftCardModel.getEndDate().compareTo(new Date());
-			if(endDate < 0)
-			{
-				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
-						getMessageSource().getMessage("text.gift.apply.applied.expire", null, locale));
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

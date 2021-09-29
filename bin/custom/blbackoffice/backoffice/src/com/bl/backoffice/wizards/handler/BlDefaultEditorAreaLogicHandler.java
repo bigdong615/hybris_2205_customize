@@ -13,6 +13,7 @@ import com.hybris.cockpitng.widgets.baseeditorarea.DefaultEditorAreaLogicHandler
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -49,7 +51,6 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
   public Object performSave(WidgetInstanceManager widgetInstanceManager, Object currentObject) throws ObjectSavingException {
     if (currentObject instanceof OrderModel) {
 
-			final  Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
 
       OrderModel orderModel = (OrderModel) currentObject;
         orderModel.setCalculated(false);
@@ -67,6 +68,14 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
       } catch (Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while BlDefaultEditorAreaLogicHandler" , e);
       }
+     	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
+			try {
+				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
+					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+				}
+			} catch (CalculationException e) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
+			}
       return object;
      }
     return super.performSave(widgetInstanceManager , currentObject);

@@ -97,6 +97,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -943,6 +945,44 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 			throw new AdapterException(exception.getMessage(), exception);
 		}
 	}
+	
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCodeToDeposit(final CustomerModel customer, final String paymentInfoId,
+      final String nonce, final Double depositAmount)
+  {
+    try
+    {
+      final BrainTreePaymentInfoModel paymentInfo = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(customer, paymentInfoId);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Original Payment Info PK is : {}", paymentInfo.getPk().toString());
+      if (Objects.nonNull(paymentInfo))
+      {
+        final BrainTreePaymentInfoModel brainTreePaymentInfoModel = getModelService().clone(paymentInfo, BrainTreePaymentInfoModel.class);
+        if (Objects.nonNull(brainTreePaymentInfoModel))
+        {
+          brainTreePaymentInfoModel.setNonce(nonce);
+          brainTreePaymentInfoModel.setIsDepositPayment(Boolean.TRUE);
+          brainTreePaymentInfoModel.setDepositAmount(depositAmount);
+          brainTreePaymentInfoModel.setOriginal(paymentInfo);
+          brainTreePaymentInfoModel.setDuplicate(Boolean.TRUE);
+          brainTreePaymentInfoModel.setIsDefault(Boolean.FALSE);
+          getModelService().save(brainTreePaymentInfoModel);
+          getModelService().refresh(brainTreePaymentInfoModel);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "After Cloning Payment Info PK is : {}", brainTreePaymentInfoModel.getPk().toString());
+        }
+        return brainTreePaymentInfoModel;
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error while getting BraintreePaymentInfoModel for creating deposit for customer : {} and payment info ID ; {}", customer.getUid(),
+          paymentInfoId);
+    }
+    return null;
+  }
 
 	/**
 	 * @return the modelService

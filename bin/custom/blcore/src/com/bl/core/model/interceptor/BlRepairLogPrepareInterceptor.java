@@ -78,7 +78,10 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				blRepairLogModel.setAssociatedConsignment(blSerialProductModel.getAssociatedConsignment());
 				blRepairLogModel.setConsignmentEntry(blSerialProductModel.getConsignmentEntry());
 				addCurrentUserToRepairLog(blRepairLogModel);
+				getBlRepairLogService().getSelectedGearGaurdFromOrder(blRepairLogModel, blSerialProductModel);
+				getBlRepairLogService().updateTrackingNumberOnRepairLog(blRepairLogModel, blSerialProductModel);
 				getBlRepairLogService().setRepairReasonOnRepairLog(blRepairLogModel, blSerialProductModel);
+				blRepairLogModel.setLastUserChangedConditionRating(blSerialProductModel.getUserChangedConditionRating());
 			}
 		}
 		catch (final Exception exception)

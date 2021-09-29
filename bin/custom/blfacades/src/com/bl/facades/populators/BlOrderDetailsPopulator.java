@@ -103,7 +103,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
 
-    if (CollectionUtils.isNotEmpty(source.getGiftCard()))
+    if (CollectionUtils.isNotEmpty(source.getGiftCard()) && !source.isGiftCardOrder())
     {
       final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
       for (final GiftCardModel giftCardModel : source.getGiftCard())

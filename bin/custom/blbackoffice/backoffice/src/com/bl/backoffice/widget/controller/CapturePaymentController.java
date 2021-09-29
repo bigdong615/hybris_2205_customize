@@ -5,7 +5,6 @@ package com.bl.backoffice.widget.controller;
 
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
-import com.braintree.constants.GeneratedBraintreeConstants;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
@@ -13,9 +12,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.util.localization.Localization;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -44,6 +41,7 @@ public class CapturePaymentController extends DefaultWidgetController {
     protected static final String COMPLETE = "completed";
     private static final String CONNECTOR = " : ";
     private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
+    private static final String ERR_MESG_FOR_ORDER_TRANSFER = "error.message.payment.capture.order.transfer";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "success.message.payment.captured";
     private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
     private static final String MESSAGE_BOX_TITLE = "payment.capture.message.box.title";
@@ -55,6 +53,7 @@ public class CapturePaymentController extends DefaultWidgetController {
     private BlPaymentService blPaymentService;
 
     private OrderModel orderModel;
+    private ConsignmentModel consignmentModel;
 
     @Wire
     private Combobox paymentTransactions;
@@ -67,6 +66,9 @@ public class CapturePaymentController extends DefaultWidgetController {
         if (inputObject.getOrder() instanceof OrderModel) {
             this.setOrderModel((OrderModel) inputObject.getOrder());
         }
+
+        this.setConsignmentModel(inputObject);
+
         if (CollectionUtils.isNotEmpty(inputObject.getOrder().getPaymentTransactions())) {
             final ListModelList<PaymentTransactionModel> listModelList = new ListModelList<>();
             listModelList.addAll(inputObject.getOrder().getPaymentTransactions());
@@ -78,6 +80,11 @@ public class CapturePaymentController extends DefaultWidgetController {
     @ViewEvent(componentID = CAPTURE_BUTTON, eventName = Events.ON_CLICK)
     public void capturePayment() {
         BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
+        if (getConsignmentModel().isOrderTransferConsignment() || getConsignmentModel()
+            .isInternalTransferConsignment()) {
+            showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
+            return;
+        }
         if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()) {
             //TODO: Add orderStatus check if order is shipped or not!! Already shipped then notify agent!!
             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
@@ -128,5 +135,14 @@ public class CapturePaymentController extends DefaultWidgetController {
      */
     protected void showMessageBox(final String message) {
         showMessageBox(message, false);
+    }
+
+    public ConsignmentModel getConsignmentModel() {
+        return consignmentModel;
+    }
+
+    public void setConsignmentModel(
+        final ConsignmentModel consignmentModel) {
+        this.consignmentModel = consignmentModel;
     }
 }

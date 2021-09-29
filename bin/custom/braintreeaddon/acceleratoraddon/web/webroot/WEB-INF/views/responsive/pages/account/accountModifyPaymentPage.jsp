@@ -14,7 +14,7 @@
 <c:url var="savedPaymentInfoFormURL" value="/my-account/modify-choose-cc" />
 <input type="hidden" id="js-modify-order-page" name="jsModifyOrderPage" value="true"/>
 <div id="accountContent" class="col-lg-5 offset-lg-1">
-                    <h1>Modify Payment</h1>
+                    <h1><spring:theme code="order.myaccount.modify.payment"/></h1>
                     <div class="extend-order">
                         <div class="row">
                             <div class="col-12 mb-3">
@@ -191,7 +191,7 @@
 																
 																</c:if>
 																	</br>
-                                                 <a href="#" data-bs-toggle="modal"  data-order="${orderData.code}:payBill" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
+                                                 <a href="#" data-bs-toggle="modal"  data-order="${orderData.code}:modifyPayment" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
 												
 												<%-- <form name="selectSavedmdofiedCardForm" method="POST" id="selectSavedmdofiedCardForm" action="${savedPaymentInfoFormURL}">
 													 <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
@@ -332,14 +332,13 @@
                             <c:url value="/my-account/modify-payment-success" var="modifyPaymentAction"></c:url>
                         <form action="${modifyPaymentAction}" method="post" id="modifyPaymentForm">
                         <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
-                       <%-- <c:set var="total" value="" /> --%>
+                       
                        
                         <input type="hidden" id="modifyOrderTotal" name="modifyOrderTotal" value="${orderData.totalPriceWithTax.value}">
                         <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
                         <input type="hidden" id="paymentId" name="paymentId" value=""/>
                         <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
-                        <!-- <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
-                        <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/> -->
+                        
                         
                         </form>
                         		<div id="validationMessage"></div>
@@ -392,14 +391,13 @@
 					<c:url value="/my-account/modify-payment-success" var="modifyPaymentAction"></c:url>
                         <form action="${modifyPaymentAction}" method="post" id="modifyPaymentForm">
                         <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
-                       <%-- <c:set var="total" value="" /> --%>
                        
-                        <input type="hidden" id="payBillTotal" name="payBillTotal" value="${orderData.totalPriceWithTax.value}">
+                       
+                        <input type="hidden" id="modifyOrderTotal" name="modifyOrderTotal" value="${orderData.totalPriceWithTax.value}">
                         <input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}"/>
                         <input type="hidden" id="paymentId" name="paymentId" value=""/>
                         <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
-                       <!--  <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
-                        <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/> -->
+                      
                         
                        </form>
                        

@@ -339,4 +339,13 @@ public interface BlDeliveryModeService {
      * @return true, if successful
      */
     public boolean isShippingOnBlackoutDate(final List<String> lDeliveryModeAndGroupCode);
+
+    /**
+     * This method will check whether the given delivery mode is suitable for internal transfer order.
+     *
+     * @param deliveryModeModel
+     * @return true if the delivery mode supports internal transfer
+     */
+    boolean isEligibleDeliveryModeForOrderTransfer(final ZoneDeliveryModeModel deliveryModeModel);
+
 }

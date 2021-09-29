@@ -63,6 +63,8 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import java.math.RoundingMode;
 import java.util.Locale;
+import java.util.Objects;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
@@ -89,6 +91,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	
 	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
 	private static final String PAY_BILL = "/payBill";
+	private static final String DEPOSIT_PAYMENT_URL = "/depositPayment";
+	private static final String DEPOSIT_PAYMENT = "depositPayment";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
@@ -104,6 +108,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String PAY_BILL_CMS_PAGE = "pay-bill";
 	private static final int DECIMAL_PRECISION = 2;
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
+	
+	private static final String DEPOSIT_PAYMENT_CMS_PAGE = "deposit-payment";
+	private static final String MY_ACCOUNT_DEPOSIT_PAYMENT = "/my-account/depositPayment/";
 	
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -386,7 +393,15 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 				getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
 
-		if(StringUtils.isNotBlank(orderCode)) {
+		if(StringUtils.isNotBlank(orderCode) && orderCode.contains(DEPOSIT_PAYMENT))
+		{
+		  String[] split = orderCode.split(BlControllerConstants.RATIO);
+		  if(split.length >= 2)
+		  {
+		    return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + DEPOSIT_PAYMENT_URL;
+		  }
+		}
+		else if(StringUtils.isNotBlank(orderCode)) {
 			String originalOrderCode = orderCode.replace(BlControllerConstants.RATIO + getRedirectionUrl(orderCode), BlControllerConstants.EMPTY);
 			if(getRedirectionUrl(orderCode).equalsIgnoreCase(BlControllerConstants.EXTEND)) {
 				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + originalOrderCode;
@@ -467,6 +482,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		
 
 		if (isSuccess) {
+		  blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
 			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
 			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
 		    PriceData payBillTotal  = convertDoubleToPriceData(payBillAmount, order);
@@ -528,7 +544,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 					getLocalizedString("text.account.modify.payment.success"));
 			return REDIRECT_TO_ORDER_DETAILS_PAGE + orderCode;
 		} else {
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
 					getLocalizedString("text.account.modify.payment.error"));
 			return REDIRECT_PREFIX + MY_ACCOUNT_MODIFY_PAYMENT + orderCode;
 		}
@@ -834,4 +850,89 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private PriceData convertDoubleToPriceData(final Double price , final AbstractOrderModel orderModel) {
 		return priceDataFactory.create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
 	}
+	
+  /**
+   * This method is created for the Deposit Payment page.
+   */
+  @GetMapping(value = "/{orderCode}/depositPayment")
+  @RequireHardLogIn
+  public String getDepositPaymentForOrder(@PathVariable(value = ORDER_CODE, required = false) final String orderCode, final Model model)
+      throws CMSItemNotFoundException
+  {
+    final ContentPageModel depositPaymentPage = getContentPageForLabelOrId(DEPOSIT_PAYMENT_CMS_PAGE);
+    storeCmsPageInModel(model, depositPaymentPage);
+    setUpMetaDataForContentPage(model, depositPaymentPage);
+    final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+    model.addAttribute(ORDER_DATA, orderDetails);
+    model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+    setupAdditionalFields(model);
+    return getViewForPage(model);
+  }
+  
+  @PostMapping(value = "/deposit-payment-success")
+  @RequireHardLogIn
+  public String getDepositPaymentForOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String paymentInfoId = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_ID);
+    final String paymentMethodNonce = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_NONCE);
+    final String orderCode = request.getParameter(ORDER_CODE);
+    final String depositTotal = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
+    try
+    {      
+      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, depositTotal))
+      {
+        boolean isSuccess = false;
+        final double depositOrderTotal = Double.parseDouble(depositTotal);
+        final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+        if (Objects.nonNull(order))
+        {
+          final BrainTreePaymentInfoModel paymentInfo =
+              brainTreeCheckoutFacade.getBrainTreePaymentInfoForCodeToDeposit((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, depositOrderTotal);
+          if (Objects.nonNull(paymentInfo))
+          {
+            isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+                BigDecimal.valueOf(depositOrderTotal).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+          }
+        }
+        if (isSuccess)
+        {
+          final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+          final PriceData billPayTotal  = convertDoubleToPriceData(depositOrderTotal, order);
+          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.CREDIT_CARD);
+          final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, payBillSuccessPage);
+          setUpMetaDataForContentPage(model, payBillSuccessPage);
+          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+          return getViewForPage(model);
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while making deposit for order : {} with ammount : {} with PaymentID - {}", orderCode, depositTotal, paymentInfoId);
+    }
+    return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
+  }
+  
+  
+
+
+  /**
+   * Checks if is parameters eligible.
+   *
+   * @param paymentInfoId the payment info id
+   * @param paymentMethodNonce the payment method nonce
+   * @param orderCode the order code
+   * @param depositTotal the deposit total
+   * @return true, if is parameters eligible
+   */
+  private boolean isParametersEligible(String paymentInfoId, String paymentMethodNonce, String orderCode, String depositTotal)
+  {
+    return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId) && StringUtils.isNotBlank(paymentMethodNonce)
+        && StringUtils.isNotBlank(orderCode);
+  }
 }

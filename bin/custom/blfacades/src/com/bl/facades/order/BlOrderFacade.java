@@ -90,5 +90,12 @@ public interface BlOrderFacade extends OrderFacade {
    * @param target
    */
   public void setPayBillAttributes(final OrderData target);
+  
+  /**
+   * Sets the resolved status on repair log for order code.
+   *
+   * @param orderCode the new resolved status on repair log
+   */
+  public void setResolvedStatusOnRepairLog(final String orderCode);
 
 }

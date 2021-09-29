@@ -26,13 +26,20 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.internal.service.AbstractBusinessService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessService implements BlShippingOptimizationStrategy {
 
@@ -102,7 +109,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             int i = BlInventoryScanLoggingConstants.ZERO;
             for (Map.Entry<String, Long> entry : allocatedMap.entrySet()) {
                 final String key = entry.getKey().substring(0, entry.getKey().lastIndexOf('_'));
-                if (stockLevelsProductWise.get(key).size() >= entry.getValue()) {
+                if (stockLevelsProductWise.get(key) != null && stockLevelsProductWise.get(key).size() >= entry.getValue()) {
                     availabilityMap.put(key, stockLevelsProductWise.get(key));
                 } else {
                     i = BlInventoryScanLoggingConstants.ONE;
@@ -159,8 +166,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         return getBlCommerceStockService().getStockForProductCodesAndDate(newProductCodes, sourcingLocation.getWarehouse(),
                 BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
                         getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)), BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS,
-                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)),
-                        null);
+                        BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY)));
     }
 
     /**
@@ -264,7 +270,12 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
             return checkOvernightGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else {
-            return checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate);
+
+            setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
+                consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
+
+            //return checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate);
+            return false;
         }
     }
 
