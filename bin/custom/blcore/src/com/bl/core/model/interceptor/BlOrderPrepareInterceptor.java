@@ -71,6 +71,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       }
     }
     triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
+    triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
   }
   
   /**
@@ -170,6 +171,20 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
     }
   }
+
+  /**
+   * trigger Esp verification required event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
+      final InterceptorContext interceptorContext) {
+    if (abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
+      getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+    }
+
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
