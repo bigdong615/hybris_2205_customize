@@ -12,6 +12,7 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import de.hybris.platform.core.enums.DeliveryStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessModel>
 {
 	private static final Logger LOG = LoggerFactory.getLogger(VerifyOrderCompletionAction.class);
+	private DefaultBlESPEventService blEspEventService;
 
 	@Override
 	public String execute(final OrderProcessModel process)
@@ -71,6 +73,7 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 		{
 			process.getOrder().setStatus(OrderStatus.CANCELLED);
 			getModelService().save(process.getOrder());
+			getBlEspEventService().sendOrderCanceledEvent(order);
 			return Transition.CANCELLED.toString();
 		}
 
@@ -118,4 +121,14 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 			return res;
 		}
 	}
+
+	public DefaultBlESPEventService getBlEspEventService() {
+		return blEspEventService;
+	}
+
+	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService) {
+		this.blEspEventService = blEspEventService;
+	}
+
+
 }

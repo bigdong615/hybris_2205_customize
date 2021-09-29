@@ -157,7 +157,7 @@
     <extension name='blintegration'/>
 	<extension name='blcustomersupportbackoffice'/>
 	<extension name='blwarehousingbackoffice'/>
-
+    <extension name='blespintegration' />
 	
 	<extension name='braintree' />
       <extension name='braintreeacceleratorfacades' />
