@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.facades.shipment.data.PackageTypeData;
+import com.bl.facades.shipment.data.ReturnServiceData;
 import com.bl.facades.shipment.data.ShipFromData;
 import com.bl.facades.shipment.data.ShipToData;
 import com.bl.facades.shipment.data.ShipmentData;
@@ -29,6 +30,7 @@ import com.ups.xmlschema.xoltws.ship.v1.PackageType;
 import com.ups.xmlschema.xoltws.ship.v1.PackageWeightType;
 import com.ups.xmlschema.xoltws.ship.v1.PackagingType;
 import com.ups.xmlschema.xoltws.ship.v1.PaymentInfoType;
+import com.ups.xmlschema.xoltws.ship.v1.ReturnServiceType;
 import com.ups.xmlschema.xoltws.ship.v1.ServiceType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipAddressType;
 import com.ups.xmlschema.xoltws.ship.v1.ShipFromType;
@@ -43,6 +45,7 @@ import com.ups.xmlschema.xoltws.ship.v1.ShipperType;
 
 
 /**
+ * this class is responsible to populate request data for UPS
  * @author Aditi Sharma
  *
  */
@@ -58,6 +61,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	private String labelSpecCode;
 
 	/**
+	 * method will be used to convert UPS shipment request
 	 * @param upsShipmentRequest
 	 * @return
 	 */
@@ -78,7 +82,7 @@ public class BLUPSShipmentCreateRequestPopulator
 
 		final ShipmentType shipmentType = new ShipmentType();
 
-		/** Creating Shipper Data **/
+		/** Creating Shipper **/
 
 		final ShipmentData shipmentData = upsShipmentRequest.getShipment();
 		final ShipperType shipperType = new ShipperType();
@@ -86,31 +90,41 @@ public class BLUPSShipmentCreateRequestPopulator
 		populateShipperData(shipperType, shipmentData.getShipper());
 		shipmentType.setShipper(shipperType);
 
-		/** Creating ShipTo Data **/
+		/** Creating ShipTo **/
 
 		final ShipToType shipToType = new ShipToType();
 		populateShipToData(shipToType, shipmentData.getShipTo());
 		shipmentType.setShipTo(shipToType);
 
-		/** Creating ShipFrom Data **/
+		/** Creating ShipFrom **/
 
 		final ShipFromType shipFromType = new ShipFromType();
 		populateShipFromData(shipFromType, shipmentData.getShipFrom());
 		shipmentType.setShipFrom(shipFromType);
 
-		/** Creating PaymentInformation Data **/
+		/** Creating PaymentInformation **/
 
 		final PaymentInfoType paymentInfoType = new PaymentInfoType();
 		populatePaymentInfo(paymentInfoType, shipmentData.getPaymentInformation());
 		shipmentType.setPaymentInformation(paymentInfoType);
 
-		/** Creating Service Data **/
+		/** Creating Service **/
 
 		final ServiceType serviceType = new ServiceType();
 		populateServiceType(serviceType, shipmentData.getService());
 		shipmentType.setService(serviceType);
 
-		/** Creating Package Data **/
+		/** Creating Retrun Service **/
+		final ReturnServiceType returnServiceType = new ReturnServiceType();
+		final ReturnServiceData returnServiceData = shipmentData.getReturnService();
+		if (returnServiceData != null)
+		{
+			returnServiceType.setCode(returnServiceData.getCode());
+			returnServiceType.setDescription(returnServiceData.getDescription());
+			shipmentType.setReturnService(returnServiceType);
+		}
+
+		/** Creating Package **/
 
 		final List<PackageType> packageList = shipmentType.getPackage();
 		final PackageTypeData packageType = shipmentData.getShipmentPackage().get(0);
@@ -170,6 +184,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipper data
 	 * @param shipper
 	 * @param shipperData
 	 */
@@ -205,6 +220,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipTo data
 	 * @param shipTo
 	 * @param shipToData
 	 */
@@ -237,6 +253,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate shipFrom data
 	 * @param shipFrom
 	 * @param shipFromData
 	 */
@@ -270,6 +287,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate paymentInfo data
 	 * @param upsPaymentInformation
 	 *
 	 */
@@ -287,6 +305,7 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * method will be used to populate serviceType data
 	 * @param serviceType
 	 * @param serviceData
 	 */

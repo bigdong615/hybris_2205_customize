@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+
+
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
+        id="createPackage">
+
+    <grid style="margin-left:50px;margin-top:10px">
+    <rows>
+      <row>
+                   	<label value="${labels.blbackoffice.inbound.label.warehouse.code}" width="50%" />
+				  <combobox   xmlns:w="client" id="warehouseCombobox"
+                                        model="${each.warehouseCombobox}" 
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}" 
+                                    forEach="${each}" />
+                                </template>
+                            </combobox>
+      </row>
+    </rows>
+  </grid>
+  
+
+    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
+       <button id="generateInboundLabel" 
+				label="${labels.blbackoffice.inbound.label.create.button}" 
+				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+
+  		<button id="cancel"
+				label="${labels.blbackoffice.inbound.label.cancel.button}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+    </div>            	
+</widget>
