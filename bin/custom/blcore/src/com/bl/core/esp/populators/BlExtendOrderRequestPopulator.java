@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 
 /**
  * This populator created to prepare the extend order ESP Event Request
+ * @author Manikandan
  */
 public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderExtensionRequest> {
 
@@ -58,8 +59,6 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
         .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
             getString(BlCoreConstants.ORDER_EXTENSION_EVENT_DEFINITION_KEY)));
     populateExtendOrderData(orderModel, orderExtensionRequest);
-
-
   }
 
   /**
@@ -95,7 +94,6 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     data.setExtensionamount(getDoubleValueForRequest(orderModel.getTotalPrice()));
     populateOrderItemXMLData(orderModel, data);
     orderExtensionRequest.setData(data);
-
   }
 
 
@@ -105,7 +103,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
    * @return item cost
    */
   private Double getItemCostFromOrderEntry(final OrderModel orderModel) {
-    AtomicDouble itemCost = new AtomicDouble(0.0);
+    final AtomicDouble itemCost = new AtomicDouble(0.0);
     orderModel.getEntries().forEach(abstractOrderEntryModel -> itemCost.addAndGet(abstractOrderEntryModel.getTotalPrice()));
     return itemCost.get();
   }
