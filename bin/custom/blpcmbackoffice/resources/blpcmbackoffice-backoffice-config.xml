@@ -416,40 +416,30 @@
 					<ea:attribute qualifier="code"/>
 					<ea:attribute qualifier="productId"/>
 					<ea:attribute qualifier="name"/>
-					<ea:attribute qualifier="blProduct" />
+					<ea:attribute qualifier="displayName"/>
 					<ea:attribute qualifier="catalogVersion"/>
+					<ea:attribute qualifier="serialStatus"/>
 					<ea:attribute qualifier="approvalStatus"/>
+					<ea:attribute qualifier="blProduct"/>
+					<ea:attribute qualifier="forSale"/>
+					<ea:attribute qualifier="onlineDate"/>
+					<ea:attribute qualifier="offlineDate"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.general">
+					<ea:attribute qualifier="assetNumber" label="label.pcmbackoffice.blserial.assetNumber"/>
+					<ea:attribute qualifier="assetStatus" label="label.pcmbackoffice.blserial.assetStatus"/>
+					<ea:attribute qualifier="dateFirstActive" label="label.pcmbackoffice.blserial.dateFirstActive"/>
+					<ea:attribute qualifier="forRent" label="label.pcmbackoffice.blserial.forRent"/>
+					<ea:attribute qualifier="noDaysInTransit" label="label.pcmbackoffice.blserial.noDaysInTransit"/>
+					<ea:attribute qualifier="noDaysNotInService" label="label.pcmbackoffice.blserial.noDaysNotInService"/>
+					<ea:attribute qualifier="noDaysRented" label="label.pcmbackoffice.blserial.noDaysRented"/>
+					<ea:attribute qualifier="notes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.blserial.notes"/>
+					<ea:attribute qualifier="orderNumberRecord" label="label.pcmbackoffice.blserial.orderNumberRecord"/>
 					<ea:attribute qualifier="barcode"/>
 					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
 					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
-					<ea:attribute qualifier="displayName" label="label.pcmbackoffice.displayname"/>
 					<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
-					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
-				</ea:section>
-				<ea:section name="label.pcmbackoffice.rentaldetails">
-					<ea:attribute qualifier="forRent"/>
-				</ea:section>
-				<ea:section name="label.pcmbackoffice.useddetails">
-					<ea:attribute qualifier="forSale"/>
 					<ea:attribute qualifier="onSale"/>
-				</ea:section>
-				<ea:section name="label.pcmbackoffice.additional">
-					<ea:attribute qualifier="staffPick"/>
-					<ea:attribute qualifier="mostPopular"/>
-					<ea:attribute qualifier="greatValue" />
-					<ea:attribute qualifier="ownedBy" />
-				</ea:section>
-				<ea:section name="hmc.product.descriptions">
-					<ea:panel colspan="2" name="panel.proddescription" rowspan="2">
-						<ea:attribute qualifier="conditions"/>
-						<ea:attribute qualifier="notes"/>
-					</ea:panel>
-				</ea:section>
-				<ea:section name="hmc.section.catalog_and_validity">
-					<ea:attribute qualifier="onlineDate"/>
-					<ea:attribute qualifier="offlineDate"/>
 				</ea:section>
 			</ea:tab>
 			<ea:customTab name="hmc.tab.attribute" position="6"
@@ -463,23 +453,36 @@
 					<ea:attribute qualifier="supercategories"/>
 					<ea:attribute qualifier="classificationClasses"/>
 				</ea:section>
+				<ea:section name="hmc.section.product.productreferences">
+					<ea:attribute qualifier="productReferences"/>
+				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.prices" position="14">
 				<ea:section name="label.pcmbackoffice.general">
-					<ea:attribute qualifier="constrained"/>
-				</ea:section>
-				<ea:section name="hmc.section.product.purchasing">
+					<ea:attribute qualifier="trackingNumber" label="label.pcmbackoffice.blserial.trackingNumber"/>
 					<ea:attribute qualifier="cosmeticRating"/>
 					<ea:attribute qualifier="functionalRating"/>
-					<ea:attribute qualifier="conditionRatingOverallScore"/>
-					<ea:attribute qualifier="incentivizedPrice"/>
-					<ea:attribute qualifier="finalSalePrice"/>
-					<ea:attribute qualifier="totalRepairSpend"/>
-					<ea:attribute qualifier="priceQuantity"/>
+					<ea:attribute qualifier="conditionRatingOverallScore" label="label.pcmbackoffice.blserial.conditionRatingOverallScore"/>
+					<ea:attribute qualifier="conditions" label="label.pcmbackoffice.blserial.conditions"/>
+					<ea:attribute qualifier="dateOfSale" label="label.pcmbackoffice.blserial.dateOfSale"/>
+					<ea:attribute qualifier="finalSalePrice" label="label.pcmbackoffice.blserial.finalSalePrice"/>
+					<ea:attribute qualifier="forSaleBasePrice" label="label.pcmbackoffice.blserial.forSaleBasePrice"/>
+					<ea:attribute qualifier="incentivizedPrice" label="label.pcmbackoffice.blserial.incentivizedPrice"/>
+					<ea:attribute qualifier="constrained"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.pricesdiscounts">
+					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
+						<ea:attribute qualifier="procurementCost"/>
+					</ea:panel>
 					<ea:attribute qualifier="minOrderQuantity"/>
 					<ea:attribute qualifier="maxOrderQuantity"/>
+					<ea:attribute qualifier="priceQuantity"/>
 					<ea:attribute description="hmc.text.product.pg" qualifier="Europe1PriceFactory_PPG"/>
 					<ea:attribute qualifier="unit"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.discounts">
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.dimensions">
 					<ea:attribute qualifier="weight"/>
@@ -488,35 +491,75 @@
 					<ea:attribute qualifier="height"/>
 				</ea:section>
 			</ea:tab>
+			<ea:tab name="hmc.tab.product.multimedia" position="18">
+				<ea:section name="hmc.section.product.pictures">
+					<ea:attribute qualifier="picture"/>
+					<ea:attribute qualifier="thumbnail"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.additionalmedias">
+					<ea:attribute qualifier="logo"/>
+					<ea:attribute qualifier="thumbnails"/>
+					<ea:attribute qualifier="galleryImages"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.supbparts" position="22">
+				<ea:section description="hmc.text.supbparts" name="hmc.section.product.subparts">
+					<ea:attribute qualifier="blSubParts">
+						<ea:editor-parameter>
+							<ea:name>configurableFlowConfigCtx</ea:name>
+							<ea:value>create-wizard-no-save</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+				</ea:section>
+			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.coresettings">
-					<ea:attribute qualifier="numberSystem"/>
-					<ea:attribute qualifier="productId"/>
-					<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
+				<ea:attribute qualifier="numberSystem"/>
+				<ea:attribute qualifier="productId"/>
+				<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.extendedattributes">
+					<ea:attribute qualifier="isArchived"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.opssettings">
-					<ea:attribute qualifier="serialStatus"/>
-					<ea:attribute qualifier="batteryMaterial"/>
+					<ea:attribute qualifier="serialStatus" />
 					<ea:attribute qualifier="reserveRatio"/>
-					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="skuFirmwareVersion"/>
 					<ea:attribute qualifier="scheduled"/>
 					<ea:attribute qualifier="video"/>
+					<ea:attribute qualifier="inventoryLocationId" label="label.pcmbackoffice.blserial.inventoryLocationId"/>
+			  	<ea:attribute qualifier="isBufferedInventory" label="label.pcmbackoffice.blserial.isBufferedInventory"/>
+					<ea:attribute qualifier="lastLocationScanParent" label="label.pcmbackoffice.blserial.lastLocationScanParent"/>
+					<ea:attribute qualifier="ocLocation" label="label.pcmbackoffice.blserial.ocLocation"/>
+				  <ea:attribute qualifier="serialHomeLocation" label="label.pcmbackoffice.blserial.serialHomeLocation"/>
+					<ea:attribute qualifier="totalRepairSpend" label="label.pcmbackoffice.blserial.totalRepairSpend"/>
+			  	<ea:attribute qualifier=" warehouseLocation" label="label.pcmbackoffice.blserial.warehouseLocation" />
+					<ea:attribute qualifier="firmwareVersion" label="label.pcmbackoffice.blserial.firmwareVersion"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.procurement">
-					<ea:attribute qualifier="mpn"/>
-					<ea:attribute qualifier="procurementCost"/>
+					<ea:attribute qualifier="withOrderID" label="label.pcmbackoffice.blserial.withOrderID"/>
+					<ea:attribute qualifier="invoiceDate" label="label.pcmbackoffice.blserial.invoiceDate"/>
+					<ea:attribute qualifier="invoiceNumber" label="label.pcmbackoffice.blserial.invoiceNumber"/>
+					<ea:attribute qualifier="invoiceNumberRecord" label="label.pcmbackoffice.blserial.invoiceNumberRecord"/>
+					<ea:attribute qualifier="ownedBy" label="label.pcmbackoffice.blserial.ownedBy"/>
+					<ea:attribute qualifier="purchaseOrder" label="label.pcmbackoffice.blserial.purchaseOrder"/>
 					<ea:attribute qualifier="procurementSource"/>
-					<ea:attribute qualifier="retailPrice"/>
+					<ea:attribute qualifier="retailPrice" label="label.pcmbackoffice.blserial.retailPrice"/>
+					<ea:attribute qualifier="staffPick"/>
+					<ea:attribute qualifier="mostPopular"/>
+					<ea:attribute qualifier="greatValue" />
+				</ea:section>
+				<ea:section name="hmc.section.product.ids">
+					<ea:attribute qualifier="mpn"/>
 					<ea:attribute qualifier="upc"/>
+					<ea:attribute qualifier="numberSystem"/>
+					<ea:attribute qualifier="productType"/>
 				</ea:section>
 				</ea:tab>
 			<ea:tab name="hmc.tab.order.invoice" position="30">
 				<ea:section name="hmc.product.order.section">
 					<ea:attribute qualifier="associatedConsignment"/>
 					<ea:attribute qualifier="associatedOrder"/>
-					<ea:attribute qualifier="dateFirstActive"/>
-					<ea:attribute qualifier="serialHomeLocation"/>
 					<ea:attribute qualifier="hardAssigned"/>
 					<ea:attribute qualifier="gearRated"/>
 					<ea:attribute qualifier="repairReasons"/>
@@ -524,31 +567,9 @@
 					<ea:attribute qualifier="dirtyPriorityStatus"/>
 					<ea:attribute qualifier="testingStatus"/>
 					<ea:attribute qualifier="repairLogType"/>
-					<ea:attribute qualifier="isBufferedInventory"/>
-				</ea:section>
-				<ea:section name="hmc.product.order.invoice">
-					<ea:attribute qualifier="dateOfSale"/>
-					<ea:attribute qualifier="withOrderID"/>
-					<ea:attribute qualifier="purchaseOrder"/>
-					<ea:attribute qualifier="orderNumberRecord"/>
-					<ea:attribute qualifier="invoiceNumberRecord"/>
-					<ea:attribute qualifier="trackingNumber"/>
-					<ea:attribute qualifier="invoiceNumber"/>
-					<ea:attribute qualifier="invoiceDate"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.inventory">
-					<ea:attribute qualifier="inventoryLocationId"/>
-					<ea:attribute qualifier="isArchived"/>
-					<ea:attribute qualifier="ocLocation"/>
 					<ea:attribute qualifier="ocLocationDetails"/>
-					<ea:attribute qualifier="noDaysRented"/>
-					<ea:attribute qualifier="noDaysInTransit"/>
-					<ea:attribute qualifier="noDaysNotInService"/>
-					<ea:attribute qualifier="lastLocationScanParent"/>
-					<ea:attribute qualifier="assetNumber"/>
-					<ea:attribute qualifier="assetStatus"/>
-					<ea:attribute qualifier="warehouseLocation"/>
-					<ea:attribute qualifier="isBufferedInventory"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
