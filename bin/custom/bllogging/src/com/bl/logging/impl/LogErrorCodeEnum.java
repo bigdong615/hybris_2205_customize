@@ -23,7 +23,17 @@ public enum LogErrorCodeEnum implements LogError
   ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order"),
    ORDER_OPTIMIZATION_ERROR("0012","Error occur while shipping optimization process for order"),
    EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0013", "Email subscription integration Error"),
-  CONSIGNMENT_CREATION_ERROR("0014", "Error occur while creating consignment");
+  CONSIGNMENT_CREATION_ERROR("0014", "Error occur while creating consignment"),
+    ESP_EVENT_INTEGRATION_ERROR("0015", "Error occur while getting access token for ESP Event API"),
+    ESP_EVENT_ACCESS_TOKEN_OBJECT_IS_MISSING("0016", "ClientId , AccountId , ClientSecret , GrantType , Scope is null "),
+    ESP_EVENT_BASE_URL_OR_ACCESS_TOKEN_URL_IS_MISSING("0017", "Event Base URL Or Access Token URL is null"),
+    ESP_EVENT_ACCESS_TOKEN_EMPTY("0018", "Event Access token is empty"),
+    ESP_EVENT_ACCESS_TOKEN_API_FAILED_ERROR("0019", "Event access token call for ESP API failed."),
+    ESP_EVENT_NO_ACCESS_TOKEN_RECEIVED_FROM_API_ERROR("0020", "No access token received from Access Token API."),
+    ESP_EVENT_SERVICE_RESPONSE_NULL("0021", "Event Service Response is null"),
+    ESP_EVENT_API_FAILED_ERROR("0022", "Event API call failed."),
+  ESP_EVENT_POPULATOR_EXCEPTION("0023", "Error while populating data for ESP Event"),
+  ESP_EVENT_REST_API_URL_AND_ENDPOINT_IS_MISSING("0024", "ESP Event Rest API URL And Endpoint is missing");
 
     private String code;
     private String description;

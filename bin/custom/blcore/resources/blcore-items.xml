@@ -389,17 +389,17 @@
         <value code="YES" />
 		<value code="NO" />
     </enumtype>
-	
-	<enumtype generate="true" code="CustomerCollectionStatusEnum" autocreate="true" dynamic="true">
-        <value code="NOT_STARTED" />
-		<value code="BILL_CREATED" />
-		<value code="FIRST_FOLLOW_UP_SENT" />
-		<value code="SECOND_FOLLOW_UP_SENT" />
-		<value code="PASSED_TO_RECOVERY" />
-		<value code="EXCEPTION_MADE" />
-		<value code="BLACKLISTED" />
-		<value code="RESOLVED" />
-    </enumtype>
+
+        <enumtype generate="true" code="CustomerCollectionStatusEnum" autocreate="true" dynamic="true">
+            <value code="NOT_STARTED" />
+		        <value code="BILL_CREATED" />
+		        <value code="FIRST_FOLLOW_UP_SENT" />
+		        <value code="SECOND_FOLLOW_UP_SENT" />
+		        <value code="PASSED_TO_RECOVERY" />
+		        <value code="EXCEPTION_MADE" />
+            <value code="BLACKLISTED" />
+		        <value code="RESOLVED" />
+      </enumtype>
 
       <enumtype generate="true" code="InventoryCycleCountStatus" autocreate="true" dynamic="true">
           <value code="READY"/>
@@ -2062,8 +2062,7 @@
               </attribute>
             </attributes>
           </itemtype>
-            
-         </typegroup>
+        </typegroup>
          
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"

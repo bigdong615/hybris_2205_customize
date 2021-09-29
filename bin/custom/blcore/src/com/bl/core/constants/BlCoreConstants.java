@@ -362,6 +362,95 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_ORDERS_NOT_EXIST = "No completed status rental orders exist";
 	public static final String SHARE_A_SALE_COMMA = ",";
 	public static final String BIN_LOCATION_ID = "binLocationId";
+
+	public static final String ORDER_CONFIRMATION_EVENT_DEFINITION_KEY = "order.confirmation.event.definition.key";
+	public static final String ORDER_CONFIRMATION_EVENT_TEMPLATE = "order.confirmation.event.template";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE = "order.paymentdeclined.event.template";
+	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_DEFINITION_KEY = "order.verification.moreinfo.event.definition.key";
+	public static final String ORDER_VERIFICATION_MORE_INFO_EVENT_TEMPLATE = "order.verification.moreinfo.event.template";
+
+	public static final String ORDER_VERIFICATION_COI_NEEDED_EVENT_DEFINITION_KEY = "order.verification.coineeded.event.definition.key";
+	public static final String ORDER_VERIFICATION_COI_NEEDED_EVENT_TEMPLATE = "order.verification.coineeded.event.template";
+
+	public static final String ORDER_VERIFICATION_REQUIRED_EVENT_DEFINITION_KEY = "order.verification.required.event.definition.key";
+	public static final String ORDER_VERIFICATION_REQUIRED_EVENT_TEMPLATE = "order.verification.required.event.template";
+	public static final String ORDER_VERIFICATION_COMPLETED_EVENT_DEFINITION_KEY = "order.verification.completed.event.definition.key";
+	public static final String ORDER_VERIFICATION_COMPLETED_EVENT_TEMPLATE = "order.verification.completed.event.template";
+
+	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
+	public static final String ORDER_READYFORPICKUP_EVENT_TEMPLATE = "order.readyforpickup.event.template";
+	public static final String ORDER_CANCELED_EVENT_DEFINITION_KEY="order.canceled.event.definition.key";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_DEFINITION_KEY="order.paymentdeclined.event.definition.key";
+	public static final String ORDER_READYFORPICKUP_EVENT_DEFINITION_KEY="order.readyforpickup.event.definition.key";
+	public static final String ORDER_NEWSHIPPING_EVENT_TEMPLATE = "order.newshipping.event.template";
+	public static final String ORDER_RNEWSHIPPING_EVENT_DEFINITION_KEY="order.newshipping.event.definition.key";
+
+	public static final String ORDER_EXCEPTION_EVENT_DEFINITION_KEY = "order.exception.event.definition.key";
+	public static final String ORDER_EXCEPTION_EVENT_TEMPLATE = "order.exception.event.template";
+	public static final String ORDER_UNBOXED_EVENT_DEFINITION_KEY = "order.unboxed.event.definition.key";
+	public static final String ORDER_UNBOXED_EVENT_TEMPLATE = "order.unboxed.event.template";
+
+	public static final String ORDER_DEPOSIT_EVENT_DEFINITION_KEY = "order.deposit.event.definition.key";
+	public static final String ORDER_DEPOSIT_EVENT_TEMPLATE = "order.deposit.event.template";
+
+	public static final String ORDER_EXTENSION_EVENT_DEFINITION_KEY = "order.extension.event.definition.key";
+	public static final String ORDER_EXTENSION_EVENT_TEMPLATE = "order.extension.event.template";
+
+	public static final String ORDER_SHIPPED_EVENT_DEFINITION_KEY = "order.shipped.event.definition.key";
+	public static final String ORDER_SHIPPED_EVENT_TEMPLATE = "order.shipped.event.template";
+	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";
+	public static final String ORDER_PICKEDUP_EVENT_TEMPLATE = "order.pickedup.event.template";
+
+	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
+	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
+	public static final String SHIPPING_LAST_NAME = "shippinglastname";
+	public static final String SHIPPING_ORGANIZATION = "shippingorganization";
+	public static final String SHIPPING_ADDRESS_1 = "shippingaddress1";
+	public static final String SHIPPING_ADDRESS_2 = "shippingaddress2";
+	public static final String SHIPPING_CITY = "shippingcity";
+	public static final String SHIPPING_STATE = "shippingstate";
+	public static final String SHIPPING_ZIP_CODE = "shippingzipcode";
+	public static final String SHIPPING_PHONE = "shippingphone";
+	public static final String SHIPPING_EMAIL = "shippingemail";
+	public static final String SHIPPING_HOURS = "shippinghours";
+	public static final String SHIPPING_NOTES = "shippingnotes";
+
+	public static final String BILLING_ROOT_ELEMENT = "billinginfo";
+	public static final String BILLING_FIRST_NAME = "billingfirstname";
+	public static final String BILLING_LAST_NAME = "billinglastname";
+	public static final String BILLING_ORGANIZATION = "billingorganization";
+	public static final String BILLING_ADDRESS_1 = "billingaddress1";
+	public static final String BILLING_ADDRESS_2 = "billingaddress2";
+	public static final String BILLING_CITY = "billingcity";
+	public static final String BILLING_STATE = "billingstate";
+	public static final String BILLING_ZIP_CODE = "billingzipcode";
+	public static final String BILLING_PHONE = "billingphone";
+	public static final String BILLING_EMAIL = "billingemail";
+	public static final String BILLING_NOTES = "ordernotes";
+	public static final String BILLING_GIFT_CARD_USED = "giftcardused";
+	public static final String BILLING_GIFT_CARD_BALANCE = "giftcardbalance";
+
+	public static final String ORDER_ITEMS_ROOT_ELEMENT = "orderitemsinfo";
+	public static final String ORDER_ITEM_ROOT_ELEMENT = "orderitem";
+	public static final String ORDER_ITEM_PRODUCT_CODE = "productcode";
+	public static final String ORDER_ITEM_PRODUCT_TITLE = "producttitle";
+	public static final String ORDER_ITEM_PRODUCT_PHOTO = "productphoto";
+	public static final String ORDER_ITEM_RENTAL_PRICE = "rentalprice";
+	public static final String ORDER_ITEM_DAMAGE_WAIVER_PRICE = "damagewaiverprice";
+	public static final String ORDER_ITEM_DAMAGE_WAIVER_TEXT = "damagewaivertext";
+	public static final String ORDER_ITEM_TOTAL_PRICE = "totalprice";
+
+	public static final String ITEMS_ROOT_ELEMENT = "itemsinfo";
+	public static final String ITEM_ROOT_ELEMENT = "item";
+	public static final String ITEM_PRODUCT_URL = "producturl";
+	public static final String ITEM_AMOUNT_DUE_ROOT_ELEMENT = "amountdue";
+	public static final String ITEM_NOTES_ROOT_ELEMENT = "notes";
+
+  public static final String DATE_PATTERN = "yyyy-MM-dd";
+  public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
+  public static final String RENTAL = "Rental";
+  public static final String UN_BOXED = "UnBoxed";
+
 	private BlCoreConstants()
 	{
 		//empty
