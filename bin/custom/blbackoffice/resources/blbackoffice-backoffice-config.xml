@@ -3052,6 +3052,8 @@
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayDate" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountSerialStatus" selected="true"/>
+				<advanced-search:field name="productStatus" selected="true"/>
 				<advanced-search:field name="scannedTime" selected="true"/>
 				<advanced-search:field name="scannedUser" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>
