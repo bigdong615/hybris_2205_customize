@@ -190,7 +190,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       return blEspEventService;
     }
 
-    public void setBlEspEventService(DefaultBlESPEventService blEspEventService){
+    public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
       this.blEspEventService = blEspEventService;
     }
 }

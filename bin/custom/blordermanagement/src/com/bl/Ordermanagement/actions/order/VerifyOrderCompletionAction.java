@@ -126,7 +126,7 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 		return blEspEventService;
 	}
 
-	public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
+	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService) {
 		this.blEspEventService = blEspEventService;
 	}
 
