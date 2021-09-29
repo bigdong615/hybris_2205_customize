@@ -169,8 +169,8 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 				stockLevel.setHardAssigned(false);
 				stockLevel.setReservedStatus(false);
 				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
-				modelService.save(stockLevel);
-				modelService.save(serialProduct);
+				getModelService().save(stockLevel);
+				getModelService().save(serialProduct);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Reserved status set to {} and Hard Assigned set to {} for serial {}",
 						stockLevel.getReservedStatus(), stockLevel.getHardAssigned(), serialProduct.getCode());
 			});

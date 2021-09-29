@@ -621,6 +621,12 @@
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
 		<constructor-arg value="BlPricingLogic"/>
 	</bean>
+	<!--BL-849 : Allocation - Optimize Item Return Warehouse -->
+	<alias name="defaultBlWarehouseGenericDao" alias="blWarehouseGenericDao"/>
+	<bean name="defaultBlWarehouseGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="Warehouse"/>
+	</bean>
 	<alias name="defaultPriceRowGenericDao" alias="priceRowGenericDao"/>
 	<bean name="defaultPriceRowGenericDao"
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
