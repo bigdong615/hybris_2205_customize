@@ -12,7 +12,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final int ZERO = 0;
     public static final long ZERO_LONG = 0L;
     public static final String ZERO_DOUBLE = "#0.00";
-    public static final double ZERO_DOUBLE_VAL = 0d;
+    public static final double ZERO_DOUBLE_VAL = 0.0D;
 
     public static final String FULL = "FULL";
     public static final String PARTIAL = "PARTIAL";
