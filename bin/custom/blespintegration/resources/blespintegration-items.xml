@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<enumtypes>
+
+			<enumtype generate="true" code="EspEventTypeEnum" autocreate="true" dynamic="true">
+					<value code="ORDER_CONFIRM" />
+					<value code="VERIFICATION_REQUIRED" />
+					<value code="VERIFICATION_DEPOSIT" />
+					<value code="VERIFICATION_MOREINFO" />
+					<value code="VERIFICATION_COMPLETED" />
+					<value code="VERIFICATION_COINEEDED" />
+					<value code="ORDER_CANCELED" />
+					<value code="ORDER_PAYMENTDECLINED" />
+					<value code="ORDER_SHIPPED" />
+					<value code="ORDER_READYFORPICKUP" />
+					<value code="ORDER_PICKEDUP" />
+					<value code="ORDER_NEWSHIPPING" />
+					<value code="ORDER_EXTENDED" />
+					<value code="ORDER_UNBOXED" />
+					<value code="BILL_LATEFEES" />
+					<value code="EXCEPTION_ISSUE" />
+					<value code="EXCEPTION_EXTRAITEM" />
+					<value code="BILL_DUE" />
+					<value code="BILL_PAID" />
+					<value code="ORDER_REFUND" />
+			</enumtype>
+			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">
+					<value code="SUCCESS"/>
+					<value code="FAILURE"/>
+			</enumtype>
+	</enumtypes>
+
+	<itemtypes>
+		<itemtype code="BlStoredEspEvent" autocreate="true" generate="true"
+			jaloclass="com.bl.core.jalo.BlStoredEspEvent">
+			<description>Esp Event detail</description>
+			<deployment table="BlStoredEspEvent" typecode="12235"/>
+			<attributes>
+				<attribute qualifier="eventInstanceId" type="java.lang.String">
+					<persistence type="property"/>
+					<modifiers read="true" write="true" optional="true"/>
+					<description>Event ID created for current request</description>
+				</attribute>
+				<attribute qualifier="status" type="ESPEventStatus">
+					<modifiers read="true" write="true" optional="true"/>
+					<description>It will store the ESP Event status of rest call --> success/failure</description>
+					<persistence type="property"/>
+				</attribute>
+				<attribute qualifier="orderCode" type="java.lang.String">
+					<modifiers read="true" write="true" optional="true"/>
+					<description>It will store the order code for which the event is triggered.</description>
+					<persistence type="property"/>
+				</attribute>
+				<attribute qualifier="eventType" type="EspEventTypeEnum">
+					<persistence type="property"/>
+					<modifiers read="true" write="true" optional="true"/>
+					<description>ESP Event Type of current request
+					</description>
+				</attribute>
+				<attribute qualifier="requestString" type="java.lang.String">
+					<description>This attribute is used to store the request json string of ESP Event.
+					</description>
+					<modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+					<persistence type="property">
+						<columntype database="oracle">
+							<value>CLOB</value>
+						</columntype>
+						<columntype database="sap">
+							<value>NCLOB</value>
+						</columntype>
+						<columntype>
+							<value>HYBRIS.LONG_STRING</value>
+						</columntype>
+					</persistence>
+				</attribute>
+				<attribute qualifier="responseString" type="java.lang.String">
+					<description>This attribute is used to store the response json string of ESP Event.
+					</description>
+					<modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+					<persistence type="property">
+						<columntype database="oracle">
+							<value>CLOB</value>
+						</columntype>
+						<columntype database="sap">
+							<value>NCLOB</value>
+						</columntype>
+						<columntype>
+							<value>HYBRIS.LONG_STRING</value>
+						</columntype>
+					</persistence>
+				</attribute>
+			</attributes>
+		</itemtype>
+	</itemtypes>
+</items>
