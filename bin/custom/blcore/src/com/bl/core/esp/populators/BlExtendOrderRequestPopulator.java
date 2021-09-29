@@ -62,6 +62,11 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
 
   }
 
+  /**
+   * This method created to populate order extension data
+   * @param orderModel order model
+   * @param orderExtensionRequest orderExtensionRequest
+   */
   private void populateExtendOrderData(final OrderModel orderModel, final OrderExtensionRequest orderExtensionRequest) {
 
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
@@ -105,7 +110,12 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     return itemCost.get();
   }
 
-  private void populateOrderItemXMLData(OrderModel orderModel, OrderExtensionData data) {
+  /**
+   * THis method populates order items in xml
+   * @param orderModel ordermodel
+   * @param data data
+   */
+  private void populateOrderItemXMLData(final OrderModel orderModel, final OrderExtensionData data) {
     try {
       final Document orderItemsInXMLDocument = createNewXMLDocument();
       final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ORDER_ITEMS_ROOT_ELEMENT);
