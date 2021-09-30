@@ -1252,6 +1252,8 @@
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
 				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction"
+					property="currentObject" />
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction"
 					property="currentObject"/>
 				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"

@@ -276,8 +276,9 @@ public class BlInventoryScanLoggingConstants {
     public static final int TWENTY_NINE = 29;
     public static final int THIRTY = 30;
     public static final String PREVIOUS_CYCLE_COUNT_NOT_ENDED_YET_FOR_CODE = "Previous Cycle count not ended yet for code: {}";
+    public static final String PREVIOUS_CYCLE_COUNT_ENDED_FOR_CODE = "Previous Cycle count ended yet for code: {}";
     public static final String PREVIOUS_CYCLE_COUNT_ENDED = "No active inventory cycle found!!";
-    public static final String DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivating previous cycle count with code: {}";
+    public static final String DEACTIVATED_PREVIOUS_CYCLE_COUNT_WITH_CODE = "Deactivated previous cycle count with code: {}";
     public static final String FAILED_TO_CREATE_INVENTORY_CYCLE_AS_SKU_LIST_IS_EMPTY = "Failed to create inventory Cycle as SKU list is empty!!";
     public static final String PREVIOUS_INVENTORY_CYCLE_NOT_COMPLETED_WITH_CODE = "Previous Inventory Cycle not completed with code: {}";
     public static final String CREATING_NEW_INVENTORY_CYCLE_COUNT_FROM_TO = "Creating new Inventory Cycle count from: {} to: {}";
