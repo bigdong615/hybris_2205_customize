@@ -155,8 +155,8 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
         if(CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()) && orderModel.getPaymentTransactions().get(
                 BlInventoryScanLoggingConstants.ZERO) != null && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()
                 .get(BlInventoryScanLoggingConstants.ZERO).getEntries())) {
-            final Collection<PaymentTransactionEntryModel> entries = orderModel.getPaymentTransactions().get(
-                    BlInventoryScanLoggingConstants.ZERO).getEntries();
+            final Collection<PaymentTransactionEntryModel> entries = new ArrayList<>(orderModel.getPaymentTransactions().get(
+                    BlInventoryScanLoggingConstants.ZERO).getEntries());
             entries.add(entry);
             modelService.save(orderModel);
             modelService.refresh(orderModel);
@@ -188,7 +188,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     public double calculateAmountOnCheckboxStatusFull(final double subTotal, final double tax, final double waiver, final double shipping,
                                                       final double amount) {
         final double totalSelectionAmount = (subTotal + shipping + tax + waiver);
-        return totalSelectionAmount > amount ? totalSelectionAmount : amount;
+        return Math.min(totalSelectionAmount, amount);
     }
 
     /**
@@ -241,7 +241,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
     @Override
     public double getTotalAmountPerEntry(int cancelQty, final int cancellableQty, final double productPrice, final double taxLabel,
                                          final double waiverLabel) {
-        final double totalProductPrice = (productPrice * cancelQty) + (taxLabel * cancelQty) + (waiverLabel * cancelQty);
+        final double totalProductPrice = (productPrice + taxLabel + waiverLabel) * cancelQty;
         return BigDecimal.valueOf(totalProductPrice).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
     }
 
