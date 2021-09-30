@@ -184,7 +184,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
       getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
     }
-
+  }
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
