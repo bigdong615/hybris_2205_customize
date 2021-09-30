@@ -24,6 +24,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                             ; MobileMiniCartSlot             ;                                                                                       ;                           ; minicart
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                ; position[unique = true]  ; pageTemplate(uid, $contentCV)[unique = true][default = 'DeliveryOrPickUpCartPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -37,6 +38,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                         ; SocialMediaSectionSlot-DeliveryOrPickupCartpage    ; SocialMediaSectionSlot        ;                                                                                      ; SocialMediaSectionSlot                   ; true
                                     ;                         ; TopHeaderSlot-DeliveryOrPickupCartpage    ; TopHeaderSlot        ;                                                                                      ; TopHeaderSlot                   ; true
                                     ;                         ; MyAccountSlot-DeliveryOrPickupCartpage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                   ;                          ; MobileMiniCartSlot-DeliveryOrPickupCartpage             ; MobileMiniCartSlot             ;                                                                                   ; MobileMiniCartSlot                         ; true
 
 
 

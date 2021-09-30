@@ -1,6 +1,7 @@
 package com.bl.core.model.interceptor;
 
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
@@ -37,6 +38,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private static final Logger LOG = Logger.getLogger(BlOrderPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
   private EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy;
+  private DefaultBlESPEventService blEspEventService;
 
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
@@ -68,6 +70,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         getEventPublishingSubmitOrderStrategy().submitOrder((OrderModel)abstractOrderModel);
       }
     }
+    triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
+    triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
   }
   
   /**
@@ -153,7 +157,34 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignments are set in to Order order Notes");
   }
+  /**
+   * trigger Esp Payment Declined event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspPaymentDeclined(final AbstractOrderModel abstractOrderModel,
+      final InterceptorContext interceptorContext) {
+    if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
+        .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
+      getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+    }
+  }
 
+  /**
+   * trigger Esp verification required event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
+      final InterceptorContext interceptorContext) {
+    if (abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
+      getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+    }
+  }
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
@@ -170,4 +201,11 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       final EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy) {
     this.eventPublishingSubmitOrderStrategy = eventPublishingSubmitOrderStrategy;
   }
+    public DefaultBlESPEventService getBlEspEventService(){
+      return blEspEventService;
+    }
+
+    public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
+      this.blEspEventService = blEspEventService;
+    }
 }

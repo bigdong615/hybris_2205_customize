@@ -49,6 +49,7 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]     ; n
                          ;                          ; ProductGridSlot        ; Product List                    ; true
                          ;                          ; PlaceholderContentSlot ; Placeholder for Addon tag files ; true
                          ;                         ; SocialMediaSectionSlot  ; Social Media Section Slot       ; true
+                         ;                         ; MobileMiniCartSlot      ;                                 ; true
 
 
 
@@ -76,6 +77,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
+                             ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -106,6 +108,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                          ; FooterCopyRightslot-productGrid           ; FooterCopyRightslot           ;                                                                                  ; FooterCopyRightslot                        ; true
                                     ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
                                     ;                         ; MyAccountSlot-productGrid                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                    ;                         ; MobileMiniCartSlot-productGrid             ; MobileMiniCartSlot            ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 
