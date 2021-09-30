@@ -10,7 +10,6 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.jalo.order.OrderEntry;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
@@ -828,7 +827,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
     /**
      * calculate total refund amount
-     * @return
+     * @return amt
      */
     private double getTotalRefundAmount() {
         double orderAmount = BlCustomCancelRefundConstants.ZERO;
@@ -836,22 +835,17 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         double globalWaiver = BlInventoryScanLoggingConstants.ZERO;
         double globalShipping = BlInventoryScanLoggingConstants.ZERO;
         if(Double.parseDouble(this.totalRefundedAmount.getValue()) <= BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
-            orderAmount = this.getOrderModel().getSubtotal();
-            if (this.globalShippingSelection.isChecked()) {
-                globalShipping = this.getOrderModel().getDeliveryCost();
-            }
-            if (this.globalTaxSelection.isChecked()) {
-                globalTax = this.getOrderModel().getTotalTax();
-            }
-            if (this.globalWaiverSelection.isChecked()) {
-                globalWaiver += this.getOrderModel().getTotalDamageWaiverCost();
-            }
+            return blCustomCancelRefundService.calculateAmountOnCheckboxStatusFull(this.getOrderModel().getSubtotal(),
+                    (this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() : BlInventoryScanLoggingConstants.ZERO),
+                    (this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost() : BlInventoryScanLoggingConstants.ZERO),
+                    (this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() : BlInventoryScanLoggingConstants.ZERO),
+                    Double.parseDouble(this.globalTotalRefundAmount.getValue()));
         } else {
             for (Map.Entry<AbstractOrderEntryModel, Long> entry : this.orderCancellableEntries.entrySet()) {
                 final OrderEntryModel orderEntry = (OrderEntryModel) entry.getKey();
                 orderAmount += orderEntry.getBasePrice() * entry.getValue();
                 if (this.globalTaxSelection.isChecked()) {
-                    globalTax = (orderEntry.getAvalaraLineTax()/(orderEntry.getQuantityAllocated() + orderEntry.getUnAllocatedQuantity()))
+                    globalTax += (orderEntry.getAvalaraLineTax()/(orderEntry.getQuantityAllocated() + orderEntry.getUnAllocatedQuantity()))
                             * entry.getValue();
                 }
                 if (this.globalWaiverSelection.isChecked()) {
