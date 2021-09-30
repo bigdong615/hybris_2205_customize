@@ -1252,6 +1252,8 @@
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
 				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction"
+					property="currentObject" />
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction"
 					property="currentObject"/>
 				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
@@ -3027,20 +3029,20 @@
 
 	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="type">
 		<list-view:list-view>
-			<list-view:column qualifier="inventoryCycleCountCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayDate"/>
-			<list-view:column qualifier="serialNumber"/>
-			<list-view:column qualifier="barcodeNumber"/>
-			<list-view:column qualifier="homeBaseLocation"/>
-			<list-view:column qualifier="lastOrderNumber"/>
-			<list-view:column qualifier="lastOrderShippedDate"/>
-			<list-view:column qualifier="orderStatus"/>
 			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="barcodeNumber"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
 			<list-view:column qualifier="productStatus"/>
 			<list-view:column qualifier="oc"/>
 			<list-view:column qualifier="ocParent"/>
-			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
+			<list-view:column qualifier="lastOrderNumber"/>
+			<list-view:column qualifier="orderStatus"/>
+			<list-view:column qualifier="lastOrderShippedDate"/>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayDate"/>
+			<list-view:column qualifier="homeBaseLocation"/>
 			<list-view:column qualifier="scannedUser"/>
 			<list-view:column qualifier="scannedTime"/>
 		</list-view:list-view>
@@ -3052,6 +3054,8 @@
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayDate" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountSerialStatus" selected="true"/>
+				<advanced-search:field name="productStatus" selected="true"/>
 				<advanced-search:field name="scannedTime" selected="true"/>
 				<advanced-search:field name="scannedUser" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>

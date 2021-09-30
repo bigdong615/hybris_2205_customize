@@ -2490,6 +2490,12 @@
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="totalRefundedAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total refunded amount on order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                     <attribute qualifier="totalWeight" type="java.lang.Double">
                         <description>The address where the order is to be shipped from.</description>
                         <persistence type="property" />
