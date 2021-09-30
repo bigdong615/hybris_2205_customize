@@ -37,7 +37,7 @@
 					<spring:theme code="type.orderstatus.${orderData.status}.name" var="orderStatus"/>
 					</c:when>
 					<c:otherwise>
-					<c:set var="orderStatus" value="${orderData.status}"/>"
+					<c:set var="orderStatus" value="${orderData.status}"/>
 					</c:otherwise>
 					</c:choose>
 					<div class="col-6">
