@@ -179,4 +179,17 @@ public interface BrainTreeTransactionService
 	 */
 	boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
 			final String requestId) throws BraintreeErrorException;
+	
+  /**
+   * Do capture payment for modified order.
+   *
+   * @param orderModel the order model
+   * @param amount the amount
+   * @param submitForSettlement the submit for settlement
+   * @param paymentInfo the payment info
+   * @return true, if successful
+   * @throws BraintreeErrorException the braintree error exception
+   */
+  boolean doCapturePaymentForModifiedOrder(final AbstractOrderModel orderModel, final BigDecimal amount, final boolean submitForSettlement,
+      final BrainTreePaymentInfoModel paymentInfo) throws BraintreeErrorException;
 }

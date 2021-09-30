@@ -262,6 +262,25 @@ $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
     createPayPalPaymentMarkFlow(createPayPalOptions());
 });
 
+$("#paymentMethodPayPal-modify-order-payment").change(function () {
+	$('.page-loader-new-layout').show();
+	$("#mark-paypal-button").empty();
+	$('#payPalErrorMessage').empty();
+	var depositAmount = getAmount();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#payPalErrorMessage').append(validationDiv);		
+		$('.page-loader-new-layout').hide();
+	}
+	else
+	{
+		createPayPalPaymentMarkFlow(createPayPalOptions());	
+		$("#paymentMethodPayPal-modify-order-payment").addClass("initialized");
+	}
+    
+});
+
 
 $(CONST.PAYMENT_METHOD_APPLE_PAY).change(function () {
     createApplePay(createPayPalOptions(), CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID, function (payload) {
@@ -1477,7 +1496,7 @@ $(".add-cc-form-modifyPayment").on("click",function(e){
     $("#payment-add-form-modifyPayment").submit();
 });
 
-$("#deposit-amount").on("input", function(evt) {
+$("#deposit-amount , #modify_order-payment-amount").on("input", function(evt) {
 	$('#validationMessage').empty();
 	$('#depositPaymentErrorMessage').empty();
 	var self = $(this);
@@ -1490,17 +1509,17 @@ $("#deposit-amount").on("input", function(evt) {
 	{
 		$('#depositPaymentErrorMessage').empty();
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
-		$('#depositPaymentErrorMessage').append(validationDiv);
+		$('#depositPaymentErrorMessage').append(validationDiv);		
 	}
 });
 
-$(".js-order-deposit-payment").on("click", function(e) {
+$(".js-order-deposit-payment , .js-modify-order-capture-payment").on("click", function(e) {
 	e.preventDefault();
 	$('#validationMessage').empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
 	var paymentInfoId = $('#paymentId').val();
-	var depositAmount = $("#deposit-amount").val();
+	var depositAmount = getAmount();
 	if(depositAmount == '')
 	{
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
@@ -1523,6 +1542,22 @@ $(".js-order-deposit-payment").on("click", function(e) {
 		$('#validationMessage').append(validationDiv);
 	}
 });
+
+function getAmount()
+{
+	if($("#modify_order-payment-amount").length == 1)
+	{
+		return $("#modify_order-payment-amount").val();
+	}
+	else if($("#deposit-amount").length == 1)
+	{
+		return $("#deposit-amount").val();
+	}
+	else
+	{
+		return '';
+	}
+}
 
 $(".add-cc-form-depositPayment").on("click",function(e){
 	e.preventDefault();

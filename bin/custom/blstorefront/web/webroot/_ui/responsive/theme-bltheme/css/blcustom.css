@@ -706,3 +706,10 @@ color:#fff !important;
 .arrival-notification{background:#fff !important;border: 1px solid #cccccc !important;color: #3d3c3c !important;}
 .arrival-notification:hover{background:none !important;border:1px solid #ccc!important;color: #3d3c3c !important;}
 #costSummary i.icon-support {width:12px;}
+
+.refund-space{
+    margin-right:16px;
+}
+.gc-textbox{
+    border: 1px solid #ced4da !important;
+}

@@ -955,6 +955,55 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
   {
     try
     {
+      final BrainTreePaymentInfoModel brainTreePaymentInfoModel = getClonedPaymentInfoForCode(customer, paymentInfoId, nonce);
+      if(Objects.nonNull(brainTreePaymentInfoModel))
+      {
+        brainTreePaymentInfoModel.setIsDepositPayment(Boolean.TRUE);
+        brainTreePaymentInfoModel.setDepositAmount(depositAmount);
+        getModelService().save(brainTreePaymentInfoModel);
+        getModelService().refresh(brainTreePaymentInfoModel);
+      }      
+      return brainTreePaymentInfoModel;
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error while getting BraintreePaymentInfoModel for creating deposit for customer : {} and payment info ID ; {}", customer.getUid(),
+          paymentInfoId);
+    }
+    return null;
+  }
+  
+  @Override
+  public BrainTreePaymentInfoModel getModifyOrderPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+      final String nonce, final Double newAmount)
+  {
+    try
+    {
+      final BrainTreePaymentInfoModel brainTreePaymentInfoModel = getClonedPaymentInfoForCode(customer, paymentInfoId, nonce);
+      if(Objects.nonNull(brainTreePaymentInfoModel))
+      {
+        brainTreePaymentInfoModel.setCreateNewTransaction(Boolean.TRUE);
+        brainTreePaymentInfoModel.setNewAmount(newAmount);
+        getModelService().save(brainTreePaymentInfoModel);
+        getModelService().refresh(brainTreePaymentInfoModel);
+      }      
+      return brainTreePaymentInfoModel;
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error while getting BraintreePaymentInfoModel for creating deposit for customer : {} and payment info ID ; {}", customer.getUid(),
+          paymentInfoId);
+    }
+    return null;
+  }
+  
+  private BrainTreePaymentInfoModel getClonedPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+      final String nonce)
+  {
+    try
+    {
       final BrainTreePaymentInfoModel paymentInfo = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(customer, paymentInfoId);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Original Payment Info PK is : {}", paymentInfo.getPk().toString());
       if (Objects.nonNull(paymentInfo))
@@ -963,8 +1012,6 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
         if (Objects.nonNull(brainTreePaymentInfoModel))
         {
           brainTreePaymentInfoModel.setNonce(nonce);
-          brainTreePaymentInfoModel.setIsDepositPayment(Boolean.TRUE);
-          brainTreePaymentInfoModel.setDepositAmount(depositAmount);
           brainTreePaymentInfoModel.setOriginal(paymentInfo);
           brainTreePaymentInfoModel.setDuplicate(Boolean.TRUE);
           brainTreePaymentInfoModel.setIsDefault(Boolean.FALSE);

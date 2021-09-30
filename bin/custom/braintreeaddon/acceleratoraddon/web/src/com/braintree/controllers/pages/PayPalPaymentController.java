@@ -271,6 +271,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         final String orderCode = request.getParameter("order_code");
         final String payBillTotal = request.getParameter("payBillTotal");
         final boolean isDepositPaymentPage = BooleanUtils.toBoolean(request.getParameter("isDepositPaymentPage"));
+        final boolean isModifyOrderPaymentPage = BooleanUtils.toBoolean(request.getParameter("isModifyOrderPaymentPage"));
 		double payBillAmount = Double.parseDouble(payBillTotal);
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
@@ -325,7 +326,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				if (null != order) {
 					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
 							.completeCreateSubscription(
-									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount);
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount, isModifyOrderPaymentPage);
 					if (null != paymentInfo) {
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
 								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
@@ -341,7 +342,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         final PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
         orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
-        if (isDepositPaymentPage)
+        if (isDepositPaymentPage || isModifyOrderPaymentPage)
         {
           model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
           model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);

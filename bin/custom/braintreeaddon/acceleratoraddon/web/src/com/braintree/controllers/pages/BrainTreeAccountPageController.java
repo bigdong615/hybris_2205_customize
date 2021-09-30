@@ -110,6 +110,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
 	
 	private static final String DEPOSIT_PAYMENT_CMS_PAGE = "deposit-payment";
+	private static final String MODIFY_ORDER_PAYMENT_CMS_PAGE = "modify-order-payment";
 	private static final String MY_ACCOUNT_DEPOSIT_PAYMENT = "/my-account/depositPayment/";
 	
 	@Resource(name = "userFacade")
@@ -934,5 +935,78 @@ public class BrainTreeAccountPageController extends AbstractPageController
   {
     return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId) && StringUtils.isNotBlank(paymentMethodNonce)
         && StringUtils.isNotBlank(orderCode);
+  }
+  
+  /**
+   * Gets the modify order payment page.
+   *
+   * @param orderCode the order code
+   * @param model the model
+   * @return the modify order payment page
+   * @throws CMSItemNotFoundException the CMS item not found exception
+   */
+  @GetMapping(value = "/{orderCode}/modifyOrderPayment")
+  @RequireHardLogIn
+  public String getModifyOrderPaymentPage(@PathVariable(value = ORDER_CODE, required = false) final String orderCode, final Model model)
+      throws CMSItemNotFoundException
+  {
+    final ContentPageModel modifyOrderPaymentPage = getContentPageForLabelOrId(MODIFY_ORDER_PAYMENT_CMS_PAGE);
+    storeCmsPageInModel(model, modifyOrderPaymentPage);
+    setUpMetaDataForContentPage(model, modifyOrderPaymentPage);
+    final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+    model.addAttribute(ORDER_DATA, orderDetails);
+    model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+    setupAdditionalFields(model);
+    return getViewForPage(model);
+  }
+  
+  @PostMapping(value = "/modify-order-payment-success")
+  @RequireHardLogIn
+  public String doPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String paymentInfoId = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_ID);
+    final String paymentMethodNonce = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_NONCE);
+    final String orderCode = request.getParameter(ORDER_CODE);
+    final String depositTotal = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
+    final String gcCode = request.getParameter("gcCode");
+    try
+    {      
+      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, depositTotal))
+      {
+        boolean isSuccess = false;
+        final double newAmount = Double.parseDouble(depositTotal);
+        final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+        if (Objects.nonNull(order))
+        {
+          final BrainTreePaymentInfoModel paymentInfo =
+              brainTreeCheckoutFacade.getModifyOrderPaymentInfoForCode((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, newAmount);
+          if (Objects.nonNull(paymentInfo))
+          {
+            isSuccess = brainTreeTransactionService.doCapturePaymentForModifiedOrder(order,
+                BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+          }
+        }
+        if (isSuccess)
+        {
+          final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+          final PriceData billPayTotal  = convertDoubleToPriceData(newAmount, order);
+          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.CREDIT_CARD);
+          final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId("rerere");
+          storeCmsPageInModel(model, payBillSuccessPage);
+          setUpMetaDataForContentPage(model, payBillSuccessPage);
+          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+          return getViewForPage(model);
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while making deposit for order : {} with ammount : {} with PaymentID - {}", orderCode, depositTotal, paymentInfoId);
+    }
+    return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
   }
 }

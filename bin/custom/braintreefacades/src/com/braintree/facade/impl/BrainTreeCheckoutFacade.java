@@ -777,6 +777,20 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			getModelService().save(cart);
 		}
 	}
+	
+	/**
+	 * Gets the cloned payment info for code.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @return the cloned payment info for code
+	 */
+	public BrainTreePaymentInfoModel getModifyOrderPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+      final String nonce, final Double newAmount)
+	{
+	  return getBrainTreePaymentService().getModifyOrderPaymentInfoForCode(customer, paymentInfoId, nonce, newAmount);
+	}
 
 	private Map<String, String> getCustomFields()
 	{
