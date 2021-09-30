@@ -3027,20 +3027,20 @@
 
 	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="type">
 		<list-view:list-view>
-			<list-view:column qualifier="inventoryCycleCountCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayDate"/>
-			<list-view:column qualifier="serialNumber"/>
-			<list-view:column qualifier="barcodeNumber"/>
-			<list-view:column qualifier="homeBaseLocation"/>
-			<list-view:column qualifier="lastOrderNumber"/>
-			<list-view:column qualifier="lastOrderShippedDate"/>
-			<list-view:column qualifier="orderStatus"/>
 			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="barcodeNumber"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
 			<list-view:column qualifier="productStatus"/>
 			<list-view:column qualifier="oc"/>
 			<list-view:column qualifier="ocParent"/>
-			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
+			<list-view:column qualifier="lastOrderNumber"/>
+			<list-view:column qualifier="orderStatus"/>
+			<list-view:column qualifier="lastOrderShippedDate"/>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayDate"/>
+			<list-view:column qualifier="homeBaseLocation"/>
 			<list-view:column qualifier="scannedUser"/>
 			<list-view:column qualifier="scannedTime"/>
 		</list-view:list-view>
