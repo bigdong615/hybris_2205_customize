@@ -45,7 +45,7 @@
         <enumtype code="OrderStatus" autocreate="false" generate="true"
                   dynamic="true">
             <value code="PARTIAL_CAPTURE" />
-            <value code="PAYMENT_DECLINED"/>
+            <value code="RECEIVED_PAYMENT_DECLINED"/>
         </enumtype>
         <enumtype code="PaymentTransactionType" autocreate="false"
                   generate="true">

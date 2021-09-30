@@ -236,9 +236,9 @@
       </enumtype>
      
       <enumtype code="OrderStatus" autocreate="false" generate="false">
-            <value code="INVERIFICATION"/>
-            <value code="MANUAL_REVIEW"/>
-            <value code="SHIPPING_MANUAL_REVIEW"/>
+            <value code="RECEIVED_IN_VERIFICATION"/>
+            <value code="RECEIVED_MANUAL_REVIEW"/>
+            <value code="RECEIVED_SHIPPING_MANUAL_REVIEW"/>
             <value code="SOLD"/>
             <value code="INCOMPLETE" />
       		<value code="INCOMPLETE_ITEMS_IN_REPAIR" />
@@ -250,6 +250,12 @@
       		<value code="LATE" />
       		<value code="RETURNED" />
       		<value code="SHIPPED"/>
+      		<value code="RECEIVED_ROLLING"/>
+      		<value code="INCOMPLETE_BALANCE_DUE"/>
+      		<value code="INCOMPLETE_STOLEN"/>
+      		<value code="INCOMPLETE_LOST_IN_TRANSIT"/>
+      		<value code="SOLD_SHIPPED"/>
+      		<value code="SOLD_RMA_CREATED"/>
         </enumtype>
       
       
@@ -268,11 +274,12 @@
       	<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
       	<value code="INCOMPLETE_RECOVERED" />
       	<value code="MANUAL_REVIEW" />
-      	<value code="PARTIALLY_UNBOXED" />
-      	<value code="UNBOXED" />
+      	<value code="UNBOXED_PARTIALLY" />
+      	<value code="UNBOXED_COMPLETELY" />
       	<value code="SHIPPING_MANUAL_REVIEW"/>
-      	<value code="READY_TO_SHIP"/>
+      	<value code="RECEIVED_READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
+        <value code="RECEIVED_READY_FOR_PICKUP"/>
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
