@@ -1,16 +1,24 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +38,8 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
   private static final Logger LOG = Logger.getLogger(BlConsignmentPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
+  private DefaultBlESPEventService blEspEventService;
+  private BaseStoreService baseStoreService;
 
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
@@ -57,7 +67,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     }
 
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
-
+    triggerEspReadyForPickupEvent(consignmentModel, interceptorContext);
   }
 
   /**
@@ -131,6 +141,21 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 		  }
 	  }
   }
+  public void triggerEspReadyForPickupEvent(final ConsignmentModel consignmentModel,
+      final InterceptorContext interceptorContext){
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+    if(!interceptorContext.isNew(consignmentModel) && interceptorContext
+        .isModified(consignmentModel, ConsignmentModel.STATUS) && consignmentModel.getStatus().equals(
+        ConsignmentStatus.READY_FOR_PICKUP) && CollectionUtils.isNotEmpty(warehouses)){
+       final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
+       orderModel.setStatus(OrderStatus.RECEIVED_READY_FOR_PICKUP);
+      interceptorContext.getModelService().save(orderModel);
+      interceptorContext.getModelService().refresh(orderModel);
+      getBlEspEventService().sendOrderReadyForPickupEvent((OrderModel) consignmentModel.getOrder());
+    }
+
+  }
 
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
@@ -139,5 +164,21 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
   public void setBlOrderNoteService(BlOrderNoteService blOrderNoteService) {
     this.blOrderNoteService = blOrderNoteService;
   }
+  public DefaultBlESPEventService getBlEspEventService(){
 
+    return blEspEventService;
+
+  }
+  public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
+
+    this.blEspEventService = blEspEventService;
+
+  }
+  public BaseStoreService getBaseStoreService() {
+    return baseStoreService;
+  }
+
+  public void setBaseStoreService(BaseStoreService baseStoreService) {
+    this.baseStoreService = baseStoreService;
+  }
 }
