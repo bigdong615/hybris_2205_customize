@@ -32,12 +32,13 @@
 	</section>
 	
 	<!-- BL-360 : HomePage Mobile device Search Box Section -->
+	<div class="wrapup-search">
 	<section id="globalSearch" class="d-md-none">
 		<cms:pageSlot position="MobileHomePageBannerSearchBoxSlot" var="feature">
 			<cms:component component="${feature}" />
 		</cms:pageSlot>
 	</section>
-
+	</div>
 	<section id="theProcess">
 		<div class="container">
 			<div class="row justify-content-center">

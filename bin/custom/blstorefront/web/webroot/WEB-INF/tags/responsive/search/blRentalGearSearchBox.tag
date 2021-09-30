@@ -9,7 +9,7 @@
 <spring:url value="/search/autocomplete/{/componentuid}" var="autocompleteUrl" htmlEscape="false">
      <spring:param name="componentuid"  value="${component.uid}"/>
 </spring:url>
-
+<div class="wrapup-search">
 <section id="globalSearch">
    <div class="container">
       <div  class="row justify-content-center">
@@ -43,3 +43,4 @@
       </div>
    </div>
 </section>
+</div>
