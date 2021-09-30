@@ -80,7 +80,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                         blInventoryCycleCountModel.getInventoryCycleCountCode());
                 return Boolean.FALSE;
             } else {
-                BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.DEACTIVATING_PREVIOUS_CYCLE_COUNT_WITH_CODE,
+                BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.DEACTIVATED_PREVIOUS_CYCLE_COUNT_WITH_CODE,
                         blInventoryCycleCountModel.getInventoryCycleCountCode());
                 blInventoryCycleCountModel.setInventoryCycleCountActive(Boolean.FALSE);
                 getModelService().save(blInventoryCycleCountModel);
@@ -170,11 +170,14 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                     serialBarcodes, sku.getInventoryCycleCountProduct());
         }
 
-        if(Boolean.TRUE.equals(this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes))) {
-            return this.getActiveInventoryCycleCount().getInventoryCycleCountCode();
-        } else {
-            return StringUtils.EMPTY;
+        final BlInventoryCycleCountModel blInventoryCycleCountModel = this.getActiveInventoryCycleCount();
+        if(null != blInventoryCycleCountModel){
+            this.isCurrentCycleCountDaysEnded(blInventoryCycleCountModel);
+            if(Boolean.TRUE.equals(this.logInventoryCycleCountScanHistory(scannedSKUsAndSerials, missingList, serialBarcodes))) {
+                return blInventoryCycleCountModel.getInventoryCycleCountCode();
+            }
         }
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -199,7 +202,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
     }
 
     /**
-     * This methid will create missing and success scanned list
+     * This method will create missing and success scanned list
      *
      * @param serialBarcodes barcodes
      * @param missingList list
@@ -445,6 +448,24 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
                 blInventoryCycleCountDetailsModel.getInventoryCycleCountCode(), blInventoryCycleCountDetailsModel.getInventoryCycleCountDate());
         return blInventoryCycleCountDetailsModel;
 
+    }
+
+    /**
+     * This method will set ICC COMPLETED
+     * @param blInventoryCycleCountModel cycleCount
+     */
+    public void isCurrentCycleCountDaysEnded(final BlInventoryCycleCountModel blInventoryCycleCountModel) {
+        final Collection<BlInventoryCycleCountDetailsModel> allCurrentCycleCountDetails = blInventoryCycleCountModel
+                .getInventoryCycleCountProducts();
+        if(CollectionUtils.isNotEmpty(allCurrentCycleCountDetails) && allCurrentCycleCountDetails.stream().noneMatch(
+            entry -> InventoryCycleCountStatus.READY.equals(entry.getInventoryCycleCountDetailStatus()))) {
+            BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.PREVIOUS_CYCLE_COUNT_ENDED_FOR_CODE,
+                    blInventoryCycleCountModel.getInventoryCycleCountCode());
+            blInventoryCycleCountModel.setInventoryCycleCountStatus(InventoryCycleCountStatus.COMPLETED);
+            blInventoryCycleCountModel.setInventoryCycleCountActive(Boolean.FALSE);
+            getModelService().save(blInventoryCycleCountModel);
+            getModelService().refresh(blInventoryCycleCountModel);
+        }
     }
 
     /**
