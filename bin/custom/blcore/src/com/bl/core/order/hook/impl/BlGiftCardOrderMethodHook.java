@@ -135,10 +135,11 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       giftCardPurchase.setOrder(Collections.singletonList(order));
       modelService.save(giftCardPurchase);
       getModelService().refresh(giftCardPurchase);
+      order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
+      modelService.save(order);
+      getModelService().refresh(order);
+
     }
-    order.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
-    modelService.save(order);
-    getModelService().refresh(order);
   }
 
 

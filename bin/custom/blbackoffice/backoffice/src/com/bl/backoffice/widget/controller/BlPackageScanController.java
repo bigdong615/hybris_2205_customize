@@ -6,13 +6,16 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
@@ -22,7 +25,9 @@ import org.zkoss.zul.Textbox;
 
 import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -51,6 +56,9 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	@Resource(name = "blInventoryScanToolService")
 	private BlInventoryScanToolService blInventoryScanToolService;
+
+	@Resource(name = "blInventoryScanToolDao")
+	BlInventoryScanToolDao blInventoryScanToolDao;
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
@@ -170,13 +178,13 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_SCAN_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_SCAN_CANCEL_ORDER_FAILURE);
 		}
 		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_SCAN_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_SCAN_MANUAL_REVIEW_FAILURE);
 		}
 		else
 		{
@@ -192,21 +200,79 @@ public class BlPackageScanController extends DefaultWidgetController
 	 */
 	private void validatePackageBinLocation()
 	{
+		final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+
 		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_SCAN_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_SCAN_CANCEL_ORDER_FAILURE);
 		}
 		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_SCAN_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_SCAN_MANUAL_REVIEW_FAILURE);
 		}
 		else
 		{
-			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
 			createResponseForPackageScan(barcodes);
 		}
+	}
+
+	/**
+	 * method will be used to create error response for order in CANCEL state
+	 * @param errorMap
+	 * @param serialBarcode
+	 */
+	private void createErrorResponseForCancel(final Map<String, String> errorMap, final String serialBarcode)
+	{
+		if (errorMap.containsKey(serialBarcode))
+		{
+
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE, serialBarcode, errorMap.get(serialBarcode));
+
+		}
+		else
+		{
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE, serialBarcode, StringUtils.EMPTY);
+		}
+	}
+
+	/**
+	 * method will be used to create error response for order in MANUAL REVIEW state
+	 * @param errorMap
+	 * @param serialBarcode
+	 */
+	private void createErrorResponseForManulReview(final Map<String, String> errorMap, final String serialBarcode)
+	{
+		if (errorMap.containsKey(serialBarcode))
+		{
+
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE, serialBarcode, errorMap.get(serialBarcode));
+
+		}
+		else
+		{
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE, serialBarcode, StringUtils.EMPTY);
+		}
+	}
+
+	/**
+	 * method wil be used to create error Map for boxing response
+	 * @param barcodes
+	 * @return
+	 */
+	private Map<String, String> createErrorMap(final List<String> barcodes)
+	{
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolDao()
+				.getSerialProductsByBarcode(subList);
+
+		return serialProductsByBarcode.stream()
+				.collect(Collectors.toMap(BlSerialProductModel::getBarcode, serial -> serial.getBlProduct().getName()));
 	}
 
 	/**
@@ -218,13 +284,15 @@ public class BlPackageScanController extends DefaultWidgetController
 	{
 		if (OrderStatus.CANCELLED.equals(selectedConsignment.getOrder().getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_CANCEL_ORDER_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_CANCEL_ORDER_FAILURE);
+
+			final Map<String, String> errorMap = createErrorMap(barcodes);
+			barcodes.forEach(serialBarcode -> createErrorResponseForCancel(errorMap, serialBarcode));
+
 		}
 		else if (ConsignmentStatus.SHIPPING_MANUAL_REVIEW.equals(selectedConsignment.getStatus()))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SHIPPING_MANUAL_REVIEW_FAILURE_MSG,
-					BlInventoryScanLoggingConstants.PACKAGE_MANUAL_REVIEW_FAILURE);
+			final Map<String, String> errorMap = createErrorMap(barcodes);
+			barcodes.forEach(serialBarcode -> createErrorResponseForManulReview(errorMap, serialBarcode));
 		}
 
 		else
@@ -269,7 +337,7 @@ public class BlPackageScanController extends DefaultWidgetController
 			case BlInventoryScanLoggingConstants.ONE:
 				final Map<Integer, List<String>> failedBinBarcodeMap = getBlInventoryScanToolService()
 						.getFailedBinBarcodeList(barcodes);
-				createSuccessResponse(failedBinBarcodeMap);
+				createSuccessResponse(failedBinBarcodeMap, barcodes);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
@@ -303,13 +371,15 @@ public class BlPackageScanController extends DefaultWidgetController
 						.getFailedPackageBarcodeList(barcodes);
 				if (MapUtils.isNotEmpty(failedPackageBarcodeList))
 				{
-					createSuccessResponse(failedPackageBarcodeList);
+					createSuccessResponse(failedPackageBarcodeList, barcodes);
 				}
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
-				notifyErrorMessage(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.LAST_LOCATION_VALID_TRACKING_FAILURE);
+				final String trackingId = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+
+				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_LOCATION_VALID_TRACKING_FAILURE, trackingId);
 				break;
 
 			default:
@@ -321,10 +391,14 @@ public class BlPackageScanController extends DefaultWidgetController
 	/**
 	 * This method is used to create success response
 	 *
+	 * @param barcodes
+	 *
 	 * @param failedBinBarcodeList
 	 */
-	private void createSuccessResponse(final Map<Integer, List<String>> failedBinBarcodeMap)
+	private void createSuccessResponse(final Map<Integer, List<String>> failedBinBarcodeMap, final List<String> barcodes)
 	{
+		final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+
 		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ZERO))
 		{
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
@@ -334,20 +408,30 @@ public class BlPackageScanController extends DefaultWidgetController
 
 		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ONE))
 		{
-			notifyInvalidScan(BlInventoryScanLoggingConstants.INVALID_BARCODE_SCANNED_MSG,
-					BlInventoryScanLoggingConstants.INVALID_BARCODE_SCANNED_ERROR, failedBinBarcodeMap);
+			notifyInvalidScan(BlInventoryScanLoggingConstants.MIX_SCAN_EMPTY_ERROR_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.MIX_SCAN_EMPTY_ERROR_FAILURE_KEY, failedBinBarcodeMap);
 		}
 
 		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.TWO))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_MSG,
-					BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_ERROR);
+			final List<String> list = failedBinBarcodeMap.get(BlInventoryScanLoggingConstants.TWO);
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_MSG,
+					BlInventoryScanLoggingConstants.SERIAL_MISMATCH_SCANNED_ERROR, list, lastScannedItem);
+
 		}
 
 		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.THREE))
 		{
-			notifyErrorMessage(BlInventoryScanLoggingConstants.INVALID_SCAN_MSG,
-					BlInventoryScanLoggingConstants.INVALID_SCAN_ERROR_KEY);
+			final List<String> list = failedBinBarcodeMap.get(BlInventoryScanLoggingConstants.THREE);
+			notifyInvalidScan(BlInventoryScanLoggingConstants.PACKAGE_SERIAL_MISMATCH_SCANNED_MSG,
+					BlInventoryScanLoggingConstants.PACKAGE_SERIAL_MISMATCH_SCANNED_ERROR, lastScannedItem, list);
+
+		}
+
+		else if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.FOUR))
+		{
+			notifyInvalidScan(BlInventoryScanLoggingConstants.FIRST_SCAN_EMPTY_ERROR_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.FIRST_SCAN_EMPTY_ERROR_FAILURE_KEY, failedBinBarcodeMap);
 		}
 	}
 
@@ -370,6 +454,11 @@ public class BlPackageScanController extends DefaultWidgetController
 					BlLogger.logMessage(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 					Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 					this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
+				}
+				else if (checkValidTrackingId == BlInventoryScanLoggingConstants.TWO)
+				{
+					notifyErrorMessage(BlInventoryScanLoggingConstants.FIRST_SCAN_EMPTY_ERROR_FAILURE_MSG,
+							BlInventoryScanLoggingConstants.FIRST_SCAN_EMPTY_ERROR_FAILURE_KEY);
 				}
 				break;
 
@@ -404,7 +493,7 @@ public class BlPackageScanController extends DefaultWidgetController
 	private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, logMsg, logParam);
-		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
+		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel, logParam));
 	}
 
 	/**
@@ -436,6 +525,23 @@ public class BlPackageScanController extends DefaultWidgetController
 	public void setBlInventoryScanToolService(final BlInventoryScanToolService blInventoryScanToolService)
 	{
 		this.blInventoryScanToolService = blInventoryScanToolService;
+	}
+
+	/**
+	 * @return the blInventoryScanToolDao
+	 */
+	public BlInventoryScanToolDao getBlInventoryScanToolDao()
+	{
+		return blInventoryScanToolDao;
+	}
+
+	/**
+	 * @param blInventoryScanToolDao
+	 *           the blInventoryScanToolDao to set
+	 */
+	public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao)
+	{
+		this.blInventoryScanToolDao = blInventoryScanToolDao;
 	}
 
 

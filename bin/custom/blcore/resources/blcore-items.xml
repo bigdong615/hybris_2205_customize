@@ -256,6 +256,7 @@
       		<value code="INCOMPLETE_LOST_IN_TRANSIT"/>
       		<value code="SOLD_SHIPPED"/>
       		<value code="SOLD_RMA_CREATED"/>
+      		<value code="RECEIVED_READY_FOR_PICKUP" />
         </enumtype>
       
       
