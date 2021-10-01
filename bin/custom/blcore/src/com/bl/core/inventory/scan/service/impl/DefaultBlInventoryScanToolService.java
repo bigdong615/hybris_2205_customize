@@ -176,7 +176,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
    		 final List<String> memberAllowedLocationList) {
         if (filteredLocationList.get(BlInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
             final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(inventoryLocation);
-            if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
+            if(Objects.isNull(blLocalInventoryLocation)) {
+            	BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG);
+               return BlInventoryScanLoggingConstants.TWO;
+            }
+            else if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
                 setBlInventoryLocation(blLocalInventoryLocation);
                 return BlInventoryScanLoggingConstants.ONE;
             }
@@ -1170,6 +1174,22 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultInventoryLocation(),
 				Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
+	@Override
+	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes)
+	{
+		if (CollectionUtils.isNotEmpty(barcodes))
+		{
+			final String barcode = barcodes.get(0);
+			return BlInventoryScanLoggingConstants.getDefaultInventoryLocation().stream()
+					.anyMatch(location -> barcode.startsWith(location));
+		}
+		return Boolean.TRUE;
 	}
 
 	/**

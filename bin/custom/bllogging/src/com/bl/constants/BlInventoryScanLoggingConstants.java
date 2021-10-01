@@ -325,6 +325,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String MARGIN_TOP_21_PX_FLOAT_LEFT_MARGIN_LEFT_122_PX_POSITION_FIXED_Z_INDEX_1 = "margin-top:21px;float:left;margin-left: 122px;position: fixed;z-index: 1;";
     public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
     public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
+    public static final String FIRST_SCAN_LOCATION_ERROR_FAILURE = "firstScanLocationErrorFailure";
+    public static final String UNBOX_SAN_TOOL_DC_FROM_DPC_FAILURE = "unboxInvalidDCLocationFromDPErrorFailure";
 
     public static final String REGEX_N = "\n";
 
