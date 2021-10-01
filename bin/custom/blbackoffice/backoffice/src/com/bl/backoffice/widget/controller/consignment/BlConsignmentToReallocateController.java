@@ -169,13 +169,13 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   )
   public void confirmReallocation() throws InterruptedException {
 
-    // Show error message if other consignment of the same order is already shipped.
-    final Set<ConsignmentModel> allConsignments = this.consignment.getOrder().getConsignments();
-    if (CollectionUtils.isNotEmpty(allConsignments) && allConsignments.size() > 1) {
-      allConsignments.remove(this.consignment);
+    // Show error message if other warehouse consignment of the same order is already shipped.
+    final Set<ConsignmentModel> otherConsignments = this.consignment.getOrder().getConsignments();
+    if (CollectionUtils.isNotEmpty(otherConsignments) && otherConsignments.size() > 1) {
+      otherConsignments.remove(this.consignment);
 
-      allConsignments.stream().forEach(consignmentModel -> {
-        if(consignmentModel.getStatus().equals(ConsignmentStatus.SHIPPED)) {
+      otherConsignments.stream().forEach(consignmentModel -> {
+        if (consignmentModel.getStatus().equals(ConsignmentStatus.SHIPPED)) {
           showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_CONSIGNMENT_SHIPPED), true);
           return;
         }
@@ -183,36 +183,48 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     }
 
     this.validateRequest();
+
     String consignmentProcessCode = this.consignment.getCode() + "_ordermanagement";
-    Optional<ConsignmentProcessModel> myConsignmentProcess = this.consignment.getConsignmentProcesses().stream().filter((consignmentProcess) -> {
-      return consignmentProcess.getCode().equals(consignmentProcessCode);
-    }).findFirst();
+    Optional<ConsignmentProcessModel> myConsignmentProcess = this.consignment
+        .getConsignmentProcesses().stream().filter((consignmentProcess) -> {
+          return consignmentProcess.getCode().equals(consignmentProcessCode);
+        }).findFirst();
+
     Collection<DeclineEntry> entriesToReallocate = new ArrayList();
     if (myConsignmentProcess.isPresent()) {
       List<Component> rows = this.consignmentEntries.getRows().getChildren();
       rows.stream().filter((entry) -> {
-        return ((Checkbox)entry.getFirstChild()).isChecked();
+        return ((Checkbox) entry.getFirstChild()).isChecked();
       }).forEach((entry) -> {
         this.createDeclineEntry(entriesToReallocate, entry);
       });
     }
 
     if (!entriesToReallocate.isEmpty()) {
-      this.buildDeclineParam((ConsignmentProcessModel)myConsignmentProcess.get(), entriesToReallocate);
-      this.getConsignmentBusinessProcessService().triggerChoiceEvent(this.getConsignment(), "ConsignmentActionEvent", "reallocateConsignment");
-      ConsignmentModel refreshedConsignment = (ConsignmentModel)this.getModelService().get(this.getConsignment().getPk());
+      this.buildDeclineParam((ConsignmentProcessModel) myConsignmentProcess.get(),
+          entriesToReallocate);
+      this.getConsignmentBusinessProcessService()
+          .triggerChoiceEvent(this.getConsignment(), "ConsignmentActionEvent",
+              "reallocateConsignment");
+      ConsignmentModel refreshedConsignment = (ConsignmentModel) this.getModelService()
+          .get(this.getConsignment().getPk());
 
-      for(int iterationCount = 0; !this.isDeclineProcessDone(refreshedConsignment, entriesToReallocate) && iterationCount < 500000; ++iterationCount) {
+      for (int iterationCount = 0;
+          !this.isDeclineProcessDone(refreshedConsignment, entriesToReallocate)
+              && iterationCount < 500000; ++iterationCount) {
         this.getModelService().refresh(refreshedConsignment);
       }
 
       refreshedConsignment.getConsignmentEntries().forEach((entry) -> {
-        this.getCockpitEventQueue().publishEvent(new DefaultCockpitEvent("objectsUpdated", entry, (Object)null));
+        this.getCockpitEventQueue()
+            .publishEvent(new DefaultCockpitEvent("objectsUpdated", entry, (Object) null));
       });
       this.setConsignment(refreshedConsignment);
-      this.getNotificationService().notifyUser("", "JustMessage", Level.SUCCESS, new Object[]{this.getLabel("warehousingbackoffice.reallocationconsignment.success.message")});
+      this.getNotificationService().notifyUser("", "JustMessage", Level.SUCCESS, new Object[]{
+          this.getLabel("warehousingbackoffice.reallocationconsignment.success.message")});
     } else {
-      this.getNotificationService().notifyUser("", "JustMessage", Level.FAILURE, new Object[]{this.getLabel("warehousingbackoffice.reallocationconsignment.error.message")});
+      this.getNotificationService().notifyUser("", "JustMessage", Level.FAILURE, new Object[]{
+          this.getLabel("warehousingbackoffice.reallocationconsignment.error.message")});
     }
 
     this.sendOutput("confirmOutput", COMPLETED);
@@ -590,26 +602,51 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     return null;
   }
 
+  /**
+   * It validate consignment entry which needs to be re-allocated
+   * @param entry the ConsignmentEntryToReallocateDto
+   */
   protected void validateConsignmentEntry(ConsignmentEntryToReallocateDto entry) {
+
     InputElement quantity;
     if (entry.getQuantityToReallocate() > entry.getConsignmentEntry().getQuantityPending()) {
-      quantity = (InputElement)this.targetFieldToApplyValidation(entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 4);
-      throw new WrongValueException(quantity, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.invalid.quantity"));
+
+      quantity = (InputElement) this.targetFieldToApplyValidation(
+          entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 4);
+      throw new WrongValueException(quantity, this.getLabel(
+          "warehousingbackoffice.reallocationconsignment.decline.validation.invalid.quantity"));
     } else if (entry.getSelectedReason() != null && entry.getQuantityToReallocate() == 0L) {
-      quantity = (InputElement)this.targetFieldToApplyValidation(entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 4);
-      throw new WrongValueException(quantity, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.missing.quantity"));
+
+      quantity = (InputElement) this.targetFieldToApplyValidation(
+          entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 4);
+      throw new WrongValueException(quantity, this.getLabel(
+          "warehousingbackoffice.reallocationconsignment.decline.validation.missing.quantity"));
     } else {
+
       Combobox location;
       if (entry.getSelectedReason() == null && entry.getQuantityToReallocate() > 0L) {
-        location = (Combobox)this.targetFieldToApplyValidation(entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 5);
-        throw new WrongValueException(location, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.missing.reason"));
-      } else if (entry.getSelectedLocation() != null && isStockNotAvailable(entry.getConsignmentEntry(), entry.getSelectedLocation())) {
-        location = (Combobox)this.targetFieldToApplyValidation(entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 6);
-        throw new WrongValueException(location, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.invalid.stockLevel"));
+
+        location = (Combobox) this.targetFieldToApplyValidation(
+            entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 5);
+        throw new WrongValueException(location, this.getLabel(
+            "warehousingbackoffice.reallocationconsignment.decline.validation.missing.reason"));
+      } else if (entry.getSelectedLocation() != null && isStockNotAvailable(
+          entry.getConsignmentEntry(), entry.getSelectedLocation())) {
+
+        location = (Combobox) this.targetFieldToApplyValidation(
+            entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 6);
+        throw new WrongValueException(location, this.getLabel(
+            "warehousingbackoffice.reallocationconsignment.decline.validation.invalid.stockLevel"));
       }
     }
   }
 
+  /**
+   * It checks the stock availability for the product
+   * @param consignmentEntry the ConsignmentEntryModel
+   * @param selectedLocation the WarehouseModel
+   * @return true if no stock available
+   */
   private boolean isStockNotAvailable(final ConsignmentEntryModel consignmentEntry,
       final WarehouseModel selectedLocation) {
 
@@ -627,9 +664,11 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
 
       final Map<Object, List<StockLevelModel>> stockLevelsDatewise = stockLevels.stream()
           .collect(Collectors.groupingBy(stockLevel -> stockLevel.getDate()));
+
       final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(orderModel.getActualRentalStartDate());
       final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(orderModel.getActualRentalEndDate());
       final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
+
       final Set<Object> datesPresentInStockTable = stockLevelsDatewise.keySet();
       //This is to check whether stock for any particular day is missing in inventory table
       if (datesPresentInStockTable.size() == stayDuration){
@@ -637,7 +676,6 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
       } else {
         return true;
       }
-
     }
 
     return true;
@@ -646,22 +684,25 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
   protected void validateRequest() {
     Iterator var2 = this.getConsignmentEntries().getRows().getChildren().iterator();
 
-    while(var2.hasNext()) {
-      Component row = (Component)var2.next();
-      Component firstComponent = (Component)row.getChildren().iterator().next();
-      if (firstComponent instanceof Checkbox && ((Checkbox)firstComponent).isChecked()) {
-        InputElement returnQty = (InputElement)row.getChildren().get(4);
+    while (var2.hasNext()) {
+      Component row = (Component) var2.next();
+      Component firstComponent = (Component) row.getChildren().iterator().next();
+      if (firstComponent instanceof Checkbox && ((Checkbox) firstComponent).isChecked()) {
+        InputElement returnQty = (InputElement) row.getChildren().get(4);
         if (returnQty.getRawValue().equals(0)) {
-          throw new WrongValueException(returnQty, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.missing.quantity"));
+          throw new WrongValueException(returnQty, this.getLabel(
+              "warehousingbackoffice.reallocationconsignment.decline.validation.missing.quantity"));
         }
       }
     }
 
-    ListModelList<ConsignmentEntryToReallocateDto> modelList = (ListModelList)this.getConsignmentEntries().getModel();
+    ListModelList<ConsignmentEntryToReallocateDto> modelList = (ListModelList) this
+        .getConsignmentEntries().getModel();
     if (modelList.stream().allMatch((entry) -> {
       return entry.getQuantityToReallocate() == 0L;
     })) {
-      throw new WrongValueException(this.globalDeclineEntriesSelection, this.getLabel("warehousingbackoffice.reallocationconsignment.decline.validation.missing.selectedLine"));
+      throw new WrongValueException(this.globalDeclineEntriesSelection, this.getLabel(
+          "warehousingbackoffice.reallocationconsignment.decline.validation.missing.selectedLine"));
     } else {
       modelList.forEach(this::validateConsignmentEntry);
     }
