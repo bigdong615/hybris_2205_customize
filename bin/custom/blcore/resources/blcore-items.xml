@@ -245,8 +245,8 @@
       		<value code="INCOMPLETE_MISSING_ITEMS" />
       		<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
       		<value code="INCOMPLETE_RECOVERED" />
-      		<value code="PARTIALLY_UNBOXED" />
-      		<value code="UNBOXED" />
+      		<value code="UNBOXED_PARTIALLY" />
+      		<value code="UNBOXED_COMPLETELY" />
       		<value code="LATE" />
       		<value code="RETURNED" />
       		<value code="SHIPPED"/>
@@ -274,8 +274,8 @@
       	<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
       	<value code="INCOMPLETE_RECOVERED" />
       	<value code="MANUAL_REVIEW" />
-      	<value code="UNBOXED_PARTIALLY" />
-      	<value code="UNBOXED_COMPLETELY" />
+      	<value code="PARTIALLY_UNBOXED" />
+      	<value code="UNBOXED" />
       	<value code="SHIPPING_MANUAL_REVIEW"/>
       	<value code="RECEIVED_READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>

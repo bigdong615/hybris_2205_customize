@@ -167,7 +167,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       final InterceptorContext interceptorContext) {
     if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
-        .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
+        .equals(OrderStatus.RECEIVED_PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
       getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
     }
   }
@@ -180,7 +180,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
    */
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
-    if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
+    if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
       getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
     }

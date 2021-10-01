@@ -85,7 +85,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 						order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null), Boolean.FALSE);
 			}
 		} catch(final BraintreeErrorException ex) {
-			order.setStatus(OrderStatus.PAYMENT_DECLINED);
+			order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
 			modelService.save(order);
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
@@ -133,7 +133,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 			return true;
 		} else {
 			if(status) {
-				order.setStatus(OrderStatus.PAYMENT_DECLINED);
+				order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
 			} else {
 				order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
 			}

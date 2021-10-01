@@ -285,7 +285,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    */
   private void setOrderToManualReviewStatus(final OrderModel order) {
 
-    order.setStatus(OrderStatus.MANUAL_REVIEW);
+    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
     getModelService().save(order);
   }
 
