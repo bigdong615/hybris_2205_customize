@@ -16,9 +16,6 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-
-import de.hybris.platform.store.BaseStoreModel;
-import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +37,6 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
   private static final Logger LOG = Logger.getLogger(BlConsignmentPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
   private DefaultBlESPEventService blEspEventService;
-  private BaseStoreService baseStoreService;
 
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
@@ -187,11 +183,5 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     this.blEspEventService = blEspEventService;
 
   }
-  public BaseStoreService getBaseStoreService() {
-    return baseStoreService;
-  }
 
-  public void setBaseStoreService(BaseStoreService baseStoreService) {
-    this.baseStoreService = baseStoreService;
-  }
 }

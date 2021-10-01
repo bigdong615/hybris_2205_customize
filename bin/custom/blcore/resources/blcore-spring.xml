@@ -109,7 +109,7 @@
 		<property name="commonI18NService" ref="commonI18NService" />
 		<property name="baseSiteService" ref="baseSiteService" />
 	</bean>
-	<bean id="submitOrderEventListener" class="com.bl.core.event.SubmitOrderEventListener" parent="abstractAcceleratorSiteEventListener">
+	<bean id="submitOrderEventListener" class="com.bl.core.event.SubmitOrderEveblConsignmentPrepareInterceptorntListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="modelService" ref="modelService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
@@ -1125,7 +1125,6 @@
 	<bean id="blConsignmentPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
 		<property name="blEspEventService" ref="blEspEventService"/>
-		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<bean id="blConsignmentPrepareInterceptorMapping"
