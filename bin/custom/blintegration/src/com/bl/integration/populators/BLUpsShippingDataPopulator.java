@@ -135,7 +135,11 @@ public class BLUpsShippingDataPopulator
 	private ShipmentData populateUpsShipmentRequestData(final PackagingInfoModel packagingInfo, final ShipmentData shipmentData,
 			final WarehouseModel stateWarehouse)
 	{
+		/** Creating UPS Payment Data **/
+		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
+
 		final WarehouseModel warehouse = packagingInfo.getConsignment().getWarehouse();
+		final ShipperData shipperData = new ShipperData();
 		AddressModel shipperAddress = new AddressModel();
 
 		/** Creating Shipper Data **/
@@ -143,20 +147,24 @@ public class BLUpsShippingDataPopulator
 		if (Objects.isNull(stateWarehouse) && Objects.nonNull(warehouse) && Objects.nonNull(warehouse.getPointsOfService()))
 		{
 			shipperAddress = getWarehouseAddress(warehouse);
+			shipperData.setShipperNumber(warehouse.getAccountNumber());
+			populatePaymentServiceData(warehouse, upsPaymentInformation);
 		}
 		else if (Objects.nonNull(stateWarehouse) && Objects.nonNull(stateWarehouse.getPointsOfService()))
 		{
 			shipperAddress = getWarehouseAddress(stateWarehouse);
+			shipperData.setShipperNumber(stateWarehouse.getAccountNumber());
+			populatePaymentServiceData(stateWarehouse, upsPaymentInformation);
 		}
 		final AddressData addressData = addressConverter.convert(shipperAddress);
 
-		final ShipperData shipperData = new ShipperData();
+
 
 		final ShipmentPhoneData shipperPhone = new ShipmentPhoneData();
 		shipperPhone.setNumber(addressData.getPhone());
 
 		final AddressData shipperAddressData = new AddressData();
-		populateShipperAddressData(warehouse, addressData, shipperData, shipperAddressData);
+		populateShipperAddressData(addressData, shipperAddressData);
 
 		shipperData.setName(shipperName);
 		shipperData.setAttentionName(shipperAttensionName);
@@ -176,10 +184,6 @@ public class BLUpsShippingDataPopulator
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
 		populateUpsShipmentServiceData(packagingInfo, upsShipmentServiceData);
-
-		/** Creating UPS Payment Data **/
-		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
-		populatePaymentServiceData(warehouse, upsPaymentInformation);
 
 		/** Creating UPS Package Data List **/
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
@@ -203,13 +207,8 @@ public class BLUpsShippingDataPopulator
 	 * @param shipperData
 	 * @param shipperAddressData
 	 */
-	private void populateShipperAddressData(final WarehouseModel warehouse, final AddressData addressData,
-			final ShipperData shipperData, final AddressData shipperAddressData)
+	private void populateShipperAddressData(final AddressData addressData, final AddressData shipperAddressData)
 	{
-		if (Objects.nonNull(warehouse) && Objects.nonNull(warehouse.getAccountNumber()))
-		{
-			shipperData.setShipperNumber(warehouse.getAccountNumber());
-		}
 		shipperAddressData.setLine1(addressData.getLine1());
 		shipperAddressData.setLine2(addressData.getLine2());
 		shipperAddressData.setTown(addressData.getTown());
