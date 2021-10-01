@@ -273,6 +273,7 @@
       	<value code="SHIPPING_MANUAL_REVIEW"/>
       	<value code="READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
+        <value code="PARTIALLY_SHIPPED" />
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
@@ -2288,7 +2289,7 @@
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                        <deployment table="shippingGroup" typecode="12209" />
+                        <deployment table="shippingGroup" typecode="12509" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
@@ -2992,7 +2993,7 @@
             </itemtype>
 
             <itemtype code="OptimizedShippingMethod" generate="true" autocreate="true">
-                <deployment table="optShipMethod" typecode="12215"/>
+                <deployment table="optShipMethod" typecode="12515"/>
                 <attributes>
                     <attribute type="java.lang.String" qualifier="code">
                         <modifiers read="true" write="true" unique="true" optional="false"/>
