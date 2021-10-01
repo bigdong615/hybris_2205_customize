@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -141,18 +142,32 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 		  }
 	  }
   }
+
+  /**
+   * This method created to trigger the ESP event for ready for pickup order
+   * @param consignmentModel  consignmentModel
+   * @param interceptorContext interceptorContext
+   */
   public void triggerEspReadyForPickupEvent(final ConsignmentModel consignmentModel,
       final InterceptorContext interceptorContext){
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+    final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
     if(!interceptorContext.isNew(consignmentModel) && interceptorContext
         .isModified(consignmentModel, ConsignmentModel.STATUS) && consignmentModel.getStatus().equals(
-        ConsignmentStatus.READY_FOR_PICKUP) && CollectionUtils.isNotEmpty(warehouses)){
+        ConsignmentStatus.READY_FOR_PICKUP) && CollectionUtils.isNotEmpty(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+        && (StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
+        StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
        final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
        orderModel.setStatus(OrderStatus.RECEIVED_READY_FOR_PICKUP);
       interceptorContext.getModelService().save(orderModel);
       interceptorContext.getModelService().refresh(orderModel);
-      getBlEspEventService().sendOrderReadyForPickupEvent((OrderModel) consignmentModel.getOrder());
+      try{
+        getBlEspEventService().sendOrderReadyForPickupEvent((OrderModel) consignmentModel.getOrder());
+      }
+      catch (Exception e){
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing OrderReadyForPickup ESP Event" , e.getMessage());
+      }
     }
 
   }
