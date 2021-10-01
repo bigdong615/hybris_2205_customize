@@ -55,6 +55,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String CARRIER = "CARRIER";
     public static final String BOXING_FEDEX = "FEDEX";
     public static final String FD_MOBILE_SHELF = "FDSHIPPED";
+ 	public static final String ITEM_TEXT = " Item :";
+ 	public static final String PRODUCT_TEXT = " for product : ";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -93,18 +95,25 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
-    public static final String LAST_SCAN_ERROR_FAILURE_MSG = "Last scan must be a location";
-    public static final String MANY_LOCATION_ERROR_FAILURE_MSG = "Too many location scans in sequence for an item";
-    public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG = "Something went wrong!!";
+    public static final String LAST_SCAN_ERROR_FAILURE_MSG = "If the first scan is a tracking number, all following scans must be tracking numbers and the last scan must be a location";
+ 	public static final String MANY_LOCATION_ERROR_FAILURE_MSG = "Only a single location scan is allowed and it must be last when scanning in tracking numbers to locations";
+ 	public static final String FIRST_SCAN_EMPTY_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN or a tracking number";
+ 	public static final String MIX_SCAN_EMPTY_ERROR_FAILURE_MSG = "An item or bin scan is not allowed when the first scan is a tracking number";
+
+ 	public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG = "Something went wrong!!";
  	public static final String SHIPPING_MAX_SCAN_ERROR_MSG = "Invalid number of barcodes in sequence";
  	public static final String INVALID_BARCODE_SCANNED_MSG = "Scanned barcodes are not valid {}";
- 	public static final String SERIAL_MISMATCH_SCANNED_MSG = "Scanned serial does not match to serials on package";
+ 	public static final String SERIAL_MISMATCH_SCANNED_MSG = "{} is not assigned to orders present in tracking number: {} ";
+ 	public static final String PACKAGE_SERIAL_MISMATCH_SCANNED_MSG = "Could not find a matching order for tracking number: {} {}";
+
  	public static final String INVALID_SCAN_MSG = "Invalid Scan";
 
- 	public static final String SHIPPING_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
-	public static final String SHIPPING_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order"; 
- 	public static final String SERIAL_MISSING_ON_CONSIGNMENT_MSG = "Serial {} is missing on consignment ";
- 	public static final String SERIAL_MISSING_ON_SCAN_MSG = "Serial {} is missing on Scan ";
+ 	public static final String SHIPPING_MANUAL_REVIEW_FAILURE_MSG = "{} for product: {} should not processed for Shipping or Boxing as Consignment status = 'Shipping Manual Review'";
+	public static final String SHIPPING_CANCEL_ORDER_FAILURE_MSG = "{} for product: {} should not processed for Shipping or Boxing as Consignment status = 'Cancelled'";
+	public static final String SHIPPING_SCAN_CANCEL_ORDER_FAILURE_MSG = "This scan should not be processed for Shipping or Boxing as Consignment status = 'Cancelled'";
+	public static final String SHIPPING_SCAN_MANUAL_REVIEW_FAILURE_MSG = "This scan should not be processed for Shipping or Boxing as Consignment status = 'Shipping Manual Review";
+	public static final String SERIAL_MISSING_ON_CONSIGNMENT_MSG = "Serial {} is missing on consignment ";
+	public static final String SERIAL_MISSING_ON_SCAN_MSG = "Serial {} is missing on Scan ";
 
     public static final String VALID_BIN_LOCATION_ERROR_FAILURE_MSG = "Failed to update BIN inventory location for: {}";
     public static final String VALID_PARENT_LOCATION_ERROR_FAILURE_MSG = "Last scan must be valid Parent Inventory Location for BIN";
@@ -157,6 +166,9 @@ public class BlInventoryScanLoggingConstants {
  	public static final String FRONT_DESK_SHIPPED_MOBILE_CART = "FRONT_DESK_SHIPPED_MOBILE_CART";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
  	public static final String LAST_SCAN_INVALID_ERROR_FAILURE_KEY = "blbackoffice.order.scan.last.location.error";
+ 	public static final String FIRST_SCAN_EMPTY_ERROR_FAILURE_KEY = "blbackoffice.order.scan.first.location.error";
+	public static final String PACKAGE_SERIAL_MISMATCH_SCANNED_ERROR = "blbackoffice.order.package.serial.mismatch.error";
+	public static final String MIX_SCAN_EMPTY_ERROR_FAILURE_KEY = "blbackoffice.order.scan.mix.location.error";
  	public static final String NO_ITEM_SCAN_KEY = "blbackoffice.order.scan.tool.noitem.scan.error";
  	public static final String INVALID_SCAN_ERROR = "blbackoffice.order.scan.invalid.scan.error";
  	public static final String MANY_LOCATION_ERROR_KEY = "blbackoffice.order.scan.many.location.error";
@@ -167,7 +179,9 @@ public class BlInventoryScanLoggingConstants {
  	public static final String INVALID_SCAN_ERROR_KEY = "blbackoffice.order.invali.scan.error.key";
  	public static final String TWO_BARCODE_SCAN_ERROR_KEY = "blbackoffice.order.scan.item.error";
 	public static final String PACKAGE_MANUAL_REVIEW_FAILURE = "blbackoffice.order.manual.review.error.messge";
+	public static final String PACKAGE_SCAN_MANUAL_REVIEW_FAILURE = "blbackoffice.order.manual.review.package.error.messge";
 	public static final String PACKAGE_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.order.error.messge";
+	public static final String PACKAGE_SCAN_CANCEL_ORDER_FAILURE = "blbackoffice.order.cancel.package.scan.error.messge";
 	public static final String LAST_LOCATION_VALID_TRACKING_FAILURE = "blbackoffice.order.last.location.tracking.id.error.messge";
 	
  	public static final String SHIPPING_NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
@@ -178,9 +192,12 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SHIPPING_MANY_LOCATION_ERROR = "blbackoffice.shipping.scan.many.location.error";
  	public static final String SHIPPING_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
  	public static final String SHIPPING_MANUAL_REVIEW_FAILURE = "blbackoffice.shipping.manual.review.error.messge";
+	public static final String SHIPPING_SCAN_MANUAL_REVIEW_FAILURE = "blbackoffice.shipping.manual.review.scan.error.messge";
 	public static final String SHIPPING_CANCEL_ORDER_FAILURE = "blbackoffice.shipping.cancel.order.error.messge";
- 	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
- 	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
+	public static final String SHIPPING_SCAN_CANCEL_ORDER_FAILURE = "blbackoffice.shipping.cancel.order.scan.error.messge";
+	public static final String SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY = "blbackoffice.shipping.serial.missing.error.messge";
+	public static final String SHIPPING_SERIAL_MISSING_ON_SCAN_KEY = "blbackoffice.shipping.scan.missing.error.messge";
+	public static final String SHIPPING_FIRST_SCAN_EMPTY_ERROR_FAILURE_KEY = "blbackoffice.shipping.scan.first.location.error";
  	
 	public static final String FRONT_DESK_MANUAL_REVIEW_FAILURE_MSG = "Can not scan order which is in SHIPPIN MANUAL REVIEW state";
 	public static final String FRONT_DESK_CANCEL_ORDER_FAILURE_MSG = "Can not scan cancelled order";

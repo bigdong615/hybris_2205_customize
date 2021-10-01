@@ -191,7 +191,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
       getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
     }
   }
