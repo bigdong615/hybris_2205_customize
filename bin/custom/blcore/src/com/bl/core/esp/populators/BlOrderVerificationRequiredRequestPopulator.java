@@ -9,6 +9,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -62,11 +63,16 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
           .getDeliveryMode());
       orderVerificationRequiredEventData.setShippingMethodType(getRequestValue(zoneDeliveryModeModel.getShippingGroup().getName()));
       orderVerificationRequiredEventData.setShippingMethod(getRequestValue(zoneDeliveryModeModel.getCode()));
+    }
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
+    {
+      orderVerificationRequiredEventData
+          .setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
+      orderVerificationRequiredEventData
+          .setReturnDate(formatter.format(orderModel.getRentalEndDate()));
+      orderVerificationRequiredEventData.setRentalDuration((int) getRentalDuration(orderModel));
       orderVerificationRequiredEventData.setExpectedShipping(formatter.format(orderModel.getActualRentalStartDate()));
     }
-    orderVerificationRequiredEventData.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
-    orderVerificationRequiredEventData.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
-    orderVerificationRequiredEventData.setRentalDuration((int) getRentalDuration(orderModel));
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       orderVerificationRequiredEventData.setCustomerName(getRequestValue(userModel.getName()));
