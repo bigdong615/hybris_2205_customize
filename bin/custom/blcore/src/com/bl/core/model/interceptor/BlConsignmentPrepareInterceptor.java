@@ -152,9 +152,8 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       final InterceptorContext interceptorContext){
     final WarehouseModel warehouses = consignmentModel.getWarehouse();
     final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
-    if(!interceptorContext.isNew(consignmentModel) && interceptorContext
-        .isModified(consignmentModel, ConsignmentModel.STATUS) && consignmentModel.getStatus().equals(
-        ConsignmentStatus.READY_FOR_PICKUP) && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+    if(interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS) && ConsignmentStatus.READY_FOR_PICKUP.equals(consignmentModel.getStatus().getCode())
+        && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
         && (StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
         StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
        final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
@@ -164,8 +163,8 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       try{
         getBlEspEventService().sendOrderReadyForPickupEvent((OrderModel) consignmentModel.getOrder());
       }
-      catch (Exception e){
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing OrderReadyForPickup ESP Event" , e.getMessage());
+      catch (final Exception exception){
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing OrderReadyForPickup ESP Event" , exception);
       }
     }
 

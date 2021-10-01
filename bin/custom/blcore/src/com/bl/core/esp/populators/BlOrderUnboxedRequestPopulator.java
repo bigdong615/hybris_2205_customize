@@ -72,8 +72,8 @@ public class BlOrderUnboxedRequestPopulator  extends ESPEventCommonPopulator<Ord
       orderUnBoxedData.setActualreturndate(formatter.format(order.getActualRentalEndDate()));
       orderUnBoxedEventRequest.setData(orderUnBoxedData);
     }
-    catch (Exception e){
-      BlLogger.logMessage(LOG , Level.ERROR , "Error while populating data for Unboxed ESP event" , e.getMessage());
+    catch (final Exception exception){
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while populating data for Unboxed ESP event" , exception);
     }
   }
 }
