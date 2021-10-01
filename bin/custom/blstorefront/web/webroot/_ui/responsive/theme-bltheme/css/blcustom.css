@@ -706,3 +706,4 @@ color:#fff !important;
 .arrival-notification{background:#fff !important;border: 1px solid #cccccc !important;color: #3d3c3c !important;}
 .arrival-notification:hover{background:none !important;border:1px solid #ccc!important;color: #3d3c3c !important;}
 #costSummary i.icon-support {width:12px;}
+.fixed-line-height .dropdown ul li a{line-height: 20px;padding-left: 0 !important;width: 100%;overflow: hidden;}
