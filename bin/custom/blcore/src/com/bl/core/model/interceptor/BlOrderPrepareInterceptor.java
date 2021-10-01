@@ -77,7 +77,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
     }
-    catch (final BlESPIntegrationException e){
+    catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
           "Event API call failed", e);
     }
@@ -178,7 +178,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
         .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
-      getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      try
+      {
+        getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger payment declined event.",e);
+      }
+
     }
   }
 
@@ -191,8 +198,15 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
-      getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+      try
+      {
+        getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger verification Required Event",e);
+      }
+
     }
   }
   public BlOrderNoteService getBlOrderNoteService() {
