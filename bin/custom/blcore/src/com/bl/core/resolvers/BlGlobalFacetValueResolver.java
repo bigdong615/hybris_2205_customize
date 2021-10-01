@@ -68,7 +68,7 @@ public class BlGlobalFacetValueResolver extends
 
   private Object getPropertyValue(final Object model)
   {
-    return getPropertyValue(model, BlCoreConstants.CODE);
+    return getPropertyValue(model, BlCoreConstants.NAME);
   }
 
   private Object getPropertyValue(final Object model, final String propertyName)
