@@ -650,7 +650,7 @@ ul.ui-autocomplete.active {
   line-height:1px;
 }  
 .view-links .dropdown-menu>li>a {  
-    padding: 3px 20px 0 0;
+    padding:0px 20px 0 0;
 }
 .gift-card-input{
 padding-left:0;
