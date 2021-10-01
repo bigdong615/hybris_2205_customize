@@ -250,6 +250,7 @@
       		<value code="LATE" />
       		<value code="RETURNED" />
       		<value code="SHIPPED"/>
+      		<value code="RECEIVED_READY_FOR_PICKUP" />
         </enumtype>
       
       

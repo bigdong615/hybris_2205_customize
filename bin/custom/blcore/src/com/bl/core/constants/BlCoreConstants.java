@@ -451,6 +451,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
   public static final String RENTAL = "Rental";
   public static final String UN_BOXED = "UnBoxed";
 
+  public static final String NAME = "Name";
+
 	private BlCoreConstants()
 	{
 		//empty

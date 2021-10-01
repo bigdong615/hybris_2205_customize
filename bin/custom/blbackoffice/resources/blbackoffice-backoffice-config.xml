@@ -827,7 +827,7 @@
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
-            </na:notifications>
+            </na:notifications>            
             <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
                 <na:references linksEnabled="true">
@@ -1532,13 +1532,19 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+            <na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
             <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
-            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+            <na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
@@ -1829,13 +1835,19 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
+			<na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
 			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+			<na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -1867,6 +1879,12 @@
 			</na:notifications>
 			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="unboxInvalidDCLocationFromDPErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.from.dirty.priority.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>

@@ -176,7 +176,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
    		 final List<String> memberAllowedLocationList) {
         if (filteredLocationList.get(BlInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
             final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao().getInventoryLocationById(inventoryLocation);
-            if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
+            if(Objects.isNull(blLocalInventoryLocation)) {
+            	BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG);
+               return BlInventoryScanLoggingConstants.TWO;
+            }
+            else if (isLocationValidForMember(memberAllowedLocationList, blLocalInventoryLocation)) {
                 setBlInventoryLocation(blLocalInventoryLocation);
                 return BlInventoryScanLoggingConstants.ONE;
             }
@@ -532,14 +536,17 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes)
 	{
-
-		final List<String> subList = new ArrayList<>(
-				barcodes.subList(0, barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+		final List<String> subList = new ArrayList<>(barcodes.subList(0, barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 		final Collection<BlSerialProductModel> scannedSerialProduct = getBlInventoryScanToolDao()
 				.getSerialProductsByBarcode(subList);
 
 		if (scannedSerialProduct.size() != subList.size())
 		{
+			if (StringUtils.isEmpty(subList.get(0)))
+			{
+				return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.FOUR, Collections.emptyList()));
+			}
+
 			final List<String> collect = scannedSerialProduct.stream().map(BlSerialProductModel::getBarcode)
 					.collect(Collectors.toList());
 			for (final String scannedProduct : collect)
@@ -567,12 +574,81 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			});
 			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ZERO, Collections.emptyList()));
 		}
-		else
+		else if (serialProductsOnPackage.size() > scannedSerialProduct.size())
 		{
-			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.TWO, Collections.emptyList()));
+			return getMissingSerialOnScan(scannedSerialProduct, serialProductsOnPackage);
+
 		}
+
+		else if (scannedSerialProduct.size() > serialProductsOnPackage.size())
+		{
+			return getMissingSerialOnPackage(scannedSerialProduct, serialProductsOnPackage);
+		}
+		return null;
 	}
 
+	/**
+	 * method will be used to get the serial which is missing on package
+	 * @param scannedSerialProduct
+	 * @param serialProductsOnPackage
+	 * @return
+	 */
+	private Map<Integer, List<String>> getMissingSerialOnPackage(final Collection<BlSerialProductModel> scannedSerialProduct,
+			final List<BlProductModel> serialProductsOnPackage)
+	{
+		final List<BlProductModel> serialProductList = new ArrayList<>();
+		final List<String> errorList = new ArrayList<>();
+
+		for (final BlProductModel blSerialProduct : scannedSerialProduct)
+		{
+			serialProductList.add(blSerialProduct);
+		}
+		serialProductList.removeIf(serialProductsOnPackage::contains);
+
+		serialProductList.forEach(serialProduct -> {
+
+			if (serialProduct instanceof BlSerialProductModel)
+			{
+				final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct;
+				errorList.add((BlInventoryScanLoggingConstants.ITEM_TEXT).concat(blSerialProduct.getBarcode())
+						.concat(BlInventoryScanLoggingConstants.PRODUCT_TEXT).concat(blSerialProduct.getBlProduct().getName()));
+			}
+		});
+
+		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.THREE, errorList));
+	}
+
+	/**
+	 * method will be used to get the serial which is missing on scan
+	 * @param scannedSerialProduct
+	 * @param serialProductsOnPackage
+	 * @return
+	 */
+	private Map<Integer, List<String>> getMissingSerialOnScan(final Collection<BlSerialProductModel> scannedSerialProduct,
+			final List<BlProductModel> serialProductsOnPackage)
+	{
+		final List<BlProductModel> serialProductList = new ArrayList<>();
+		final List<String> errorList = new ArrayList<>();
+
+		for (final BlProductModel blSerialProduct : serialProductsOnPackage)
+		{
+			serialProductList.add(blSerialProduct);
+		}
+		serialProductList.removeIf(scannedSerialProduct::contains);
+
+		serialProductList.forEach(serialProduct -> {
+
+			if (serialProduct instanceof BlSerialProductModel)
+			{
+				final BlSerialProductModel blSerialProduct = (BlSerialProductModel) serialProduct;
+				errorList.add((BlInventoryScanLoggingConstants.ITEM_TEXT)
+						.concat(blSerialProduct.getBarcode().concat(BlInventoryScanLoggingConstants.PRODUCT_TEXT))
+						.concat(blSerialProduct.getBlProduct().getName()));
+			}
+		});
+
+		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.TWO, errorList));
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1098,6 +1174,22 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultInventoryLocation(),
 				Lists.newArrayList(BlInventoryScanLoggingConstants.ALLOW_SCAN));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
+	@Override
+	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes)
+	{
+		if (CollectionUtils.isNotEmpty(barcodes))
+		{
+			final String barcode = barcodes.get(0);
+			return BlInventoryScanLoggingConstants.getDefaultInventoryLocation().stream()
+					.anyMatch(location -> barcode.startsWith(location));
+		}
+		return Boolean.TRUE;
 	}
 
 	/**
