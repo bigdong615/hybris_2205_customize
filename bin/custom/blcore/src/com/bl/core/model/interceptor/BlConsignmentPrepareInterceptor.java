@@ -150,12 +150,11 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
    */
   public void triggerEspReadyForPickupEvent(final ConsignmentModel consignmentModel,
       final InterceptorContext interceptorContext){
-    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-    final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+    final WarehouseModel warehouses = consignmentModel.getWarehouse();
     final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
     if(!interceptorContext.isNew(consignmentModel) && interceptorContext
         .isModified(consignmentModel, ConsignmentModel.STATUS) && consignmentModel.getStatus().equals(
-        ConsignmentStatus.READY_FOR_PICKUP) && CollectionUtils.isNotEmpty(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+        ConsignmentStatus.READY_FOR_PICKUP) && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
         && (StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
         StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
        final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
