@@ -178,7 +178,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
         .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
-      getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      try
+      {
+        getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger payment declined event.",e);
+      }
+
     }
   }
 
