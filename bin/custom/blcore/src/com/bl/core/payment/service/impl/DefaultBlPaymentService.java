@@ -87,10 +87,10 @@ public class DefaultBlPaymentService implements BlPaymentService
 		} catch(final BraintreeErrorException ex) {
 			order.setStatus(OrderStatus.RECEIVED_PAYMENT_DECLINED);
 			modelService.save(order);
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
+			BlLogger.logMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Exception occurred while capturing "
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		}
 		return false;
