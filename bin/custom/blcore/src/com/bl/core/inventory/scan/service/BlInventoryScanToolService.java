@@ -284,5 +284,13 @@ public interface BlInventoryScanToolService {
 	 * @param blInventoryLocationModel
 	 */
 	void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel);
+	
+	/**
+	 * Check if first entry is location.
+	 *
+	 * @param barcodes the barcodes
+	 * @return true, if successful
+	 */
+	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes);
 
 }

@@ -4,7 +4,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.strategies.BlProductDynamicPriceStrategy;
 import com.bl.logging.BlLogger;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.MathContext;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,9 +46,10 @@ public class BlDefaultProductDynamicPriceStrategy implements BlProductDynamicPri
       final int diffInDays = highest - lowest;
       final BigDecimal diffInPrice = priceList.get(highest).subtract(priceList.get(lowest));
       final BigDecimal perDayPrice = diffInPrice
-          .divide(new BigDecimal(diffInDays), BlCoreConstants.PRECISION, RoundingMode.DOWN);
-      return priceList.get(lowest).add(perDayPrice.multiply((new BigDecimal(noOfDays - lowest))))
-          .setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN);
+          .divide(BigDecimal.valueOf(diffInDays), new MathContext(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+      return priceList.get(lowest).setScale(BlCoreConstants.DECIMAL_PRECISION,
+          BlCoreConstants.ROUNDING_MODE).add((perDayPrice.multiply((BigDecimal.valueOf(noOfDays - lowest))))
+          .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
     }
     BlLogger.logMessage(LOG, Level.WARN, "!Check rental days");
     return null;

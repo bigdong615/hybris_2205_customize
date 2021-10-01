@@ -6,7 +6,9 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
+import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 
 /**
  * This class is for setting consignments in to each order notes of the order.
@@ -70,10 +73,17 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         getEventPublishingSubmitOrderStrategy().submitOrder((OrderModel)abstractOrderModel);
       }
     }
-    triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
-    triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
+    try {
+      triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
+      triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
+    }
+    catch (final Exception e){
+      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+          "Event API call failed", e);
+    }
   }
-  
+
+
   /**
    * Do change dirty priority status on serial if Order is cancelled and shipping date is current date.
    *
@@ -168,7 +178,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
         .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
-      getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      try
+      {
+        getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger payment declined event.",e);
+      }
+
     }
   }
 
@@ -181,8 +198,15 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
-      getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+      try
+      {
+        getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger verification Required Event",e);
+      }
+
     }
   }
   public BlOrderNoteService getBlOrderNoteService() {

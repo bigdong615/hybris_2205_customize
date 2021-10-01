@@ -1,5 +1,6 @@
 package com.bl.backoffice.wizards.handler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,7 +74,14 @@ public class TechEngScanToolHandler implements FlowActionHandler
 			}
 			else
 			{
-				createResponseForScanResult(barcodes);
+				final List<String> filteredBarcode = new ArrayList<>();
+				barcodes.forEach(barcode -> {
+					if (StringUtils.isNotBlank(barcode))
+					{
+						filteredBarcode.add(barcode.trim());
+					}
+				});
+				createResponseForScanResult(filteredBarcode);
 			}
 		}
 	}
@@ -89,8 +97,19 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	{
 		if (barcodes.size() >= BlInventoryScanLoggingConstants.TWO)
 		{
-			createResponseMsgForScan(getBlInventoryScanToolService().isValidTechEngLocationBarcode(barcodes,
-					BlInventoryScanUtility.getTechEngAllowedLocations()), barcodes);
+			if (getBlInventoryScanToolService().checkIfFirstEntryIsLocation(barcodes))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						StringUtils.EMPTY);
+				this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
+						BlInventoryScanLoggingConstants.FIRST_SCAN_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
+						StringUtils.EMPTY);
+			}
+			else
+			{
+				createResponseMsgForScan(getBlInventoryScanToolService().isValidTechEngLocationBarcode(barcodes,
+						BlInventoryScanUtility.getTechEngAllowedLocations()), barcodes);
+			}
 		}
 		else
 		{
@@ -121,7 +140,7 @@ public class TechEngScanToolHandler implements FlowActionHandler
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
 						StringUtils.EMPTY);
 				addMessageToNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE,
-						NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+						NotificationEvent.Level.FAILURE, barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 				break;
 			case BlInventoryScanLoggingConstants.THREE:
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
@@ -165,7 +184,7 @@ public class TechEngScanToolHandler implements FlowActionHandler
 		{
 			case BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS:
 				doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.WARNING, errorBarcode);
+						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART:
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
