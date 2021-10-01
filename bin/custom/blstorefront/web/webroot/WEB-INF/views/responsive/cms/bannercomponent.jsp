@@ -44,7 +44,7 @@
 
 	<c:if test="${positionAttribute == 'Section1Slot' || positionAttribute == 'Section2Slot' || positionAttribute == 'Section3Slot' || positionAttribute == 'Section4Slot'}">
               <c:forEach items="${feature.medias}" var="image">
-             <div class="col-6 col-md-3 text-center">
+             <div class="col-6 col-md-3 text-center mb-5">
                     <img src="${image.url}" />
              </div>
              </c:forEach>

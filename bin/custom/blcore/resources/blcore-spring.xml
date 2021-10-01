@@ -744,7 +744,7 @@
   </bean>
 
   <bean id="blCategorySource" parent="abstractCategorySource">
-    <property name="rootCategory" value="brands"/>
+    <property name="rootCategory" value="rentalgear"/>
   </bean>
 
   <bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
