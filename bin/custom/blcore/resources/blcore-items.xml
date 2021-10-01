@@ -2289,7 +2289,7 @@
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                        <deployment table="shippingGroup" typecode="12509" />
+                        <deployment table="shippingGroup" typecode="12209" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
@@ -2999,7 +2999,7 @@
             </itemtype>
 
             <itemtype code="OptimizedShippingMethod" generate="true" autocreate="true">
-                <deployment table="optShipMethod" typecode="12515"/>
+                <deployment table="optShipMethod" typecode="12215"/>
                 <attributes>
                     <attribute type="java.lang.String" qualifier="code">
                         <modifiers read="true" write="true" unique="true" optional="false"/>

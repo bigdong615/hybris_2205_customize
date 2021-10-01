@@ -10,8 +10,7 @@
  Information and shall use it only in accordance with the terms of the
  license agreement you entered into with SAP.
 -->
-
-<action-definition id="de.hybris.platform.warehousingbackoffice.actions.reallocateaction"
+<action-definition id="custom.bl.widgets.actions.blreallocateaction"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
@@ -20,7 +19,7 @@
     <author>hybris</author>
     <version>0.1</version>
 
-    <actionClassName>de.hybris.platform.warehousingbackoffice.actions.reallocate.BlReallocateAction</actionClassName>
+    <actionClassName>com.bl.backoffice.actions.BlReallocationAction</actionClassName>
     <inputType>de.hybris.platform.ordersplitting.model.ConsignmentModel</inputType>
     <outputType>de.hybris.platform.ordersplitting.model.ConsignmentModel</outputType>
 
