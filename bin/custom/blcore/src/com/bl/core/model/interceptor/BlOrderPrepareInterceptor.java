@@ -1,11 +1,14 @@
 package com.bl.core.model.interceptor;
 
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
+import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -27,6 +30,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+
 /**
  * This class is for setting consignments in to each order notes of the order.
  *
@@ -37,6 +41,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private static final Logger LOG = Logger.getLogger(BlOrderPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
   private EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy;
+  private DefaultBlESPEventService blEspEventService;
 
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
@@ -68,8 +73,17 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         getEventPublishingSubmitOrderStrategy().submitOrder((OrderModel)abstractOrderModel);
       }
     }
+    try {
+      triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
+      triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
+    }
+    catch (final Exception e){
+      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+          "Event API call failed", e);
+    }
   }
-  
+
+
   /**
    * Do change dirty priority status on serial if Order is cancelled and shipping date is current date.
    *
@@ -153,7 +167,48 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignments are set in to Order order Notes");
   }
+  /**
+   * trigger Esp Payment Declined event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspPaymentDeclined(final AbstractOrderModel abstractOrderModel,
+      final InterceptorContext interceptorContext) {
+    if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel && (abstractOrderModel.getStatus()
+        .equals(OrderStatus.PAYMENT_DECLINED) || abstractOrderModel.getStatus().equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))) {
+      try
+      {
+        getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger payment declined event.",e);
+      }
 
+    }
+  }
+
+  /**
+   * trigger Esp verification required event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
+      final InterceptorContext interceptorContext) {
+    if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+      try
+      {
+        getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
+      }catch (final Exception e)
+      {
+        BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger verification Required Event",e);
+      }
+
+    }
+  }
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
@@ -170,4 +225,11 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       final EventPublishingSubmitOrderStrategy eventPublishingSubmitOrderStrategy) {
     this.eventPublishingSubmitOrderStrategy = eventPublishingSubmitOrderStrategy;
   }
+    public DefaultBlESPEventService getBlEspEventService(){
+      return blEspEventService;
+    }
+
+    public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
+      this.blEspEventService = blEspEventService;
+    }
 }

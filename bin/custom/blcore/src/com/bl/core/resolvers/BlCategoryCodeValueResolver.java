@@ -44,7 +44,7 @@ public class BlCategoryCodeValueResolver extends
 
     if (CollectionUtils.isNotEmpty(categories)) {
         for (final CategoryModel category : categories) {
-          if (!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName())) {
+          if (!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && !BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(category.getCode())) {
             inputDocument.addField(indexedProperty, getPropertyValue(category));
           }
         }

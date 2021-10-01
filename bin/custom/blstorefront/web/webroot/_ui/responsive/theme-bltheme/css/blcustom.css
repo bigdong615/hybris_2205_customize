@@ -330,6 +330,26 @@ margin: 0;
   .splide__arrows{display:block !important;z-index: 99999;}
   #product-thumbnails{display:none !important ;}
   .splide {margin-bottom: 18px;}
+  #globalSearch, #productDates {width:86%;}
+.wrapup-search{background:#fff;box-shadow: 6px 0px 2px 0px #7c7c7c inset;}
+#globalSearch .input-group {padding-right: 0;}
+#globalSearch .input-group input#mobile-litepicker {
+  padding-left: 26px;
+  background: url(../assets/icon-calendar-red.svg) no-repeat -1px center;
+}
+.scroll-hide{width: 95%;}
+.splide__arrows {width: 90%;margin-left:4.5%;}
+#globalSearch .input-group span, #productDates .input-group span {
+  padding-left: 0;
+  font-weight: 700;
+  line-height: 50px;
+  border-right: 2px solid #ddd;
+  padding-right: 5px;
+}
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+   padding-left: 7px;
+}
+
 }
 #product-thumbnails{display:block ;}
 .splide__arrows{display:none;}
@@ -630,7 +650,7 @@ ul.ui-autocomplete.active {
   line-height:1px;
 }  
 .view-links .dropdown-menu>li>a {  
-    padding: 3px 20px 0 0;
+    padding:0px 20px 0 0;
 }
 .gift-card-input{
 padding-left:0;
@@ -685,4 +705,4 @@ color:#fff !important;
 .search-term{text-transform: capitalize;}
 .arrival-notification{background:#fff !important;border: 1px solid #cccccc !important;color: #3d3c3c !important;}
 .arrival-notification:hover{background:none !important;border:1px solid #ccc!important;color: #3d3c3c !important;}
-
+#costSummary i.icon-support {width:12px;}

@@ -2,6 +2,7 @@ package com.bl.core.services.extendorder.impl;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.extendorder.BlExtendOrderService;
@@ -41,6 +42,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private CustomerAccountService customerAccountService;
   private BaseStoreService baseStoreService;
   private BlStockLevelDao blStockLevelDao;
+  private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * This method created to clone the extend order from order model
@@ -139,6 +141,10 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
       saveAndRefreshModel(originalOrder);
       updateStockForExtendedOrder(extendOrderModel);
+
+      // To call Extend order ESP Event
+      getDefaultBlESPEventService().sendExtendOrderEvent((OrderModel) extendOrderModel);
+
     }
     }
 
@@ -288,6 +294,14 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     this.blStockLevelDao = blStockLevelDao;
   }
 
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(final DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
 
 
 

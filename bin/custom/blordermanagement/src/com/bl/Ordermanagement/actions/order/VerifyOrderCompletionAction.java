@@ -12,6 +12,9 @@
  */
 package com.bl.Ordermanagement.actions.order;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.esp.service.AbstractESPRestService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.DeliveryStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
@@ -23,7 +26,8 @@ import de.hybris.platform.processengine.action.AbstractAction;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
@@ -33,13 +37,16 @@ import org.slf4j.LoggerFactory;
  */
 public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessModel>
 {
-	private static final Logger LOG = LoggerFactory.getLogger(VerifyOrderCompletionAction.class);
+	private static final org.apache.log4j.Logger LOG = Logger.getLogger(VerifyOrderCompletionAction.class);
+	private DefaultBlESPEventService blEspEventService;
 
 	@Override
 	public String execute(final OrderProcessModel process)
 	{
-		LOG.info("Process: {} in step {}", process.getCode(), getClass().getSimpleName());
-		LOG.debug("Process: {} is checking for order cancellation and {} subprocess results", process.getCode(),
+
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Process: {} in step {}", process.getCode(), getClass().getSimpleName());
+
+		BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Process: {} is checking for order cancellation and {} subprocess results",process.getCode(),
 				process.getConsignmentProcesses().size());
 
 		final OrderModel order = process.getOrder();
@@ -71,6 +78,13 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 		{
 			process.getOrder().setStatus(OrderStatus.CANCELLED);
 			getModelService().save(process.getOrder());
+			try {
+				getBlEspEventService().sendOrderCanceledEvent(order);
+			}catch(final Exception e)
+			{
+				BlLogger.logMessage(LOG, Level.ERROR,"Failed to trigger order canceled event" , e);
+			}
+
 			return Transition.CANCELLED.toString();
 		}
 
@@ -85,11 +99,11 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 		{
 			if (!subProcess.isDone())
 			{
-				LOG.debug(
-						"Process: {} found subprocess {} incomplete -> wait again!", process.getCode(), subProcess.getCode());
+				BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Process: {} found subprocess {} incomplete -> wait again!",process.getCode(), subProcess.getCode());
+
 				return Transition.WAIT.toString();
 			}
-			LOG.debug("Process: {} found subprocess {} complete ...", process.getCode(), subProcess.getCode());
+			BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Process: {} found subprocess {} complete ...",process.getCode(), subProcess.getCode());
 		}
 
 		order.setStatus(OrderStatus.READY);
@@ -118,4 +132,14 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 			return res;
 		}
 	}
+
+	public DefaultBlESPEventService getBlEspEventService() {
+		return blEspEventService;
+	}
+
+	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService) {
+		this.blEspEventService = blEspEventService;
+	}
+
+
 }

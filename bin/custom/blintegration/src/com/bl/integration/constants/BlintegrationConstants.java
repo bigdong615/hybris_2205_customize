@@ -35,6 +35,9 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String PICKUP_ZIP_CODE = "pickUpZipCode";
 	public static final String DROPOFF_ZIP_CODE = "dropOffZipCode";
 	public static final String X_API_KEY = "X-Api-Key";
+	public static final String CONTENT_TYPE = "Content-Type";
+	public static final String AUTHORIZATION = "Authorization";
+	public static final String Q_NAME_CODE = "ShipService";
 
 	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
 	public static final String FAILURE_STRING = "Failure";
@@ -60,6 +63,14 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
 	public static final String RECIPIENT_TYPE = "RECIPIENT";
 	public static final String SUCCESS = "success";
+	public static final String UPS_SHIPMENT_MSG = "Shipment Call Started.....";
+	public static final String RETURN_SHIPMENT_MSG = "Return Shipment Call Started.....";
+	public static final String DEFAULT_WAREHOUSE_CODE = "OPTIMISED";
+	public static final String WAREHOUSE_MA = "warehouse_ma";
+	public static final String WAREHOUSE_CA = "warehouse_ca";
+	public static final String WEIGHT_UNIT = "LB";
+	public static final String DIMENSION_UNIT = "IN";
+	public static final String SIMPLE_DATE_FORMAT = "hh";
 
 	private BlintegrationConstants()
 	{
