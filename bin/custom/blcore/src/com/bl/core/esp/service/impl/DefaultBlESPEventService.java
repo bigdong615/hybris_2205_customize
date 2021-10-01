@@ -327,11 +327,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void sendOrderUnboxed(final OrderModel orderModel) {
     if (Objects.nonNull(orderModel)) {
       final OrderUnBoxedEventRequest orderUnBoxedEventRequest = new OrderUnBoxedEventRequest();
-      getBlOrderUnboxedRequestPopulator().populate(orderModel,
-          orderUnBoxedEventRequest);
+
       ESPEventResponseWrapper espEventResponseWrapper = null;
       try
       {
+        getBlOrderUnboxedRequestPopulator().populate(orderModel,
+            orderUnBoxedEventRequest);
         // Call send order Unboxed ESP Event API
         espEventResponseWrapper = getBlESPEventRestService().sendOrderUnboxed(
             orderUnBoxedEventRequest);

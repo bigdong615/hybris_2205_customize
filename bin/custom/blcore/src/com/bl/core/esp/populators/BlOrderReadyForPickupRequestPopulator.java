@@ -91,9 +91,11 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 			data.setShippingmethod(getRequestValue(delivery.getCode()));
 			data.setShippingmethodtext(getRequestValue(delivery.getName()));
 		}
+		if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
 			data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
 			data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
 			data.setRentalduration((int) getRentalDuration(orderModel));
+		}
 			data.setPhotoorvideo("test");// TODO Setting dummy value, once we got the actual value then set actual value one
      // Populate Shipping Info In XML
 			populateShippingInfoInXML(orderModel, data);

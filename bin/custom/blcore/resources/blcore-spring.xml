@@ -1124,6 +1124,7 @@
 	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
 	<bean id="blConsignmentPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+		<property name="blEspEventService" ref="blEspEventService"/>
 	</bean>
 
 	<bean id="blConsignmentPrepareInterceptorMapping"
