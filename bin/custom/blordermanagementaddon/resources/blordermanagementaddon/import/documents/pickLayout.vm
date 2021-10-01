@@ -87,6 +87,9 @@
                 <td>
                     <strong>$!{ctx.messages.orderDate}</strong>
                 </td>
+                <td>
+                    <strong>$!{ctx.messages.trackingNumber}</strong>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -95,6 +98,9 @@
                 <td>
                     $!{ctx.order.date}
                 </td>
+                 <td>
+                    $!{ctx.consignment.packagingInfo.trackingNumber}
+                </td>                
                 </tr>
             <tr>
                 <td colspan="2"><div class="pick-slip-border"></div></td>
@@ -143,9 +149,7 @@
             <tr>
                 <th class="hd2">$!{ctx.messages.productCount}</th>
                 <th class="hd2">$!{ctx.messages.productCode}</th>
-                <th class="hd2">$!{ctx.messages.productImage}</th>
                 <th class="hd2">$!{ctx.messages.productDescription}</th>
-                <th class="hd2">$!{ctx.messages.productBinCode}</th>
                 <th class="hd2">$!{ctx.messages.productQuantity}</th>
             </tr>
             <tr>
@@ -156,9 +160,7 @@
                 <tr>
                     <td>$foreach.count</td>
                     <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.code)}</td>
-                    <td><img src="${ctx.mediaBaseUrl}$!{ctx.getProductImageURL($consignmentEntry)}" /></td>
                     <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.name)}</td>
-                    <td>$!{ctx.escapeHtml($ctx.extractBin($consignmentEntry))}</td>
                     <td>$!{consignmentEntry.quantityPending}</td>
                 </tr>
             #end
