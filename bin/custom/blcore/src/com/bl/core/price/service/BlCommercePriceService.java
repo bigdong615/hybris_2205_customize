@@ -81,4 +81,13 @@ public interface BlCommercePriceService extends CommercePriceService
 	public PriceValue getDynamicBasePriceForBundle(
 			final ProductModel product,final int noOfRentalDays) throws CalculationException;
 
+	/**
+	 * Gets the dynamic price data for product for order.
+	 *
+	 * @param isConstrainedProduct the is constrained product
+	 * @param priceValue the price value
+	 * @param rentedDays the rented days
+	 * @return the dynamic price data for product for order
+	 */
+	BigDecimal getDynamicPriceDataForProductForOrder(final Boolean isConstrainedProduct, final Double priceValue, final Long rentedDays);
 }
