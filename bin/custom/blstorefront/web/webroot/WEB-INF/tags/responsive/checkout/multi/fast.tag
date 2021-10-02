@@ -72,7 +72,7 @@
                             <spring:theme code="text.ship.it.ups.change.store"/>
                         </button>
                     </div>
-                    <div id="ship-it-pickup-gear">
+                    <%-- <div id="ship-it-pickup-gear">
                         <b class="mt-4"><spring:theme code="text.ship.it.pick.up.section"/></b>
                         <div id="pickup-person" class="row mt-2 mb-4">
                             <div class="col-3">
@@ -91,7 +91,7 @@
                                     </label>
                                 </button>
                             </div>
-                        </div>
+                        </div> --%>
                         <div id="ship-it-pickup-person">
                             <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                             <checkout:pickUpAddressForm />
