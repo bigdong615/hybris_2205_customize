@@ -209,9 +209,8 @@ public class BlShippingScanController extends DefaultWidgetController
 	 */
 	private Map<String, String> createErrorMap(final List<String> barcodes)
 	{
-		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
 		final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolDao()
-				.getSerialProductsByBarcode(subList);
+				.getSerialProductsByBarcode(barcodes);
 
 		return serialProductsByBarcode.stream()
 				.collect(Collectors.toMap(BlSerialProductModel::getBarcode, serial -> serial.getBlProduct().getName()));
