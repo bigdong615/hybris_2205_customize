@@ -355,6 +355,12 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 
 	}
 
+	/**
+	 * This method will return long days
+	 * @param startDate date
+	 * @param endDate date
+	 * @return long days
+	 */
 	private Long getRentedDays(final Date startDate, final Date endDate)
 	{
 		final LocalDate arrDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -702,8 +708,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		{
 			final PriceInformation dynamicPriceDataForProduct = getCommercePriceService()
 					.getWebPriceForTax(product , abstractOrder);
-			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct == null ? 0.0D :
-					dynamicPriceDataForProduct.getPriceValue().getValue(), basePrice.isNet());
+			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct.getPriceValue().getValue(), basePrice.isNet());
 		}
 		return basePrice;
 	}

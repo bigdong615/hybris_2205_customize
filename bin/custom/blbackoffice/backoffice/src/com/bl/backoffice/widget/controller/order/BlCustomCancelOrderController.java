@@ -3,12 +3,10 @@ package com.bl.backoffice.widget.controller.order;
 import static org.apache.log4j.Level.DEBUG;
 import static org.apache.log4j.Level.ERROR;
 
-import com.bl.core.order.dao.BlOrderDao;
 import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.basecommerce.enums.RefundReason;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
@@ -19,11 +17,9 @@ import de.hybris.platform.ordercancel.OrderCancelException;
 import de.hybris.platform.ordercancel.OrderCancelRequest;
 import de.hybris.platform.ordercancel.OrderCancelService;
 import de.hybris.platform.ordercancel.model.OrderCancelRecordEntryModel;
-import de.hybris.platform.ordercancel.model.OrderCancelRecordModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.payment.dto.TransactionStatus;
-import de.hybris.platform.payment.dto.TransactionStatusDetails;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -392,25 +388,34 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private double getTotalAmountToRefund() {
         if (this.globalCancelEntriesSelection.isChecked()) {
+            final double tax = this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() : BlInventoryScanLoggingConstants.ZERO;
+            final double waiver = this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost()
+                    : BlInventoryScanLoggingConstants.ZERO;
             return this.globalShippingSelection.isChecked() ? (this.getOrderModel().getSubtotal() + this.getOrderModel().getDeliveryCost() +
-                (this.globalTaxSelection.isChecked() ? this.getOrderModel().getTotalTax() : BlInventoryScanLoggingConstants.ZERO) +
-                (this.globalWaiverSelection.isChecked() ? this.getOrderModel().getTotalDamageWaiverCost() : BlInventoryScanLoggingConstants.ZERO))
-                : this.getTotalAmountToRefundForFullOrder();
+                tax + waiver) : this.getTotalAmountToRefundForFullOrder();
         } else {
-            double totalAmountToRefund = BlInventoryScanLoggingConstants.ZERO;
-            for (final BlOrderEntryToCancelDto orderEntryToCancelDto : this.cancelAndRefundEntries) {
-                final AbstractOrderEntryModel orderEntryModel = orderEntryToCancelDto.getOrderEntry();
-                final double gearGuardProFullWaiverSelected = Boolean.TRUE.equals(orderEntryModel.getGearGuardProFullWaiverSelected())
-                        ? orderEntryModel.getGearGuardProFullWaiverPrice() : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL;
-                final double totAmount = blCustomCancelRefundService.getTotalAmountPerEntry(Math.toIntExact(orderEntryToCancelDto
-                                .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
-                        orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
-                                .getQuantityAvailableToCancel()))), Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
-                                ? orderEntryModel.getGearGuardWaiverPrice() : gearGuardProFullWaiverSelected);
-                totalAmountToRefund += Math.min(totAmount, orderEntryToCancelDto.getAmount());
-            }
-            return totalAmountToRefund;
+            return getTotalAmountToRefundForFull();
         }
+    }
+
+    /**
+     * this method will return total amount to refund in case of partial
+     * @return amt
+     */
+    private double getTotalAmountToRefundForFull() {
+        double totalAmountToRefund = BlInventoryScanLoggingConstants.ZERO;
+        for (final BlOrderEntryToCancelDto orderEntryToCancelDto : this.cancelAndRefundEntries) {
+            final AbstractOrderEntryModel orderEntryModel = orderEntryToCancelDto.getOrderEntry();
+            final double gearGuardProFullWaiverSelected = Boolean.TRUE.equals(orderEntryModel.getGearGuardProFullWaiverSelected())
+                    ? orderEntryModel.getGearGuardProFullWaiverPrice() : BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL;
+            final double totAmount = blCustomCancelRefundService.getTotalAmountPerEntry(Math.toIntExact(orderEntryToCancelDto
+                            .getQuantityToCancel()), (Math.toIntExact(orderEntryToCancelDto.getQuantityAvailableToCancel())),
+                    orderEntryModel.getBasePrice(), (orderEntryModel.getAvalaraLineTax() / (Math.toIntExact(orderEntryToCancelDto
+                            .getQuantityAvailableToCancel()))), Boolean.TRUE.equals(orderEntryModel.getGearGuardWaiverSelected())
+                            ? orderEntryModel.getGearGuardWaiverPrice() : gearGuardProFullWaiverSelected);
+            totalAmountToRefund += Math.min(totAmount, orderEntryToCancelDto.getAmount());
+        }
+        return totalAmountToRefund;
     }
 
     /**
@@ -621,13 +626,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         .setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
                 request.setOrderId(this.getOrderModel().getCode());
                 request.setTransactionId(captureEntry.getRequestId());
-                //this.refund(brainTreePaymentService.refundTransaction(request), gcAmount);
-                BrainTreeRefundTransactionResult result = new BrainTreeRefundTransactionResult(Boolean.TRUE);
-                result.setAmount(request.getAmount());
-                result.setCurrencyIsoCode("USD");
-                result.setTransactionStatus(TransactionStatus.ACCEPTED);
-                result.setTransactionStatusDetails(TransactionStatusDetails.AMOUNTS_MUST_MATCH);
-                this.refund(result, gcAmount);
+                this.refund(brainTreePaymentService.refundTransaction(request), gcAmount);
             }  catch (final AdapterException e) {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND,
                         this.getOrderModel().getCode());
@@ -849,14 +848,24 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void voidRefundedTransaction(final double amount) {
         for (PaymentTransactionModel transaction : this.getOrderModel().getPaymentTransactions()) {
             for (PaymentTransactionEntryModel paymentEntry : transaction.getEntries()) {
-                if (TransactionStatus.ACCEPTED.name().equals(paymentEntry.getTransactionStatus()) &&
-                        paymentEntry.getType().getCode().startsWith(REFUND) && (paymentEntry.getAmount().doubleValue()) == amount) {
-                    try {
-                        braintreeBackofficeOrderFacade.executeVoid(paymentEntry);
-                    } catch (final BraintreeErrorException e) {
-                        this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR, this.getOrderModel().getCode());
-                    }
-                }
+                this.voidRefund(amount, paymentEntry);
+            }
+        }
+    }
+
+    /**
+     * This method will void refunded transaction if cancel fails
+     * @param amount amt
+     * @param paymentEntry entry
+     */
+    private void voidRefund(final double amount, final PaymentTransactionEntryModel paymentEntry) {
+        if (TransactionStatus.ACCEPTED.name().equals(paymentEntry.getTransactionStatus()) &&
+                paymentEntry.getType().getCode().startsWith(REFUND) && Double.compare(paymentEntry.getAmount().doubleValue(),
+                amount) == BlCustomCancelRefundConstants.ZERO) {
+            try {
+                braintreeBackofficeOrderFacade.executeVoid(paymentEntry);
+            } catch (final BraintreeErrorException e) {
+                this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_DUE_TO_PAYMENT_GATEWAY_ERROR, this.getOrderModel().getCode());
             }
         }
     }
@@ -965,14 +974,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             refundEntries = new ArrayList<>();
             final List<OrderCancelEntry> orderCancelEntries = new ArrayList<>();
             if(this.globalCancelEntriesSelection.isChecked()) {
-                this.getOrderEntriesGridRows().forEach(entry -> {
-                    this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry);
-                });
+                this.getOrderEntriesGridRows().forEach(entry -> this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry));
             } else {
                 this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).forEach(
-                    entry -> {
-                        this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry);
-                    });
+                    entry -> this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry));
             }
             if (CollectionUtils.isNotEmpty(orderCancelEntries)) {
                 final OrderCancelRequest orderCancelRequest = new OrderCancelRequest(this.getOrderModel(), orderCancelEntries);
