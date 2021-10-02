@@ -159,7 +159,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				return handleAuthorizationResult(result, orderModel);
 			}
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+			BlLogger.logMessage(LOG, Level.ERROR,
 					"Error occurred while creating authorization for the order {}", orderModel.getCode(), ex);
 		}
 			return false;

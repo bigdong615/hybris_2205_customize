@@ -57,7 +57,8 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
 
     if (BooleanUtils.isFalse(abstractOrderModel.getInternalTransferOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getEntries()) && rentalStartDate != null
-        && rentalReturnDate != null) {
+        && rentalReturnDate != null && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())
+        && BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart())) {
       final List<AbstractOrderEntryModel> entryModelList = abstractOrderModel.getEntries().stream().filter(entry ->!entry.isBundleEntry()).collect(
           Collectors.toList());
       for (final AbstractOrderEntryModel orderEntry : entryModelList) {

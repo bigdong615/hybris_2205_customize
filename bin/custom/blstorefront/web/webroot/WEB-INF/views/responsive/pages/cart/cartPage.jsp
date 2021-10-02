@@ -41,7 +41,7 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header">
-          <h5><spring:theme code="text.savedcart.warning.wait"/></h5>
+          <h5 class="zero-margine"><spring:theme code="text.savedcart.warning.wait"/></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">

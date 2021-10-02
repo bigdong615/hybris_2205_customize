@@ -24,7 +24,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 		while (customFieldsNames.hasNext())
 		{
 			final String customFieldName = customFieldsNames.next();
-			final String customFieldValue = Double.valueOf(34.77).toString();
+			final String customFieldValue = configurationService.getConfiguration().getString(customFieldName);
 			if (!"".equals(customFieldValue))
 			{
 				customFields.put(customFieldName.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
