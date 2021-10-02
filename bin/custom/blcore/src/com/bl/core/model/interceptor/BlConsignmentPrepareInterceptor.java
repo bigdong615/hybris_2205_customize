@@ -148,7 +148,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       final InterceptorContext interceptorContext){
     final WarehouseModel warehouses = consignmentModel.getWarehouse();
     final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
-    if(interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS) && ConsignmentStatus.READY_FOR_PICKUP.equals(consignmentModel.getStatus().getCode())
+    if(interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS) && ConsignmentStatus.READY_FOR_PICKUP.equals(consignmentModel.getStatus())
         && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
         && (StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
         StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
