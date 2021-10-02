@@ -202,7 +202,7 @@ function reverseTraverseOnShipping() {
            
             else {
              	 $('#cart-shipping-cost').text('-');
-                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
+                 showErrorNotification('Uh oh, this delivery method is not available for this arrival date.', false);
              }
          },
          complete: function() {
@@ -322,7 +322,7 @@ function reverseTraverseOnShipping() {
                 $('#checkZipForUPSPickup').show();
             } else {
             	$('#cart-shipping-cost').text('-');
-                showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
+                showErrorNotification('Uh oh, this delivery method is not available for this arrival date.', false);
                 $('#checkZipForUPSPickup').hide();
             }
         },
@@ -760,7 +760,7 @@ else
             	 if($('.js-new-gear-shipping-page').val() == 'true'){
             	  showErrorNotificationPickUp('Selected shipping option not available for new gear pickup!!');
             	 }else {
-                showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
+                showErrorNotificationPickUp('Uh oh, this delivery method is not available for this arrival date.');
                 }
             }
         },
@@ -954,6 +954,10 @@ else
                                $('#sameDayShippingMethodsNotification').show();
                                $('#same-day-address-div').show();
                                if($('#same-day-address-div #delivery-saved-addresses-dropdown').length == 1) {
+                                   if($('#same-day-address-div #delivery-saved-addresses-dropdown #ship-it-savedAddresses option').length > 1) {
+                                       $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
+                                   }
+                                   $('#same-day-address-div #delivery-shippingAddressFormDiv').hide();
                                    $('#same-day-save-address-div').hide();
                                    $('#same-day-save-address-div #same-day-save-address').prop("checked", false);
                                    $('#same-day-status-updates-div').hide();
