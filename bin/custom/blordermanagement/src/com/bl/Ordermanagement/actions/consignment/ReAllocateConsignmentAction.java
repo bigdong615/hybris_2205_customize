@@ -99,7 +99,17 @@ public class ReAllocateConsignmentAction extends AbstractProceduralAction<Consig
 			performManualDecline(manualDeclineEntries);
 		}
 
-
+		//Extracting auto decline entries and performing auto reallocation
+		Collection<DeclineEntry> autoEntries = declinedEntries.getEntries().stream()
+				.filter(declineEntry -> declineEntry.getReallocationWarehouse() == null).collect(Collectors.toList());
+		if (!autoEntries.isEmpty())
+		{
+			LOGGER.debug("Performing Auto Reallocation for {} decline entries", autoEntries.size());
+			DeclineEntries autoDeclineEntries = new DeclineEntries();
+			autoDeclineEntries.setEntries(autoEntries);
+			performAutoDecline(order, autoDeclineEntries);
+			isAutoDecline = Boolean.TRUE;
+		}
 		//Calling corresponding declineActionStrategy to be executed, based on selected reasons for decline
 		executeDeclineActions(declinedEntries);
 
@@ -144,7 +154,20 @@ public class ReAllocateConsignmentAction extends AbstractProceduralAction<Consig
 		getModelService().save(consignmentProcessModel);
 	}
 
-
+	/**
+	 * Performs the auto decline for the given {@link DeclineEntries} and trigger the sourcing for the associated {@link AbstractOrderModel}
+	 *
+	 * @param autoDeclineEntries
+	 * 		- entries to be declined
+	 * @param order
+	 * 		- associated {@link AbstractOrderModel} with the {@link DeclineEntries},for which sourcing needs to be triggered
+	 */
+	protected void performAutoDecline(AbstractOrderModel order, DeclineEntries autoDeclineEntries)
+	{
+		getAllocationService().autoReallocate(autoDeclineEntries);
+		getOrderBusinessProcessService()
+				.triggerChoiceEvent(order, BlOrdermanagementConstants.ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
+	}
 
 	/**
 	 * Performs the manual reallocation for the given {@link DeclineEntries},
