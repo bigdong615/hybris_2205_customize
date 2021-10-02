@@ -23,8 +23,17 @@
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <!-- BL-926: Added condition for Gift Card as per requirement -->
+${product.stock.stockLevel}ttttttt
+${product.stock.stockLevelStatus.code}yyyyyyy
+${product.isBundle}wwwwwww
+${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}rrrrrrrrrr
  <c:if test="${product.productType ne 'GIFTCARD'}">
 		<c:choose>
+		  	<c:when test="${product.stock.stockLevel eq 0}">
+      				<span class="badge badge-out-of-stock"><spring:theme
+      						code="text.product.tile.flag.outOfStock"
+      						arguments="${product.stock.stockLevel}" /></span>
+      			</c:when>
 			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock' && product.isBundle ne true}">
 				<span class="badge badge-limited-stock"><spring:theme
 						code="text.product.tile.flag.only.left"
