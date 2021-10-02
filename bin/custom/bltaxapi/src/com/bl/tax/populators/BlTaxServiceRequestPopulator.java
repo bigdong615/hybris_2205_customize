@@ -90,9 +90,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         taxLine.setItemCode(entry.getProduct().getCode());
         Double value = 0.0;
         if (BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
-          value = entry.getGearGuardProFullWaiverPrice();
+          value = entry.getGearGuardProFullWaiverPrice() * entry.getQuantity().intValue();
         } else if (BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
-          value = entry.getGearGuardWaiverPrice();
+          value = entry.getGearGuardWaiverPrice() * entry.getQuantity().intValue();
         }
         taxLine.setAmount(entry.getTotalPrice() + value);
         taxLine.setDescription(entry.getInfo());
