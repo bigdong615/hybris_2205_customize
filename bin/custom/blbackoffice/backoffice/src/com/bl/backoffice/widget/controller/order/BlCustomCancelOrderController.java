@@ -1447,7 +1447,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param event the event
      */
     private void handleGlobalCancelComment(final Event event) {
-        this.applyToGrid(((InputEvent) event).getValue(), BlloggingConstants.TWELVE);
+        this.applyToGrid(((InputEvent) event).getValue(), BlloggingConstants.THIRTEEN);
         this.getOrderEntriesGridRows().stream()
                 .filter(entry -> ((Checkbox) entry.getChildren().iterator().next()).isChecked())
                 .forEach(entry -> {
