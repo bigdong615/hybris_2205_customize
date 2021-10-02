@@ -85,17 +85,16 @@ public class DefaultBlReallocationService implements BlReallocationService {
   /**
    * {@inheritDoc}
    */
-  public void assignSerialFromLocation(final SourcingContext context, final WarehouseModel warehouseModel) {
+  public void assignSerialFromLocation(final SourcingContext context) {
 
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
     final SourcingLocation finalSourcingLocation = context.getSourcingLocations().iterator().next();
-    context.getOrderEntries().forEach(entry -> {
+    context.getOrderEntries().forEach(entry ->
 
-      getBlAssignSerialService()
-          .fulfillEachEntry(context, result, finalSourcingLocation, entry, allEntrySourceComplete,
-              entry.getUnAllocatedQuantity());
-    });
+        getBlAssignSerialService()
+        .fulfillEachEntry(context, result, finalSourcingLocation, entry, allEntrySourceComplete,
+            entry.getUnAllocatedQuantity()));
   }
 
   /**

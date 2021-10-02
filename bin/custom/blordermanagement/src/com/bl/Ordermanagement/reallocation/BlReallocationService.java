@@ -37,10 +37,8 @@ public interface BlReallocationService {
   /**
    * It assigns the serial as per serial priority rules
    * @param context
-   * @param warehouseModel
    */
-  void assignSerialFromLocation(final SourcingContext context,
-      final WarehouseModel warehouseModel);
+  void assignSerialFromLocation(final SourcingContext context);
 
   /**
    * It creates a consignment

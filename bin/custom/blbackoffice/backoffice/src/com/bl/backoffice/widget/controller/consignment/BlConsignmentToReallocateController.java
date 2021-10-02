@@ -228,7 +228,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
     final SourcingContext context = blReallocationService.createSourcingContext(orderEntries);
     blReallocationService.createSourcingLocation(availabilityMap, selectedWH, context);
 
-    blReallocationService.assignSerialFromLocation(context, selectedWH);
+    blReallocationService.assignSerialFromLocation(context);
 
     blReallocationService.createConsignment(orderModel, context, selectedWH);
 
