@@ -340,11 +340,11 @@ function reverseTraverseOnShipping() {
 
  function shipToUPSStoreLocationContinue(shippingMethod) {
      if($('#changeUPSStoreButton').is(":visible")) {
-         utag.link({
-           "tealium_event"    : "continue_shipping_click",
-           "shipping_method"   : "Ship It-Ship to UPS",
-           "shipping_method_not_available"     : "0"
-         });
+//         utag.link({
+//           "tealium_event"    : "continue_shipping_click",
+//           "shipping_method"   : "Ship It-Ship to UPS",
+//           "shipping_method_not_available"     : "0"
+//         });
          ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
          var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
          if(checkShippingBlackout(deliveryMethod))
@@ -387,8 +387,18 @@ else
              }
          }
      } else {
-         savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
-                         .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+//         savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
+//                         .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+    	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
+         var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
+         var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
+         var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
+         if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
+             savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                    $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+         } else {
+              showErrorForInputValidationPick('Ship');
+         }
      }
  }
 
@@ -529,7 +539,8 @@ else
                              '</div>';
                 $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
                 $('#changeUPSStoreButton').show();
-                $('#ship-it-pickup-gear').show();
+              //  $('#ship-it-pickup-gear').show();
+                $('#ship-it-pickup-person').show();
                 $('#ship-it-ups-zip-code').val('');
                 $('#checkZipForUPSPickup').hide();
                 $('.on-select-hide').hide();
