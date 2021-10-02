@@ -190,7 +190,7 @@
 										</a>
 									</h5>
 									<div class="row mb-4">
-										<%-- <div class="col-6">
+										<div class="col-6">
 											<p class="gray80 body14">
 												<b class="gray100"><spring:theme
 														code="text.review.page.delivery.mode.pickup" /></b>
@@ -198,7 +198,7 @@
 												<br /> ${cartData.pickUpPersonEmail} <br />
 												${cartData.pickUpPersonPhone} <br />
 											</p>
-										</div> --%>
+										</div>
 										<c:if test="${not empty cartData.deliveryAddress}">
 											<div class="col-6">
 												<p class="gray80 body14">
@@ -290,7 +290,7 @@
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
 			<c:choose>
-				<c:when test="${isCustomerHasUnPaidBillOrders}">
+				<c:when test="false">
 					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
 						data-bs-target="#unpaidBill" 
 						class="btn btn-sm btn-primary float-end"> <spring:theme

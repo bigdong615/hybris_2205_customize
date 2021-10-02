@@ -269,11 +269,11 @@ function reverseTraverseOnShipping() {
       else
       {
         // track Tealium event on continue shipping.
-              utag.link({
-              "tealium_event"    : "continue_shipping_click",
-              "shipping_method"   : "Ship It-Ship to home",
-              "shipping_method_not_available"     : "1"
-               });
+//              utag.link({
+//              "tealium_event"    : "continue_shipping_click",
+//              "shipping_method"   : "Ship It-Ship to home",
+//              "shipping_method_not_available"     : "1"
+//               });
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
@@ -373,7 +373,7 @@ else
         showErrorForUPSOrPickAddressError();
      }
      //shipping by someone form data
-     /*if($('#ship-it-pickup-gear').find('#pickup-person').find('input[id="store-pickup-other"]').prop("checked")) {
+     if($('#ship-it-pickup-gear').find('#pickup-person').find('input[id="store-pickup-other"]').prop("checked")) {
          if($("#ship-it-pickup-person").css('display') == 'block') {
              var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
              var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
@@ -389,7 +389,7 @@ else
      } else {
          savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
                          .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-     }*/
+     }
  }
 
  function onClickOfFindStore() {
@@ -601,8 +601,8 @@ else
  });
 
  function pickUpPartnerLocationContinue(shippingMethod) {
-     /*if($('#pick-up-pickup-gear').find('#pickup-person').find('input[id="pickup-other"]').prop("checked")) {
-         if($("#store-pickup-person").css('display') == 'block') {
+//     if($('#pick-up-pickup-gear').find('#pickup-person').find('input[id="pickup-other"]').prop("checked")) {
+//         if($("#store-pickup-person").css('display') == 'block') {
              var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
              var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
              var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
@@ -613,19 +613,19 @@ else
              } else {
                   showErrorForInputValidationPick('Pick');
              }
-         }
-     } else {
-           savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
-                 $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
-     }*/
+//         }
+//     } else {
+//           savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
+//                 $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
+//     }
 
      if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
         // track Tealium event on continue shipping.
-        utag.link({
-         "tealium_event"    : "continue_shipping_click",
-         "shipping_method"   : "PickUP",
-         "shipping_method_not_available"     : "0"
-        });
+//        utag.link({
+//         "tealium_event"    : "continue_shipping_click",
+//         "shipping_method"   : "PickUP",
+//         "shipping_method_not_available"     : "0"
+//        });
         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
         var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
         if(checkShippingBlackout(deliveryMode))
@@ -749,11 +749,12 @@ else
                          }
                 }
                 $('#partnerPickUpShippingMethods').html(partnerDelivery);
-                $('#pick-up-pickup-gear').show();
+                // $('#pick-up-pickup-gear').show();
+                $('#store-pickup-person').show();
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
-                /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
+                showErrorNotificationForPickUpId('They must show ID at time of pickup');
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
@@ -834,7 +835,7 @@ else
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').removeClass('error');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
-     /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
+     showErrorNotificationForPickUpId('They must show ID at time of pickup');
  }
 
  function pickUpByMeClick() {
@@ -1020,11 +1021,11 @@ else
     else if(checkAvailability(deliveryMode))
     {
         // track Tealium event on continue shipping.
-           utag.link({
-           "tealium_event"    : "continue_shipping_click",
-           "shipping_method"   : "Same Day Delivery",
-           "shipping_method_not_available"     : "0"
-           });
+//           utag.link({
+//           "tealium_event"    : "continue_shipping_click",
+//           "shipping_method"   : "Same Day Delivery",
+//           "shipping_method_not_available"     : "0"
+//           });
         ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
@@ -1761,6 +1762,7 @@ else
  }
 
  function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
  if(checkShippingBlackout(deliveryMode))
 	  {
 	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
