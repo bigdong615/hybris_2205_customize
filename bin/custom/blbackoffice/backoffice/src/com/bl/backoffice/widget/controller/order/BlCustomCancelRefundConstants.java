@@ -73,6 +73,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND_MSG = "Order can not be cancel as failed to initiate refund";
     public static final String REFUND_NOTES_WHILE_FULL_REFUND = "Refund Notes while full refund";
     public static final String AND_REFUNDED = " and refunded for order: {}";
+    public static final String AND_REFUNDED_MSG = " and refunded";
     public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND = "Order can not be cancel as failed to refund for order: {}";
     public static final String ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND_MSG = "Order can not be cancel as failed to refund";
     public static final String INVALID_ENTERED_AMOUNT_AMOUNT_SHOULD_BE_UP_TO_TWO_DECIMAL_DIGITS_ONLY = "Invalid entered amount!! amount should be up to two decimal digits only!!";
