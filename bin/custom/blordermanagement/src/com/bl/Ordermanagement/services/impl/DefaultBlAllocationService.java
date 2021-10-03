@@ -138,7 +138,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
 
-      if (BooleanUtils.isTrue(order.getIsRentalCart()) || !isInternalTransferOder(order)) {
+      //for internal transfer orders, saving and returning consignment without checking availability
+      if (isInternalTransferOder(order)) {
+        this.getModelService().save(consignment);
+        return consignment;
+      }
+
+      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
         if (null != result.getSerialProductMap()) {
