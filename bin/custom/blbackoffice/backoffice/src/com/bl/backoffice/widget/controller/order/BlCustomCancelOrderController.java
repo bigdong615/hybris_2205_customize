@@ -820,7 +820,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         .append(this.getTwoDecimalDoubleValue(gcAmount));
             }
             this.logCancelRefundLogger(stringSuccess.toString(), this.getOrderModel().getCode());
-            this.successMessageBox(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
+            this.successMessageBox(stringSuccess.toString());
         }
     }
 
