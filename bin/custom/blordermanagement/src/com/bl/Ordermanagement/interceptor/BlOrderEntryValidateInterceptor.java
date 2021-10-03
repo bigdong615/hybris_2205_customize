@@ -1,5 +1,7 @@
 package com.bl.Ordermanagement.interceptor;
 
+import com.bl.core.model.BlProductModel;
+import com.bl.core.services.order.BlOrderService;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -78,6 +80,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	@Resource(name="blShippingOptimizationStrategy")
 	private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
 
+	@Resource(name = "blOrderService")
+	BlOrderService blOrderService;
+
 	/**
 	 * method will validate order entry for modified order
 	 */
@@ -89,6 +94,12 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 		if (isCsAgent)
 		{
+			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
+				/* if(!orderEntryModel.isBundleEntry() && !orderEntryModel.isEntryCreated()){
+					 blOrderService.createAllEntryForBundleProduct(orderEntryModel);*/
+         orderEntryModel.setBundleMainEntry(Boolean.TRUE);
+				 //}
+			}
 			final List<BlSerialProductModel> serialProduct = orderEntryModel.getModifiedSerialProductList();
 			final WarehouseModel warehouse = orderEntryModel.getWarehouse();
 			if (CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
