@@ -320,13 +320,13 @@ gtag('config', googleAnalyticsTrackingId);
     </c:forEach>
     <c:set var="cartType" value=""/>
                       <c:choose>
-                      <c:when test="${cartData.hasGiftCart}">
+                      <c:when test="${orderData.hasGiftCart}">
                         <c:set var="cartType" value="Gift Cart Order"/>
                       </c:when>
-                       <c:when test="${cartData.isNewGearOrder}">
+                       <c:when test="${orderData.isNewGearOrder}">
                          <c:set var="cartType" value="New Gear Order"/>
                        </c:when>
-                       <c:when test="${cartData.isRentalCart}">
+                       <c:when test="${orderData.isRentalCart}">
                          <c:set var="cartType" value="Rental Order"/>
                        </c:when>
                       <c:otherwise>
