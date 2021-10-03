@@ -77,11 +77,9 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public boolean capturePaymentForOrder(final OrderModel order) {
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
-			if(authEntry != null) {
-				if(authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
-					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
-							order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
-				}
+			if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
+				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
+						order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
 			} else {
 				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
 					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
