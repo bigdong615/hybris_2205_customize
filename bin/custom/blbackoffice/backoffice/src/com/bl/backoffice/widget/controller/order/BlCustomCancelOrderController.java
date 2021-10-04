@@ -811,16 +811,17 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
             this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
         } else {
-            StringBuilder stringSuccess = new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED);
-            stringSuccess.append(BlCustomCancelRefundConstants.AND_REFUNDED);
+            StringBuilder stringSuccess = new StringBuilder(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
             this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(totalAmt));
             if (gcAmount > BlInventoryScanLoggingConstants.ZERO) {
                 this.logAmountForGiftCardTransactions(gcAmount);
                 stringSuccess.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH)
                         .append(this.getTwoDecimalDoubleValue(gcAmount));
+                this.successMessageBox(stringSuccess.toString());
             }
-            this.logCancelRefundLogger(stringSuccess.toString(), this.getOrderModel().getCode());
-            this.successMessageBox(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
+            this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER,
+                    this.getOrderModel().getCode());
+            this.successMessageBox(stringSuccess.toString());
         }
     }
 

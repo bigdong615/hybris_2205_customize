@@ -575,14 +575,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     totalWeight = getBigDecimal(totalWeight, entry);
                     if(blSerialProduct instanceof BlSerialProductModel) {
                         final BlProductModel blProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
-
-                        sumWidth = getSumWidth(sumWidth, ((blProduct.getWidth() != null ? blProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
-                                * entry.getQuantity().intValue()));
+                        sumWidth = getSumWidth(sumWidth, blProduct.getWidth(), entry.getQuantity().intValue());
                         maxHeight = getMaxHeight(maxHeight, blProduct.getHeight());
                         maxLength = getMaxLength(maxLength, blProduct.getLength());
                     }else if(null != blSerialProduct) {
-                        sumWidth = getSumWidth(sumWidth, ((blSerialProduct.getWidth() != null ? blSerialProduct.getWidth() : BlInventoryScanLoggingConstants.ZERO)
-                                * entry.getQuantity().intValue()));
+                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth(), entry.getQuantity().intValue());
                         maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
                         maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
                     }
@@ -619,6 +616,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 weight = serialProduct.getWeight().doubleValue() * entry.getQuantity();
                 weight = totalWeight.doubleValue() + weight;
             }
+
+            if (!(((BlSerialProductModel) entry.getProduct()).getBlProduct().getCode().equals(((BlSerialProductModel) blSerialProduct)
+                    .getBlProduct().getCode()))) {
+                weight = totalWeight.doubleValue() + weight;
+            }
         }else{
             if(null != blSerialProduct.getWeight()) {
                 weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
@@ -626,13 +628,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
 
-        if(!(blSerialProduct instanceof BlSerialProductModel)) {
-            weight = totalWeight.doubleValue() + weight;
-        }else {
-            if (!(((BlSerialProductModel) entry.getProduct()).getBlProduct().getCode().equals(((BlSerialProductModel) blSerialProduct).getBlProduct().getCode()))) {
-                weight = totalWeight.doubleValue() + weight;
-            }
-        }
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);
         } else {
@@ -645,10 +640,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      *
      * @param sumWidth width
      * @param width    width
+     * @param qty      quantity
      * @return value
      */
-    private int getSumWidth(final int sumWidth, final Integer width) {
-        return width != null ? (sumWidth + width) : (sumWidth + BlInventoryScanLoggingConstants.FIVE);
+    private int getSumWidth(final int sumWidth, final Integer width, final int qty) {
+        return width != null && width > BlInventoryScanLoggingConstants.ZERO ? (sumWidth + (width * qty))
+                : (sumWidth + (BlInventoryScanLoggingConstants.FIVE * qty));
     }
 
     /**
@@ -659,7 +656,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @return height value
      */
     private int getMaxHeight(final int maxHeight, final Integer height) {
-        return height != null ? Math.max(height, maxHeight) : Math.max(BlInventoryScanLoggingConstants.FIVE, maxHeight);
+        return height != null && height > BlInventoryScanLoggingConstants.ZERO ? Math.max(height, maxHeight)
+                : Math.max(BlInventoryScanLoggingConstants.FIVE, maxHeight);
     }
 
     /**
@@ -670,7 +668,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @return length value
      */
     private int getMaxLength(final int maxLength, final Integer length) {
-        return length != null ? Math.max(length, maxLength) : Math.max(BlInventoryScanLoggingConstants.FIVE, maxLength);
+        return length != null && length > BlInventoryScanLoggingConstants.ZERO ? Math.max(length, maxLength)
+                : Math.max(BlInventoryScanLoggingConstants.FIVE, maxLength);
     }
 
     /**
