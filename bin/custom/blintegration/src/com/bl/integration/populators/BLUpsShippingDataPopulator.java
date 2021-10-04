@@ -291,6 +291,7 @@ public class BLUpsShippingDataPopulator
 			shipToAddressData.setFirstName(shipToAddress.getFirstName());
 		}
 		shipToAddressData.setLastName(shipToAddress.getLastName());
+		shipToAddressData.setCompanyName(shipToAddress.getCompanyName());
 		shipToAddressData.setLine1(shipToAddress.getLine1());
 		shipToAddressData.setLine2(shipToAddress.getLine2());
 		shipToAddressData.setTown(shipToAddress.getTown());

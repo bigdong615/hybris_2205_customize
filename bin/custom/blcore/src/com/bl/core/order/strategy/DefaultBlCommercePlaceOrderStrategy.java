@@ -70,6 +70,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           orderModel.getPaymentInfo().setBillingAddress(getModelService().clone(billingAddress));
           getModelService().save(orderModel.getPaymentInfo());
         }
+        setPickFormDetailsInAddress(orderModel);
         getModelService().save(orderModel);
         // Transfer promotions to the order
         getPromotionsService().transferPromotionsToOrder(cartModel, orderModel, false);
@@ -107,6 +108,23 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
     this.afterPlaceOrder(parameter, result);
     return result;
+  }
+
+  /**
+   * It sets the pickup person details into delivery address
+   * @param orderModel the order model
+   */
+  private void setPickFormDetailsInAddress(final OrderModel orderModel) {
+    if(null != orderModel.getDeliveryAddress() && null != orderModel.getPickUpPersonFirstName()) {
+      final AddressModel deliveryAddress = orderModel.getDeliveryAddress();
+      deliveryAddress.setCompany(deliveryAddress.getFirstname());
+      deliveryAddress.setFirstname(cartModel.getPickUpPersonFirstName());
+      deliveryAddress.setLastname(cartModel.getPickUpPersonLastName());
+      deliveryAddress.setEmail(cartModel.getPickUpPersonEmail());
+      deliveryAddress.setPhone1(cartModel.getPickUpPersonPhone());
+      getModelService().save(deliveryAddress);
+      getModelService().refresh(deliveryAddress);
+    }
   }
 
 }
