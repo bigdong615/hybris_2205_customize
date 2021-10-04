@@ -622,7 +622,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving UPS pickUpByMe details", e);
         }
     }
