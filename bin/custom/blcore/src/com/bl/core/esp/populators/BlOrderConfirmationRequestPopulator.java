@@ -250,7 +250,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                            entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
                     }
                     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : entryModel.getProduct().getPicture().getURL());
+                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
                     if (Objects.nonNull(entryModel.getBasePrice())) {
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
                     }
@@ -273,6 +273,17 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           BlLogger.logMessage(LOG , Level.ERROR , POPULATOR_ERROR , exception);
           throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
         }
+    }
+
+  /**
+   * To check whether media is empty of not
+   * @param abstractOrderEntryModel
+   * @return
+   */
+    private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
+      return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
+          StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
+        abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
     }
 
 
