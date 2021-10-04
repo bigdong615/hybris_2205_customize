@@ -76,7 +76,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			final String result = EntityUtils.toString(response.getEntity());
 
 			// This condtion will get remove once proxy server issue get resolved
-			if (BooleanUtils.isTrue(mockEnable))
+			if (true)
 			{
 				if (sameDayCityReqData.getDeliveryAddressZipCode().equals("95054")
 						|| sameDayCityReqData.getDeliveryAddressZipCode().equals("10109"))

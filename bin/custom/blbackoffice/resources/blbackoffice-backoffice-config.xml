@@ -70,6 +70,7 @@
 	<context merge-by="module" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
+			<n:type-node code="Consignment" id="Consignment"/>
 		</n:explorer-tree>
 	</context>
 
@@ -1252,8 +1253,6 @@
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">
 				<y:label>actiongroup.common</y:label>
-				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.capturepaymentaction"
-					property="currentObject" />
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.updateshippingaction"
 					property="currentObject"/>
 				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
@@ -1265,6 +1264,17 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.blCalculateAvalaraTaxAction"
 					property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
+
+	<context component="collectioneditorareaactions" type="Consignment" parent="GenericItem" merge-by="type"
+			 principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction"
+						  property="currentObject" />
 			</y:group>
 		</y:actions>
 	</context>
@@ -2262,6 +2272,13 @@
                 <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
                 <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
             </n:navigation-node>
+			<n:navigation-node id="BLProductInventoryCycleCount">
+				<n:navigation-node id="InventoryCycleCountScan"/>
+				<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
+				<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
+				<n:type-node id="BlInventoryCycleCountProductDetails" code="BlInventoryCycleCountProductDetails"/>
+				<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
+			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>

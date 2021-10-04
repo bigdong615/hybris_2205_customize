@@ -313,27 +313,48 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	/**
  	 * Update location on item.
 	 *
-	 * @param blSerialProduct
- 	 *           the bl serial product
- 	 * @param blInventoryLocationLocal
- 	 *           the bl inventory location local
+	 * @param blSerialProduct the bl serial product
+ 	 * @param blInventoryLocationLocal the bl inventory location local
  	 */
 	private void updateLocationOnItem(final BlSerialProductModel blSerialProduct, final BlInventoryLocationModel blInventoryLocationLocal,
-									  final boolean unboxStatus)
-	{
-		if(unboxStatus)
-		{
+									  final boolean unboxStatus) {
+		if(unboxStatus) {
 			blSerialProduct.setSerialStatus(SerialStatusEnum.UNBOXED);
 		}
 		blSerialProduct.setOcLocation(blInventoryLocationLocal.getCode());
 		blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
-				? blInventoryLocationLocal.getParentInventoryLocation().getCode()
-				: null);
+				? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
 		blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
 		modelService.save(blSerialProduct);
 		modelService.refresh(blSerialProduct);
+
+		this.updateLocationOnItemForStaged(blSerialProduct, unboxStatus, blInventoryLocationLocal);
+
 		/* Scan History Entry */
 		setBlLocationScanHistory(blSerialProduct, unboxStatus);
+	}
+
+	/**
+	 * Update location on item
+	 * @param blSerialProduct the bl serial product
+	 * @param unboxStatus status
+	 * @param blInventoryLocationLocal the bl inventory location local
+	 */
+	private void updateLocationOnItemForStaged(final BlSerialProductModel blSerialProduct, final boolean unboxStatus,
+											   final BlInventoryLocationModel blInventoryLocationLocal) {
+		final BlSerialProductModel serialStagedProductModel = this.getBlInventoryScanToolDao().getSerialProductByBarcode(
+				blSerialProduct.getCode());
+		if(null != serialStagedProductModel) {
+			if (unboxStatus) {
+				serialStagedProductModel.setSerialStatus(SerialStatusEnum.UNBOXED);
+			}
+			serialStagedProductModel.setOcLocation(blInventoryLocationLocal.getCode());
+			serialStagedProductModel.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
+					? blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
+			serialStagedProductModel.setOcLocationDetails(blInventoryLocationLocal);
+			modelService.save(serialStagedProductModel);
+			modelService.refresh(serialStagedProductModel);
+		}
 	}
 
 	/**

@@ -1,6 +1,6 @@
 #% impex.info("=============================== Importing content from BLInitialData coredata/common inventory-cycle-count-job.impex =========================");
 
-INSERT_UPDATE ServicelayerJob; code[unique = true] 		; springId
+INSERT_UPDATE ServicelayerJob; code[unique = true]      ; springId
                              ; blInventoryCycleCountJob ; blInventoryCycleCountJob
 
 INSERT_UPDATE CronJob; code[unique = true]      ; job(code)                ; singleExecutable; sessionLanguage(isocode)

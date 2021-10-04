@@ -203,4 +203,14 @@
 		<property name="blProductService" ref="productService"/>
 	</bean>
 
+  <!-- BL-956 reallocation consignment -->
+  <bean id="blReallocationService" class="com.bl.Ordermanagement.reallocation.impl.DefaultBlReallocationService">
+    <property name="modelService" ref="modelService"/>
+    <property name="blAssignSerialService" ref="blAssignSerialService"/>
+    <property name="blAllocationService" ref="allocationService"/>
+    <property name="blStockLevelDao" ref="blStockLevelDao" />
+    <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+    <property name="businessProcessService" ref="businessProcessService"/>
+  </bean>
+
 </beans>

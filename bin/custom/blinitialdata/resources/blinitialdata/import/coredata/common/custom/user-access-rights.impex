@@ -328,7 +328,11 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;BlInventoryLocation;+;-;-;-
 ;;;SavedValues;+;-;-;-
 ;;;SavedValueEntry;+;-;-;-
-
+;;;InventoryCycleCountScan;+;+;-;-
+;;;BlInventoryCycleCount;+;-;-;-
+;;;BlInventoryCycleCountDetails;+;-;-;-
+;;;BlInventoryCycleCountProductDetails;+;-;-;-
+;;;BlInventoryCycleCountScanHistory;+;-;-;-
 $END_USERRIGHTS;;;;
 
  
