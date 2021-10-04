@@ -358,7 +358,7 @@
                         <virtual-sockets />
                     </widget>
 
-                    <widget id="warehousingReallocationConsignmentPopup" widgetDefinitionId="de.hybris.platform.warehousingbackoffice.widgets.reallocationconsignment" slotId="cockpitWidgetChildrenInvisible"
+                    <widget id="warehousingReallocationConsignmentPopup" widgetDefinitionId="custom.bl.widgets.consignment.reallocationconsignment" slotId="cockpitWidgetChildrenInvisible"
                             template="true">
 
                         <instance-settings socketEventRoutingMode="LAST_USED">
@@ -374,7 +374,7 @@
                         </instance-settings>
 
                         <setting key="widgetStyleClass" type="String"></setting>
-                        <setting key="__externalLocationPath" type="String">extension://warehousingbackoffice</setting>
+                        <setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
                         <setting key="widgetStyleAttribute" type="String"></setting>
                         <setting key="_width" type="String">1020px</setting>
                         <setting key="_height" type="String">650px</setting>
@@ -595,7 +595,7 @@
     <widget-connection sourceWidgetId="waitingForGoodsConditionEvaluator" outputId="true" targetWidgetId="waitingForGoodsReturns" inputId="nodeSelected" />
     <widget-connection sourceWidgetId="waitingForGoodsReturns" outputId="outContext" targetWidgetId="warehousingAdvancedSearch" inputId="initContext" />
     <widget-connection sourceWidgetId="STUB_de.hybris.platform.warehousingbackoffice.actions.returns.cancelreturnaction" outputId="warehousingCancelReturnContext" targetWidgetId="warehousingCancelReturnPopup" inputId="cancelReturnContextInput"/>
-	<widget-connection sourceWidgetId="STUB_de.hybris.platform.warehousingbackoffice.actions.reallocateaction" outputId="reallocateContext" targetWidgetId="warehousingReallocationConsignmentPopup" inputId="consignmentInput"/>
+	<widget-connection sourceWidgetId="STUB_custom.bl.widgets.actions.blreallocateaction" outputId="reallocateContext" targetWidgetId="warehousingReallocationConsignmentPopup" inputId="consignmentInput"/>
 	<widget-connection sourceWidgetId="warehousingSavedQueries" outputId="advancedSearchInitContext" targetWidgetId="warehousingAdvancedSearch" inputId="initContext"/>
 	<!-- Stock Levels -->
 	<widget-connection sourceWidgetId="STUB_de.hybris.platform.warehousingbackoffice.actions.stock.adjustment" outputId="stockAdjustmentContext" targetWidgetId="warehousingStockAdjustmentPopup" inputId="stockLevelInput"/>
