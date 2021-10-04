@@ -108,8 +108,4 @@
 		<property name="eventService" ref="eventService"/>
 	</bean>
 
-	<bean id="sendOrderConfirmationESPEventAction" class="com.bl.Ordermanagement.actions.order.SendOrderConfirmationESPEventAction" parent="abstractOrderAction">
-		<property name="defaultBlESPEventService" ref="blEspEventService"/>
-	</bean>
-	
 </beans>

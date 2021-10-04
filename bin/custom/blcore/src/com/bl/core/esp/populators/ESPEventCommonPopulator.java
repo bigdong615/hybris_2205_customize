@@ -248,6 +248,11 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return orderType.get();
     }
 
+    /**
+     * This method craeted to get the product title
+     * @param serialProductCode serial code
+     * @return string
+     */
 
     protected String getProductTitle(final String serialProductCode) {
         final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
