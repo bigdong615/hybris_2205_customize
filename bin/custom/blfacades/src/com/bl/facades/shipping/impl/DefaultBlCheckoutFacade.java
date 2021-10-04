@@ -580,12 +580,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
-//                if(cartModel.isPickUpByMe()) {
-//                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
-//                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
-//                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
-//                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
-//                }
                 getModelService().save(addressModel);
                 getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
@@ -644,7 +638,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().refresh(cartModel);
             }
             return BlFacadesConstants.RESULT_SUCCESS;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
         }
