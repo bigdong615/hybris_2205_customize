@@ -210,6 +210,7 @@
     <property name="blAllocationService" ref="allocationService"/>
     <property name="blStockLevelDao" ref="blStockLevelDao" />
     <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+    <property name="businessProcessService" ref="businessProcessService"/>
   </bean>
 
 </beans>
