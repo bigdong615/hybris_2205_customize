@@ -176,7 +176,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
       otherConsignments.remove(this.consignment);
 
       otherConsignments.stream().forEach(consignmentModel -> {
-        if (consignmentModel.getStatus().equals(ConsignmentStatus.SHIPPED)) {
+        if (consignmentModel.getStatus().equals(ConsignmentStatus.BL_SHIPPED)) {
           showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_CONSIGNMENT_SHIPPED), true);
           return;
         }
