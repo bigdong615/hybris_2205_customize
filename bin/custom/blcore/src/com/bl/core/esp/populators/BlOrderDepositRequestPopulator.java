@@ -6,10 +6,14 @@ import com.bl.esp.dto.orderdeposit.data.OrderDepositData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -67,16 +71,22 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
       data.setShippingmethod(getRequestValue(delivery.getCode()));
     }
 
-    data.setExpectedshipping(formatter.format(orderModel.getActualRentalStartDate()));
-    data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalduration((int) getRentalDuration(orderModel));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setExpectedshipping(formatter.format(orderModel.getActualRentalStartDate()));
+      data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalduration((int) getRentalDuration(orderModel));
+    }
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
     data.setVerificationlevel(1);
-    data.setDepositamount(BigDecimal.valueOf(getDoubleValueForRequest(orderModel.getTotalPrice())));
+    final List<PaymentTransactionModel> paymentTransactionModelList = orderModel.getDepositPaymentTransactions();
+    if(Objects.nonNull(paymentTransactionModelList)){
+      final BigDecimal gcRedeemedAmount = paymentTransactionModelList.get(paymentTransactionModelList.size()-1).getPlannedAmount().setScale(2, RoundingMode.HALF_DOWN);
+      data.setDepositamount(gcRedeemedAmount);
+    }
     orderDepositRequest.setData(data);
   }
 

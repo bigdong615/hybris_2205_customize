@@ -6,6 +6,8 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_HAED_ERROR;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.order.BlOrderFacade;
@@ -133,6 +135,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+
+	@Resource(name = "blEspEventService")
+	private DefaultBlESPEventService blEspEventService;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -343,6 +348,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
         if (isDepositPaymentPage)
         {
+					final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+					blEspEventService.sendOrderDepositEvent(orderModel);
           model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
           model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);
           final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
