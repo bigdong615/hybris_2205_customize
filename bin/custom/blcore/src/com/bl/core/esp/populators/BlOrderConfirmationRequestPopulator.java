@@ -276,7 +276,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
   /**
    * To check whether media is empty of not
    * @param abstractOrderEntryModel abstractOrderEntryModel
-   * @return STring
+   * @return string
    */
     private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
       return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
