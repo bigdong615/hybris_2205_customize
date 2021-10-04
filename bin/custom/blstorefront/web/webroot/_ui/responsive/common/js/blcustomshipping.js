@@ -514,6 +514,7 @@ function reverseTraverseOnShipping() {
                 $('#ship-it-ups-zip-code').val('');
                 $('#checkZipForUPSPickup').hide();
                 $('.on-select-hide').hide();
+                showErrorNotificationForPickUpId('They must show ID at time of pickup');
              }
          }
      }
