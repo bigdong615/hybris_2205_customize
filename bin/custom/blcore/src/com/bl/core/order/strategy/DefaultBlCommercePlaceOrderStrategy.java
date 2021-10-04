@@ -118,10 +118,10 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
     if(null != orderModel.getDeliveryAddress() && null != orderModel.getPickUpPersonFirstName()) {
       final AddressModel deliveryAddress = orderModel.getDeliveryAddress();
       deliveryAddress.setCompany(deliveryAddress.getFirstname());
-      deliveryAddress.setFirstname(cartModel.getPickUpPersonFirstName());
-      deliveryAddress.setLastname(cartModel.getPickUpPersonLastName());
-      deliveryAddress.setEmail(cartModel.getPickUpPersonEmail());
-      deliveryAddress.setPhone1(cartModel.getPickUpPersonPhone());
+      deliveryAddress.setFirstname(orderModel.getPickUpPersonFirstName());
+      deliveryAddress.setLastname(orderModel.getPickUpPersonLastName());
+      deliveryAddress.setEmail(orderModel.getPickUpPersonEmail());
+      deliveryAddress.setPhone1(orderModel.getPickUpPersonPhone());
       getModelService().save(deliveryAddress);
       getModelService().refresh(deliveryAddress);
     }

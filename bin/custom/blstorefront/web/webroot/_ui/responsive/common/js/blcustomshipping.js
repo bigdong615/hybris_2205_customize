@@ -102,7 +102,7 @@ function reverseTraverseOnShipping() {
    $("#ship-it-savedAddresses option[value='newAddress']").attr('selected', 'selected');
  });
 
- //MainContinueMethod
+ // MainContinueMethod
  function shippingMethodContinue() {
  	$("#validationMessage").empty();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
@@ -121,7 +121,7 @@ function reverseTraverseOnShipping() {
     }
  }
 
- //ShipIt
+ // ShipIt
  $("input[id='ship-it']").click(function() {
     $('#ship-it-am-notification').html('');
     $('#ship-it-am-notification').hide();
@@ -280,7 +280,7 @@ function reverseTraverseOnShipping() {
       
   }
 
- //UPS-Store
+ // UPS-Store
  function fetchUPSDeliveryMethods() {
     $.ajax({
         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/chooseShippingDelivery',
@@ -339,6 +339,7 @@ function reverseTraverseOnShipping() {
  }
 
  function shipToUPSStoreLocationContinue(shippingMethod) {
+	 hideErrorForInputValidation();
      if($('#changeUPSStoreButton').is(":visible")) {
          utag.link({
            "tealium_event"    : "continue_shipping_click",
@@ -347,62 +348,28 @@ function reverseTraverseOnShipping() {
          });
          ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
          var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
-         if(checkShippingBlackout(deliveryMethod))
-{
-	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
-	$('#validationMessage').append(validationDiv);
-}
-else
-{
-	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
-     var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
-     var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
-     var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
-     if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
-     if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
-           savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+         if(checkShippingBlackout(deliveryMethod)) {
+        	 var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+        	 $('#validationMessage').append(validationDiv);
+         }
+         else
+         {
+        	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
+        	 var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
+        	 var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
+        	 var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
+        	 if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
+        		 if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
+        			 savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                           $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-          }
-     } else {
-          showErrorForInputValidationPick('Ship');
-     }
-//	addNewAddress(createUPSStoreAddress(), deliveryMethod)
-//             .then((data) => {
-//                 saveDeliveryMode(deliveryMethod, false)
-//                     .then((data) => {
-//                         $('.page-loader-new-layout').hide();
-//                         window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-//                     })
-//                     .catch((error) => {
-//                       console.log(error)
-//                     })
-//             })
-//             .catch((error) => {
-//               console.log(error)
-//             })
-}         
-     } else {
+        		 }
+        	 } else {
+        		 showErrorForInputValidationPick('Ship');
+        	 }
+         }         
+     	} else {
         showErrorForUPSOrPickAddressError();
-     }
-     //shipping by someone form data
-//     if($('#ship-it-pickup-gear').find('#pickup-person').find('input[id="store-pickup-other"]').prop("checked")) {
-//         if($("#ship-it-pickup-person").css('display') == 'block') {
-           
-//         }
-//     } else {
-////         savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
-////                         .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-//    	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
-//         var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
-//         var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
-//         var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
-//         if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
-//             savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
-//                    $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-//         } else {
-//              showErrorForInputValidationPick('Ship');
-//         }
-//     }
+     	}
  }
 
  function onClickOfFindStore() {
@@ -542,7 +509,7 @@ else
                              '</div>';
                 $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
                 $('#changeUPSStoreButton').show();
-              //  $('#ship-it-pickup-gear').show();
+              // $('#ship-it-pickup-gear').show();
                 $('#ship-it-pickup-person').show();
                 $('#ship-it-ups-zip-code').val('');
                 $('#checkZipForUPSPickup').hide();
@@ -605,7 +572,7 @@ else
       return blPickUpByForm;
   }
 
- //PickUp
+ // PickUp
  $("input[id='pickup']").click(function() {
      hideErrorForInputValidation();
      resetSelectBox('pick-up-select-box');
@@ -615,43 +582,42 @@ else
  });
 
  function pickUpPartnerLocationContinue(shippingMethod) {
+	 hideErrorForInputValidation();
      if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
         // track Tealium event on continue shipping.
-//        utag.link({
-//         "tealium_event"    : "continue_shipping_click",
-//         "shipping_method"   : "PickUP",
-//         "shipping_method_not_available"     : "0"
-//        });
+        utag.link({
+         "tealium_event"    : "continue_shipping_click",
+         "shipping_method"   : "PickUP",
+         "shipping_method_not_available"     : "0"
+        });
         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
         var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
-        if(checkShippingBlackout(deliveryMode))
-{
-	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
-	$('#validationMessage').append(validationDiv);
-}
-else
-{
-	var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
-    var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
-    var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
-    var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
-    if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
-      if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
-          savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+        if(checkShippingBlackout(deliveryMode)) {
+        	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+        	$('#validationMessage').append(validationDiv);
+        }
+        else {
+        	var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
+        	var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
+        	var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
+        	var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
+        	if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
+        		if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
+        			savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                     $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
-          saveDeliveryMode(deliveryMode, true)
-          .then((data) => {
-              $('.page-loader-new-layout').hide();
-              window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      }
-    } else {
-         showErrorForInputValidationPick('Pick');
-    }
-}
+        			saveDeliveryMode(deliveryMode, true)
+        			.then((data) => {
+        				$('.page-loader-new-layout').hide();
+        				window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+        			})
+        			.catch((error) => {
+        				console.log(error)
+        			})
+        		}
+        	} else {
+        		showErrorForInputValidationPick('Pick');
+        	}
+        }
      } else {
         showErrorForUPSOrPickAddressError();
      }
@@ -860,7 +826,7 @@ else
      $('#showErrorForUPSOrPickAddressError').hide();
   }
 
-  //SF Or NYC
+  // SF Or NYC
   $("input[id='sameday']").click(function() {
       hideErrorForInputValidation();
       $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
@@ -1033,11 +999,11 @@ else
     else if(checkAvailability(deliveryMode))
     {
         // track Tealium event on continue shipping.
-//           utag.link({
-//           "tealium_event"    : "continue_shipping_click",
-//           "shipping_method"   : "Same Day Delivery",
-//           "shipping_method_not_available"     : "0"
-//           });
+           utag.link({
+           "tealium_event"    : "continue_shipping_click",
+           "shipping_method"   : "Same Day Delivery",
+           "shipping_method_not_available"     : "0"
+           });
         ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
@@ -1147,7 +1113,7 @@ else
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]').removeClass('error');
   }
 
- //Error Notifications
+ // Error Notifications
  function showErrorForInputValidation(section) {
     let notification = '';
     var len = 0;
@@ -1317,7 +1283,7 @@ else
     $('#same-day-notification').show();
  }
 
- //Methods
+ // Methods
  function hideShippingForm() {
      if($('#delivery-saved-addresses-dropdown').length == 1) {
          $('#delivery-shippingAddressFormDiv').hide();
@@ -1524,7 +1490,7 @@ else
       }
  }
 
- //AJAX
+ // AJAX
  function addressValidationService(addressForm, deliveryMode, section, businessType) {
     sessionStorage.setItem("enteredAddressForm", JSON.stringify(addressForm));
     sessionStorage.setItem("section", JSON.stringify(section));
@@ -1558,7 +1524,7 @@ else
                     if(data.addressType != null) {
                         addressForm.addressType = data.addressType;
                     }
-                    //suggested state not supported error from response
+                    // suggested state not supported error from response
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {
                              sessionStorage.removeItem("enteredAddressForm");
@@ -1762,7 +1728,7 @@ else
              success: function (data) {
                 if(data == 'success') {
                     resolve(data);
-                    //TODO: Handle for payment method for checkout
+                    // TODO: Handle for payment method for checkout
                     window.location = ACC.config.encodedContextPath + '/checkout/multi/payment-method/add';
                 } else {
                     reject(data);
@@ -1802,7 +1768,7 @@ else
                           "tealium_event"    : "continue_shipping_click",
                           "shipping_method"   : "Ship It-Ship to UPS",
                           "shipping_method_not_available"     : "0"
-                                   });
+                        });
                         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
@@ -1868,7 +1834,7 @@ else
      }
   }
 
-  //show Price of shipping on cart
+  // show Price of shipping on cart
   function onChangeOfShipItShipToHome(event) {    
 	$("#validationMessage").empty();  	
      $('#cart-shipping-cost').text($ ($("#shipToHomeShippingMethods .selected").find(".text-muted")).html());
@@ -1938,7 +1904,7 @@ else
 
   }
   
-  //checks the product availability for the selected delivery mode
+  // checks the product availability for the selected delivery mode
   function checkAvailability(deliveryMode){
     var isAvailable;
     if(deliveryMode != undefined && deliveryMode != '') {
@@ -1989,7 +1955,7 @@ function checkShippingBlackout(deliveryMode){
     return blockShipping;
 }
 
- //Replacement place order , mai method.
+ // Replacement place order , mai method.
  $(document).on("click", ".js-replacement-order", function (e) {
      e.preventDefault();
     var shippingCategory = $('input[name="shipProduct"]:checked').attr('id');
@@ -2272,7 +2238,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
     }
 
 
-//AJAX
+// AJAX
  function addressValidationServiceForOrderReplacement(addressForm, deliveryMode, section, businessType) {
     sessionStorage.setItem("enteredAddressForm", JSON.stringify(addressForm));
     sessionStorage.setItem("section", JSON.stringify(section));
@@ -2306,7 +2272,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
                     if(data.addressType != null) {
                         addressForm.addressType = data.addressType;
                     }
-                    //suggested state not supported error from response
+                    // suggested state not supported error from response
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {
                              sessionStorage.removeItem("enteredAddressForm");

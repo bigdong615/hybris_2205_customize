@@ -290,7 +290,7 @@
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
 			<c:choose>
-				<c:when test="false">
+				<c:when test="isCustomerHasUnPaidBillOrders">
 					<a href="#" data-bs-toggle="modal" data-bs-toggle="modal"
 						data-bs-target="#unpaidBill" 
 						class="btn btn-sm btn-primary float-end"> <spring:theme
