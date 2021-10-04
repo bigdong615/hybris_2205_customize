@@ -5,6 +5,10 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -827,6 +831,48 @@ public final class BlDateTimeUtils
 		return BlDateTimeUtils
 				.convertStringDateToLocalDate(stringDate, BlCoreConstants.DATE_FORMAT);
 	}
+	
+	/** This method will update the Actual Rental End date for order
+	 * @param abstractOrderModel
+	 * @param zoneDeliveryMode
+	 * @param dateFormat
+	 */
+	public static void updateActualRentalEndDate(final AbstractOrderModel abstractOrderModel,
+			final ZoneDeliveryModeModel zoneDeliveryMode, final DateFormat dateFormat)
+	{
+		final int postDaysToAdd = Integer.parseInt(zoneDeliveryMode.getPostReservedDays());						
+		final String rentalEndDate = dateFormat.format(abstractOrderModel.getRentalEndDate());
+		LocalDate localEndDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalEndDate, BlCoreConstants.DATE_FORMAT);
+		if (Objects.nonNull(localEndDate))
+		{
+			localEndDate = localEndDate.plusDays(postDaysToAdd);
+
+			abstractOrderModel
+					.setActualRentalEndDate(Date.from(localEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		}
+	}
+
+	/**
+	 * This method will update the Actual Rental Start date for order
+	 * @param abstractOrderModel
+	 * @param zoneDeliveryMode
+	 * @param dateFormat
+	 */
+	public static void updateActualRentalStartDate(final AbstractOrderModel abstractOrderModel,
+			final ZoneDeliveryModeModel zoneDeliveryMode, final DateFormat dateFormat)
+	{
+		final int preDaysToDeduct = Integer.parseInt(zoneDeliveryMode.getPreReservedDays());
+		final String rentalStartDate = dateFormat.format(abstractOrderModel.getRentalStartDate());
+		LocalDate localStartDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalStartDate, BlCoreConstants.DATE_FORMAT);
+		if (Objects.nonNull(localStartDate))
+		{
+			localStartDate = localStartDate.minusDays(preDaysToDeduct);
+
+			abstractOrderModel
+					.setActualRentalStartDate(Date.from(localStartDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		}
+	}
+
 	/**
 	 * Check if the date falls on weekends or blackout dates.
 	 *
