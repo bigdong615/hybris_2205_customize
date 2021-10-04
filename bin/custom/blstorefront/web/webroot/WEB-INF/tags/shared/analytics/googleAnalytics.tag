@@ -333,7 +333,7 @@ gtag('config', googleAnalyticsTrackingId);
                         <c:set var="cartType" value="Used Gear Order"/>
                       </c:otherwise>
                       </c:choose>
-		gtag('event', 'confirmation', {
+		gtag('event', 'purchase', {
 		  "event_category": "Order Confirmation",
     	"event_label": "${cartType}",
 		  "transaction_id": "${orderCode}",
