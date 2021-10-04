@@ -81,8 +81,10 @@ public class DefaultBlPaymentService implements BlPaymentService
 				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
 						order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
 			} else {
-				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
-						order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null), Boolean.FALSE);
+				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
+					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
+							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null), Boolean.FALSE);
+				}
 			}
 		} catch(final BraintreeErrorException ex) {
 			order.setStatus(OrderStatus.PAYMENT_DECLINED);
