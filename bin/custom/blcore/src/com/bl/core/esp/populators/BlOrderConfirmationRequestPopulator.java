@@ -20,11 +20,9 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javolution.io.Struct.Bool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -277,8 +275,8 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
 
   /**
    * To check whether media is empty of not
-   * @param abstractOrderEntryModel
-   * @return
+   * @param abstractOrderEntryModel abstractOrderEntryModel
+   * @return STring
    */
     private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
       return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
