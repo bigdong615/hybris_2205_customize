@@ -20,7 +20,7 @@ INSERT_UPDATE Category; code[unique = true]             ; active; name[lang = en
                       ; production               ; true  ; Production                   ; true          ; Production                   ;                                                                       ;                                                  ;                ; true
                       ; subparts                 ; true  ; Subparts                     ; false         ; Subparts                     ;                                                                       ;                                                  ;                ; true
                       ; newgear                  ; true  ; New Gear                     ; false         ; New Gear                     ;                                                                       ; asagentgroup                                     ;                ; false
-                      ; package                  ; true  ; package                      ; false         ; package                      ;                                                                       ;                                                  ;                ; true
+                      ; package                  ; true  ; Package                      ; false         ; package                      ;                                                                       ;                                                  ;                ; true
                       ; usedgear                 ; true  ; Used Gear                    ; true          ; Used Gear                    ;                                                                       ;                                                  ;                ; false
                       ; audio                    ; true  ; Audio                        ; true          ; Audio                        ; Camera microphones | Audio Mixers | UHF Lavaliers | Borrow Lenses     ;                                                  ;                ; true
                       ; lighting                 ; true  ; Lighting                     ; true          ; Lighting                     ;                                                                       ;                                                  ;                ; true
@@ -113,6 +113,10 @@ INSERT_UPDATE CategoryCategoryRelation; $categories              ; $supercategor
                                       ; audio-accessories        ; audio
                                       ; headphones               ; audio
                                       ; video-lighting-batteries ; batteries_power
+                                      ; cameras ; rentalgear
+                                      ; lenses ; rentalgear
+                                      ; production ; rentalgear
+                                      ; package ; rentalgear
 
 
 ####### BL -80 Added Used Gear Category

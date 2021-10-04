@@ -15,6 +15,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.order.exceptions.CalculationException;
@@ -26,8 +27,12 @@ import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.PriceValue;
 import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +84,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final AbstractOrderModel order = entry.getOrder();
 		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
-		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product);
+		final PriceValue dynamicBasePrice = ((BlProductModel)product).isBundleProduct()? basePrice : getDynamicBasePriceForRentalSKU(basePrice, product, order);
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
@@ -117,7 +122,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				}
 			}
 			if(BooleanUtils.isFalse(order.isGiftCardOrder()) && BooleanUtils.isFalse(order.getIsNewGearOrder())){
-			final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
+				final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
 				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
 						finaltotalDamageWaiverCost);
@@ -167,7 +172,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	@Override
 	protected void calculateTotals(final AbstractOrderModel order, final boolean recalculate,
-			final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap) throws CalculationException
+								   final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap) throws CalculationException
 	{
 		if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(BlCoreConstants.RETURN_REQUEST)) {
 			BlReplaceMentOrderUtils.updateCartForReplacementOrder(order);
@@ -204,7 +209,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 
 	private void calculateTotalsForCart(final AbstractOrderModel order, final boolean recalculate , final int digits ,
-			final double subtotal , final double totalDamageWaiverCost ,final double totalOptionCost){
+										final double subtotal , final double totalDamageWaiverCost ,final double totalOptionCost){
 		final double totalDiscounts = calculateDiscountValues(order, recalculate);
 		final double roundedTotalDiscounts = getDefaultCommonI18NService()
 				.roundCurrency(totalDiscounts, digits);
@@ -274,7 +279,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *            the calculation exception
 	 */
 	private PriceValue getPriceForSkuOrSerial(final AbstractOrderModel order, final AbstractOrderEntryModel entry,
-			final ProductModel product) throws CalculationException
+											  final ProductModel product) throws CalculationException
 	{
 
 		if (PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product))
@@ -312,9 +317,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			else{
 				return findBasePrice(entry);
 			}
-			
+
 		}
-		
+
 		throw new CalculationException("Product Type is not a type of SKU or Serial Product");
 	}
 
@@ -327,21 +332,44 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *           the product
 	 * @return the dynamic base price for rental SKU
 	 */
-	private PriceValue getDynamicBasePriceForRentalSKU(final PriceValue basePrice, final ProductModel product)
+	private PriceValue getDynamicBasePriceForRentalSKU(final PriceValue basePrice, final ProductModel product, final AbstractOrderModel order)
 	{
-		
-		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product) 
+
+		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product)
 				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product) && BooleanUtils.isFalse(
-						ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())) && BooleanUtils.isFalse(
+				ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType())) && BooleanUtils.isFalse(
 				((BlProductModel) product).getRetailGear()))
 		{
 			final BlProductModel blProductModel = (BlProductModel) product;
+			Long rentedDays = null;
+			if(order instanceof OrderModel)
+			{
+				rentedDays = getRentedDays(order.getRentalStartDate(), order.getRentalEndDate());
+			}
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
-					.getDynamicPriceDataForProduct(blProductModel.getConstrained(), Double.valueOf(basePrice.getValue()));
+					.getDynamicPriceDataForProductForOrder(blProductModel.getConstrained(), Double.valueOf(basePrice.getValue()), rentedDays);
 			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct.doubleValue(), basePrice.isNet());
 		}
 		return basePrice;
+
+
 	}
+
+	/**
+	 * This method will return long days
+	 * @param startDate date
+	 * @param endDate date
+	 * @return long days
+	 */
+	private Long getRentedDays(final Date startDate, final Date endDate)
+	{
+		final LocalDate arrDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		final LocalDate retDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+		return ChronoUnit.DAYS.between(arrDate, retDate);
+	}
+
+
 
 	/**
 	 * Sets the damage Waiver prices. Calculating on the basis of the type of SKU and percentage.
@@ -395,7 +423,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *            the calculation exception
 	 */
 	private void setGearGuardProFullDamageWaiverPrice(final AbstractOrderEntryModel cartEntry,
-			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing, final Double gearGuardWaiverPrice)
+													  final List<BlDamageWaiverPricingModel> lDamageWaiverPricing, final Double gearGuardWaiverPrice)
 			throws CalculationException
 	{
 		final BlDamageWaiverPricingModel damageWaiverProPricing = getDamageWaiverPricingModel(lDamageWaiverPricing,
@@ -422,7 +450,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *            the calculation exception
 	 */
 	private Double setGearGuardDamageWaiverPrice(final AbstractOrderEntryModel cartEntry, final ProductModel product,
-			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing) throws CalculationException
+												 final List<BlDamageWaiverPricingModel> lDamageWaiverPricing) throws CalculationException
 	{
 		final String gearType = BooleanUtils.toBoolean(((BlProductModel) product).getIsVideo()) ? BlCoreConstants.VIDEO
 				: BlCoreConstants.PHOTO;
@@ -463,7 +491,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *            the calculation exception
 	 */
 	private BlDamageWaiverPricingModel getDamageWaiverPricingModel(final List<BlDamageWaiverPricingModel> lDamageWaiverPricing,
-			final String gearType) throws CalculationException
+																   final String gearType) throws CalculationException
 	{
 		final BlDamageWaiverPricingModel damageWaiverPricingModel = lDamageWaiverPricing.stream()
 				.filter(damageWaiverPricing -> gearType.equals(damageWaiverPricing.getDamageWaiverGearType().getCode())).findFirst()
@@ -574,7 +602,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if(entry.isBundleMainEntry()){
 			pv = commercePriceService.getDynamicBasePriceForBundle(product,defaultAddedTimeForExtendRental);
 		}else {
-			 pv = getPriceForSkuOrSerial(order, entry, product);
+			pv = getPriceForSkuOrSerial(order, entry, product);
 		}
 		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
 		final PriceValue dynamicBasePrice = entry.isBundleMainEntry()? basePrice:getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
@@ -673,7 +701,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	@Override
 	public PriceValue getDynamicBasePriceForTax(final PriceValue basePrice, final ProductModel product , final
-			AbstractOrderModel abstractOrder)
+	AbstractOrderModel abstractOrder)
 	{
 		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product)
 				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
@@ -692,7 +720,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	@Override
 	public Map<TaxValue, Map<Set<TaxValue>, Double>> calculateSubtotal(final AbstractOrderModel order,
-			final boolean recalculate)
+																	   final boolean recalculate)
 	{
 		if (recalculate || orderRequiresCalculationStrategy.requiresCalculation(order))
 		{
@@ -725,8 +753,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	private void addEntryTaxValue(final Map<TaxValue, Map<Set<TaxValue>, Double>> taxValueMap,
-			final AbstractOrderEntryModel entry,
-			final double entryTotal, final Set<TaxValue> relativeTaxGroupKey, final TaxValue taxValue)
+								  final AbstractOrderEntryModel entry,
+								  final double entryTotal, final Set<TaxValue> relativeTaxGroupKey, final TaxValue taxValue)
 	{
 		if (taxValue.isAbsolute())
 		{
@@ -806,7 +834,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		this.defaultCommonI18NService = defaultCommonI18NService;
 	}
-
 
 	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
 		return defaultBlExternalTaxesService;
