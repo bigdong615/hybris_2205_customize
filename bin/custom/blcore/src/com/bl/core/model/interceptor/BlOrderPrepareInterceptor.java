@@ -7,7 +7,6 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
-import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -218,7 +217,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
           isEligibleToTrigger.set(Boolean.FALSE);
           break;
         }
-    };
+    }
       if(isEligibleToTrigger.get()){
         getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
       }
