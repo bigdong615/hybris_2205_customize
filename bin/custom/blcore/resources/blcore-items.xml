@@ -274,6 +274,7 @@
       	<value code="SHIPPING_MANUAL_REVIEW"/>
       	<value code="READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
+        <value code="PARTIALLY_SHIPPED" />
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
