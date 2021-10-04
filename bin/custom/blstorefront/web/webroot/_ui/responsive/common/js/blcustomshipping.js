@@ -269,11 +269,11 @@ function reverseTraverseOnShipping() {
       else
       {
         // track Tealium event on continue shipping.
-//              utag.link({
-//              "tealium_event"    : "continue_shipping_click",
-//              "shipping_method"   : "Ship It-Ship to home",
-//              "shipping_method_not_available"     : "1"
-//               });
+              utag.link({
+              "tealium_event"    : "continue_shipping_click",
+              "shipping_method"   : "Ship It-Ship to home",
+              "shipping_method_not_available"     : "1"
+               });
         ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
@@ -340,11 +340,11 @@ function reverseTraverseOnShipping() {
 
  function shipToUPSStoreLocationContinue(shippingMethod) {
      if($('#changeUPSStoreButton').is(":visible")) {
-//         utag.link({
-//           "tealium_event"    : "continue_shipping_click",
-//           "shipping_method"   : "Ship It-Ship to UPS",
-//           "shipping_method_not_available"     : "0"
-//         });
+         utag.link({
+           "tealium_event"    : "continue_shipping_click",
+           "shipping_method"   : "Ship It-Ship to UPS",
+           "shipping_method_not_available"     : "0"
+         });
          ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
          var deliveryMethod = $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val();
          if(checkShippingBlackout(deliveryMethod))
@@ -359,8 +359,10 @@ else
      var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
      var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
      if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
-         savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
-                $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+     if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
+           savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                          $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+          }
      } else {
           showErrorForInputValidationPick('Ship');
      }
@@ -634,6 +636,7 @@ else
     var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
     var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
     if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
+      if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
           savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                     $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
           saveDeliveryMode(deliveryMode, true)
@@ -644,6 +647,7 @@ else
           .catch((error) => {
             console.log(error)
           })
+      }
     } else {
          showErrorForInputValidationPick('Pick');
     }
@@ -1794,11 +1798,11 @@ else
                  if(data != null) {
                      if(upsStoreAddress != null) {
                         // track Tealium event on continue shipping.
-//                          utag.link({
-//                          "tealium_event"    : "continue_shipping_click",
-//                          "shipping_method"   : "Ship It-Ship to UPS",
-//                          "shipping_method_not_available"     : "0"
-//                                   });
+                          utag.link({
+                          "tealium_event"    : "continue_shipping_click",
+                          "shipping_method"   : "Ship It-Ship to UPS",
+                          "shipping_method_not_available"     : "0"
+                                   });
                         ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {

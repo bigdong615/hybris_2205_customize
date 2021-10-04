@@ -96,7 +96,6 @@
                             <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                             <checkout:pickUpAddressForm />
                         </div>
-                    </div>
                 </div>
                 <div id="ship-it-notification"></div>
                 <div id="ship-it-am-notification"></div>
