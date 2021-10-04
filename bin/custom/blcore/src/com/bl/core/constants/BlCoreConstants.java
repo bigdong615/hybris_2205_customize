@@ -453,6 +453,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
   public static final String NAME = "Name";
 
+  public static final String GIFT_CARD_ORDER = "Gift Card";
+
+
 	private BlCoreConstants()
 	{
 		//empty

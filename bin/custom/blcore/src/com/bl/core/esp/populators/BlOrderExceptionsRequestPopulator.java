@@ -135,42 +135,6 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     }
 
 
-  /**
-   * This method created to get the serial product title for request
-   * @param serialProductCode serial product code
-   * @return string
-   */
-  private String getProductTitle(final String serialProductCode) {
-    final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-      final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)){
-        productTitle.set(blProductModel.getName());
-      }
-    }
-    return productTitle.get();
-  }
-
-
-  /**
-   * This method created to get the serial product url for request
-   * @param serialProductCode serial product code
-   * @return string
-   */
-  private String getProductUrl(final String serialProductCode) {
-    final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-     final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)){
-        productUrl.set(blProductModel.getPicture().getURL());
-      }
-    }
-    return productUrl.get();
-  }
-
-
 
   public ProductService getProductService() {
     return productService;

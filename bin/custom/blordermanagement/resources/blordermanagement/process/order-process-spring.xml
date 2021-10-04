@@ -44,6 +44,7 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
 		<property name="blOrderService" ref="blOrderService"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 	
 	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />
@@ -106,5 +107,5 @@
 	<bean id="sendPaymentFailedNotificationAction" class="com.bl.Ordermanagement.actions.order.payment.SendPaymentFailedNotificationAction" parent="abstractAction">
 		<property name="eventService" ref="eventService"/>
 	</bean>
-	
+
 </beans>
