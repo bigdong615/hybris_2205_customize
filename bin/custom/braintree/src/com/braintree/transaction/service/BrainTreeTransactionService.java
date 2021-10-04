@@ -192,4 +192,32 @@ public interface BrainTreeTransactionService
    */
   boolean doCapturePaymentForModifiedOrder(final AbstractOrderModel orderModel, final BigDecimal amount, final boolean submitForSettlement,
       final BrainTreePaymentInfoModel paymentInfo) throws BraintreeErrorException;
+  
+  /**
+   * Do modified order po payment.
+   *
+   * @param order the order
+   * @param poNumber the po number
+   * @param poNote the po note
+   * @param poAmount the po amount
+   * @return true, if successful
+   */
+  public boolean doModifiedOrderPoPayment(final AbstractOrderModel order, final String poNumber, final String poNote, final BigDecimal poAmount);
+  
+  /**
+   * Initiate refund process.
+   *
+   * @param orderModel the order model
+   * @param amountToRefund the amount to refund
+   * @return true, if successful
+   */
+  public boolean initiateRefundProcess(final AbstractOrderModel orderModel, final BigDecimal amountToRefund);
+  
+  /**
+   * Gets the remaining amount to refund.
+   *
+   * @param order the order
+   * @return the remaining amount to refund
+   */
+  public BigDecimal getRemainingAmountToRefund(final AbstractOrderModel order);
 }

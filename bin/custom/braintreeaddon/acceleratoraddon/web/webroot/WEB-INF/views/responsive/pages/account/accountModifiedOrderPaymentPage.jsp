@@ -15,7 +15,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <input type="hidden" id="isModifyOrderPaymentPage" name="isModifyOrderPaymentPage" value="true" />
 <div id="accountContent" class="col-lg-5 offset-lg-1">
-	<h1>Modify Order Payment</h1>
+	<h1>Modified Order Payment</h1>
 	<div class="extend-order">
 		<div class="row">
 			<div class="col-12 mb-3">
@@ -260,8 +260,7 @@
 				</div>
 					<!-- PO Section -->
 					<c:if test="${!orderData.hasGiftCart}">
-                <%-- <c:if test="${orderData.isPOEnabled}"> --%>
-                <c:if test="true">
+                <c:if test="${orderData.isPOEnabled}">
                 	<div class="accordion-item payProduct">
                 	  <c:if test="${not empty selectedPoNumber}">
                     		<input type="hidden" id="isPOPresent" name="isPOPresent" value="true"/>
@@ -284,17 +283,17 @@
                 			</div>
                 			<div class="col-11">
                 				<b><spring:theme code="text.payment.page.po" /></b>
-                				<div class="collapse" id="po-expand"
-                					data-bs-parent="#paymentOptions">
-                				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
+                				<div class="collapse" id="po-expand" data-bs-parent="#paymentOptions">
+                				<c:url value="/my-account/modified-order-po-payment" var="modifiedOrderPoPaymentAction" />
+                				<form name="submitModifiedOrderPoForm" method="POST" id="submitModifiedOrderPoForm" action="${modifiedOrderPoPaymentAction}">
+                					<input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" />
                 					<input type="text" class="form-control po-number" name="poNumber" id="poNumber" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
                 						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
-                					<input type="text" class="form-control po-number" name="poNotes" id="poNotes" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
+                					<input type="text" class="form-control po-number" name="poNote" id="poNote" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
                 						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
-                					<input type="hidden" id="selectedPoNumber" name="selectedPoNumber" value=""/>
-                          <input type="hidden" id="selectedPoNotes" name="selectedPoNotes" value=""/>
-                          <input type="hidden" id="poSelected" name="poSelected" value=""/>
-                				</form:form>
+                					<input type="hidden" id="poAmount" name="poAmount" value="" /> 
+                					<input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}" />
+                				</form>
                 				</div>
                 			</div>
                 		</div>
@@ -308,7 +307,7 @@
 
 			</div>
 			<div class="cart-actions">
-				<c:url value="/my-account/modify-order-payment-success"
+				<c:url value="/my-account/modified-order-cc-payment"
 					var="depositPaymentAction"></c:url>
 				<form action="${depositPaymentAction}" method="post"
 					id="depositPaymentForm">
@@ -357,6 +356,12 @@
 		<div id="depositPaymentErrorMessage"></div>
 	</div>
 </div>
+<c:url value="/my-account/modified-order-refund-payment" var="refundPaymentAction"/>
+<form action="${refundPaymentAction}" method="post" id="refundPaymentForm">
+	<input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" />
+	<input type="hidden" id="refundAmount" name="refundAmount" value="" />
+	<input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}" />
+</form>
 
 
 

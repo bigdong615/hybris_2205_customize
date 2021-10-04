@@ -1518,6 +1518,7 @@ $(".js-order-deposit-payment , .js-modify-order-capture-payment").on("click", fu
 	$('#validationMessage').empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var poEnabled = $('#paymentMethodPo').is(':checked');
 	var paymentInfoId = $('#paymentId').val();
 	var depositAmount = getAmount();
 	if(depositAmount == '')
@@ -1534,6 +1535,12 @@ $(".js-order-deposit-payment , .js-modify-order-capture-payment").on("click", fu
 	{
 		$("#depositOrderTotal").val(depositAmount);
 		var formToSubmit = $("#depositPaymentForm");
+		formToSubmit.submit();
+	}
+	else if(poEnabled == true)
+	{
+		var formToSubmit = $("#submitModifiedOrderPoForm");
+		$("#poAmount").val(depositAmount);
 		formToSubmit.submit();
 	}
 	else 
@@ -1565,3 +1572,52 @@ $(".add-cc-form-depositPayment").on("click",function(e){
 	var orderId = $("#orderId").val(id);
     $("#payment-add-form-depositPayment").submit();
 });
+
+$(".js-modify-order-refund-payment").on("click", function(e) {
+	e.preventDefault();
+	$('#depositPaymentErrorMessage').empty();
+	var depositAmount = getAmount();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else
+	{
+		doProcessRefund(depositAmount, $("#orderCode").val());
+	}
+});
+
+function doProcessRefund(amount, orderCode)
+{
+	$.ajax({
+        url: ACC.config.encodedContextPath + "/my-account/refund-remaining-payment",
+        async: false,
+        type: 'POST',
+        data: {orderCode: orderCode, refundAmount: amount},
+        
+        success: function (response) {
+        	if(response == 'SUCCESS')
+			{
+				$("#refundAmount").val(amount);
+				var formToSubmit = $("#refundPaymentForm");
+				formToSubmit.submit();
+			}
+			else if(response != '')
+			{
+				var validationDiv = $('<div class="notification notification-error mb-4" />').text(response);
+				$('#depositPaymentErrorMessage').append(validationDiv);
+			}
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+              $('.modal-backdrop').addClass('remove-popup-background');
+              // log the error to the console
+              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+        }
+	});
+}
