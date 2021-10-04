@@ -48,7 +48,7 @@ public class BlReallocationAction extends AbstractComponentWidgetAdapterAware im
 			ConsignmentModel consignment = (ConsignmentModel) data;
 			if (!CollectionUtils.isEmpty(consignment.getConsignmentEntries()) && !(consignment
 					.isInternalTransferConsignment()) && !(consignment.getStatus()
-					.equals(ConsignmentStatus.SHIPPED))
+					.equals(ConsignmentStatus.BL_SHIPPED))
 					&& consignment.getFulfillmentSystemConfig() == null) {
 
 				decision = consignment.getConsignmentEntries().stream().anyMatch(consignmentEntry ->
