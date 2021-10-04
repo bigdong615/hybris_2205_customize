@@ -40,7 +40,7 @@
 
 			<setting key="widgetStyleClass" type="String"></setting>
 			<setting key="__externalLocationPath" type="String">
-				extension://warehousingbackoffice
+				extension://blbackoffice
 			</setting>
 			<setting key="widgetStyleAttribute" type="String"></setting>
 			<setting key="_width" type="String">1020px</setting>
