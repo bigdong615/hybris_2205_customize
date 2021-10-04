@@ -43,8 +43,8 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("locationId", locationId);
         final List<BlInventoryLocationModel> results = getFlexibleSearchService().<BlInventoryLocationModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_INVENTORY_LOC + locationId);
-        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_INVENTORY_LOC, locationId);
+        return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
     }
 
     /**
@@ -58,9 +58,24 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("barcodeList", barcodes);
         final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD + barcodes);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcodes);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BlSerialProductModel getSerialProductByBarcode(final String barcode) {
+		final String barcodeList = "SELECT {bsp.pk} FROM {BlSerialProduct! as bsp}, {CatalogVersion as cv}, " +
+				"{Catalog as c}, {ArticleApprovalStatus as aas} WHERE {cv.catalog} = {c.pk} and {bsp.catalogVersion} = " +
+				"{cv.pk} and {c.id} = 'blProductCatalog' and {cv.version} = 'Staged' and {aas.code} = 'approved' and {code} = ?barcode";
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+		query.addQueryParameter("barcode", barcode);
+		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcode);
+		return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
+	}
 
     /**
      * {@inheritDoc}
@@ -71,8 +86,8 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("key", key);
         final List<BlInventoryScanConfigurationModel> results = getFlexibleSearchService().<BlInventoryScanConfigurationModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
-        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE, key);
+        return CollectionUtils.isNotEmpty(results) ? results.get(BlInventoryScanLoggingConstants.ZERO) : null;
     }
 
 
@@ -86,7 +101,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
        query.addQueryParameter(BlInventoryScanLoggingConstants.LAST_SCANNED_ITEM, lastScannedItem);
        final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();
        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE, lastScannedItem);
-       return CollectionUtils.isEmpty(results) ? null : results.get(0);
+       return CollectionUtils.isEmpty(results) ? null : results.get(BlInventoryScanLoggingConstants.ZERO);
     }
     /**
  	 * {@inheritDoc}
@@ -174,7 +189,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(serialsOnLocation);
 		query.addQueryParameter(BlCoreConstants.BIN_LOCATION_ID, binLocationId);
 		final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
-		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC , binLocationId);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC, binLocationId);
 		return CollectionUtils.isEmpty(results) ? Collections.emptyList() : results;
 	}
 
