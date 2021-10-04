@@ -3,7 +3,9 @@ package com.bl.Ordermanagement.reallocation;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
@@ -66,4 +68,13 @@ public interface BlReallocationService {
    */
   void reserveStocksForSerialProducts(final Set<BlSerialProductModel> serialProductModels,
       final ConsignmentEntryModel entry);
+
+  /**
+   * Create and start a consignment process for each consignment in the collection.
+   *
+   * @param consignments - list of consignments; never <tt>null</tt>
+   * @param process      - order process model
+   */
+  void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
+      final OrderProcessModel process);
 }

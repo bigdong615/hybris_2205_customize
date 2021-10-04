@@ -13,11 +13,16 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
@@ -45,6 +50,7 @@ public class DefaultBlReallocationService implements BlReallocationService {
   private BlAllocationService blAllocationService;
   private BlConsignmentEntryService blConsignmentEntryService;
   private BlStockLevelDao blStockLevelDao;
+  private BusinessProcessService businessProcessService;
 
   /**
    * {@inheritDoc}
@@ -110,13 +116,20 @@ public class DefaultBlReallocationService implements BlReallocationService {
     final ConsignmentModel consignment = getConsignment(warehouseModel, order);
 
     if (Objects.isNull(consignment)) {
-      getBlAllocationService().createConsignment(order,
+
+      final ConsignmentModel newConsignmentModel = getBlAllocationService().createConsignment(order,
           BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + order.getCode()
               + BlOrdermanagementConstants.UNDER_SCORE
               + order.getConsignments().size(),
           result);
+
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "A new consignment has been created for consignment reallocation ");
+
+      final List<ConsignmentModel> consignmentModelList = new ArrayList<>();
+      consignmentModelList.add(newConsignmentModel);
+      startConsignmentSubProcess(consignmentModelList, getOrderProcess((OrderModel)order));
+
     } else {
       final List<AbstractOrderEntryModel> orderEntries = new ArrayList<>();
       context.getOrderEntries().forEach(orderEntry ->
@@ -149,6 +162,19 @@ public class DefaultBlReallocationService implements BlReallocationService {
       consignment.setConsignmentEntries(entries);
       getModelService().save(consignment);
     }
+  }
+
+  private OrderProcessModel getOrderProcess(final OrderModel order) {
+
+    final Optional<OrderProcessModel> orderProcessModel = order.getOrderProcess().stream().filter(
+        orderProcess -> orderProcess.getProcessDefinitionName().equalsIgnoreCase("order-process"))
+        .findFirst();
+
+    if (orderProcessModel.isPresent()) {
+      return orderProcessModel.get();
+    }
+
+    return null;
   }
 
   private ConsignmentModel getConsignment(final WarehouseModel location,
@@ -222,6 +248,26 @@ public class DefaultBlReallocationService implements BlReallocationService {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
+      final OrderProcessModel process) {
+
+    for (final ConsignmentModel consignment : consignments) {
+      final ConsignmentProcessModel subProcess = getBusinessProcessService()
+          .createProcess(
+              consignment.getCode() + WarehousingConstants.CONSIGNMENT_PROCESS_CODE_SUFFIX,
+              BlOrdermanagementConstants.CONSIGNMENT_SUBPROCESS_NAME);
+      subProcess.setParentProcess(process);
+      subProcess.setConsignment(consignment);
+      this.getModelService().save(subProcess);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Starting Consignment sub-process: '{}'",
+          subProcess.getCode());
+      getBusinessProcessService().startProcess(subProcess);
+    }
+  }
+
 
   public ModelService getModelService() {
     return modelService;
@@ -261,6 +307,15 @@ public class DefaultBlReallocationService implements BlReallocationService {
 
   public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao) {
     this.blStockLevelDao = blStockLevelDao;
+  }
+
+  public BusinessProcessService getBusinessProcessService() {
+    return businessProcessService;
+  }
+
+  public void setBusinessProcessService(
+      final BusinessProcessService businessProcessService) {
+    this.businessProcessService = businessProcessService;
   }
 
 }
