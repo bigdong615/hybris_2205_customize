@@ -378,7 +378,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	/**
 	 * This method will be used to reset the popup values
 	 */
-	@ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+	@ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void reset()
 	{
 		this.initCustomerAddressForm(this.getOrderModel());
@@ -387,7 +387,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	/**
 	 * This method will be used to confirm/ Save the modified values for shipping
 	 */
-	@ViewEvent(componentID = "confirmAddress", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
+	@ViewEvent(componentID = "confirmAddress", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void confirmOrder()
 	{
 		this.validateRequest();
