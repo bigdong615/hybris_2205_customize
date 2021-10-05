@@ -124,14 +124,14 @@
 										<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
 											<h5 class="mb-4"><spring:theme code="text.review.page.delivery.pickup.title"/></h5>
 											<div class="row mb-4">
-												<%-- <div class="col-6">
+												<div class="col-6">
 													<p class="gray80 body14">
 														<b class="gray100"><spring:theme code="text.review.page.delivery.mode.pickup"/></b>
 														${cartData.pickUpPersonFirstName}&nbsp;${cartData.pickUpPersonLastName} <br/>
 														${cartData.pickUpPersonEmail} <br/>
 														${cartData.pickUpPersonPhone} <br/>
 													</p>
-												</div> --%>
+												</div>
 												<c:if test="${not empty deliveryAddress}">
 												<div class="col-6">
 													<p class="gray80 body14">
