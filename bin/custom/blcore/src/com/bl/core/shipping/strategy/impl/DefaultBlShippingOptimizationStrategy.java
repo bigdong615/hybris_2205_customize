@@ -335,7 +335,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkTwoDayGround(final int result, final int carrierId, final int warehouseCode, final String customerZip,
                                       final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
-                carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
+                carrierId, warehouseCode, customerZip, BlInventoryScanLoggingConstants.TWO, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
             final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
@@ -365,7 +365,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkOvernightGround(final int result, final int carrierId, final int warehouseCode, final String customerZip,
                                          final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
-                carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
+                carrierId, warehouseCode, customerZip, BlInventoryScanLoggingConstants.ONE, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
             final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +

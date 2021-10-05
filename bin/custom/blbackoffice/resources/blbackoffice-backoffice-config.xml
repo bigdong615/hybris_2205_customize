@@ -45,6 +45,10 @@
                 <n:type-node id="ShippingGroup" code="ShippingGroup"/>
                 <n:type-node id="ShippingCost" code="ShippingCost"/>
                 <n:type-node id="ZoneDeliveryMode" code="ZoneDeliveryMode"/>
+				<n:navigation-node id="Shipping Optimization">
+					<n:type-node id="ShippingOptimization" code="ShippingOptimization"/>
+					<n:type-node id="OptimizedShippingMethod" code="OptimizedShippingMethod"/>
+				</n:navigation-node>
              </n:navigation-node>
              
               <n:navigation-node id="BlReportDefinition">
@@ -3180,4 +3184,142 @@
 		</na:notification-area>
 	</context>
 	<!-- End BlInventoryCycleCount -->
+
+	<context type="GiftCard" component="collectioneditorareaactions" parent="GenericItem" principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.bl.blbackoffice.actions.giftcardemailandmovement"
+					property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
+	<!-- Shipping Optimization-->
+	<context component="create-wizard" type="ShippingOptimization" merge-by="type">
+		<wz:flow id="ShippingOptimizationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="ShippingOptimizationPrepare">
+				<wz:initialize property="newShippingOptimization" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.shippingOptimization.essential.label"
+					 sublabel="create.shippingOptimization.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newShippingOptimization">
+						<wz:property qualifier="groundShippingDaysID"/>
+						<wz:property qualifier="zip"/>
+						<wz:property qualifier="serviceDays"/>
+						<wz:property qualifier="homeBaseID"/>
+						<wz:property qualifier="carrierID"/>
+						<wz:property qualifier="inbound"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newShippingOptimization"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="ShippingOptimization" component="listview" merge-by="type">
+		<list-view:list-view>
+			<list-view:column qualifier="groundShippingDaysID"/>
+			<list-view:column qualifier="zip"/>
+			<list-view:column qualifier="serviceDays"/>
+			<list-view:column qualifier="homeBaseID"/>
+			<list-view:column qualifier="carrierID"/>
+			<list-view:column qualifier="inbound"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="ShippingOptimization" component="advanced-search" merge-by="type">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="groundShippingDaysID" selected="true"/>
+				<advanced-search:field name="zip" selected="true"/>
+				<advanced-search:field name="serviceDays" selected="true"/>
+				<advanced-search:field name="homeBaseID" selected="true"/>
+				<advanced-search:field name="carrierID" selected="true"/>
+				<advanced-search:field name="inbound" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="ShippingOptimization" component="simple-search" merge-by="type">
+		<ss:simple-search>
+			<ss:field name="groundShippingDaysID"/>
+			<ss:field name="serviceDays"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="ShippingOptimization" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>groundShippingDaysID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context component="create-wizard" type="OptimizedShippingMethod" merge-by="type">
+		<wz:flow id="OptimizedShippingMethodWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="OptimizedShippingMethodPrepare">
+				<wz:initialize property="newOptimizedShippingMethod" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.optimizedShippingMethod.essential.label"
+					 sublabel="create.optimizedShippingMethod.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newOptimizedShippingMethod">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="serviceTypeCode"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newOptimizedShippingMethod"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="OptimizedShippingMethod" component="listview" merge-by="type">
+		<list-view:list-view>
+			<list-view:column qualifier="code"/>
+			<list-view:column qualifier="name"/>
+			<list-view:column qualifier="serviceTypeCode"/>
+			<list-view:column qualifier="serviceTypeDesc"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="OptimizedShippingMethod" component="advanced-search" merge-by="type">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="code" selected="true"/>
+				<advanced-search:field name="name" selected="true"/>
+				<advanced-search:field name="serviceTypeCode" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="OptimizedShippingMethod" component="simple-search" merge-by="type">
+		<ss:simple-search>
+			<ss:field name="code"/>
+			<ss:field name="name"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="OptimizedShippingMethod" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>name</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	<!-- End Shipping Optimization-->
 </config>

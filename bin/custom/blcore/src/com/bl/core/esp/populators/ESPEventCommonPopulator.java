@@ -194,10 +194,14 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     protected Double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel abstractOrderEntryModel) {
         final AtomicDouble damageWaiverPrice = new AtomicDouble(0.0);
         if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
             damageWaiverPrice.set(0.0);
