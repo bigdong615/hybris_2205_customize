@@ -401,7 +401,7 @@ function reverseTraverseOnShipping() {
                                                       '<input type="radio" id="' + data.result[i].locationId + '" name="ups-location"><label for="' +
                                                          data.result[i].locationId + '" onClick="onSelectOfUPSStore('+ data.result[i].locationId +')"></label>' +
                                                   '</div>' +
-                                                  '<div class="col-11 col-md-7">' +
+                                                  '<div class="col-11 col-md-6">' +
                                                       '<p>' + data.result[i].consigneeName + '<br>' +
                                                          '<a href="https://maps.google.com/maps?q='+
                                                             data.result[i].addressLine + ',' + data.result[i].politicalDivision1 + ' ' +
@@ -416,7 +416,7 @@ function reverseTraverseOnShipping() {
                                            if(data.result[i].distance != null) {
                                                upsStores +=  data.result[i].contactNumber;
                                            }
-                                           upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                                           upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-5 offset-md-0">';
                                                   if(data.result[i].latestGroundDropOffTime != null && data.result[i].latestGroundDropOffTime.length != 0) {
                                                         if(data.result[i].latestGroundDropOffTime[0] != null && data.result[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
                                          upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
