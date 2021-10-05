@@ -1,8 +1,7 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
+
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsData;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -15,7 +14,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
