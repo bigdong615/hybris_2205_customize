@@ -112,7 +112,7 @@ gtag('config', googleAnalyticsTrackingId);
       </c:choose>
   		gtag('event', 'cart', {
   		  "event_category": "Cart Page",
-      	"event_label": "${cartType}",
+      	"event_label": "Cart",
   		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
   		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
   		  "currency": "USD",
@@ -166,7 +166,7 @@ gtag('config', googleAnalyticsTrackingId);
           </c:choose>
       		gtag('event', 'shipping', {
       		  "event_category": "Shipping Page",
-          	"event_label": "${cartType}",
+          	"event_label": "Delivery",
       		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
       		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
       		  "currency": "USD",
