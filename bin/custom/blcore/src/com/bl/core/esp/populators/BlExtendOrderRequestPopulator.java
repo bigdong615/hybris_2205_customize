@@ -128,7 +128,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
                 getRequestValue(entryModel.getProduct().getName()));
           }
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-              entryModel.getProduct().getPicture().getURL());
+              getProductURL(entryModel));
           if (Objects.nonNull(entryModel.getBasePrice())) {
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
           }
