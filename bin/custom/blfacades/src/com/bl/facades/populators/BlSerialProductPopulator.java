@@ -130,7 +130,8 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	 */
 	private boolean serialHasActiveStatus(final BlSerialProductModel blSerialProduct) {
 
-		return SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) || SerialStatusEnum.ADDED_TO_CART.equals(blSerialProduct.getSerialStatus()) ;
+		return SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) || SerialStatusEnum.ADDED_TO_CART.equals(blSerialProduct.getSerialStatus()) ||
+				SerialStatusEnum.RECEIVED_OR_RETURNED.equals(blSerialProduct.getSerialStatus());
 	}
 
 
