@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.service.BlProductService;
@@ -66,7 +67,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
-					if(BooleanUtils.isTrue(serialProductModel.getForSale())) {
+					if(BooleanUtils.isTrue(serialProductModel.getForSale()) && serialHasActiveStatus(serialProductModel)) {
 						final SerialProductData serialProductData = new SerialProductData();
 						if (getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel)) {
 							serialProductData.setCosmeticRating(
@@ -120,6 +121,17 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
+	}
+
+	/**
+	 * Check if serial has active status
+	 * @param blSerialProduct
+	 * @return
+	 */
+	private boolean serialHasActiveStatus(final BlSerialProductModel blSerialProduct) {
+
+		return SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) || SerialStatusEnum.ADDED_TO_CART.equals(blSerialProduct.getSerialStatus()) ||
+				SerialStatusEnum.RECEIVED_OR_RETURNED.equals(blSerialProduct.getSerialStatus());
 	}
 
 
