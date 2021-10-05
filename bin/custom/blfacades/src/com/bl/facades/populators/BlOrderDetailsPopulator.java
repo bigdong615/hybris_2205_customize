@@ -250,7 +250,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     if (CollectionUtils.isNotEmpty(notesModelList)) {
       for (NotesModel notesModel : notesModelList) {
-        if (notesModel.getType().equals(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES)) {
+        if (NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES.equals(notesModel.getType())) {
           orderNotes.append(notesModel.getNote());
         }
       }

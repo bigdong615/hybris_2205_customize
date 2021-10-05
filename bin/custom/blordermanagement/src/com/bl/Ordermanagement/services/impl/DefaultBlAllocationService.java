@@ -28,7 +28,6 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
@@ -233,7 +232,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @param consignmentModel      - newly created consignment
    */
   private void setConsignmentsInNotes(final AbstractOrderModel abstractOrderModel,
-      ConsignmentModel consignmentModel) {
+      final ConsignmentModel consignmentModel) {
 
     final List<NotesModel> orderNotesFromOrder = abstractOrderModel.getOrderNotes();
     if (CollectionUtils.isNotEmpty(orderNotesFromOrder)) {
