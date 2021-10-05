@@ -60,7 +60,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
           "No matching consignments found while performing MarkReadyToShipConsignmentsCleanJob");
     } else {
 
-      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "Start performing MarkReadyToShipConsignmentsCleanJob...for shipping date : {} and consignment codes : {}",
           shipDate, consignmentModels.stream().map(ConsignmentModel::getCode).collect(
               Collectors.toList()));
@@ -78,7 +78,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 
     }
 
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "Completed performing MarkReadyToShipConsignmentsCleanJob...");
 
     return resetAndReturnResult(markReadyToShipConsignmentsCleanJob, CronJobResult.SUCCESS);
@@ -133,7 +133,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
       if (allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get)) {
 
         BlLogger
-            .logFormatMessageInfo(LOG, Level.INFO,
+            .logFormatMessageInfo(LOG, Level.DEBUG,
                 "Consignment with code {} is marked as clean complete.", consignment.getCode());
       }
 
