@@ -56,15 +56,14 @@ public class BlOrderPickedUpRequestPopulator extends
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderPickedUpEventData data = new OrderPickedUpEventData();
     populateCommonData(orderModel, data);
-    data.setOldOrderId(getRequestValue(orderModel.getCode()));
+    data.setOldOrderId(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
         .getString(BlCoreConstants.ORDER_PICKEDUP_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       data.setCustomerName(getRequestValue(userModel.getName()));
     }
-    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL
-        : BlCoreConstants.USED_GEAR);
+    data.setType(getOrderType(orderModel));
     data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(
@@ -77,10 +76,16 @@ public class BlOrderPickedUpRequestPopulator extends
       data.setShippingMethodType(getRequestValue(delivery.getShippingGroup().getName()));
       data.setShippingMethod(getRequestValue(delivery.getCode()));
       data.setShippingMethodText(getRequestValue(delivery.getName()));
+    }else{
+      data.setShippingMethodType(StringUtils.EMPTY);
+      data.setShippingMethod(StringUtils.EMPTY);
+      data.setShippingMethodText(StringUtils.EMPTY);
     }
-    data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalDuration((int) getRentalDuration(orderModel));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalDuration((int) getRentalDuration(orderModel));
+    }
     orderPickedUpEventRequest.setData(data);
   }
 }

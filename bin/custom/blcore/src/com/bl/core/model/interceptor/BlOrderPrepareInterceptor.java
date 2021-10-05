@@ -285,7 +285,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
       try
       {
         getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
@@ -293,8 +293,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       {
         BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger verification Required Event",e);
       }
-
-    }
+		}
   }
   
   /**
