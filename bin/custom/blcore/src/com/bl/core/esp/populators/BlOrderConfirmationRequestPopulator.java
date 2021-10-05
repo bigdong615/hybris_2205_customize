@@ -76,7 +76,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       final OrderConfirmationData data = new OrderConfirmationData();
        populateCommonData(orderModel , data);
-       data.setOldorderid(getRequestValue(orderModel.getCode()));
+       data.setOldorderid(StringUtils.EMPTY);
        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE)));
        final UserModel userModel = orderModel.getUser();
         if (Objects.nonNull(userModel)) {
@@ -273,16 +273,6 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
     }
 
-  /**
-   * To check whether media is empty of not
-   * @param abstractOrderEntryModel abstractOrderEntryModel
-   * @return string
-   */
-    private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
-      return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
-          StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
-        abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
-    }
 
 
 }
