@@ -13,7 +13,7 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.user.UserService;
-import javax.annotation.Resource;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -43,7 +43,7 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
    */
   private void doTriggerEspEvent(final AddressModel addressModel,
       final InterceptorContext interceptorContext) {
-    if (isCsUser() && !interceptorContext.isNew(addressModel) && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && addressModel.getShippingAddress()) {
+    if (isCsUser() && !interceptorContext.isNew(addressModel) && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
       try {
        triggerEspNewShipping((OrderModel) addressModel.getOwner());
 
