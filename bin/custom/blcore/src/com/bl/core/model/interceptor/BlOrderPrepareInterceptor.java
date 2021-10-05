@@ -133,6 +133,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
       triggerEspShipped(abstractOrderModel, interceptorContext);
+			triggerEspNewShippingInfo(abstractOrderModel, interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
@@ -275,13 +276,24 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       }
     }
   }
+	/**
+	 * trigger Esp New Shipping Info
+	 *
+	 * @param abstractOrderModel the abstract order model
+	 * @param interceptorContext the interceptor context
+	 */
+	private void triggerEspNewShippingInfo(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
+		if(isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
+			getBlEspEventService().sendOrderNewShippingEvent((OrderModel) abstractOrderModel);
+		}
+	}
 
-  /**
-   * trigger Esp verification required event
-   *
-   * @param abstractOrderModel the abstract order model
-   * @param interceptorContext the interceptor context
-   */
+		/**
+     * trigger Esp verification required event
+     *
+     * @param abstractOrderModel the abstract order model
+     * @param interceptorContext the interceptor context
+     */
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
