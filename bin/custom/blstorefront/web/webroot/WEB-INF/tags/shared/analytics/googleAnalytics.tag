@@ -118,7 +118,7 @@ gtag('config', googleAnalyticsTrackingId);
   		  "currency": "USD",
   		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
        	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
-        "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}"
+        "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
   		  "items": [
   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
   					{
@@ -135,7 +135,7 @@ gtag('config', googleAnalyticsTrackingId);
   					  </c:choose>
               "list_position": ${status.index},
   					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
-  					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}"
+  					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
   					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
   					}
   					<c:if test='${not status.last}'>,</c:if>
@@ -174,7 +174,7 @@ gtag('config', googleAnalyticsTrackingId);
            	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
             "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
             "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
-            "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}"
+            "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
       		  "items": [
       				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
       					{
@@ -230,7 +230,7 @@ gtag('config', googleAnalyticsTrackingId);
                    	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
                     "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
-                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}"
+                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
               		  "items": [
               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
               					{
@@ -286,7 +286,7 @@ gtag('config', googleAnalyticsTrackingId);
                                    	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
                                     "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
                                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
-                                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}"
+                                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
                               		  "items": [
                               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
                               					{
@@ -345,7 +345,7 @@ gtag('config', googleAnalyticsTrackingId);
 		  "damageWaiver" : "${ycommerce:encodeJavaScript(orderData.totalDamageWaiverCost.value)}",
       "subtotal": "${ycommerce:encodeJavaScript(orderData.subTotal.value)}",
       "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
-      "coupon": "${ycommerce:encodeJavaScript(couponCodes)}"
+      "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{
