@@ -4,6 +4,7 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -81,7 +82,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         if (Objects.nonNull(userModel)) {
             data.setCustomername(getRequestValue(userModel.getName()));
         }
-        data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
+        data.setType(getOrderType(orderModel));
         data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
         data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
@@ -102,11 +103,14 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
         data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
         data.setDiscounttext(StringUtils.EMPTY);
-        data.setExpectedshippingdate(formatter.format(orderModel.getActualRentalStartDate()));
-        data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
-        data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-        data.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
-        data.setRentalduration((int) getRentalDuration(orderModel));
+        if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+            orderModel.isGiftCardOrder())) {
+          data.setExpectedshippingdate(formatter.format(orderModel.getActualRentalStartDate()));
+          data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
+          data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
+          data.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+          data.setRentalduration((int) getRentalDuration(orderModel));
+        }
         if (Objects.nonNull(orderModel.getPaymentInfo())) {
             final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
             data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
@@ -241,10 +245,10 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
                             getRequestValue(entryModel.getProduct().getCode()));
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
-                            getRequestValue(entryModel.getProduct().getName()));
+                           entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
                     }
                     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-                        entryModel.getProduct().getPicture().getURL());
+                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
                     if (Objects.nonNull(entryModel.getBasePrice())) {
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
                     }
@@ -268,5 +272,17 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
         }
     }
+
+  /**
+   * To check whether media is empty of not
+   * @param abstractOrderEntryModel abstractOrderEntryModel
+   * @return string
+   */
+    private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
+      return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
+          StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
+        abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
+    }
+
 
 }

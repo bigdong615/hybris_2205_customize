@@ -1707,6 +1707,8 @@
 					<editorArea:attribute qualifier="phone1" label="customersupport_backoffice_address_phone1" />
 					<editorArea:attribute qualifier="shippingAddress" label="customersupport_backoffice_address_shippingAddress"/>
 					<editorArea:attribute qualifier="billingAddress" label="customersupport_backoffice_address_billingAddress"/>
+					<editorArea:attribute qualifier="company" label="Company"/>
+					<editorArea:attribute qualifier="email" label="Email"/>
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
@@ -2031,6 +2033,7 @@
                 <y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.cancelorderaction" property="currentObject" />
                 <y:action action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction" property="currentObject" />
 				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentvoidaction" property="currentObject"/>
+				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.recalculatetotals" property="currentObject"/>
 				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualpaymentcaptureaction" property="currentObject"/>
 				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxvoidaction" property="currentObject"/>
 				<y:action action-id="de.hybris.ordermanagementbackoffice.actions.order.manualtaxcommitaction" property="currentObject"/>

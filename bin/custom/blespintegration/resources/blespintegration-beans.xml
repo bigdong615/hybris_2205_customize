@@ -154,7 +154,7 @@
 			<annotations>@JsonProperty("rental duration")</annotations>
 		</property>
 		<property name="customername" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("customername")</annotations>
+			<annotations>@JsonProperty("customer name")</annotations>
 		</property>
 		<property name="paymenttype" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("payment type")</annotations>

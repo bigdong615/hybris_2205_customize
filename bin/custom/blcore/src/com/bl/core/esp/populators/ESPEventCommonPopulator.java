@@ -5,6 +5,8 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.order.ESPEventCommonOrderDataRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
@@ -13,6 +15,7 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,6 +41,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     Populator<SOURCE, TARGET> {
 
     private ConfigurationService configurationService;
+    private ProductService productService;
 
     /**
      * Populate common attributes with values from the OrderModel.
@@ -190,10 +194,14 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     protected Double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel abstractOrderEntryModel) {
         final AtomicDouble damageWaiverPrice = new AtomicDouble(0.0);
         if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
             damageWaiverPrice.set(0.0);
@@ -221,6 +229,67 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return damageWaiverText.get();
     }
 
+    /**
+     * This method created to get the order type
+     * @param orderModel ordermodel
+     * @return string
+     */
+    protected String getOrderType(final OrderModel orderModel){
+        final AtomicReference<String> orderType = new AtomicReference<>(StringUtils.EMPTY);
+        if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
+            orderType.set(BlCoreConstants.GIFT_CARD_ORDER);
+        }
+        else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
+            orderType.set(BlCoreConstants.NEW_GEAR);
+        }
+        else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
+            orderType.set(BlCoreConstants.RENTAL);
+        }
+        else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
+            orderType.set(BlCoreConstants.USED_GEAR);
+        }
+
+        return orderType.get();
+    }
+
+    /**
+     * This method craeted to get the product title
+     * @param serialProductCode serial code
+     * @return string
+     */
+
+    protected String getProductTitle(final String serialProductCode) {
+        final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
+        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
+        if(Objects.nonNull(blSerialProduct)) {
+            final BlProductModel blProductModel = blSerialProduct.getBlProduct();
+            if(Objects.nonNull(blProductModel)){
+                productTitle.set(blProductModel.getName());
+            }
+        }
+        return productTitle.get();
+    }
+
+
+    /**
+     * This method created to get the serial product url for request
+     * @param serialProductCode serial product code
+     * @return string
+     */
+    protected String getProductUrl(final String serialProductCode) {
+        final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
+        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
+        if(Objects.nonNull(blSerialProduct)) {
+            final BlProductModel blProductModel = blSerialProduct.getBlProduct();
+            if(Objects.nonNull(blProductModel)){
+                productUrl.set(blProductModel.getPicture().getURL());
+            }
+        }
+        return productUrl.get();
+    }
+
+
+
 
     public ConfigurationService getConfigurationService() {
         return configurationService;
@@ -229,4 +298,13 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
+
+    public ProductService getProductService() {
+        return productService;
+    }
+
+    public void setProductService(ProductService productService) {
+        this.productService = productService;
+    }
+
 }
