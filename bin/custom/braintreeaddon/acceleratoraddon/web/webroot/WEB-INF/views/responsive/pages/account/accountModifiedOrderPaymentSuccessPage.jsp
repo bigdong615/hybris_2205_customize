@@ -43,7 +43,7 @@
 		and sent an confirmation email to: <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:otherwise>
-				<spring:theme code="text.extend.order.refund" arguments="<format:price priceData='${amount}' displayFreeForZero='false' />"/>
+				<format:price priceData='${amount}' displayFreeForZero='false' /> &nbsp <spring:theme code="text.extend.order.refund"/>
 			</c:otherwise>
 		</c:choose>
 		<c:if test="${not empty appliedGcList}">

@@ -1679,7 +1679,7 @@ $(".remove-modified-order-gift-card").on("click", function(e) {
 });
 
 $("#paymentMethodPayPal-modify-order-payment").change(function () {
-	$('.page-loader-new-layout').show();
+	/*$('.page-loader-new-layout').show();*/
 	$("#mark-paypal-button").empty();
 	$('#payPalErrorMessage').empty();
 	var depositAmount = getAmount();
