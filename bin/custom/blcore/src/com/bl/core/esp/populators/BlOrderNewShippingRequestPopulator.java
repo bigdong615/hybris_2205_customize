@@ -64,7 +64,7 @@ public class BlOrderNewShippingRequestPopulator extends ESPEventCommonPopulator<
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderNewshippingData data = new OrderNewshippingData();
     populateCommonData(orderModel , data);
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_NEWSHIPPING_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {

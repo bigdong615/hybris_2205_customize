@@ -6,6 +6,8 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_HAED_ERROR;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.order.BlOrderFacade;
@@ -138,6 +140,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+
+	@Resource(name = "blEspEventService")
+	private DefaultBlESPEventService blEspEventService;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -380,7 +385,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
         if (isDepositPaymentPage)
         {
-          model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+					final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+					triggerDepositRequestEvent(orderModel);
+					model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
           model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);
           final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
           storeCmsPageInModel(model, depositPaymentSuccessPage);
@@ -424,9 +431,21 @@ public class PayPalPaymentController extends AbstractCheckoutController
         }
 				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
 			}
-    }    
-    
-    @PostMapping(value = "/modify-payment-method")
+    }
+
+	/**
+	 * It triggers Deposit Request Event.
+	 * @param orderModel the OrderModel
+	 */
+	private void triggerDepositRequestEvent(final OrderModel orderModel) {
+		try {
+				blEspEventService.sendOrderDepositEvent(orderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Deposit Request Event", exception);
+			}
+	}
+
+	@PostMapping(value = "/modify-payment-method")
     public String modifyPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
 			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
