@@ -30,7 +30,12 @@ public class BlInventoryScanLoggingConstants {
     public static final String HUN_PER = "100%";
     public static final String SAVING = "Saving ";
     public static final String SPACE = ": ";
-
+    public static final String EMPTY_SPACE = " ";
+    public static final String OPEN_BRACKET = "[";
+    public static final String CLOSE_BRACKET = "]";
+    public static final String COUNTRY_CODE = "US";
+    public static final String SHIPPING_METHOD_ERROR_MESSAGE = "Selected shipping method service is not applicable for added zip code";
+    public static final String SHIPPING_DETAILS_UPDATE_MESSGAE = "Shipping Details Updated Successfully";
     public static final String SAMPLE1 = "sample1%";
     public static final String SAMPLE2 = "sample2%";
     public static final String SAMPLE3 = "sample3%";
