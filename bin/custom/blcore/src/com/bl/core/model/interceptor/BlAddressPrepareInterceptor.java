@@ -32,36 +32,27 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
   public void onPrepare(final AddressModel addressModel,final InterceptorContext interceptorContext)
       throws InterceptorException {
 
-    doTriggerEspEvent(addressModel, interceptorContext);
+    triggerNewShippingInfoEven(addressModel, interceptorContext);
   }
 
   /**
-   * trigger EspNewShipping event
+   * New Shipping event
    *
    * @param addressModel the abstract order model
    * @param interceptorContext the interceptor context
    */
-  private void doTriggerEspEvent(final AddressModel addressModel,
+  private void triggerNewShippingInfoEven(final AddressModel addressModel,
       final InterceptorContext interceptorContext) {
     if (isCsUser()  && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
       try {
-       triggerEspNewShipping((OrderModel) addressModel.getOwner());
+        getBlEspEventService().sendOrderNewShippingEvent((OrderModel) addressModel.getOwner());
 
       } catch (final Exception e) {
         BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-            "Event API call failed", e);
+            "New Shipping Info Event failed.", e);
       }
     }
 
-  }
-
-  /**
-   * trigger Esp New Shipping info event
-   *
-   * @param orderModel the abstract order model
-   */
-  private void triggerEspNewShipping(final OrderModel orderModel) {
-    getBlEspEventService().sendOrderNewShippingEvent(orderModel);
   }
 
   /**
