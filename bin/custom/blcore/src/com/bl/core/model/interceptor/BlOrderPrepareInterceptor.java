@@ -91,8 +91,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		{
 			modifyOrderDate(abstractOrderModel);
 		}
-		abstractOrderModel.setCalculated(false);
-
+		
      final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
     if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
 		if (CollectionUtils.isNotEmpty(consignmentModels)) {
