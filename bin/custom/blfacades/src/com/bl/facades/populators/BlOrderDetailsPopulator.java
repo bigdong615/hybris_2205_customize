@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import java.math.RoundingMode;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
@@ -81,6 +82,11 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
       target.setDeliveryAddress(addressData);
     }
+
+    if(source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
+      setpickupPersonDetails(source , target);
+    }
+
     if(source.getUser() instanceof CustomerModel){
       target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
     }
@@ -122,6 +128,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     
   }
+
+
 
   /**
    * This method created to populate dates for order details
@@ -420,6 +428,29 @@ private PriceData createPrice(final AbstractOrderModel source, final Double val)
     final double priceValue = val != null ? val.doubleValue() : 0d;
 
     return getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(priceValue), currency);
+  }
+
+
+  /**
+   * To set pickup details for order
+   * @param source ordermodel
+   * @param target orderdata
+   */
+  private void setpickupPersonDetails(final OrderModel source, final OrderData target) {
+  target.setPickUpPersonFirstName(getValue(source.getPickUpPersonFirstName()));
+  target.setPickUpPersonLastName(getValue(source.getPickUpPersonLastName()));
+  target.setPickUpPersonEmail(getValue(source.getPickUpPersonEmail()));
+  target.setPickUpPersonPhone(getValue(source.getPickUpPersonPhone()));
+  }
+
+  /**
+   * This common method created to check string value
+   * @param value value
+   * @return string
+   */
+
+  private String getValue(final String value){
+  return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;
   }
 
   public PriceDataFactory getPriceDataFactory() {

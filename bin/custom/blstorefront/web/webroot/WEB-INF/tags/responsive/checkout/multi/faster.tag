@@ -35,7 +35,7 @@
             <div id="partnerPickUpShippingMethods">
 
             </div>
-            <%-- <div id="pick-up-pickup-gear">
+            <!-- <div id="pick-up-pickup-gear">
                 <b class="mt-4"><spring:theme code="text.ship.it.pick.up.section"/></b>
                 <div id="pickup-person" class="row mt-2 mb-4">
                     <div class="col-3">
@@ -55,7 +55,7 @@
                         </button>
                     </div>
                 </div>
-            </div> --%>
+            </div> -->
             <div id="store-pickup-person">
                 <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                 <checkout:pickUpAddressForm />
