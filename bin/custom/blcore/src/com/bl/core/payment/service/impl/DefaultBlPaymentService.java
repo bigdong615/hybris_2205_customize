@@ -79,18 +79,20 @@ public class DefaultBlPaymentService implements BlPaymentService
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
 			if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
 				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
-						order, authEntry.getAmount(), authEntry.getRequestId()), Boolean.TRUE);
+						order, authEntry.getAmount(), authEntry.getRequestId()));
 			} else {
-				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
-						order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null), Boolean.FALSE);
+				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
+					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
+							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null));
+				}
 			}
 		} catch(final BraintreeErrorException ex) {
 			order.setStatus(OrderStatus.PAYMENT_DECLINED);
 			modelService.save(order);
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
+			BlLogger.logMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Exception occurred while capturing "
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		}
 		return false;
@@ -101,10 +103,9 @@ public class DefaultBlPaymentService implements BlPaymentService
 	 *
 	 * @param order order
 	 * @param isSuccessCapture status for auth/capture
-	 * @param status for order status
 	 * @return true if success in capture
 	 */
-	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture, final boolean status) {
+	private boolean checkCapturePaymentSuccess(final OrderModel order, final boolean isSuccessCapture) {
 		if(isSuccessCapture) {
 			order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
 					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
@@ -132,12 +133,9 @@ public class DefaultBlPaymentService implements BlPaymentService
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
 			return true;
 		} else {
-			if(status) {
-				order.setStatus(OrderStatus.PAYMENT_DECLINED);
-			} else {
-				order.setStatus(OrderStatus.PAYMENT_NOT_AUTHORIZED);
-			}
-			modelService.save(order);
+			order.setStatus(OrderStatus.PAYMENT_DECLINED);
+			getModelService().save(order);
+			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
 		}
 		return false;

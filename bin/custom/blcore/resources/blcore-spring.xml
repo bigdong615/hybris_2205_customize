@@ -744,7 +744,7 @@
   </bean>
 
   <bean id="blCategorySource" parent="abstractCategorySource">
-    <property name="rootCategory" value="brands"/>
+    <property name="rootCategory" value="rentalgear"/>
   </bean>
 
   <bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
@@ -1124,6 +1124,7 @@
 	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
 	<bean id="blConsignmentPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor">
 		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+		<property name="blEspEventService" ref="blEspEventService"/>
 	</bean>
 
 	<bean id="blConsignmentPrepareInterceptorMapping"
@@ -1534,6 +1535,7 @@
 	<bean id="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
 	<!--ESP Event service -->

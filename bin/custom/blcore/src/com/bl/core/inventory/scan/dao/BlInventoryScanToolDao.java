@@ -90,5 +90,10 @@ public interface BlInventoryScanToolDao {
 	 */
 	 Collection<BlSerialProductModel> getAllSerialsByBinLocation(final String binLocationId);
 
-
+	/**
+	 * This method will return Staged serial product
+	 * @param barcode barcode
+	 * @return BlSerialProductModel
+	 */
+	 BlSerialProductModel getSerialProductByBarcode(final String barcode);
 }

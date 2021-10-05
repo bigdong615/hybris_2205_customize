@@ -255,6 +255,7 @@
       		<value code="LATE" />
       		<value code="RETURNED" />
       		<value code="SHIPPED"/>
+      		<value code="RECEIVED_READY_FOR_PICKUP" />
         </enumtype>
       
       
@@ -278,6 +279,7 @@
       	<value code="SHIPPING_MANUAL_REVIEW"/>
       	<value code="READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
+        <value code="PARTIALLY_SHIPPED" />
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
@@ -2518,6 +2520,12 @@
                     <attribute qualifier="originalOrderTotalAmount" type="java.lang.Double">
                         <modifiers optional="true" read="true" write="true" search="false"/>
                         <description>Total cost of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="totalRefundedAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total refunded amount on order</description>
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>

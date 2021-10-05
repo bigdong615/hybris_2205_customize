@@ -70,6 +70,7 @@
 	<context merge-by="module" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
+			<n:type-node code="Consignment" id="Consignment"/>
 		</n:explorer-tree>
 	</context>
 
@@ -827,7 +828,7 @@
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
-            </na:notifications>
+            </na:notifications>            
             <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
                 <na:references linksEnabled="true">
@@ -1267,6 +1268,17 @@
 		</y:actions>
 	</context>
 
+	<context component="collectioneditorareaactions" type="Consignment" parent="GenericItem" merge-by="type"
+			 principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction"
+						  property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
 	<!--BL-753 : OMS&WH - Different Teams - Order Notes and Customer Notes - Create Wizard for CS Role for Notes type -->
 	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
 		<wz:flow id="cs-Notes-create-wizard" title="create.title(ctx.TYPE_CODE)">
@@ -1530,13 +1542,19 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+            <na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
             <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
-            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+            <na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
                 <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
@@ -1827,13 +1845,19 @@
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
+			<na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
 			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
-			<na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+			<na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
@@ -1865,6 +1889,12 @@
 			</na:notifications>
 			<na:notifications eventType="unboxInvalidDCLocationErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="unboxInvalidDCLocationFromDPErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.unbox.scan.tool.wizard.notification.invalid.dirty.location.from.dirty.priority.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
@@ -2242,6 +2272,13 @@
                 <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
                 <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
             </n:navigation-node>
+			<n:navigation-node id="BLProductInventoryCycleCount">
+				<n:navigation-node id="InventoryCycleCountScan"/>
+				<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
+				<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
+				<n:type-node id="BlInventoryCycleCountProductDetails" code="BlInventoryCycleCountProductDetails"/>
+				<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
+			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
@@ -3027,20 +3064,20 @@
 
 	<context type="BlInventoryCycleCountScanHistory" component="listview" merge-by="type">
 		<list-view:list-view>
-			<list-view:column qualifier="inventoryCycleCountCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayCode"/>
-			<list-view:column qualifier="inventoryCycleCountDayDate"/>
-			<list-view:column qualifier="serialNumber"/>
-			<list-view:column qualifier="barcodeNumber"/>
-			<list-view:column qualifier="homeBaseLocation"/>
-			<list-view:column qualifier="lastOrderNumber"/>
-			<list-view:column qualifier="lastOrderShippedDate"/>
-			<list-view:column qualifier="orderStatus"/>
 			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="barcodeNumber"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
 			<list-view:column qualifier="productStatus"/>
 			<list-view:column qualifier="oc"/>
 			<list-view:column qualifier="ocParent"/>
-			<list-view:column qualifier="inventoryCycleCountSerialStatus"/>
+			<list-view:column qualifier="lastOrderNumber"/>
+			<list-view:column qualifier="orderStatus"/>
+			<list-view:column qualifier="lastOrderShippedDate"/>
+			<list-view:column qualifier="inventoryCycleCountCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayCode"/>
+			<list-view:column qualifier="inventoryCycleCountDayDate"/>
+			<list-view:column qualifier="homeBaseLocation"/>
 			<list-view:column qualifier="scannedUser"/>
 			<list-view:column qualifier="scannedTime"/>
 		</list-view:list-view>
@@ -3052,6 +3089,8 @@
 				<advanced-search:field name="inventoryCycleCountCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayCode" selected="true"/>
 				<advanced-search:field name="inventoryCycleCountDayDate" selected="true"/>
+				<advanced-search:field name="inventoryCycleCountSerialStatus" selected="true"/>
+				<advanced-search:field name="productStatus" selected="true"/>
 				<advanced-search:field name="scannedTime" selected="true"/>
 				<advanced-search:field name="scannedUser" selected="true"/>
 				<advanced-search:field name="PK" selected="false"/>

@@ -42,8 +42,8 @@ public class BlLocatorResponsePopulator {
             UpsStoreData locatorResponseData = new UpsStoreData();
             locatorResponseData.setLocationId(dropLocation.getLocationID());
 
-            final List<String> openingDaysGroundDropOffTime = dropLocation
-                .getLatestGroundDropOffTime();
+            final List<String> openingDaysGroundDropOffTime =new ArrayList<>();
+            openingDaysGroundDropOffTime.add(dropLocation.getStandardHoursOfOperation());
             if (CollectionUtils.isNotEmpty(openingDaysGroundDropOffTime)) {
               locatorResponseData
                   .setLatestGroundDropOffTime(getOpeningDaysDetails(openingDaysGroundDropOffTime));

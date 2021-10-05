@@ -328,7 +328,11 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;BlInventoryLocation;+;-;-;-
 ;;;SavedValues;+;-;-;-
 ;;;SavedValueEntry;+;-;-;-
-
+;;;InventoryCycleCountScan;+;+;-;-
+;;;BlInventoryCycleCount;+;-;-;-
+;;;BlInventoryCycleCountDetails;+;-;-;-
+;;;BlInventoryCycleCountProductDetails;+;-;-;-
+;;;BlInventoryCycleCountScanHistory;+;-;-;-
 $END_USERRIGHTS;;;;
 
  
@@ -398,9 +402,13 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; Notes                		  ; +                       ; +        ; +      ; +      ; +
                        ;                         ;                    ; CustomerNotes                 ; +                       ; +        ; +      ; +      ; +
                        ;                         ;                    ; BlTestingGearNeeded           ; +                       ; +        ; +      ; +      ; +
-                       ;                         ;                    ; OrdersNotCompletedQueue       ; +                       ; +        ; +      ; +      ; +          
-$END_USERRIGHTS        ;                         ;                    ;                               ;                         
-                       
+                       ;                         ;                    ; OrdersNotCompletedQueue       ; +                       ; +        ; +      ; +      ; +
+                       ;                         ;                    ; PaymentTransaction            ; +                       ; -        ; -      ; -      ; -
+                       ;                         ;                    ; PaymentTransactionEntry       ; +                       ; -        ; -      ; -      ; -
+                       ;                         ;                    ; DepositPaymentTransactions    ; +                       ; -        ; -      ; -      ; -
+                       ;                         ;                    ; Order.depositPaymentTransactions ; +                    ; -        ; -      ; -      ; -
+$END_USERRIGHTS        ;                         ;                    ;                               ;
+
 #Access right for repairmemberusergroup
 $START_USERRIGHTS      ;                         ;                    ;                               ;                         ;          ;        ;        ;             
 Type                   ; UID                     ; MemberOfGroups     ; Target                        ; read                    ; change   ; create ; remove ; change_perm 

@@ -1,22 +1,28 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -30,6 +36,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
   private static final Logger LOG = Logger.getLogger(BlConsignmentPrepareInterceptor.class);
   private BlOrderNoteService blOrderNoteService;
+  private DefaultBlESPEventService blEspEventService;
 
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
@@ -57,7 +64,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     }
 
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
-
+    triggerEspReadyForPickupEvent(consignmentModel, interceptorContext);
   }
 
   /**
@@ -132,12 +139,49 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 	  }
   }
 
+  /**
+   * This method created to trigger the ESP event for ready for pickup order
+   * @param consignmentModel  consignmentModel
+   * @param interceptorContext interceptorContext
+   */
+  public void triggerEspReadyForPickupEvent(final ConsignmentModel consignmentModel,
+      final InterceptorContext interceptorContext){
+    final WarehouseModel warehouses = consignmentModel.getWarehouse();
+    final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
+    if(interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS) && ConsignmentStatus.READY_FOR_PICKUP.equals(consignmentModel.getStatus())
+        && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+        && (StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
+        StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
+       final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
+       orderModel.setStatus(OrderStatus.RECEIVED_READY_FOR_PICKUP);
+      interceptorContext.getModelService().save(orderModel);
+      interceptorContext.getModelService().refresh(orderModel);
+      try{
+        getBlEspEventService().sendOrderReadyForPickupEvent((OrderModel) consignmentModel.getOrder());
+      }
+      catch (final Exception exception){
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing OrderReadyForPickup ESP Event" , exception);
+      }
+    }
+
+  }
+
   public BlOrderNoteService getBlOrderNoteService() {
     return blOrderNoteService;
   }
 
   public void setBlOrderNoteService(BlOrderNoteService blOrderNoteService) {
     this.blOrderNoteService = blOrderNoteService;
+  }
+  public DefaultBlESPEventService getBlEspEventService(){
+
+    return blEspEventService;
+
+  }
+  public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
+
+    this.blEspEventService = blEspEventService;
+
   }
 
 }
