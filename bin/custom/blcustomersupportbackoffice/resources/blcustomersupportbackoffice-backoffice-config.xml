@@ -44,7 +44,7 @@
 
 	<context type="OrderEntry" component="configurableFlowDynamicForms">
 		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" modelProperty="orderEntry">
-			<df:attribute id="setBasePrice" disabledIf="product==null" qualifier="basePrice" triggeredOn="product" computedValue="@blBackOfficePriceService.getProductPrice(product,rentalStartDate,rentalReturnDate , false)"/>
+			<df:attribute id="setBasePrice" disabledIf="product==null" qualifier="basePrice" triggeredOn="product" computedValue="product != null ? @blBackOfficePriceService.getProductPrice(product,rentalStartDate,rentalReturnDate , false) : ''"/>
 		</df:dynamicForms>
 	</context>
 

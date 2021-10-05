@@ -3185,6 +3185,16 @@
 	</context>
 	<!-- End BlInventoryCycleCount -->
 
+	<context type="GiftCard" component="collectioneditorareaactions" parent="GenericItem" principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.bl.blbackoffice.actions.giftcardemailandmovement"
+					property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
+
 	<!-- Shipping Optimization-->
 	<context component="create-wizard" type="ShippingOptimization" merge-by="type">
 		<wz:flow id="ShippingOptimizationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
