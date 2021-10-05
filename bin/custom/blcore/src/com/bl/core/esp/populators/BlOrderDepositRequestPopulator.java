@@ -59,7 +59,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderDepositData data = new OrderDepositData();
     populateCommonData(orderModel , data);
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_DEPOSIT_EVENT_TEMPLATE)));
 
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
@@ -69,6 +69,9 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
           .getDeliveryMode());
       data.setShippingmethodtype(getRequestValue(delivery.getShippingGroup().getName()));
       data.setShippingmethod(getRequestValue(delivery.getCode()));
+    }else {
+      data.setShippingmethodtype(StringUtils.EMPTY);
+      data.setShippingmethod(StringUtils.EMPTY);
     }
 
     if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
@@ -84,8 +87,8 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
     data.setVerificationlevel(1);
     final List<PaymentTransactionModel> paymentTransactionModelList = orderModel.getDepositPaymentTransactions();
     if(Objects.nonNull(paymentTransactionModelList)){
-      final BigDecimal gcRedeemedAmount = paymentTransactionModelList.get(paymentTransactionModelList.size()-1).getPlannedAmount().setScale(2, RoundingMode.HALF_DOWN);
-      data.setDepositamount(gcRedeemedAmount);
+      final BigDecimal depositAmount = paymentTransactionModelList.get(paymentTransactionModelList.size()-1).getPlannedAmount().setScale(2, RoundingMode.HALF_DOWN);
+      data.setDepositamount(depositAmount);
     }
     orderDepositRequest.setData(data);
   }

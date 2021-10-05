@@ -76,7 +76,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       final OrderConfirmationData data = new OrderConfirmationData();
        populateCommonData(orderModel , data);
-       data.setOldorderid(getRequestValue(orderModel.getCode()));
+       data.setOldorderid(StringUtils.EMPTY);
        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE)));
        final UserModel userModel = orderModel.getUser();
         if (Objects.nonNull(userModel)) {

@@ -76,7 +76,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     final OrderExceptionsData orderExceptionsData = new OrderExceptionsData();
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     populateCommonData(orderModel , orderExceptionsData);
-    orderExceptionsData.setOldorderid(getRequestValue(orderModel.getCode()));
+    orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExceptionsData.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));

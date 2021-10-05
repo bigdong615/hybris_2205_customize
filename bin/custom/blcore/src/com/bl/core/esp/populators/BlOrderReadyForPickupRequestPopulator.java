@@ -73,7 +73,7 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 		final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
 		final OrderReadyForPickupData data = new OrderReadyForPickupData();
 		populateCommonData(orderModel , data);
-		data.setOldorderid(getRequestValue(orderModel.getCode()));
+		data.setOldorderid(StringUtils.EMPTY);
 		data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_READYFORPICKUP_EVENT_TEMPLATE)));
 		final UserModel userModel = orderModel.getUser();
 		if (Objects.nonNull(userModel)) {

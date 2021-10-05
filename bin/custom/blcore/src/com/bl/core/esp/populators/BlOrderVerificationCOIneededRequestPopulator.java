@@ -66,7 +66,7 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
 
     populateCommonData(orderModel, data);
 
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
         .getString(BlCoreConstants.ORDER_VERIFICATION_COI_NEEDED_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();

@@ -377,13 +377,11 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	 * @param orderModel the OrderModel
 	 */
 	private void triggerDepositRequestEvent(final OrderModel orderModel) {
-		if(BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
-			try {
+		try {
 				blEspEventService.sendOrderDepositEvent(orderModel);
 			} catch (final Exception exception) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Deposit Request Event", exception);
 			}
-		}
 	}
 
 	@PostMapping(value = "/modify-payment-method")

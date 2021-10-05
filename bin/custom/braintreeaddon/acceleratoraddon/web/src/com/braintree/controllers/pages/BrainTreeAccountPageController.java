@@ -930,13 +930,11 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 */
 	private void triggerDepositRequestEvent(final String orderCode) {
 		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
-		if(BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
 			try {
 				blEspEventService.sendOrderDepositEvent(orderModel);
 			} catch (final Exception exception) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Deposit Request Event", exception);
 			}
-		}
 	}
 
 
