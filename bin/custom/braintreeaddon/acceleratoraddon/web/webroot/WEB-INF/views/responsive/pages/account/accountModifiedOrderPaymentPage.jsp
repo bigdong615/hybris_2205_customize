@@ -302,7 +302,7 @@
 			</c:if>
 				
 				<cart:blModifyOrderPaymentGiftCard cartData="${orderData}"/>
-				<div class="page-loader-new-layout"></div>
+				<!-- <div class="page-loader-new-layout"></div> -->
 
 
 			</div>
