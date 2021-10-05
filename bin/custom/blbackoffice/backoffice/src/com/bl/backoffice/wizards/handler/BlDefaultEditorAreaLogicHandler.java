@@ -58,50 +58,62 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
     if (currentObject instanceof OrderModel) {
 		 OrderModel orderModel = (OrderModel) currentObject;
        orderModel.setCalculated(false);
+
 			List<AbstractOrderEntryModel> bundleOrderEntries = orderModel.getEntries().stream()
 					.filter(entry -> entry.isBundleMainEntry() || entry.isBundleEntry()).collect(
 							Collectors.toList());
-			if(CollectionUtils.isNotEmpty(bundleOrderEntries)){
-				List<AbstractOrderEntryModel> newCreatedMainBundleEntry = orderModel.getEntries().stream()
+			if(CollectionUtils.isNotEmpty(bundleOrderEntries)) {
+
+				// if any entry added either bundle or normal.
+				List<AbstractOrderEntryModel> newCreatedMainBundleEntry = bundleOrderEntries.stream()
 						.filter(entry -> entry.isBundleMainEntry() && !entry.isEntryCreated()).collect(
 								Collectors.toList());
-				if(CollectionUtils.isNotEmpty(newCreatedMainBundleEntry)) {
-					newCreatedMainBundleEntry.forEach(entry -> {
-						blOrderService.createAllEntryForBundleProduct(entry);
-					});
-					((OrderModel) currentObject).setEntries(newCreatedMainBundleEntry.get(0).getOrder().getEntries());
-				}else {
-					final List<AbstractOrderEntryModel> previousChangedOrderEntrysList = getPreviousChangedOrderEntrysList(
-							orderModel);
-					if (CollectionUtils.isNotEmpty(previousChangedOrderEntrysList)) {
-						final List<AbstractOrderEntryModel> updatedOrderEntry = orderModel.getEntries();
-						previousChangedOrderEntrysList.removeIf(updatedOrderEntry::contains);
+			  	if(CollectionUtils.isNotEmpty(newCreatedMainBundleEntry)) {
+						newCreatedMainBundleEntry.forEach(entry -> {
+							blOrderService.createAllEntryForBundleProduct(entry);
+						});
+						((OrderModel) currentObject)
+								.setEntries(newCreatedMainBundleEntry.get(0).getOrder().getEntries());
+					  }
+
+			  	// if any entry remove .
+				final List<AbstractOrderEntryModel> previousChangedOrderEntrysList = getPreviousChangedOrderEntrysList(
+						orderModel);
+				if (CollectionUtils.isNotEmpty(previousChangedOrderEntrysList)) {
+					final List<AbstractOrderEntryModel> updatedOrderEntry = orderModel.getEntries();
+					previousChangedOrderEntrysList.removeIf(updatedOrderEntry::contains);
+
+					if(CollectionUtils.isNotEmpty(previousChangedOrderEntrysList)){
+						List<AbstractOrderEntryModel> bundleEntryRemoveList = previousChangedOrderEntrysList.stream().
+								filter(entry ->entry.isBundleMainEntry() || entry.isBundleEntry()).collect(Collectors.toList());
+						   if(CollectionUtils.isNotEmpty(bundleEntryRemoveList)){
+								 List<AbstractOrderEntryModel> removeEntry = new ArrayList<>();
+								 final List<AbstractOrderEntryModel> mainBundleEntryListWithoutRemove =getPreviousChangedOrderEntrysList(orderModel).stream()
+										 .filter(entry -> entry.isBundleMainEntry() || entry.isBundleEntry()).collect(
+												 Collectors.toList());
+
+								 previousChangedOrderEntrysList.forEach(entry ->{
+									 if(entry.isBundleMainEntry() || entry.isBundleEntry()){
+										 removeEntry.addAll(mainBundleEntryListWithoutRemove.stream().filter(entryModel ->entry.getBundleProductCode().equals(entryModel.getBundleProductCode())).collect(
+												 Collectors.toList()));
+									 }else{
+										 removeEntry.add(entry);
+									 }
+								 });
+								 List<AbstractOrderEntryModel> removeEntryList = new ArrayList<>(new HashSet<>(removeEntry)); // this all entry which need to remove
+								 // removing entry
+								 removeEntryFromConsignment(orderModel, removeEntryList.stream().filter(entryModel -> !entryModel.isBundleMainEntry()).collect(
+										 Collectors.toList()));
+
+								 // update and save remaing entry.
+								 mainBundleEntryListWithoutRemove.removeIf(removeEntryList::contains);
+								 ((OrderModel) currentObject).setEntries(mainBundleEntryListWithoutRemove);
+						   }else{
+								 removeEntryFromConsignment(orderModel, previousChangedOrderEntrysList);
+							 }
 					}
-					List<AbstractOrderEntryModel> bundleEntryRemoveList = previousChangedOrderEntrysList.stream().
-							filter(entry ->entry.isBundleMainEntry() || entry.isBundleEntry()).collect(Collectors.toList());
-            if(CollectionUtils.isNotEmpty(bundleEntryRemoveList)){
-							 List<AbstractOrderEntryModel> removeEntry = new ArrayList<>();
-							final List<AbstractOrderEntryModel> mainEntryListWithoutRemove =getPreviousChangedOrderEntrysList(orderModel);
-							previousChangedOrderEntrysList.forEach(entry ->{
-								if(entry.isBundleMainEntry() || entry.isBundleEntry()){
-									removeEntry.addAll(mainEntryListWithoutRemove.stream().filter(entryModel ->entry.getBundleProductCode().equals(entryModel.getBundleProductCode())).collect(
-											Collectors.toList()));
-								}else{
-									removeEntry.add(entry);
-								}
-							});
-							List<AbstractOrderEntryModel> removeEntryList = new ArrayList<>(new HashSet<>(removeEntry));
-              mainEntryListWithoutRemove.removeIf(removeEntryList::contains);
-							((OrderModel) currentObject).setEntries(mainEntryListWithoutRemove);
-						}
-					/*previousChangedOrderEntrysList.forEach(entry -> {
-						AbstractOrderEntryModel entryMode= (AbstractOrderEntryModel)entry;
-						LOG.info("removed entry entry no:"+entryMode.getEntryNumber()+" isMainBundle :"+entryMode.isBundleMainEntry()+"  productCode:"+entryMode.getProduct().getCode()
-						+"  isBundleEntry: "+entryMode.isBundleEntry());
-					});*/
 				}
 
-				return super.performSave(widgetInstanceManager , currentObject);
 			}else {
 				final List<AbstractOrderEntryModel> previousChangedOrderEntrysList = getPreviousChangedOrderEntrysList(
 						orderModel);
@@ -112,19 +124,21 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				}
 				removeEntryFromConsignment(orderModel, previousChangedOrderEntrysList);
 
-				orderModel.getEntries().forEach(
-						abstractOrderEntryModel -> abstractOrderEntryModel.setCalculated(Boolean.FALSE));
-				final Object object = super.performSave(widgetInstanceManager,
-						currentObject); // to call parent class before recalculating order.
-				try {
-					if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
-						getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
-					}
-				} catch (CalculationException e) {
-					BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
-				}
-				return object;
 			}
+
+        orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+        	if(!abstractOrderEntryModel.isBundleEntry())
+        	abstractOrderEntryModel.setCalculated(Boolean.FALSE);
+				});
+     	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
+			try {
+				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
+					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
+				}
+			} catch (CalculationException e) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
+			}
+      return object;
      }
     return super.performSave(widgetInstanceManager , currentObject);
   }
