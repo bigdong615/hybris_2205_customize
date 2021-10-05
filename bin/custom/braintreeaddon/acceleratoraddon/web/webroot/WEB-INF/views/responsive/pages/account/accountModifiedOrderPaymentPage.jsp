@@ -200,7 +200,7 @@
 
 								</c:if>
 								</br> <a href="#" data-bs-toggle="modal"
-									data-order="${orderData.code}:depositPayment"
+									data-order="${orderData.code}:modifiedOrderPayment"
 									data-bs-target="#addCrediCard" class="gray80"><spring:theme
 										code="text.myaccount.extend.order.new.card" /></a>
 
@@ -324,10 +324,18 @@
 				<button
 					class="btn btn-sm btn-primary float-end js-modify-order-capture-payment"
 					type="submit"><spring:theme code="order.myaccount.modify.order.payment.capture" /></button>
-					
-				<button
-					class="btn btn-sm btn-primary float-end js-modify-order-refund-payment refund-space"
-					type="submit"><spring:theme code="order.myaccount.modify.order.payment.refund" /></button>
+				
+				<c:choose>
+					<c:when test="${disablePayment}">
+						<button class="btn btn-sm btn-primary float-end js-modify-order-refund-payment refund-space" type="submit" disabled="disabled">
+						<spring:theme code="order.myaccount.modify.order.payment.refund" /></button>
+					</c:when>
+					<c:otherwise>
+						<button class="btn btn-sm btn-primary float-end js-modify-order-refund-payment refund-space" type="submit">
+						<spring:theme code="order.myaccount.modify.order.payment.refund" /></button>
+					</c:otherwise>
+				</c:choose>
+				
 			</div>
 			<div id="allFieldvalidationMessage"></div>
 		</div>
@@ -337,7 +345,10 @@
 	<div id="orderSummary" class="card">
 		<h5><spring:theme code="order.myaccount.summary" /></h5>
 		<hr>
-
+		<c:if test="${disablePayment}">
+<input type="hidden" id="amount_entered" name="refundAmount" value="${amount_entered.value}" />
+<input type="hidden" id="amount_remaining" name="refundAmount" value="${amount_remaining.value }" />
+</c:if>
 		<table id="costSummary">
 			<tbody>
 				<tr class="total">
@@ -345,17 +356,56 @@
 					<td class="text-end"><input type="text" id="modify_order-payment-amount"
 						name="modify_order-payment-amount" class="get-deposit-value"></td>
 				</tr>
+				<c:if test="${disablePayment}">
+				<tr class="total">
+					<td><spring:theme code="order.myaccount.modify.order.payment.remaining.amount" /></td>
+					<td class="text-end"><input type="text" id="modify_order-payment-remaining-amount"
+						name="modify_order-payment-remaining-amount" class="get-deposit-value"></td>
+				</tr>
+				</c:if>
 			</tbody>
 		</table>
 		<button
 			class="btn btn-block btn-primary mt-4 js-modify-order-capture-payment"
 			type="submit"><spring:theme code="order.myaccount.modify.order.payment.capture" /></button>
-		<button
+		
+		<c:choose>
+					<c:when test="${disablePayment}">
+						<button
+			class="btn btn-block btn-primary mt-4 js-modify-order-refund-payment"
+			type="submit" disabled="disabled"><spring:theme code="order.myaccount.modify.order.payment.refund" /></button>	
+					</c:when>
+					<c:otherwise>
+						<button
 			class="btn btn-block btn-primary mt-4 js-modify-order-refund-payment"
 			type="submit"><spring:theme code="order.myaccount.modify.order.payment.refund" /></button>	
+					</c:otherwise>
+				</c:choose>
+		
 		<div id="depositPaymentErrorMessage"></div>
+		<!-- GC APPLIED LIST -->
+
+<c:forEach items="${appliedGcList}" var="gift" varStatus="loop">
+		<p class="body14">
+			<span class="gray60">${fn:escapeXml(gift.code)}</span>
+			<a href="#" class="remove-modified-order-gift-card remove-gc-style" data-gccode="${fn:escapeXml(gift.code)}">
+				<spring:theme code="text.remove" />
+			</a>
+			<span class="float-end"><format:price priceData="${gift.redeemamount}" /></span>
+		</p>
+	</c:forEach>
+	<c:url value="/my-account/modified-order-remove-gc-payment" var="removeGiftCardAction" />
+	<form id="removeGiftCardForm" action="${removeGiftCardAction}" method="POST">
+			<input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" /> 
+			<input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}" />
+			<input type="hidden" value="" id="removeGcCode" name="gcCode" />
+	</form>
 	</div>
+	
 </div>
+
+
+
 <c:url value="/my-account/modified-order-refund-payment" var="refundPaymentAction"/>
 <form action="${refundPaymentAction}" method="post" id="refundPaymentForm">
 	<input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" />
@@ -390,7 +440,7 @@
 					<c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
 					<a href=""
 						class="btn btn-block btn-primary mt-4 add-cc-form-depositPayment"
-						data-order="${orderData.code}:depositPayment"><spring:theme
+						data-order="${orderData.code}:modifiedOrderPayment"><spring:theme
 							code="text.extend.order.credi.continue" /></a> <br>
 					<p class="text-center mb-0">
 						<a href="#" class="lightteal" aria-label="Close"
@@ -404,8 +454,6 @@
 		</div>
 	</div>
 </div>
-
-
 
 <script>
 	var addPaymentMethodsPage = "addPaymentMethodsPage";

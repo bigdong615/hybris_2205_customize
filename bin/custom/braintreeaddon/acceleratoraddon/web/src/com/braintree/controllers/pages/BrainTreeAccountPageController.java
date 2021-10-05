@@ -17,6 +17,8 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.validators.PaymentMethodValidator;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
@@ -34,6 +36,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -93,6 +96,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String PAY_BILL = "/payBill";
 	private static final String DEPOSIT_PAYMENT_URL = "/depositPayment";
 	private static final String DEPOSIT_PAYMENT = "depositPayment";
+	private static final String MODIFIED_ORDER_PAYMENT = "modifiedOrderPayment";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
@@ -404,6 +408,14 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		  {
 		    return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + DEPOSIT_PAYMENT_URL;
 		  }
+		}
+		else if(StringUtils.isNotBlank(orderCode) && orderCode.contains(MODIFIED_ORDER_PAYMENT))
+		{
+		  String[] split = orderCode.split(BlControllerConstants.RATIO);
+      if(split.length >= 2)
+      {
+        return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + MODIFIED_ORDER_PAYMET_PATH;
+      }
 		}
 		else if(StringUtils.isNotBlank(orderCode)) {
 			String originalOrderCode = orderCode.replace(BlControllerConstants.RATIO + getRedirectionUrl(orderCode), BlControllerConstants.EMPTY);
@@ -951,7 +963,29 @@ public class BrainTreeAccountPageController extends AbstractPageController
       final ContentPageModel modifiedOrderPaymentPage = getContentPageForLabelOrId(MODIFIED_ORDER_PAYMENT_CMS_PAGE);
       storeCmsPageInModel(model, modifiedOrderPaymentPage);
       setUpMetaDataForContentPage(model, modifiedOrderPaymentPage);
-      final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      if(CollectionUtils.isNotEmpty(order.getTempModifiedOrderAppliedGcList()))
+      {
+        Object enteredAmount = sessionService.getAttribute(orderCode + "amount_entered");
+        if(enteredAmount instanceof PriceData)
+        {
+          final PriceData amountToPay = ((PriceData) enteredAmount);
+          model.addAttribute("amount_entered", amountToPay);
+          final BigDecimal remainingAmountToPay = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, amountToPay.getValue());
+          final PriceData remainingAmountToPayPriceData  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
+          model.addAttribute("amount_remaining", remainingAmountToPayPriceData);
+          final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+          order.getTempModifiedOrderAppliedGcList().forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
+          model.addAttribute("appliedGcList", blGiftCardDataList);
+        }
+        model.addAttribute("disablePayment", true);        
+      }
+      else
+      {
+        model.addAttribute("disablePayment", false);
+        sessionService.removeAttribute(orderCode + "amount_entered");
+      }
+      final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);      
       model.addAttribute(ORDER_DATA, orderDetails);
       setupAdditionalFields(model);
       return getViewForPage(model);
@@ -964,6 +998,18 @@ public class BrainTreeAccountPageController extends AbstractPageController
           getLocalizedString("text.account.modified.order.payment.error.message"));
     }
     return REDIRECT_TO_ORDER_HISTORY_PAGE;
+  }
+  
+  private void addGCDetails(final AbstractOrderModel source, final List<BLGiftCardData> blGiftCardDataList, final GiftCardModel giftCardModel)
+  {
+    final BLGiftCardData blGiftCardData = new BLGiftCardData();
+      blGiftCardData.setCode(giftCardModel.getCode());
+      final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+      //rounding off double value to 2 decimal places
+      BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+      blGiftCardData.setRedeemamount(convertDoubleToPriceData(gcRedeemedAmount.doubleValue(), source));
+      blGiftCardData.setBalanceamount(convertDoubleToPriceData(giftCardModel.getBalance(), source));
+      blGiftCardDataList.add(blGiftCardData);
   }
   
   @PostMapping(value = "/modified-order-cc-payment")
@@ -981,21 +1027,32 @@ public class BrainTreeAccountPageController extends AbstractPageController
       {
         boolean isSuccess = false;
         final double newAmount = Double.parseDouble(modifiedOrderAmount);
+        BigDecimal remainingAmountToPay = BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
         final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+        final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+        final List<GiftCardModel> tempModifiedOrderAppliedGcList = new ArrayList<>();
         if (Objects.nonNull(order))
         {
+          
+          if(CollectionUtils.isNotEmpty(order.getTempModifiedOrderAppliedGcList()))
+          {
+            remainingAmountToPay = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, remainingAmountToPay).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+            tempModifiedOrderAppliedGcList.addAll(order.getTempModifiedOrderAppliedGcList());
+          }          
           final BrainTreePaymentInfoModel paymentInfo =
-              brainTreeCheckoutFacade.getModifyOrderPaymentInfoForCode((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, newAmount);
+              brainTreeCheckoutFacade.getModifyOrderPaymentInfoForCode((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, remainingAmountToPay.doubleValue());
           if (Objects.nonNull(paymentInfo))
           {
-            isSuccess = brainTreeTransactionService.doCapturePaymentForModifiedOrder(order,
-                BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
+            isSuccess = brainTreeTransactionService.doCapturePaymentForModifiedOrder(order, remainingAmountToPay, true, paymentInfo);
           }
         }
         if (isSuccess)
         {
+          blGiftCardFacade.commitAppliedGiftCard(order);
+          tempModifiedOrderAppliedGcList.forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
+          model.addAttribute("appliedGcList", blGiftCardDataList);
           final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-          final PriceData amount  = convertDoubleToPriceData(newAmount, order);
+          final PriceData amount  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
           model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
           model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, amount);
           model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.CREDIT_CARD_PAYMENT_METHOD);
@@ -1133,5 +1190,100 @@ public class BrainTreeAccountPageController extends AbstractPageController
           getLocalizedString("text.account.modified.order.payment.refund.error.message"));
     }
     return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+  }
+  
+  @PostMapping(value = "/modified-order-gc-payment")
+  @RequireHardLogIn
+  public String doGCPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+  {
+    final String gcCode = request.getParameter("gcCode");
+    final String refundAmount = request.getParameter("paymentAmount");
+    final String orderCode = request.getParameter(ORDER_CODE);
+    try
+    {
+      boolean isSuccess = false;
+      final double newAmount = Double.parseDouble(refundAmount);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      final Locale locale = getI18nService().getCurrentLocale();
+      final BigDecimal amountToPay = BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+      final PriceData amount  = convertDoubleToPriceData(newAmount, order);
+      sessionService.setAttribute(order.getCode() + "amount_entered", amount);
+      if(blGiftCardFacade.isGcAlreadyApplied(gcCode, order))
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.already.msg", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final BigDecimal remainingBalance = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, amountToPay);
+      if(remainingBalance.compareTo(BigDecimal.valueOf(0.0d)) <= 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(gcCode);
+      if(Objects.isNull(giftCardModel))
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      if(giftCardModel.getEndDate().compareTo(new Date()) < 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.expire", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final double gcBlance = blGiftCardFacade.getGcRemainingBalanace(giftCardModel);
+      if(gcBlance <= 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.cart.insufficient.balance",new Object[]
+            {gcCode}, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      if(blGiftCardFacade.applyGiftCardForModifiedOrderPayment(gcCode, order, amountToPay))
+      {
+        modelService.refresh(giftCardModel);
+        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+        final BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.success", new Object[]
+            {gcRedeemedAmount.abs().doubleValue()}, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      else
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while making payment wiht Gift Card for Order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.gc.error.message"));
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH; 
+    }
+  }
+  
+  @PostMapping(value = "/modified-order-remove-gc-payment")
+  @RequireHardLogIn
+  public String doGCRemoveForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+  {
+    final String gcCode = request.getParameter("gcCode");
+    final String orderCode = request.getParameter(ORDER_CODE);
+    try
+    {
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      blGiftCardFacade.removeGiftCardForModifiedOrder(gcCode, order);
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while removing Gift Card for Order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.gc.error.message"));
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH; 
+    }    
+    
   }
 }

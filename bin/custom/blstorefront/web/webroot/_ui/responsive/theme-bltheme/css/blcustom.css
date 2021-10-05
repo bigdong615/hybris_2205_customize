@@ -716,3 +716,11 @@ color:#fff !important;
 .gc-textbox{
     border: 1px solid #ced4da !important;
 }
+.gc-button-left{
+	margin-left: 428px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.remove-gc-style{
+	color: #52bfc0;
+}

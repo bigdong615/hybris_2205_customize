@@ -35,6 +35,8 @@
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
         <collectiontype code="InventoryCycleCountProducts" elementtype="BlInventoryCycleCountDetails" type="list"/>
+        
+        <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
     </collectiontypes>
 
@@ -2851,6 +2853,16 @@
                       </persistence>
                       <modifiers read="true" write="true" optional="true" />
                       <description>PO Notes</description>
+                    </attribute>
+                    <attribute qualifier="modifiedOrderAppliedGcList" type="ModifiedOrderGCPaymentList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>List of Applied GC for modified order</description>
+                    </attribute>
+                    <attribute qualifier="tempModifiedOrderAppliedGcList" type="ModifiedOrderGCPaymentList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>List of Applied GC for modified order</description>
                     </attribute>
                 </attributes>
             </itemtype>

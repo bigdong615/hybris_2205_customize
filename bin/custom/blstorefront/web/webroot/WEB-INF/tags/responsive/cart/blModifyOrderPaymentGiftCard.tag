@@ -12,7 +12,7 @@
 <div class="page-loader-new-layout">
     <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
 </div>
-<c:url value="/checkout/applyGiftCard" var="giftCardUrl" />
+<c:url value="/my-account/modified-order-gc-payment" var="giftCardUrl" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div class="paymentOption">
 	<div class="row">
@@ -23,18 +23,18 @@
         		<spring:theme code="text.gift.card.disclaimer"/>
         </div>
         </c:if>
-        <form:form method="post" id="giftCardForm" action="${giftCardUrl}">
+        <form method="post" id="giftCardForm" action="${giftCardUrl}">
+        <input type="hidden" name="${CSRFToken.parameterName}" value="${CSRFToken.token}" />
 					<div class="input-group mt-2">
-						<input type="text" id="gift-card-apply-gift-card-number" 
-							name="giftCardNumber" class="form-control gc-textbox"
-							placeholder="Gift Card Number">
-						<div class="input-group-append">
-						
-							<button id="applyGcCode" class="btn btn-secondary" type="submit"><spring:theme code="text.gift.apply"/></button>
-						</div>
+						<input type="text" id="gcCode" name="gcCode" class="form-control gc-textbox" placeholder="Gift Card Number">
 					</div>
-					<input type="hidden" name="appliedGC" value="${cartData.giftCardData}"/>
-				</form:form>
+					<input type="hidden" id="orderCode" name="orderCode" value="${orderData.code}" />
+					<input type="hidden" id="paymentAmount" name="paymentAmount" value=""/>
+	
+				</form>
+				<div class="gc-button-left">
+							<button id="applyModifiedGcCode" class="btn btn-secondary" type="submit"><spring:theme code="text.gift.apply"/></button>
+						</div>
 				<c:if test="${not empty coupon_applied_msg}">
 					<div class="notification notification-warning" style="font-size: 13px;">${coupon_applied_msg}</div>
 				</c:if>
