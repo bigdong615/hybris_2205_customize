@@ -865,6 +865,7 @@
 		class="com.bl.core.order.hook.impl.BlGiftCardOrderMethodHook">
 		<property name="eventService" ref="eventService" />
 		<property name="modelService" ref="modelService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="commerceGiftCardOrderMethodHookMergeDirective"
@@ -1354,6 +1355,7 @@
 	<bean id="defaultNewGearOrderStatusChangeHook"
 		class="com.bl.core.order.hook.impl.BlNewGearOrderStatusChangeHook">
 		<property name="modelService" ref="modelService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="commerceNewGearOrderStatusHookMergeDirective"

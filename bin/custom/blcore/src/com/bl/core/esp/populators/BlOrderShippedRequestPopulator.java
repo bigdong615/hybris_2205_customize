@@ -93,9 +93,11 @@ public class BlOrderShippedRequestPopulator extends
       data.setShippingMethod(getRequestValue(delivery.getCode()));
       data.setShippingMethodText(getRequestValue(delivery.getName()));
     }
-    data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalDuration((int) getRentalDuration(orderModel));
+   if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalDuration((int) getRentalDuration(orderModel));
+    }
     data.setTrackingString(
         "test");// TODO Setting dummy value, once we got the actual value then set actual value one
     populateShippingInfoInXML(orderModel, data);
