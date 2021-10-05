@@ -1,7 +1,3 @@
-//
-// author Aditi Sharma
-//
-
 package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.commercefacades.i18n.I18NFacade;
@@ -46,6 +42,7 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
@@ -58,12 +55,15 @@ import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
 
+/**
+ * ############## BL-630 : CS Cockpit - Shipping Address and Shipping Method related features Orders ############## This
+ * class is created to update shipping address and shipping method for order
+ *
+ * @author Aditi Sharma
+ */
 public class UpdateOrderDetailsController extends DefaultWidgetController
 {
-
 	private static final Logger LOG = Logger.getLogger(UpdateOrderDetailsController.class);
-
-	private static final String COUNTRY_CODE = "US";
 
 	private static final int DURATION = 2000;
 
@@ -151,7 +151,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private ListModelList isPickupStore = new ListModelList();
 	private ListModelList isUpsStore = new ListModelList();
 
-	private final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
+	private final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(BlInventoryScanLoggingConstants.COUNTRY_CODE);
 
 	boolean isDeliveryModeChange = false;
 
@@ -170,13 +170,18 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 
+	/**
+	 * This method is used to show the default values of shipping and address
+	 *
+	 * @param inputObject
+	 */
 	@SocketEvent(socketId = "inputObject")
 	public void initCustomerAddressForm(final OrderModel inputObject)
 	{
 		this.setOrderModel(inputObject);
 		this.getWidgetInstanceManager()
-				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.updateshipping.confirm.title")) + " "
-						+ this.getOrderModel().getCode());
+				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.updateshipping.confirm.title"))
+						.concat(BlInventoryScanLoggingConstants.EMPTY_SPACE).concat(this.getOrderModel().getCode()));
 		final AddressModel deliveryAddress = getOrderModel().getDeliveryAddress();
 		if (deliveryAddress.getFirstname() != null)
 		{
@@ -191,8 +196,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		this.postalCode.setValue(deliveryAddress.getPostalcode());
 		this.town.setValue(deliveryAddress.getTown());
 		this.contactNo.setValue(deliveryAddress.getPhone1());
-		this.countryCode
-				.setValue(deliveryAddress.getCountry().getName() + " " + "[" + deliveryAddress.getCountry().getIsocode() + "]");
+		this.countryCode.setValue(deliveryAddress.getCountry().getName().concat(BlInventoryScanLoggingConstants.EMPTY_SPACE)
+				.concat(BlInventoryScanLoggingConstants.OPEN_BRACKET).concat(deliveryAddress.getCountry().getIsocode())
+				.concat(BlInventoryScanLoggingConstants.CLOSE_BRACKET));
 
 		isPickupStore();
 
@@ -204,12 +210,16 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	}
 
-	@ViewEvent(componentID = "regionCombobox", eventName = "onChange")
+	/**
+	 * This method is called when we will change the value of region
+	 */
+	@ViewEvent(componentID = "regionCombobox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeCountry()
 	{
-		final List<RegionData> regionForIso = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
+		final List<RegionData> regionForIso = i18NFacade.getRegionsForCountryIso(BlInventoryScanLoggingConstants.COUNTRY_CODE);
 
-		final String regionCode = StringUtils.substringBetween(regionCombobox.getValue(), "[", "]");
+		final String regionCode = StringUtils.substringBetween(regionCombobox.getValue(),
+				BlInventoryScanLoggingConstants.OPEN_BRACKET, BlInventoryScanLoggingConstants.CLOSE_BRACKET);
 
 		for (final RegionData isoCodeList : regionForIso)
 		{
@@ -217,7 +227,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			{
 				if (regionCode.trim().equals(isoCodeList.getIsocode()))
 				{
-					final RegionData regionData = i18NFacade.getRegion(COUNTRY_CODE, regionCode.trim());
+					final RegionData regionData = i18NFacade.getRegion(BlInventoryScanLoggingConstants.COUNTRY_CODE,
+							regionCode.trim());
 					listModelList.addToSelection(regionData);
 					regionCombobox.setModel(listModelList);
 					showNotify("Changed to: " + regionCode, regionCombobox);
@@ -232,7 +243,10 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	}
 
-	@ViewEvent(componentID = "deliveryModeCombobox", eventName = "onChange")
+	/**
+	 * This method is called when we will change the value of deliveryModeCombobox
+	 */
+	@ViewEvent(componentID = "deliveryModeCombobox", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeDeliveryMode()
 	{
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
@@ -241,26 +255,37 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		isUpsStore();
 	}
 
-	@ViewEvent(componentID = "postalCode", eventName = "onChange")
+	/**
+	 * This method is called when we will change the value of postalCode
+	 */
+	@ViewEvent(componentID = "postalCode", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeZipCode()
 	{
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
 		validateZipCodeForDelivery(sameDayCityReqData);
 	}
 
-	@ViewEvent(componentID = "isPickStoreAddress", eventName = "onChange")
+	/**
+	 * This method is called when we will change the value of isPickStoreAddress
+	 */
+	@ViewEvent(componentID = "isPickStoreAddress", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void isPickUpStoreAddress()
 	{
 		isPickupStore.addToSelection(this.isPickStoreAddress.getValue());
 	}
 
-	@ViewEvent(componentID = "isUPSStoreAddress", eventName = "onChange")
+	/**
+	 * This method is called when we will change the value of isUPSStoreAddress
+	 */
+	@ViewEvent(componentID = "isUPSStoreAddress", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void isUpsStoreAddress()
 	{
 		isUpsStore.addToSelection(this.isUPSStoreAddress.getValue());
 	}
 
 	/**
+	 * This method is used to validate the zip code for delivery
+	 *
 	 * @param sameDayCityReqData
 	 * @param deliveryAddressZipCode
 	 * @param warehouseZipCode
@@ -299,11 +324,13 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			deliveryAddress.setPickStoreAddress(false);
 			deliveryAddress.setUpsStoreAddress(false);
 		}
-		populateAddressData(deliveryAddress);
+		getBlRegionDataOnPopup(blRegionCode, deliveryAddress.getRegion());
 		getSameDayCityResponse(sameDayCityReqData, blZoneDeliveryMode);
 	}
 
 	/**
+	 * This method is used to get same day city response
+	 *
 	 * @param sameDayCityReqData
 	 * @param blZoneDeliveryMode
 	 */
@@ -337,7 +364,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
-					Messagebox.show("Selected shipping method service is not applicable for added zip code");
+					Messagebox.show(BlInventoryScanLoggingConstants.SHIPPING_METHOD_ERROR_MESSAGE);
 					throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
 				}
 			}
@@ -349,26 +376,18 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 	/**
-	 * @param deliveryAddress
+	 * This method will be used to reset the popup values
 	 */
-	private void populateAddressData(final AddressModel deliveryAddress)
-	{
-		this.firstName.setValue(deliveryAddress.getFirstname());
-		this.lastName.setValue(deliveryAddress.getLastname());
-		this.line1.setValue(deliveryAddress.getLine1());
-		this.line2.setValue(deliveryAddress.getLine2());
-		this.town.setValue(deliveryAddress.getTown());
-		this.contactNo.setValue(deliveryAddress.getPhone1());
-		getBlRegionDataOnPopup(blRegionCode, deliveryAddress.getRegion());
-	}
-
-	@ViewEvent(componentID = "undochanges", eventName = "onClick")
+	@ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void reset()
 	{
 		this.initCustomerAddressForm(this.getOrderModel());
 	}
 
-	@ViewEvent(componentID = "confirmAddress", eventName = "onClick")
+	/**
+	 * This method will be used to confirm/ Save the modified values for shipping
+	 */
+	@ViewEvent(componentID = "confirmAddress", eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void confirmOrder()
 	{
 		this.validateRequest();
@@ -380,7 +399,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		addressModel.setPostalcode(this.postalCode.getValue());
 		addressModel.setTown(this.town.getValue());
 		addressModel.setPhone1(this.contactNo.getValue());
-		final String regionCode = StringUtils.substringBetween(this.regionCombobox.getValue().trim(), "[", "]");
+		final String regionCode = StringUtils.substringBetween(this.regionCombobox.getValue().trim(),
+				BlInventoryScanLoggingConstants.OPEN_BRACKET, BlInventoryScanLoggingConstants.CLOSE_BRACKET);
 		try
 		{
 			final RegionModel regionModel = getCommonI18NService()
@@ -426,7 +446,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 	/**
-	 *
+	 * This method is used to check isUpsStore or not
 	 */
 	private void isUpsStore()
 	{
@@ -437,11 +457,11 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				: isUpsStore.addToSelection(Boolean.FALSE);
 
 		isUPSStoreAddress.setModel(isUpsStore);
-		BlLogger.logMessage(LOG, Level.INFO, "isUPSAddessSelected : " + isUpsStoreAddSelected);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "isUPSAddessSelected {}", isUpsStoreAddSelected);
 	}
 
 	/**
-	 *
+	 * This method is used to check isPickupStore or not
 	 */
 	private void isPickupStore()
 	{
@@ -452,9 +472,12 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				: isPickupStore.addToSelection(Boolean.FALSE);
 		isPickStoreAddress.setModel(isPickupStore);
 
-		BlLogger.logMessage(LOG, Level.INFO, "isPickUpAddessSelected : " + isPickupAddSelected);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "isPickUpAddessSelected {}", isPickupAddSelected);
 	}
 
+	/**
+	 * This method will be used to validate modified data for shipping
+	 */
 	protected void validateRequest()
 	{
 
@@ -493,18 +516,20 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 
 	/**
+	 * This method is used to get boolean value for ups store
+	 *
 	 * @return valueList
 	 */
-	private List getBooleanValueList()
+	private List<Boolean> getBooleanValueList()
 	{
-		final List valueList = new ArrayList();
+		final List<Boolean> valueList = new ArrayList<>();
 		valueList.add(Boolean.TRUE);
 		valueList.add(Boolean.FALSE);
 		return valueList;
 	}
 
 	/**
-	 * This method will set all delivery modes to combo box
+	 * This method is used to get the delivery modes
 	 */
 	private void getBlDeliveryModes()
 	{
@@ -515,12 +540,14 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 	/**
+	 * This method is used to get BlRegionData
+	 *
 	 * @param regionCodeList
 	 * @param blRegionCode
 	 */
 	private void getBlRegionData(final List<RegionData> blRegionCode)
 	{
-		final List regionCodeList = new ArrayList();
+		final List<RegionData> regionCodeList = new ArrayList<>();
 		regionCodeList.addAll(blRegionCode);
 		listModelList = new ListModelList<>(regionCodeList);
 
@@ -539,6 +566,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 
 	/**
+	 * This method is used to get region date on popup
+	 *
 	 * @param regionCodeList
 	 * @param blRegionCode
 	 */
@@ -562,12 +591,21 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 
+	/**
+	 * This method will be used to show success message
+	 */
 	protected void showMessageBox()
 	{
-		Messagebox.show("Details Updated Successfully");
+		Messagebox.show(BlInventoryScanLoggingConstants.SHIPPING_DETAILS_UPDATE_MESSGAE);
 
 	}
 
+	/**
+	 * This method will be used to show notification
+	 *
+	 * @param msg
+	 * @param ref
+	 */
 	private void showNotify(final String msg, final Component ref)
 	{
 		Clients.showNotification(msg, "info", ref, "end_center", DURATION);
