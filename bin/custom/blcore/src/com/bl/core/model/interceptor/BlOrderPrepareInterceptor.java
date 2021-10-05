@@ -1,6 +1,15 @@
 package com.bl.core.model.interceptor;
 
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.NotesModel;
+import com.bl.core.services.order.note.BlOrderNoteService;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -11,6 +20,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
@@ -33,6 +43,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -122,6 +133,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     try {
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
+      triggerEspShipped(abstractOrderModel, interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
@@ -230,6 +242,38 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger payment declined event.",e);
       }
 
+    }
+  }
+
+  /**
+   * trigger Esp Shipped event
+   *
+   * @param abstractOrderModel the abstract order model
+   * @param interceptorContext the interceptor context
+   */
+  private void triggerEspShipped(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
+    if(interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+        && OrderStatus.SHIPPED.equals(abstractOrderModel.getStatus())){
+
+      final AtomicBoolean isEligibleToTrigger = new AtomicBoolean(Boolean.FALSE);
+      final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
+
+      for(ConsignmentModel consignmentModel : consignments){
+        final WarehouseModel warehouses = consignmentModel.getWarehouse();
+        final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
+        if(consignmentModel.getStatus().equals(ConsignmentStatus.BL_SHIPPED) && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+            && (!StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
+            !StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
+          isEligibleToTrigger.set(Boolean.TRUE);
+        }
+        else {
+          isEligibleToTrigger.set(Boolean.FALSE);
+          break;
+        }
+    }
+      if(isEligibleToTrigger.get()){
+        getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
+      }
     }
   }
 
