@@ -43,7 +43,7 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
    */
   private void doTriggerEspEvent(final AddressModel addressModel,
       final InterceptorContext interceptorContext) {
-    if (isCsUser() && !interceptorContext.isNew(addressModel) && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
+    if (isCsUser()  && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
       try {
        triggerEspNewShipping((OrderModel) addressModel.getOwner());
 
