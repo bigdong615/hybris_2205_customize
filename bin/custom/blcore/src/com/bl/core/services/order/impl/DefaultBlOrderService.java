@@ -215,7 +215,7 @@ public class DefaultBlOrderService implements BlOrderService {
 	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
 			final AbstractOrderModel orderModel,
 			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
-		BlLogger.logFormattedMessage(LOG, Level.INFO,StringUtils.EMPTY,
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,StringUtils.EMPTY,
 				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
 				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
 		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
