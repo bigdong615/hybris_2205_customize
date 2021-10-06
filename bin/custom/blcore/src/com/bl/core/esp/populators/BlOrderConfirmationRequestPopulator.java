@@ -107,15 +107,16 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setDiscounttext(StringUtils.EMPTY);
         if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
-          data.setExpectedshippingdate(formatter.format(orderModel.getActualRentalStartDate()));
+          data.setExpectedshippingdate(formatter.format(orderModel.getRentalStartDate()));
           data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
           data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-          data.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+          data.setActualreturndate(formatter.format(orderModel.getRentalEndDate()));
           data.setRentalduration((int) getRentalDuration(orderModel));
         }
         if (Objects.nonNull(orderModel.getPaymentInfo())) {
             final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-            data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
+            data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                ? BlCoreConstants.PAY_PAL : getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
         }
         if(StringUtils.isNotBlank(orderModel.getPoNumber())){
           data.setPaymenttype(BlCoreConstants.PO);
