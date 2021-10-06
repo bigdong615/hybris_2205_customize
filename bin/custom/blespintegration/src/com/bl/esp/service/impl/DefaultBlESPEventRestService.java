@@ -151,7 +151,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
    * {@inheritDoc}
    */
   @Override
-  public ESPEventResponseWrapper sendOrderExtraItem(
+  public ESPEventResponseWrapper sendOrderExtraItemEvent(
       final OrderExtraItemRequest orderExtraItemRequest) {
 
     return super.getTokenAndTriggerEvent(orderExtraItemRequest);

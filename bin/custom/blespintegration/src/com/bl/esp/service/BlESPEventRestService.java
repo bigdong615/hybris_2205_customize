@@ -156,6 +156,6 @@ public interface BlESPEventRestService {
    * Send  Order Extra Item Event by calling Order Extra Item ESP Event API
    * @param  orderExtraItemRequest
    */
-   ESPEventResponseWrapper sendOrderExtraItem(
+   ESPEventResponseWrapper sendOrderExtraItemEvent(
       final OrderExtraItemRequest orderExtraItemRequest) ;
 }

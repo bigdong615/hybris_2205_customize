@@ -454,7 +454,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
       try
       {
         // Call send order Extra Item ESP Event API
-        espEventResponseWrapper = getBlESPEventRestService().sendOrderExtraItem(
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderExtraItemEvent(
             orderExtraItemRequest);
       }catch (final BlESPIntegrationException exception){
         persistESPEventDetail(null, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
