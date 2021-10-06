@@ -2,10 +2,7 @@ ACC.order = {
 
 	_autoload: [
 	    "backToOrderHistory",
-	    "bindMultidProduct",
-	    ["bindApplyAccountVoucher", $(".js-voucher-apply-account-btn").length != 0],
-	    "bindApplyExtendOrder",
-	    "bindApplyRentAgain"
+	    "bindMultidProduct"
 	],
 
 	backToOrderHistory: function(){
@@ -28,120 +25,5 @@ ACC.order = {
 			ACC.multidgrid.populateAndShowGridOverlay(this, event);
 		});
 
-	} ,
-
-	 bindApplyAccountVoucher: function() {
-
-   		$(".js-voucher-apply-account-btn").on("click", function(e) {
-   			e.preventDefault();
-   			var voucherCode = $.trim($(".js-voucher-code-text-account").val());
-   			if (voucherCode != '' && voucherCode.length > 0) {
-         var formValues = $('#applyVoucherForm').serialize();
-   				$.ajax({
-   			url: ACC.config.encodedContextPath + '/my-account/voucher/apply',
-             type: "POST",
-             data: formValues,
-             success: function (data) {
-             if(data=='success')
-                    window.location.reload();
-             },
-             error: function (xhr, textStatus, error) {
-
-             }
-   				});
-   			} else {
-   				$("#errorMessages_account_voucher").removeClass("d-none");
-   				$("#errorMessages_account_voucher").html("Please enter your coupon code and click apply");
-   				$(".js-voucher-code-text-account").addClass("error");
-   			}
-
-   	});
-
-
-
-   	$("#js-voucher-code-text-account").on("keypress", function(e) {
-   		var code = (e.keyCode ? e.keyCode : e.which);
-   		if (code == 13) {
-   			var voucherCode = $.trim($(".js-voucher-code-text-account").val());
-   			if (voucherCode != '' && voucherCode.length > 0) {
-   				$("#applyVoucherForm").submit();
-   			} else {
-   				$("#errorMessages_account_voucher").removeClass("d-none");
-   				$("#errorMessages_account_voucher").html("Please enter your coupon code and click apply");
-   				$(".js-voucher-code-text-account").addClass("error");
-   			}
-   		}
-   	});
-   },
-
-   bindApplyRentAgain: function() {
-         		$(".js-rent-again").on("click", function(e) {
-         			e.preventDefault();
-         			   var orderCode = $(this).data('order-id');
-         				$.ajax({
-         			url: ACC.config.encodedContextPath + '/my-account/rentAgain/'+ orderCode,
-                   data: orderCode,
-                   success: function (data) {
-                   alert(data.includes("/cart"))
-                   if(data.includes("/cart")){
-                    window.location.href = ACC.config.encodedContextPath + "/cart";}
-                 else  {
-                 $('#rentAgainPopUp').html(data);
-                   setTimeout(function(){$("#rentAgainPopUp").modal('show');},500);}
-                   },
-                   error: function (xhr, textStatus, error) {
-
-                   }
-         				});
-
-         	});
-         },
-
-   	 bindApplyExtendOrder: function() {
-      		$(".js-extendOrder-btn").on("click", function(e) {
-      			e.preventDefault();
-      			   var orderCode = $(this).data('order-id');
-      			alert(orderCode)
-      				$.ajax({
-      			url: ACC.config.encodedContextPath + '/my-account/extendOrder',
-                type: "POST",
-                data: formValues,
-                success: function (data) {
-                if(data=='success')
-                       window.location.reload();
-                },
-                error: function (xhr, textStatus, error) {
-
-                }
-      				});
-
-      	});
-
-         // To enable extend order button once payment is selected
-        $(document).on("click", ".js-enable-extend-button", function (e) {
-        if($('#js-isAllProductExtendabe').val() === '') {
-          $('.js-enable-extend-order').attr('disabled',false);
-          }
-        });
-
-
-   	$('#saved-payment-action-ExtendBill').on('change',function(e){
-   	    					 var optionSelected = $("option:selected", this);
-    					 var paymentId = optionSelected.data("id");
-    						var paymentnonce = optionSelected.data("nonce");
-    						if($('#js-isAllProductExtendabe').val() === '' && paymentId !== '' && paymentId !== 'undefined' && paymentnonce !== '' && paymentnonce !=='undefined' ) {
-                          $('.js-enable-extend-order').attr('disabled',false);
-                }
-    				 });
-
-$(".add-cc-extendOrderform").on("click",function(e){
-	e.preventDefault();
-	var id = $(this).data("order");
-	var orderId = $("#orderId").val(id);
-    $("#extend-order-payment-add-form").submit();
-});
-
-
-     }
-
+	}
 };

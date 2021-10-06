@@ -4,7 +4,6 @@
 	<classpathentry kind="output" path="eclipsebin/notused"/>
 	<classpathentry exported="true" kind="src" path="/acceleratorservices" />
 	<classpathentry exported="true" kind="src" path="/warehousing" />
-	<classpathentry exported="true" kind="src" path="/blcore" />
 	<classpathentry exported="true" kind="lib" path="resources" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="src" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="testsrc" />

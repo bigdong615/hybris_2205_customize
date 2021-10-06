@@ -5,56 +5,11 @@ ACC.savedcarts = {
         ["bindDeleteSavedCartLink", $('.js-delete-saved-cart').length != 0],
         ["bindDeleteConfirmLink", $('.js-savedcart_delete_confirm').length != 0],
         ["bindSaveCartForm", $(".js-save-cart-link").length != 0 || $(".js-update-saved-cart").length != 0],
-        ["bindUpdateUploadingSavedCarts", $(".js-uploading-saved-carts-update").length != 0],
-       ["bindRenameSavedCartForm", $(".js-rename-saved-carts").length != 0],
-       ["binddeleteCartForm", $(".js-remove-saved-carts").length != 0]
+        ["bindUpdateUploadingSavedCarts", $(".js-uploading-saved-carts-update").length != 0]
     ],
     
     $savedCartRestoreBtn: {},
     $currentCartName: {},
-
-    bindRenameSavedCartForm: function () {
-            $(".js-rename-saved-carts").click(function (event) {
-            event.preventDefault();
-
-           document.getElementById("renameSaveCartName").value="";
-           if(!$("#errorMessages_renamecart").hasClass("d-none")){
-              $("#errorMessages_renamecart").addClass("d-none");
-           }
-
-             var cartId = $(this).data('savedcart-id');
-             var cartName = $(this).data('savedcart-name');
-             var renameCartCode = $(this).data('savedcart-code');
-             $('#renameCartIdUrl').val(cartId);
-             $('#renameCartCode').val(renameCartCode);
-
-             document.getElementById("renameCartForm").action = cartId;
-              $('#renameSaveCartName').attr('placeholder', cartName);
-            });
-
-             $(".js-validate-rename-cart").click(function (event) {
-              event.preventDefault();
-               var cartName = document.getElementById("renameSaveCartName").value;
-               if(cartName !== 'undefined' && cartName !== ''&& !cartName.trim().length === false){
-                 $('#renameCartForm').submit();
-               }
-               else{
-               	$("#errorMessages_renamecart").removeClass("d-none");
-               	$("#errorMessages_renamecart").html("Whoops, be sure to enter a name for your cart.");
-
-               }
-
-             });
-        },
-
-        binddeleteCartForm: function () {
-                    $(".js-remove-saved-carts").click(function (event) {
-                    event.preventDefault();
-                     var cartId = $(this).data('savedcart-id');
-                    $('#removeCartIdUrl').val(cartId);
-                     document.getElementById("removecartUrl").href = cartId;
-                    });
-                },
 
     bindRestoreSavedCartClick: function () {
         $(".js-restore-saved-cart").click(function (event) {
@@ -64,15 +19,23 @@ ACC.savedcarts = {
             var cartId = $(this).data('savedcart-id');
             var url = ACC.config.encodedContextPath +'/my-account/saved-carts/'+encodeURIComponent(cartId)+'/restore';
             var popupTitleHtml = ACC.common.encodeHtml(popupTitle);
-            $.ajax({
-            				url: url,
-            				success: function (result) {
-            					$('#restorePopUp').html(result);
-            					setTimeout(function(){$("#restorePopUp").modal('show');},500);
-            				}
-            			})
 
-
+            ACC.common.checkAuthenticationStatusBeforeAction(function(){
+            	$.get(url, undefined, undefined, 'html').done(function (data) {
+            		ACC.colorbox.open(popupTitleHtml, {
+            			html: data,
+            			width: 500,
+            			onComplete: function () {
+            				ACC.common.refreshScreenReaderBuffer();
+            				ACC.savedcarts.bindRestoreModalHandlers();
+            				ACC.savedcarts.bindPostRestoreSavedCartLink();
+            			},
+            			onClosed: function () {
+            				ACC.common.refreshScreenReaderBuffer();
+            			}
+            		});
+            	});
+            });
         });
     },
 
@@ -109,16 +72,23 @@ ACC.savedcarts = {
     },
 
     bindPostRestoreSavedCartLink: function () {
-        var keepRestoredCart = false;
-        var preventSaveActiveCart = true;
+        var keepRestoredCart = true;
+        var preventSaveActiveCart = false;
 
+        $(document).on("click", '.js-keep-restored-cart', function (event) {
+            keepRestoredCart = $(this).prop('checked');
+        });
+
+        $(document).on("click", '.js-prevent-save-active-cart', function (event) {
+            preventSaveActiveCart = $(this).prop('checked');
+        });
 
         $(document).on("click", '.js-save-cart-restore-btn', function (event) {
         	
             event.preventDefault();
             var cartName = $('#activeCartName').val();
             var url = $(this).data('restore-url');
-            var postData = {preventSaveActiveCart: true, keepRestoredCart: keepRestoredCart, cartName: cartName};
+            var postData = {preventSaveActiveCart: preventSaveActiveCart, keepRestoredCart: keepRestoredCart, cartName: cartName};
             
             ACC.common.checkAuthenticationStatusBeforeAction(function(){
             	$.post(url, postData, undefined, 'html').done(function (result, data, status) {
@@ -147,13 +117,23 @@ ACC.savedcarts = {
             var cartId = $(this).data('savedcart-id');
             var popupTitle = $(this).data('delete-popup-title');
             var popupTitleHtml = ACC.common.encodeHtml(popupTitle);
+
+            ACC.colorbox.open(popupTitleHtml, {
+                inline: true,
+                className: "js-savedcart_delete_confirm_modal",
+                href: "#popup_confirm_savedcart_delete_" + cartId,
+                width: '500px',
+                onComplete: function () {
+                    $(this).colorbox.resize();
+                }
+            });
         });
     },
 
     bindDeleteConfirmLink: function () {
         $(document).on("click", '.js-savedcart_delete_confirm', function (event) {
             event.preventDefault();
-            var cartId = document.getElementById('#removeCartIdUrl');
+            var cartId = $(this).data('savedcart-id');
             var url = ACC.config.encodedContextPath + '/my-account/saved-carts/' + encodeURIComponent(cartId) + '/delete';
             ACC.common.checkAuthenticationStatusBeforeAction(function(){
             	$.ajax({
@@ -166,6 +146,10 @@ ACC.savedcarts = {
             		}
             	});
             });
+        });
+
+        $(document).on("click", '.js-savedcart_delete_confirm_cancel', function (event) {
+            ACC.colorbox.close();
         });
     },
     
@@ -221,6 +205,14 @@ ACC.savedcarts = {
 			var tlength = $(this).val().length;
 			remain = maxchars - parseInt(tlength);
         	$('#remain').text(value+' : '+remain);
+		});
+
+         $('#saveCartDescription').keyup(function() {
+			var maxchars = 255;
+			var value=$('#localized_val').attr('value');
+			var tlength = $(this).val().length;
+			remain = maxchars - parseInt(tlength);
+        	$('#remainTextArea').text(value+' : '+remain);
 		});
 
 		$(document).on("click",'#saveCart #saveCartButton', function (e) {

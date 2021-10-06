@@ -1,6 +1,6 @@
 ACC.common = {
 	currentCurrency: $("main").data('currencyIsoCode') || "USD",
-//processingMessage: $("<img>").attr("src", ACC.config.commonResourcePath + "/images/spinner.gif"),
+	processingMessage: $("<img>").attr("src", ACC.config.commonResourcePath + "/images/spinner.gif"),
 
 
 	blockFormAndShowProcessingMessage: function (submitButton)

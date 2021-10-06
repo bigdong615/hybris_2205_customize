@@ -3,18 +3,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="eclipsebin/notused"/>
 	<classpathentry exported="true" kind="src" path="/acceleratorcms" />
-	<classpathentry exported="true" kind="src" path="/commercefacades" />
 	<classpathentry exported="true" kind="src" path="/bllogging" />
-	<classpathentry exported="true" kind="src" path="/blintegration" />
 	<classpathentry exported="true" kind="src" path="/commercefacades" />
-	<classpathentry exported="true" kind="src" path="/braintree" />
-	<classpathentry exported="true" kind="src" path="/stocknotificationservices" />
-	<classpathentry exported="true" kind="src" path="/ruleengineservices" />
-	<classpathentry exported="true" kind="src" path="/ruledefinitions" />
-	<classpathentry exported="true" kind="src" path="/wishlist" />
-	<classpathentry exported="true" kind="src" path="/promotionengineservices" />
-	<classpathentry exported="true" kind="src" path="/couponservices" />
-	<classpathentry exported="true" kind="src" path="/warehousing" />
 	<classpathentry exported="true" kind="lib" path="resources" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="src" />
 	<classpathentry exported="true" output="eclipsebin/classes" kind="src" path="testsrc" />

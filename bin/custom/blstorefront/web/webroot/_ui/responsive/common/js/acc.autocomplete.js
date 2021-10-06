@@ -37,9 +37,7 @@ ACC.autocomplete = {
 			_renderItem : function (ul, item){
 				
 				if (item.type == "autoSuggestion"){
-					var blPageType = document.getElementById("js-page-type").value;
-				  var completeUrl = item.url + "&blPageType="+ blPageType +"&text=";
-					var renderHtml = $("<a>").attr("href", completeUrl)
+					var renderHtml = $("<a>").attr("href", item.url)
 							.append($("<div>").addClass("name").text(item.value));
 					return $("<li>")
 							.data("item.autocomplete", item)
@@ -67,13 +65,12 @@ ACC.autocomplete = {
 			{
 				var self=this;
 				var term = request.term.toLowerCase();
-				var blPageType = document.getElementById("js-page-type").value;
 				if (term in self.options.cache)
 				{
 					return response(self.options.cache[term]);
 				}
 
-				$.getJSON(self.options.autocompleteUrl, {term: request.term ,blPageType:blPageType}, function (data)
+				$.getJSON(self.options.autocompleteUrl, {term: request.term}, function (data)
 				{
 					var autoSearchData = [];
 					if(data.suggestions != null){
@@ -87,14 +84,6 @@ ACC.autocomplete = {
 						});
 					}
 					if(data.products != null){
-					var blPageType = document.getElementById("js-page-type").value;
-				 var productUrl = "";
-					if(blPageType ==='usedGear') {
-					productUrl = "/buy";
-					}
-					else {
-					productUrl = "/rent";
-					}
 						$.each(data.products, function (i, obj)
 						{
 							autoSearchData.push({
@@ -102,8 +91,8 @@ ACC.autocomplete = {
 								code: obj.code,
 								desc: ACC.sanitizer.sanitize(obj.description),
 								manufacturer: ACC.sanitizer.sanitize(obj.manufacturer),
-								url:  ACC.config.encodedContextPath + productUrl + obj.url,
-								/*price: obj.price.formattedValue,*/
+								url:  ACC.config.encodedContextPath + obj.url,
+								price: obj.price.formattedValue,
 								type: "productResult",
 								image: (obj.images!=null && self.options.displayProductImages) ? obj.images[0].url : null // prevent errors if obj.images = null
 							});
