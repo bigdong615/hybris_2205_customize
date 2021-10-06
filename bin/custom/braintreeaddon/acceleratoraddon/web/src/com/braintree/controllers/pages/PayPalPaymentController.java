@@ -86,6 +86,11 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private static final int DECIMAL_PRECISION = 2;
 	private static final String MY_ACCOUNT_MODIFY_PAYMENT = "/my-account/modifyPayment/";
 	private static final String REDIRECT_TO_ORDER_DETAILS_PAGE = REDIRECT_PREFIX + "/my-account/order/";
+	private static final String MY_ACCOUNT = "/my-account/";
+	private static final String REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE = REDIRECT_PREFIX + MY_ACCOUNT;
+	private static final String REDIRECT_TO_DEPOSIT_ORDER_PAYMENT_PAGE = REDIRECT_PREFIX + MY_ACCOUNT;
+	private static final String MODIFIED_ORDER_PAYMET_PATH = "/modifiedOrderPayment";
+	private static final String DEPOSIT_ORDER_PAYMET_PATH = "/depositPayment";
 
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -276,6 +281,24 @@ public class PayPalPaymentController extends AbstractCheckoutController
         final String orderCode = request.getParameter("order_code");
         final String payBillTotal = request.getParameter("payBillTotal");
         final boolean isDepositPaymentPage = BooleanUtils.toBoolean(request.getParameter("isDepositPaymentPage"));
+        final boolean isModifyOrderPaymentPage = BooleanUtils.toBoolean(request.getParameter("isModifyOrderPaymentPage"));
+        if(StringUtils.isBlank(orderCode) || StringUtils.isBlank(payBillTotal))
+        {
+          if(isModifyOrderPaymentPage)
+          {
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Modified Order : {} with PayPal", orderCode);
+            GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+                getLocalizedString("text.account.modified.order.payment.paypal.error.message"));
+            return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+          }
+          if(isDepositPaymentPage)
+          {
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Deposit for Order : {} with PayPal", orderCode);
+            GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+                getLocalizedString("text.account.deposit.order.payment.paypal.error.message"));
+            return REDIRECT_TO_DEPOSIT_ORDER_PAYMENT_PAGE + orderCode + DEPOSIT_ORDER_PAYMET_PATH;
+          }
+        }
 		double payBillAmount = Double.parseDouble(payBillTotal);
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
@@ -330,13 +353,27 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				if (null != order) {
 					final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
 							.completeCreateSubscription(
-									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount);
+									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount, isModifyOrderPaymentPage);
 					if (null != paymentInfo) {
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
 								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
 					}
 				}
 			} catch (final Exception exception) {
+			  BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+            "Error while making Payment for Order : {} with PayPal", orderCode);
+			  if (isModifyOrderPaymentPage)
+        {
+			    GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+              getLocalizedString("text.account.modified.order.payment.paypal.error.message"));
+          return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+        }
+			  if(isDepositPaymentPage)
+        {
+          GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+              getLocalizedString("text.account.deposit.order.payment.paypal.error.message"));
+          return REDIRECT_TO_DEPOSIT_ORDER_PAYMENT_PAGE + orderCode + DEPOSIT_ORDER_PAYMET_PATH;
+        }
 				final String errorMessage = getLocalizedString("braintree.billing.general.error");
 				handleErrors(errorMessage, model);
 				return CheckoutOrderPageErrorPage;
@@ -357,7 +394,17 @@ public class PayPalPaymentController extends AbstractCheckoutController
           setUpMetaDataForContentPage(model, depositPaymentSuccessPage);
           model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
           return getViewForPage(model);
-        }				
+        }
+        else if (isModifyOrderPaymentPage)
+        {
+          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, billPayTotal);
+          model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.PAYPAL_PAYMENT_METHOD);
+          final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
+          setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
+          return getViewForPage(model);
+        }
 				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
@@ -368,6 +415,20 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 				return getViewForPage(model);
 			} else {
+			  if(isModifyOrderPaymentPage)
+			  {
+			    BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Modified Order : {} with PayPal", orderCode);
+	        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+	            getLocalizedString("text.account.modified.order.payment.paypal.error.message"));
+	        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+			  }
+			  if(isDepositPaymentPage)
+        {
+          BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Deposit for Order : {} with PayPal", orderCode);
+          GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+              getLocalizedString("text.account.deposit.order.payment.paypal.error.message"));
+          return REDIRECT_TO_DEPOSIT_ORDER_PAYMENT_PAGE + orderCode + DEPOSIT_ORDER_PAYMET_PATH;
+        }
 				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
 			}
     }

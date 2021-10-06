@@ -70,7 +70,7 @@ public class BlOrderNewShippingRequestPopulator extends ESPEventCommonPopulator<
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
-    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
+    data.setType(getOrderType(orderModel));
     data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
@@ -82,9 +82,11 @@ public class BlOrderNewShippingRequestPopulator extends ESPEventCommonPopulator<
       data.setShippingmethod(getRequestValue(delivery.getCode()));
       data.setShippingmethodtext(getRequestValue(delivery.getName()));
     }
-    data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalduration((int) getRentalDuration(orderModel));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalduration((int) getRentalDuration(orderModel));
+    }
     data.setTracking("test");// TODO Setting dummy value, once we got the actual value then set actual value one
     populateShippingInfoInXML(orderModel, data);
     orderNewShippingEventRequest.setData(data);
