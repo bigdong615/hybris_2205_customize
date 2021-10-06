@@ -570,8 +570,8 @@ function isBrainTreeMethodSelected() {
 
 function creditCardValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
-	  $('#validationMessage').append(validationDiv);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage.message);
+	 $('#validationMessage').append(validationDiv);
 }
 
 function allFieldValidation(errorMessage){
