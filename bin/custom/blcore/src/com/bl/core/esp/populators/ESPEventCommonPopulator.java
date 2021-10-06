@@ -298,21 +298,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return productUrl.get();
     }
 
-
-    /**
-     * To check whether media is empty of not
-     * @param abstractOrderEntryModel abstractOrderEntryModel
-     * @return string
-     */
-    protected String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
-        return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
-            StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
-            abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
-    }
-
-
-
-
+    
     public ConfigurationService getConfigurationService() {
         return configurationService;
     }
