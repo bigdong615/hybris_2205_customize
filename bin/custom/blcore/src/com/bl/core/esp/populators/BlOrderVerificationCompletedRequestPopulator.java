@@ -52,7 +52,7 @@ public class BlOrderVerificationCompletedRequestPopulator extends ESPEventCommon
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderVerificationCompletedEventData orderVerificationCompletedEventData = new OrderVerificationCompletedEventData();
     populateCommonData(orderModel , orderVerificationCompletedEventData);
-    orderVerificationCompletedEventData.setOldOrderId(getRequestValue(orderModel.getCode()));
+    orderVerificationCompletedEventData.setOldOrderId(StringUtils.EMPTY);
     orderVerificationCompletedEventData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.ORDER_VERIFICATION_COMPLETED_EVENT_TEMPLATE)));
     orderVerificationCompletedEventData.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));

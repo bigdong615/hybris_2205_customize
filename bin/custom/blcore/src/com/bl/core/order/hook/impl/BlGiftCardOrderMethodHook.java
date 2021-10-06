@@ -1,5 +1,6 @@
 package com.bl.core.order.hook.impl;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.gitfcard.BlGiftCardService;
@@ -34,6 +35,8 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
   @Resource(name = "giftCardService")
   private BlGiftCardService giftCardService;
 
+  private DefaultBlESPEventService defaultBlESPEventService;
+
   /**
    * {@inheritDoc}
    */
@@ -45,6 +48,7 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
 
     createGiftCardForGCOrder(order);
+
     double discountValue = 0.00D;
     if (CollectionUtils.isNotEmpty(order.getGlobalDiscountValues())) {
       for (final DiscountValue orderDiscounts : order.getGlobalDiscountValues()) {
@@ -139,6 +143,8 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       modelService.save(order);
       getModelService().refresh(order);
 
+      // To call OrderConfirmation ESP Event
+      getDefaultBlESPEventService().sendOrderConfirmation(order);
     }
   }
 
@@ -174,6 +180,15 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
   public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
+  }
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
   }
 }
 

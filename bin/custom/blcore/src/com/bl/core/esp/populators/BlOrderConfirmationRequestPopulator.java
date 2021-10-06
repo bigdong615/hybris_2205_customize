@@ -20,11 +20,9 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javolution.io.Struct.Bool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -78,7 +76,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       final OrderConfirmationData data = new OrderConfirmationData();
        populateCommonData(orderModel , data);
-       data.setOldorderid(getRequestValue(orderModel.getCode()));
+       data.setOldorderid(StringUtils.EMPTY);
        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE)));
        final UserModel userModel = orderModel.getUser();
         if (Objects.nonNull(userModel)) {
@@ -250,7 +248,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                            entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
                     }
                     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : entryModel.getProduct().getPicture().getURL());
+                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
                     if (Objects.nonNull(entryModel.getBasePrice())) {
                         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
                     }
@@ -274,6 +272,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
         }
     }
+
 
 
 }

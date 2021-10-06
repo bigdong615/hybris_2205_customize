@@ -57,9 +57,9 @@ public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopula
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderPaymentDeclinedData data = new OrderPaymentDeclinedData();
     populateCommonData(orderModel , data);
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_PAYMENT_DECLINED_EVENT_TEMPLATE)));
-    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
+    data.setType(getOrderType(orderModel));
     data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));

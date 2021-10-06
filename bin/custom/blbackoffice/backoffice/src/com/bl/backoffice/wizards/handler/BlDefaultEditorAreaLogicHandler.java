@@ -160,6 +160,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				findSerialStockLevelForDate.forEach(stockLevel -> {
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);
+					stockLevel.setOrder(null);
 					((BlSerialProductModel) serial).setHardAssigned(false); // NOSONAR
 					modelService.save(stockLevel);
 					modelService.save(serial);

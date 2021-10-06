@@ -1,42 +1,6 @@
 package com.bl.core.model.interceptor;
 
 
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.security.PrincipalGroupModel;
-import de.hybris.platform.core.model.user.UserModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.order.CalculationService;
-import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
-import de.hybris.platform.servicelayer.interceptor.InterceptorException;
-import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.user.UserService;
-import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
@@ -52,6 +16,40 @@ import com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.security.PrincipalGroupModel;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
+import de.hybris.platform.servicelayer.interceptor.InterceptorException;
+import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -91,8 +89,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		{
 			modifyOrderDate(abstractOrderModel);
 		}
-		abstractOrderModel.setCalculated(false);
-
+		
      final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
     if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
 		if (CollectionUtils.isNotEmpty(consignmentModels)) {
@@ -122,6 +119,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     try {
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
+      triggerEspShipped(abstractOrderModel, interceptorContext);
+			triggerNewShippingInfoEvent(abstractOrderModel, interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
@@ -234,15 +233,58 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   }
 
   /**
-   * trigger Esp verification required event
+   * trigger Esp Shipped event
    *
    * @param abstractOrderModel the abstract order model
    * @param interceptorContext the interceptor context
    */
+  private void triggerEspShipped(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
+    if(interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+        && OrderStatus.SHIPPED.equals(abstractOrderModel.getStatus())){
+
+      final AtomicBoolean isEligibleToTrigger = new AtomicBoolean(Boolean.FALSE);
+      final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
+
+      for(ConsignmentModel consignmentModel : consignments){
+        final WarehouseModel warehouses = consignmentModel.getWarehouse();
+        final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
+        if(consignmentModel.getStatus().equals(ConsignmentStatus.BL_SHIPPED) && Objects.nonNull(warehouses) && (StringUtils.isNotBlank(deliveryMode)
+            && (!StringUtils.containsIgnoreCase(BlCoreConstants.BL_WALTHAM , deliveryMode) ||
+            !StringUtils.containsIgnoreCase(BlCoreConstants.BL_SAN_CARLOS , deliveryMode)))){
+          isEligibleToTrigger.set(Boolean.TRUE);
+        }
+        else {
+          isEligibleToTrigger.set(Boolean.FALSE);
+          break;
+        }
+    }
+      if(isEligibleToTrigger.get()){
+        getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
+      }
+    }
+  }
+	/**
+	 * trigger Esp New Shipping Info
+	 *
+	 * @param abstractOrderModel the abstract order model
+	 * @param interceptorContext the interceptor context
+	 */
+	private void triggerNewShippingInfoEvent(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
+		if(isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
+			getBlEspEventService().sendOrderNewShippingEvent((OrderModel) abstractOrderModel);
+		}
+	}
+
+		/**
+     * trigger Esp verification required event
+     *
+     * @param abstractOrderModel the abstract order model
+     * @param interceptorContext the interceptor context
+     */
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
     if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.STATUS) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+        .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
       try
       {
         getBlEspEventService().sendOrderVerificationRequiredEvent((OrderModel) abstractOrderModel);
@@ -250,8 +292,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       {
         BlLogger.logMessage(LOG,Level.ERROR,"Failed to trigger verification Required Event",e);
       }
-
-    }
+		}
   }
   
   /**

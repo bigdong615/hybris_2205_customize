@@ -1,5 +1,6 @@
 package com.bl.core.order.hook.impl;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.BooleanUtils;
 public class BlNewGearOrderStatusChangeHook implements CommercePlaceOrderMethodHook {
 
   private ModelService modelService;
+  private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * Executed after the place order
@@ -38,6 +40,8 @@ public class BlNewGearOrderStatusChangeHook implements CommercePlaceOrderMethodH
       order.setStatus(OrderStatus.SOLD);
       modelService.save(order);
       getModelService().refresh(order);
+      // To Call Order confirmation ESP event
+      getDefaultBlESPEventService().sendOrderConfirmation(order);
     }
   }
 
@@ -70,4 +74,15 @@ public class BlNewGearOrderStatusChangeHook implements CommercePlaceOrderMethodH
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
   }
+
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
+
 }

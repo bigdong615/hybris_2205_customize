@@ -91,12 +91,12 @@
                                     </label>
                                 </button>
                             </div>
-                        </div>
+                        </div> --%>
                         <div id="ship-it-pickup-person">
                             <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                             <checkout:pickUpAddressForm />
                         </div>
-                    </div> --%>
+                        <div id="pick-up-notification"></div>
                 </div>
                 <div id="ship-it-notification"></div>
                 <div id="ship-it-am-notification"></div>

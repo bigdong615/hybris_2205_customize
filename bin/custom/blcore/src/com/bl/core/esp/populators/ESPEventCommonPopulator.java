@@ -194,10 +194,14 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     protected Double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel abstractOrderEntryModel) {
         final AtomicDouble damageWaiverPrice = new AtomicDouble(0.0);
         if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
-            damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            if(abstractOrderEntryModel.getGearGuardWaiverPrice()!=null) {
+                damageWaiverPrice.set(abstractOrderEntryModel.getGearGuardWaiverPrice());
+            }
         }
         else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
             damageWaiverPrice.set(0.0);
@@ -236,7 +240,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
             orderType.set(BlCoreConstants.GIFT_CARD_ORDER);
         }
         else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
-            orderType.set(BlCoreConstants.NEW_GEAR);
+            orderType.set(BlCoreConstants.NEW_GEAR_ORDER);
         }
         else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
             orderType.set(BlCoreConstants.RENTAL);
@@ -246,6 +250,16 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         }
 
         return orderType.get();
+    }
+    /**
+     * To check whether media is empty of not
+     * @param abstractOrderEntryModel abstractOrderEntryModel
+     * @return string
+     */
+    protected String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
+        return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
+            StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
+            abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
     }
 
     /**
@@ -284,9 +298,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return productUrl.get();
     }
 
-
-
-
+    
     public ConfigurationService getConfigurationService() {
         return configurationService;
     }

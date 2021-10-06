@@ -177,8 +177,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES = "lenses";
 	public static final String CAMERAS = "cameras";
 	public static final String PRODUCTION = "production";
-	public static final String PACKAGE= "package";
-	public static final String GEAR_PACKAGE="gear package";
+	public static final String PACKAGE= "packages";
+	public static final String GEAR_PACKAGE="gear packages";
 
 	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
@@ -454,7 +454,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
   public static final String NAME = "Name";
 
   public static final String GIFT_CARD_ORDER = "Gift Card";
-
+	public static final String NEW_GEAR_ORDER = "New Gear";
 
 	private BlCoreConstants()
 	{

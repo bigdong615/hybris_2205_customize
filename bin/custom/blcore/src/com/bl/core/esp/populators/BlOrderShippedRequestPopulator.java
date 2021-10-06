@@ -71,15 +71,14 @@ public class BlOrderShippedRequestPopulator extends
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderShippedEventData data = new OrderShippedEventData();
     populateCommonData(orderModel, data);
-    data.setOldOrderId(getRequestValue(orderModel.getCode()));
+    data.setOldOrderId(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
         .getString(BlCoreConstants.ORDER_SHIPPED_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       data.setCustomerName(getRequestValue(userModel.getName()));
     }
-    data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL
-        : BlCoreConstants.USED_GEAR);
+    data.setType(getOrderType(orderModel));
     data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(
@@ -92,10 +91,16 @@ public class BlOrderShippedRequestPopulator extends
       data.setShippingMethodType(getRequestValue(delivery.getShippingGroup().getName()));
       data.setShippingMethod(getRequestValue(delivery.getCode()));
       data.setShippingMethodText(getRequestValue(delivery.getName()));
+    }else{
+      data.setShippingMethodType(StringUtils.EMPTY);
+      data.setShippingMethod(StringUtils.EMPTY);
+      data.setShippingMethodText(StringUtils.EMPTY);
     }
-    data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalDuration((int) getRentalDuration(orderModel));
+   if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalDuration((int) getRentalDuration(orderModel));
+    }
     data.setTrackingString(
         "test");// TODO Setting dummy value, once we got the actual value then set actual value one
     populateShippingInfoInXML(orderModel, data);
