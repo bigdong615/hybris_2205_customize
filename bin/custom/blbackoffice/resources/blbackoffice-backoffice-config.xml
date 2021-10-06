@@ -75,6 +75,7 @@
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
 			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="StockLevel" id="StockLevel"/>
 		</n:explorer-tree>
 	</context>
 
