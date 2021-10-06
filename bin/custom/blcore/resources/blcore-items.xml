@@ -2824,7 +2824,7 @@
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                  </attribute>
-                 <attribute qualifier="modifiedOrederPoNumber" type="localized:java.lang.String">
+                 <attribute qualifier="modifiedOrderPoNumber" type="localized:java.lang.String">
                       <persistence type="property">
                         <columntype database="oracle">
                           <value>CLOB</value>
@@ -2839,7 +2839,7 @@
                       <modifiers read="true" write="true" optional="true" />
                       <description>PO number used as payment method</description>
                     </attribute>
-                    <attribute qualifier="modifiedOrederPoNotes" type="localized:java.lang.String">
+                    <attribute qualifier="modifiedOrderPoNotes" type="localized:java.lang.String">
                       <persistence type="property">
                         <columntype database="oracle">
                           <value>CLOB</value>
@@ -2862,7 +2862,7 @@
                     <attribute qualifier="tempModifiedOrderAppliedGcList" type="ModifiedOrderGCPaymentList">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true"/>
-                        <description>List of Applied GC for modified order</description>
+                        <description>List of Applied GC for modified order which will be used as a teporary holder.</description>
                     </attribute>
                 </attributes>
             </itemtype>

@@ -172,7 +172,7 @@
 														style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																			</c:when>
 												<c:otherwise>
-																				Select or Enter new card
+																				<spring:theme code="text.myaccount.select.new.card" />
 																			</c:otherwise>
 											</c:choose>
 										</button>

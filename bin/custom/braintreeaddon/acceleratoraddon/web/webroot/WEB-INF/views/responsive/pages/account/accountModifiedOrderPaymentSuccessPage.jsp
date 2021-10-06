@@ -16,31 +16,31 @@
 
 
 <div id="accountContent" class="col-lg-5 offset-lg-1">
-	<h1>Payment Received</h1>
+	<h1><spring:theme code="text.myaccount.payment.received.message" /></h1>
 	<hr>
 
-	<h5 class="mb-5">Thanks for completing this order.</h5>
+	<h5 class="mb-5"><spring:theme code="text.myaccount.thanks.message" /></h5>
 	<p>
 		<c:choose>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'creditCard')}">
 				<spring:theme code="text.extend.order.text" />
 				<format:price priceData="${amount}" displayFreeForZero="false" />
-		and sent an confirmation email to: <b>${orderData.user.uid}</b>
+		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'payPal')}">
 				<spring:theme code="text.extend.order.paypal" />
 				<format:price priceData="${amount}" displayFreeForZero="false" />
-		and sent an confirmation email to: <b>${orderData.user.uid}</b>
+		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'poPayment')}">
 				<spring:theme code="text.extend.order.po" />
 				<format:price priceData="${amount}" displayFreeForZero="false" />
-		and sent an confirmation email to: <b>${orderData.user.uid}</b>
+		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'giftCard')}">
 				<spring:theme code="text.extend.order.gift.card" />
 				<format:price priceData="${amount}" displayFreeForZero="false" />
-		and sent an confirmation email to: <b>${orderData.user.uid}</b>
+		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:otherwise>
 				<format:price priceData='${amount}' displayFreeForZero='false' /> &nbsp <spring:theme code="text.extend.order.refund"/>

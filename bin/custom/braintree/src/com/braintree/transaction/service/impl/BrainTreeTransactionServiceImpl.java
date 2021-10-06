@@ -1662,8 +1662,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       Validate.notNull(poAmount, "Po Amount Must not be null", StringUtils.EMPTY);
       Validate.notBlank(poNumber, "Po Number must not be blank", StringUtils.EMPTY);
 
-      order.setModifiedOrederPoNumber(poNumber);
-      order.setModifiedOrederPoNotes(poNote);
+      order.setModifiedOrderPoNumber(poNumber);
+      order.setModifiedOrderPoNotes(poNote);
       order.setModifiedOrderPoAmount(poAmount.doubleValue());
       getModelService().save(order);
       getModelService().refresh(order);

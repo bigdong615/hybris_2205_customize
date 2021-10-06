@@ -62,6 +62,14 @@ public interface BraintreeaddonControllerConstants
     public static final String PO_NOTE = "poNote";
     public static final String PO_AMOUNT = "poAmount";
     public static final String MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE = "modified-order-payment-success";
+    
+    public static final String AMOUNT_ENTERED = "amount_entered";
+    public static final String AMOUNT_REMAINING = "amount_remaining";
+    public static final String APPLIED_GC_LIST = "appliedGcList";
+    public static final String DISABLE_PAYMENT = "disablePayment";
+    public static final String REFUND_AMOUNT = "refundAmount";
+    public static final String GC_CODE = "gcCode";
+    public static final String PAYMENT_AMOUNT = "paymentAmount";
 
     interface Views
     {

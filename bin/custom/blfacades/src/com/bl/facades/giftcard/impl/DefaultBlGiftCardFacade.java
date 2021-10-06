@@ -238,12 +238,14 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 				orderModel.setTempModifiedOrderAppliedGcList(appliedGC);
 				getModelService().save(orderModel);
 				getModelService().refresh(orderModel);
+				BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Applied Gift Card : {} for Modified Order Payment :{}", gcCode, orderModel.getCode());
 				return Boolean.TRUE;
 			}
 		}
 		catch (final Exception exception)
 		{
-
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, "Error while applying Gift Card : {} for modified order : {}", 
+					gcCode, orderModel.getCode());
 		}
 		return Boolean.FALSE;
 	}
@@ -284,6 +286,9 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 			movement.setTransactionId(orderModel.getCode() + "_" + UUID.randomUUID().toString() + "_" + transactionId);
 			getModelService().save(movement);
 			getModelService().refresh(giftCard);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, 
+					"Created Movment with Transaction ID : {} with Amount : {} and Balance Amount : {} for Gift Card : {} on Modified Order : {}", 
+					movement.getTransactionId(), movement.getAmount(), movement.getBalanceAmount(), giftCard.getCode(), orderModel.getCode());
 		}
 		return remainingAmountToPay;
 	}
@@ -315,6 +320,8 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 				orderModel.setTempModifiedOrderAppliedGcList(updatedGiftCardModelList);
 				getModelService().save(orderModel);
 				getModelService().refresh(orderModel);
+				BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, 
+						"Removed Gift card : {} from modified order : {}", giftCardCode, orderModel.getCode());
 			}
 		}
 	}
@@ -342,6 +349,9 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 						giftCardMovementModel.setRedeemDate(new Date());
 						getModelService().save(giftCardMovementModel);
 						getModelService().refresh(giftCard);
+						BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, 
+								"Committing Movement : {} on Gift card : {} from modified order : {}", 
+								giftCardMovementModel.getTransactionId(), giftCard.getCode(), orderModel.getCode());
 					}
 				}
 				committedGiftCards.add(giftCard);

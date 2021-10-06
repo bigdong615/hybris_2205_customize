@@ -982,24 +982,24 @@ public class BrainTreeAccountPageController extends AbstractPageController
       final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
       if(CollectionUtils.isNotEmpty(order.getTempModifiedOrderAppliedGcList()))
       {
-        Object enteredAmount = sessionService.getAttribute(orderCode + "amount_entered");
+        Object enteredAmount = sessionService.getAttribute(orderCode + BraintreeaddonControllerConstants.AMOUNT_ENTERED);
         if(enteredAmount instanceof PriceData)
         {
           final PriceData amountToPay = ((PriceData) enteredAmount);
-          model.addAttribute("amount_entered", amountToPay);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT_ENTERED, amountToPay);
           final BigDecimal remainingAmountToPay = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, amountToPay.getValue());
           final PriceData remainingAmountToPayPriceData  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
-          model.addAttribute("amount_remaining", remainingAmountToPayPriceData);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT_REMAINING, remainingAmountToPayPriceData);
           final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
           order.getTempModifiedOrderAppliedGcList().forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
-          model.addAttribute("appliedGcList", blGiftCardDataList);
+          model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
         }
-        model.addAttribute("disablePayment", true);        
+        model.addAttribute(BraintreeaddonControllerConstants.DISABLE_PAYMENT, true);        
       }
       else
       {
-        model.addAttribute("disablePayment", false);
-        sessionService.removeAttribute(orderCode + "amount_entered");
+        model.addAttribute(BraintreeaddonControllerConstants.DISABLE_PAYMENT, false);
+        sessionService.removeAttribute(orderCode + BraintreeaddonControllerConstants.AMOUNT_ENTERED);
       }
       final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);      
       model.addAttribute(ORDER_DATA, orderDetails);
@@ -1066,7 +1066,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
         {
           blGiftCardFacade.commitAppliedGiftCard(order);
           tempModifiedOrderAppliedGcList.forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
-          model.addAttribute("appliedGcList", blGiftCardDataList);
+          model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
           final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
           final PriceData amount  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
           model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
@@ -1170,7 +1170,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
   public String doRefundForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
       final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
   {
-    final String refundAmount = request.getParameter("refundAmount");
+    final String refundAmount = request.getParameter(BraintreeaddonControllerConstants.REFUND_AMOUNT);
     final String orderCode = request.getParameter(ORDER_CODE);
     try
     {
@@ -1213,8 +1213,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
   public String doGCPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
       final RedirectAttributes redirectModel) throws CMSItemNotFoundException
   {
-    final String gcCode = request.getParameter("gcCode");
-    final String refundAmount = request.getParameter("paymentAmount");
+    final String gcCode = request.getParameter(BraintreeaddonControllerConstants.GC_CODE);
+    final String refundAmount = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_AMOUNT);
     final String orderCode = request.getParameter(ORDER_CODE);
     try
     {
@@ -1224,7 +1224,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
       final Locale locale = getI18nService().getCurrentLocale();
       final BigDecimal amountToPay = BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
       final PriceData amount  = convertDoubleToPriceData(newAmount, order);
-      sessionService.setAttribute(order.getCode() + "amount_entered", amount);
+      sessionService.setAttribute(order.getCode() + BraintreeaddonControllerConstants.AMOUNT_ENTERED, amount);
       if(blGiftCardFacade.isGcAlreadyApplied(gcCode, order))
       {
         redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.already.msg", null, locale));
@@ -1284,7 +1284,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
   public String doGCRemoveForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
       final RedirectAttributes redirectModel) throws CMSItemNotFoundException
   {
-    final String gcCode = request.getParameter("gcCode");
+    final String gcCode = request.getParameter(BraintreeaddonControllerConstants.GC_CODE);
     final String orderCode = request.getParameter(ORDER_CODE);
     try
     {

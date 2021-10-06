@@ -962,6 +962,8 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
         brainTreePaymentInfoModel.setDepositAmount(depositAmount);
         getModelService().save(brainTreePaymentInfoModel);
         getModelService().refresh(brainTreePaymentInfoModel);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cloned Braintree Payment info Model with PK : {} with original Braintree payment info  model PK : {}", 
+            brainTreePaymentInfoModel.getPk().toString(), paymentInfoId);
       }      
       return brainTreePaymentInfoModel;
     }
@@ -987,6 +989,8 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
         brainTreePaymentInfoModel.setNewAmount(newAmount);
         getModelService().save(brainTreePaymentInfoModel);
         getModelService().refresh(brainTreePaymentInfoModel);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cloned Braintree Payment info Model with PK : {} with original Braintree payment info  model PK : {}", 
+            brainTreePaymentInfoModel.getPk().toString(), paymentInfoId);
       }      
       return brainTreePaymentInfoModel;
     }
