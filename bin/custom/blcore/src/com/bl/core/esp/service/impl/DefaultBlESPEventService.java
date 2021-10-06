@@ -445,7 +445,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderExtraItems(final OrderModel orderModel) {
+  public void sendOrderExtraItemsEvent(final OrderModel orderModel) {
     if (Objects.nonNull(orderModel)) {
       final OrderExtraItemRequest orderExtraItemRequest = new OrderExtraItemRequest();
       getBlExtraItemRequestPopulator().populate(orderModel,
