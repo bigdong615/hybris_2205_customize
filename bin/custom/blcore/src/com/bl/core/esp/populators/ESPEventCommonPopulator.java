@@ -291,7 +291,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
         if(Objects.nonNull(blSerialProduct)) {
             final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-            if(Objects.nonNull(blProductModel)  && Objects.isNull(blProductModel.getPicture()) &&
+            if(Objects.nonNull(blProductModel)  && Objects.nonNull(blProductModel.getPicture()) &&
                 StringUtils.isNotBlank(blProductModel.getPicture().getURL())){
                 productUrl.set(blProductModel.getPicture().getURL());
             }
