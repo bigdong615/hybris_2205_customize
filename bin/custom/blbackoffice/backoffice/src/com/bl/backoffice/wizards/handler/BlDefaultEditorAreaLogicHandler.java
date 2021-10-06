@@ -75,7 +75,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				List<AbstractOrderEntryModel> newCreatedMainBundleEntry = orderModel.getEntries().stream()
 						.filter(entry -> entry.isBundleMainEntry() && !entry.isEntryCreated()).collect(
 								Collectors.toList());
-				// if new bundle entry added then creating corresponding entry : creating start.
+				// if new bundle entry added then creating corresponding entry : creation start.
 				if (CollectionUtils.isNotEmpty(newCreatedMainBundleEntry)) {
 					newCreatedMainBundleEntry.forEach(entry -> {
 						blOrderService.createAllEntryForBundleProduct(entry);

@@ -252,6 +252,7 @@ public class DefaultBlOrderService implements BlOrderService {
 				});
 				existingEntry.setEntryCreated(Boolean.TRUE);
 				existingEntry.setBundleProductCode(existingEntry.getProduct().getCode());
+				getModelService().save(existingEntry);
 			}
 		});
 		orderModel.setEntries(orderEntryModelList);
