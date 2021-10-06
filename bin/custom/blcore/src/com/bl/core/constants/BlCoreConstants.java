@@ -462,6 +462,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String TECH_ENG_USER_GROUP  = "techEngusergroup";
 
+	public static final String PAY_PAL_PROVIDER  = "BrainTreePayPalExpress";
+	public static final String PAY_PAL = "Paypal";
+
 	private BlCoreConstants()
 	{
 		//empty

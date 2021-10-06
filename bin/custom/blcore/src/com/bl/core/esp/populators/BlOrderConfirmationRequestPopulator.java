@@ -115,7 +115,8 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
         if (Objects.nonNull(orderModel.getPaymentInfo())) {
             final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-            data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
+            data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                ? BlCoreConstants.PAY_PAL : getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
         }
         if(StringUtils.isNotBlank(orderModel.getPoNumber())){
           data.setPaymenttype(BlCoreConstants.PO);
