@@ -7,15 +7,20 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.services.blackout.BlBlackoutDateService;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 
 
@@ -30,6 +35,7 @@ public class DefaultBlBlackoutDateService implements BlBlackoutDateService
 	private static final Logger LOG = Logger.getLogger(DefaultBlBlackoutDateService.class);
 	private BlConsignmentDao blConsignmentDao;
 	private ModelService modelService;
+   private BlCartService blCartService;
 
 	@Override
 	public void performOrderReturnDateChange(final Date forDate, final List<Date> blackoutDates)
@@ -53,6 +59,32 @@ public class DefaultBlBlackoutDateService implements BlBlackoutDateService
 			});
 		}
 
+	}
+	
+	/**
+ 	 * {@inheritDoc}
+ 	 */
+	@Override
+	public boolean checkForBlackoutDate(final RentalDateDto rentalDateDto)
+	{
+		return Objects.nonNull(rentalDateDto) && isDatesAvailable(rentalDateDto) 
+				&& (blCartService.isSelectedDateIsBlackoutDate(
+						 BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT),
+						 BlackoutDateTypeEnum.RENTAL_START_DATE)
+						 || blCartService.isSelectedDateIsBlackoutDate(
+								 BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT),
+								 BlackoutDateTypeEnum.RENTAL_END_DATE));
+	}
+
+	/**
+	 * Checks if is dates available.
+	 *
+	 * @param rentalDateDto the rental date dto
+	 * @return true, if is dates available
+	 */
+	private boolean isDatesAvailable(final RentalDateDto rentalDateDto)
+	{
+		return StringUtils.isNotBlank(rentalDateDto.getSelectedFromDate()) && StringUtils.isNotBlank(rentalDateDto.getSelectedToDate());
 	}
 
 	/**
