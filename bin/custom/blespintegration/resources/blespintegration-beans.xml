@@ -884,4 +884,33 @@
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
 	</bean>
+
+
+	<!-- Order Extra Item Event Request Object-->
+	<bean class="com.bl.esp.dto.extraItem.OrderExtraItemRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.extraItem.data.OrderExtraItemData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<!-- Order Extra item Event data Request Object -->
+	<bean class="com.bl.esp.dto.extraItem.data.OrderExtraItemData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+	<property name="oldorderid" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("old order id")</annotations>
+	</property>
+	<property name="Items" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Items")</annotations>
+	</property>
+	<property name="returnfee" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("return fee")</annotations>
+	</property>
+	</bean>
+
 </beans>

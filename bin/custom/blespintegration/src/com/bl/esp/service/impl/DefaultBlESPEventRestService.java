@@ -1,6 +1,7 @@
 package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -143,6 +144,17 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
   @Override
   public ESPEventResponseWrapper sendExtendOrderEvent(final OrderExtensionRequest orderExtensionRequest) {
     return super.getTokenAndTriggerEvent(orderExtensionRequest);
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderExtraItem(
+      final OrderExtraItemRequest orderExtraItemRequest) {
+
+    return super.getTokenAndTriggerEvent(orderExtraItemRequest);
   }
 
 

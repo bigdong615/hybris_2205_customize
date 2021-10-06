@@ -2,12 +2,14 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
+import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
 import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
 import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
@@ -68,6 +70,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderShippedRequestPopulator blOrderShippedRequestPopulator;
     private BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator;
     private BlExtendOrderRequestPopulator blExtendOrderRequestPopulator;
+  private BlExtraItemRequestPopulator blExtraItemRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -437,6 +440,30 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
+  /**
+   * This method created to prepare the request and response from ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderExtraItems(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderExtraItemRequest orderExtraItemRequest = new OrderExtraItemRequest();
+      getBlExtraItemRequestPopulator().populate(orderModel,
+          orderExtraItemRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Extra Item ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderExtraItem(
+            orderExtraItemRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order Extra Item ESP ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(),null, null);
+    }
+  }
+
 
 
   /**
@@ -627,5 +654,16 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
   public void setBlExtendOrderRequestPopulator(final BlExtendOrderRequestPopulator blExtendOrderRequestPopulator) {
     this.blExtendOrderRequestPopulator = blExtendOrderRequestPopulator;
+  }
+
+
+
+  public BlExtraItemRequestPopulator getBlExtraItemRequestPopulator() {
+    return blExtraItemRequestPopulator;
+  }
+
+  public void setBlExtraItemRequestPopulator(
+      BlExtraItemRequestPopulator blExtraItemRequestPopulator) {
+    this.blExtraItemRequestPopulator = blExtraItemRequestPopulator;
   }
 }
