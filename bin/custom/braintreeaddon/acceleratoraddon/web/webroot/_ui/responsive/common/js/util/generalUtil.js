@@ -48,18 +48,13 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
     var amountToBePaid = '';
     var isDepositPaymentPage = false;
+    var isModifyOrderPaymentPage = false;
     if($("#deposit-amount").length == 1)
     {
       amountToBePaid = $("#deposit-amount").val();
       isDepositPaymentPage = true;
     }
-    else
-    {
-      amountToBePaid = $("#payBillTotal").val();
-      isDepositPaymentPage = false;
-    }
-    var isModifyOrderPaymentPage = false;
-    if($("#modify_order-payment-amount").length == 1)
+    else if($("#modify_order-payment-amount").length == 1)
     {
       amountToBePaid = $("#modify_order-payment-amount").val();
       isModifyOrderPaymentPage = true;
@@ -67,7 +62,6 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     else
     {
       amountToBePaid = $("#payBillTotal").val();
-      isModifyOrderPaymentPage = false;
     }
     var payBillTotal = createHiddenParameter("payBillTotal", amountToBePaid);
     var modifyOrderTotal = createHiddenParameter("modifyOrderTotal", $("#modifyOrderTotal").val());
