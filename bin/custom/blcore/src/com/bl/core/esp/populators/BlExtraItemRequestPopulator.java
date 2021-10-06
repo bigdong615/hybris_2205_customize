@@ -60,7 +60,7 @@ public class BlExtraItemRequestPopulator extends ESPEventCommonPopulator<OrderMo
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     orderExtraItemData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExtraItemData.setItems(getCustomerOrderNotes(orderModel));
-    orderExtraItemData.setReturnfee(String.valueOf(100.00)); // TODO Setting dummy value, once we got the actual value then set actual value one
+    orderExtraItemData.setReturnfee(String.valueOf(0.0)); // TODO Setting dummy value, once we got the actual value then set actual value one
     orderExtraItemRequest.setData(orderExtraItemData);
 
   }
