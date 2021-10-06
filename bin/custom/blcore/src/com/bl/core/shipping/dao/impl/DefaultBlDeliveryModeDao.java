@@ -11,6 +11,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.util.Config;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -310,9 +311,11 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      */
     @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today) {
-        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}" +
-                " where to_char({c.optimizedShippingStartDate},'" + BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN + "') in ('" + yDay + "', '" + today + "') " +
-                "and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
+        final String datePattern = Config.isSQLServerUsed() ? ("CONVERT(VARCHAR,{c.optimizedShippingStartDate},110) in ('"
+                 + yDay + "', '" + today + "')") : ("to_char({c.optimizedShippingStartDate},'" +
+                BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN + "') in ('" + yDay + "', '" + today + "')");
+        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs} where " +
+                datePattern + " and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING);

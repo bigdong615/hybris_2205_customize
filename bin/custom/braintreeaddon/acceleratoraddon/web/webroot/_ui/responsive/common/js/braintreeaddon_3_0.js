@@ -117,6 +117,13 @@ jQuery(document).ready(function ($) {
     var client;
     var paymentMethodResponse;
     $("#save-address").prop('checked', true);
+    if($("#amount_entered").length == 1 && $("#amount_remaining").length == 1)
+	{
+		$("#modify_order-payment-amount").val($("#amount_entered").val());
+		$("#modify_order-payment-amount").prop('readOnly', true);
+		$("#modify_order-payment-remaining-amount").val($("#amount_remaining").val());
+		$("#modify_order-payment-remaining-amount").prop('readOnly', true);
+	}
 	if($("#paymentAddNewAddress").length <= 0)
 	{
 		$("#showSavedAddresses").hide();
@@ -246,8 +253,16 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 		{
 			$('.page-loader-new-layout').show();
 			initializeBTclientSDK();
-		}
+		}		
 	}
+	if($(".js-modify-order-capture-payment").length >= 1)
+		{
+			$(".js-modify-order-capture-payment").attr("disabled",false);
+		}
+		if($(".js-order-deposit-payment").length >= 1)
+		{
+			$(".js-order-deposit-payment").attr("disabled",false);
+		}
 });
 
 if ((typeof addPaymentMethodsPage != 'undefined')) {
@@ -259,9 +274,12 @@ if ((typeof addPaymentMethodsPage != 'undefined')) {
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
 	$("#mark-paypal-button").empty();
+	if($(".js-order-deposit-payment").length >= 1)
+		{
+			$(".js-order-deposit-payment").attr("disabled",true);
+		}
     createPayPalPaymentMarkFlow(createPayPalOptions());
 });
-
 
 $(CONST.PAYMENT_METHOD_APPLE_PAY).change(function () {
     createApplePay(createPayPalOptions(), CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID, function (payload) {
@@ -1477,7 +1495,7 @@ $(".add-cc-form-modifyPayment").on("click",function(e){
     $("#payment-add-form-modifyPayment").submit();
 });
 
-$("#deposit-amount").on("input", function(evt) {
+$("#deposit-amount , #modify_order-payment-amount").on("input", function(evt) {
 	$('#validationMessage').empty();
 	$('#depositPaymentErrorMessage').empty();
 	var self = $(this);
@@ -1490,17 +1508,18 @@ $("#deposit-amount").on("input", function(evt) {
 	{
 		$('#depositPaymentErrorMessage').empty();
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
-		$('#depositPaymentErrorMessage').append(validationDiv);
+		$('#depositPaymentErrorMessage').append(validationDiv);		
 	}
 });
 
-$(".js-order-deposit-payment").on("click", function(e) {
+$(".js-order-deposit-payment , .js-modify-order-capture-payment").on("click", function(e) {
 	e.preventDefault();
 	$('#validationMessage').empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
-	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+	var payPalEnable = isPayPalEnabled();
+	var poEnabled = $('#paymentMethodPo').is(':checked');
 	var paymentInfoId = $('#paymentId').val();
-	var depositAmount = $("#deposit-amount").val();
+	var depositAmount = getAmount();
 	if(depositAmount == '')
 	{
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
@@ -1511,10 +1530,21 @@ $(".js-order-deposit-payment").on("click", function(e) {
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
 		$('#validationMessage').append(validationDiv);
 	}
-	else if ((ccEnable == true && paymentInfoId != '') || payPalEnable == true) 
+	else if(payPalEnable == true)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('PayPal is selected. Please proceed with Paypal Payment');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if ((ccEnable == true && paymentInfoId != '')) 
 	{
 		$("#depositOrderTotal").val(depositAmount);
 		var formToSubmit = $("#depositPaymentForm");
+		formToSubmit.submit();
+	}
+	else if(poEnabled == true)
+	{
+		var formToSubmit = $("#submitModifiedOrderPoForm");
+		$("#poAmount").val(depositAmount);
 		formToSubmit.submit();
 	}
 	else 
@@ -1524,9 +1554,150 @@ $(".js-order-deposit-payment").on("click", function(e) {
 	}
 });
 
+function getAmount()
+{
+	if($("#modify_order-payment-amount").length == 1)
+	{
+		return $("#modify_order-payment-amount").val();
+	}
+	else if($("#deposit-amount").length == 1)
+	{
+		return $("#deposit-amount").val();
+	}
+	else
+	{
+		return '';
+	}
+}
+
+function isPayPalEnabled()
+{
+	if($("#paymentMethodPayPal-modify-order-payment").length == 1)
+	{
+		return $('#paymentMethodPayPal-modify-order-payment').is(':checked');
+	}
+	else if($("#paymentMethodPayPal").length == 1)
+	{
+		return $('#paymentMethodPayPal').is(':checked');
+	}
+	else
+	{
+		return false;
+	}
+}
+
 $(".add-cc-form-depositPayment").on("click",function(e){
 	e.preventDefault();
 	var id = $(this).data("order");
 	var orderId = $("#orderId").val(id);
     $("#payment-add-form-depositPayment").submit();
+});
+
+$(".js-modify-order-refund-payment").on("click", function(e) {
+	e.preventDefault();
+	$('#depositPaymentErrorMessage').empty();
+	var depositAmount = getAmount();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else
+	{
+		doProcessRefund(depositAmount, $("#orderCode").val());
+	}
+});
+
+function doProcessRefund(amount, orderCode)
+{
+	$.ajax({
+        url: ACC.config.encodedContextPath + "/my-account/refund-remaining-payment",
+        async: false,
+        type: 'POST',
+        data: {orderCode: orderCode, refundAmount: amount},
+        
+        success: function (response) {
+        	if(response == 'SUCCESS')
+			{
+				$("#refundAmount").val(amount);
+				var formToSubmit = $("#refundPaymentForm");
+				formToSubmit.submit();
+			}
+			else if(response != '')
+			{
+				var validationDiv = $('<div class="notification notification-error mb-4" />').text(response);
+				$('#depositPaymentErrorMessage').append(validationDiv);
+			}
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+              $('.modal-backdrop').addClass('remove-popup-background');
+              // log the error to the console
+              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+        }
+	});
+}
+
+$("#applyModifiedGcCode").on("click", function(e) {
+	e.preventDefault();
+	$('#validationMessage').empty();
+	var depositAmount = getAmount();
+	var gcCode = $("#gcCode").val();
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(gcCode == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter Gift Card Code');
+		$('#validationMessage').append(validationDiv);
+	}
+	else
+	{
+		$("#paymentAmount").val(depositAmount);
+		var formToSubmit = $("#giftCardForm");
+		formToSubmit.submit();
+	}
+});
+
+$(".remove-modified-order-gift-card").on("click", function(e) {
+	e.preventDefault();
+	var gcCode = $(this).data("gccode");
+	$("#removeGcCode").val(gcCode);
+	var formToSubmit = $("#removeGiftCardForm");
+	formToSubmit.submit();	
+});
+
+$("#paymentMethodPayPal-modify-order-payment").change(function () {
+	/*$('.page-loader-new-layout').show();*/
+	$("#mark-paypal-button").empty();
+	$('#payPalErrorMessage').empty();
+	var depositAmount = getAmount();
+	$(".js-modify-order-capture-payment").attr("disabled",true);
+	if(depositAmount == '')
+	{
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		$('#payPalErrorMessage').append(validationDiv);		
+		$('.page-loader-new-layout').hide();
+	}
+	else
+	{
+		createPayPalPaymentMarkFlow(createPayPalOptions());	
+		$("#paymentMethodPayPal-modify-order-payment").addClass("initialized");
+	}
+    
+});
+
+$("#paymentMethodPo").change(function () {
+	$(".js-modify-order-capture-payment").attr("disabled",false);
 });

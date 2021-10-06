@@ -152,7 +152,7 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Unit             ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
-
+       	  ;                           ;                ;          ; StockLevel                       ; +    ; +      ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS; ; ; ; ; ; ; ; ;
