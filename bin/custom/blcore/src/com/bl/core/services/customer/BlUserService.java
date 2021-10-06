@@ -7,7 +7,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 
 
 /**
- *
+ * This class created for to check Cs user
  * @author Avani Patel
  *
  */

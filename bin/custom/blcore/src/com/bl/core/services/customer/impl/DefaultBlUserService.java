@@ -16,7 +16,8 @@ import org.apache.log4j.Logger;
 
 
 /**
- * @author Administrator
+ *  This class created for to check Cs user
+ * @author Avani Patel
  *
  */
 public class DefaultBlUserService extends DefaultUserService implements BlUserService
