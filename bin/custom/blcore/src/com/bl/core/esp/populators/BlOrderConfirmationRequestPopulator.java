@@ -165,7 +165,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
 
               final Transformer transformer = getTransformerFactoryObject();
               final StringWriter writer = new StringWriter();
