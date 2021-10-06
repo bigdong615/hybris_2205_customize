@@ -68,10 +68,10 @@ public class DefaultBlBlackoutDateService implements BlBlackoutDateService
 	public boolean checkForBlackoutDate(final RentalDateDto rentalDateDto)
 	{
 		return Objects.nonNull(rentalDateDto) && isDatesAvailable(rentalDateDto) 
-				&& (blCartService.isSelectedDateIsBlackoutDate(
+				&& (getBlCartService().isSelectedDateIsBlackoutDate(
 						 BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT),
 						 BlackoutDateTypeEnum.RENTAL_START_DATE)
-						 || blCartService.isSelectedDateIsBlackoutDate(
+						 || getBlCartService().isSelectedDateIsBlackoutDate(
 								 BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT),
 								 BlackoutDateTypeEnum.RENTAL_END_DATE));
 	}
@@ -119,6 +119,22 @@ public class DefaultBlBlackoutDateService implements BlBlackoutDateService
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the blCartService
+	 */
+	public BlCartService getBlCartService()
+	{
+		return blCartService;
+	}
+
+	/**
+	 * @param blCartService the blCartService to set
+	 */
+	public void setBlCartService(BlCartService blCartService)
+	{
+		this.blCartService = blCartService;
 	}
 
 }
