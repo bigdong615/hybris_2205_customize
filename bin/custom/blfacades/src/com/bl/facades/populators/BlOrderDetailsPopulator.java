@@ -243,21 +243,21 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   /**
    * This method created to populate the order notes
    */
-  private void populateOrderNotes(final OrderModel orderModel , final OrderData orderData) {
+  private void populateOrderNotes(final OrderModel orderModel, final OrderData orderData) {
 
-    String orderNotes = BlFacadesConstants.EMPTY;
+    final StringBuilder orderNotes = new StringBuilder();
     final List<NotesModel> notesModelList = orderModel.getOrderNotes();
-    if(CollectionUtils.isNotEmpty(notesModelList)) {
-      int notesModelSize = notesModelList.size();
-      for (NotesModel notesModel :notesModelList) {
-        if(notesModelList.get(notesModelSize -1).getPk().equals(notesModel.getPk())) {
-          orderNotes = notesModel.getNote();
+
+    if (CollectionUtils.isNotEmpty(notesModelList)) {
+      for (NotesModel notesModel : notesModelList) {
+        if (NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES.equals(notesModel.getType())) {
+          orderNotes.append(notesModel.getNote());
         }
       }
       populateCustomerOwnedNote(notesModelList, orderData);
     }
 
-    orderData.setOrderNotes(orderNotes);
+    orderData.setOrderNotes(orderNotes.toString());
   }
   
   /**
