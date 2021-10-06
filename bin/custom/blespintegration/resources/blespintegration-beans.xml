@@ -911,6 +911,9 @@
 	<property name="returnfee" type="java.lang.String" equals="true">
 		<annotations>@JsonProperty("return fee")</annotations>
 	</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
 	</bean>
 
 </beans>
