@@ -2,6 +2,7 @@ package com.bl.esp.service;
 
 
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -149,4 +150,12 @@ public interface BlESPEventRestService {
    * @param  orderExtensionRequest
    */
   ESPEventResponseWrapper sendExtendOrderEvent(final OrderExtensionRequest orderExtensionRequest);
+
+
+  /**
+   * Send  Order Extra Item Event by calling Order Extra Item ESP Event API
+   * @param  orderExtraItemRequest
+   */
+   ESPEventResponseWrapper sendOrderExtraItemEvent(
+      final OrderExtraItemRequest orderExtraItemRequest) ;
 }
