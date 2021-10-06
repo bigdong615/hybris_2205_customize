@@ -145,7 +145,7 @@ public class BlOrderShippedRequestPopulator extends
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
             StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES,
-            StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+            StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
         final Transformer transformer = getTransformerFactoryObject();
         final StringWriter writer = new StringWriter();
