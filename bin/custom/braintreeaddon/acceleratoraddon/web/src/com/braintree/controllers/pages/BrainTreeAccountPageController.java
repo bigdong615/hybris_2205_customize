@@ -3,6 +3,7 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.order.BlOrderFacade;
@@ -34,6 +35,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -147,6 +149,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+
+	@Resource(name = "blEspEventService")
+	private DefaultBlESPEventService blEspEventService;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -899,7 +904,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
         {
           final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
           final PriceData billPayTotal  = convertDoubleToPriceData(depositOrderTotal, order);
-          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+					triggerDepositRequestEvent(orderCode);
+					model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
           model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
           model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.CREDIT_CARD);
           final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
@@ -917,11 +923,22 @@ public class BrainTreeAccountPageController extends AbstractPageController
     }
     return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
   }
-  
-  
+
+	/**
+	 * It triggers Deposit Request Event.
+	 * @param orderCode the order code
+	 */
+	private void triggerDepositRequestEvent(final String orderCode) {
+		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+			try {
+				blEspEventService.sendOrderDepositEvent(orderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Deposit Request Event", exception);
+			}
+	}
 
 
-  /**
+	/**
    * Checks if is parameters eligible.
    *
    * @param paymentInfoId the payment info id

@@ -53,7 +53,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderVerificationRequiredEventData orderVerificationRequiredEventData = new OrderVerificationRequiredEventData();
     populateCommonData(orderModel , orderVerificationRequiredEventData);
-    orderVerificationRequiredEventData.setOldOrderId(getRequestValue(orderModel.getCode()));
+    orderVerificationRequiredEventData.setOldOrderId(StringUtils.EMPTY);
     orderVerificationRequiredEventData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.ORDER_VERIFICATION_REQUIRED_EVENT_TEMPLATE)));
     orderVerificationRequiredEventData.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
@@ -63,6 +63,9 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
           .getDeliveryMode());
       orderVerificationRequiredEventData.setShippingMethodType(getRequestValue(zoneDeliveryModeModel.getShippingGroup().getName()));
       orderVerificationRequiredEventData.setShippingMethod(getRequestValue(zoneDeliveryModeModel.getCode()));
+    }else{
+      orderVerificationRequiredEventData.setShippingMethodType(StringUtils.EMPTY);
+      orderVerificationRequiredEventData.setShippingMethod(StringUtils.EMPTY);
     }
     if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
     {

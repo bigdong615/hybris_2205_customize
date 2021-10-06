@@ -69,7 +69,7 @@
 				<attribute qualifier="requestString" type="java.lang.String">
 					<description>This attribute is used to store the request json string of ESP Event.
 					</description>
-					<modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+					<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
 					<persistence type="property">
 						<columntype database="oracle">
 							<value>CLOB</value>
@@ -85,7 +85,7 @@
 				<attribute qualifier="responseString" type="java.lang.String">
 					<description>This attribute is used to store the response json string of ESP Event.
 					</description>
-					<modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+					<modifiers read="true" write="true" search="true" optional="true" initial="true"/>
 					<persistence type="property">
 						<columntype database="oracle">
 							<value>CLOB</value>
