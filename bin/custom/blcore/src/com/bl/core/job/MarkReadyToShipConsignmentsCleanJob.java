@@ -156,22 +156,30 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
         .getLocationCategory()
         .getCode() : "";
 
-    final String parentLocationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+    String parentLocationCategoryCode = "";
+    String parentLocationCode = "";
+
+    if (null != ((BlSerialProductModel) productModel).getOcLocationDetails()
         && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
         .getParentInventoryLocation()
         && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
-        .getParentInventoryLocation().getLocationCategory()
-        ? ((BlSerialProductModel) productModel).getOcLocationDetails().getParentInventoryLocation()
-        .getLocationCategory().getCode()
-        : "";
+        .getParentInventoryLocation().getLocationCategory()) {
 
-    if (StringUtils.isNotBlank(parentLocationCode)) {
+      parentLocationCategoryCode = ((BlSerialProductModel) productModel).getOcLocationDetails()
+          .getParentInventoryLocation().getLocationCategory().getCode();
+
+      parentLocationCode = ((BlSerialProductModel) productModel).getOcLocationDetails()
+          .getParentInventoryLocation().getCode();
+    }
+
+    if (StringUtils.isBlank(((BlSerialProductModel) productModel).getLastLocationScanParent())
+        && StringUtils.isNotBlank(parentLocationCode)) {
       ((BlSerialProductModel) productModel).setLastLocationScanParent(parentLocationCode);
       modelService.save(productModel);
     }
 
     return getCleanLocationCategoryList()
-        .contains(StringUtils.isNotBlank(parentLocationCode) ? parentLocationCode : locationCode);
+        .contains(StringUtils.isNotBlank(parentLocationCategoryCode) ? parentLocationCategoryCode : locationCode);
   }
 
   /**

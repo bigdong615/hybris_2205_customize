@@ -29,8 +29,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BRANDS = "Brands";
 
 	public static final String COUPON_APPLIED_MSG = "coupon_applied_msg";
-
-
+	public static final String RECEIVED = "Received";
+	public static final String PO = "PO";
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE = "blPageType";
