@@ -338,7 +338,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 					.filter(note -> note.getType().equals(NotesEnum.CUSTOMER_OWNED_ITEMS_NOTES)).findAny();
 			if (customerOwnedItemsNotes.isPresent()) {
 				try {
-					getBlEspEventService().sendOrderExtraItems((OrderModel) abstractOrderModel);
+					getBlEspEventService().sendOrderExtraItemsEvent((OrderModel) abstractOrderModel);
 				} catch (final Exception exception) {
 					BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Exception extra item Event",
 							exception);
