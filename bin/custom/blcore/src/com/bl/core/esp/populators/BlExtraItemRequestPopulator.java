@@ -25,7 +25,7 @@ public class BlExtraItemRequestPopulator extends ESPEventCommonPopulator<OrderMo
    * @throws ConversionException if an error occurs
    */
   @Override
-  public void populate(OrderModel orderModel, OrderExtraItemRequest orderExtraItemRequest)
+  public void populate(final OrderModel orderModel, final OrderExtraItemRequest orderExtraItemRequest)
       throws ConversionException {
 
     Assert.notNull(orderModel, "Parameter order cannot be null.");

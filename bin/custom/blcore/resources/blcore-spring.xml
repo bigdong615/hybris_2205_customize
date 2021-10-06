@@ -1640,7 +1640,7 @@
 	<bean id="defaultBlUserService" parent="defaultUserService" class="com.bl.core.services.customer.impl.DefaultBlUserService">
 	</bean>
 
-	<!-- Order Confirmation populator ESP -->
+	<!-- Order Extra Item populator ESP -->
 	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
