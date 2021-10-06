@@ -985,8 +985,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				serialProduct.setIsBufferedInventory(Boolean.FALSE);
 				blProductService.changeBufferInvFlagInStagedVersion(serialProduct.getCode(), Boolean.FALSE);
 			}
-			final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao.findSerialStockLevelForDate(
-					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
+			final Collection<StockLevelModel> findSerialStockLevelForDate = (consignment.getOptimizedShippingStartDate() !=null && consignment.getOptimizedShippingEndDate() !=null ) ? blStockLevelDao.findSerialStockLevelForDate(
+					serialProduct.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate())  : CollectionUtils.EMPTY_COLLECTION;
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> stockLevel.setHardAssigned(true));
