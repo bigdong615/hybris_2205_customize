@@ -102,27 +102,6 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	}
 
 	/**
-	 * method will called to check is logged in user is CS user or not
-	 * @return
-	 */
-	private boolean isCsUser()
-	{
-		boolean isCsAgent = false;
-		final UserModel currentUser = userService.getCurrentUser();
-
-		for (final PrincipalGroupModel userGroup : currentUser.getGroups())
-		{
-			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(userGroup.getUid()))
-			{
-				isCsAgent = true;
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Logged in user {} is cs user", currentUser);
-				break;
-			}
-		}
-		return isCsAgent;
-	}
-	
-	/**
 	 * method will check for order modification from cs 
 	 * @param orderEntryModel
 	 * @param interceptorContext
