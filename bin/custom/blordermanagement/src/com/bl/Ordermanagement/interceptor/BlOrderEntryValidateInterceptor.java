@@ -22,6 +22,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
 
@@ -77,6 +78,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 	@Resource(name="blShippingOptimizationStrategy")
 	private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
+	
+	@Resource(name="defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
 
 	/**
 	 * method will validate order entry for modified order
@@ -85,9 +89,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	public void onValidate(final OrderEntryModel orderEntryModel, final InterceptorContext interceptorContext)
 			throws InterceptorException
 	{
-		boolean isCsAgent = isCsUser();
-
-		if (isCsAgent)
+		if (getDefaultBlUserService().isCsUser())
 		{
 			final List<BlSerialProductModel> serialProduct = orderEntryModel.getModifiedSerialProductList();
 			final WarehouseModel warehouse = orderEntryModel.getWarehouse();
@@ -317,6 +319,22 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	public void setCalculationService(CalculationService calculationService)
 	{
 		this.calculationService = calculationService;
+	}
+
+	/**
+	 * @return the defaultBlUserService
+	 */
+	public DefaultBlUserService getDefaultBlUserService()
+	{
+		return defaultBlUserService;
+	}
+
+	/**
+	 * @param defaultBlUserService the defaultBlUserService to set
+	 */
+	public void setDefaultBlUserService(DefaultBlUserService defaultBlUserService)
+	{
+		this.defaultBlUserService = defaultBlUserService;
 	}
 
 }
