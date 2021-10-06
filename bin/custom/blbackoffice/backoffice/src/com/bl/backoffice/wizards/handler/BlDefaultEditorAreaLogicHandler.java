@@ -58,7 +58,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
     if (currentObject instanceof OrderModel) {
 		 OrderModel orderModel = (OrderModel) currentObject;
        orderModel.setCalculated(false);
-
+          // need to get previous old for tracing remove
 			List<AbstractOrderEntryModel> bundleOrderEntries = orderModel.getEntries().stream()
 					.filter(entry -> entry.isBundleMainEntry() || entry.isBundleEntry()).collect(
 							Collectors.toList());
@@ -106,8 +106,9 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 										 Collectors.toList()));
 
 								 // update and save remaing entry.
-								 mainBundleEntryListWithoutRemove.removeIf(removeEntryList::contains);
-								 ((OrderModel) currentObject).setEntries(mainBundleEntryListWithoutRemove);
+								 final List<AbstractOrderEntryModel> allEntry =getPreviousChangedOrderEntrysList(orderModel);
+								 allEntry.removeIf(removeEntryList::contains);
+								 ((OrderModel) currentObject).setEntries(allEntry);
 						   }else{
 								 removeEntryFromConsignment(orderModel, previousChangedOrderEntrysList);
 							 }
