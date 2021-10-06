@@ -32,7 +32,7 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
   public void onPrepare(final AddressModel addressModel,final InterceptorContext interceptorContext)
       throws InterceptorException {
 
-    triggerNewShippingInfoEven(addressModel, interceptorContext);
+    triggerNewShippingInfoEvent(addressModel, interceptorContext);
   }
 
   /**
@@ -41,7 +41,7 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
    * @param addressModel the abstract order model
    * @param interceptorContext the interceptor context
    */
-  private void triggerNewShippingInfoEven(final AddressModel addressModel,
+  private void triggerNewShippingInfoEvent(final AddressModel addressModel,
       final InterceptorContext interceptorContext) {
     if (isCsUser()  && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
       try {
