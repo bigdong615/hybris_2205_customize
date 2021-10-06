@@ -60,7 +60,7 @@
                 <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                 <checkout:pickUpAddressForm />
             </div>
-            <div id="pick-up-notification"></div>
+            <div id="pick-up-notification-faster"></div>
         </div>
     </div>
 </div>

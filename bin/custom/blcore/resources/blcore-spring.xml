@@ -1622,4 +1622,16 @@
 		class="com.bl.core.esp.populators.BlExtendOrderRequestPopulator">
 	</bean>
 
+	<alias name="blAddressPrepareInterceptor" alias="blAddressPrepareInterceptor"/>
+	<bean id="blAddressPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlAddressPrepareInterceptor">
+		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="blAddressPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blAddressPrepareInterceptor"/>
+		<property name="typeCode" value="Address"/>
+	</bean>
 </beans>
