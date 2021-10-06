@@ -143,9 +143,9 @@ public class BlOrderShippedRequestPopulator extends
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL,
             getRequestValue(shippingAddress.getEmail()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
-            "Mon-Fri: 8:00 AM - 6:00 PM Sat: 10:00 AM - 5:00 PM Sun: Closed");
+            StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES,
-            "In the Safeway Shopping Center");
+            StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
 
         final Transformer transformer = getTransformerFactoryObject();
         final StringWriter writer = new StringWriter();

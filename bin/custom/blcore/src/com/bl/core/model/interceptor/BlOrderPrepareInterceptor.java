@@ -10,6 +10,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy;
@@ -67,8 +68,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	@Resource(name = "blDeliveryModeService")
 	private BlDeliveryModeService blDeliveryModeService;
 
-	@Resource(name = "userService")
-	private UserService userService;
+	@Resource(name = "defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
@@ -83,8 +84,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 	  
-	  final boolean isCsUser = isCsUser();
-		if (isCsUser && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if (getDefaultBlUserService().isCsUser() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			modifyOrderDate(abstractOrderModel);
@@ -270,7 +270,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @param interceptorContext the interceptor context
 	 */
 	private void triggerNewShippingInfoEvent(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
-		if(isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
+		if(getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
 			getBlEspEventService().sendOrderNewShippingEvent((OrderModel) abstractOrderModel);
 		}
 	}
@@ -296,27 +296,6 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   }
   
   /**
-	 * method will called to check is logged in user is CS user or not
-	 *
-	 * @return
-	 */
-	private boolean isCsUser()
-	{
-		boolean isCsAgent = false;
-		final UserModel currentUser = getUserService().getCurrentUser();
-		for (final PrincipalGroupModel userGroup : currentUser.getGroups())
-		{
-			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(userGroup.getUid()))
-			{
-				isCsAgent = true;
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Logged in user {} is cs user", currentUser);
-				break;
-			}
-		}
-		return isCsAgent;
-	}
-	
-	/**
 	 * This method will called when cs agent will modify order date
 	 *
 	 * @param abstractOrderModel
@@ -465,21 +444,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     }
 
 
-	/**
-	 * @return the userService
-	 */
-	public UserService getUserService()
-	{
-		return userService;
+
+	public DefaultBlUserService getDefaultBlUserService() {
+		return defaultBlUserService;
 	}
 
-
-	/**
-	 * @param userService the userService to set
-	 */
-	public void setUserService(UserService userService)
-	{
-		this.userService = userService;
+	public void setDefaultBlUserService(
+			DefaultBlUserService defaultBlUserService) {
+		this.defaultBlUserService = defaultBlUserService;
 	}
 
 
