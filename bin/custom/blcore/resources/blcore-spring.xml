@@ -1551,6 +1551,7 @@
 		<property name="blOrderShippedRequestPopulator" ref="blOrderShippedRequestPopulator"/>
 		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
+		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1637,6 +1638,11 @@
 	
 	<alias name="defaultBlUserService" alias="userService" />
 	<bean id="defaultBlUserService" parent="defaultUserService" class="com.bl.core.services.customer.impl.DefaultBlUserService">
+	</bean>
+
+	<!-- Order Extra Item populator ESP -->
+	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
 	
 </beans>

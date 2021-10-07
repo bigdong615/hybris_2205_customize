@@ -109,7 +109,11 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         }
         // To call the order confirmation Order ESP event
 
-        getDefaultBlESPEventService().sendOrderConfirmation(order);
+        try {
+          getDefaultBlESPEventService().sendOrderConfirmation(order);
+        }  catch (final Exception ex) {
+          BlLogger.logMessage(LOG , Level.ERROR , "Error while executing order confimration ESP Event");
+        }
 
       } catch (final AmbiguousIdentifierException ex) {
 
