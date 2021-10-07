@@ -104,18 +104,27 @@ public class DefaultBlOrderService implements BlOrderService {
   private void doChangeOrderStatusForSingleStatus(final AbstractOrderModel order,
 			final HashSet<ConsignmentStatus> itemStatuses)
 	{
-		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
-
+	  	String consignmentStatus = itemStatuses.iterator().next().toString();
+		 
+		if(consignmentStatus.equals(ConsignmentStatus.UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_COMPLETELY.toString();
+		}
+		if(consignmentStatus.equals(ConsignmentStatus.PARTIALLY_UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_PARTIALLY.toString();
+		}
 		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.UNBOXED_PARTIALLY,
 				OrderStatus.UNBOXED_COMPLETELY,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS);
-		statusToCheck.forEach(status -> {
-			if(status.toString().equals(consignmentStatus.toString()))
+		for(final OrderStatus status : statusToCheck)
+		{
+			if(status.toString().equals(consignmentStatus))
 			{
 				changeStatusOnOrder(order, status);
-				return;
+				break;
 			}
-		});
+		}
 	}
   
   /**
