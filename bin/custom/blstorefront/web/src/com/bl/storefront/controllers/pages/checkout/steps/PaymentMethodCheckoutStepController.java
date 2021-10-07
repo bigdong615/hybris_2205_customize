@@ -8,6 +8,8 @@ import static de.hybris.platform.util.localization.Localization.getLocalizedStri
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.blackout.BlBlackoutDateService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.customer.BlCustomerFacade;
@@ -78,6 +80,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	protected static final Map<String, String> CYBERSOURCE_SOP_CARD_TYPES = new HashMap<>();
 	private static final String PAYMENT_METHOD = "payment-method";
 	private static final String CART_DATA_ATTR = "cartData";
+	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 
 	private static final Logger LOGGER = Logger.getLogger(PaymentMethodCheckoutStepController.class);
 
@@ -95,6 +98,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
+	
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
+	
+	@Resource(name = "blBlackoutDateService")
+   private BlBlackoutDateService blBlackoutDateService;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -171,6 +180,11 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		 if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
+		 {
+			 return REDIRECT_CART_URL;
+		 }
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, true);
 		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
 		showMessageForRemovedGiftCard(model);

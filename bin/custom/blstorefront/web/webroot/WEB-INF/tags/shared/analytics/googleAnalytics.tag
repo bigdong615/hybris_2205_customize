@@ -119,6 +119,7 @@ gtag('config', googleAnalyticsTrackingId);
   		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
        	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
         "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
+        "checkout_step" : "1",
   		  "items": [
   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
   					{
@@ -175,6 +176,7 @@ gtag('config', googleAnalyticsTrackingId);
             "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
             "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
             "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+            "checkout_step" : "2",
       		  "items": [
       				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
       					{
@@ -231,6 +233,7 @@ gtag('config', googleAnalyticsTrackingId);
                     "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
                     "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+                    "checkout_step" : "3",
               		  "items": [
               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
               					{
@@ -287,6 +290,7 @@ gtag('config', googleAnalyticsTrackingId);
                                     "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
                                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
                                     "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+                                    "checkout_step" : "4",
                               		  "items": [
                               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
                               					{
@@ -346,6 +350,7 @@ gtag('config', googleAnalyticsTrackingId);
       "subtotal": "${ycommerce:encodeJavaScript(orderData.subTotal.value)}",
       "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
       "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+      "checkout_step" : "5",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{

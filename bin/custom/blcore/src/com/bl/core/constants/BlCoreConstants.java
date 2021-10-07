@@ -453,7 +453,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
   public static final String DATE_PATTERN = "yyyy-MM-dd";
   public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
   public static final String RENTAL = "Rental";
-  public static final String UN_BOXED = "UnBoxed";
+  public static final String UN_BOXED = "UNBOXED_COMPLETELY";
 
   public static final String NAME = "Name";
 

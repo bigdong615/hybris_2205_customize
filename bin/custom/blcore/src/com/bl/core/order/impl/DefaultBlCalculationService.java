@@ -311,8 +311,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				return createNewPriceValue(order.getCurrency().getIsocode(),((BlProductModel) product).getRetailGearPrice().doubleValue(),BooleanUtils.toBoolean(order.getNet()));
 			}
 			else if(BooleanUtils.isTrue(((BlProductModel) product).isBundleProduct())){
-				final PriceInformation priceInformation= commercePriceService.getWebPriceForBundleProduct(product);
-				return priceInformation!=null? priceInformation.getPriceValue() : null;
+				 return commercePriceService.getDynamicPriceForBundle(product,order);
 			}
 			else{
 				return findBasePrice(entry);
@@ -660,7 +659,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		double subtotal = 0.0;
 		double totalDamageWaiverCost = 0.0;
-		for (final AbstractOrderEntryModel entryModel : order.getEntries())
+
+		for (final AbstractOrderEntryModel entryModel : order.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
+				Collectors.toList()))
 		{
 			resetAllValuesForTax(entryModel);
 			super.calculateTotals(entryModel , true);
