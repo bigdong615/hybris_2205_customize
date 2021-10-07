@@ -125,8 +125,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		if (CollectionUtils.isEmpty(result.getResult()))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders to be processed via reshuffler job with manual review status");
-
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via reshuffler job with manual review status for the day {} ", currentDate);
 		}
 		return result.getResult();
 	}
