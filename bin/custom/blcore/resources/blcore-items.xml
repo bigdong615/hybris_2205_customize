@@ -3453,7 +3453,7 @@
                 <persistence type="property" />
                 <description>Certificate of insurance expiry date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="kycScore" type="java.lang.Double">
+              <attribute autocreate="true" qualifier="kycScore" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
@@ -3568,12 +3568,12 @@
                 </persistence>
                 <description>Overall Notes On Customer</description>
               </attribute>
-              <attribute autocreate="true" qualifier="orderCount" type="java.lang.Integer">
+              <attribute autocreate="true" qualifier="orderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Number of orders placed to date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="completedOrderCount" type="java.lang.Integer">
+              <attribute autocreate="true" qualifier="completedOrderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Number of orders in Completed status to date</description>
@@ -3596,7 +3596,6 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Legacy tracking of BL Rewards amounts</description>
               </attribute>
-
               <attribute autocreate="true" qualifier="totalAmountPastDue" type="java.math.BigDecimal">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
