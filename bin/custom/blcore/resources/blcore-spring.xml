@@ -1445,6 +1445,7 @@
 	<bean id="defaultBlBlackoutDateService" class="com.bl.core.services.blackout.impl.DefaultBlBlackoutDateService">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blCartService" ref="cartService"/>
 	</bean>    
 
     <!--BL-1089-->
