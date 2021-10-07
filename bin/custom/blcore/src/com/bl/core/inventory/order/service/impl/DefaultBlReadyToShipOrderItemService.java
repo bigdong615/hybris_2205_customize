@@ -67,7 +67,7 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
         for (BlSerialProductModel serialProduct : serialProductModels) {
 
           orderItems
-              .add(createReadyToShipOrderItem(consignmentModel, memberName, entry, serialProduct));
+              .add(createReadyToShipOrderItem(consignmentModel, memberName, serialProduct));
         }
       }
     }
@@ -98,14 +98,12 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
    * It creates and returns ReadyToShipOrderItem
    * @param consignmentModel
    * @param memberName
-   * @param entry
    * @param serialProduct
    * @return ReadyToShipOrderItemModel
    */
   private ReadyToShipOrderItemModel createReadyToShipOrderItem(
       final ConsignmentModel consignmentModel,
-      final String memberName, final ConsignmentEntryModel entry,
-      final BlSerialProductModel serialProduct) {
+      final String memberName, final BlSerialProductModel serialProduct) {
 
     final ReadyToShipOrderItemModel orderItem = modelService
         .create(ReadyToShipOrderItemModel.class);
@@ -127,8 +125,10 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
     orderItem.setOrderNotes(
         null != consignmentModel.getOrder().getConsolidatedOrderNote() ? consignmentModel.getOrder()
             .getConsolidatedOrderNote() : BlCoreConstants.EMPTY_STRING);
-    orderItem.setProductId(entry.getOrderEntry().getProduct().getCode());
-    orderItem.setProductName(entry.getOrderEntry().getProduct().getName());
+
+    orderItem.setProductId(serialProduct.getBlProduct().getCode());
+    orderItem.setProductName(serialProduct.getBlProduct().getName());
+
     orderItem.setProductCount(BlCoreConstants.DEFAULT_PRODUCT_QUANTITY);
     orderItem.setSerialNumber(serialProduct.getCode());
 

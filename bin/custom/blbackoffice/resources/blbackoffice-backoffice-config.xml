@@ -75,6 +75,7 @@
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
 			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="StockLevel" id="StockLevel"/>
 		</n:explorer-tree>
 	</context>
 
@@ -3184,6 +3185,16 @@
 		</na:notification-area>
 	</context>
 	<!-- End BlInventoryCycleCount -->
+
+	<context type="GiftCard" component="collectioneditorareaactions" parent="GenericItem" principal="customersupportmanagerrole,customersupportagentrole" module="customersupportbackoffice">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.bl.blbackoffice.actions.giftcardemailandmovement"
+					property="currentObject" />
+			</y:group>
+		</y:actions>
+	</context>
 
 	<!-- Shipping Optimization-->
 	<context component="create-wizard" type="ShippingOptimization" merge-by="type">

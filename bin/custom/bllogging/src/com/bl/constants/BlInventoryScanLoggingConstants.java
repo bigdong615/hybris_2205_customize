@@ -30,7 +30,12 @@ public class BlInventoryScanLoggingConstants {
     public static final String HUN_PER = "100%";
     public static final String SAVING = "Saving ";
     public static final String SPACE = ": ";
-
+    public static final String EMPTY_SPACE = " ";
+    public static final String OPEN_BRACKET = "[";
+    public static final String CLOSE_BRACKET = "]";
+    public static final String COUNTRY_CODE = "US";
+    public static final String SHIPPING_METHOD_ERROR_MESSAGE = "Selected shipping method service is not applicable for added zip code";
+    public static final String SHIPPING_DETAILS_UPDATE_MESSGAE = "Shipping Details Updated Successfully";
     public static final String SAMPLE1 = "sample1%";
     public static final String SAMPLE2 = "sample2%";
     public static final String SAMPLE3 = "sample3%";
@@ -161,6 +166,7 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
+    public static final String BOXING_WORKSTATION = "BOXING_WORKSTATION";
     public static final String FRONT_DESK_SHIPPER_WORKSTATION = "FRONT_DESK_MOBILE_CART";
  	public static final String FRONT_DESK_SHIPPING_BIN = "FRONT_DESK_SHIPPING_BIN";
  	public static final String FRONT_DESK_SHIPPED_MOBILE_CART = "FRONT_DESK_SHIPPED_MOBILE_CART";

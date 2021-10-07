@@ -76,7 +76,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       final OrderConfirmationData data = new OrderConfirmationData();
        populateCommonData(orderModel , data);
-       data.setOldorderid(getRequestValue(orderModel.getCode()));
+       data.setOldorderid(StringUtils.EMPTY);
        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CONFIRMATION_EVENT_TEMPLATE)));
        final UserModel userModel = orderModel.getUser();
         if (Objects.nonNull(userModel)) {
@@ -85,7 +85,9 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setType(getOrderType(orderModel));
         data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-        data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
+        data.setStatus(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()) ?
+            BlCoreConstants.RECEIVED :
+            getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
         data.setDateplaced(formatter.format(orderModel.getDate()));
         if(Objects.nonNull(orderModel.getDeliveryMode())) {
           final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) orderModel
@@ -105,15 +107,19 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setDiscounttext(StringUtils.EMPTY);
         if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
-          data.setExpectedshippingdate(formatter.format(orderModel.getActualRentalStartDate()));
+          data.setExpectedshippingdate(formatter.format(orderModel.getRentalStartDate()));
           data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
           data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-          data.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+          data.setActualreturndate(formatter.format(orderModel.getRentalEndDate()));
           data.setRentalduration((int) getRentalDuration(orderModel));
         }
         if (Objects.nonNull(orderModel.getPaymentInfo())) {
             final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-            data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
+            data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                ? BlCoreConstants.PAY_PAL : getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
+        }
+        if(StringUtils.isNotBlank(orderModel.getPoNumber())){
+          data.setPaymenttype(BlCoreConstants.PO);
         }
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
@@ -159,8 +165,8 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, "Mon-Fri: 8:00 AM - 6:00 PM Sat: 10:00 AM - 5:00 PM Sun: Closed");
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, "In the Safeway Shopping Center");
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
               final Transformer transformer = getTransformerFactoryObject();
               final StringWriter writer = new StringWriter();
@@ -273,16 +279,6 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
     }
 
-  /**
-   * To check whether media is empty of not
-   * @param abstractOrderEntryModel abstractOrderEntryModel
-   * @return string
-   */
-    private String getProductURL(final AbstractOrderEntryModel abstractOrderEntryModel){
-      return Objects.nonNull(abstractOrderEntryModel.getProduct().getPicture()) &&
-          StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getPicture().getURL()) ?
-        abstractOrderEntryModel.getProduct().getPicture().getURL() : StringUtils.EMPTY;
-    }
 
 
 }

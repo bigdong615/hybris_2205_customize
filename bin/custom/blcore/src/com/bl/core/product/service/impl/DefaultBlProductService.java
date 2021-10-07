@@ -172,6 +172,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 			findSerialStockLevelForDate.forEach(stockLevel -> {
 				stockLevel.setHardAssigned(false);
 				stockLevel.setReservedStatus(false);
+				stockLevel.setOrder(null);
 				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
 				getModelService().save(stockLevel);
 				getModelService().save(serialProduct);

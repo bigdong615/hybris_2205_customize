@@ -463,6 +463,7 @@ function reverseTraverseOnShipping() {
  function onSelectOfUPSStore(upsSelectedStoreId) {
      $('#showErrorForUPSOrPickAddressError').html('');
      $('#showErrorForUPSOrPickAddressError').hide();
+     $('#pick-up-notification').hide();
      let stores = JSON.parse(sessionStorage.getItem("UPSStores"));
      if(stores != null && stores.length != 0) {
          for (let i = 0; i < stores.length; i++) {
@@ -635,6 +636,7 @@ function reverseTraverseOnShipping() {
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#pick-up-notification').hide();
+     $('#pick-up-notification-faster').hide();
      $('#showErrorForInputValidation').html('');
      $('#showErrorForInputValidation').hide();
  }
@@ -1258,12 +1260,15 @@ function reverseTraverseOnShipping() {
      $('#showErrorForInvalidPhoneInputValidation').hide();
      $('#showErrorForUPSOrPickAddressError').html('');
      $('#showErrorForUPSOrPickAddressError').hide();
+     $('#pick-up-notification').hide();
  }
 
  function showErrorNotificationForPickUpId(msg, status) {
      let notification = '<div class="notification notification-warning">' + msg + '</div>';
      $('#pick-up-notification').html(notification);
      $('#pick-up-notification').show();
+     $('#pick-up-notification-faster').html(notification);
+     $('#pick-up-notification-faster').show();
  }
 
  function showErrorNotification(msg, status) {
@@ -1274,8 +1279,8 @@ function reverseTraverseOnShipping() {
 
  function showErrorNotificationPickUp(msg) {
      let notification = '<div class="notification notification-error">' + msg + '</div>';
-     $('#pick-up-notification').html(notification);
-     $('#pick-up-notification').show();
+     $('#pick-up-notification-faster').html(notification);
+     $('#pick-up-notification-faster').show();
  }
 
  function showErrorNotificationSameDay(msg, status) {

@@ -64,7 +64,7 @@ public class BlOrderVerificationMoreInfoRequestPopulator extends
 
     populateCommonData(orderModel, data);
 
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
         .getString(BlCoreConstants.ORDER_VERIFICATION_MORE_INFO_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();

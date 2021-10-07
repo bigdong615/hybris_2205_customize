@@ -6,10 +6,14 @@ import com.bl.esp.dto.orderdeposit.data.OrderDepositData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -55,7 +59,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderDepositData data = new OrderDepositData();
     populateCommonData(orderModel , data);
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_DEPOSIT_EVENT_TEMPLATE)));
 
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
@@ -65,18 +69,28 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
           .getDeliveryMode());
       data.setShippingmethodtype(getRequestValue(delivery.getShippingGroup().getName()));
       data.setShippingmethod(getRequestValue(delivery.getCode()));
+    }else {
+      data.setShippingmethodtype(StringUtils.EMPTY);
+      data.setShippingmethod(StringUtils.EMPTY);
     }
 
-    data.setExpectedshipping(formatter.format(orderModel.getActualRentalStartDate()));
-    data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
-    data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
-    data.setRentalduration((int) getRentalDuration(orderModel));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+      data.setExpectedshipping(formatter.format(orderModel.getActualRentalStartDate()));
+      data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
+      data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
+      data.setRentalduration((int) getRentalDuration(orderModel));
+    }
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
     data.setVerificationlevel(1);
-    data.setDepositamount(BigDecimal.valueOf(getDoubleValueForRequest(orderModel.getTotalPrice())));
+    data.setVerificationtext(StringUtils.EMPTY);
+    final List<PaymentTransactionModel> paymentTransactionModelList = orderModel.getDepositPaymentTransactions();
+    if(Objects.nonNull(paymentTransactionModelList)){
+      final BigDecimal depositAmount = paymentTransactionModelList.get(paymentTransactionModelList.size()-1).getPlannedAmount().setScale(2, RoundingMode.HALF_DOWN);
+      data.setDepositamount(depositAmount);
+    }
     orderDepositRequest.setData(data);
   }
 

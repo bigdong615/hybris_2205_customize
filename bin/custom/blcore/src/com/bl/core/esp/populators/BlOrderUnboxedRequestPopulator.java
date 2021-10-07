@@ -10,6 +10,7 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -61,7 +62,7 @@ public class BlOrderUnboxedRequestPopulator  extends ESPEventCommonPopulator<Ord
       final OrderUnBoxedData orderUnBoxedData = new OrderUnBoxedData();
       final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
       populateCommonData(order, orderUnBoxedData);
-      orderUnBoxedData.setOldorderid(getRequestValue(order.getCode()));
+      orderUnBoxedData.setOldorderid(StringUtils.EMPTY);
       orderUnBoxedData.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
           .getString(BlCoreConstants.ORDER_UNBOXED_EVENT_TEMPLATE)));
       orderUnBoxedData.setStatus(getRequestValue(BlCoreConstants.UN_BOXED));
