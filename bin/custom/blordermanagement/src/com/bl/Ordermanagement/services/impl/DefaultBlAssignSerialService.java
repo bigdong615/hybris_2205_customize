@@ -312,14 +312,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
               final List<BlSerialProductModel> oldestSerials = getOldestSerials(
                   new ArrayList<>(unAssignedForSaleTrueSerials));
-              final List<BlSerialProductModel> unAssignedSerials = new ArrayList<>(
-                  getUnAssignedSerials(oldestSerials, assignedSerials));
-
-              BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unassigned oldest Serials found {}",
-                  unAssignedSerials.stream().map(BlSerialProductModel::getCode).collect(Collectors.toList()));
 
               getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
-                  unAssignedSerials, quantity);
+                  oldestSerials, quantity);
             }
             allEntrySourceComplete.add(new AtomicBoolean(true));
           } else {

@@ -318,12 +318,18 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	private void subscribeEmailForNewsLetters(
 			@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm,
 			final CCPaymentInfoData paymentInfo, final OrderData orderData) {
-		if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
-			if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
-				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
-			} else {
-				blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+
+		try {
+			if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+				if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
+					blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+				} else {
+					blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+				}
 			}
+		} catch (Exception ex) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error occurred while subscribing the email in ESP", ex);
 		}
 	}
 
