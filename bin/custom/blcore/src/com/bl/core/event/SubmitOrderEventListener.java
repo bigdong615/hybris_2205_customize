@@ -156,7 +156,7 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 			final String fulfilmentProcessDefinitionName) {
 
 		// Creating entry for bundle product.
-		if (order.getEntries().stream().anyMatch(entry -> entry.isBundleMainEntry())) {
+		if (order.getEntries().stream().anyMatch(entry -> entry.isBundleMainEntry() && !entry.isEntryCreated())) {
 			blOrderService.createAndSetBundleOrderEntriesInOrder(order);
 		}
 

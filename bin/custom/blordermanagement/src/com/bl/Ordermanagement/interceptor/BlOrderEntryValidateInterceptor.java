@@ -1,5 +1,6 @@
 package com.bl.Ordermanagement.interceptor;
 
+import com.bl.core.model.BlProductModel;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -91,6 +92,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	{
 		if (getDefaultBlUserService().isCsUser())
 		{
+			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
+         orderEntryModel.setBundleMainEntry(Boolean.TRUE);
+			}
 			final List<BlSerialProductModel> serialProduct = orderEntryModel.getModifiedSerialProductList();
 			final WarehouseModel warehouse = orderEntryModel.getWarehouse();
 			if (CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)

@@ -141,7 +141,10 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		if (CollectionUtils.isNotEmpty(productReferences)) {
 			productReferences.forEach(productReferenceModel -> {
 				final ProductModel target = productReferenceModel.getTarget();
-				final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+				 BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+				if(baseStoreModel == null){
+					baseStoreModel =getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+				}
 				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
 				if (CollectionUtils.isNotEmpty(prices))
 				{
@@ -169,6 +172,24 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 			return newPriceInformation.getPriceValue();
 		}
 		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PriceValue getDynamicPriceForBundle(
+			final ProductModel product, final AbstractOrderModel abstractOrder) throws CalculationException {
+		if (abstractOrder != null && abstractOrder.getRentalStartDate() != null) {
+			Long rentalDays = BlDateTimeUtils
+					.getDaysBetweenDates(abstractOrder.getRentalStartDate(), abstractOrder.getRentalEndDate())
+					+ 1;
+			rentalDays = Objects.nonNull(rentalDays) ? rentalDays : BlCoreConstants.DEFAULT_RENTAL_DAY;
+			return getDynamicBasePriceForBundle(product, rentalDays.intValue());
+		} else {
+			final PriceInformation priceInformation = getWebPriceForBundleProduct(product);
+			return priceInformation != null ? priceInformation.getPriceValue() : null;
+		}
 	}
 	/**
 	 * Gets the dynamic price data for product.

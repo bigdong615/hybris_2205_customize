@@ -213,9 +213,9 @@ public class DefaultBlOrderService implements BlOrderService {
 	 */
 	@Override
 	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
-			final OrderModel orderModel,
+			final AbstractOrderModel orderModel,
 			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
-		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,StringUtils.EMPTY,
 				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
 				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
 		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
@@ -250,6 +250,9 @@ public class DefaultBlOrderService implements BlOrderService {
 					orderEntryModelList.add(newEntryModel);
 					entryNumber.getAndIncrement();
 				});
+				existingEntry.setEntryCreated(Boolean.TRUE);
+				existingEntry.setBundleProductCode(existingEntry.getProduct().getCode());
+				getModelService().save(existingEntry);
 			}
 		});
 		orderModel.setEntries(orderEntryModelList);
@@ -257,6 +260,28 @@ public class DefaultBlOrderService implements BlOrderService {
 			orderModel.setCalculated(Boolean.TRUE);
 		}
 		getModelService().save(orderModel);
+	}
+
+	@Override
+	public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel){
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(entryModel.getOrder().getEntries());
+		final AtomicInteger entryNumber = new AtomicInteger(entryModel.getOrder().getEntries().size());
+		final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(entryModel);
+		productReferenceModels.forEach(productReferenceModel -> {
+			final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, entryModel.getOrder(), entryModel,entryNumber);
+			orderEntryModelList.add(newEntryModel);
+			entryNumber.getAndIncrement();
+		});
+		entryModel.setEntryCreated(Boolean.TRUE);
+		entryModel.setBundleProductCode(entryModel.getProduct().getCode());
+		getModelService().save(entryModel);
+		entryModel.getOrder().setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(entryModel.getOrder().getCalculated())){
+			entryModel.getOrder().setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(entryModel.getOrder());
+		getModelService().refresh(entryModel.getOrder());
 	}
   public BlProductService getProductService() {
     return productService;
