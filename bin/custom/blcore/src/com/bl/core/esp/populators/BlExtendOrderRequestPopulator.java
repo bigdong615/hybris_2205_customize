@@ -71,13 +71,13 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     final OrderExtensionData data = new OrderExtensionData();
     populateCommonData(orderModel , data);
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setType(BooleanUtils.isTrue(orderModel.getIsRentalCart()) ? BlCoreConstants.RENTAL : BlCoreConstants.USED_GEAR);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXTENSION_EVENT_TEMPLATE)));
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
     data.setDateplaced(formatter.format(orderModel.getDate()));
     data.setItemcost(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel)));
-    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getDepositAmountTotal()));
+    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
     data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
     data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
     data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
@@ -128,7 +128,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
                 getRequestValue(entryModel.getProduct().getName()));
           }
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-              entryModel.getProduct().getPicture().getURL());
+              getProductURL(entryModel));
           if (Objects.nonNull(entryModel.getBasePrice())) {
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
           }

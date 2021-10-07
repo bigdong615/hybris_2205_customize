@@ -5,9 +5,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
-import com.bl.esp.dto.orderverification.OrderVerificationMoreInfoEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationCOIneededData;
-import com.bl.esp.dto.orderverification.data.OrderVerificationMoreInfoData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
@@ -66,7 +64,7 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
 
     populateCommonData(orderModel, data);
 
-    data.setOldorderid(getRequestValue(orderModel.getCode()));
+    data.setOldorderid(StringUtils.EMPTY);
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration()
         .getString(BlCoreConstants.ORDER_VERIFICATION_COI_NEEDED_EVENT_TEMPLATE)));
     final UserModel userModel = orderModel.getUser();

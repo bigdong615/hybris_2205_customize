@@ -1,8 +1,7 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
+
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsData;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -15,7 +14,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -76,7 +74,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     final OrderExceptionsData orderExceptionsData = new OrderExceptionsData();
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     populateCommonData(orderModel , orderExceptionsData);
-    orderExceptionsData.setOldorderid(getRequestValue(orderModel.getCode()));
+    orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExceptionsData.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
@@ -133,42 +131,6 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
         throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
       }
     }
-
-
-  /**
-   * This method created to get the serial product title for request
-   * @param serialProductCode serial product code
-   * @return string
-   */
-  private String getProductTitle(final String serialProductCode) {
-    final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-      final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)){
-        productTitle.set(blProductModel.getName());
-      }
-    }
-    return productTitle.get();
-  }
-
-
-  /**
-   * This method created to get the serial product url for request
-   * @param serialProductCode serial product code
-   * @return string
-   */
-  private String getProductUrl(final String serialProductCode) {
-    final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-     final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)){
-        productUrl.set(blProductModel.getPicture().getURL());
-      }
-    }
-    return productUrl.get();
-  }
 
 
 

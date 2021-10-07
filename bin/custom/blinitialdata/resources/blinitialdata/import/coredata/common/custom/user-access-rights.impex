@@ -152,7 +152,7 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
           ;                           ;                ;          ; ConsignmentEntry ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Unit             ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Warehouse        ; +    ; -      ; -      ; -      ; -
-
+       	  ;                           ;                ;          ; StockLevel                       ; +    ; +      ; +      ; -      ; -
 $END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS; ; ; ; ; ; ; ; ;
@@ -328,7 +328,11 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;BlInventoryLocation;+;-;-;-
 ;;;SavedValues;+;-;-;-
 ;;;SavedValueEntry;+;-;-;-
-
+;;;InventoryCycleCountScan;+;+;-;-
+;;;BlInventoryCycleCount;+;-;-;-
+;;;BlInventoryCycleCountDetails;+;-;-;-
+;;;BlInventoryCycleCountProductDetails;+;-;-;-
+;;;BlInventoryCycleCountScanHistory;+;-;-;-
 $END_USERRIGHTS;;;;
 
  

@@ -865,6 +865,7 @@
 		class="com.bl.core.order.hook.impl.BlGiftCardOrderMethodHook">
 		<property name="eventService" ref="eventService" />
 		<property name="modelService" ref="modelService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="commerceGiftCardOrderMethodHookMergeDirective"
@@ -1354,6 +1355,7 @@
 	<bean id="defaultNewGearOrderStatusChangeHook"
 		class="com.bl.core.order.hook.impl.BlNewGearOrderStatusChangeHook">
 		<property name="modelService" ref="modelService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="commerceNewGearOrderStatusHookMergeDirective"
@@ -1527,6 +1529,7 @@
 	<bean id="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
+		<property name="productService" ref="productService"/>
 	</bean>
 
 	<!--ESP Event service -->
@@ -1548,6 +1551,7 @@
 		<property name="blOrderShippedRequestPopulator" ref="blOrderShippedRequestPopulator"/>
 		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
+		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1619,4 +1623,26 @@
 		class="com.bl.core.esp.populators.BlExtendOrderRequestPopulator">
 	</bean>
 
+	<alias name="blAddressPrepareInterceptor" alias="blAddressPrepareInterceptor"/>
+	<bean id="blAddressPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlAddressPrepareInterceptor">
+		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="defaultBlUserService" ref="userService"/>
+	</bean>
+
+	<bean id="blAddressPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blAddressPrepareInterceptor"/>
+		<property name="typeCode" value="Address"/>
+	</bean>
+	
+	<alias name="defaultBlUserService" alias="userService" />
+	<bean id="defaultBlUserService" parent="defaultUserService" class="com.bl.core.services.customer.impl.DefaultBlUserService">
+	</bean>
+
+	<!-- Order Extra Item populator ESP -->
+	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
+	</bean>
+	
 </beans>

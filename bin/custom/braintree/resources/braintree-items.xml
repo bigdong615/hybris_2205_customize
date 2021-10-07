@@ -220,6 +220,17 @@
                          <persistence type="property" />
                          <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
+                <attribute qualifier="createNewTransaction" type="boolean">
+              	         <description>It describes whether to create new payment transaction</description>
+                         <persistence type="property" />
+                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+                <attribute qualifier="newAmount" type="java.lang.Double">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>New amount</description>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                 </attribute>
 			</attributes>
 		</itemtype>
 

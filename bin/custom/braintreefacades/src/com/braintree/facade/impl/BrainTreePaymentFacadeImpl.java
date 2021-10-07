@@ -160,10 +160,18 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	{
 		return completeCreateSubscription(brainTreeSubscriptionInfoData,customer, cart, isCreditEnabled, isCheckout, Boolean.FALSE, Double.valueOf(0.0d));
 	}
+	
+  public BrainTreePaymentInfoModel completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
+      final CustomerModel customer, final AbstractOrderModel cart, final boolean isCreditEnabled, final boolean isCheckout,
+      final boolean isDepositPayment, final Double depositAmount)
+  {
+    return completeCreateSubscription(brainTreeSubscriptionInfoData, customer, cart, isCreditEnabled, isCheckout, isDepositPayment, depositAmount,
+        Boolean.FALSE);
+  }
 
 	public BrainTreePaymentInfoModel completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
 			final CustomerModel customer, final AbstractOrderModel cart, final  boolean isCreditEnabled, final boolean isCheckout,
-			final boolean isDepositPayment, final Double depositAmount)
+			final boolean isDepositPayment, final Double depositAmount, final boolean isModifyOrderPaymentPage)
 	{
 		BrainTreePaymentInfoModel paymentInfo = null;
 		final AddressData addressData = brainTreeSubscriptionInfoData.getAddressData();
@@ -211,9 +219,13 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		}
 		paymentInfo.setPayer(brainTreeSubscriptionInfoData.getEmail());
 		paymentInfo.setDuplicate(isDuplicate);
+		if(isModifyOrderPaymentPage)
+		{
+		  paymentInfo.setCreateNewTransaction(Boolean.TRUE);
+		}
 		modelService.save(paymentInfo);
 		setPaymentInfoInCart(cart, paymentInfo, isCheckout);
-		if (!paymentInfo.isIsDepositPayment() && BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(getBrainTreeConfigService().getIntent())
+		if ((!isModifyOrderPaymentPage || !paymentInfo.isIsDepositPayment()) && BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(getBrainTreeConfigService().getIntent())
 				&& result != null && isPayPalCheckout(brainTreeSubscriptionInfoData))
 		{
 			brainTreeTransactionService.createOrderTransaction(cart, result);

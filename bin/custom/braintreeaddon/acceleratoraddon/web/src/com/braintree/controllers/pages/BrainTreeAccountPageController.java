@@ -3,6 +3,7 @@ package com.braintree.controllers.pages;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.order.BlOrderFacade;
@@ -17,6 +18,8 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.validators.PaymentMethodValidator;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
@@ -34,6 +37,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -93,6 +97,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String PAY_BILL = "/payBill";
 	private static final String DEPOSIT_PAYMENT_URL = "/depositPayment";
 	private static final String DEPOSIT_PAYMENT = "depositPayment";
+	private static final String MODIFIED_ORDER_PAYMENT = "modifiedOrderPayment";
 	private static final String MY_ACCOUNT = "/my-account/";
 	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
@@ -110,7 +115,11 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	private static final String MODIFY_PAYMENT_CMS_PAGE = "modify-payment";
 	
 	private static final String DEPOSIT_PAYMENT_CMS_PAGE = "deposit-payment";
+	private static final String MODIFIED_ORDER_PAYMENT_CMS_PAGE = "modified-order-payment";
 	private static final String MY_ACCOUNT_DEPOSIT_PAYMENT = "/my-account/depositPayment/";
+	private static final String REDIRECT_TO_ORDER_HISTORY_PAGE = REDIRECT_PREFIX + "/my-account/orders";
+	private static final String REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE = REDIRECT_PREFIX + MY_ACCOUNT;
+	private static final String MODIFIED_ORDER_PAYMET_PATH = "/modifiedOrderPayment";
 	
 	@Resource(name = "userFacade")
 	protected BrainTreeUserFacade userFacade;
@@ -147,6 +156,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
+
+	@Resource(name = "blEspEventService")
+	private DefaultBlESPEventService blEspEventService;
 	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
@@ -400,6 +412,14 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		  {
 		    return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + DEPOSIT_PAYMENT_URL;
 		  }
+		}
+		else if(StringUtils.isNotBlank(orderCode) && orderCode.contains(MODIFIED_ORDER_PAYMENT))
+		{
+		  String[] split = orderCode.split(BlControllerConstants.RATIO);
+      if(split.length >= 2)
+      {
+        return REDIRECT_PREFIX + MY_ACCOUNT + split[0] + MODIFIED_ORDER_PAYMET_PATH;
+      }
 		}
 		else if(StringUtils.isNotBlank(orderCode)) {
 			String originalOrderCode = orderCode.replace(BlControllerConstants.RATIO + getRedirectionUrl(orderCode), BlControllerConstants.EMPTY);
@@ -899,7 +919,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
         {
           final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
           final PriceData billPayTotal  = convertDoubleToPriceData(depositOrderTotal, order);
-          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+					triggerDepositRequestEvent(orderCode);
+					model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
           model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
           model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.CREDIT_CARD);
           final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
@@ -917,11 +938,22 @@ public class BrainTreeAccountPageController extends AbstractPageController
     }
     return REDIRECT_PREFIX + MY_ACCOUNT_DEPOSIT_PAYMENT + orderCode;
   }
-  
-  
+
+	/**
+	 * It triggers Deposit Request Event.
+	 * @param orderCode the order code
+	 */
+	private void triggerDepositRequestEvent(final String orderCode) {
+		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+			try {
+				blEspEventService.sendOrderDepositEvent(orderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Deposit Request Event", exception);
+			}
+	}
 
 
-  /**
+	/**
    * Checks if is parameters eligible.
    *
    * @param paymentInfoId the payment info id
@@ -934,5 +966,340 @@ public class BrainTreeAccountPageController extends AbstractPageController
   {
     return StringUtils.isNotBlank(depositTotal) && StringUtils.isNotBlank(paymentInfoId) && StringUtils.isNotBlank(paymentMethodNonce)
         && StringUtils.isNotBlank(orderCode);
+  }
+  
+  @GetMapping(value = "/{orderCode}/modifiedOrderPayment")
+  @RequireHardLogIn
+  public String getModifyOrderPaymentPage(@PathVariable(value = ORDER_CODE, required = false) final String orderCode, final Model model,
+      final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectAttributes)
+      throws CMSItemNotFoundException
+  {
+    try
+    {
+      final ContentPageModel modifiedOrderPaymentPage = getContentPageForLabelOrId(MODIFIED_ORDER_PAYMENT_CMS_PAGE);
+      storeCmsPageInModel(model, modifiedOrderPaymentPage);
+      setUpMetaDataForContentPage(model, modifiedOrderPaymentPage);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      if(CollectionUtils.isNotEmpty(order.getTempModifiedOrderAppliedGcList()))
+      {
+        Object enteredAmount = sessionService.getAttribute(orderCode + BraintreeaddonControllerConstants.AMOUNT_ENTERED);
+        if(enteredAmount instanceof PriceData)
+        {
+          final PriceData amountToPay = ((PriceData) enteredAmount);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT_ENTERED, amountToPay);
+          final BigDecimal remainingAmountToPay = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, amountToPay.getValue());
+          final PriceData remainingAmountToPayPriceData  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT_REMAINING, remainingAmountToPayPriceData);
+          final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+          order.getTempModifiedOrderAppliedGcList().forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
+          model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
+        }
+        model.addAttribute(BraintreeaddonControllerConstants.DISABLE_PAYMENT, true);        
+      }
+      else
+      {
+        model.addAttribute(BraintreeaddonControllerConstants.DISABLE_PAYMENT, false);
+        sessionService.removeAttribute(orderCode + BraintreeaddonControllerConstants.AMOUNT_ENTERED);
+      }
+      final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);      
+      model.addAttribute(ORDER_DATA, orderDetails);
+      setupAdditionalFields(model);
+      return getViewForPage(model);
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while redirecting to modified order payment page for order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.error.message"));
+    }
+    return REDIRECT_TO_ORDER_HISTORY_PAGE;
+  }
+  
+  private void addGCDetails(final AbstractOrderModel source, final List<BLGiftCardData> blGiftCardDataList, final GiftCardModel giftCardModel)
+  {
+    final BLGiftCardData blGiftCardData = new BLGiftCardData();
+      blGiftCardData.setCode(giftCardModel.getCode());
+      final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+      //rounding off double value to 2 decimal places
+      BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+      blGiftCardData.setRedeemamount(convertDoubleToPriceData(gcRedeemedAmount.doubleValue(), source));
+      blGiftCardData.setBalanceamount(convertDoubleToPriceData(giftCardModel.getBalance(), source));
+      blGiftCardDataList.add(blGiftCardData);
+  }
+  
+  @PostMapping(value = "/modified-order-cc-payment")
+  @RequireHardLogIn
+  public String doPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String orderCode = request.getParameter(ORDER_CODE);
+    final String paymentInfoId = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_ID);
+    final String paymentMethodNonce = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_NONCE);    
+    final String modifiedOrderAmount = request.getParameter(BraintreeaddonControllerConstants.DEPOSIT_ORDER_TOTAL);
+    try
+    {      
+      if (isParametersEligible(paymentInfoId, paymentMethodNonce, orderCode, modifiedOrderAmount))
+      {
+        boolean isSuccess = false;
+        final double newAmount = Double.parseDouble(modifiedOrderAmount);
+        BigDecimal remainingAmountToPay = BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+        final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+        final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
+        final List<GiftCardModel> tempModifiedOrderAppliedGcList = new ArrayList<>();
+        if (Objects.nonNull(order))
+        {
+          
+          if(CollectionUtils.isNotEmpty(order.getTempModifiedOrderAppliedGcList()))
+          {
+            remainingAmountToPay = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, remainingAmountToPay).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+            tempModifiedOrderAppliedGcList.addAll(order.getTempModifiedOrderAppliedGcList());
+          }          
+          final BrainTreePaymentInfoModel paymentInfo =
+              brainTreeCheckoutFacade.getModifyOrderPaymentInfoForCode((CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce, remainingAmountToPay.doubleValue());
+          if (Objects.nonNull(paymentInfo))
+          {
+            isSuccess = brainTreeTransactionService.doCapturePaymentForModifiedOrder(order, remainingAmountToPay, true, paymentInfo);
+          }
+        }
+        if (isSuccess)
+        {
+          blGiftCardFacade.commitAppliedGiftCard(order);
+          tempModifiedOrderAppliedGcList.forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
+          model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
+          final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+          final PriceData amount  = convertDoubleToPriceData(remainingAmountToPay.doubleValue(), order);
+          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, amount);
+          model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.CREDIT_CARD_PAYMENT_METHOD);
+          final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
+          storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
+          setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
+          return getViewForPage(model);
+        }
+        else
+        {
+          BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Modified Order : {} with Credit Card", orderCode);
+          GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+              getLocalizedString("text.account.modified.order.payment.cc.error.message"));
+          return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error while making Payment for Modified Order : {} with Credit Card", orderCode);
+      GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.cc.error.message"));
+    }
+    return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+  }
+  
+  @PostMapping(value = "/modified-order-po-payment")
+  @RequireHardLogIn
+  public String doPoPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String orderCode = request.getParameter(ORDER_CODE);
+    final String poNumber = request.getParameter(BraintreeaddonControllerConstants.PO_NUMBER);
+    final String poNote = request.getParameter(BraintreeaddonControllerConstants.PO_NOTE);
+    final String poAmount = request.getParameter(BraintreeaddonControllerConstants.PO_AMOUNT);
+    try
+    {  
+      boolean isSuccess = false;
+      final double newAmount = Double.parseDouble(poAmount);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      isSuccess = brainTreeTransactionService.doModifiedOrderPoPayment(order, poNumber, poNote, BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN));
+      if(isSuccess)
+      {
+        final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+        final PriceData amount  = convertDoubleToPriceData(newAmount, order);
+        model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+        model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, amount);
+        model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.PO_PAYMENT_METHOD);
+        final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
+        storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
+        setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
+        return getViewForPage(model);
+      }
+      else
+      {
+        BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error while making Payment for Modified Order : {} with PO", orderCode);
+        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+            getLocalizedString("text.account.modified.order.payment.po.error.message"));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while making payment with PO on modified order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.po.error.message"));
+    }
+    return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+  }
+  
+  @PostMapping(value = "/refund-remaining-payment")
+  @ResponseBody
+  public String getRemainingAmountToRefund(@RequestParam(value = ORDER_CODE) final String orderCode,
+      @RequestParam(value = "refundAmount") final String refundAmount,
+      final Model model, final HttpServletRequest request, final HttpServletResponse response)
+  {
+    try
+    {
+      final BigDecimal newAmount = BigDecimal.valueOf(Double.parseDouble(refundAmount)).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      final BigDecimal remainingAmountToRefund = brainTreeTransactionService.getRemainingAmountToRefund(order);
+      if(remainingAmountToRefund.compareTo(newAmount) <= 0)
+      {
+        return "Remaining Amount to Refund is : ".concat(String.valueOf(remainingAmountToRefund.doubleValue()));
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while getting remianing refund amount for order : {}", orderCode);
+    }
+    return "SUCCESS";
+  }
+  
+  @PostMapping(value = "/modified-order-refund-payment")
+  @RequireHardLogIn
+  public String doRefundForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+  {
+    final String refundAmount = request.getParameter(BraintreeaddonControllerConstants.REFUND_AMOUNT);
+    final String orderCode = request.getParameter(ORDER_CODE);
+    try
+    {
+      boolean isSuccess = false;
+      final double newAmount = Double.parseDouble(refundAmount);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      isSuccess = brainTreeTransactionService.initiateRefundProcess(order, BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN));
+      if(isSuccess)
+      {
+        final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+        final PriceData amount  = convertDoubleToPriceData(newAmount, order);
+        model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+        model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, amount);
+        model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.REFUND_PAYMENT);
+        final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
+        storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
+        setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
+        return getViewForPage(model);
+      }
+      else
+      {
+        BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while refunding for order : {} with ammount : {}", orderCode, refundAmount);
+        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+            getLocalizedString("text.account.modified.order.payment.refund.error.message"));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while refunding for order : {} with ammount : {}", orderCode, refundAmount);
+      GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.refund.error.message"));
+    }
+    return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+  }
+  
+  @PostMapping(value = "/modified-order-gc-payment")
+  @RequireHardLogIn
+  public String doGCPaymentForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+  {
+    final String gcCode = request.getParameter(BraintreeaddonControllerConstants.GC_CODE);
+    final String refundAmount = request.getParameter(BraintreeaddonControllerConstants.PAYMENT_AMOUNT);
+    final String orderCode = request.getParameter(ORDER_CODE);
+    try
+    {
+      boolean isSuccess = false;
+      final double newAmount = Double.parseDouble(refundAmount);
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      final Locale locale = getI18nService().getCurrentLocale();
+      final BigDecimal amountToPay = BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
+      final PriceData amount  = convertDoubleToPriceData(newAmount, order);
+      sessionService.setAttribute(order.getCode() + BraintreeaddonControllerConstants.AMOUNT_ENTERED, amount);
+      if(blGiftCardFacade.isGcAlreadyApplied(gcCode, order))
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.already.msg", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final BigDecimal remainingBalance = blGiftCardFacade.isModifiedAmountIsFullyPaid(order, amountToPay);
+      if(remainingBalance.compareTo(BigDecimal.valueOf(0.0d)) <= 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(gcCode);
+      if(Objects.isNull(giftCardModel))
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      if(giftCardModel.getEndDate().compareTo(new Date()) < 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.expire", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      final double gcBlance = blGiftCardFacade.getGcRemainingBalanace(giftCardModel);
+      if(gcBlance <= 0)
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.cart.insufficient.balance",new Object[]
+            {gcCode}, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      if(blGiftCardFacade.applyGiftCardForModifiedOrderPayment(gcCode, order, amountToPay))
+      {
+        modelService.refresh(giftCardModel);
+        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+        final BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.success", new Object[]
+            {gcRedeemedAmount.abs().doubleValue()}, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+      else
+      {
+        redirectModel.addFlashAttribute(BlCoreConstants.COUPON_APPLIED_MSG, getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+        return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while making payment wiht Gift Card for Order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.gc.error.message"));
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH; 
+    }
+  }
+  
+  @PostMapping(value = "/modified-order-remove-gc-payment")
+  @RequireHardLogIn
+  public String doGCRemoveForModifiedOrder(final Model model, final HttpServletRequest request, final HttpServletResponse response,
+      final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+  {
+    final String gcCode = request.getParameter(BraintreeaddonControllerConstants.GC_CODE);
+    final String orderCode = request.getParameter(ORDER_CODE);
+    try
+    {
+      final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+      blGiftCardFacade.removeGiftCardForModifiedOrder(gcCode, order);
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH;
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error occurred while removing Gift Card for Order : {}", orderCode);
+      GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
+          getLocalizedString("text.account.modified.order.payment.gc.error.message"));
+      return REDIRECT_TO_MODIFIED_ORDER_PAYMENT_PAGE + orderCode + MODIFIED_ORDER_PAYMET_PATH; 
+    }    
+    
   }
 }

@@ -6,6 +6,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.order.BlOrderService;
@@ -52,6 +53,9 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private AllocationService allocationService;
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
   private BlOrderService blOrderService;
+
+
+  private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * {@inheritDoc}
@@ -102,6 +106,13 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
           setOrderToManualReviewStatus(order);
         } else {
         getModelService().save(order);
+        }
+        // To call the order confirmation Order ESP event
+
+        try {
+          getDefaultBlESPEventService().sendOrderConfirmation(order);
+        }  catch (final Exception ex) {
+          BlLogger.logMessage(LOG , Level.ERROR , "Error while executing order confimration ESP Event");
         }
 
       } catch (final AmbiguousIdentifierException ex) {
@@ -352,4 +363,17 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   public void setBlOrderService(final BlOrderService blOrderService) {
     this.blOrderService = blOrderService;
   }
+
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
+
+
+
 }

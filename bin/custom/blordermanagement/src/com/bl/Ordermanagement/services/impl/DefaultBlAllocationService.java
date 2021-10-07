@@ -11,6 +11,7 @@ import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
@@ -138,7 +139,16 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
 
-      if (BooleanUtils.isTrue(order.getIsRentalCart()) || !isInternalTransferOder(order)) {
+      //update order notes
+      setConsignmentsInNotes(order, consignment);
+
+      //for internal transfer orders, saving and returning consignment without checking availability
+      if (isInternalTransferOder(order)) {
+        this.getModelService().save(consignment);
+        return consignment;
+      }
+
+      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
         if (null != result.getSerialProductMap()) {
@@ -213,6 +223,30 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   private boolean isInternalTransferOder(final AbstractOrderModel orderModel) {
 
     return orderModel.getInternalTransferOrder();
+  }
+
+  /**
+   * Update consignment in order notes.
+   *
+   * @param abstractOrderModel - the order model
+   * @param consignmentModel      - newly created consignment
+   */
+  private void setConsignmentsInNotes(final AbstractOrderModel abstractOrderModel,
+      final ConsignmentModel consignmentModel) {
+
+    final List<NotesModel> orderNotesFromOrder = abstractOrderModel.getOrderNotes();
+    if (CollectionUtils.isNotEmpty(orderNotesFromOrder)) {
+
+      orderNotesFromOrder.forEach(orderNote -> {
+        final Set<ConsignmentModel> orderNoteConsignments = new HashSet<>(
+            orderNote.getConsignment());
+        orderNoteConsignments.add(consignmentModel);
+        orderNote.setConsignment(orderNoteConsignments);
+      });
+      this.getModelService().saveAll(orderNotesFromOrder);
+
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment is set in to Order Notes");
+    }
   }
 
   /**

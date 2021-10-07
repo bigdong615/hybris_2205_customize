@@ -1,5 +1,6 @@
 package com.bl.core.product.service.impl;
 
+import com.bl.core.utils.BlDateTimeUtils;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -159,8 +160,11 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 	 */
 	@Override
 	public void updateStockForCancelledProduct(final BlProductModel serialProduct, final Date optimizedShippingStartDate,
-			final Date optimizedShippingEndDate)
+			Date optimizedShippingEndDate)
 	{
+        if(null == optimizedShippingEndDate) {
+            optimizedShippingEndDate = BlDateTimeUtils.getNextYearsSameDay();
+        }
 		final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao
 				.findSerialStockLevelForDate(serialProduct.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
 		if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
@@ -168,6 +172,7 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 			findSerialStockLevelForDate.forEach(stockLevel -> {
 				stockLevel.setHardAssigned(false);
 				stockLevel.setReservedStatus(false);
+				stockLevel.setOrder(null);
 				((BlSerialProductModel) serialProduct).setHardAssigned(false); // NOSONAR
 				getModelService().save(stockLevel);
 				getModelService().save(serialProduct);

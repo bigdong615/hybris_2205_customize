@@ -35,6 +35,8 @@
         <collectiontype code="InventoryCycleCountSkipDays" elementtype="java.util.Date" type="list"/>
 
         <collectiontype code="InventoryCycleCountProducts" elementtype="BlInventoryCycleCountDetails" type="list"/>
+        
+        <collectiontype code="ModifiedOrderGCPaymentList" elementtype="GiftCard" type="list"/>
 
     </collectiontypes>
 
@@ -281,6 +283,7 @@
       	<value code="RECEIVED_READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
         <value code="RECEIVED_READY_FOR_PICKUP"/>
+        <value code="PARTIALLY_SHIPPED" />
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
@@ -2822,6 +2825,52 @@
                         <persistence type="property"/>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                  </attribute>
+                 <attribute qualifier="modifiedOrderPoAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true"/>
+                        <description>Total deposit amount of order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                 </attribute>
+                 <attribute qualifier="modifiedOrderPoNumber" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO number used as payment method</description>
+                    </attribute>
+                    <attribute qualifier="modifiedOrderPoNotes" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO Notes</description>
+                    </attribute>
+                    <attribute qualifier="modifiedOrderAppliedGcList" type="ModifiedOrderGCPaymentList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>List of Applied GC for modified order</description>
+                    </attribute>
+                    <attribute qualifier="tempModifiedOrderAppliedGcList" type="ModifiedOrderGCPaymentList">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>List of Applied GC for modified order which will be used as a teporary holder.</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 

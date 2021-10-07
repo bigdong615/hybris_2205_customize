@@ -1590,7 +1590,7 @@
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.shipaction" property="currentObject"/>
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.confirmpickupaction"
                           property="currentObject"/>
-                <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.reallocateaction" property="currentObject"/>
+                <y:action action-id="custom.bl.widgets.actions.blreallocateaction" property="currentObject"/>
             </y:group>
         </y:actions>
     </context>
