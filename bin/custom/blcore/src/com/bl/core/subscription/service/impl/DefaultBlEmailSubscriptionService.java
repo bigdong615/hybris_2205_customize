@@ -50,19 +50,25 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	 */
 	private void persistContact(final ContactResponseWrapper contactResponseWrapper) {
 
-		final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
-				.create(BlStoredEmailSubscriptionModel.class);
-		emailSubscriptionModel.setContactId(null != contactResponseWrapper.getContactID() ? String
-				.valueOf(contactResponseWrapper.getContactID()) : BlCoreConstants.EMPTY_STRING);
-		emailSubscriptionModel.setContactKey(contactResponseWrapper.getContactKey());
-		emailSubscriptionModel.setStatusCode(contactResponseWrapper.getOperationStatus());
-		emailSubscriptionModel.setRequestString(contactResponseWrapper.getRequestString());
-		emailSubscriptionModel.setResponseString(contactResponseWrapper.getResponseString());
+		if (null != contactResponseWrapper) {
 
-		getModelService().save(emailSubscriptionModel);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-				"Email contact saved for subscription with id {} and with key {}",
-				contactResponseWrapper.getContactID(), contactResponseWrapper.getContactKey());
+			final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
+					.create(BlStoredEmailSubscriptionModel.class);
+			emailSubscriptionModel.setContactId(null != contactResponseWrapper.getContactID() ? String
+					.valueOf(contactResponseWrapper.getContactID()) : BlCoreConstants.EMPTY_STRING);
+			emailSubscriptionModel.setContactKey(contactResponseWrapper.getContactKey());
+			emailSubscriptionModel.setStatusCode(contactResponseWrapper.getOperationStatus());
+			emailSubscriptionModel.setRequestString(contactResponseWrapper.getRequestString());
+			emailSubscriptionModel.setResponseString(contactResponseWrapper.getResponseString());
+
+			getModelService().save(emailSubscriptionModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Email contact saved for subscription with id {} and with key {}",
+					contactResponseWrapper.getContactID(), contactResponseWrapper.getContactKey());
+		} else {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Email contact can not be saved for subscription");
+		}
 	}
 
 	public ModelService getModelService()
