@@ -179,7 +179,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	 */
 	@Override
 	public PriceValue getDynamicPriceForBundle(
-			final ProductModel product, AbstractOrderModel abstractOrder) throws CalculationException {
+			final ProductModel product, final AbstractOrderModel abstractOrder) throws CalculationException {
 		if (abstractOrder != null && abstractOrder.getRentalStartDate() != null) {
 			Long rentalDays = BlDateTimeUtils
 					.getDaysBetweenDates(abstractOrder.getRentalStartDate(), abstractOrder.getRentalEndDate())

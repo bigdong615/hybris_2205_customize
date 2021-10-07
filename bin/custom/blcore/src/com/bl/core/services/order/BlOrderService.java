@@ -58,5 +58,5 @@ public interface BlOrderService {
    */
   public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel);
 
-  public void createAllEntryForBundleProduct(AbstractOrderEntryModel entryModel);
+  public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel);
 }

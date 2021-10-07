@@ -99,5 +99,5 @@ public interface BlCommercePriceService extends CommercePriceService
 	 * @throws CalculationException exception
 	 */
 	public PriceValue  getDynamicPriceForBundle(
-			final ProductModel product,AbstractOrderModel order) throws CalculationException;
+			final ProductModel product,final AbstractOrderModel order) throws CalculationException;
 }
