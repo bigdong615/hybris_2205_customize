@@ -143,7 +143,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				final ProductModel target = productReferenceModel.getTarget();
 				 BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
 				if(baseStoreModel == null){
-					baseStoreModel =getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);;
+					baseStoreModel =getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 				}
 				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
 				if (CollectionUtils.isNotEmpty(prices))
