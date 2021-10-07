@@ -162,7 +162,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	{
 		if (Objects.nonNull(order))
 		{
-			order.setStatus(OrderStatus.MANUAL_REVIEW);
+			order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW", order.getCode());
