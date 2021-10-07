@@ -38,6 +38,8 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
+
+import com.bl.core.services.blackout.BlBlackoutDateService;
 import com.bl.core.services.cart.BlCartService;
 import java.math.BigDecimal;
 import java.util.*;
@@ -67,6 +69,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public static final String REDIRECT_PREFIX = "redirect:";
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 	public static final String REVIEW_SUMMARY_PAGE = "reviewSummaryPage";
+	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -97,6 +100,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
 	
+	@Resource(name = "blBlackoutDateService")
+  private BlBlackoutDateService blBlackoutDateService;
+	
 	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -110,7 +116,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
-		
+	  final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+    if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
+    {
+      return REDIRECT_CART_URL;
+    }
 		final boolean isCustomerHasUnPaidBillOrders =  brainTreeCheckoutFacade.isCustomerHasUnPaidBillOrders();
 		model.addAttribute("isCustomerHasUnPaidBillOrders", isCustomerHasUnPaidBillOrders);
 		model.addAttribute("pageType", REVIEW_SUMMARY_PAGE);
@@ -208,7 +218,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 
-		
+	  final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+    if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
+    {
+      return REDIRECT_CART_URL;
+    }
 		updateGiftCardPurchaseForm(request);
 		final CartModel cartModel = blCartService.getSessionCart();
 		double priceBeforeRecalculateGiftCard = cartModel.getTotalPrice();
@@ -304,12 +318,18 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	private void subscribeEmailForNewsLetters(
 			@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm,
 			final CCPaymentInfoData paymentInfo, final OrderData orderData) {
-		if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
-			if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
-				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
-			} else {
-				blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+
+		try {
+			if (paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+				if (StringUtils.isNotEmpty(paymentInfo.getBillingAddress().getEmail())) {
+					blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+				} else {
+					blEmailSubscriptionFacade.subscribe(orderData.getUser().getUid());
+				}
 			}
+		} catch (Exception ex) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error occurred while subscribing the email in ESP", ex);
 		}
 	}
 
