@@ -93,7 +93,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   }
 
   /**
-   * This method will mark the order as manual review when some of the products can not be sourced.
+   * This method will mark the order as RECEIVED_MANUAL_REVIEW when some of the products can not be sourced.
    *
    * @param sourcingContext the sourcingContext
    */
