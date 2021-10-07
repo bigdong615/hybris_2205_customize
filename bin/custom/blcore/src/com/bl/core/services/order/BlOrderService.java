@@ -43,7 +43,7 @@ public interface BlOrderService {
    * @return returning created entry.
    */
   AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
-      final OrderModel orderModel,
+      final AbstractOrderModel orderModel,
       final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber);
   
   /**
@@ -57,4 +57,6 @@ public interface BlOrderService {
    * @param orderModel order
    */
   public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel);
+
+  public void createAllEntryForBundleProduct(AbstractOrderEntryModel entryModel);
 }

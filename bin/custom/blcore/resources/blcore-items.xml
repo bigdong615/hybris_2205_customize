@@ -2268,6 +2268,12 @@
               <description>The number of quantity remained un-allocated during sourcing and allocation</description>
             </attribute>
             <!-- BL-1189:created bundle order entry related specific attribute.-->
+            <attribute qualifier="entryCreated" type="boolean">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+              <description>flag to identify if the entry is created or not</description>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+            </attribute>
             <attribute qualifier="bundleEntry" type="boolean">
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
