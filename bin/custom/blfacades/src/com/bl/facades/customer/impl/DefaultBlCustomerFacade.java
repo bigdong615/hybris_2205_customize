@@ -54,7 +54,8 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     @Override
     public void setCommonPropertiesForRegister(final RegisterData registerData, final CustomerModel customerModel)
     {
-        customerModel.setName(BlFacadesConstants.CUSTOMER);
+    	//commented as default name not to set as Customer
+        //customerModel.setName(BlFacadesConstants.CUSTOMER);
         setUidForRegister(registerData, customerModel);
         customerModel.setSessionLanguage(getCommonI18NService().getCurrentLanguage());
         customerModel.setSessionCurrency(getCommonI18NService().getCurrentCurrency());

@@ -28,7 +28,7 @@
 		<%=HybrisDataConverter.getHomeScript()%>
 	</c:when>
 	
-	<c:when test="${currentPageType == 'productsearch'}">>
+	<c:when test="${currentPageType == 'productsearch'}">
 		<%=HybrisDataConverter.getSearchPageScript()%>
 	</c:when>
 	
