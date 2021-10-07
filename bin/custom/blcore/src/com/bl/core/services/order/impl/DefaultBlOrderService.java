@@ -263,7 +263,7 @@ public class DefaultBlOrderService implements BlOrderService {
 	}
 
 	@Override
-	public void createAllEntryForBundleProduct(AbstractOrderEntryModel entryModel){
+	public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel){
 		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
 		orderEntryModelList.addAll(entryModel.getOrder().getEntries());
 		final AtomicInteger entryNumber = new AtomicInteger(entryModel.getOrder().getEntries().size());
