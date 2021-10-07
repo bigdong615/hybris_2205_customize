@@ -328,7 +328,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		if (abstractOrderModel instanceof OrderModel && BooleanUtils
 				.isTrue(getDefaultBlUserService().isTechEngUser()) && interceptorContext
 				.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
-			List<NotesModel> modifiedOrderNotes = abstractOrderModel.getOrderNotes();
+			List<NotesModel> modifiedOrderNotes = Lists.newArrayList(abstractOrderModel.getOrderNotes());
 			List<Object> previousChangedOrderNotesList = getPreviousChangedOrderNotesList(
 					abstractOrderModel);
 			if (CollectionUtils.isNotEmpty(previousChangedOrderNotesList)) {
