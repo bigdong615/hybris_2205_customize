@@ -217,7 +217,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
 
     if(BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse()) && abstractOrderModel.getStatus().getCode().equalsIgnoreCase(
-        OrderStatus.UNBOXED.getCode())) {
+        OrderStatus.UNBOXED_COMPLETELY.getCode())) {
       orderStatus.set(BlFacadesConstants.RETURNED);
     }
 

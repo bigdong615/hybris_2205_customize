@@ -222,7 +222,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
    */
   private void triggerEspPaymentDeclined(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
-    if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS) && abstractOrderModel instanceof OrderModel && OrderStatus.PAYMENT_DECLINED.equals(abstractOrderModel.getStatus())) {
+    if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS) && abstractOrderModel instanceof OrderModel && OrderStatus.RECEIVED_PAYMENT_DECLINED.equals(abstractOrderModel.getStatus())) {
       try
       {
         getBlEspEventService().sendOrderPaymentDeclinedEvent(((OrderModel) abstractOrderModel));
@@ -285,7 +285,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
      */
   private void triggerEspVerificationRequired(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) {
-    if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.INVERIFICATION) && interceptorContext
+    if (abstractOrderModel.getStatus() != null && abstractOrderModel.getStatus().equals(OrderStatus.RECEIVED_IN_VERIFICATION) && interceptorContext
         .isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
       try
       {

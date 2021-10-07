@@ -68,7 +68,7 @@ public class CreatePackageScanAction extends AbstractComponentWidgetAdapterAware
 		{
 			final OrderStatus status = consignment.getOrder().getStatus();
 			if (status.equals(OrderStatus.CHECKED_INVALID)
-					|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED) || status.equals(OrderStatus.PAYMENT_DECLINED))
+					|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED) || status.equals(OrderStatus.RECEIVED_PAYMENT_DECLINED))
 			{
 				return false;
 			}
