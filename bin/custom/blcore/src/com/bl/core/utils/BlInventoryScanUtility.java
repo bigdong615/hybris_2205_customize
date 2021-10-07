@@ -207,6 +207,7 @@ public final class BlInventoryScanUtility
 	{
 		final List<String> shippingAllowedLocation = new ArrayList<>();
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BOXING_WORKSTATION);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
