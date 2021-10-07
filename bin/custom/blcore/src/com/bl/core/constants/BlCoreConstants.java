@@ -29,8 +29,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BRANDS = "Brands";
 
 	public static final String COUPON_APPLIED_MSG = "coupon_applied_msg";
-
-
+	public static final String RECEIVED = "Received";
+	public static final String PO = "PO";
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE = "blPageType";
@@ -401,6 +401,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";
 	public static final String ORDER_PICKEDUP_EVENT_TEMPLATE = "order.pickedup.event.template";
 
+
+	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
+	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";
@@ -455,6 +459,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
   public static final String GIFT_CARD_ORDER = "Gift Card";
 	public static final String NEW_GEAR_ORDER = "New Gear";
+
+	public static final String TECH_ENG_USER_GROUP  = "techEngusergroup";
+
+	public static final String PAY_PAL_PROVIDER  = "BrainTreePayPalExpress";
+	public static final String PAY_PAL = "Paypal";
 
 	private BlCoreConstants()
 	{

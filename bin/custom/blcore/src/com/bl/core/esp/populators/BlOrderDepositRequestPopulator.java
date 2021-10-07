@@ -85,6 +85,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
       data.setCustomername(getRequestValue(userModel.getName()));
     }
     data.setVerificationlevel(1);
+    data.setVerificationtext(StringUtils.EMPTY);
     final List<PaymentTransactionModel> paymentTransactionModelList = orderModel.getDepositPaymentTransactions();
     if(Objects.nonNull(paymentTransactionModelList)){
       final BigDecimal depositAmount = paymentTransactionModelList.get(paymentTransactionModelList.size()-1).getPlannedAmount().setScale(2, RoundingMode.HALF_DOWN);

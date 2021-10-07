@@ -50,6 +50,26 @@ public interface BraintreeaddonControllerConstants
     public static final String PAYMENT_ID = "paymentId";
     public static final String PAYMENT_NONCE = "paymentNonce";
     public static final String DEPOSIT_ORDER_TOTAL = "depositOrderTotal";
+    
+    public static final String AMOUNT = "amount";
+    public static final String MODIFIED_ORDER_PAYMENT_METHOD = "modifiedOrderPaymentMethod";
+    public static final String CREDIT_CARD_PAYMENT_METHOD = "creditCard";
+    public static final String PAYPAL_PAYMENT_METHOD = "payPal";
+    public static final String PO_PAYMENT_METHOD = "poPayment";
+    public static final String REFUND_PAYMENT = "refundPayment";
+    public static final String GIFT_CARD_PAYMENT_METHOD = "giftCard";
+    public static final String PO_NUMBER = "poNumber";
+    public static final String PO_NOTE = "poNote";
+    public static final String PO_AMOUNT = "poAmount";
+    public static final String MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE = "modified-order-payment-success";
+    
+    public static final String AMOUNT_ENTERED = "amount_entered";
+    public static final String AMOUNT_REMAINING = "amount_remaining";
+    public static final String APPLIED_GC_LIST = "appliedGcList";
+    public static final String DISABLE_PAYMENT = "disablePayment";
+    public static final String REFUND_AMOUNT = "refundAmount";
+    public static final String GC_CODE = "gcCode";
+    public static final String PAYMENT_AMOUNT = "paymentAmount";
 
     interface Views
     {

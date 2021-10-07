@@ -125,8 +125,8 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
 				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, "Mon-Fri: 8:00 AM - 6:00 PM Sat: 10:00 AM - 5:00 PM Sun: Closed");
-				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, "In the Safeway Shopping Center");
+				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+				createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
 				final Transformer transformer = getTransformerFactoryObject();
 				final StringWriter writer = new StringWriter();

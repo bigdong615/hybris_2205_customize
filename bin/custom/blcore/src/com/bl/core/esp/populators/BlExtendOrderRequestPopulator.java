@@ -77,7 +77,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
     data.setDateplaced(formatter.format(orderModel.getDate()));
     data.setItemcost(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel)));
-    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getDepositAmountTotal()));
+    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
     data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
     data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
     data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
