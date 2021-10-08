@@ -584,11 +584,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     - this.getOrderModel().getGiftCardAmount());
             if (refundedAmount < otherPayment) {
                 this.doFullRefundCalculations(captureEntry, this.getTotalRefundAmount(), refundedAmount, otherPayment);
-            } else {
+            } else if(null != this.cancelOrder()) {
                 this.logAmountForGiftCardTransactions(this.getTotalRefundAmount());
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), this.getTotalRefundAmount());
                 this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED +
                         BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT + this.getTwoDecimalDoubleValue(this.getTotalRefundAmount()));
+            } else {
+                this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
+                this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
             }
         } else {
             this.partialRefund(this.cancelAndRefundEntries, captureEntry);

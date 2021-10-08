@@ -22,7 +22,7 @@ INSERT_UPDATE BlPickUpZoneDeliveryMode; code[unique = 'true']                ; s
 
 
 
-INSERT_UPDATE Address   ;&addrID            ; url											; streetname                   	   ; postalcode[unique=true]; town[unique=true]; region(isocodeShort)  	; country(isocode)  ; owner(PointOfService.name)[unique=true] ; openingDaysDetails[key2value-delimiter = ->][map-delimiter = :] ; phone1 			; email
+INSERT_UPDATE Address   ;&addrID            ; url											; streetname                   	   ; postalcode[unique=true]; town[unique=true]; region(isocodeShort)  	; country(isocode)  ; owner(PointOfService.name)[unique=true] ; openingDaysDetails[key2value-delimiter = ->][map-delimiter = :] ; phone1 			; email ; addressType(code)[default='BUSINESS']
 						;BL_SAN_CARLOS_ADDR ; https://goo.gl/maps/EnKsZ4QxNfN1kXvS7			; 1664 Industrial Rd		   	   ; 94070 				 	; San Carlos	   ; CA			  			; US   				; BL SAN CARLOS POS	                      ; M-F -> 9am-2pm : Sat -> Closed : Sun -> Closed  				; (844)853-6737		; borrowlenses.com
 						;BL_WALTHAM_ADDR    ; https://g.page/BorrowLenses-Waltham?share 	; 425 Waverley Oaks Rd Suite 208   ; 02452 				 	; Waltham          ; MA              		; US   				; BL WALTHAM POS                          ; M-F -> 9am-2pm : Sat -> Closed : Sun -> Closed  				; +1 844 853 6737	; borrowlenses.com
 						;FOTO_EXPRESS_ADDR  ; https://goo.gl/maps/vj3z1Au6E9DkhuHb6			; 304 E Santa Clara St             ; 95112 				 	; San Jose         ; CA              		; US   				; FOTO EXPRESS POS                        ; M-F -> 9am-2pm : Sat -> Closed : Sun -> Closed  				; 					;
