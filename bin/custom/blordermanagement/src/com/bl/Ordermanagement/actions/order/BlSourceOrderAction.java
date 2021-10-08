@@ -82,7 +82,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
       setOrderToManualReviewStatus(order);
       BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), ex,
-          " Changing order status to MANUAL_REVIEW for order code {}", order.getCode());
+          " Changing order status to RECEIVED_MANUAL_REVIEW for order code {}", order.getCode());
     } catch (final Exception e) {
 
       setOrderSuspendedStatus(order);
@@ -126,7 +126,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
         setOrderToManualReviewStatus(order);
         BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
-            " Changing order status to MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
+            " Changing order status to RECEIVED_MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
       } catch (final BlShippingOptimizationException soe) {
 
         setOrderSuspendedStatus(order);
@@ -290,7 +290,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   }
 
   /**
-   * Set order status to MANUAL_REVIEW.
+   * Set order status to RECEIVED_MANUAL_REVIEW.
    *
    * @param order - order
    */
