@@ -2729,6 +2729,7 @@
 			<list-view:column qualifier="parentLocationCode"/>
 			<list-view:column qualifier="locationCode"/>
 			<list-view:column qualifier="shippingMethod"/>
+			<list-view:column qualifier="orderReturnDate"/>
 		</list-view:list-view>
 	</context>
 

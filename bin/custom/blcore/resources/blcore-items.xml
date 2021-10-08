@@ -5096,7 +5096,7 @@ new Integer(8)
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod, {order:rentalEndDate} as orderReturnDate FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -5321,6 +5321,22 @@ new Integer(8)
           <property name="position">
             <value>
               new Integer(8)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="orderReturnDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(12)
             </value>
           </property>
         </custom-properties>
