@@ -20,7 +20,6 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -93,7 +92,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   /**
    * It processed the orders day wise
    * @param currentDate the date
-   * @param isPresentDay
+   * @param isPresentDay is present day
    */
   public void processOrdersByDay(final Date currentDate, final boolean isPresentDay) {
     final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
