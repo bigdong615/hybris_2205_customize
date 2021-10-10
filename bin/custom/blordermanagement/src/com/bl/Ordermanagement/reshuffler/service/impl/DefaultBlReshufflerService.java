@@ -15,7 +15,6 @@ import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
