@@ -36,7 +36,8 @@ public class BlReshufflerJob extends AbstractJobPerformable<CronJobModel>
 		}
 		catch (final Exception ex)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob {} ", ex);
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob {} ", ex.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob", ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);

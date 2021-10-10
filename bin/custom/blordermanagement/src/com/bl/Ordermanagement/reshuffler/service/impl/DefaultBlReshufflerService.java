@@ -15,6 +15,7 @@ import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -150,7 +151,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         } catch (final Exception ex) {
           BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred while fulfilling the order {} through BlReshufflerJob {} ",
               entry.getKey().getCode(), ex);
-          ex.printStackTrace();
+          BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while fulfilling the order", ex);
         } finally {
           if(fulfillmentCompleted){
             tx.commit();
