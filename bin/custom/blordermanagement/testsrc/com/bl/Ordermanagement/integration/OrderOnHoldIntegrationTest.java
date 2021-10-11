@@ -78,7 +78,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//When put order on hold
 		sourcingUtil.moveOrderProcess(order, orderProcessModel, PUT_ON_HOLD_CHOICE);
@@ -115,7 +115,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 4);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 		declineEntryInfo.put(consignmentResult.getConsignmentEntries().stream().findFirst().get(), 1L);
 		declineUtil.autoDeclineDefaultConsignment(consignmentResult, declineEntryInfo, orderProcessModel, DeclineReason.TOOBUSY);
@@ -164,7 +164,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		// Given create the order and cancel it partially
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		cancellationEntryInfo.put(order.getEntries().stream().findFirst().get(), 1L);
 		cancellationUtil.cancelOrder(order, cancellationEntryInfo, CancelReason.LATEDELIVERY);
@@ -216,7 +216,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		// Given create the order and put it on hold
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		sourcingUtil.moveOrderProcess(order, orderProcessModel, PUT_ON_HOLD_CHOICE);
 
 		//When resource the on hold order
@@ -227,7 +227,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		assertEquals(order.getConsignments().size(), 2);
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.READY)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 		assertTrue(verifyOrderAndConsignment
 				.verifyConsignment_Camera(order, CODE_MONTREAL, Long.valueOf(0L), CAMERA_QTY, Long.valueOf(3L)).booleanValue());
 
@@ -253,7 +253,7 @@ public class OrderOnHoldIntegrationTest extends BaseAcceleratorSourcingIntegrati
 		// Given create the order and put it on hold
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		sourcingUtil.moveOrderProcess(order, orderProcessModel, PUT_ON_HOLD_CHOICE);
 
 		//When cancel the on hold order

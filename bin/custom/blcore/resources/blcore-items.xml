@@ -259,6 +259,7 @@
       		<value code="SOLD_SHIPPED"/>
       		<value code="SOLD_RMA_CREATED"/>
       		<value code="RECEIVED_READY_FOR_PICKUP" />
+        <value code="RECEIVED" />
         </enumtype>
       
       

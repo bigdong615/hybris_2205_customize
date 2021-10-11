@@ -78,7 +78,7 @@ public class SourceOrderAction extends AbstractProceduralAction<OrderProcessMode
 					.createConsignments(process.getOrder(), "cons" + process.getOrder().getCode(), results);
 			LOGGER.debug("Number of consignments created during allocation: {}", consignments.size());
 			startConsignmentSubProcess(consignments, process);
-			order.setStatus(OrderStatus.READY);
+			order.setStatus(OrderStatus.RECEIVED);
 
 			partialFulfillment = order.getEntries().stream()
 					.anyMatch(orderEntry -> ((OrderEntryModel) orderEntry).getQuantityUnallocated().longValue() > 0);
