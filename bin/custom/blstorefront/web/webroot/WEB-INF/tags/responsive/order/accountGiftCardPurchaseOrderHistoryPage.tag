@@ -33,7 +33,7 @@
 						</p>
 					</div>
 					<c:choose>
-					<c:when test="${orderData.status eq 'INVERIFICATION'}">
+					<c:when test="${orderData.status eq 'RECEIVED_IN_VERIFICATION'}">
 					<spring:theme code="type.orderstatus.${orderData.status}.name" var="orderStatus"/>
 					</c:when>
 					<c:otherwise>

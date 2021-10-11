@@ -104,18 +104,27 @@ public class DefaultBlOrderService implements BlOrderService {
   private void doChangeOrderStatusForSingleStatus(final AbstractOrderModel order,
 			final HashSet<ConsignmentStatus> itemStatuses)
 	{
-		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
-
-		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.PARTIALLY_UNBOXED,
-				OrderStatus.UNBOXED,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
+	  	String consignmentStatus = itemStatuses.iterator().next().toString();
+		 
+		if(consignmentStatus.equals(ConsignmentStatus.UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_COMPLETELY.toString();
+		}
+		if(consignmentStatus.equals(ConsignmentStatus.PARTIALLY_UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_PARTIALLY.toString();
+		}
+		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.UNBOXED_PARTIALLY,
+				OrderStatus.UNBOXED_COMPLETELY,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS);
-		statusToCheck.forEach(status -> {
-			if(status.toString().equals(consignmentStatus.toString()))
+		for(final OrderStatus status : statusToCheck)
+		{
+			if(status.toString().equals(consignmentStatus))
 			{
 				changeStatusOnOrder(order, status);
-				return;
+				break;
 			}
-		});
+		}
 	}
   
   /**
@@ -147,7 +156,7 @@ public class DefaultBlOrderService implements BlOrderService {
 		}
 		else if(itemStatuses.contains(ConsignmentStatus.PARTIALLY_UNBOXED))
 		{
-			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED);
+			changeStatusOnOrder(order, OrderStatus.UNBOXED_PARTIALLY);
 		}
 	}
 	
@@ -169,7 +178,7 @@ public class DefaultBlOrderService implements BlOrderService {
 					orderStatus,order.getCode());
 
 			// To call Order Unboxed ESP event service
-			if(OrderStatus.UNBOXED.equals(orderStatus)) {
+			if(OrderStatus.UNBOXED_COMPLETELY.equals(orderStatus)) {
 				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
 			}
 		}
@@ -213,9 +222,9 @@ public class DefaultBlOrderService implements BlOrderService {
 	 */
 	@Override
 	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
-			final OrderModel orderModel,
+			final AbstractOrderModel orderModel,
 			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
-		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,StringUtils.EMPTY,
 				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
 				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
 		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
@@ -250,6 +259,9 @@ public class DefaultBlOrderService implements BlOrderService {
 					orderEntryModelList.add(newEntryModel);
 					entryNumber.getAndIncrement();
 				});
+				existingEntry.setEntryCreated(Boolean.TRUE);
+				existingEntry.setBundleProductCode(existingEntry.getProduct().getCode());
+				getModelService().save(existingEntry);
 			}
 		});
 		orderModel.setEntries(orderEntryModelList);
@@ -257,6 +269,28 @@ public class DefaultBlOrderService implements BlOrderService {
 			orderModel.setCalculated(Boolean.TRUE);
 		}
 		getModelService().save(orderModel);
+	}
+
+	@Override
+	public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel){
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(entryModel.getOrder().getEntries());
+		final AtomicInteger entryNumber = new AtomicInteger(entryModel.getOrder().getEntries().size());
+		final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(entryModel);
+		productReferenceModels.forEach(productReferenceModel -> {
+			final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, entryModel.getOrder(), entryModel,entryNumber);
+			orderEntryModelList.add(newEntryModel);
+			entryNumber.getAndIncrement();
+		});
+		entryModel.setEntryCreated(Boolean.TRUE);
+		entryModel.setBundleProductCode(entryModel.getProduct().getCode());
+		getModelService().save(entryModel);
+		entryModel.getOrder().setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(entryModel.getOrder().getCalculated())){
+			entryModel.getOrder().setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(entryModel.getOrder());
+		getModelService().refresh(entryModel.getOrder());
 	}
   public BlProductService getProductService() {
     return productService;

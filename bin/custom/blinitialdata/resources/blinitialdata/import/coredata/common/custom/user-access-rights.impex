@@ -124,6 +124,7 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
 
 
           ;                           ;                ;          ; Order                          ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.code                     ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Order.orderNotes               ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes                          ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Notes.note                     ; +    ; +      ; -      ; -      ; -
@@ -161,6 +162,7 @@ Type      ; UID                      ; MemberOfGroups ; Password ; Target       
 UserGroup ; customersupportagentrole  ;                ;          ;                  ;      ;        ;        ;        ;
 
           ;                           ;                ;          ; Order            ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.code       ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes            ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
@@ -205,6 +207,7 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; OrdersAwaitingQueue        ; +    ; +      ; -      ; -
           ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
+          ;                   ;                ; Orde.code                  ; +    ; -      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
@@ -219,6 +222,7 @@ Usergroup ; frontdeskuserrole ;                ;                ;      ;        
           ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
           ;                   ;                ; Order          ; +    ; +      ; -      ; -
+          ;                   ;                ; Order.code     ; +    ; -      ; -      ; -
           ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
@@ -231,6 +235,7 @@ Usergroup ; shippingteamuserrole ;                ;                            ;
 # Access Rights for Warehousing agent group;;;;;;;;
 ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
 ;                   ;                ; Order          ; +    ; +      ; -      ; -
+;                   ;                ; Order.code     ; +    ; -      ; -      ; -
 ;                   ;                ; User           ; +    ; -      ; -      ; -
 ;                   ;                ; Address        ; +    ; -      ; -      ; -
 ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
@@ -315,6 +320,7 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Warehouse;+;+;-;-
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
+;;;Order.code;+;-;-;-
 ;;;StockLevel;+;-;-;-
 ;;;BlTestingGearNeeded;+;+;+;+;
 ;;;Product;+;-;-;-;
@@ -364,7 +370,8 @@ Type                   ; UID                     ; MemberOfGroups     ; Target  
 Usergroup              ; techEngusergroup        ;                    ;                               ;                         ;          ;        ;        ;             
 # Access Rights for Tech eng group;                         ;                    ;                               ;                         ;          ;        ;        ;             
                        ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
-                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingItemsQueue           ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingPriorityItems        ; +                       ; +        ; -      ; -      ;             
@@ -414,8 +421,9 @@ $START_USERRIGHTS      ;                         ;                    ;         
 Type                   ; UID                     ; MemberOfGroups     ; Target                        ; read                    ; change   ; create ; remove ; change_perm 
 Usergroup              ; repairmemberusergroup   ;                    ;                               ;                         ;          ;        ;        ;             
 # Access Rights for Repair member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
-                       ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
-                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;
+                       ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
                        ;                         ;                    ; InHouseRepairLog              ; +                       ; +        ; +      ; +      ;             
@@ -457,7 +465,8 @@ Type                   ; UID                     ; MemberOfGroups     ; Target  
 Usergroup              ; unboxingmemberusergroup ;                    ;                               ;                         ;          ;        ;        ;             
 # Access Rights for Unboxing member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
                        ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
-                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;             
+                       ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
                        ;                         ;                    ; InHouseRepairLog              ; +                       ; +        ; +      ; +      ;             

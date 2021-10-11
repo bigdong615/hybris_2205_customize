@@ -90,4 +90,14 @@ public interface BlCommercePriceService extends CommercePriceService
 	 * @return the dynamic price data for product for order
 	 */
 	BigDecimal getDynamicPriceDataForProductForOrder(final Boolean isConstrainedProduct, final Double priceValue, final Long rentedDays);
+
+	/**
+	 * Get Dynamic price for bundle product for order.
+	 * @param product bundle product
+	 * @param order order
+	 * @return price data
+	 * @throws CalculationException exception
+	 */
+	public PriceValue  getDynamicPriceForBundle(
+			final ProductModel product,final AbstractOrderModel order) throws CalculationException;
 }

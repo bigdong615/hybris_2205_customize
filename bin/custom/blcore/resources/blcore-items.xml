@@ -243,20 +243,26 @@
       </enumtype>
      
       <enumtype code="OrderStatus" autocreate="false" generate="false">
-            <value code="INVERIFICATION"/>
-            <value code="MANUAL_REVIEW"/>
-            <value code="SHIPPING_MANUAL_REVIEW"/>
+            <value code="RECEIVED_IN_VERIFICATION"/>
+            <value code="RECEIVED_MANUAL_REVIEW"/>
+            <value code="RECEIVED_SHIPPING_MANUAL_REVIEW"/>
             <value code="SOLD"/>
             <value code="INCOMPLETE" />
       		<value code="INCOMPLETE_ITEMS_IN_REPAIR" />
       		<value code="INCOMPLETE_MISSING_ITEMS" />
       		<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
       		<value code="INCOMPLETE_RECOVERED" />
-      		<value code="PARTIALLY_UNBOXED" />
-      		<value code="UNBOXED" />
+      		<value code="UNBOXED_PARTIALLY" />
+      		<value code="UNBOXED_COMPLETELY" />
       		<value code="LATE" />
       		<value code="RETURNED" />
       		<value code="SHIPPED"/>
+      		<value code="RECEIVED_ROLLING"/>
+      		<value code="INCOMPLETE_BALANCE_DUE"/>
+      		<value code="INCOMPLETE_STOLEN"/>
+      		<value code="INCOMPLETE_LOST_IN_TRANSIT"/>
+      		<value code="SOLD_SHIPPED"/>
+      		<value code="SOLD_RMA_CREATED"/>
       		<value code="RECEIVED_READY_FOR_PICKUP" />
         </enumtype>
       
@@ -279,8 +285,9 @@
       	<value code="PARTIALLY_UNBOXED" />
       	<value code="UNBOXED" />
       	<value code="SHIPPING_MANUAL_REVIEW"/>
-      	<value code="READY_TO_SHIP"/>
+      	<value code="RECEIVED_READY_TO_SHIP"/>
       	<value code="BL_SHIPPED"/>
+        <value code="RECEIVED_READY_FOR_PICKUP"/>
         <value code="PARTIALLY_SHIPPED" />
       </enumtype>
       
@@ -421,6 +428,36 @@
             <value code="MISSING"/>
             <value code="UNEXPECTED"/>
         </enumtype>
+
+      <enumtype generate="true" code="BehaviorEnum" autocreate="true" dynamic="true">
+        <value code="CREDIT_CARD_FRAUD_OR_CHARGEBACK"/>
+        <value code="WE_CANCELLED_THE_ORDER_COULD_NOT_CONFIRM_TRUSTWORTHINESS"/>
+        <value code="STOLEN_GEAR_VALUED_OVER"/>
+        <value code="DID_NOT_PROVIDE_DEPOSIT_OR_DOCS"/>
+        <value code="RETURNED_ORDERS_LATE_X_OR_MORE_TIMES"/>
+        <value code="UNUSUAL_BEHAVIOR"/>
+      </enumtype>
+
+      <enumtype generate="true" code="VipTypeEnum" autocreate="true" dynamic="true">
+        <value code="VIP"/>
+        <value code="VIDEO_VIP"/>
+      </enumtype>
+
+      <enumtype generate="true" code="LinkSourceEnum" autocreate="true" dynamic="true">
+        <value code="INSTAGRAM"/>
+        <value code="VIMEO"/>
+        <value code="LINKEDIN"/>
+        <value code="YOUTUBE"/>
+        <value code="BEHANCE"/>
+        <value code="PERSONAL_WEBSITE"/>
+        <value code="OTHER"/>
+        <value code="EMPLOYEE_VERIFIED"/>
+      </enumtype>
+      <enumtype generate="true" code="BillTypeEnum" autocreate="true" dynamic="true">
+        <value code="LATE_FEES"/>
+        <value code="REPAIRS"/>
+        <value code="WAIVER_12_PERCENT_TOTAL"/>
+      </enumtype>
 
 	  </enumtypes>
 
@@ -2294,6 +2331,12 @@
               <description>The number of quantity remained un-allocated during sourcing and allocation</description>
             </attribute>
             <!-- BL-1189:created bundle order entry related specific attribute.-->
+            <attribute qualifier="entryCreated" type="boolean">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" search="true"/>
+              <description>flag to identify if the entry is created or not</description>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+            </attribute>
             <attribute qualifier="bundleEntry" type="boolean">
               <persistence type="property"/>
               <modifiers read="true" write="true" search="true"/>
@@ -3414,7 +3457,185 @@
                 <defaultvalue>Boolean.FALSE</defaultvalue>
                 <description>It enables/disables PO payment option for a customer</description>
             </attribute>
-           </attributes>
+              <attribute autocreate="true" qualifier="coiVerified " type="boolean">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+                <description>Is Insurance certificate verified</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="vip" type="boolean">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+                <description>Is VIP customer</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="employee" type="boolean">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+                <description>Is BL Employee flag</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="coiCoverageAmount" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                <description>Certificate of insurance coverage amount</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="coiExpirationDate" type="java.util.Date">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Certificate of insurance expiry date</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="kycScore" type="double">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                <description>Know your customer score</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="badBehaviorTag" type="BehaviorEnum">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Reason for identifying the customer's bad behavior </description>
+              </attribute>
+              <attribute autocreate="true" qualifier="vipType" type="VipTypeEnum">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Is customer Photo VIP or Video VIP</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="verificationLinkSource" type="LinkSourceEnum">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>identifies the source of the social media link </description>
+              </attribute>
+              <attribute autocreate="true" qualifier="photoOrVideo" type="java.lang.String">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>identifies Photo or Video customer</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="outstandingBillType" type="BillTypeEnum">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Type of outstanding bill (associated with most recent order)</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="badBehaviorNotes" type="java.lang.String">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype database="mysql">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype database="sqlserver">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+                <description>Notes by verification explaining bad behavior</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="verificationNotes" type="java.lang.String">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype database="mysql">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype database="sqlserver">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+                <description>Verification notes about this customer</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="verificationLink" type="java.lang.String">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype database="mysql">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype database="sqlserver">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+                <description>Link to a customer's social media account. Should be able to add as many as needed</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="accountNotes" type="java.lang.String">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype database="mysql">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype database="sqlserver">
+                    <value>TEXT</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+                <description>Overall Notes On Customer</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="orderCount" type="int">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Number of orders placed to date</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="completedOrderCount" type="int">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>Number of orders in Completed status to date</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="rollingSpend" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                <description>Total spend in a rolling 1 year period</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="outstandingBillAmount" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                <description>Amount due on associated bill</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="blRewards" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                <description>Legacy tracking of BL Rewards amounts</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="totalAmountPastDue" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                <description>Sum of all outstanding bills</description>
+              </attribute>
+            </attributes>
             </itemtype>
           <itemtype code="UserGroup" autocreate="false" generate="false">
             <description>Extending Employee type with Organization Roles</description>
@@ -4902,7 +5123,7 @@ new Integer(8)
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
+          "SELECT {order:code} as orderCode, {ot:code} as orderType, case when({order:isVipOrder} = 1) then 'True' else 'False' end as isVipOrder, case when({order:isRentalCart} = 1) then 'False' else 'True' end as isUsedGearOrder, {order:consolidatedOrderNote} as consolidatedOrderNote, {p:code} as prodCode, {p:name} as prodName, {serial:code} as serialCode, {wh:code} as warehouseCode, {serial:lastLocationScanParent} as parentLocationCode, {serial:ocLocation} as locationCode, {dm:name} as shippingMethod, {order:rentalEndDate} as orderReturnDate FROM  {Order AS order JOIN Consignment AS c ON {order.pk}={c.order} }, {BlSerialProduct as serial}, {ConsignmentEntry as ce}, {AbstractOrderEntry as oe}, {Product as p}, {Warehouse as wh}, {DeliveryMode as dm}, {OrderTypeEnum as ot} WHERE {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {oe:product} LIKE CONCAT('%',CONCAT({p.pk},'%')) AND {ce:orderEntry} = {oe.pk} AND {c:deliveryMode} = {dm.pk} AND {c:warehouse} = {wh.pk} AND {wh:pk} = ?warehouse AND {c:cleanCompleteConsignment} = 1 AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shipdate,110) AND {ot:pk} = {order:orderType}"
         </value>
       </property>
     </custom-properties>
@@ -5127,6 +5348,22 @@ new Integer(8)
           <property name="position">
             <value>
               new Integer(8)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="orderReturnDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(12)
             </value>
           </property>
         </custom-properties>

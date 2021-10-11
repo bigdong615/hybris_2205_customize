@@ -653,7 +653,7 @@ public class BlConsignmentToReallocateController  extends DefaultWidgetControlle
             entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 5);
         throw new WrongValueException(location, this.getLabel(
             "warehousingbackoffice.reallocationconsignment.decline.validation.missing.reason"));
-      } else if (entry.getSelectedLocation() == null) {
+      } else if (entry.getQuantityToReallocate() > 0L && entry.getSelectedLocation() == null) {
 
         location = (Combobox) this.targetFieldToApplyValidation(
             entry.getConsignmentEntry().getOrderEntry().getProduct().getCode(), 1, 6);

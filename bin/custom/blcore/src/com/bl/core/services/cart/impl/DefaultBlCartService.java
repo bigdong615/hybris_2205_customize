@@ -69,7 +69,9 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlCartService extends DefaultCartService implements BlCartService {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
+	private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
+	
+	private static final String DATE_IS_BLACKOUT_DATE = "Date : {} isBlackoutDate : {}";
 
     private CommerceCartService commerceCartService;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -482,28 +484,34 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  	@Override
  	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
  	{
- 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
- 		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check for Blackout: {} ", dateToCheck);
  		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
 				.getAllBlackoutDatesForGivenType(blackoutDateType);
  		final boolean isRentalStartDate = Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE.equals(blackoutDateType);
  		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
  		{
- 			return isGivenDateIsBlackoutDate.get();
+ 			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.FALSE);
+ 			return Boolean.FALSE;
  		}
  		if(isRentalStartDate)
  		{
  			allBlackoutDatesForGivenType.removeIf(blackoutDate -> !BlackoutDateShippingMethodEnum.ALL.equals(blackoutDate.getBlockedShippingMethod()));
  		}
- 		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
+ 		final List<BlBlackoutDateModel> allHolidaysForGivenType = getBlBlackoutDatesDao().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+ 		if(CollectionUtils.isNotEmpty(allHolidaysForGivenType))
+ 		{
+ 			allBlackoutDatesForGivenType.addAll(allHolidaysForGivenType);
+ 		}
+ 		for(final BlBlackoutDateModel blackoutDate : allBlackoutDatesForGivenType)
+ 		{
  			if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate()))
  			{
- 				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
- 				return;
+ 				BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.TRUE);
+ 				return Boolean.TRUE;
  			}
- 		});
- 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck, isGivenDateIsBlackoutDate.get());
- 		return isGivenDateIsBlackoutDate.get();
+ 		}
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.FALSE);
+ 		return Boolean.FALSE;
  	}
 
     /**
