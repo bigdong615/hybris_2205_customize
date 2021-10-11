@@ -34,14 +34,20 @@ public interface BlOrderDao extends OrderDao
 	 * It gets the incomplete orders
 	 * @return list of orders
    * @param currentDate the current date
-   * @param date the date
 	 */
-	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(Date currentDate,
-      Date date);
+	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate);
 	/**
 	 * It gets the rental orders which are completed and shareASale value is false.
 	 * @return list of orders
 	 */
 	public List<AbstractOrderModel> getCompletedRentalOrderForShareASale();
 
+	/**
+	 * It fetches the orders which have the products which does not have enough stocks to get fulfilled
+	 * @param currentDate the current date
+	 * @param productCodes list of product code
+	 * @return list of order model
+	 */
+	public List<AbstractOrderModel> getOrdersOfUnavailableSoftAssignedSerials(final Date currentDate,
+			final List<String> productCodes);
 }

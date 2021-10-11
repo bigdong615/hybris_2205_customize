@@ -1,19 +1,16 @@
 package com.bl.Ordermanagement.job;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.bl.Ordermanagement.reshuffler.service.BlReshufflerService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
-
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * It is responsible for allocating the unallocated products which are going to be shipped
@@ -39,8 +36,8 @@ public class BlReshufflerJob extends AbstractJobPerformable<CronJobModel>
 		}
 		catch (final Exception ex)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(),
-					"Error occurred while performing BlBufferInventoryJob", ex);
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob {} ", ex.getMessage());
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlReshufflerJob", ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);

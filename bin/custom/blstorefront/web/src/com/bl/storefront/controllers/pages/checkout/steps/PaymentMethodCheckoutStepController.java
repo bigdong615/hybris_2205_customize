@@ -10,6 +10,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.blackout.BlBlackoutDateService;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.customer.BlCustomerFacade;
@@ -104,6 +105,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	
 	@Resource(name = "blBlackoutDateService")
    private BlBlackoutDateService blBlackoutDateService;
+	
+	@Resource(name = "cartService")
+	private BlCartService blCartService;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -166,7 +170,6 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return expiryYears;
 	}
 
-
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -185,6 +188,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		 {
 			 return REDIRECT_CART_URL;
 		 }
+		 model.addAttribute(BlControllerConstants.ENABLE_DATE_PICKER, blCartService.isRentalCartOnly());
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, true);
 		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
 		showMessageForRemovedGiftCard(model);
