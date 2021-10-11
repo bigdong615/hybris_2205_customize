@@ -5,6 +5,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
@@ -35,6 +36,9 @@ import org.springframework.util.Assert;
  */
 public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
+
+
+  private DefaultBlTrackWebServiceImpl defaultBlTrackWebService;
   /**
    * This Method Populate Rental Dates to target to display on storefront
    */
@@ -290,6 +294,16 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      }
 
     return orderStatus;
+  }
+
+
+  public DefaultBlTrackWebServiceImpl getDefaultBlTrackWebService() {
+    return defaultBlTrackWebService;
+  }
+
+  public void setDefaultBlTrackWebService(
+      DefaultBlTrackWebServiceImpl defaultBlTrackWebService) {
+    this.defaultBlTrackWebService = defaultBlTrackWebService;
   }
 
 }

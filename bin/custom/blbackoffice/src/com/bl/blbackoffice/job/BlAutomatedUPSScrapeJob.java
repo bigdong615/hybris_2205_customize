@@ -2,8 +2,10 @@ package com.bl.blbackoffice.job;
 
 import com.bl.core.model.UPSScrapeCronJobModel;
 import com.bl.core.services.upsscrape.impl.BlUpdateSerialService;
+import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
 import com.bl.integration.services.impl.DefaultBlUPSScrapeService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
@@ -19,8 +21,8 @@ import org.apache.log4j.Logger;
 public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCronJobModel> {
 
   private static final Logger LOG = Logger.getLogger(BlAutomatedUPSScrapeJob.class);
-  private DefaultBlUPSScrapeService defaultBlUPSScrapeService;
   private BlUpdateSerialService blUpdateSerialService;
+  private DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl;
 
   /**
    * This method perform cronjob
@@ -30,6 +32,8 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     BlLogger.logMessage(LOG , Level.INFO , "Executing BlUPSScrapeJob perform method");
     try {
 //
+      OrderModel orderModel = null;
+      getDefaultBlTrackWebServiceimpl().trackService(orderModel);
 
       getBlUpdateSerialService().updateSerialProducts(null , "00016003" , new Date() , 2);
     }
@@ -40,14 +44,6 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
   }
 
-  public DefaultBlUPSScrapeService getDefaultBlUPSScrapeService() {
-    return defaultBlUPSScrapeService;
-  }
-
-  public void setDefaultBlUPSScrapeService(
-      DefaultBlUPSScrapeService defaultBlUPSScrapeService) {
-    this.defaultBlUPSScrapeService = defaultBlUPSScrapeService;
-  }
 
   public BlUpdateSerialService getBlUpdateSerialService() {
     return blUpdateSerialService;
@@ -57,5 +53,16 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
       BlUpdateSerialService blUpdateSerialService) {
     this.blUpdateSerialService = blUpdateSerialService;
   }
+
+  public DefaultBlTrackWebServiceImpl getDefaultBlTrackWebServiceimpl() {
+    return defaultBlTrackWebServiceimpl;
+  }
+
+  public void setDefaultBlTrackWebServiceimpl(
+      DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl) {
+    this.defaultBlTrackWebServiceimpl = defaultBlTrackWebServiceimpl;
+  }
+
+
 
 }

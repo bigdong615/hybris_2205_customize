@@ -178,8 +178,11 @@
 
   <!--BL-803 UPS Scrape -->
 
-  <bean id="defaultBlUPSScrapeService" class="com.bl.integration.services.impl.DefaultBlUPSScrapeService">
+
+  <bean id="defaultBlTrackWebServiceImpl" class="com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl">
   </bean>
+
+
 
 
 </beans>

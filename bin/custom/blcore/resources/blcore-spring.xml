@@ -1416,10 +1416,7 @@
 	</bean>
 
 	<!--BL-803 UPS Scrape-->
-	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.blbackoffice.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
-		<property name="defaultBlUPSScrapeService" ref="defaultBlUPSScrapeService"/>
-		<property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
-	</bean>
+
 
 	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService"/>
 
@@ -1653,5 +1650,5 @@
 	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
-	
+
 </beans>

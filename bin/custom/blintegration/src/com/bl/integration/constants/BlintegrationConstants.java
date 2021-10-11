@@ -72,6 +72,19 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String DIMENSION_UNIT = "IN";
 	public static final String SIMPLE_DATE_FORMAT = "hh";
 
+
+	public static final String FEDEX_ACCOUNT_NUMBER = "ups.scrape.fedex.acount.number";
+	public static final String FEDEX_METER_NUMBER = "ups.scrape.fedex.meter.number";
+	public static final String FEDEX_PARENT_API_KEY = "fedex.parent.api.key";
+	public static final String FEDEX_PARENT_API_PASSWORD = "fedex.parent.api.password";
+	public static final String FEDEX_USER_API_KEY = "fedex.user.api.key";
+	public static final String FEDEX_USER_API_PASSWORD = "fedex.user.api.password";
+	public static final String IN_BOUND_OR_OUT_BOUND = "inboundOrOutbound";
+	public static final String HYPHEN = "-";
+	public static final String TRCK = "trck";
+	public static final String FEDEX_API_URL = "fedex.api.url";
+
+
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class

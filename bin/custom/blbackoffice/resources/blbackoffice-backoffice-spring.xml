@@ -123,4 +123,12 @@
 		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
 	</bean>
 	<!-- End Inventory Cycle Count Tool-->
+
+
+	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.blbackoffice.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
+		<property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
+		<property name="defaultBlTrackWebServiceImpl" ref="defaultBlTrackWebServiceImpl"/>
+	</bean>
+
+
 </beans>
