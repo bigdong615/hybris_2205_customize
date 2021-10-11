@@ -307,9 +307,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		final DeliveryModeModel deliveryMode = abstractOrderModel.getDeliveryMode();
 		final SourcingLocation sourcingLocation = new SourcingLocation();
 		final AtomicBoolean isGroundAvailability = new AtomicBoolean();
-		for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments())
-		{
-			updareShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
+		if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
+			for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments()) {
+				updareShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
+			}
 		}
 		if (deliveryMode instanceof ZoneDeliveryModeModel)
 		{
