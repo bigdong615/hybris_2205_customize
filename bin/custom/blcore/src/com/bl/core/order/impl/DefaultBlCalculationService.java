@@ -1,5 +1,7 @@
 package com.bl.core.order.impl;
 
+import com.bl.constants.BlCancelRefundLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlDamageWaiverPricingModel;
@@ -27,6 +29,7 @@ import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.PriceValue;
 import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -211,34 +214,68 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private void calculateTotalsForCart(final AbstractOrderModel order, final boolean recalculate , final int digits ,
 										final double subtotal , final double totalDamageWaiverCost ,final double totalOptionCost){
 		final double totalDiscounts = calculateDiscountValues(order, recalculate);
-		final double roundedTotalDiscounts = getDefaultCommonI18NService()
-				.roundCurrency(totalDiscounts, digits);
-		order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
+		final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
+		order.setTotalDiscounts(roundedTotalDiscounts);
 
 		// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
 		if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
 			order.setDeliveryCost(0.0);
+			BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
 		}
 
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
-		// set total
-		final double total = subtotal + totalDamageWaiverCost + totalOptionCost+ order.getPaymentCost().doubleValue()
-				+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
-		final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
-		order.setTotalPrice(Double.valueOf(totalRounded));
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-		final double totalRoundedTaxes = getDefaultCommonI18NService()
-				.roundCurrency(order.getTotalTax(), digits);
-		order.setTotalTax(Double.valueOf(totalRoundedTaxes));
+		final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
+		order.setTotalTax(totalRoundedTaxes);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
+
+		// set total
+		double total = subtotal + totalDamageWaiverCost + totalOptionCost + order.getPaymentCost() + order.getDeliveryCost()
+				- roundedTotalDiscounts + order.getTotalTax();
+		final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
+
+		if(order instanceof OrderModel) {
+			this.orderTotalCalculation(order, totalRounded);
+		} else {
+			order.setTotalPrice(totalRounded);
+		}
+
 		setCalculatedStatus(order);
 		saveOrder(order);
+	}
 
-		// To set the current extend order in session
-		if (BooleanUtils.isTrue(order.getIsExtendedOrder())) {
-			BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+	/**
+	 * This method will calculate order and grand total after modification
+	 * @param order order
+	 * @param totalRounded amt
+	 */
+	private void orderTotalCalculation(final AbstractOrderModel order, final double totalRounded) {
+		final double gcAmount = this.getGiftCardAmount(order);
+		if (gcAmount > BlCancelRefundLoggingConstants.ZERO) {
+			if(Double.compare(order.getOriginalOrderTotalAmount(), order.getGiftCardAmount()) == BlInventoryScanLoggingConstants.ZERO) {
+				order.setTotalPrice(0.0D);
+			} else {
+				order.setTotalPrice(totalRounded - gcAmount);
+			}
+			order.setGrandTotal(totalRounded);
+		} else {
+			order.setTotalPrice(totalRounded);
+			order.setGrandTotal(0.0D);
 		}
 	}
+
+	/**
+	 * this will return gift card amount
+	 * @param order order
+	 * @return amount
+	 */
+	private double getGiftCardAmount(final AbstractOrderModel order) {
+		final double totalAmt = (order.getGiftCardAvailableAmount() == null || order.getGiftCardAvailableAmount() ==
+				BlCancelRefundLoggingConstants.ZERO) ? order.getGiftCardAmount() : order.getGiftCardAvailableAmount();
+		return BigDecimal.valueOf((totalAmt < BlInventoryScanLoggingConstants.ZERO) ? -totalAmt : totalAmt).setScale(
+				BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue();
+	}
+
 
 	/**
 	 * Gets the damage Waiver price from entry.
