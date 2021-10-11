@@ -211,7 +211,7 @@ public class ProcessOrderCancellationActionTest
 	public void shouldSetOrderStatusToCancelledWhenQuantityPendingIsZero() throws Exception
 	{
 		//Given
-		orderModel.setStatus(OrderStatus.READY);
+		orderModel.setStatus(OrderStatus.RECEIVED);
 		when(orderEntryModel.getQuantity()).thenReturn(Long.valueOf(0L));
 		when(orderCancelService.getPendingCancelRecordEntry(orderModel)).thenReturn(orderCancelRecordEntryModel);
 		orderEntryCancelRecordEntryModel.setCancelRequestQuantity(Integer.valueOf(0));
@@ -245,7 +245,7 @@ public class ProcessOrderCancellationActionTest
 	public void shouldSetOrderStatusToSuspendedWhenSuchOrderCancelled() throws Exception
 	{
 		//Given
-		orderModel.setStatus(OrderStatus.READY);
+		orderModel.setStatus(OrderStatus.RECEIVED);
 		when(orderEntryModel.getQuantityUnallocated()).thenReturn(Long.valueOf(5L));
 		when(orderCancelService.getPendingCancelRecordEntry(orderModel)).thenReturn(orderCancelRecordEntryModel);
 		when(orderCancelRecordEntryModel.getCancelResult()).thenReturn(OrderCancelEntryStatus.PARTIAL);

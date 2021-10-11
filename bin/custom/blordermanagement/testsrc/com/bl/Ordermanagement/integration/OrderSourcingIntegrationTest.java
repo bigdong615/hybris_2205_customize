@@ -66,7 +66,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		modelService.refresh(order);
 
 		//When packing a consignment
@@ -99,7 +99,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraPickUpOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		modelService.refresh(order);
 
@@ -132,7 +132,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		modelService.refresh(order);
 
@@ -166,7 +166,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraPickUpOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		modelService.refresh(order);
 
@@ -201,7 +201,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(3),
@@ -265,14 +265,14 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		orderBusinessProcessService.triggerEvent(
 				BusinessProcessEvent.builder(orderProcessModel.getCode() + "_" + ORDER_ACTION_EVENT_NAME).withChoice(RE_SOURCE_CHOICE)
 						.withEventTriggeringInTheFutureDisabled().build());
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		//Then: verify the ATP is now reduced by ordered quantity and order status is Ready
 		assertEquals(Long.valueOf(3),
 				commerceStockService.getStockLevelForProductAndBaseStore(products.Camera(), baseStores.NorthAmerica()));
 		assertEquals(Long.valueOf(3), commerceStockService
 				.getStockLevelForProductAndPointOfService(products.Camera(), pointsOfService.Montreal_Downtown()));
-		assertEquals(OrderStatus.READY, order.getStatus());
+		assertEquals(OrderStatus.RECEIVED, order.getStatus());
 
 		//Then: verify the consignment
 		modelService.refresh(order);
@@ -295,7 +295,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraPickUpOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(3),
@@ -360,7 +360,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 0, 100, 0);
 		warehouses.Montreal().setPriority(Integer.valueOf(1));
 		warehouses.Boston().setPriority(Integer.valueOf(50));
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//then verify the result
 		assertEquals(Long.valueOf(3), commerceStockService
@@ -389,7 +389,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 0, 0, 100);
 		warehouses.Montreal().setScore(25d);
 		warehouses.Boston().setScore(5d);
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//verify the result
 		assertEquals(Long.valueOf(2), commerceStockService
@@ -419,7 +419,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 0, 0, 100);
 		warehouses.Montreal().setScore(25d);
 		warehouses.Boston().setScore(5d);
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//verify the result
 		assertEquals(Long.valueOf(0), commerceStockService
@@ -447,7 +447,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 0, 0, 100);
 		warehouses.Montreal().setScore(25d);
 		warehouses.Boston().setScore(5d);
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//verify the result
 		assertEquals(Long.valueOf(3), commerceStockService
@@ -473,7 +473,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		order = sourcingUtil.createCameraShippedOrder();
 		LOG.info("Sourcing from distance sourcing factor only");
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 100, 0, 0);
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//then verify the result
 		assertEquals(warehouses.Montreal().getName(), order.getConsignments().iterator().next().getWarehouse().getName());
@@ -498,7 +498,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		modelService.save(order);
 		LOG.info("Sourcing from distance sourcing factor only");
 		sourcingUtil.setSourcingFactors(order.getStore(), 0, 100, 0, 0);
-		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.READY);
+		sourcingUtil.runDefaultOrderProcessForOrder(order, OrderStatus.RECEIVED);
 
 		//then verify the result
 		assertEquals(warehouses.Boston().getName(), order.getConsignments().iterator().next().getWarehouse().getName());
@@ -519,7 +519,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(3),
@@ -563,7 +563,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.MemoryCard(warehouses.Boston(), 6);
 
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(3),
@@ -617,7 +617,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.MemoryCard(warehouses.Montreal(), 1);
 
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(3),
@@ -686,7 +686,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 
 		order = sourcingUtil
 				.createOrder(orders.CameraAndMemoryCardAndLens_Shipped(Long.valueOf(1L), Long.valueOf(1L), Long.valueOf(7L)));
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the consignment
 		modelService.refresh(order);
@@ -729,7 +729,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Montreal(), 6);
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//when confirm shipment twice
 		order.getConsignments().forEach(e -> sourcingUtil.confirmDefaultConsignment(orderProcessModel, e));
@@ -744,7 +744,7 @@ public class OrderSourcingIntegrationTest extends BaseAcceleratorSourcingIntegra
 		stockLevels.Camera(warehouses.Paris(), 6);
 
 		order = sourcingUtil.createCameraShippedOrder();
-		sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//then verify the consignment
 		modelService.refresh(order);

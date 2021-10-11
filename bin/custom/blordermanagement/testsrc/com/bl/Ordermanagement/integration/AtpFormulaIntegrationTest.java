@@ -102,7 +102,7 @@ public class AtpFormulaIntegrationTest extends BaseAcceleratorSourcingIntegratio
 
 		order = sourcingUtil.createCameraShippedOrder();
 		initialOrderQty = order.getEntries().iterator().next().getQuantity();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream().findFirst().get();
 
 		cancellationEntryInfo = new HashMap<AbstractOrderEntryModel, Long>();
