@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
@@ -58,6 +61,17 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 	{
 		final ConsignmentModel consignment = actionContext.getData();
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
+		for (final PackagingInfoModel packageInfo : packages)
+		{
+			packageInfo.getSerialProducts().forEach(serialProduct -> {
+				if (serialProduct instanceof BlSerialProductModel)
+				{
+					((BlSerialProductModel) serialProduct).setOcLocation(StringUtils.EMPTY);
+				}
+				modelService.save(serialProduct);
+			});
+		}
+
 		modelService.removeAll(packages);
 		modelService.refresh(consignment);
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
