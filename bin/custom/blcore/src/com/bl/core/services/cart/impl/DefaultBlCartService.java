@@ -554,6 +554,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.FALSE);
  		return Boolean.FALSE;
  	}
+ 	
+ 	/**
+    * @inheritDoc
+    */
+   @Override
+ 	public boolean isRentalCartOnly()
+ 	{
+ 		final CartModel cartModel = getSessionCart();
+ 		if(Objects.nonNull(cartModel))
+ 		{
+ 			return BooleanUtils.isTrue(cartModel.getIsRentalCart()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
+ 		}
+ 		return Boolean.FALSE;
+ 	}
 
     /**
      * @inheritDoc

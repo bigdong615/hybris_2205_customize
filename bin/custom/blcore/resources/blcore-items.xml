@@ -4087,6 +4087,11 @@
 				<description>SUB-status</description>
 				<persistence type="property" />
 			</attribute>
+			<attribute qualifier="partCost" type="java.lang.Double">
+				<modifiers read="true" write="true" optional="true" />
+				<description>Cost For Parts</description>
+				<persistence type="property" />
+			</attribute>
 		</attributes>
 	</itemtype>
 </typegroup>
