@@ -100,6 +100,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             }
             cartModel.setIsNewGearOrder(false);
             cartModel.setIsRentalCart(false);
+            cartModel.setRentalStartDate(null);
+            cartModel.setRentalEndDate(null);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
@@ -223,16 +225,18 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate) {
         final CartModel cartModel = getSessionCart();
         final String cartCode = cartModel.getCode();
-        cartModel.setRentalStartDate(rentalStartDate);
-        cartModel.setRentalEndDate(rentalEndDate);
-        try {
-            getModelService().save(cartModel);
-            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
+        if(BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
+            cartModel.setRentalStartDate(rentalStartDate);
+            cartModel.setRentalEndDate(rentalEndDate);
+            try {
+                getModelService().save(cartModel);
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
                     rentalStartDate, rentalEndDate, cartCode);
-        } catch (final Exception exception) {
-            BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                    "Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate,
+            } catch (final Exception exception) {
+                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, "Error while saving rental Start Date: {} and End Date: {} on cart - {}",
+                    rentalStartDate, rentalEndDate,
                     cartCode);
+            }
         }
     }
 
