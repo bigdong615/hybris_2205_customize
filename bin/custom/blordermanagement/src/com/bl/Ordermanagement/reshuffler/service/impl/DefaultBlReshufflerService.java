@@ -266,7 +266,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
        return entry.getQuantity() == entry.getSerialProducts().size();
     });
     if(allQuantityFulfilled) {
-      order.setStatus(OrderStatus.READY);
+      order.setStatus(OrderStatus.RECEIVED);
       getModelService().save(order);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",
