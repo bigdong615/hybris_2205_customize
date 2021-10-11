@@ -202,7 +202,10 @@ public class CartPageController extends AbstractCartPageController
 
 	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException{
-		checkDatesIsBlackoutDate(model);
+		if(blCartService.isRentalCartOnly())
+		{
+			checkDatesIsBlackoutDate(model);
+		}		
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
@@ -1073,10 +1076,10 @@ public class CartPageController extends AbstractCartPageController
 		{
 			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
 		}
-		else if(blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
+		else if(blCartService.isRentalCartOnly() && (blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
 				BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_START_DATE)
 				|| blCartService.isSelectedDateIsBlackoutDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_END_DATE))
+						BlControllerConstants.DATE_FORMAT_PATTERN), BlackoutDateTypeEnum.RENTAL_END_DATE)))
 		{
 			return BlControllerConstants.BLACKOUT_DATE_FOUND;
 		}
