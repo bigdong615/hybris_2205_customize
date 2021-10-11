@@ -4143,7 +4143,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} = 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} = 'RECEIVED_READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>
@@ -4250,7 +4250,7 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} != 'READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
+				"SELECT {bsp.code} as serialProducts, {order:code} as code, {bsp.ocLocation} as ocLocation, {cs.code} as status FROM  {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as bsp}, {ConsignmentStatus as cs},{AbstractOrder as order} WHERE {ce:consignment} = {c.pk} AND  {c.status} = {cs.pk} AND  {cs.code} != 'RECEIVED_READY_TO_SHIP' AND  {ce:serialProducts} LIKE CONCAT('%',CONCAT({bsp.pk},'%')) AND  {c:order} = {order:pk} AND CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?optimizedShippingStartDate,110) AND {c.warehouse} =?warehouse"
 			</value>
 		</property>
 	</custom-properties>
