@@ -4,5 +4,5 @@ INSERT_UPDATE CronJob	; code[unique=true]			;job(code)						;singleExecutable	;s
 						; blShippingOptimizationJob	;blShippingOptimizationJob		;false				;en
 
 INSERT_UPDATE Trigger	;cronjob(code)[unique=true]		;cronExpression
-						; blShippingOptimizationJob		; 30 1-16 0 ? * MON-FRI
+						; blShippingOptimizationJob		; 0 30 1-16 ? * MON-FRI
 						
