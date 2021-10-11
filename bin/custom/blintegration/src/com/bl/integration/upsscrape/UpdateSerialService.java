@@ -1,4 +1,4 @@
-package com.bl.core.services.upsscrape;
+package com.bl.integration.upsscrape;
 
 public interface UpdateSerialService {
 

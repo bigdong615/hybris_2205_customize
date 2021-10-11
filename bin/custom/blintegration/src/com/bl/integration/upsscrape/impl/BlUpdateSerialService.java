@@ -1,9 +1,8 @@
-package com.bl.core.services.upsscrape.impl;
+package com.bl.integration.upsscrape.impl;
 
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.services.upsscrape.UpdateSerialService;
-import com.bl.core.utils.BlUpdateStagedProductUtils;
+import com.bl.integration.Utils.BlUpdateStagedProductUtils;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -19,7 +18,7 @@ import java.util.Objects;
  * This class created to update the
  * @author Manikandan
  */
-public class BlUpdateSerialService  implements UpdateSerialService {
+public class BlUpdateSerialService {
 
   private BaseStoreService baseStoreService;
   private UserService userService;

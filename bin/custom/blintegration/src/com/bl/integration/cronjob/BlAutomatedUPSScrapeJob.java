@@ -1,8 +1,8 @@
-package com.bl.core.job;
+package com.bl.integration.cronjob;
 
 import com.bl.core.model.UPSScrapeCronJobModel;
-import com.bl.core.services.upsscrape.impl.BlUpdateSerialService;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
+import com.bl.integration.upsscrape.impl.BlUpdateSerialService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -27,7 +27,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
 
   private static final Logger LOG = Logger.getLogger(BlAutomatedUPSScrapeJob.class);
   private BlUpdateSerialService blUpdateSerialService;
-  private DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl;
+  private DefaultBlTrackWebServiceImpl defaultBlTrackWebService;
   private BaseStoreService baseStoreService;
   private UserService userService;
   private CustomerAccountService customerAccountService;
@@ -45,7 +45,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
       final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
           getUserService().getCurrentUser().getOrders().iterator().next().getCode(),
           baseStoreModel);
-      final Map<String, Object> stringObjectMap = getDefaultBlTrackWebServiceimpl()
+      final Map<String, Object> stringObjectMap = getDefaultBlTrackWebService()
           .trackService(orderModel);
 
       getBlUpdateSerialService().updateSerialProducts(null , "00016003" , new Date() , 2);
@@ -65,15 +65,6 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   public void setBlUpdateSerialService(
       BlUpdateSerialService blUpdateSerialService) {
     this.blUpdateSerialService = blUpdateSerialService;
-  }
-
-  public DefaultBlTrackWebServiceImpl getDefaultBlTrackWebServiceimpl() {
-    return defaultBlTrackWebServiceimpl;
-  }
-
-  public void setDefaultBlTrackWebServiceimpl(
-      DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl) {
-    this.defaultBlTrackWebServiceimpl = defaultBlTrackWebServiceimpl;
   }
 
   public BaseStoreService getBaseStoreService() {
@@ -99,6 +90,16 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   public void setCustomerAccountService(
       CustomerAccountService customerAccountService) {
     this.customerAccountService = customerAccountService;
+  }
+
+
+  public DefaultBlTrackWebServiceImpl getDefaultBlTrackWebService() {
+    return defaultBlTrackWebService;
+  }
+
+  public void setDefaultBlTrackWebService(
+      DefaultBlTrackWebServiceImpl defaultBlTrackWebService) {
+    this.defaultBlTrackWebService = defaultBlTrackWebService;
   }
 
 

@@ -178,10 +178,24 @@
 
   <!--BL-803 UPS Scrape -->
 
+  <bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.integration.cronjob.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
+    <property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
+    <property name="defaultBlTrackWebService" ref="defaultBlTrackWebServiceImpl"/>
+    <property name="baseStoreService" ref="baseStoreService"/>
+    <property name="customerAccountService" ref="customerAccountService" />
+    <property name="userService" ref="userService"/>
+  </bean>
 
   <bean id="defaultBlTrackWebServiceImpl" class="com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl">
   </bean>
 
+
+  <bean id="defaultBlUpdateSerialService" class="com.bl.integration.upsscrape.impl.BlUpdateSerialService">
+    <property name="modelService" ref="modelService"/>
+    <property name="baseStoreService" ref="baseStoreService"/>
+    <property name="customerAccountService" ref="customerAccountService" />
+    <property name="userService" ref="userService"/>
+  </bean>
 
 
 

@@ -1,6 +1,5 @@
-package com.bl.core.utils;
+package com.bl.integration.Utils;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
@@ -25,6 +24,11 @@ public class BlUpdateStagedProductUtils {  // Change to BlProductUtils
     //empty to avoid instantiating utils class
   }
 
+  public static final String PRODUCT_CATALOG = "catalog";
+  public static final String VERSION = "version";
+  public static final String STAGED = "Staged";
+  public static final String CATALOG_VALUE = "blProductCatalog";
+
   private static SessionService sessionService;
   private static CatalogVersionDao catalogVersionDao;
   private static ModelService modelService;
@@ -38,8 +42,7 @@ public class BlUpdateStagedProductUtils {  // Change to BlProductUtils
    */
   public static void changeSerialStatusInStagedVersion(final String productCode, final SerialStatusEnum serialStatus) {
     Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(
-        BlCoreConstants
-            .CATALOG_VALUE, BlCoreConstants.STAGED);
+        CATALOG_VALUE, STAGED);
     List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode, catalogModels.iterator().next());
     if(CollectionUtils.isNotEmpty(products)) {
       BlSerialProductModel product = products.get(0);
