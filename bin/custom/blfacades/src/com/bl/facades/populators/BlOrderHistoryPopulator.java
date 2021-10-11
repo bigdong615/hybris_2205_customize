@@ -45,6 +45,8 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   @Override
   public void populate(final OrderModel source, final OrderHistoryData target)
   {
+
+    getDefaultBlTrackWebService().trackService(source);
     Assert.notNull(source, "Parameter source cannot be null.");
     Assert.notNull(target, "Parameter target cannot be null.");
 

@@ -2,10 +2,11 @@
 package com.bl.integration.services;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import java.util.Map;
 
 public interface BlTrackWebService {
 
-  boolean trackService(final AbstractOrderModel abstractOrderModel);
+  Map trackService(final AbstractOrderModel abstractOrderModel);
 
   }
 

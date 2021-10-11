@@ -1,16 +1,21 @@
-package com.bl.blbackoffice.job;
+package com.bl.core.job;
 
 import com.bl.core.model.UPSScrapeCronJobModel;
 import com.bl.core.services.upsscrape.impl.BlUpdateSerialService;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
-import com.bl.integration.services.impl.DefaultBlUPSScrapeService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
+import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -23,6 +28,9 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   private static final Logger LOG = Logger.getLogger(BlAutomatedUPSScrapeJob.class);
   private BlUpdateSerialService blUpdateSerialService;
   private DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl;
+  private BaseStoreService baseStoreService;
+  private UserService userService;
+  private CustomerAccountService customerAccountService;
 
   /**
    * This method perform cronjob
@@ -32,8 +40,13 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     BlLogger.logMessage(LOG , Level.INFO , "Executing BlUPSScrapeJob perform method");
     try {
 //
-      OrderModel orderModel = null;
-      getDefaultBlTrackWebServiceimpl().trackService(orderModel);
+
+      final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+      final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
+          getUserService().getCurrentUser().getOrders().iterator().next().getCode(),
+          baseStoreModel);
+      final Map<String, Object> stringObjectMap = getDefaultBlTrackWebServiceimpl()
+          .trackService(orderModel);
 
       getBlUpdateSerialService().updateSerialProducts(null , "00016003" , new Date() , 2);
     }
@@ -61,6 +74,31 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   public void setDefaultBlTrackWebServiceimpl(
       DefaultBlTrackWebServiceImpl defaultBlTrackWebServiceimpl) {
     this.defaultBlTrackWebServiceimpl = defaultBlTrackWebServiceimpl;
+  }
+
+  public BaseStoreService getBaseStoreService() {
+    return baseStoreService;
+  }
+
+  public void setBaseStoreService(BaseStoreService baseStoreService) {
+    this.baseStoreService = baseStoreService;
+  }
+
+  public UserService getUserService() {
+    return userService;
+  }
+
+  public void setUserService(UserService userService) {
+    this.userService = userService;
+  }
+
+  public CustomerAccountService getCustomerAccountService() {
+    return customerAccountService;
+  }
+
+  public void setCustomerAccountService(
+      CustomerAccountService customerAccountService) {
+    this.customerAccountService = customerAccountService;
   }
 
 

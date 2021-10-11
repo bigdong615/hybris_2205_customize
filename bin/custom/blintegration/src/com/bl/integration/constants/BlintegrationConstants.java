@@ -79,7 +79,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String FEDEX_PARENT_API_PASSWORD = "fedex.parent.api.password";
 	public static final String FEDEX_USER_API_KEY = "fedex.user.api.key";
 	public static final String FEDEX_USER_API_PASSWORD = "fedex.user.api.password";
-	public static final String IN_BOUND_OR_OUT_BOUND = "inboundOrOutbound";
+	public static final String IN_BOUND_OR_OUT_BOUND = "inbound";
 	public static final String HYPHEN = "-";
 	public static final String TRCK = "trck";
 	public static final String FEDEX_API_URL = "fedex.api.url";

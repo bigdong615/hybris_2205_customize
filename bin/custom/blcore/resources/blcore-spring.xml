@@ -1418,7 +1418,12 @@
 	<!--BL-803 UPS Scrape-->
 
 
-	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService"/>
+	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService">
+		<property name="modelService" ref="modelService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="userService" ref="userService"/>
+	</bean>
 
   <!--BL-27: This process is override to call own strategy to provide email related things.-->
 	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
@@ -1650,5 +1655,15 @@
 	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
+
+
+	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.core.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
+		<property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
+		<property name="defaultBlTrackWebServiceImpl" ref="defaultBlTrackWebServiceImpl"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="userService" ref="userService"/>
+	</bean>
+
 
 </beans>
