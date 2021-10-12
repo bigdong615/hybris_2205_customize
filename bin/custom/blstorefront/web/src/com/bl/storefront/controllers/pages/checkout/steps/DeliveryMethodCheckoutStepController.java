@@ -335,6 +335,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @ResponseBody
     public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
                       final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        addressForm.setShippingAddress(Boolean.TRUE);
         getAddressValidator().validate(addressForm, bindingResult);
         populateCommonModelAttributes(model, getCheckoutFacade().getCheckoutCart(), addressForm);
         if (bindingResult.hasErrors()) {

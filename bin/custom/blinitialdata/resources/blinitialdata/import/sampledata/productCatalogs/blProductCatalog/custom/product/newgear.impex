@@ -120,3 +120,32 @@ UPDATE Product;code[unique=true];$galleryImages;$catalogVersion
               ;Retired-SKB-1610-10-Case;Retired-SKB-1610-10-Case_Container
               ;Retired-SKB-Military-Case;Retired-SKB-Military-Case_Container
               ;Retired-RED-Case;Retired-RED-Case_Container
+
+UPDATE BlProduct ; $catalogVersion ; code[unique=true] ; name[Lang=en];displayName
+                 ;;General_Brand_Gaffer_Cloth_Tape_Matte_Black_2_x_12_Yards;General Brand Gaffer Cloth Tape Matte Black 2 x 12 Yards;General Brand Gaffer Cloth Tape Matte Black 2 x 12 Yards
+                 ;;sensor_cleaning;sensor cleaning;sensor cleaning
+                 ;;Lenspen_Sensor_Cleaning_Kit;Lenspen Sensor Cleaning Kit;Lenspen Sensor Cleaning Kit
+                 ;;BL-Sports-Performance-Cap;BL Sports Performance Cap;BL Sports Performance Cap
+                 ;;General-Brand-ProGaffer-Vinyl-Tape-Orange--2-x-50-Yards;General Brand ProGaffer Vinyl Tape Orange 2 x 50 Yards;General Brand ProGaffer Vinyl Tape Orange 2 x 50 Yards
+                 ;;Lowepro_Event_Messenger_100;Lowepro Event Messenger 100;Lowepro Event Messenger 100
+                 ;;Transcend_32GB_SDHC_Memory_Card_Class_10_UHS_I;	Transcend 32GB SDHC Memory Card Class 10 UHS I;	Transcend 32GB SDHC Memory Card Class 10 UHS I
+                 ;;General-Brand-ProGaffer-Vinyl-Tape-Black--2-x-50-Yards;General Brand ProGaffer Vinyl Tape Black 2 x 50Yardsds;General Brand ProGaffer Vinyl Tape Black 2 x 50Yards
+                 ;;Giottos_Rocket_Air_Blower_Medium;Giottos Rocket Air Blower Medium;Giottos Rocket Air Blower Medium
+                 ;;BorrowLenses_com_microfiber_lens_cleaning_cloth;BorrowLenses com microfiber lens cleaning cloth;BorrowLenses com microfiber lens cleaning cloth
+                 ;;Tenba-TTP34-Tripak-Bag-for-Tripods-Light-Stands-or-Umbrellas;Tenba TTP34 Tripak Bag for Tripods Light Stands or UmbrellasTenba TTP34 Tripak Bag for Tripods Light Stands or Umbrellas
+                 ;;Transcend_16GB_SDHC_Memory_Card_Class_10_UHS_I;Transcend 16GB SDHC Memory Card Class 10 UHS I;Transcend 16GB SDHC Memory Card Class 10 UHS I
+                 ;;BL-Beanie;BL Beanie;BL Beanie
+                 ;;Datacolor-Spyder5-STUDIO-Color-Calibration-Bundle-For-Sale;Datacolor Spyder5 STUDIO Color Calibration Bundle For Sale;Datacolor Spyder5 STUDIO Color Calibration Bundle For Sale
+                 ;;Retired-Pelican-1490;Retired Pelican 1490;Retired Pelican 1490
+                 ;;Retired-Pelican-1120;Retired Pelican 1120;Retired Pelican 1120
+                 ;;Retired-Pelican-1150;Retired Pelican 1150;Retired Pelican 1150
+                 ;;Retired-HPRC-2400E-Hard-Case;Retired HPRC 2400E Hard Case;Retired HPRC 2400E Hard Case
+                 ;;Retired-Pelican-1400NF;Retired Pelican 1400NF;Retired Pelican 1400NF
+                 ;;Retired-Pelican-iM2075;Retired Pelican iM2075;Retired Pelican iM2075
+                 ;;Retired-SKB-Case;Retired SKB Case;Retired SKB Case
+                 ;;Retired-Pelican-iM2306;Retired Pelican iM2306;Retired Pelican iM2306
+                 ;;Retired-SKB-1610-10-Case;Retired SKB 1610 10 Case;Retired SKB 1610 10 Case
+                 ;;Retired-SKB-Military-Case;Retired SKB Military Case;Retired SKB Military Case
+                 ;;Retired-RED-Case;Retired RED Case;Retired RED Case
+                 ;;KEH-D610-30120314;KEH D610 30120314;KEH D610 30120314
+                 ;;Retired-Pelican-1200;Retired Pelican 1200;Retired Pelican 1200
