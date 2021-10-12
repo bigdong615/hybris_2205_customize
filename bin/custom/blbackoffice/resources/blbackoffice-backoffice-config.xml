@@ -1548,7 +1548,7 @@
                 </na:references>
             </na:notifications>
             <na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
-                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.tech.eng.first.scan.location.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
@@ -1851,7 +1851,7 @@
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="firstScanLocationErrorFailure" level="FAILURE" destination="TOPMOST">
-                <na:message>blbackoffice.web.scan.tool.wizard.notification.first.scan.location.failure</na:message>
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.first.scan.location.failure</na:message>
                 <na:references linksEnabled="true">
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
