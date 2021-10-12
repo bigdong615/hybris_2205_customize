@@ -763,6 +763,38 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		return Collections.emptyList();
 	}
 
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public List<AddressData> getShippingAddressBook() {
+
+		// Get the current customer's addresses
+		final CustomerModel currentUser = (CustomerModel) getUserService().getCurrentUser();
+		final Collection<AddressModel> addresses = getCustomerAccountService()
+				.getShippingAddressBookEntries(currentUser);
+
+		if (CollectionUtils.isNotEmpty(addresses)) {
+			final List<AddressData> addressBook = new ArrayList<>();
+			final AddressData defaultAddress = getDefaultAddress();
+			for (final AddressModel address : addresses)
+			{
+				final AddressData addressData = getAddressConverter().convert(address);
+				if (defaultAddress != null && StringUtils.isNotEmpty(defaultAddress.getId()) && StringUtils.equals(defaultAddress.getId(),addressData.getId()))
+				{
+					addressData.setDefaultAddress(true);
+					addressBook.add(0, addressData);
+				}
+				else
+				{
+					addressBook.add(addressData);
+				}
+			}
+			return addressBook;
+		}
+		return Collections.emptyList();
+	}
+
 	public PaymentInfoService getPaymentInfoService()
 	{
 		return paymentInfoService;
