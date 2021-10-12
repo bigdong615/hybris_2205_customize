@@ -214,6 +214,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<String> failedBarcodeList = new ArrayList<>();
 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		if(CollectionUtils.isEmpty(blSerialProducts))
+		{
+			failedBarcodeList.addAll(subList);
+			return failedBarcodeList;
+		}
 		subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
 		return failedBarcodeList;
 	}
@@ -1076,6 +1081,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		Map<String, List<String>> processStatus = Maps.newHashMap();
 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		if(CollectionUtils.isEmpty(blSerialProducts))
+		{
+			processStatus.put(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,subList);
+			return processStatus;
+		}
 		getMissingBarcodeItems(blSerialProducts, missingBarcodeSerialList, Lists.newArrayList(subList));
 		if(CollectionUtils.isNotEmpty(missingBarcodeSerialList))
 		{

@@ -133,6 +133,7 @@ public class BlControllerConstants
 	public static final String DISCONTINUE_MESSAGE_KEY = "cart.discontinue.product.removed.entry.text";
 
 	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
+	public static final String BRAINTREE_CVV_ERROR_KEY = "braintree.cvv.general.error";
 	public static final String CART_PAGE = "cartPage";
 	public static final String FROM_PAGE = "fromPage";
 	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
@@ -194,6 +195,7 @@ public class BlControllerConstants
 
 	public static final String CLEAR_BRANDS = "clearBrands";
 	public static final String BRANDS = "brands";
+	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
 
 	private BlControllerConstants()
 	{
