@@ -724,3 +724,8 @@ color:#fff !important;
 .remove-gc-style{
 	color: #52bfc0;
 }
+.spiner-select{
+  width: 32px !important;
+  text-align: center !important;
+  margin: 0 auto !important;     
+}
