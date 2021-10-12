@@ -23,7 +23,8 @@ public interface BlESPEventService {
      *
      * @param orderModel
      */
-    public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel);
+    public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel,
+        final Double amount);
 
     /**
      * Send Order Canceled Event by calling Order Canceled ESP Event API

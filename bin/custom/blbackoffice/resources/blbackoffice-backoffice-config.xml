@@ -1269,6 +1269,8 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.blCalculateAvalaraTaxAction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.coirequiredaction"
+					property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>
