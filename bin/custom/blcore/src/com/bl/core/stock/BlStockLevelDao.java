@@ -151,4 +151,11 @@ public interface BlStockLevelDao {
 	 */
 	public Collection<StockLevelModel> getStockForUnallocatedProduct(final List<String> productCodes,
 			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
+
+	/**
+	 * It checks whether assigned serials of the order are soft-assigned or not
+	 * @param orderCodes list of order code
+	 * @return list of stock level model
+	 */
+	public List<StockLevelModel> getStocksOfSoftAssignedSerialsOfOrders(final Set<String> orderCodes);
 }

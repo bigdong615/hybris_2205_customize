@@ -1,5 +1,6 @@
 package com.bl.core.order.hook.impl;
 
+import com.bl.constants.BlCancelRefundLoggingConstants;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
@@ -99,19 +100,21 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       			}
      }*/
     }
-    giftCardService.calculateGiftCard(order, totalplustax);
+    if(CollectionUtils.isNotEmpty(order.getGiftCard())) {
+      giftCardService.calculateGiftCard(order, order.getGrandTotal());
 
-    final List<GiftCardModel> giftCards = order.getGiftCard();
-    if (giftCards != null) {
-      for (final GiftCardModel giftCard : giftCards) {
-        getModelService().refresh(giftCard);
-        final List<GiftCardMovementModel> movements = giftCard.getMovements();
-        for (final GiftCardMovementModel giftCardMovementModel : movements) {
-          if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
-            giftCardMovementModel.setCommitted(Boolean.TRUE);
-            giftCardMovementModel.setOrder(order);
-            giftCardMovementModel.setRedeemDate(new Date());
-            getModelService().save(giftCardMovementModel);
+      final List<GiftCardModel> giftCards = order.getGiftCard();
+      if (giftCards != null) {
+        for (final GiftCardModel giftCard : giftCards) {
+          getModelService().refresh(giftCard);
+          final List<GiftCardMovementModel> movements = giftCard.getMovements();
+          for (final GiftCardMovementModel giftCardMovementModel : movements) {
+            if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
+              giftCardMovementModel.setCommitted(Boolean.TRUE);
+              giftCardMovementModel.setOrder(order);
+              giftCardMovementModel.setRedeemDate(new Date());
+              getModelService().save(giftCardMovementModel);
+            }
           }
         }
       }

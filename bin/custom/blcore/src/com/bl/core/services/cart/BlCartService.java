@@ -155,4 +155,11 @@ public interface BlCartService extends CartService {
      * @return true, if the session cart have aquatech products
      */
     boolean isAquatechProductsPresentInCart();
+    
+    /**
+     * Checks if is rental cart only.
+     *
+     * @return true, if is rental cart only
+     */
+    boolean isRentalCartOnly();
 }
