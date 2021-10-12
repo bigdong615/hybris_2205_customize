@@ -12,6 +12,7 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 	private String email;
 	private Boolean isDefault;
 	private String braintreeAddressId;
+	private String cvvValidationCode;
 
 	public String getPaymentMethodToken()
 	{
@@ -99,7 +100,8 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 		return "BrainTreeCreatePaymentMethodResult [paymentMethodToken=" + paymentMethodToken + ", imageSource=" + imageSource
 				+ ", cardType=" + cardType + ", cardNumber="
 				+ cardNumber + ", cardholderName=" + cardholderName + ", expirationMonth=" + expirationMonth + ", expirationYear="
-        + expirationYear + ", email=" + email + ", brainTreeAddressId=" + braintreeAddressId + "]";
+        + expirationYear + ", email=" + email + ", brainTreeAddressId=" + braintreeAddressId 
+        + ", cvvValidationCode=" + cvvValidationCode+ "]";
 	}
 
   /**
@@ -131,6 +133,22 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 	public void setIsDefault(Boolean isDefault) {
 		this.isDefault = isDefault;
 	}
+
+  /**
+   * @return the cvvValidationCode
+   */
+  public String getCvvValidationCode()
+  {
+    return cvvValidationCode;
+  }
+
+  /**
+   * @param cvvValidationCode the cvvValidationCode to set
+   */
+  public void setCvvValidationCode(String cvvValidationCode)
+  {
+    this.cvvValidationCode = cvvValidationCode;
+  }
 
 
 }

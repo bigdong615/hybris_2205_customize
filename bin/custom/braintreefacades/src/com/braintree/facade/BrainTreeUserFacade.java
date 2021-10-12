@@ -48,4 +48,9 @@ public interface BrainTreeUserFacade extends UserFacade
 	 * This method is responsible for getting default billing address.
 	 */
 	public AddressData getDefaultBillingAddress();
+
+	/**
+	 * This method is responsible for getting all shipping address.
+	 */
+	 List<AddressData> getShippingAddressBook();
 }

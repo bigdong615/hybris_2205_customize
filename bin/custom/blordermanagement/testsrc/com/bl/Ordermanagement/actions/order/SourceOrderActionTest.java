@@ -163,7 +163,7 @@ public class SourceOrderActionTest
 		verify(consignmentProcessModel).setParentProcess(orderProcessModel);
 		verify(consignmentProcessModel).setConsignment(consignment);
 
-		assertTrue(orderModel.getStatus().toString().equals(OrderStatus.READY.toString()));
+		assertTrue(orderModel.getStatus().toString().equals(OrderStatus.RECEIVED.toString()));
 	}
 
 }

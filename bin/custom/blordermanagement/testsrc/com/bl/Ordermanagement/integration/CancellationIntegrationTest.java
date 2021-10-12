@@ -94,7 +94,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 
 		//when cancel the order
@@ -127,7 +127,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		IntStream.rangeClosed(1, 6).forEach(e -> stockLevels.NewStockLevel(products.Camera(), warehouses.Montreal(), 1, null));
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 
 		//when cancel the order
@@ -165,7 +165,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 
 		//when cancel the order
@@ -192,7 +192,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		//when cancel the order
 		order.getEntries().forEach(e -> cancellationEntryInfo.put(e, e.getQuantity()));
@@ -243,7 +243,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		stockLevels.Camera(warehouses.Montreal(), 2);
 		stockLevels.Camera(warehouses.Boston(), 1);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream()
 				.filter(e -> e.getWarehouse().getCode().equals(CODE_MONTREAL)).findFirst().get();
 		final ConsignmentModel consignmentResult_Boston = order.getConsignments().stream()
@@ -293,7 +293,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream().findFirst().get();
 
 		//when cancel first consignment
@@ -308,7 +308,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		assertEquals(2L, ((OrderEntryModel) order.getEntries().stream().findFirst().get()).getQuantityCancelled().longValue());
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.READY)));
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(2),
@@ -348,7 +348,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		stockLevels.Camera(warehouses.Montreal(), 2);
 		stockLevels.Camera(warehouses.Boston(), 1);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream()
 				.filter(e -> e.getWarehouse().getCode().equals(CODE_MONTREAL)).findFirst().get();
 		final ConsignmentModel consignmentResult_Boston = order.getConsignments().stream()
@@ -384,7 +384,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		assertTrue(order.getConsignments().stream().filter(e -> e.getWarehouse().getCode().equals(CODE_BOSTON))
 				.allMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//then verify the ATP and consignment
 		assertEquals(Long.valueOf(1),
@@ -421,7 +421,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Boston = order.getConsignments().stream().findFirst().get();
 		stockLevels.Camera(warehouses.Montreal(), 2);
 
@@ -437,7 +437,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		assertEquals(2L, ((OrderEntryModel) order.getEntries().stream().findFirst().get()).getQuantityCancelled().longValue());
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.READY)));
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(4),
@@ -492,7 +492,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		assertEquals(1, order.getConsignments().size());
 		assertEquals(2L, ((OrderEntryModel) order.getEntries().stream().findFirst().get()).getQuantityCancelled().longValue());
 		assertTrue(order.getConsignments().stream().allMatch(result -> result.getStatus().equals(ConsignmentStatus.READY)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//then verify the ATP
 		assertEquals(Long.valueOf(0),
@@ -528,7 +528,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream().findFirst().get();
@@ -566,7 +566,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		// Given create the order
 		stockLevels.Camera(warehouses.Montreal(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream()
 				.filter(e -> e.getWarehouse().getCode().equals(CODE_MONTREAL)).findFirst().get();
 
@@ -591,7 +591,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.CANCELLED)));
 		assertTrue(order.getConsignments().stream().anyMatch(result -> result.getStatus().equals(ConsignmentStatus.READY)));
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//when cancel second time
 		sourcingUtil.refreshOrder(order);
@@ -627,7 +627,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		stockLevels.MemoryCard(warehouses.Montreal(), 2);
 		stockLevels.MemoryCard(warehouses.Boston(), 1);
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream().findFirst().get();
 
 		//when cancel memoryCard with quantity 1
@@ -723,10 +723,10 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 		stockLevels.Camera(warehouses.Boston(), 2);
 		modelService.saveAll();
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		modelService.refresh(order);
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//when cancel consignment
 		sourcingUtil.refreshOrder(order);
@@ -954,7 +954,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 				.getStockLevelForProductAndPointOfService(products.Camera(), pointsOfService.Montreal_External()));
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// Verify consignment is allocated from the external warehouse
 		assertEquals(1, order.getConsignments().size());
@@ -1007,7 +1007,7 @@ public class CancellationIntegrationTest extends BaseAcceleratorSourcingIntegrat
 				.getStockLevelForProductAndPointOfService(products.Camera(), pointsOfService.Montreal_External()));
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// Verify consignment is allocated from the external warehouse
 		assertEquals(1, order.getConsignments().size());
