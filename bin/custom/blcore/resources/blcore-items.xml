@@ -3732,6 +3732,16 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This date refers to the late return date of this package.</description>
           </attribute>
+          <attribute qualifier="numberOfRepetitions" type="java.lang.Integer">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This refers to number of repetitions </description>
+          </attribute>
+          <attribute qualifier="isDelivered" type="boolean">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>To identify by UPS scrape</description>
+          </attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>

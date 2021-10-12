@@ -184,6 +184,7 @@
     <property name="baseStoreService" ref="baseStoreService"/>
     <property name="customerAccountService" ref="customerAccountService" />
     <property name="userService" ref="userService"/>
+    <property name="defaultBlOrderDao" ref="blDefaultOrderDao"/>
   </bean>
 
   <bean id="defaultBlTrackWebServiceImpl" class="com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl">
@@ -195,6 +196,12 @@
     <property name="baseStoreService" ref="baseStoreService"/>
     <property name="customerAccountService" ref="customerAccountService" />
     <property name="userService" ref="userService"/>
+    <property name="defaultBlOrderDao" ref="blDefaultOrderDao"/>
+  </bean>
+
+
+  <bean id="blDefaultOrderDao" class="com.bl.integration.dao.DefaultBlOrderDao">
+    <property name="flexibleSearchService" ref="flexibleSearchService" />
   </bean>
 
 
