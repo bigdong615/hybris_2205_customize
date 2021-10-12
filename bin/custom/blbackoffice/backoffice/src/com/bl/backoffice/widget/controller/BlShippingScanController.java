@@ -290,7 +290,7 @@ public class BlShippingScanController extends DefaultWidgetController
 				}
 				if (scannedBarcodeMap.containsKey(BlInventoryScanLoggingConstants.MISSING_SCAN_BARCODE))
 				{
-					getErrorMsgForMissingOnConsignment(scannedBarcodeMap);
+					getErrorMsgForMissingScanBarcode(scannedBarcodeMap);
 				}
 			}
 		}
@@ -302,6 +302,19 @@ public class BlShippingScanController extends DefaultWidgetController
 	private void getErrorMsgForMissingOnConsignment(final Map<String, List<BlProductModel>> scannedBarcodeMap)
 	{
 		final List<BlProductModel> serialCode = scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_IN_CONSIGNMENT);
+		final List<String> serialProductCode = createErrorMsgForScan(serialCode);
+
+		notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG,
+				BlInventoryScanLoggingConstants.SHIPPING_SERIAL_MISSING_ON_CONSIGNMENT_KEY, serialProductCode,
+				selectedConsignment.getOrder().getCode());
+	}
+
+	/**
+	 * @param scannedBarcodeMap
+	 */
+	private void getErrorMsgForMissingScanBarcode(final Map<String, List<BlProductModel>> scannedBarcodeMap)
+	{
+		final List<BlProductModel> serialCode = scannedBarcodeMap.get(BlInventoryScanLoggingConstants.MISSING_SCAN_BARCODE);
 		final List<String> serialProductCode = createErrorMsgForScan(serialCode);
 
 		notifyInvalidScan(BlInventoryScanLoggingConstants.SERIAL_MISSING_ON_CONSIGNMENT_MSG,
