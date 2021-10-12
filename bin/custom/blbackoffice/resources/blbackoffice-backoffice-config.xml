@@ -2467,6 +2467,7 @@
 				<editorArea:section name="hmc.section.blSerial.attributes" merge-mode="append">
 					<editorArea:attribute qualifier="repairVendor"/>
 					<editorArea:attribute qualifier="partsStatus"/>
+					<editorArea:attribute qualifier="partCost"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2729,6 +2730,7 @@
 			<list-view:column qualifier="parentLocationCode"/>
 			<list-view:column qualifier="locationCode"/>
 			<list-view:column qualifier="shippingMethod"/>
+			<list-view:column qualifier="orderReturnDate"/>
 		</list-view:list-view>
 	</context>
 

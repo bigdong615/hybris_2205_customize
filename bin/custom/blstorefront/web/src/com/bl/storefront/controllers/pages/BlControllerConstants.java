@@ -194,6 +194,7 @@ public class BlControllerConstants
 
 	public static final String CLEAR_BRANDS = "clearBrands";
 	public static final String BRANDS = "brands";
+	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
 
 	private BlControllerConstants()
 	{

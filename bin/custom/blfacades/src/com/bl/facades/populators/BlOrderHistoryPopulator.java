@@ -202,7 +202,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
     final AtomicReference<String> orderStatus = new AtomicReference<>();
 
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) ||
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) ||
         abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
             paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
@@ -260,7 +260,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
         paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
       orderStatus =  BlFacadesConstants.SOLD;

@@ -67,8 +67,8 @@ public class DefaultBlBlackoutDateService implements BlBlackoutDateService
 	@Override
 	public boolean checkForBlackoutDate(final RentalDateDto rentalDateDto)
 	{
-		return Objects.nonNull(rentalDateDto) && isDatesAvailable(rentalDateDto) 
-				&& (getBlCartService().isSelectedDateIsBlackoutDate(
+		final boolean isEligibleToCheckBlackoutDate = getBlCartService().isRentalCartOnly() && Objects.nonNull(rentalDateDto) && isDatesAvailable(rentalDateDto);
+		return isEligibleToCheckBlackoutDate && (getBlCartService().isSelectedDateIsBlackoutDate(
 						 BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT),
 						 BlackoutDateTypeEnum.RENTAL_START_DATE)
 						 || getBlCartService().isSelectedDateIsBlackoutDate(

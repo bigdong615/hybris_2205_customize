@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +38,8 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	private static final String WHERE = "} WHERE {";
 	private static final String PRODUCT_CODE_PARAM = "} = ?productCode ";
 	private static final String DATE_PARAM = "} BETWEEN ?startDate AND ?endDate ";
+	private static final String HARD_ASSIGNED = "hardAssigned";
+	private static final String ORDER_CODES = "orderCodes";
 
 	private static final String STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE + PRODUCT_CODE_PARAM +
@@ -94,6 +95,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 
 	private static final String WH_SPECIFIC_STOCK_LEVELS_FOR_PRODUCTS_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.WAREHOUSE + "} =?warehouse " + AND + StockLevelModel.DATE + DATE_PARAM;
+
+	private static final String STOCKS_FOR_SOFT_ASSIGNED_SERIALS_OF_ORDERS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
+			+ WHERE + StockLevelModel.ORDER + "} IN (?orderCodes)" + AND + StockLevelModel.HARDASSIGNED + "} =?hardAssigned";
 
 	/**
 	 * {@inheritDoc}
@@ -305,9 +309,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		else
 		{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY);
-			fQuery.addQueryParameter("productCodes", productCodes);
+			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODES, productCodes);
 			addQueryParameter(startDate, endDate, fQuery);
-			fQuery.addQueryParameter("warehouses", warehouse);
+			fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouse);
 			fQuery.addQueryParameter(BlCoreConstants.BUFFER_INVENTORY, Boolean.FALSE);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
@@ -429,6 +433,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		return stockLevels;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Collection<StockLevelModel> getStockForUnallocatedProduct(final List<String> productCodes,
 			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate) {
 		if (null == warehouses)
@@ -438,9 +445,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		else
 		{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_FOR_UNALLOCATED_PRODUCTS_QUERY);
-			fQuery.addQueryParameter("productCodes", productCodes);
+			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODES, productCodes);
 			addQueryParameter(startDate, endDate, fQuery);
-			fQuery.addQueryParameter("warehouses", warehouses);
+			fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouses);
 			fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
@@ -453,6 +460,24 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			}
 			return stockLevels;
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<StockLevelModel> getStocksOfSoftAssignedSerialsOfOrders(final Set<String> orderCodes) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCKS_FOR_SOFT_ASSIGNED_SERIALS_OF_ORDERS_QUERY);
+		fQuery.addQueryParameter(HARD_ASSIGNED, Boolean.FALSE);
+		fQuery.addQueryParameter(ORDER_CODES, orderCodes);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for orders {} when hard assigned flag is true ", orderCodes);
+			return Collections.emptyList();
+		}
+		return stockLevels;
 	}
 
 }
