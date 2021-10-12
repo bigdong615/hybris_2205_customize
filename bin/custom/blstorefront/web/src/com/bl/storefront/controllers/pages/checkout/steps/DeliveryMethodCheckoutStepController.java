@@ -26,6 +26,7 @@ import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.bl.storefront.util.BlAddressDataUtil;
+import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -100,6 +101,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     
     @Resource(name = "blBlackoutDateService")
     private BlBlackoutDateService blBlackoutDateService;
+
+    @Resource(name = "userFacade")
+    private BrainTreeUserFacade brainTreeUserFacade;
     
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration() 
@@ -139,7 +143,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
 
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
-        model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
+        model.addAttribute("deliveryAddresses", brainTreeUserFacade.getShippingAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
         model.addAttribute("addressForm", new BlAddressForm());
         model.addAttribute("blPickUpByForm", new BlPickUpByForm());
