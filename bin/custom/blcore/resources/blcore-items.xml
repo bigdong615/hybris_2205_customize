@@ -633,6 +633,17 @@
         <targetElement qualifier="serialProduct" type="BlSerialProduct"
           cardinality="one" />
       </relation>
+      <relation code="BlProduct2PrincipalRelation" autocreate="true" generate="true" localized="false">
+        <deployment table="BlProduct2PrincRel" typecode="12241"/>
+        <sourceElement qualifier="restrictedProducts" type="BlProduct" cardinality="many" ordered="false">
+          <description>catalog categories which are accessible for this principal</description>
+          <modifiers read="true" write="false" search="true" optional="true"/>
+        </sourceElement>
+        <targetElement qualifier="restrictedPrincipals" type="Principal" cardinality="many" collectiontype="set" ordered="true">
+          <description>Principals which are restricted to access this catalogProduct</description>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </targetElement>
+      </relation>
     </relations>
 
 

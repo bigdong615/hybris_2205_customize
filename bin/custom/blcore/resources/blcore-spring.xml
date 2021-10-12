@@ -1645,5 +1645,11 @@
 	<bean id="blExtraItemRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
+
+	<!-- [BL-635] -->
+	<bean id="blRestrictedUserGroupResolver" class="com.bl.core.resolvers.BlRestrictedUserGroupResolver"
+		parent="abstractValueResolver">
+		<property name="modelService" ref="modelService"/>
+	</bean>
 	
 </beans>
