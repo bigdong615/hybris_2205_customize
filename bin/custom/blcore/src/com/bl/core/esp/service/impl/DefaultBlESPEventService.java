@@ -28,6 +28,7 @@ import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
+import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
@@ -316,15 +317,17 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
 
   /**
-   * This method created to prepare the request and response from Order Exception ESP service
+   * This method created to prepare the request and response from Order Exception missing/broken ESP service
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderExceptions(final OrderModel orderModel) {
+  public void sendOrderMissingBrokenLateEvent(final OrderModel orderModel, final OrderExceptionsExtraData orderExceptionsExtraData) {
     if (Objects.nonNull(orderModel)) {
       final OrderExceptionEventRequest orderExceptionEventRequest = new OrderExceptionEventRequest();
+      orderExceptionEventRequest.setExtraData(orderExceptionsExtraData);
       getBlOrderExceptionsRequestPopulator().populate(orderModel,
           orderExceptionEventRequest);
+
       ESPEventResponseWrapper espEventResponseWrapper = null;
       try
       {
@@ -332,10 +335,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
         espEventResponseWrapper = getBlESPEventRestService().sendOrderException(
             orderExceptionEventRequest);
       }catch (final BlESPIntegrationException exception){
-        persistESPEventDetail(null, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+        persistESPEventDetail(null, EspEventTypeEnum.EXCEPTION_ISSUE,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
       }
       // Save send order exception ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.EXCEPTION_EXTRAITEM,orderModel.getCode(),null, null);
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.EXCEPTION_ISSUE,orderModel.getCode(),null, null);
     }
   }
 

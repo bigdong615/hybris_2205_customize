@@ -1383,14 +1383,6 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			else
 			{
-				final String ipAddress = request.getRemoteAddr();
-				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
-				{
-					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null ,
-							getI18nService().getCurrentLocale()));
-				}
-				else
-				{
 					final String referer = request.getHeader(BlControllerConstants.REFERER);
 					final List<String> errorList = new ArrayList<>();
 					final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
@@ -1405,7 +1397,7 @@ public class AccountPageController extends AbstractSearchPageController
 						model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 					}
 				}
-			}
+
 		}
 		catch (final VoucherOperationException e)
 		{

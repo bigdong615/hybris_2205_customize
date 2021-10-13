@@ -370,6 +370,7 @@
 		<property name="data" type="com.bl.esp.dto.orderexceptions.data.OrderExceptionsData" equals="true">
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
+		<property name="extraData" type="com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData" equals="true"/>
 	</bean>
 
 
@@ -403,6 +404,11 @@
 		</property>
 	</bean>
 
+	<bean class="com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData">
+		<property name="serialCode" type="java.lang.String" equals="true"/>
+		<property name="totalChargedAmount" type="java.lang.String" equals="true"/>
+		<property name="allUnPaidBillNotes" type="java.lang.String" equals="true"/>
+	</bean>
 
 	<bean class="com.bl.esp.dto.orderunboxed.data.OrderUnBoxedData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>

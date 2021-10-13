@@ -472,7 +472,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_REFUND_EVENT_DEFINITION_KEY = "order.refund.event.definition.key";
 	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
-	
+
 	private BlCoreConstants()
 	{
 		//empty
