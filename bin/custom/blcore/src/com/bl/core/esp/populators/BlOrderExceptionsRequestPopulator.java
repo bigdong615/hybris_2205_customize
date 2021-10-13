@@ -17,6 +17,7 @@ import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -75,7 +76,11 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
-    orderExceptionsData.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+        orderModel.isGiftCardOrder())) {
+      orderExceptionsData
+          .setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+    }
     populateOrderItemsInXML(orderExceptionsData,orderExceptionEventRequest);
     orderExceptionEventRequest.setData(orderExceptionsData);
   }
