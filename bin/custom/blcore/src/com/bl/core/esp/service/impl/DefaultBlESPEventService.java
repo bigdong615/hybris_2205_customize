@@ -46,7 +46,6 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -498,9 +497,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
       OrderRefundData data) {
     data.setRefundamount(totalRefundAmount);
     data.setRefundmethod(refundMethod);
-   /* orderCancelEntries.forEach(orderCancelEntry -> {
-      data.setReason(orderCancelEntry.getCancelReason().getCode());
-    });*/
     populateOrderItemXMLData(orderCancelEntries, data);
   }
 
@@ -554,7 +550,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @throws TransformerConfigurationException TransformerConfigurationException
    */
   protected Transformer getTransformerFactoryObject() throws TransformerConfigurationException {
-    final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    final TransformerFactory transformerFactory = TransformerFactory.newInstance(); //NOSONAR
     return transformerFactory.newTransformer();
   }
 

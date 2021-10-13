@@ -122,7 +122,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private transient Set<BlOrderEntryToCancelDto> orderEntriesToCancel;
     private List<BlOrderEntryToCancelDto> cancelAndRefundEntries;
     private List<BlOrderEntryToCancelDto> refundEntries;
-    private List<OrderCancelEntry> orderCancelEntries ;
+    private transient List<OrderCancelEntry> orderCancelEntries ;
 
     @Wire
     private Textbox customerName;
