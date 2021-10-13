@@ -3,7 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
@@ -220,6 +220,18 @@ public class LoginPageController extends AbstractBlLoginPageController
 		}
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
 				ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
+	}
+
+	@GetMapping(value = "/isSessionPresent")
+	@ResponseBody
+	public String checkSessionPresent(final Model model,
+			final HttpServletRequest request, final HttpServletResponse response){
+		final HttpSession session = request.getSession(false);
+		if(session != null && !session.isNew()) {
+			return BlControllerConstants.SUCCESS;
+		} else {
+			return BlCoreConstants.FAILURE_STRING;
+		}
 	}
 
 }

@@ -11,6 +11,7 @@ ACC.account = {
 			var serialClick = $(this).data('click');
 			var productCode = $(this).attr('data-product-code');
 			$('#signIn').html("");
+			if(isSessionPresent()){
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
@@ -22,6 +23,10 @@ ACC.account = {
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
+			}else{
+      	console.log("session not present");
+        window.location.reload();
+        }
 		});
 
 		/*This function is responsible for providing form object for the sign up popup*/
@@ -30,6 +35,7 @@ ACC.account = {
 			var serialClick = $(this).data('serial');
 			var productCode = $(this).data('product-code');
 			$('#signUp').html("");
+			if(isSessionPresent()){
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
@@ -41,6 +47,10 @@ ACC.account = {
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
+			}else{
+       console.log("session not present");
+       window.location.reload();
+       }
 		});
 
 		/** Added for BL-31 to make validation for registration **/
@@ -231,6 +241,27 @@ ACC.account = {
 				$("#errorMessages_login").html("Your Email or Password was incorrect");
 			}
 		});
+
+		function isSessionPresent(){
+    var sessionUrl = ACC.config.encodedContextPath + '/login/isSessionPresent';
+        var status = false;
+           $.ajax({
+                async: false,
+           			url:sessionUrl,
+           			success: function (result) {
+                   	if(result == 'success'){
+                    	status = true;
+                    	}else {
+                    	status = false;
+                    	}
+                  },
+                  error:function(error){
+                    console.log("some error occure while checking session"+error);
+                    status = false;
+                    }
+                 })
+                 return status;
+        }
 
 	}
 };
