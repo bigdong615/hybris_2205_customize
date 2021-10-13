@@ -15,6 +15,7 @@ import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.customer.service.BrainTreeCustomerAccountService;
 import com.braintree.enums.BrainTreePaymentMethod;
+import com.braintree.exceptions.BraintreeCreditCardValidationException;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
@@ -57,7 +58,8 @@ import org.apache.log4j.Logger;
 
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
+	private static final String CVV_MATCH_CODE = "M";
+  private final static Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
 	private BrainTreeUserFacade brainTreeUserFacade;
 	private BrainTreePaymentService brainTreePaymentService;
 	private CartService cartService;
@@ -344,8 +346,13 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 				});
 	}
 
-	private void checkBraintreeResult(final BrainTreeCreatePaymentMethodResult paymentMethodResult) throws AdapterException {
+	private void checkBraintreeResult(final BrainTreeCreatePaymentMethodResult paymentMethodResult) {
 		if (!paymentMethodResult.isSuccess()) {
+		  if(StringUtils.isNotBlank(paymentMethodResult.getCvvValidationCode()) && !paymentMethodResult.getCvvValidationCode().equalsIgnoreCase(CVV_MATCH_CODE))
+		  {
+		    throw new BraintreeCreditCardValidationException("Credit Card CVV Check Validation Fail", 
+		        paymentMethodResult.getCvvValidationCode());
+		  }
 			throw new AdapterException(paymentMethodResult.getErrorMessage());
 		}
 	}
