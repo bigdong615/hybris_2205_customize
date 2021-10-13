@@ -1,5 +1,6 @@
 package com.bl.core.esp.service;
 
+import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.OrderModel;
 
 public interface BlESPEventService {
@@ -36,8 +37,9 @@ public interface BlESPEventService {
     /**
      * Send Order Exceptions Event by calling Order Canceled ESP Event API
      * @param orderModel
+     * @param orderExceptionsExtraData
      */
-    void sendOrderExceptions(final OrderModel orderModel) ;
+    void sendOrderExceptions(final OrderModel orderModel, final OrderExceptionsExtraData orderExceptionsExtraData) ;
 
     /**
      * Send Order Unboxed Event by calling Order Canceled ESP Event API
