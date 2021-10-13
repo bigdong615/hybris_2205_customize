@@ -128,7 +128,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			final OrderModel orderModel = (OrderModel) consignmentEntryModel.getConsignment().getOrder();
 			modifiedBillingCharges.forEach((serialCode, charges) -> {
 				if (previousChangedBillingChargesList.containsKey(serialCode)) {
-					List<BlItemsBillingChargeModel> previousCharges = previousChangedBillingChargesList
+					final List<BlItemsBillingChargeModel> previousCharges = previousChangedBillingChargesList
 							.get(serialCode);
 					List<BlItemsBillingChargeModel> updatedCharges = Lists
 							.newArrayList(modifiedBillingCharges.get(serialCode));
