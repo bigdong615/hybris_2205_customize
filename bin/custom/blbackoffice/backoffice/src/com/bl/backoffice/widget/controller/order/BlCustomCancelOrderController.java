@@ -28,8 +28,13 @@ import de.hybris.platform.returns.model.RefundEntryModel;
 import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
-
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.logging.impl.LogErrorCodeEnum;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import java.math.BigDecimal;
+import org.apache.log4j.Level;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -109,12 +114,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private static final Logger LOGGER = Logger.getLogger(BlCustomCancelOrderController.class);
     public static final String REFUND = "REFUND";
 
+    @Resource(name = "blOrderService")
+    DefaultBlESPEventService blEspEventService;
     private OrderModel orderModel;
     private final List<String> cancelReasons = new ArrayList<>();
     private Map<AbstractOrderEntryModel, Long> orderCancellableEntries;
     private transient Set<BlOrderEntryToCancelDto> orderEntriesToCancel;
     private List<BlOrderEntryToCancelDto> cancelAndRefundEntries;
     private List<BlOrderEntryToCancelDto> refundEntries;
+    private transient List<OrderCancelEntry> orderCancelEntries ;
 
     @Wire
     private Textbox customerName;
@@ -195,6 +203,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
  	@Resource(name = "defaultBlConsignmentService")
  	private BlConsignmentService defaultBlConsignmentService;
 
+ 	@Resource(name = "defaultBlUserService")
+  private DefaultBlUserService defaultBlUserService;
+
     /**
      * Init cancellation order form.
      * @param inputObject the input object
@@ -202,6 +213,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     @SocketEvent(socketId = BlCustomCancelRefundConstants.INPUT_OBJECT)
     public void initCancellationOrderForm(final OrderModel inputObject) {
         getModelService().refresh(inputObject);
+        orderCancelEntries = new ArrayList<>();
         if(inputObject.getOriginalOrderTotalAmount() == BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
             if(inputObject.getGrandTotal() > BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
                 inputObject.setOriginalOrderTotalAmount(inputObject.getGrandTotal());
@@ -248,6 +260,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (Button.YES.event.equals(obj.getName())) {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.CANCELLING_THE_ORDER_FOR_CODE, this.getOrderModel().getCode());
             if (this.buildCancelRequest() != null) {
+                this.setOrderCancelEntries(new ArrayList<>());
                 this.doCallToRefundProcess();
                 try {
                     calculationService.recalculate(this.getOrderModel());
@@ -592,6 +605,18 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             } else {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
                 this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
+                // trigger Esp Refund event for GC
+                final AbstractOrderModel order = captureEntry.getPaymentTransaction().getOrder();
+                if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                    try {
+                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,this.getTotalRefundAmount(),BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                        this.setOrderCancelEntries(null);
+                    }
+                    catch (final Exception e){
+                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                            BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                    }
+                }
             }
         } else {
             this.partialRefund(this.cancelAndRefundEntries, captureEntry);
@@ -674,11 +699,33 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()));
         if(gcAmount > BlInventoryScanLoggingConstants.ZERO) {
             this.logAmountForGiftCardTransactions(gcAmount);
+            // trigger Esp Refund event for GC
+            if(getDefaultBlUserService().isCsUser()){
+                try {
+                    getBlEspEventService().sendOrderRefundEvent(this.getOrderModel(),gcAmount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                }
+                catch (final Exception e){
+                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                }
+            }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), gcAmount);
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER +
                     this.getOrderModel().getCode() + BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT +
                     this.getTwoDecimalDoubleValue(gcAmount));
         } else {
+            // trigger Esp Refund event for cc/paypal
+            if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
+                try {
+                    getBlEspEventService()
+                        .sendOrderRefundEvent(this.getOrderModel(), this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()), ((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider(),
+                            getOrderCancelEntries());
+                }
+                catch (final Exception e){
+                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                }
+            }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY, this.getOrderModel().getCode());
             this.successMessageBox(BlCustomCancelRefundConstants.ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY);
         }
@@ -752,6 +799,17 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER +
                     this.getOrderModel().getCode() + BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT +
                     this.getTwoDecimalDoubleValue(totalAmt));
+            // trigger Esp Refund event for GC
+            final AbstractOrderModel order = captureEntry.getPaymentTransaction().getOrder();
+            if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                try {
+                    getBlEspEventService().sendOrderRefundEvent((OrderModel) order,totalAmt,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                }
+                catch (final Exception e){
+                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                }
+            }
         }
     }
 
@@ -817,6 +875,17 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             StringBuilder stringSuccess = new StringBuilder(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
             this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(totalAmt));
             if (gcAmount > BlInventoryScanLoggingConstants.ZERO) {
+                // trigger Esp Refund event for GC
+                if(getDefaultBlUserService().isCsUser()){
+                    try {
+                        getBlEspEventService().sendOrderRefundEvent(this.getOrderModel(),gcAmount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                    }
+                    catch (final Exception e){
+                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                            BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+
+                    }
+                }
                 this.logAmountForGiftCardTransactions(gcAmount);
                 stringSuccess.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH)
                         .append(this.getTwoDecimalDoubleValue(gcAmount));
@@ -825,6 +894,19 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER,
                     this.getOrderModel().getCode());
             this.successMessageBox(stringSuccess.toString());
+            // trigger Esp Refund event for cc/paypal
+            if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
+                try {
+                    getBlEspEventService()
+                        .sendOrderRefundEvent(this.getOrderModel(),totalAmt, ((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider(),
+                            getOrderCancelEntries());
+                }
+                catch (final Exception e){
+                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                }
+
+            }
         }
     }
 
@@ -976,15 +1058,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (this.getOrderModel() != null) {
             cancelAndRefundEntries = new ArrayList<>();
             refundEntries = new ArrayList<>();
-            final List<OrderCancelEntry> orderCancelEntries = new ArrayList<>();
-            if(this.globalCancelEntriesSelection.isChecked()) {
-                this.getOrderEntriesGridRows().forEach(entry -> this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry));
+           if(this.globalCancelEntriesSelection.isChecked()) {
+                this.getOrderEntriesGridRows().forEach(entry -> this.createOrderCancelEntryRecord(this.getOrderCancelEntries(), (Row) entry));
             } else {
                 this.getOrderEntriesGridRows().stream().filter(entryRow -> ((Checkbox) entryRow.getFirstChild()).isChecked()).forEach(
-                    entry -> this.createOrderCancelEntryRecord(orderCancelEntries, (Row) entry));
+                    entry -> this.createOrderCancelEntryRecord(this.getOrderCancelEntries(), (Row) entry));
             }
-            if (CollectionUtils.isNotEmpty(orderCancelEntries)) {
-                final OrderCancelRequest orderCancelRequest = new OrderCancelRequest(this.getOrderModel(), orderCancelEntries);
+            if (CollectionUtils.isNotEmpty(this.getOrderCancelEntries())) {
+                final OrderCancelRequest orderCancelRequest = new OrderCancelRequest(this.getOrderModel(), this.getOrderCancelEntries());
                 orderCancelRequest.setCancelReason(this.matchingComboboxCancelReason(this.globalCancelReasons.getValue()).orElse(null));
                 orderCancelRequest.setNotes(this.globalCancelComment.getValue());
                 return orderCancelRequest;
@@ -1695,4 +1776,30 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 	public void setDefaultBlConsignmentService(final BlConsignmentService defaultBlConsignmentService) {
 		this.defaultBlConsignmentService = defaultBlConsignmentService;
 	}
+    public DefaultBlESPEventService getBlEspEventService() {
+        return blEspEventService;
+    }
+
+    public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
+        this.blEspEventService = blEspEventService;
+    }
+
+    public List<OrderCancelEntry> getOrderCancelEntries() {
+        return orderCancelEntries;
+    }
+
+    public void setOrderCancelEntries(
+        List<OrderCancelEntry> orderCancelEntries) {
+        this.orderCancelEntries = orderCancelEntries;
+    }
+
+    public DefaultBlUserService getDefaultBlUserService() {
+        return defaultBlUserService;
+    }
+
+    public void setDefaultBlUserService(
+        DefaultBlUserService defaultBlUserService) {
+        this.defaultBlUserService = defaultBlUserService;
+    }
+
 }

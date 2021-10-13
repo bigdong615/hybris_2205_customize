@@ -1,21 +1,19 @@
 package com.bl.core.esp.service.impl;
 
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
-import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
-import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
-import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
-import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
-import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
-import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
-import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
+import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
+import com.bl.core.esp.populators.BlOrderRefundRequestPopulator;
+import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderUnboxedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationCOIneededRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator;
@@ -23,7 +21,11 @@ import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
+import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
+import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
@@ -36,18 +38,34 @@ import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
+import com.bl.esp.dto.refund.OrderRefundEventRequest;
+import com.bl.esp.dto.refund.data.OrderRefundData;
 import com.bl.esp.dto.shipped.OrderShippedEventRequest;
 import com.bl.esp.enums.ESPEventStatus;
 import com.bl.esp.enums.EspEventTypeEnum;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
+import java.io.StringWriter;
+import java.util.List;
 import java.util.Objects;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * This Common class used for preparing request and resposne for ESP Events
@@ -71,7 +89,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderShippedRequestPopulator blOrderShippedRequestPopulator;
     private BlOrderPickedUpRequestPopulator blOrderPickedUpRequestPopulator;
     private BlExtendOrderRequestPopulator blExtendOrderRequestPopulator;
-  private BlExtraItemRequestPopulator blExtraItemRequestPopulator;
+    private BlExtraItemRequestPopulator blExtraItemRequestPopulator;
+    private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private ModelService modelService;
 
@@ -443,6 +462,100 @@ public class DefaultBlESPEventService implements BlESPEventService {
       persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_EXTENDED,orderModel.getCode(),null, null);
     }
   }
+  /**
+   * Send Order Refund by calling Order Refund ESP Event API
+   * @param orderModel
+   * @param totalRefundAmount
+   * @param refundMethod
+   * @param orderCancelEntries
+   */
+
+  @Override
+  public void sendOrderRefundEvent(final OrderModel orderModel,final double totalRefundAmount,final String refundMethod, final List<OrderCancelEntry> orderCancelEntries) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderRefundEventRequest orderRefundEventRequest = new OrderRefundEventRequest();
+      getBlOrderRefundRequestPopulator().populate(orderModel, orderRefundEventRequest );
+      orderCancelEntries(totalRefundAmount, refundMethod, orderCancelEntries, orderRefundEventRequest.getData());
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order deposit ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderRefundDeclinedEvent(orderRefundEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_REFUND,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order deposit ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_REFUND,orderModel.getCode(),null, null);
+
+    }
+  }
+  /**
+   * Order Cancel Entries
+   * @param totalRefundAmount
+   * @param refundMethod
+   * @param orderCancelEntries
+   */
+  private void orderCancelEntries(double totalRefundAmount, String refundMethod,
+      List<OrderCancelEntry> orderCancelEntries,
+      OrderRefundData data) {
+    data.setRefundamount(totalRefundAmount);
+    data.setRefundmethod(refundMethod);
+    populateOrderItemXMLData(orderCancelEntries, data);
+  }
+
+  /**
+   * THis method populates order items in xml
+   * @param orderCancelEntries orderCancelEntry
+   * @param data data
+   */
+  private void populateOrderItemXMLData(final List<OrderCancelEntry> orderCancelEntries , final OrderRefundData data) {
+    try {
+      final Document orderItemsInXMLDocument = createNewXMLDocument();
+      final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ORDER_ITEMS_ROOT_ELEMENT);
+
+
+      if (Objects.nonNull(orderCancelEntries)) {
+        for (final OrderCancelEntry orderCancelEntry :orderCancelEntries) {
+          final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument,
+              rootOrderItems, BlCoreConstants.ORDER_ITEM_ROOT_ELEMENT);
+          if (Objects.nonNull(orderCancelEntry.getOrderEntry().getProduct())) {
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+                BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                getRequestValue(orderCancelEntry.getOrderEntry().getProduct().getCode()));
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+                BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                getRequestValue(orderCancelEntry.getOrderEntry().getProduct().getName()));
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+                BlCoreConstants.ORDER_ITEM_PRODUCT_CANCEL_REASON,
+                getRequestValue(orderCancelEntry.getCancelReason().getCode()));
+          }
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+              BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
+              getProductURL(orderCancelEntry));
+        }
+        }
+
+
+      final Transformer transformer = getTransformerFactoryObject();
+      final StringWriter writer = new StringWriter();
+
+      //transform document to string
+      transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
+      data.setOrderitemsinfo(writer.getBuffer().toString());
+
+    } catch (final Exception exception) {
+      throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ORDER_INVALID.getCode() , exception);
+    }
+  }
+  /**
+   * This method created to get transformer factory object
+   * @return transformer
+   * @throws TransformerConfigurationException TransformerConfigurationException
+   */
+  protected Transformer getTransformerFactoryObject() throws TransformerConfigurationException {
+    final TransformerFactory transformerFactory = TransformerFactory.newInstance(); //NOSONAR
+    return transformerFactory.newTransformer();
+  }
 
   /**
    * This method created to prepare the request and response from ESP service
@@ -468,7 +581,76 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
+   /*
+   * To check whether media is empty of not
+   * @param abstractOrderEntryModel abstractOrderEntryModel
+   * @return string
+   */
+  protected String getProductURL(final OrderCancelEntry abstractOrderEntryModel){
+    return Objects.nonNull(abstractOrderEntryModel.getOrderEntry().getProduct().getPicture()) &&
+        org.apache.commons.lang3.StringUtils
+            .isNotBlank(abstractOrderEntryModel.getOrderEntry().getProduct().getPicture().getURL()) ?
+        abstractOrderEntryModel.getOrderEntry().getProduct().getPicture().getURL() : org.apache.commons.lang3.StringUtils.EMPTY;
+  }
 
+  /**
+   * To get the request value based
+   * @param value value get from order
+   * @return value to set on request
+   */
+  protected String getRequestValue(final String value){
+    return org.apache.commons.lang3.StringUtils
+        .isBlank(value) ? org.apache.commons.lang3.StringUtils.EMPTY :value;
+  }
+  /**
+   * This method created to add the root element
+   * @param document document to be add
+   * @param rootElement root element to be set
+   * @return element which append
+   */
+  protected Element createRootElementForRootElement(final Document document, final Element rootElement, final String rootElementName) {
+    final Element childElement = document.createElement(rootElementName);
+    rootElement.appendChild(childElement);
+    return childElement;
+  }
+  /**
+   * This method created to add the root element
+   * @param document document to be add
+   * @param rootElement root element to be set
+   * @param value value to add
+   * @return element which append
+   */
+
+  protected Element createElementForRootElement(final Document document, final Element rootElement, final String element, final String value) {
+    final Element childElement = document.createElement(element);
+    childElement.appendChild(document.createTextNode(value));
+    rootElement.appendChild(childElement);
+    return childElement;
+  }
+
+
+  /**
+   * This method created to add the root element
+   * @param document document to be add
+   * @param rootElement root element to be set
+   * @return element which append
+   */
+  protected Element createRootElementForDocument(final Document document, final String rootElement) {
+    final Element root = document.createElement(rootElement);
+    document.appendChild(root);
+    return root;
+  }
+
+  /**
+   * This method created to populate data
+   * @return data which converted
+   * @throws ParserConfigurationException parserConfigurationException
+   */
+  protected Document createNewXMLDocument() throws ParserConfigurationException {
+    final DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+    return documentBuilder.newDocument();
+  }
 
   /**
      * This method created to store the response from ESP for all type of events
@@ -670,4 +852,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
       BlExtraItemRequestPopulator blExtraItemRequestPopulator) {
     this.blExtraItemRequestPopulator = blExtraItemRequestPopulator;
   }
+
+  public BlOrderRefundRequestPopulator getBlOrderRefundRequestPopulator() {
+    return blOrderRefundRequestPopulator;
+  }
+
+  public void setBlOrderRefundRequestPopulator(
+      BlOrderRefundRequestPopulator blOrderRefundRequestPopulator) {
+    this.blOrderRefundRequestPopulator = blOrderRefundRequestPopulator;
+  }
+
 }

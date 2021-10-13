@@ -17,6 +17,7 @@ import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
+import com.bl.esp.dto.refund.OrderRefundEventRequest;
 import com.bl.esp.dto.shipped.OrderShippedEventRequest;
 
 
@@ -151,11 +152,19 @@ public interface BlESPEventRestService {
    */
   ESPEventResponseWrapper sendExtendOrderEvent(final OrderExtensionRequest orderExtensionRequest);
 
-
   /**
    * Send  Order Extra Item Event by calling Order Extra Item ESP Event API
    * @param  orderExtraItemRequest
    */
    ESPEventResponseWrapper sendOrderExtraItemEvent(
       final OrderExtraItemRequest orderExtraItemRequest) ;
+
+  /**
+   * Send Order Refund Event by calling Order Refund ESP Event API
+   *
+   * @param orderRefundEventRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderRefundDeclinedEvent(final OrderRefundEventRequest orderRefundEventRequest);
+
 }
