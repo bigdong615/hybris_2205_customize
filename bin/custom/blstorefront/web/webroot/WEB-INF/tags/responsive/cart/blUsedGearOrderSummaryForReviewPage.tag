@@ -31,17 +31,41 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="gray80"><spring:theme
-						code="text.checkout.multi.order.summary.shipping" /></td>
-				<td class="text-end" id="cart-shipping-cost"><format:blPrice
-						priceData="${cartData.deliveryCost}" /></td>
-				<input type="hidden" class="cart-cost"
-					id="${cartData.deliveryCost.formattedValue}">
+				<td class="gray80">
+				    <c:choose>
+                        <c:when test="${pageType =='reviewSummaryPage'}">
+                            <spring:theme code="text.checkout.multi.order.summary.shipping.calculated" />
+                        </c:when>
+                        <c:otherwise>
+                            <spring:theme code="text.checkout.multi.order.summary.shipping" />
+                        </c:otherwise>
+                    </c:choose>
+				</td>
+				<td class="text-end" id="cart-shipping-cost">
+				    <c:choose>
+                        <c:when test="${pageType =='reviewSummaryPage'}">
+                            <format:price priceData="${cartData.deliveryCost}" />
+                        </c:when>
+                        <c:otherwise>
+                            <format:blPrice priceData="${cartData.deliveryCost}" />
+                        </c:otherwise>
+                    </c:choose>
+				</td>
+				<input type="hidden" class="cart-cost" id="${cartData.deliveryCost.formattedValue}">
 			</tr>
 			<tr>
-				<td class="gray80"><spring:theme
-						code="text.checkout.multi.order.summary.tax" /></td>
-				<td class="text-end" id="cart-shipping-tax"><c:choose>
+				<td class="gray80">
+				    <c:choose>
+                        <c:when test="${pageType =='reviewSummaryPage'}">
+                            <spring:theme code="text.checkout.multi.order.summary.tax.calculated" />
+                        </c:when>
+                        <c:otherwise>
+                            <spring:theme code="text.checkout.multi.order.summary.tax" />
+                        </c:otherwise>
+                    </c:choose>
+				</td>
+				<td class="text-end" id="cart-shipping-tax">
+				    <c:choose>
 						<c:when
 							test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
 							<format:blPrice priceData="${cartData.taxAvalaraCalculated}" />
@@ -49,7 +73,8 @@
 						<c:otherwise>
 							<format:price priceData="${cartData.taxAvalaraCalculated}" />
 						</c:otherwise>
-					</c:choose></td>
+					</c:choose>
+			    </td>
 			</tr>
 			<tr class="discount">
 				<c:if test="${cartData.totalDiscounts.value > 0}">
