@@ -354,8 +354,7 @@ gtag('config', googleAnalyticsTrackingId);
       "subtotal": "${ycommerce:encodeJavaScript(orderData.subTotal.value)}",
       "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
       "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
-      "checkout_step" : 5,
-      "checkout_option" : "purchase",
+      "checkout_step" : "purchase",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{

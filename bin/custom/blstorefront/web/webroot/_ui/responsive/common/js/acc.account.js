@@ -242,6 +242,7 @@ ACC.account = {
 			}
 		});
 
+  /* [BL-694]: Changes related to checking session */
 		function isSessionPresent(){
     var sessionUrl = ACC.config.encodedContextPath + '/login/isSessionPresent';
         var status = false;

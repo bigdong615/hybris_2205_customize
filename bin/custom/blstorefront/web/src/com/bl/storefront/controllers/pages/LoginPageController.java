@@ -222,16 +222,15 @@ public class LoginPageController extends AbstractBlLoginPageController
 				ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
 	}
 
+	/**
+	 * This method used to check is previous session present or not.
+	 */
 	@GetMapping(value = "/isSessionPresent")
 	@ResponseBody
 	public String checkSessionPresent(final Model model,
 			final HttpServletRequest request, final HttpServletResponse response){
 		final HttpSession session = request.getSession(false);
-		if(session != null && !session.isNew()) {
-			return BlControllerConstants.SUCCESS;
-		} else {
-			return BlCoreConstants.FAILURE_STRING;
-		}
+		 return  (session != null && !session.isNew()) ? BlControllerConstants.SUCCESS :BlCoreConstants.FAILURE_STRING;
 	}
 
 }
