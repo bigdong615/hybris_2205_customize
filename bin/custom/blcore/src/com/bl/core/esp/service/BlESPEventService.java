@@ -1,6 +1,8 @@
 package com.bl.core.esp.service;
 
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import java.util.List;
 
 public interface BlESPEventService {
 
@@ -107,4 +109,15 @@ public interface BlESPEventService {
      * @param orderModel ordermodel
      */
      void sendOrderExtraItemsEvent(final OrderModel orderModel) ;
+
+    /**
+     * Send Order Refund by calling Order Refund ESP Event API
+     * @param orderModel
+     * @param totalRefundAmount
+     * @param refundMethod
+     * @param orderCancelEntries
+     */
+    public void sendOrderRefundEvent(final OrderModel orderModel,final double totalRefundAmount,final String refundMethod, final List<OrderCancelEntry> orderCancelEntries);
+
+
 }
