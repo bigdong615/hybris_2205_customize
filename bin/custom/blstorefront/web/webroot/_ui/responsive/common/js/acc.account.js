@@ -257,7 +257,7 @@ ACC.account = {
                     	}
                   },
                   error:function(error){
-                    console.log("some error occure while checking session"+error);
+                    console.log("Error while accessing Session"+error);
                     status = false;
                     }
                  })
