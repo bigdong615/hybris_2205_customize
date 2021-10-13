@@ -36,7 +36,8 @@ public class DefaultBlOrderDao
 
   private static final String ORDERS_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + "} FROM {"
       + OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
-      + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND endDate ";
+      + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE + "} BETWEEN ?startDate AND ?endDate OR {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?startDate OR {con:"
+      + ConsignmentModel.OPTIMIZEDSHIPPINGENDDATE +"} = ?endDate";
 
 
   protected FlexibleSearchService flexibleSearchService;
