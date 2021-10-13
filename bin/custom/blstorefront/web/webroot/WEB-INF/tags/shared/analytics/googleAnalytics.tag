@@ -120,6 +120,7 @@ gtag('config', googleAnalyticsTrackingId);
        	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
         "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
         "checkout_step" : 1,
+        "checkout_option" : "View Cart",
   		  "items": [
   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
   					{
@@ -177,6 +178,7 @@ gtag('config', googleAnalyticsTrackingId);
             "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
             "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
             "checkout_step" : 2,
+            "checkout_option": "Delivery Method",
       		  "items": [
       				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
       					{
@@ -234,6 +236,7 @@ gtag('config', googleAnalyticsTrackingId);
                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
                     "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
                     "checkout_step" : 3,
+                    "checkout_option" : "Payment Method",
               		  "items": [
               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
               					{
@@ -291,6 +294,7 @@ gtag('config', googleAnalyticsTrackingId);
                                     "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
                                     "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
                                     "checkout_step" : 4,
+                                    "checkout_option" : "Review Order",
                               		  "items": [
                               				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
                               					{
@@ -351,6 +355,7 @@ gtag('config', googleAnalyticsTrackingId);
       "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
       "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
       "checkout_step" : 5,
+      "checkout_option" : "purchase",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{
