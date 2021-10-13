@@ -299,7 +299,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				final Collection<String> dirtyErrorSerialList = unboxingResultMap.get(BlInventoryScanLoggingConstants.FOUR);
 				if (CollectionUtils.isNotEmpty(dirtyErrorSerialList))
 				{
-					doScanToAnotherLocationMessage(dirtyErrorSerialList);
+					doScanToAnotherLocationMessage(dirtyErrorSerialList, barcodes);
 				}
 			}
 			if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FIVE))
@@ -308,7 +308,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				if (CollectionUtils.isNotEmpty(dirtyPriorityErrorSerialList)
 						&& !getBlInventoryScanToolService().getStatusOfLocationDP())
 				{
-					doScanToDPCErrorMessage(dirtyPriorityErrorSerialList);
+					doScanToDPCErrorMessage(dirtyPriorityErrorSerialList, barcodes);
 				}
 			}
 		}
@@ -320,7 +320,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	 * @param dirtyErrorSerialList
 	 *           the dirty error serial list
 	 */
-	private void doScanToAnotherLocationMessage(final Collection<String> dirtyErrorSerialList)
+	private void doScanToAnotherLocationMessage(final Collection<String> dirtyErrorSerialList, final List<String> barcodes)
 	{
 		final List<String> barcodeWithNameList = new ArrayList<>();
 		getBarcodeByProductNameString(dirtyErrorSerialList, barcodeWithNameList);
@@ -332,6 +332,8 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 		else if (!getBlInventoryScanToolService().getStatusOfLocationDC())
 		{
+			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS, barcodes.size());
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE_MSG,
 					BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE, NOTIFICATION_LEVEL_WARNING, barcodeWithNameList);
 		}
@@ -372,11 +374,13 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	 * @param dirtyPriorityErrorSerialList
 	 *           the dirty priority error serial list
 	 */
-	private void doScanToDPCErrorMessage(final Collection<String> dirtyPriorityErrorSerialList)
+	private void doScanToDPCErrorMessage(final Collection<String> dirtyPriorityErrorSerialList, final List<String> barcodes)
 	{
 		final List<String> barcodeWithNameList = new ArrayList<>();
 		getBarcodeByProductNameString(dirtyPriorityErrorSerialList, barcodeWithNameList);
 
+		addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+				BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS, barcodes.size());
 		addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
 				BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING, barcodeWithNameList);
 	}
