@@ -120,12 +120,12 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		if (BooleanUtils.isTrue(defaultBlUserService.isTechEngOrRepairUser()) && interceptorContext
 				.isModified(consignmentEntryModel, ConsignmentEntryModel.BILLINGCHARGES)
 				&& CollectionUtils.isNotEmpty(serialProducts)) {
-			Map<String, List<BlItemsBillingChargeModel>> modifiedBillingCharges = Maps
+			final Map<String, List<BlItemsBillingChargeModel>> modifiedBillingCharges = Maps
 					.newHashMap(consignmentEntryModel.getBillingCharges());
-			Map<String, List<BlItemsBillingChargeModel>> newModifiedBillingCharges = Maps.newHashMap();
-			Map<String, List<BlItemsBillingChargeModel>> previousChangedBillingChargesList = getPreviousChangedBillingChargesList(
+			final Map<String, List<BlItemsBillingChargeModel>> newModifiedBillingCharges = Maps.newHashMap();
+			final Map<String, List<BlItemsBillingChargeModel>> previousChangedBillingChargesList = getPreviousChangedBillingChargesList(
 					consignmentEntryModel);
-			OrderModel orderModel = (OrderModel) consignmentEntryModel.getConsignment().getOrder();
+			final OrderModel orderModel = (OrderModel) consignmentEntryModel.getConsignment().getOrder();
 			modifiedBillingCharges.forEach((serialCode, charges) -> {
 				if (previousChangedBillingChargesList.containsKey(serialCode)) {
 					List<BlItemsBillingChargeModel> previousCharges = previousChangedBillingChargesList
@@ -201,22 +201,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> lateChargeList) {
 		if (CollectionUtils.isNotEmpty(lateChargeList) && CollectionUtils.isEmpty(repairChargeList)) {
-			BigDecimal chargedAmount = BigDecimal.ZERO;
-			StringBuilder unPaidBillNotes = new StringBuilder();
-			for (BlItemsBillingChargeModel blItemsBillingChargeModel : lateChargeList) {
-				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
-			}
-			final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
-			orderExceptionsExtraData.setSerialCode(serialCode);
-			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
-			orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
-			try {
-				getBlEspEventService().sendOrderExceptions(orderModel, orderExceptionsExtraData);
-			} catch (final Exception exception) {
-				BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
-						exception);
-			}
+      eventTriggerForCharge(orderModel, serialCode, lateChargeList);
 		}
 	}
 
@@ -273,25 +258,9 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	private void eventTriggerForRepairCharge(final OrderModel orderModel, final String serialCode,
 			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> missingChargeList) {
-		final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
 		if (CollectionUtils.isNotEmpty(repairChargeList) && CollectionUtils
 				.isEmpty(missingChargeList)) {
-			BigDecimal chargedAmount = BigDecimal.ZERO;
-			StringBuilder unPaidBillNotes = new StringBuilder();
-			//consolidated data for repair charge.
-			for (BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
-				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
-			}
-			orderExceptionsExtraData.setSerialCode(serialCode);
-			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
-			orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
-			try {
-				getBlEspEventService().sendOrderExceptions(orderModel, orderExceptionsExtraData);
-			} catch (final Exception exception) {
-				BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
-						exception);
-			}
+      eventTriggerForCharge(orderModel, serialCode, repairChargeList);
 		}
 	}
 
@@ -306,29 +275,42 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	private void eventTriggerForMissingCharge(final OrderModel orderModel, final String serialCode,
 			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> missingChargeList) {
-		final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
+
 		if (CollectionUtils.isEmpty(repairChargeList) && CollectionUtils
 				.isNotEmpty(missingChargeList)) {
-			BigDecimal chargedAmount = BigDecimal.ZERO;
-			StringBuilder unPaidBillNotes = new StringBuilder();
-			//consolidated data for missing charge.
-			for (BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
-				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
-			}
-			orderExceptionsExtraData.setSerialCode(serialCode);
-			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
-			orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
-			try {
-				getBlEspEventService().sendOrderExceptions(orderModel, orderExceptionsExtraData);
-			} catch (final Exception exception) {
-				BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
-						exception);
-			}
-		}
+      eventTriggerForCharge(orderModel, serialCode, missingChargeList);
+    }
 	}
 
-	/**
+  /**
+   * It is responsible for triggering Exception broken/missing ESP event with consolidated data.
+   *
+   * @param orderModel
+   * @param serialCode
+   * @param billingChargeList
+   */
+  private void eventTriggerForCharge(final OrderModel orderModel, final String serialCode,
+      final List<BlItemsBillingChargeModel> billingChargeList) {
+    final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
+    BigDecimal chargedAmount = BigDecimal.ZERO;
+    final StringBuilder unPaidBillNotes = new StringBuilder();
+    //consolidated data for billing charge.
+    for (BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
+      chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
+      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+    }
+    orderExceptionsExtraData.setSerialCode(serialCode);
+    orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
+    orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
+    try {
+      getBlEspEventService().sendOrderExceptions(orderModel, orderExceptionsExtraData);
+    } catch (final Exception exception) {
+      BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
+          exception);
+    }
+  }
+
+  /**
 	 * It fetches billing charges list.
 	 * @param consignmentEntryModel
 	 * @return
