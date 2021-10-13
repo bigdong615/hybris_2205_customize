@@ -298,11 +298,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
 
   /**
-   * This method created to prepare the request and response from Order Exception ESP service
+   * This method created to prepare the request and response from Order Exception missing/broken ESP service
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderExceptions(final OrderModel orderModel, final OrderExceptionsExtraData orderExceptionsExtraData) {
+  public void sendOrderMissingBrokenLateEvent(final OrderModel orderModel, final OrderExceptionsExtraData orderExceptionsExtraData) {
     if (Objects.nonNull(orderModel)) {
       final OrderExceptionEventRequest orderExceptionEventRequest = new OrderExceptionEventRequest();
       orderExceptionEventRequest.setExtraData(orderExceptionsExtraData);
