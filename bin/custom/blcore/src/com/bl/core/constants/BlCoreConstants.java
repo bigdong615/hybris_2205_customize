@@ -177,8 +177,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES = "lenses";
 	public static final String CAMERAS = "cameras";
 	public static final String PRODUCTION = "production";
-	public static final String PACKAGE = "packages";
-	public static final String GEAR_PACKAGE = "gear packages";
+	public static final String PACKAGE= "packages";
+	public static final String GEAR_PACKAGE="gear packages";
 
 	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
@@ -244,8 +244,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String EXTEND_ORDER = "extendOrder";
 
-	public static final String DAMAGE_WAIVER_ERROR = "Total Damage Waiver Cost : {}";
-	public static final String NEW_LINE_CHARACTER = "\n";
+	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
+	public static final String NEW_LINE_CHARACTER =  "\n";
 	public static final String CATALOG_VERSION_NAME = "Online";
 
 	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
@@ -254,7 +254,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMAIL_ADDRESSES = "Email Addresses";
 	public static final String HTML_ENABLED = "HTML Enabled";
 
-	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 
@@ -268,8 +268,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HARD_ASSIGNED = "hardAssign";
 	public static final String SOFT_ASSIGNED = "softAssign";
 	public static final String NEW_GEAR = "newgear";
-	public static final String RETAILGEAR = "retailGear";
-	public static final String BUNDLEPRODUCT = "bundleProduct";
+	public static final String RETAILGEAR = "retailGear" ;
+	public static final String BUNDLEPRODUCT = "bundleProduct" ;
 	public static final String BARCODE = "barcode";
 	public static final String IS_NEW_GEAR_INSTOCK = "newGearInStock";
 
@@ -279,7 +279,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ACTING_USER_UID = "ACTING_USER_UID";
 	public static final String ASM_SESSION_PARAMETER = "ASM";
 	public static final String MISSING_CHARGE = "MISSING_CHARGE";
-	public static final String AQUATECH_BRAND_ID = "9";
+	public static final String AQUATECH_BRAND_ID ="9";
 	public static final String SQL_DATE_FORMAT = "MM-dd-yyyy";
 
 
@@ -379,11 +379,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String ORDER_CANCELED_EVENT_TEMPLATE = "order.Canceled.event.template";
 	public static final String ORDER_READYFORPICKUP_EVENT_TEMPLATE = "order.readyforpickup.event.template";
-	public static final String ORDER_CANCELED_EVENT_DEFINITION_KEY = "order.canceled.event.definition.key";
-	public static final String ORDER_PAYMENT_DECLINED_EVENT_DEFINITION_KEY = "order.paymentdeclined.event.definition.key";
-	public static final String ORDER_READYFORPICKUP_EVENT_DEFINITION_KEY = "order.readyforpickup.event.definition.key";
+	public static final String ORDER_CANCELED_EVENT_DEFINITION_KEY="order.canceled.event.definition.key";
+	public static final String ORDER_PAYMENT_DECLINED_EVENT_DEFINITION_KEY="order.paymentdeclined.event.definition.key";
+	public static final String ORDER_READYFORPICKUP_EVENT_DEFINITION_KEY="order.readyforpickup.event.definition.key";
 	public static final String ORDER_NEWSHIPPING_EVENT_TEMPLATE = "order.newshipping.event.template";
-	public static final String ORDER_RNEWSHIPPING_EVENT_DEFINITION_KEY = "order.newshipping.event.definition.key";
+	public static final String ORDER_RNEWSHIPPING_EVENT_DEFINITION_KEY="order.newshipping.event.definition.key";
 
 	public static final String ORDER_EXCEPTION_EVENT_DEFINITION_KEY = "order.exception.event.definition.key";
 	public static final String ORDER_EXCEPTION_EVENT_TEMPLATE = "order.exception.event.template";
@@ -398,9 +398,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String ORDER_SHIPPED_EVENT_DEFINITION_KEY = "order.shipped.event.definition.key";
 	public static final String ORDER_SHIPPED_EVENT_TEMPLATE = "order.shipped.event.template";
-	public static final String ORDER_REFUND_EVENT_DEFINITION_KEY = "order.refund.event.definition.key";
-	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
-
 	public static final String ORDER_PICKEDUP_EVENT_DEFINITION_KEY = "order.pickedup.event.definition.key";
 	public static final String ORDER_PICKEDUP_EVENT_TEMPLATE = "order.pickedup.event.template";
 
@@ -441,8 +438,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_ROOT_ELEMENT = "orderitem";
 	public static final String ORDER_ITEM_PRODUCT_CODE = "productcode";
 	public static final String ORDER_ITEM_PRODUCT_TITLE = "producttitle";
-	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
-
 	public static final String ORDER_ITEM_PRODUCT_PHOTO = "productphoto";
 	public static final String ORDER_ITEM_RENTAL_PRICE = "rentalprice";
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_PRICE = "damagewaiverprice";
@@ -465,11 +460,19 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD_ORDER = "Gift Card";
 	public static final String NEW_GEAR_ORDER = "New Gear";
 
-	public static final String TECH_ENG_USER_GROUP = "techEngusergroup";
+	public static final String TECH_ENG_USER_GROUP  = "techEngusergroup";
+	public static final String REPAIR_USER_GROUP  = "repairmemberusergroup";
 
-	public static final String PAY_PAL_PROVIDER = "BrainTreePayPalExpress";
+	public static final String PAY_PAL_PROVIDER  = "BrainTreePayPalExpress";
 	public static final String PAY_PAL = "Paypal";
 
+	public static final String LATE_CHARGE = "LATE_CHARGE";
+	public static final String REPAIR_CHARGE = "REPAIR_CHARGE";
+
+	public static final String ORDER_REFUND_EVENT_DEFINITION_KEY = "order.refund.event.definition.key";
+	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
+	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
+	
 	private BlCoreConstants()
 	{
 		//empty
