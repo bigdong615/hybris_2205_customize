@@ -62,6 +62,8 @@ import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.core.model.security.PrincipalGroupModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
@@ -79,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -216,6 +219,19 @@ public class CartPageController extends AbstractCartPageController
 				return REDIRECT_EMPTY_CART;
 			}
 		}
+
+		if (getSessionService().getAttribute(BlCoreConstants.USER_RESTRICTION) != null && CollectionUtils.isNotEmpty(cartModel.getEntries())){
+			Optional<PrincipalGroupModel> restrictedGroup = cartModel.getUser().getGroups().stream()
+					.filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP))
+					.findAny();
+			if(restrictedGroup.isPresent()){
+			List<ProductModel> entryProductCodes = cartModel.getEntries().stream().map(entry -> entry.getProduct()).collect(Collectors.toList());
+				if(entryProductCodes.stream().anyMatch(productModel -> ((BlProductModel) entryProductCodes.get(0)).getRestrictedPrincipals().iterator().next().getUid().equals(restrictedGroup.get().getUid()))) {
+					return REDIRECT_EMPTY_CART;
+				}
+			}
+		}
+
 		if(Objects.nonNull(cartModel)){
 		BlReplaceMentOrderUtils.updateCartForReplacementOrder(cartModel);
 		}
