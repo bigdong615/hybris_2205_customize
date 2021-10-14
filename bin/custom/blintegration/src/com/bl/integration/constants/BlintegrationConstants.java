@@ -83,6 +83,10 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String HYPHEN = "-";
 	public static final String TRCK = "trck";
 	public static final String FEDEX_API_URL = "fedex.api.url";
+	public static final String UPS_API_URL = "ups.api.url";
+	public static final String UPS_API_USER_NAME = "ups.token.user.name";
+	public static final String UPS_API_PASSWORD = "ups.token.password";
+	public static final String UPS_API_LICENSE = "ups.token.license";
 
 
 	private BlintegrationConstants()

@@ -185,10 +185,15 @@
     <property name="customerAccountService" ref="customerAccountService" />
     <property name="userService" ref="userService"/>
     <property name="defaultBlOrderDao" ref="blDefaultOrderDao"/>
+    <property name="defaultBlUPSTrackServiceImpl" ref="defaultBlUPSTrackServiceImpl"/>
   </bean>
 
   <bean id="defaultBlTrackWebServiceImpl" class="com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl">
   </bean>
+
+  <bean id="defaultBlUPSTrackServiceImpl" class="com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl">
+  </bean>
+
 
 
   <bean id="defaultBlUpdateSerialService" class="com.bl.integration.upsscrape.impl.BlUpdateSerialService">

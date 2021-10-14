@@ -3,11 +3,11 @@ package com.bl.integration.cronjob;
 import com.bl.core.model.UPSScrapeCronJobModel;
 import com.bl.integration.dao.DefaultBlOrderDao;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
+import com.bl.integration.services.impl.DefaultBlUPSTrackServiceImpl;
 import com.bl.integration.upsscrape.impl.BlUpdateSerialService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -39,6 +40,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   private CustomerAccountService customerAccountService;
   private DefaultBlOrderDao defaultBlOrderDao;
   private ModelService modelService;
+  private DefaultBlUPSTrackServiceImpl defaultBlUPSTrackServiceImpl;
 
   /**
    * This method perform cronjob
@@ -47,40 +49,45 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   public PerformResult perform(UPSScrapeCronJobModel upsScrapeCronJobModel) {
     BlLogger.logMessage(LOG , Level.INFO , "Executing BlUPSScrapeJob perform method");
     try {
+      final AtomicReference<Map<String, Object>> stringObjectMap = new AtomicReference<>();
       final List<AbstractOrderModel> orderModelList = getDefaultBlOrderDao().getOrdersForUPSScrape();
       BlLogger.logMessage(LOG , Level.INFO , String.valueOf(orderModelList.size()));
 
       orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
           consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
             try {
-              final Map<String, Object> stringObjectMap = getDefaultBlTrackWebService()
-                  .trackService(abstractOrderModel, packagingInfoModel);
-              if (MapUtils.isNotEmpty(stringObjectMap)) {
-                if (Objects.nonNull(stringObjectMap.get("EstimatedDeliveryTimestamp"))) {
-                  final Date estimatedDeliveryTimestamp = (Date) stringObjectMap
+              stringObjectMap.set(getDefaultBlTrackWebService()
+                  .trackService(abstractOrderModel, packagingInfoModel));
+
+              stringObjectMap.set(getDefaultBlUPSTrackServiceImpl().trackUPSService(abstractOrderModel , packagingInfoModel));
+
+              final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
+              if (MapUtils.isNotEmpty(stringObjectMap1)) {
+                if (Objects.nonNull(stringObjectMap1.get("EstimatedDeliveryTimestamp"))) {
+                  final Date estimatedDeliveryTimestamp = (Date) stringObjectMap1
                       .get("EstimatedDeliveryTimestamp");
                   if (estimatedDeliveryTimestamp.before(new Date())) {
                     updatePackageDetails(abstractOrderModel,
-                        String.valueOf(stringObjectMap.get("TrackingNumber")), packagingInfoModel);
+                        String.valueOf(stringObjectMap1.get("TrackingNumber")), packagingInfoModel);
                   }
                 } else if (StringUtils.equalsIgnoreCase("Delivered",
-                    String.valueOf(stringObjectMap.get("StatusDescription")))) {
+                    String.valueOf(stringObjectMap1.get("StatusDescription")))) {
                   updatePackageDetails(abstractOrderModel,
-                      String.valueOf(stringObjectMap.get("TrackingNumber")), packagingInfoModel);
-                } else if (Objects.nonNull(stringObjectMap.get("TrackEvents"))) {
-                  final List<Map<String, Object>> list = (List<Map<String, Object>>) stringObjectMap
+                      String.valueOf(stringObjectMap1.get("TrackingNumber")), packagingInfoModel);
+                } else if (Objects.nonNull(stringObjectMap1.get("TrackEvents"))) {
+                  final List<Map<String, Object>> list = (List<Map<String, Object>>) stringObjectMap1
                       .get("TrackEvents");
                   list.forEach(objectMap -> {
                     if (StringUtils.equalsIgnoreCase("Delivered",
                         (CharSequence) objectMap.get("Description"))) {
                       updatePackageDetails(abstractOrderModel,
-                          String.valueOf(stringObjectMap.get("TrackingNumber")),
+                          String.valueOf(stringObjectMap1.get("TrackingNumber")),
                           packagingInfoModel);
                     }
                   });
                 } else {
                   getBlUpdateSerialService()
-                      .updateSerialProducts(String.valueOf(stringObjectMap.get("TrackingNumber")),
+                      .updateSerialProducts(String.valueOf(stringObjectMap1.get("TrackingNumber")),
                           abstractOrderModel.getCode(), new Date(),
                           packagingInfoModel.getNumberOfRepetitions(),
                           packagingInfoModel);
@@ -172,5 +179,16 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
   }
+
+
+  public DefaultBlUPSTrackServiceImpl getDefaultBlUPSTrackServiceImpl() {
+    return defaultBlUPSTrackServiceImpl;
+  }
+
+  public void setDefaultBlUPSTrackServiceImpl(
+      DefaultBlUPSTrackServiceImpl defaultBlUPSTrackServiceImpl) {
+    this.defaultBlUPSTrackServiceImpl = defaultBlUPSTrackServiceImpl;
+  }
+
 
 }
