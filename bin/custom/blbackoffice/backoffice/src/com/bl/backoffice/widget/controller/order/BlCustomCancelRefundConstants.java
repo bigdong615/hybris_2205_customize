@@ -19,7 +19,7 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
     public static final String GIFTCARD = "GiftCard";
-    public static final String RRFUND_EVENT_API_CALL_FAILED = "Refund Event API call failed";
+    public static final String REFUND_EVENT_API_CALL_FAILED = "Refund Event API call failed";
 
     public static final String ON_CHECK = "onCheck";
     public static final String ON_CLICK = "onClick";
