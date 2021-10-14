@@ -67,4 +67,25 @@ public class DefaultBlUserService extends DefaultUserService implements BlUserSe
 		}
 		return isTechEng;
 	}
+
+	/**
+	 * It checks, Is logged in user tech engineering/Repair group user or not
+	 *
+	 * @return boolean value.
+	 */
+	@Override
+	public boolean isTechEngOrRepairUser() {
+		boolean isTechEngOrRepairUser = false;
+		final UserModel currentUser = getCurrentUser();
+		for (final PrincipalGroupModel userGroup : currentUser.getGroups()) {
+			if (userGroup.getUid().equals(BlCoreConstants.TECH_ENG_USER_GROUP) || userGroup.getUid().equals(BlCoreConstants.REPAIR_USER_GROUP)) {
+				isTechEngOrRepairUser = true;
+				BlLogger
+						.logFormatMessageInfo(LOG, Level.DEBUG, "Logged in user {} is",
+								currentUser);
+				break;
+			}
+		}
+		return isTechEngOrRepairUser;
+	}
 }

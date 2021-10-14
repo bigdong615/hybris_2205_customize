@@ -1,9 +1,9 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsData;
+import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -17,7 +17,6 @@ import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -77,8 +76,12 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
-    orderExceptionsData.setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
-    populateOrderItemsInXML(orderModel, orderExceptionsData);
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+        orderModel.isGiftCardOrder())) {
+      orderExceptionsData
+          .setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));
+    }
+    populateOrderItemsInXML(orderExceptionsData,orderExceptionEventRequest);
     orderExceptionEventRequest.setData(orderExceptionsData);
   }
 
@@ -86,53 +89,51 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
 
   /**
    * This method populate items info details
-   * @param orderModel ordermodel
    * @param orderExceptionsData data to be set
    */
 
-  private void populateOrderItemsInXML(final OrderModel orderModel, final OrderExceptionsData orderExceptionsData) {
-      try {
-        final Document orderItemsInXMLDocument = createNewXMLDocument();
-        final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
-
-        if(CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
-
-          orderModel.getConsignments().forEach(consignmentModel ->
-              consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel ->
-                  consignmentEntryModel.getBillingCharges().forEach((serialProductCode, blItemsBillingChargeModels) ->
-                      blItemsBillingChargeModels.forEach(blItemsBillingChargeModel ->{
-                        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
-                        if(BooleanUtils.isFalse(blItemsBillingChargeModel.isBillPaid())){
-                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
-                              getRequestValue(serialProductCode));
-                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
-                              getRequestValue(getProductTitle(serialProductCode)));
-                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_PRODUCT_URL,
-                              getRequestValue(getProductUrl(serialProductCode)));
-                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
-                              getRequestValue(String.valueOf(blItemsBillingChargeModel.getChargedAmount().add(blItemsBillingChargeModel.getTaxAmount()).
-                                  setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE))));
-                          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ITEM_NOTES_ROOT_ELEMENT,
-                              getRequestValue(blItemsBillingChargeModel.getUnPaidBillNotes()));
-                        }
-                          }
-                      ))));
-        }
-
-        final Transformer transformer = getTransformerFactoryObject();
-        final StringWriter writer = new StringWriter();
-
-        //transform document to string
-        transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
-        orderExceptionsData.setItemsinfo(writer.getBuffer().toString());
-
-      } catch (final Exception exception) {
-        BlLogger.logMessage(LOG , Level.ERROR , POPULATOR_ERROR , exception);
-        throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
+  private void populateOrderItemsInXML(final OrderExceptionsData orderExceptionsData,
+      final OrderExceptionEventRequest orderExceptionEventRequest) {
+    try {
+      final Document orderItemsInXMLDocument = createNewXMLDocument();
+      final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument,
+          BlCoreConstants.ITEMS_ROOT_ELEMENT);
+      final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument,
+          rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+      final OrderExceptionsExtraData orderExceptionsExtraData = orderExceptionEventRequest
+          .getExtraData();
+      if (Objects.nonNull(orderExceptionsExtraData)) {
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+            getRequestValue(orderExceptionsExtraData.getSerialCode()));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+            getRequestValue(getProductTitle(orderExceptionsExtraData.getSerialCode())));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.ITEM_PRODUCT_URL,
+            getRequestValue(getProductUrl(orderExceptionsExtraData.getSerialCode())));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
+            getRequestValue(String.valueOf(orderExceptionsExtraData.getTotalChargedAmount())));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.ITEM_NOTES_ROOT_ELEMENT,
+            getRequestValue(orderExceptionsExtraData.getAllUnPaidBillNotes()));
+        orderExceptionEventRequest.setExtraData(null);
       }
+
+      final Transformer transformer = getTransformerFactoryObject();
+      final StringWriter writer = new StringWriter();
+
+      //transform document to string
+      transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
+      orderExceptionsData.setItemsinfo(writer.getBuffer().toString());
+
+    } catch (final Exception exception) {
+      BlLogger.logMessage(LOG, Level.ERROR, POPULATOR_ERROR, exception);
+      throw new BlESPIntegrationException(exception.getMessage(),
+          LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode(), exception);
     }
-
-
+  }
 
   public ProductService getProductService() {
     return productService;
