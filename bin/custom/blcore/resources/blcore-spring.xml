@@ -1646,4 +1646,8 @@
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
 	
+	<bean id="blCalculateRollingSpendHandler" class="com.bl.core.model.handler.BlCalculateRollingSpendHandler">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+	
 </beans>

@@ -50,4 +50,11 @@ public interface BlOrderDao extends OrderDao
 	 */
 	public List<AbstractOrderModel> getOrdersOfUnavailableSoftAssignedSerials(final Date currentDate,
 			final List<String> productCodes);
+
+	/**
+	 * It loads the value of rolling spend attribute
+	 * @param oneYearPastDate the past date before one year
+	 * @return
+	 */
+	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate);
 }

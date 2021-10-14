@@ -4,6 +4,7 @@ import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
@@ -24,7 +25,6 @@ import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.google.common.util.concurrent.AtomicDouble;
-
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.CompanyModel;
@@ -50,6 +50,7 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -545,6 +546,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 							if(BooleanUtils.isFalse(billing.isBillPaid())) {
 								billing.setBillPaid(true);
 								getModelService().save(billing);
+								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
 							}
 						}))));
 		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
@@ -557,11 +559,25 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 					})));
 		if(isOrderComplete.get()) {
 			order.setStatus(OrderStatus.COMPLETED);
+			order.setOrderCompletedDate(new Date());
 			getModelService().save(order);
 			order.getConsignments().forEach(consignmentModel -> {
 				consignmentModel.setStatus(ConsignmentStatus.COMPLETED);
 				getModelService().save(consignmentModel);
 			});
+		}
+	}
+
+	/**
+	 * It updates the total amount past due on successful bill payment
+	 * @param user the user
+	 * @param billing the billing charge instance
+	 */
+	private void setTotalAmountPastDue(final UserModel user, final BlItemsBillingChargeModel billing) {
+		final CustomerModel customerModel = (CustomerModel) user;
+		if(Objects.nonNull(customerModel.getTotalAmountPastDue())) {
+			customerModel.setTotalAmountPastDue(customerModel.getTotalAmountPastDue().subtract(billing.getChargedAmount()));
+			getModelService().save(customerModel);
 		}
 	}
 
