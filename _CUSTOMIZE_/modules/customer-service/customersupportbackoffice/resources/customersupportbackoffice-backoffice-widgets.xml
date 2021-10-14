@@ -384,6 +384,33 @@
 					<virtual-sockets />
 				</widget>
 
+				<widget id="blCoiRequiredPopup"
+					widgetDefinitionId="custom.bl.widgets.blCoiRequired"
+					slotId="cockpitWidgetChildrenInvisible"
+					title="COI Required ESP Event" template="true">
+
+					<instance-settings
+						socketEventRoutingMode="LAST_USED">
+						<create onInit="false" reuseExisting="true">
+							<all-incoming-events />
+						</create>
+						<close>
+							<all-outgoing-events />
+						</close>
+						<select onInit="false">
+							<all-incoming-events />
+						</select>
+					</instance-settings>
+
+					<setting key="widgetStyleClass" type="String"></setting>
+					<setting key="__externalLocationPath" type="String">extension://blbackoffice
+					</setting>
+					<setting key="widgetStyleAttribute" type="String"></setting>
+					<setting key="_width" type="String">1140px</setting>
+					<setting key="_height" type="String">650px</setting>
+					<virtual-sockets />
+				</widget>
+				
                 <widget id="omsCancelOrderPopup" widgetDefinitionId="de.hybris.ordermanagementbackoffice.widgets.cancelorder" slotId="cockpitWidgetChildrenInvisible"
                         title="Cancel an Order" template="true">
 
@@ -595,5 +622,6 @@
     <widget-connection sourceWidgetId="STUB_com.hybris.cockpitng.editor.ticket.state" outputId="state" targetWidgetId="configurableFlow" inputId="context"/>
 
     <widget-connection sourceWidgetId="STUB_com.hybris.backoffice.widgets.actions.createauditreport" outputId="openWizard" targetWidgetId="configurableFlow" inputId="context"/>
+	 <widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.coirequiredaction" outputId="blCoiRequiredContext" targetWidgetId="blCoiRequiredPopup" inputId="inputObject" />
 
 </widgets>

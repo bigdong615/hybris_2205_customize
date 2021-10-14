@@ -11,6 +11,8 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.order.ESPEventCommonOrderDataRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.google.common.util.concurrent.AtomicDouble;
+import de.hybris.platform.catalog.CatalogVersionService;
+import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -42,6 +44,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
     private ConfigurationService configurationService;
     private ProductService productService;
+    private CatalogVersionService catalogVersionService;
 
     /**
      * Populate common attributes with values from the OrderModel.
@@ -270,7 +273,8 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
     protected String getProductTitle(final String serialProductCode) {
         final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
-        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
+        final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlCoreConstants.CATALOG_VALUE,BlCoreConstants.ONLINE);
+        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
         if(Objects.nonNull(blSerialProduct)) {
             final BlProductModel blProductModel = blSerialProduct.getBlProduct();
             if(Objects.nonNull(blProductModel)){
@@ -288,7 +292,8 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      */
     protected String getProductUrl(final String serialProductCode) {
         final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
-        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(serialProductCode);
+        final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlCoreConstants.CATALOG_VALUE,BlCoreConstants.ONLINE);
+        final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
         if(Objects.nonNull(blSerialProduct)) {
             final BlProductModel blProductModel = blSerialProduct.getBlProduct();
             if(Objects.nonNull(blProductModel)  && Objects.nonNull(blProductModel.getPicture()) &&
@@ -299,7 +304,6 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return productUrl.get();
     }
 
-    
     public ConfigurationService getConfigurationService() {
         return configurationService;
     }
@@ -316,4 +320,12 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         this.productService = productService;
     }
 
+    public CatalogVersionService getCatalogVersionService() {
+        return catalogVersionService;
+    }
+
+    public void setCatalogVersionService(
+        CatalogVersionService catalogVersionService) {
+        this.catalogVersionService = catalogVersionService;
+    }
 }

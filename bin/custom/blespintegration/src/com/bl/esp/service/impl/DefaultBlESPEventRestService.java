@@ -16,6 +16,7 @@ import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.paymentdeclined.OrderPaymentDeclinedEventRequest;
 import com.bl.esp.dto.pickedup.OrderPickedUpEventRequest;
 import com.bl.esp.dto.readyforpickup.OrderReadyForPickupEventRequest;
+import com.bl.esp.dto.refund.OrderRefundEventRequest;
 import com.bl.esp.dto.shipped.OrderShippedEventRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
 import com.bl.esp.service.AbstractESPRestService;
@@ -144,6 +145,15 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
   @Override
   public ESPEventResponseWrapper sendExtendOrderEvent(final OrderExtensionRequest orderExtensionRequest) {
     return super.getTokenAndTriggerEvent(orderExtensionRequest);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderRefundEvent(
+      OrderRefundEventRequest orderRefundEventRequest) {
+    return super.getTokenAndTriggerEvent(orderRefundEventRequest);
   }
 
 

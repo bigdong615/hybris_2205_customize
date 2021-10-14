@@ -10,6 +10,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.util.Assert;
@@ -72,6 +73,16 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     {
         validateParameterNotNull(customerModel, "Customer model cannot be null");
         return brainTreeCustomerAccountDao.findAddressBookDeliveryEntriesForCustomer(customerModel,
+            getCommerceCommonI18NService().getAllCountries());
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<AddressModel> getShippingAddressBookEntries(final CustomerModel customerModel)
+    {
+        validateParameterNotNull(customerModel, "Customer model cannot be null");
+        return getCustomerAccountDao().findAddressBookDeliveryEntriesForCustomer(customerModel,
             getCommerceCommonI18NService().getAllCountries());
     }
 

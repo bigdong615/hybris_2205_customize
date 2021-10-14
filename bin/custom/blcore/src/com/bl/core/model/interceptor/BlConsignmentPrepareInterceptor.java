@@ -65,6 +65,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
     triggerEspReadyForPickupEvent(consignmentModel, interceptorContext);
+    triggerEspPickedUpEvent(consignmentModel, interceptorContext);
   }
 
   /**
@@ -164,6 +165,29 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       }
     }
 
+  }
+
+  /**
+   * This method created to trigger the ESP event for picked up order
+   *
+   * @param consignmentModel   consignmentModel
+   * @param interceptorContext interceptorContext
+   */
+  private void triggerEspPickedUpEvent(final ConsignmentModel consignmentModel,
+      final InterceptorContext interceptorContext) {
+    if (interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS)
+        && ConsignmentStatus.PICKED_UP.equals(consignmentModel.getStatus())) {
+      final OrderModel orderModel = (OrderModel) consignmentModel.getOrder();
+      orderModel.setStatus(OrderStatus.RECEIVED_PICKED_UP);
+      interceptorContext.getModelService().save(orderModel);
+      interceptorContext.getModelService().refresh(orderModel);
+      try {
+        getBlEspEventService().sendOrderPickedUpEvent(orderModel);
+      } catch (final Exception exception) {
+        BlLogger
+            .logMessage(LOG, Level.ERROR, "Error while executing Picked Up ESP Event", exception);
+      }
+    }
   }
 
   public BlOrderNoteService getBlOrderNoteService() {

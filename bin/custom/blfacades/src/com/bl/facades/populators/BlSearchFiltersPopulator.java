@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> extends
     SearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> {
 
+  public static final String RESTRICTED_PRINCIPALS_STRING_MV = "-restrictedPrincipals_string_mv";
   private CommerceCategoryService commerceCategoryService;
   private UserService userService;
 
@@ -83,7 +84,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     final Optional<PrincipalGroupModel> blGroup = getUserService().getCurrentUser().getGroups().stream()
         .filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP)).findAny();
     if (blGroup.isPresent()) {
-      String rawQuery = "-restrictedPrincipals_string_mv";
+      String rawQuery = RESTRICTED_PRINCIPALS_STRING_MV;
       target.getSearchQuery().addFilterRawQuery(rawQuery+":"+blGroup.get().getUid());
     }
   }
