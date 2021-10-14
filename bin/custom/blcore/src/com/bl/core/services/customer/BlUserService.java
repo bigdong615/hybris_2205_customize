@@ -27,4 +27,10 @@ public interface BlUserService extends UserService
 	 * @return boolean value.
 	 */
 	boolean isTechEngUser();
+
+	/**
+	 * It checks, Is logged in user tech engineering/Repair group user or not
+	 * @return boolean value
+	 */
+	boolean isTechEngOrRepairUser();
 }

@@ -54,6 +54,7 @@ public class CreatePaymentMethodCommandImpl extends
 			{
 				result.setErrorCode(creditCardVerification.getProcessorResponseCode());
 				result.setErrorMessage(getLocalizedErrorMessage(BraintreeConstants.GENERAL_VALIDATION_ERROR_MESSAGE));
+				result.setCvvValidationCode(creditCardVerification.getCvvResponseCode());
 				getLoggingHandler().handleCardVerificationError(creditCardVerification);
 			}
 			getLoggingHandler().handleErrors(brainTreeResult.getErrors().getAllDeepValidationErrors());

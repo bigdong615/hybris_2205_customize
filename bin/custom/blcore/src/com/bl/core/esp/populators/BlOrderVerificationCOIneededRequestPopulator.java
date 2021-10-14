@@ -88,7 +88,6 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
     data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
     data.setRentalduration((int) getRentalDuration(orderModel));
     data.setVerificationlevel(1); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
-    data.setCoiamount(00.00); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
     data.setVerificationtext("Dummy verification text"); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
 
     orderVerificationCOIneededEventRequest.setData(data);

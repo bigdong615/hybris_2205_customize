@@ -335,7 +335,14 @@ margin: 0;
 #globalSearch .input-group {padding-right: 0;}
 #globalSearch .input-group input#mobile-litepicker {
   padding-left: 26px;
-  background: url(../assets/icon-calendar-red.svg) no-repeat -1px center;
+  background: url(../assets/icon-calendar-red.svg) no-repeat 4px center;
+  background-size: 19px;
+}
+#cat-slider .splide__arrow--prev, #overview-slider > .splide__arrows .splide__arrow--prev {
+  margin-left: -31px;
+}
+#cat-slider .splide__arrow--next, #overview-slider > .splide__arrows .splide__arrow--next {
+  margin-right: -31px;
 }
 .scroll-hide{width: 95%;}
 .splide__arrows {width: 90%;margin-left:4.5%;}
@@ -349,10 +356,20 @@ margin: 0;
 .input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
    padding-left: 7px;
 }
+.card .splide__arrow {
+  padding: 0px;
+  background: rgba(255,255,255,.6);
+  border-radius: 50%;
+  z-index: 99;
+}
+#cat-slider .splide__arrows, #gear-slider > .splide__arrows, #blog-slider > .splide__arrows, #gear-slider-cart > .splide__arrows {
+  z-index: 1;
+}
 
 }
 #product-thumbnails{display:block ;}
 .splide__arrows{display:none;}
+#addToCart-gear-sliders .splide__arrows{display:block;opacity: 9}
 .hide-on-desktop{display:none ;}
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -723,4 +740,9 @@ color:#fff !important;
 }
 .remove-gc-style{
 	color: #52bfc0;
+}
+.spiner-select{
+  width: 32px !important;
+  text-align: center !important;
+  margin: 0 auto !important;     
 }

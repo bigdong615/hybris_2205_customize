@@ -3,6 +3,19 @@ package com.bl.core.model.interceptor;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 import de.hybris.platform.core.model.user.CustomerModel;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ItemBillingChargeTypeEnum;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlItemsBillingChargeModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -18,9 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -45,6 +59,11 @@ import com.google.common.collect.Maps;
 public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<ConsignmentEntryModel>
 {
 	private static final Logger LOG = Logger.getLogger(BlConsignmentEntryPrepareInterceptor.class);
+	private static final String EVENT_EXCEPTION_MSG = "Failed to trigger exception missing/broken Event";
+	private DefaultBlESPEventService blEspEventService;
+
+	@Resource(name = "defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
 
 	@Override
 	public void onPrepare(final ConsignmentEntryModel consignmentEntryModel, final InterceptorContext interceptorContext)
@@ -54,6 +73,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				"ERROR : BlConsignmentEntryPrepareInterceptor : Parameter ConsignmentEntryModel is NULL");
 		modifySerialCodeOnBillingChargesMap(consignmentEntryModel, interceptorContext);
 		validateBillingCharges(consignmentEntryModel, interceptorContext);
+		triggerExceptionBrokenOrMissingEvent(consignmentEntryModel, interceptorContext);
 		doChangePriorityStatus(consignmentEntryModel, interceptorContext); //BL-822 AC.2
 	}
 
@@ -109,23 +129,246 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			InterceptorContext interceptorContext) {
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
 				.getItemModelContext();
-		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx.getOriginalValue("billingCharges");
-		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel.getBillingCharges();
+		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx
+				.getOriginalValue("billingCharges");
+		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
+				.getBillingCharges();
 		currentBillingCharges.entrySet().forEach(billingCharge -> {
-			if(billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
+			if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
 				final List<BlItemsBillingChargeModel> charges = billingCharges.get(billingCharge.getKey());
 				final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
 				currentCharges.removeAll(charges);
-				final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment().getOrder().getUser();
-				final BigDecimal newlyAddedCharges = currentCharges.stream().map(BlItemsBillingChargeModel::getChargedAmount)
+				final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
+						.getOrder().getUser();
+				final BigDecimal newlyAddedCharges = currentCharges.stream()
+						.map(BlItemsBillingChargeModel::getChargedAmount)
 						.reduce(BigDecimal.ZERO, BigDecimal::add);
-				BigDecimal totalAmountPastDue = Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
-				customerModel.getTotalAmountPastDue();
+				BigDecimal totalAmountPastDue =
+						Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
+								customerModel.getTotalAmountPastDue();
 				totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
 				customerModel.setTotalAmountPastDue(totalAmountPastDue);
 				interceptorContext.getModelService().save(customerModel);
 			}
 		});
+	}
+
+	/**
+	 * It triggers Exception Broken/Missing Event.
+	 * @param consignmentEntryModel the ConsignmentEntryModel
+	 * @param interceptorContext    InterceptorContext
+	 */
+	private void triggerExceptionBrokenOrMissingEvent(
+			final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext) {
+		final List<BlProductModel> serialProducts = consignmentEntryModel.getSerialProducts();
+		if (BooleanUtils.isTrue(defaultBlUserService.isTechEngOrRepairUser()) && interceptorContext
+				.isModified(consignmentEntryModel, ConsignmentEntryModel.BILLINGCHARGES)
+				&& CollectionUtils.isNotEmpty(serialProducts)) {
+			final Map<String, List<BlItemsBillingChargeModel>> modifiedBillingCharges = Maps
+					.newHashMap(consignmentEntryModel.getBillingCharges());
+			final Map<String, List<BlItemsBillingChargeModel>> newModifiedBillingCharges = Maps.newHashMap();
+			final Map<String, List<BlItemsBillingChargeModel>> previousChangedBillingChargesList = getPreviousChangedBillingChargesList(
+					consignmentEntryModel);
+			final OrderModel orderModel = (OrderModel) consignmentEntryModel.getConsignment().getOrder();
+			modifiedBillingCharges.forEach((serialCode, charges) -> {
+				if (previousChangedBillingChargesList.containsKey(serialCode)) {
+					final List<BlItemsBillingChargeModel> previousCharges = previousChangedBillingChargesList
+							.get(serialCode);
+					List<BlItemsBillingChargeModel> updatedCharges = Lists
+							.newArrayList(modifiedBillingCharges.get(serialCode));
+					updatedCharges.removeIf(previousCharges::contains);
+					newModifiedBillingCharges.put(serialCode, updatedCharges);
+				}
+			});
+
+			if (MapUtils.isNotEmpty(newModifiedBillingCharges)) {
+				addModifiedChargesToNewList(newModifiedBillingCharges, orderModel);
+			}
+		}
+	}
+
+	/**
+	 * If any new charge has been added then adding that charge to its corresponding new list and
+	 * invoke trigger event methods.
+	 *
+	 * @param newModifiedBillingCharges
+	 * @param orderModel
+	 */
+	private void addModifiedChargesToNewList(
+			final Map<String, List<BlItemsBillingChargeModel>> newModifiedBillingCharges,
+			final OrderModel orderModel) {
+		newModifiedBillingCharges.forEach((serialCode, updatedChargesList) ->
+		{
+			if (CollectionUtils.isNotEmpty(updatedChargesList)) {
+				final List<BlItemsBillingChargeModel> missingChargeList = Lists.newArrayList();
+				final List<BlItemsBillingChargeModel> lateChargeList = Lists.newArrayList();
+				final List<BlItemsBillingChargeModel> repairChargeList = Lists.newArrayList();
+
+				updatedChargesList.forEach(charge -> {
+					if (BooleanUtils.isFalse(charge.isBillPaid())) {
+						switch (charge.getBillChargeType().getCode()) {
+							case BlCoreConstants.LATE_CHARGE:
+								lateChargeList.add(charge);
+								break;
+							case BlCoreConstants.REPAIR_CHARGE:
+								repairChargeList.add(charge);
+								break;
+							case BlCoreConstants.MISSING_CHARGE:
+								missingChargeList.add(charge);
+								break;
+							default:
+								BlLogger.logMessage(LOG, Level.INFO,
+										"Billing charge type {} is not eligible for ESP event",
+										charge.getBillChargeType().getCode());
+								break;
+						}
+					}
+				});
+				eventTriggerForLateCharge(orderModel, serialCode, repairChargeList, lateChargeList);
+				eventTriggerForRepairAndMissingCharge(orderModel, serialCode, repairChargeList,
+						missingChargeList);
+				eventTriggerForRepairCharge(orderModel, serialCode, repairChargeList, missingChargeList);
+				eventTriggerForMissingCharge(orderModel, serialCode, repairChargeList, missingChargeList);
+			}
+		});
+	}
+
+	/**
+	 * It triggers exception missing/broken event for late charge.
+	 *
+	 * @param orderModel
+	 * @param serialCode
+	 * @param repairChargeList
+	 * @param lateChargeList
+	 */
+	private void eventTriggerForLateCharge(final OrderModel orderModel, final String serialCode,
+			final List<BlItemsBillingChargeModel> repairChargeList,
+			final List<BlItemsBillingChargeModel> lateChargeList) {
+		if (CollectionUtils.isNotEmpty(lateChargeList) && CollectionUtils.isEmpty(repairChargeList)) {
+      eventTriggerForCharge(orderModel, serialCode, lateChargeList);
+		}
+	}
+
+	/**
+	 * It triggers exception missing/broken event for repair and missing charges.
+	 *
+	 * @param orderModel
+	 * @param serialCode
+	 * @param repairChargeList
+	 * @param missingChargeList
+	 */
+	private void eventTriggerForRepairAndMissingCharge(final OrderModel orderModel,
+			final String serialCode,
+			final List<BlItemsBillingChargeModel> repairChargeList,
+			final List<BlItemsBillingChargeModel> missingChargeList) {
+		final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
+		if (CollectionUtils.isNotEmpty(repairChargeList) && CollectionUtils
+				.isNotEmpty(missingChargeList)) {
+			BigDecimal chargedAmount = BigDecimal.ZERO;
+			StringBuilder unPaidBillNotes = new StringBuilder();
+
+			//consolidated data for repair charge.
+			for (BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
+				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+			}
+
+			//consolidated data for missing charge.
+			for (BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
+				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+			}
+			orderExceptionsExtraData.setSerialCode(serialCode);
+			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
+			orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
+
+			try {
+				getBlEspEventService().sendOrderMissingBrokenLateEvent(orderModel, orderExceptionsExtraData);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
+						exception);
+			}
+		}
+	}
+
+	/**
+	 * It triggers exception missing/broken event for repair charge.
+	 *
+	 * @param orderModel
+	 * @param serialCode
+	 * @param repairChargeList
+	 * @param missingChargeList
+	 */
+	private void eventTriggerForRepairCharge(final OrderModel orderModel, final String serialCode,
+			final List<BlItemsBillingChargeModel> repairChargeList,
+			final List<BlItemsBillingChargeModel> missingChargeList) {
+		if (CollectionUtils.isNotEmpty(repairChargeList) && CollectionUtils
+				.isEmpty(missingChargeList)) {
+      eventTriggerForCharge(orderModel, serialCode, repairChargeList);
+		}
+	}
+
+	/**
+	 * It triggers exception missing/broken event for missing charge.
+	 *
+	 * @param orderModel
+	 * @param serialCode
+	 * @param repairChargeList
+	 * @param missingChargeList
+	 */
+	private void eventTriggerForMissingCharge(final OrderModel orderModel, final String serialCode,
+			final List<BlItemsBillingChargeModel> repairChargeList,
+			final List<BlItemsBillingChargeModel> missingChargeList) {
+
+		if (CollectionUtils.isEmpty(repairChargeList) && CollectionUtils
+				.isNotEmpty(missingChargeList)) {
+      eventTriggerForCharge(orderModel, serialCode, missingChargeList);
+    }
+	}
+
+  /**
+   * It is responsible for triggering Exception broken/missing ESP event with consolidated data.
+   *
+   * @param orderModel
+   * @param serialCode
+   * @param billingChargeList
+   */
+  private void eventTriggerForCharge(final OrderModel orderModel, final String serialCode,
+      final List<BlItemsBillingChargeModel> billingChargeList) {
+    final OrderExceptionsExtraData orderExceptionsExtraData = new OrderExceptionsExtraData();
+    BigDecimal chargedAmount = BigDecimal.ZERO;
+    final StringBuilder unPaidBillNotes = new StringBuilder();
+    //consolidated data for billing charge.
+    for (BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
+      chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
+      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+    }
+    orderExceptionsExtraData.setSerialCode(serialCode);
+    orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
+    orderExceptionsExtraData.setAllUnPaidBillNotes(unPaidBillNotes.toString());
+    try {
+      getBlEspEventService().sendOrderMissingBrokenLateEvent(orderModel, orderExceptionsExtraData);
+    } catch (final Exception exception) {
+      BlLogger.logMessage(LOG, Level.ERROR, EVENT_EXCEPTION_MSG,
+          exception);
+    }
+  }
+
+  /**
+	 * It fetches billing charges list.
+	 * @param consignmentEntryModel
+	 * @return
+	 */
+	private Map<String, List<BlItemsBillingChargeModel>> getPreviousChangedBillingChargesList(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		final Object previousValue = consignmentEntryModel.getItemModelContext()
+				.getOriginalValue(ConsignmentEntryModel.BILLINGCHARGES);
+		if (previousValue instanceof Map)
+		{
+			return  Maps.newHashMap((Map<String, List<BlItemsBillingChargeModel>>)previousValue);
+		}
+		return Maps.newHashMap();
 	}
 
 	/**
@@ -252,4 +495,11 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		}
 	}
 
+	public DefaultBlESPEventService getBlEspEventService() {
+		return blEspEventService;
+	}
+
+	public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
+		this.blEspEventService = blEspEventService;
+	}
 }

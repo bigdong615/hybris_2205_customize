@@ -1,6 +1,9 @@
 package com.bl.core.esp.service;
 
+import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordercancel.OrderCancelEntry;
+import java.util.List;
 
 public interface BlESPEventService {
 
@@ -22,8 +25,10 @@ public interface BlESPEventService {
      * Verify Order by calling Order verification coi needed ESP Event API
      *
      * @param orderModel
+     * @param amount
      */
-    public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel);
+    public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel,
+        final Double amount);
 
     /**
      * Send Order Canceled Event by calling Order Canceled ESP Event API
@@ -32,10 +37,11 @@ public interface BlESPEventService {
     public void sendOrderCanceledEvent(final OrderModel orderModel);
 
     /**
-     * Send Order Exceptions Event by calling Order Canceled ESP Event API
+     * Send Order Exceptions Event by calling Order Exception Broken/Missing ESP Event API
      * @param orderModel
+     * @param orderExceptionsExtraData
      */
-    void sendOrderExceptions(final OrderModel orderModel) ;
+    void sendOrderMissingBrokenLateEvent(final OrderModel orderModel, final OrderExceptionsExtraData orderExceptionsExtraData) ;
 
     /**
      * Send Order Unboxed Event by calling Order Canceled ESP Event API
@@ -105,4 +111,15 @@ public interface BlESPEventService {
      * @param orderModel ordermodel
      */
      void sendOrderExtraItemsEvent(final OrderModel orderModel) ;
+
+    /**
+     * Send Order Refund by calling Order Refund ESP Event API
+     * @param orderModel
+     * @param totalRefundAmount
+     * @param refundMethod
+     * @param orderCancelEntries
+     */
+    public void sendOrderRefundEvent(final OrderModel orderModel,final double totalRefundAmount,final String refundMethod, final List<OrderCancelEntry> orderCancelEntries);
+
+
 }
