@@ -1523,6 +1523,11 @@
 		class="com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator">
 	</bean>
 
+	<!-- Order Ready For pickup populator ESP -->
+	<bean id="blOrderRefundRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderRefundRequestPopulator">
+	</bean>
+
 	<!-- Order Verification Completed populator ESP -->
 	<bean id="blOrderVerificationCompletedRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator">
@@ -1556,6 +1561,7 @@
 		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
+		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
