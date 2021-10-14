@@ -124,12 +124,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
      * @param orderModel
      */
     @Override
-    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel, final String VerificationText) {
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel, final String verificationText) {
         if (Objects.nonNull(orderModel)) {
             final OrderVerificationMoreInfoEventRequest orderVerificationMoreInfoEventRequest = new OrderVerificationMoreInfoEventRequest();
             getBlOrderVerificationMoreInfoRequestPopulator().populate(orderModel,
                 orderVerificationMoreInfoEventRequest);
-          orderVerificationMoreInfoEventRequest.getData().setVerificationtext(VerificationText);
+          orderVerificationMoreInfoEventRequest.getData().setVerificationtext(verificationText);
             ESPEventResponseWrapper espEventResponseWrapper = null;
             try
             {

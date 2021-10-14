@@ -4,8 +4,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
-    <name>coirequired.action</name>
-    <description>COI Required Action</description>
+    <name>moreinforequired.action</name>
+    <description>More Info Required Action</description>
     <author>hybris</author>
     <version>0.1</version>
 
@@ -13,9 +13,9 @@
     <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
     <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
 
-    <iconUri>icons/icon_action_coirequired_default.png</iconUri>
-    <iconDisabledUri>icons/icon_action_coirequired_disabled.png</iconDisabledUri>
-    <iconHoverUri>icons/icon_action_coirequired_hover.png</iconHoverUri>
+    <iconUri>icons/icon_action_moreinforequired_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_moreinforequired_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_moreinforequired_hover.png</iconHoverUri>
 
     <settings>
         <setting key="viewMode" default-value="iconAndText"/>
@@ -23,6 +23,6 @@
     
     <!-- Sockets definition-->
     <sockets>
-        <output id="blInfoRequiredContext"/>
+        <output id="blMoreInfoRequiredContext"/>
     </sockets>
 </action-definition>

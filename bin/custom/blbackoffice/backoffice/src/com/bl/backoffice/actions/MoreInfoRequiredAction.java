@@ -19,7 +19,7 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
  */
 public class MoreInfoRequiredAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<OrderModel, OrderModel>
 {
-	protected static final String SOCKET_OUT_CONTEXT = "blInfoRequiredContext";
+	protected static final String SOCKET_OUT_CONTEXT = "blMoreInfoRequiredContext";
 
 	/**
 	 * This method is responsible for trigger Info_required ESP event
