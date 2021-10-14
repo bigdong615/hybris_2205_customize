@@ -4,7 +4,6 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.gitfcard.BlGiftCardService;
-import com.bl.core.utils.BlDateTimeUtils;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -19,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
@@ -52,11 +50,10 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
     final CustomerModel customerModel = (CustomerModel) order.getUser();
     setOrderCountForCustomer(customerModel);
-    setAverageOrderValue(order, customerModel);
+    setAverageOrderValue(customerModel);
     setOrderValuePriorToShippedStatus(order, customerModel);
 
     // add tax to total only if order is NET
-    double totalplustax = order.getTotalPrice().doubleValue();
     if(CollectionUtils.isNotEmpty(order.getGiftCard())) {
       giftCardService.calculateGiftCard(order, order.getGrandTotal());
 
@@ -94,7 +91,7 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
    * @param order the order
    * @param customerModel the customer
    */
-  private void setAverageOrderValue(final OrderModel order, final CustomerModel customerModel) {
+  private void setAverageOrderValue(final CustomerModel customerModel) {
     final Collection<OrderModel> orders = customerModel.getOrders();
     final Double averageOrderValue = orders.stream().mapToDouble(OrderModel::getTotalPrice).sum();
     customerModel.setAverageOrderValue(averageOrderValue/orders.size());

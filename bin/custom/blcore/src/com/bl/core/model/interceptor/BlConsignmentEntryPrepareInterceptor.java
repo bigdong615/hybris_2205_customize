@@ -39,15 +39,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlItemsBillingChargeModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * The Class BlConsignmentEntryPrepareInterceptor used to intercept the model and modify the attributes before saving

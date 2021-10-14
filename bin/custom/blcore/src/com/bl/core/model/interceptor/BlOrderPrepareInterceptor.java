@@ -187,10 +187,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 */
 	private boolean isOrderAfterShippedStatus(final OrderStatus orderStatus) {
 		return orderStatus.getCode().startsWith(OrderStatus.INCOMPLETE.getCode()) ||
-				orderStatus.getCode().startsWith(OrderStatus.SOLD.getCode()) ||
 				orderStatus.getCode().startsWith("UNBOXED") ||
-				orderStatus.equals(OrderStatus.LATE) || orderStatus.equals(OrderStatus.RETURNED) ||
+				isOrderStatusAfterShipped(orderStatus) ||
 				orderStatus.getCode().startsWith("COMPLETED");
+	}
+
+	private boolean isOrderStatusAfterShipped(final OrderStatus orderStatus) {
+		return orderStatus.equals(OrderStatus.LATE) || orderStatus.equals(OrderStatus.RETURNED) ||
+				orderStatus.getCode().startsWith(OrderStatus.SOLD.getCode());
 	}
 
 

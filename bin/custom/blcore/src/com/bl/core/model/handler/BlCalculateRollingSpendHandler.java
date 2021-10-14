@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  */
 public class BlCalculateRollingSpendHandler implements DynamicAttributeHandler<BigDecimal, CustomerModel>
 {
-	private static final Logger LOG = Logger.getLogger(BlCalculateCostForLaborHandler.class);
+	private static final Logger LOG = Logger.getLogger(BlCalculateRollingSpendHandler.class);
 	private BlOrderDao orderDao;
 
 	@Override
@@ -29,9 +29,7 @@ public class BlCalculateRollingSpendHandler implements DynamicAttributeHandler<B
 		final Date sameDayPastYear = getPastYearSameDay();
 		final List<AbstractOrderModel> orders = getOrderDao().getOneYearOldCompletedOrders(sameDayPastYear);
 		AtomicDouble totalPrice = new AtomicDouble();
-		orders.forEach(order -> {
-			totalPrice.addAndGet(order.getTotalPrice() - order.getTotalTax());
-		});
+		orders.forEach(order -> totalPrice.addAndGet(order.getTotalPrice() - order.getTotalTax()));
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Rolling Spend value : {} ",
 				totalPrice.get());
 		return BigDecimal.valueOf(totalPrice.get());
