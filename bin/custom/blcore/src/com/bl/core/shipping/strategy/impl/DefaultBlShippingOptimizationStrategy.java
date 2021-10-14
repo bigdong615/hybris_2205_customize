@@ -450,15 +450,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
         final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
         consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
-        if (result != BlInventoryScanLoggingConstants.ZERO) {
-            if(optimizedShippingType != null) {
-                if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
-                } else {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            optimizedShippingMethod.getCode()));
-                }
+        if (result != BlInventoryScanLoggingConstants.ZERO && optimizedShippingType != null) {
+            if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
+            } else {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        optimizedShippingMethod.getCode()));
             }
         } else {
             consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
