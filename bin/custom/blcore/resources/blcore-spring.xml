@@ -1274,7 +1274,9 @@
 	
 	<!-- Interceptor for ConsignmentEntryModel to perform custom logic before saving the model -->
 	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
-	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor"/>
+	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor">
+		<property name="blEspEventService" ref="blEspEventService"/>
+	</bean>
 	
 	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
 	<bean id="blConsignmentEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1521,6 +1523,11 @@
 		class="com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator">
 	</bean>
 
+	<!-- Order Ready For pickup populator ESP -->
+	<bean id="blOrderRefundRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderRefundRequestPopulator">
+	</bean>
+
 	<!-- Order Verification Completed populator ESP -->
 	<bean id="blOrderVerificationCompletedRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator">
@@ -1531,6 +1538,7 @@
 		class="com.bl.core.esp.populators.ESPEventCommonPopulator" abstract="true">
 		<property name="configurationService" ref="configurationService"/>
 		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 	<!--ESP Event service -->
@@ -1553,6 +1561,7 @@
 		<property name="blOrderPickedUpRequestPopulator" ref="blOrderPickedUpRequestPopulator"/>
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
+		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
