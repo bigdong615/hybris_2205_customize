@@ -221,12 +221,14 @@ public class CartPageController extends AbstractCartPageController
 		}
 
 		if (getSessionService().getAttribute(BlCoreConstants.USER_RESTRICTION) != null && CollectionUtils.isNotEmpty(cartModel.getEntries())){
-			Optional<PrincipalGroupModel> restrictedGroup = cartModel.getUser().getGroups().stream()
+			final Optional<PrincipalGroupModel> restrictedGroup = cartModel.getUser().getGroups().stream()
 					.filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP))
 					.findAny();
 			if(restrictedGroup.isPresent()){
-			List<ProductModel> entryProductCodes = cartModel.getEntries().stream().map(entry -> entry.getProduct()).collect(Collectors.toList());
-				if(entryProductCodes.stream().anyMatch(productModel -> ((BlProductModel) entryProductCodes.get(0)).getRestrictedPrincipals().iterator().next().getUid().equals(restrictedGroup.get().getUid()))) {
+			final List<ProductModel> entryProductCodes = cartModel.getEntries().stream().map(
+					AbstractOrderEntryModel:: getProduct).collect(Collectors.toList());
+			final List<String> userGroups = entryProductCodes.stream().filter(product ->  CollectionUtils.isNotEmpty(((BlProductModel)product).getRestrictedPrincipals())).map(product -> ((BlProductModel)product).getRestrictedPrincipals().iterator().next().getUid()).collect(Collectors.toList());
+				if(userGroups.contains(restrictedGroup.get().getUid())) {
 					return REDIRECT_EMPTY_CART;
 				}
 			}
