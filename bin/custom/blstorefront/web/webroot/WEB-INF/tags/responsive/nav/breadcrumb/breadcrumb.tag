@@ -15,7 +15,7 @@
 		<c:choose>
 			<c:when test="${status.last}">
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
-      <c:if test="${product.productType ne 'GIFTCARD' && product.retailGear ne true && product.isDiscontinued ne true}">
+      <c:if test="${product.productType ne 'GIFTCARD' && product.retailGear ne true && product.isDiscontinued ne true && product.forSale ne 'true'}">
       <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
              <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
@@ -33,7 +33,7 @@
       </sec:authorize>
       <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
        <span class="bookmark js-login-popup" id="card-${status.index}" data-product-code="${product.code}"
-          data-bs-target="#signIn" data-bs-toggle="modal" data-link="/login/loginpopup"   data-bookmark-value="${product.isBookMarked}"></span>
+          data-bs-target="#signIn" data-bs-toggle="modal" data-link="<c:url value='/login/loginpopup'/>"   data-bookmark-value="${product.isBookMarked}"></span>
        </sec:authorize>
       </c:if>
 			</c:when>
