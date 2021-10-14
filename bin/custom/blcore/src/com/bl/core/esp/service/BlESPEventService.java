@@ -19,7 +19,7 @@ public interface BlESPEventService {
      *
      * @param orderModel
      */
-    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel);
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel, final String VerificationText);
 
     /**
      * Verify Order by calling Order verification coi needed ESP Event API
