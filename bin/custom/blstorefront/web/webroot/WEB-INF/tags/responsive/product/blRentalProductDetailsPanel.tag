@@ -53,8 +53,7 @@
                                          </c:if>
                                       </c:otherwise>
                                     </c:choose>
-                                    
-                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                <div id="pr-reviewsnippet"></div> 
                                 </div>
                                 <product:productImagePanel galleryImages="${galleryImages}" />
                               </div>
@@ -82,9 +81,8 @@
                                            <span class="badge badge-new">${product.productTagValues}</span>
                                          </c:if>
                                       </c:otherwise>
-                                    </c:choose>
-                                    
-                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
+                                    </c:choose>                                 
+                                <div id="pr-reviewsnippet"></div> 
                                 </div>                                   
 
                                  <ul class="checklist mt-4">
