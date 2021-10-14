@@ -151,7 +151,7 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
    * {@inheritDoc}
    */
   @Override
-  public ESPEventResponseWrapper sendOrderRefundDeclinedEvent(
+  public ESPEventResponseWrapper sendOrderRefundEvent(
       OrderRefundEventRequest orderRefundEventRequest) {
     return super.getTokenAndTriggerEvent(orderRefundEventRequest);
   }

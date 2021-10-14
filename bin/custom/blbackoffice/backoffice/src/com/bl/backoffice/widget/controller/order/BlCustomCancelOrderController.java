@@ -614,7 +614,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     }
                     catch (final Exception e){
                         BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                            BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                     }
                 }
             }
@@ -706,7 +706,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 }
                 catch (final Exception e){
                     BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                 }
             }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), gcAmount);
@@ -723,7 +723,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 }
                 catch (final Exception e){
                     BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                 }
             }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY, this.getOrderModel().getCode());
@@ -807,7 +807,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 }
                 catch (final Exception e){
                     BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                 }
             }
         }
@@ -882,7 +882,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     }
                     catch (final Exception e){
                         BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                            BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
 
                     }
                 }
@@ -903,7 +903,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 }
                 catch (final Exception e){
                     BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.RRFUND_EVENT_API_CALL_FAILED, e);
+                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                 }
 
             }

@@ -165,6 +165,6 @@ public interface BlESPEventRestService {
    * @param orderRefundEventRequest
    * @return
    */
-  ESPEventResponseWrapper sendOrderRefundDeclinedEvent(final OrderRefundEventRequest orderRefundEventRequest);
+  ESPEventResponseWrapper sendOrderRefundEvent(final OrderRefundEventRequest orderRefundEventRequest);
 
 }
