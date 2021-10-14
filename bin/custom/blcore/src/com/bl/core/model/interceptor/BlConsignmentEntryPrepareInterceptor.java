@@ -180,7 +180,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 						}
 					}
 				});
-				eventTriggerForLateCharge(orderModel, serialCode, repairChargeList, lateChargeList);
+				eventTriggerForLateCharge(orderModel, serialCode, lateChargeList);
 				eventTriggerForRepairAndMissingCharge(orderModel, serialCode, repairChargeList,
 						missingChargeList);
 				eventTriggerForRepairCharge(orderModel, serialCode, repairChargeList, missingChargeList);
@@ -194,13 +194,11 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	 *
 	 * @param orderModel
 	 * @param serialCode
-	 * @param repairChargeList
 	 * @param lateChargeList
 	 */
 	private void eventTriggerForLateCharge(final OrderModel orderModel, final String serialCode,
-			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> lateChargeList) {
-		if (CollectionUtils.isNotEmpty(lateChargeList) && CollectionUtils.isEmpty(repairChargeList)) {
+		if (CollectionUtils.isNotEmpty(lateChargeList)) {
       eventTriggerForCharge(orderModel, serialCode, lateChargeList);
 		}
 	}
