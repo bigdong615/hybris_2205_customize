@@ -480,7 +480,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
       try
       {
         // Call send order deposit ESP Event API
-        espEventResponseWrapper = getBlESPEventRestService().sendOrderRefundDeclinedEvent(orderRefundEventRequest);
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderRefundEvent(orderRefundEventRequest);
       }catch (final BlESPIntegrationException exception){
         persistESPEventDetail(null, EspEventTypeEnum.ORDER_REFUND,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
       }
