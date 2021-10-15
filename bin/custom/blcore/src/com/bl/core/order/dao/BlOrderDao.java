@@ -56,7 +56,7 @@ public interface BlOrderDao extends OrderDao
 	 * It loads the value of rolling spend attribute
 	 * @param oneYearPastDate the past date before one year
 	 * @param customerModel the customer model
-	 * @return
+	 * @return list of order model
 	 */
 	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
 			final CustomerModel customerModel);
