@@ -12,6 +12,7 @@ import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.impl.DefaultOrderDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -67,7 +68,9 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ " as type} where {type:code} = ?code}})";
 
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ORDERCOMPLETEDDATE + "} > ?orderCompletedDate";
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ORDERCOMPLETEDDATE + "} > ?orderCompletedDate AND {o:"
+			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
+			+ CustomerModel.UID + "} = ?uid}})";
 
 	/**
  	* {@inheritDoc}
@@ -200,10 +203,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate) {
+	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
+			final CustomerModel customerModel) {
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(
 				GET_ONE_YEAR_OLD_COMPLETED_ORDERS);
 		query.addQueryParameter(ORDER_COMPLETED_DATE, oneYearPastDate);
+		query.addQueryParameter(BlCoreConstants.UID, customerModel.getUid());
 		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
 		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {

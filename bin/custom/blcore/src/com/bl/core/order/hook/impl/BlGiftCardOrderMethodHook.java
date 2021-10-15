@@ -88,7 +88,6 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
   /**
    * It updates the average order value on customer model whenever a new order is created
-   * @param order the order
    * @param customerModel the customer
    */
   private void setAverageOrderValue(final CustomerModel customerModel) {

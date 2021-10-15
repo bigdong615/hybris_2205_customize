@@ -473,6 +473,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
+	public static final String UID = "uid";
+
 	private BlCoreConstants()
 	{
 		//empty
