@@ -370,6 +370,7 @@
 		<property name="data" type="com.bl.esp.dto.orderexceptions.data.OrderExceptionsData" equals="true">
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
+		<property name="extraData" type="com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData" equals="true"/>
 	</bean>
 
 
@@ -403,6 +404,11 @@
 		</property>
 	</bean>
 
+	<bean class="com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData">
+		<property name="serialCode" type="java.lang.String" equals="true"/>
+		<property name="totalChargedAmount" type="java.lang.String" equals="true"/>
+		<property name="allUnPaidBillNotes" type="java.lang.String" equals="true"/>
+	</bean>
 
 	<bean class="com.bl.esp.dto.orderunboxed.data.OrderUnBoxedData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
@@ -913,6 +919,41 @@
 	</property>
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+	</bean>
+	<!-- Order Refund Event Request Object-->
+	<bean class="com.bl.esp.dto.refund.OrderRefundEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.refund.data.OrderRefundData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<!-- Order Refund Event data Request Object -->
+	<bean class="com.bl.esp.dto.refund.data.OrderRefundData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldorderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("old order id")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="refundamount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("Refund Amount")</annotations>
+		</property>
+		<property name="refundmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Refund Method")</annotations>
+		</property>
+		<property name="email" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Email")</annotations>
+		</property>
+		<property name="orderitemsinfo" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order items info")</annotations>
 		</property>
 	</bean>
 

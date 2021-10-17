@@ -448,21 +448,19 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                                                   final Date optimizedEndDate, final OptimizedShippingMethodEnum optimizedShippingMethod) {
         consignmentModel.setOptimizedShippingStartDate(optimizedDate);
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
-        if (result != BlInventoryScanLoggingConstants.ZERO) {
-            final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
-            consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
-            if(optimizedShippingType != null) {
-                if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
-                } else {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            optimizedShippingMethod.getCode()));
-                }
+        final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
+        consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
+        if (result != BlInventoryScanLoggingConstants.ZERO && optimizedShippingType != null) {
+            if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
+            } else {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        optimizedShippingMethod.getCode()));
             }
         } else {
-            consignmentModel.setOptimizedShippingType(null);
-            consignmentModel.setOptimizedShippingMethodType(null);
+            consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                    OptimizedShippingMethodEnum.DEFAULT.getCode()));
         }
         getModelService().save(consignmentModel);
         getModelService().refresh(consignmentModel);

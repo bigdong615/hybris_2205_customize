@@ -264,7 +264,8 @@
       		<value code="SOLD_SHIPPED"/>
       		<value code="SOLD_RMA_CREATED"/>
       		<value code="RECEIVED_READY_FOR_PICKUP" />
-        <value code="RECEIVED" />
+          <value code="RECEIVED" />
+          <value code="RECEIVED_PICKED_UP" />
         </enumtype>
       
       
@@ -290,6 +291,7 @@
       	<value code="BL_SHIPPED"/>
         <value code="RECEIVED_READY_FOR_PICKUP"/>
         <value code="PARTIALLY_SHIPPED" />
+        <value code="PICKED_UP" />
       </enumtype>
       
       <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
