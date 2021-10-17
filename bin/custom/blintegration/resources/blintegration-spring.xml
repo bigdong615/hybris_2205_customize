@@ -207,6 +207,8 @@
 
   <bean id="blDefaultOrderDao" class="com.bl.integration.dao.DefaultBlOrderDao">
     <property name="flexibleSearchService" ref="flexibleSearchService" />
+    <property name="searchRestrictionService" ref="searchRestrictionService"/>
+
   </bean>
 
 

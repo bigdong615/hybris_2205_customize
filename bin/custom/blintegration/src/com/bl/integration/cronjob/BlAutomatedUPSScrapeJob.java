@@ -1,5 +1,6 @@
 package com.bl.integration.cronjob;
 
+import com.bl.BlloggingStandalone;
 import com.bl.core.model.UPSScrapeCronJobModel;
 import com.bl.integration.dao.DefaultBlOrderDao;
 import com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl;
@@ -21,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import javolution.io.Struct.Bool;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -51,53 +54,41 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     try {
       final AtomicReference<Map<String, Object>> stringObjectMap = new AtomicReference<>();
       final List<AbstractOrderModel> orderModelList = getDefaultBlOrderDao().getOrdersForUPSScrape();
+
       BlLogger.logMessage(LOG , Level.INFO , String.valueOf(orderModelList.size()));
 
-      orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
+        orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
           consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
             try {
-              stringObjectMap.set(getDefaultBlTrackWebService()
-                  .trackService(abstractOrderModel, packagingInfoModel));
-
-              stringObjectMap.set(getDefaultBlUPSTrackServiceImpl().trackUPSService(abstractOrderModel , packagingInfoModel));
-
+             // if(BooleanUtils.isFalse(packagingInfoModel.isDelivered())) {
+                performFedexService(abstractOrderModel , packagingInfoModel, stringObjectMap);
+                performUPSService(abstractOrderModel , packagingInfoModel , stringObjectMap);
+              //}
               final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
-              if (MapUtils.isNotEmpty(stringObjectMap1)) {
-                if (Objects.nonNull(stringObjectMap1.get("EstimatedDeliveryTimestamp"))) {
-                  final Date estimatedDeliveryTimestamp = (Date) stringObjectMap1
-                      .get("EstimatedDeliveryTimestamp");
-                  if (estimatedDeliveryTimestamp.before(new Date())) {
-                    updatePackageDetails(abstractOrderModel,
-                        String.valueOf(stringObjectMap1.get("TrackingNumber")), packagingInfoModel);
-                  }
-                } else if (StringUtils.equalsIgnoreCase("Delivered",
-                    String.valueOf(stringObjectMap1.get("StatusDescription")))) {
-                  updatePackageDetails(abstractOrderModel,
-                      String.valueOf(stringObjectMap1.get("TrackingNumber")), packagingInfoModel);
-                } else if (Objects.nonNull(stringObjectMap1.get("TrackEvents"))) {
-                  final List<Map<String, Object>> list = (List<Map<String, Object>>) stringObjectMap1
-                      .get("TrackEvents");
-                  list.forEach(objectMap -> {
-                    if (StringUtils.equalsIgnoreCase("Delivered",
-                        (CharSequence) objectMap.get("Description"))) {
-                      updatePackageDetails(abstractOrderModel,
-                          String.valueOf(stringObjectMap1.get("TrackingNumber")),
-                          packagingInfoModel);
-                    }
-                  });
-                } else {
-                  getBlUpdateSerialService()
-                      .updateSerialProducts(String.valueOf(stringObjectMap1.get("TrackingNumber")),
-                          abstractOrderModel.getCode(), new Date(),
-                          packagingInfoModel.getNumberOfRepetitions(),
-                          packagingInfoModel);
-                }
-              }
+                postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
             }
             catch (Exception e){
               BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {}" , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
             }
       })));
+
+      final List<PackagingInfoModel> packagingInfoModels = getDefaultBlOrderDao().getRescheduledPackagesForUPSScrape();
+      BlLogger.logMessage(LOG , Level.ERROR , String.valueOf(packagingInfoModels.size()));
+
+        packagingInfoModels.forEach(packagingInfoModel -> {
+          final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
+          try {
+            /*if(BooleanUtils.isFalse(packagingInfoModel.isDelivered())) {*/
+              performFedexService(abstractOrderModel , packagingInfoModel, stringObjectMap);
+              performUPSService(abstractOrderModel , packagingInfoModel , stringObjectMap);
+           // }
+            final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
+            postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
+          }
+          catch (Exception e){
+            BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {}" , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
+          }
+        });
 
     }
     catch (final Exception e){
@@ -107,16 +98,67 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
     return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
   }
 
+  private void performFedexService(final AbstractOrderModel abstractOrderModel , final PackagingInfoModel packagingInfoModel ,
+      final AtomicReference<Map<String, Object>> stringObjectMap) {
+    stringObjectMap.set(getDefaultBlTrackWebService()
+        .trackService(abstractOrderModel, packagingInfoModel));
+  }
+
+
+  private void performUPSService(final AbstractOrderModel abstractOrderModel , final PackagingInfoModel packagingInfoModel ,
+      final AtomicReference<Map<String, Object>> stringObjectMap) {
+     stringObjectMap.set(getDefaultBlUPSTrackServiceImpl()
+        .trackUPSService(abstractOrderModel, packagingInfoModel));
+  }
+
   private void updatePackageDetails(final AbstractOrderModel orderModel, final String trackingNumber , final
       PackagingInfoModel packagingInfoModel) {
     packagingInfoModel.setNumberOfRepetitions(0);
-    packagingInfoModel.setIsDelivered(Boolean.TRUE);
+    packagingInfoModel.setDelivered(Boolean.TRUE);
+    packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);
     getModelService().save(orderModel);
     getModelService().refresh(orderModel);
   }
 
+  private void postResponseAction(final AbstractOrderModel abstractOrderModel , final PackagingInfoModel packagingInfoModel ,
+      final Map<String, Object>  stringObjectMap1){
+    if (MapUtils.isNotEmpty(stringObjectMap1)) {
+
+      if (Objects.nonNull(stringObjectMap1.get("EstimatedDeliveryTimestamp"))) {
+        final Date estimatedDeliveryTimestamp = (Date) stringObjectMap1
+            .get("EstimatedDeliveryTimestamp");
+        if (estimatedDeliveryTimestamp.before(new Date())) {
+          updatePackageDetails(abstractOrderModel,
+              String.valueOf(stringObjectMap1.get("TrackingNumber")),
+              packagingInfoModel);
+        }
+      } else if (StringUtils.equalsIgnoreCase("Delivered",
+          String.valueOf(stringObjectMap1.get("StatusDescription")))) {
+        updatePackageDetails(abstractOrderModel,
+            String.valueOf(stringObjectMap1.get("TrackingNumber")), packagingInfoModel);
+      } else if (Objects.nonNull(stringObjectMap1.get("TrackEvents"))) {
+        final List<Map<String, Object>> list = (List<Map<String, Object>>) stringObjectMap1
+            .get("TrackEvents");
+        list.forEach(objectMap -> {
+          if (StringUtils.equalsIgnoreCase("Delivered",
+              (CharSequence) objectMap.get("Description"))) {
+            updatePackageDetails(abstractOrderModel,
+                String.valueOf(stringObjectMap1.get("TrackingNumber")),
+                packagingInfoModel);
+          }
+        });
+      } else {
+        getBlUpdateSerialService()
+            .updateSerialProducts(
+                String.valueOf(stringObjectMap1.get("TrackingNumber")),
+                abstractOrderModel.getCode(), new Date(),
+                packagingInfoModel.getNumberOfRepetitions(),
+                packagingInfoModel);
+      }
+    }
+  }
 
   public BlUpdateSerialService getBlUpdateSerialService() {
     return blUpdateSerialService;

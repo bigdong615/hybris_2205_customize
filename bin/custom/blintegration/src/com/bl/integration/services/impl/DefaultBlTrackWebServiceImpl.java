@@ -73,6 +73,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
       }
     }
 
+    results.put("upsScrapeServiceType" , "fedex");
     return results;
   }
 

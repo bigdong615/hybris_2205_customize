@@ -52,7 +52,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
                             .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
                                 SerialStatusEnum.LATE);
                         packagingInfoModel.setNumberOfRepetitions(Objects.isNull(numberOfRepetition) ? 0 : numberOfRepetition + 1);
-                        packagingInfoModel.setIsDelivered(Boolean.FALSE);
+                        packagingInfoModel.setDelivered(Boolean.FALSE);
+                        packagingInfoModel.setIsScrapeScanCompleted(Boolean.FALSE);
                         getModelService().save(packagingInfoModel);
                         getModelService().refresh(packagingInfoModel);
                       } else if (numberOfRepetition == 3) {
@@ -60,7 +61,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
                         BlUpdateStagedProductUtils
                             .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
                                 SerialStatusEnum.STOLEN);
-                        packagingInfoModel.setIsDelivered(Boolean.FALSE);
+                        packagingInfoModel.setDelivered(Boolean.FALSE);
                         getModelService().save(packagingInfoModel);
                         getModelService().refresh(packagingInfoModel);
                       }

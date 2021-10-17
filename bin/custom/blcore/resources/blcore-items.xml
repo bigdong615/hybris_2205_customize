@@ -3737,10 +3737,15 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This refers to number of repetitions </description>
           </attribute>
-          <attribute qualifier="isDelivered" type="boolean">
+          <attribute qualifier="delivered" type="boolean">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>To identify by UPS scrape</description>
+          </attribute>
+          <attribute qualifier="isScrapeScanCompleted" type="boolean">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>To identify by UPS scrape is scanned this pacakege or not</description>
           </attribute>
 				</attributes>
 			</itemtype>
