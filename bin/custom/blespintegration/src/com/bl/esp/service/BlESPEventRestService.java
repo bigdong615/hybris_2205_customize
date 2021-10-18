@@ -1,6 +1,7 @@
 package com.bl.esp.service;
 
 
+import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -167,4 +168,11 @@ public interface BlESPEventRestService {
    */
   ESPEventResponseWrapper sendOrderRefundEvent(final OrderRefundEventRequest orderRefundEventRequest);
 
+  /**
+   * Send Order Bill Paid Event by calling Order Bill Paid ESP Event API
+   *
+   * @param orderBillPaidEventRequest the OrderBillPaidEventRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderBillPaidEvent(final OrderBillPaidEventRequest orderBillPaidEventRequest);
 }
