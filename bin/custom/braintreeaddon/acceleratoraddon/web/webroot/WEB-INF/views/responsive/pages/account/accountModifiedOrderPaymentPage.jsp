@@ -435,7 +435,7 @@
 					method="GET">
 					<input type="hidden" id="orderId" name="orderId" value="" />
 
-					<spring:theme code="text.deposit.order.credi.card.message" />
+					<spring:theme code="text.modified.order.credi.card.message" />
 
 					<c:url value="/my-account/add-payment-method" var="addPaymentUrl" />
 					<a href=""
