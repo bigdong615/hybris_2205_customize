@@ -13,6 +13,7 @@ import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Required;
 
 
@@ -66,6 +67,7 @@ public class OrderCompletedEventListener extends AbstractAcceleratorSiteEventLis
 	{
 		final OrderModel orderModel = orderCompletedEvent.getProcess().getOrder();
 		orderModel.setStatus(OrderStatus.COMPLETED);
+		orderModel.setOrderCompletedDate(new Date());
 		getModelService().save(orderModel);
 	}
 
