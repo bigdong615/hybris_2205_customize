@@ -12,6 +12,11 @@ import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 
+/**
+ * @author Ritika
+ * This resolver is for getting restricted groups
+ *
+ */
 public class BlRestrictedUserGroupResolver extends   AbstractValueResolver<BlProductModel, Object, Object> {
 
   private ModelService modelService;

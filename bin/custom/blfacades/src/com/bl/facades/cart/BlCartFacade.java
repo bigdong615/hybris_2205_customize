@@ -202,9 +202,11 @@ public interface BlCartFacade extends CartFacade {
 	void checkAquatechRentalDates(final CartData cartData);
 
 	/**
-	 * Remove restricted entries from cart
+	 * Remove restricted entries from the cart
 	 * @param restrictedEntries
-	 * @return
+	 * @param cartModel
+	 * @param isCartPage
+	 * @return restricted entries name
 	 */
   String removeRestrictedEntries(final List<AbstractOrderEntryModel> restrictedEntries, final CartModel cartModel, final boolean isCartPage);
 }

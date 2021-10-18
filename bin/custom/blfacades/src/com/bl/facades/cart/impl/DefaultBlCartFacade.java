@@ -573,7 +573,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String removeRestrictedEntries(List<AbstractOrderEntryModel> restrictedEntries,final CartModel cartModel, final boolean isCartPage) {
+	public String removeRestrictedEntries(final List<AbstractOrderEntryModel> restrictedEntries,final CartModel cartModel, final boolean isCartPage) {
 		if (CollectionUtils.isNotEmpty(restrictedEntries)) {
 			final List<Integer> entryList = restrictedEntries.stream().map(AbstractOrderEntryModel::getEntryNumber).collect(Collectors.toList());
 			final String removedEntries = restrictedEntries.stream().map(entry-> entry.getProduct().getName(i18nService.getCurrentLocale())).collect(Collectors.joining(BlFacadesConstants.COMMA_SEPERATER));
