@@ -21,9 +21,11 @@ import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Lists;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.strategies.impl.EventPublishingSubmitOrderStrategy;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -117,6 +119,12 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         getEventPublishingSubmitOrderStrategy().submitOrder((OrderModel)abstractOrderModel);
       }
     }
+    if (!interceptorContext.isNew(abstractOrderModel) && interceptorContext
+				.isModified(abstractOrderModel, AbstractOrderModel.STATUS)) {
+			setCompletedOrderCount(abstractOrderModel);
+			setInCompletedOrderCount(abstractOrderModel);
+			setOrderValuePriorToShippedStatus(abstractOrderModel);
+		}
     try {
       triggerEspPaymentDeclined(abstractOrderModel, interceptorContext);
       triggerEspVerificationRequired(abstractOrderModel, interceptorContext);
@@ -130,8 +138,73 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     }
   }
 
+	/**
+	 * It sets the total count of orders which are in inCompleted status
+	 * @param abstractOrderModel the order model
+	 */
+	private void setInCompletedOrderCount(final AbstractOrderModel abstractOrderModel) {
+		if(OrderStatus.INCOMPLETE.getCode().contains(abstractOrderModel.getStatus().getCode())) {
+			final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
+			customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() + 1);
+			modelService.save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "InCompleted order count : {} updated for the customer {} ",
+					customerModel.getIncompletedOrderCount(), customerModel.getUid());
+		}
+	}
 
-  /**
+	/**
+	 * It sets the total count of orders which are in completed status
+	 * @param abstractOrderModel the order model
+	 */
+	private void setCompletedOrderCount(final AbstractOrderModel abstractOrderModel) {
+  	if(OrderStatus.COMPLETED.equals(abstractOrderModel.getStatus())) {
+  		final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
+  		customerModel.setCompletedOrderCount(customerModel.getCompletedOrderCount() + 1);
+  		modelService.save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Completed order count : {} updated for the customer {} ",
+					customerModel.getCompletedOrderCount(), customerModel.getUid());
+		}
+	}
+
+	/**
+	 * It updates the value whenever an order status is changed from shipped to other status
+	 * @param order the order
+	 */
+	private void setOrderValuePriorToShippedStatus(final AbstractOrderModel order) {
+  	if(isOrderAfterShippedStatus(order.getStatus())) {
+			final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) order.getItemModelContext();
+			final OrderStatus status = itemModelCtx.getOriginalValue(BlCoreConstants.STATUS);
+			if(status.equals(OrderStatus.SHIPPED)) {
+				final CustomerModel customerModel = (CustomerModel) order.getUser();
+				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
+						AbstractOrderEntryModel::getTotalPrice).sum();
+				customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() - priceOfProducts);
+				modelService.save(customerModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
+						customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
+			}
+		}
+	}
+
+	/**
+	 * It checks for the status which can be set after shipped status
+	 * @param orderStatus the status
+	 * @return boolean
+	 */
+	private boolean isOrderAfterShippedStatus(final OrderStatus orderStatus) {
+		return OrderStatus.INCOMPLETE.getCode().startsWith(orderStatus.getCode()) ||
+				BlCoreConstants.UNBOXED.startsWith(orderStatus.getCode()) ||
+				isOrderStatusAfterShipped(orderStatus) ||
+				BlCoreConstants.COMPLETED.startsWith(orderStatus.getCode());
+	}
+
+	private boolean isOrderStatusAfterShipped(final OrderStatus orderStatus) {
+		return orderStatus.equals(OrderStatus.LATE) || orderStatus.equals(OrderStatus.RETURNED) ||
+				orderStatus.getCode().startsWith(OrderStatus.SOLD.getCode());
+	}
+
+
+	/**
    * Do change dirty priority status on serial if Order is cancelled and shipping date is current date.
    *
    * @param abstractOrderModel the abstract order model

@@ -19,6 +19,7 @@ import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -172,6 +173,9 @@ public class DefaultBlOrderService implements BlOrderService {
 		try
 		{
 			order.setStatus(orderStatus);
+			if(orderStatus.equals(OrderStatus.COMPLETED)) {
+				order.setOrderCompletedDate(new Date());
+			}
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",

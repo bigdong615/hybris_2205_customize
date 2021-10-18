@@ -12,6 +12,7 @@ import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.impl.DefaultOrderDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -36,6 +37,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private UserService userService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
+	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
@@ -65,13 +67,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALCART + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
-
-	private static final String INCOMPLETE_ORDERS_TO_BE_PROCESSED_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
-			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
-			+ "} BETWEEN ?startDate AND ?endDate) AND {o:status} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
-			+ "} =?manualReviewStatusByReshuffler";
+	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ORDERCOMPLETEDDATE + "} > ?orderCompletedDate AND {o:"
+			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
+			+ CustomerModel.UID + "} = ?uid}})";
 
 	/**
  	* {@inheritDoc}
@@ -195,6 +194,25 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return abstractOrderModelList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
+			final CustomerModel customerModel) {
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(
+				GET_ONE_YEAR_OLD_COMPLETED_ORDERS);
+		query.addQueryParameter(ORDER_COMPLETED_DATE, oneYearPastDate);
+		query.addQueryParameter(BlCoreConstants.UID, customerModel.getUid());
+		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
+		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Orders Found in past one year as per order completed date");
 			return Collections.emptyList();
 		}
 		return abstractOrderModelList;

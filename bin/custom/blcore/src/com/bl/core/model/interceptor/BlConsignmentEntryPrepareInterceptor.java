@@ -2,6 +2,7 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import de.hybris.platform.core.model.user.CustomerModel;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
@@ -20,6 +21,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +35,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -104,12 +108,47 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				}
 			});
 			consignmentEntryModel.setBillingCharges(validatedBillingCharges);
+			setTotalAmountPastDue(consignmentEntryModel, interceptorContext);
 		}
 	}
 
 	/**
+	 * It updates the total amount past due when new billing charges are added
+	 * @param consignmentEntryModel the consignment entry model
+	 * @param interceptorContext interceptor context
+	 */
+	private void setTotalAmountPastDue(final ConsignmentEntryModel consignmentEntryModel, final
+			InterceptorContext interceptorContext) {
+		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
+				.getItemModelContext();
+		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx
+				.getOriginalValue(BlCoreConstants.BILLING_CHARGES);
+		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
+				.getBillingCharges();
+		currentBillingCharges.entrySet().forEach(billingCharge -> {
+			if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
+				final List<BlItemsBillingChargeModel> charges = billingCharges.get(billingCharge.getKey());
+				final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
+				currentCharges.removeAll(charges);
+				final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
+						.getOrder().getUser();
+				final BigDecimal newlyAddedCharges = currentCharges.stream()
+						.map(BlItemsBillingChargeModel::getChargedAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal totalAmountPastDue =
+						Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
+								customerModel.getTotalAmountPastDue();
+				totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
+				customerModel.setTotalAmountPastDue(totalAmountPastDue);
+				interceptorContext.getModelService().save(customerModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
+						totalAmountPastDue, customerModel.getUid());
+			}
+		});
+	}
+
+	/**
 	 * It triggers Exception Broken/Missing Event.
-	 *
 	 * @param consignmentEntryModel the ConsignmentEntryModel
 	 * @param interceptorContext    InterceptorContext
 	 */
@@ -180,7 +219,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 						}
 					}
 				});
-				eventTriggerForLateCharge(orderModel, serialCode, repairChargeList, lateChargeList);
+				eventTriggerForLateCharge(orderModel, serialCode, lateChargeList);
 				eventTriggerForRepairAndMissingCharge(orderModel, serialCode, repairChargeList,
 						missingChargeList);
 				eventTriggerForRepairCharge(orderModel, serialCode, repairChargeList, missingChargeList);
@@ -194,13 +233,11 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	 *
 	 * @param orderModel
 	 * @param serialCode
-	 * @param repairChargeList
 	 * @param lateChargeList
 	 */
 	private void eventTriggerForLateCharge(final OrderModel orderModel, final String serialCode,
-			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> lateChargeList) {
-		if (CollectionUtils.isNotEmpty(lateChargeList) && CollectionUtils.isEmpty(repairChargeList)) {
+		if (CollectionUtils.isNotEmpty(lateChargeList)) {
       eventTriggerForCharge(orderModel, serialCode, lateChargeList);
 		}
 	}
@@ -226,13 +263,13 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			//consolidated data for repair charge.
 			for (BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
 
 			//consolidated data for missing charge.
 			for (BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
 			orderExceptionsExtraData.setSerialCode(serialCode);
 			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
@@ -297,7 +334,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
     //consolidated data for billing charge.
     for (BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
       chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(
+					StringUtils.SPACE);
     }
     orderExceptionsExtraData.setSerialCode(serialCode);
     orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());

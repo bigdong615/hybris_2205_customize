@@ -1566,6 +1566,7 @@
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
+		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1661,9 +1662,18 @@
 
 	<!-- Fix for default package creation while placing order -->
 	<bean id="blConsignmentPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
-    <property name="interceptor" ref="VoidInterceptor"/>
-    <property name="typeCode" value="Consignment"/>
-    <property name="replacedInterceptors" ref="consignmentPackagingInfoPrepareInterceptor"/>
+    	<property name="interceptor" ref="VoidInterceptor"/>
+    	<property name="typeCode" value="Consignment"/>
+    	<property name="replacedInterceptors" ref="consignmentPackagingInfoPrepareInterceptor"/>
 	</bean>
 	
+	<bean id="blCalculateRollingSpendHandler" class="com.bl.core.model.handler.BlCalculateRollingSpendHandler">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+	<!-- Order Bill Paid populator ESP -->
+	<bean id="blOrderBillPaidRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator">
+	</bean>
+
 </beans>

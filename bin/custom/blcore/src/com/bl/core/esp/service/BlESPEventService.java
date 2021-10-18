@@ -19,7 +19,7 @@ public interface BlESPEventService {
      *
      * @param orderModel
      */
-    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel);
+    public void sendOrderMoreInfoRequiredEvent(final OrderModel orderModel, final String verificationText);
 
     /**
      * Verify Order by calling Order verification coi needed ESP Event API
@@ -121,5 +121,10 @@ public interface BlESPEventService {
      */
     public void sendOrderRefundEvent(final OrderModel orderModel,final double totalRefundAmount,final String refundMethod, final List<OrderCancelEntry> orderCancelEntries);
 
+    /**
+     *  Send  bill paid  by calling  Order Bill Paid ESP Event API
+     * @param orderModel ordermodel
+     */
+    void sendOrderBillPaidEvent(final OrderModel orderModel) ;
 
 }
