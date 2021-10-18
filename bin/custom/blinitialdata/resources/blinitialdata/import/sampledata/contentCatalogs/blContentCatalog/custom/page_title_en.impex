@@ -1,0 +1,15 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs page_title_en.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# Language
+$lang=en
+
+# Content Pages
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; title[lang=$lang]
+                   ;                         ; cartpage             ; "Shopping Cart"
+                   ;                         ; emptyCartPage        ; "Shopping Cart"
+                   ;                         ; DeliveryOrPickupCartpage ; "Checkout - Delivery Info"
+                   ;                         ; multiStepCheckoutSummaryPage ; "Checkout - Payment Info"
+                   ;                         ; orderConfirmation       ; "Order Confirmed"
