@@ -20,14 +20,14 @@
                 <row>
                   <label value="${labels.blbackoffice.inforequired.label.verification.text}" width="140px"/>
                     <hlayout>
-                        <textbox sclass="oms-widget-updateorder-input-text-box" id="amount" width="140px" />
+                        <textbox sclass="oms-widget-updateorder-input-text-box" id="verificationText" width="140px" />
                     </hlayout>
 
                 </row>
             	</rows>
             	</grid>
 		
-    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
+    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer reduce-size-box" style = "position:relative;top:5%">
         <button id="undochanges"
 				label="${labels.blbackoffice.inforequired.button.undo}"
 				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />

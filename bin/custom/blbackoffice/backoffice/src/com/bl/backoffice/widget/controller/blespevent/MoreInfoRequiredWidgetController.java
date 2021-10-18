@@ -53,7 +53,7 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 	 * @param inputObject
 	 */
 	@SocketEvent(socketId = "inputObject")
-	public void initCOIRequiredForm(final OrderModel inputObject)
+	public void initMoreInfoRequiredForm(final OrderModel inputObject)
 	{
 		this.setOrderModel(inputObject);
 		this.verificationText.setValue("");
