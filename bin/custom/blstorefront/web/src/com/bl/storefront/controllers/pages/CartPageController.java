@@ -64,6 +64,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.security.PrincipalGroupModel;
+import de.hybris.platform.core.model.security.PrincipalModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
@@ -76,16 +77,20 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -225,11 +230,21 @@ public class CartPageController extends AbstractCartPageController
 					.filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP))
 					.findAny();
 			if(restrictedGroup.isPresent()){
-			final List<ProductModel> entryProductCodes = cartModel.getEntries().stream().map(
-					AbstractOrderEntryModel:: getProduct).collect(Collectors.toList());
-			final List<String> userGroups = entryProductCodes.stream().filter(product ->  CollectionUtils.isNotEmpty(((BlProductModel)product).getRestrictedPrincipals())).map(product -> ((BlProductModel)product).getRestrictedPrincipals().iterator().next().getUid()).collect(Collectors.toList());
-				if(userGroups.contains(restrictedGroup.get().getUid())) {
+			final List<ProductModel> entryProductCodes = cartModel.getEntries().stream().map(AbstractOrderEntryModel:: getProduct).collect(Collectors.toList());
+				final Set<String> userGroups = getUserGroups(entryProductCodes);
+				final List<AbstractOrderEntryModel> nonRestrictedProductEntries = getNonRestrictedProductEntries(
+						cartModel.getEntries());
+				List<AbstractOrderEntryModel> restrictedEntries = ListUtils.subtract(cartModel.getEntries(),nonRestrictedProductEntries);
+				if(userGroups.contains(restrictedGroup.get().getUid()) && CollectionUtils.isEmpty(nonRestrictedProductEntries)) {
 					return REDIRECT_EMPTY_CART;
+				}
+				else if(userGroups.contains(restrictedGroup.get().getUid()) && CollectionUtils.isNotEmpty(restrictedEntries)){
+					final String restrictedRemovedEntries = getBlCartFacade().removeRestrictedEntries(restrictedEntries, cartModel, Boolean.TRUE);
+					if(StringUtils.isNotEmpty(restrictedRemovedEntries)) {
+						GlobalMessages
+								.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
+										BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{restrictedRemovedEntries});
+					}
 				}
 			}
 		}
@@ -269,7 +284,36 @@ public class CartPageController extends AbstractCartPageController
 
 		return prepareCartUrl(model);
 	}
-	
+
+	/**
+	 * get User groups associated to products
+	 * @param entryProductCodes
+	 * @return
+	 */
+	private Set<String> getUserGroups(final List<ProductModel> entryProductCodes) {
+		final Set<String> userGroups = new HashSet<>();
+		for (ProductModel product : entryProductCodes) {
+			if (CollectionUtils.isNotEmpty(((BlProductModel) product).getRestrictedPrincipals())) {
+				for(PrincipalModel ug: ((BlProductModel) product).getRestrictedPrincipals()){
+					userGroups.add(ug.getUid());
+				}
+			}
+		}
+		return userGroups;
+	}
+
+	/**
+	 * Get Non restricted Entry list
+	 * @param entries
+	 * @return
+	 */
+	private List<AbstractOrderEntryModel> getNonRestrictedProductEntries(final List<AbstractOrderEntryModel> entries) {
+		List<AbstractOrderEntryModel> nonRestrictedProductEntries = entries.stream().filter(entry ->
+				CollectionUtils.isEmpty(((BlProductModel) entry.getProduct()).getRestrictedPrincipals()))
+				.collect(Collectors.toList());
+		return CollectionUtils.isEmpty(nonRestrictedProductEntries) ? Collections.emptyList() : nonRestrictedProductEntries;
+	}
+
 	/**
 	 * Check selected rental dates is blackout date.
 	 *

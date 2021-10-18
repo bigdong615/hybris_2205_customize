@@ -5,6 +5,7 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
 
@@ -199,4 +200,11 @@ public interface BlCartFacade extends CartFacade {
 	 *           the cart data
 	 */
 	void checkAquatechRentalDates(final CartData cartData);
+
+	/**
+	 * Remove restricted entries from cart
+	 * @param restrictedEntries
+	 * @return
+	 */
+  String removeRestrictedEntries(final List<AbstractOrderEntryModel> restrictedEntries, final CartModel cartModel, final boolean isCartPage);
 }

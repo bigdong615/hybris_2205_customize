@@ -570,6 +570,33 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String removeRestrictedEntries(List<AbstractOrderEntryModel> restrictedEntries,final CartModel cartModel, final boolean isCartPage) {
+		if (CollectionUtils.isNotEmpty(restrictedEntries)) {
+			final List<Integer> entryList = restrictedEntries.stream().map(AbstractOrderEntryModel::getEntryNumber).collect(Collectors.toList());
+			final String removedEntries = restrictedEntries.stream().map(entry-> entry.getProduct().getName(i18nService.getCurrentLocale())).collect(Collectors.joining(BlFacadesConstants.COMMA_SEPERATER));
+			Collections.reverse(entryList);
+			entryList.forEach(entryNumber -> {
+				try {
+					if (isCartPage) {
+						updateCartEntry(entryNumber, 0);
+					} else {
+						updateCartEntry(entryNumber, 0, cartModel);
+					}
+				} catch (final CommerceCartModificationException ex) {
+					BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
+							"Couldn't update product with the entry number: {}",entryNumber);
+				}
+			});
+			return removedEntries;
+
+		}
+		return StringUtils.EMPTY;
+	}
+
+	/**
 	 * Set the date error message to aquatech entries, if rental start date is less than 2 business days
 	 */
 	private void setMessageToAquatechEntry(final CartData cartData) {
