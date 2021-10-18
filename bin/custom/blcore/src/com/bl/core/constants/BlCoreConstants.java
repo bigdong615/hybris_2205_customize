@@ -443,6 +443,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_PRICE = "damagewaiverprice";
 	public static final String ORDER_ITEM_DAMAGE_WAIVER_TEXT = "damagewaivertext";
 	public static final String ORDER_ITEM_TOTAL_PRICE = "totalprice";
+	public static final String ORDER_ITEM_QUANTITY = "quantity";
 
 	public static final String ITEMS_ROOT_ELEMENT = "itemsinfo";
 	public static final String ITEM_ROOT_ELEMENT = "item";
@@ -473,7 +474,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
+
 	public static final String UID = "uid";
+	
+	public static final String ORDER_BILL_PAID_EVENT_DEFINITION_KEY = "order.bill.paid.event.definition.key";
+	public static final String ORDER_BILL_PAID_EVENT_TEMPLATE = "order.bill.paid.event.template";
 
 	private BlCoreConstants()
 	{

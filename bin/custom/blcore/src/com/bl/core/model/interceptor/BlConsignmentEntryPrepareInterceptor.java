@@ -35,6 +35,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -216,7 +217,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 						}
 					}
 				});
-				eventTriggerForLateCharge(orderModel, serialCode, repairChargeList, lateChargeList);
+				eventTriggerForLateCharge(orderModel, serialCode, lateChargeList);
 				eventTriggerForRepairAndMissingCharge(orderModel, serialCode, repairChargeList,
 						missingChargeList);
 				eventTriggerForRepairCharge(orderModel, serialCode, repairChargeList, missingChargeList);
@@ -230,13 +231,11 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	 *
 	 * @param orderModel
 	 * @param serialCode
-	 * @param repairChargeList
 	 * @param lateChargeList
 	 */
 	private void eventTriggerForLateCharge(final OrderModel orderModel, final String serialCode,
-			final List<BlItemsBillingChargeModel> repairChargeList,
 			final List<BlItemsBillingChargeModel> lateChargeList) {
-		if (CollectionUtils.isNotEmpty(lateChargeList) && CollectionUtils.isEmpty(repairChargeList)) {
+		if (CollectionUtils.isNotEmpty(lateChargeList)) {
       eventTriggerForCharge(orderModel, serialCode, lateChargeList);
 		}
 	}
@@ -262,13 +261,13 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			//consolidated data for repair charge.
 			for (BlItemsBillingChargeModel blItemsBillingChargeModel : repairChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
 
 			//consolidated data for missing charge.
 			for (BlItemsBillingChargeModel blItemsBillingChargeModel : missingChargeList) {
 				chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+				unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(StringUtils.SPACE);
 			}
 			orderExceptionsExtraData.setSerialCode(serialCode);
 			orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());
@@ -333,7 +332,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
     //consolidated data for billing charge.
     for (BlItemsBillingChargeModel blItemsBillingChargeModel : billingChargeList) {
       chargedAmount = chargedAmount.add(blItemsBillingChargeModel.getChargedAmount());
-      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes());
+      unPaidBillNotes.append(blItemsBillingChargeModel.getUnPaidBillNotes()).append(
+					StringUtils.SPACE);
     }
     orderExceptionsExtraData.setSerialCode(serialCode);
     orderExceptionsExtraData.setTotalChargedAmount(chargedAmount.toString());

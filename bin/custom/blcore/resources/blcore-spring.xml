@@ -1562,6 +1562,7 @@
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
+		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1665,5 +1666,10 @@
 	<bean id="blCalculateRollingSpendHandler" class="com.bl.core.model.handler.BlCalculateRollingSpendHandler">
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
-	
+
+	<!-- Order Bill Paid populator ESP -->
+	<bean id="blOrderBillPaidRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator">
+	</bean>
+
 </beans>
