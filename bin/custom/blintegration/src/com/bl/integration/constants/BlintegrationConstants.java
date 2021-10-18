@@ -88,6 +88,37 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UPS_API_PASSWORD = "ups.token.password";
 	public static final String UPS_API_LICENSE = "ups.token.license";
 
+	public static final String ESTIMATED_DELIVERY_TIME_STAMP = "EstimatedDeliveryTimestamp";
+	public static final String TRACKING_NUMBER = "TrackingNumber";
+	public static final String DELIVERED = "Delivered";
+	public static final String STATUS_DESCRIPTION = "StatusDescription";
+	public static final String TRACK_EVENTS = "TrackEvents";
+	public static final String DESCRIPTION = "Description";
+	public static final int END_HOURS = 23;
+	public static final int END_MINUTES = 59;
+	public static final int END_SECONDS = 59;
+	public static final int START_HOURS = 0;
+	public static final int START_MINUTES = 0;
+	public static final int START_SECONDS = 0;
+	public static final String CODE = "code";
+	public static final String FROM = "} FROM {";
+	public static final String OPTIMIZED_SHIPPING_START_DATE = "optimizedShippingStartDate";
+	public static final String OPTIMIZED_SHIPPING_END_DATE = "optimizedShippingEndDate";
+	public static final String PACKAGE_RETURNED_TO_WAREHOUSE = "packageReturnedToWarehouse";
+	public static final String IS_SCRAPE_SCAN_COMPLETED = "isScrapeScanCompleted";
+	public static final String START_DATE = "startDate";
+	public static final String END_DATE = "endDate";
+	public static final String DATE_FORMATTER = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
+	public static final String UTC = "UTC";
+	public static final String SCRAPE_TYPE = "upsScrapeServiceType";
+	public static final String FEDEX_TYPE = "fedex";
+	public static final String UPS_TYPE = "Ups";
+
+
+
+
+
 
 	private BlintegrationConstants()
 	{

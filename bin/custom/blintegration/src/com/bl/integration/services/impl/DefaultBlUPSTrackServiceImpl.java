@@ -53,9 +53,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
         final BindingProvider bindingProvider = (BindingProvider)trackPortType;
         getEndPointURLForUPS(bindingProvider);
-        TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(), getSecurityDetailsForUPS());
+        TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
         convertResponse(response , stringObjectMap);
-        BlLogger.logMessage(LOG , Level.ERROR , response.getResponse().toString());
       } catch(Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService" , e.getMessage());
       }
@@ -77,15 +76,16 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
   /**
    * This method created to set the tracking details for UPS
    * @return TrackRequest
+   * @param packagingInfoModel
    */
-  private TrackRequest getTrackRequestForUPS(){
+  private TrackRequest getTrackRequestForUPS(final PackagingInfoModel packagingInfoModel){
     final TrackRequest trackRequest = new TrackRequest();
     final RequestType request = new RequestType();
     final List<String> requestOption = request.getRequestOption();
     requestOption.add("1");
     request.setRequestOption(requestOption);
     trackRequest.setRequest(request);
-    trackRequest.setInquiryNumber("1Z19E5968748538530");
+    trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getTrackingNumber()) ? StringUtils.EMPTY : packagingInfoModel.getTrackingNumber());
     trackRequest.setTrackingOption("02");
     return trackRequest;
   }

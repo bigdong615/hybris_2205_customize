@@ -7,6 +7,12 @@ import java.util.Map;
 
 public interface BlTrackWebService {
 
+  /**
+   * This method created to track service
+   * @param abstractOrderModel abstractOrderModel
+   * @param packagingInfoModel packagingInfoModel
+   * @return Map
+   */
   Map trackService(final AbstractOrderModel abstractOrderModel , final PackagingInfoModel packagingInfoModel);
 
   }

@@ -6,4 +6,14 @@ package com.bl.integration.services;
  */
 public interface UPSScrapeService {
 
+  /**
+   * This method created for UPS scrape order
+   */
+   void performUPSScrapeForOrders();
+
+  /**
+   * This method created for UPS scrape Late order
+   */
+   void performUPSScrapeForLateOrder();
+
 }

@@ -41,12 +41,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * This class created to track the UPS service
+ * @author Manikandan
+ */
 public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlTrackWebServiceImpl.class);
-  public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Map<String, Object> trackService(final AbstractOrderModel abstractOrderModel , final
       PackagingInfoModel packagingInfoModel) {
@@ -66,19 +71,20 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         port = service.getTrackServicePort();
         final TrackReply response  = port.track(trackRequest);
         convertResponse(response , results);
-        BlLogger.logMessage(LOG, Level.INFO, response.getCompletedTrackDetails()[0].getTrackDetails()[0].getDatesOrTimes()[0].getType().getValue());
       } catch (final Exception e) {
         BlLogger.logMessage(LOG, Level.ERROR, "Error While Calling Track service", e);
         return new LinkedHashMap<>();
       }
     }
 
-    results.put("upsScrapeServiceType" , "fedex");
+    results.put(BlintegrationConstants.SCRAPE_TYPE , BlintegrationConstants.FEDEX_TYPE);
     return results;
   }
 
-
-
+  /**
+   * This method craeted to set the Fedex client details
+   * @return ClientDetail
+   */
   private ClientDetail getCliendDetailsForFedex() {
     final ClientDetail clientDetail = new ClientDetail();
     clientDetail.setAccountNumber(getValuesFromProperty(BlintegrationConstants.FEDEX_ACCOUNT_NUMBER));
@@ -86,6 +92,10 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     return clientDetail;
   }
 
+  /**
+   * This method craeted to set the Fedex web  details
+   * @return WebAuthenticationDetail
+   */
   private WebAuthenticationDetail getWebAuthenticationDetailsForFedex() {
     final WebAuthenticationCredential userCredential = new WebAuthenticationCredential();
     final WebAuthenticationCredential parentCredential = new WebAuthenticationCredential();
@@ -99,10 +109,15 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
 
+  /**
+   * This method created to Set the Transaction details for fedex
+   * @param abstractOrderModel abstractOrderModel
+   * @return TransactionDetail
+   */
   private TransactionDetail getTransactionDetailForFedex(
       final AbstractOrderModel abstractOrderModel) {
     final TransactionDetail transactionDetail = new TransactionDetail();
-    final String transactionId = "00005003"
+    final String transactionId = abstractOrderModel.getCode()
         + BlintegrationConstants.HYPHEN
         + BlintegrationConstants.IN_BOUND_OR_OUT_BOUND
         + BlintegrationConstants.HYPHEN
@@ -111,10 +126,18 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     return transactionDetail;
   }
 
+  /**
+   * This method created to set the version Details
+   * @return version ID
+   */
   private VersionId getVersionIdForFedex() {
     return new VersionId(BlintegrationConstants.TRCK, 19, 0, 0);
   }
 
+  /**
+   * This method created to set the tracking details
+   * @param trackRequest trackRequest
+   */
   private void getTrackageIndentifierNumber(final TrackRequest trackRequest) {
     final TrackPackageIdentifier packageIdentifier = new TrackPackageIdentifier();
     final TrackSelectionDetail selectionDetail = new TrackSelectionDetail();
@@ -127,16 +150,30 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
 
+  /**
+   * This method created to upadate the End point
+   * @param serviceLocator serviceLocator
+   */
   private void updateEndPoint(final TrackServiceLocator serviceLocator) {
     serviceLocator.setTrackServicePortEndpointAddress(
         getValuesFromProperty(BlintegrationConstants.FEDEX_API_URL));
   }
 
+  /**
+   * This method created to get the values from propery
+   * @param key key
+   * @return String
+   */
   private String getValuesFromProperty(final String key) {
     return StringUtils.isNotBlank(Config.getParameter(key)) ? Config.getParameter(key)
         : StringUtils.EMPTY;
   }
 
+  /**
+   * This method created to convert the response
+   * @param response response
+   * @param responseResults responseResults
+   */
   private void convertResponse(final TrackReply response , final Map<String, Object> responseResults) throws ParseException {
     if(Objects.nonNull(response)) {
       final CompletedTrackDetail[] completedTrackDetails = response.getCompletedTrackDetails();
@@ -226,7 +263,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         final TrackEvent trackEvent = trackDetails.getEvents()[i];
         if (Objects.nonNull(trackEvent)) {
           map.put("Timestamp", trackEvent.getTimestamp().getTime());
-          map.put("Description", trackEvent.getEventDescription());
+          map.put(BlintegrationConstants.DESCRIPTION, trackEvent.getEventDescription());
           Address address = trackEvent.getAddress();
           if (Objects.nonNull(address)) {
             final Map<String, String> trackAddress = new LinkedHashMap<>();
@@ -237,13 +274,13 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
           list.add(map);
         }
       }
-      responseResults.put("TrackEvents", list);
+      responseResults.put(BlintegrationConstants.TRACK_EVENTS, list);
     }
   }
 
   private Date convertTime(final String dateOrTimestamp) throws ParseException {
-    final SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-    Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+    final SimpleDateFormat formatter = new SimpleDateFormat(BlintegrationConstants.DATE_FORMAT);
+    Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone(BlintegrationConstants.UTC));
     calendar.setTime(formatter.parse(dateOrTimestamp));
     return calendar.getTime();
   }
