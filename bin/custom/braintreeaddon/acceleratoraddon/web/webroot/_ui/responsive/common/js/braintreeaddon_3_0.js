@@ -1522,7 +1522,7 @@ $(".js-order-deposit-payment , .js-modify-order-capture-payment").on("click", fu
 	var depositAmount = getAmount();
 	if(depositAmount == '')
 	{
-		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Please Enter Amount');
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
@@ -1599,7 +1599,7 @@ $(".js-modify-order-refund-payment").on("click", function(e) {
 	var depositAmount = getAmount();
 	if(depositAmount == '')
 	{
-		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Please Enter Amount');
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
@@ -1649,7 +1649,7 @@ $("#applyModifiedGcCode").on("click", function(e) {
 	var gcCode = $("#gcCode").val();
 	if(depositAmount == '')
 	{
-		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Please Enter Amount');
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(depositAmount.indexOf('.') == 0 || depositAmount.split(".").length > 2)
@@ -1686,7 +1686,7 @@ $("#paymentMethodPayPal-modify-order-payment").change(function () {
 	$(".js-modify-order-capture-payment").attr("disabled",true);
 	if(depositAmount == '')
 	{
-		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter deposit amount');
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Please Enter Amount');
 		$('#payPalErrorMessage').append(validationDiv);		
 		$('.page-loader-new-layout').hide();
 	}
