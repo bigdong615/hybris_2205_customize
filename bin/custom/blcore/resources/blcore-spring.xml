@@ -1655,4 +1655,11 @@
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
 	
+	<!-- Fix for default package creation while placing order -->
+	<bean id="blConsignmentPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+    <property name="interceptor" ref="VoidInterceptor"/>
+    <property name="typeCode" value="Consignment"/>
+    <property name="replacedInterceptors" ref="consignmentPackagingInfoPrepareInterceptor"/>
+	</bean>
+	
 </beans>
