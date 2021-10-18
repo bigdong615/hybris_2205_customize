@@ -400,6 +400,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	 * It sets the payment details
 	 * @param paymentInfoId the payment info id
 	 * @param paymentMethodNonce the payment method nonce
+	 * @param order the order
 	 * @return boolean
 	 */
 	public boolean setPaymentDetailsForModifyPayment(final String paymentInfoId, final String paymentMethodNonce, final AbstractOrderModel order) {
@@ -578,6 +579,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		if(Objects.nonNull(customerModel.getTotalAmountPastDue())) {
 			customerModel.setTotalAmountPastDue(customerModel.getTotalAmountPastDue().subtract(billing.getChargedAmount()));
 			getModelService().save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
+					customerModel.getTotalAmountPastDue(), customerModel.getUid());
 		}
 	}
 
@@ -800,6 +803,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	 * @param customer the customer
 	 * @param paymentInfoId the payment info id
 	 * @param nonce the nonce
+	 * @param newAmount the new amount
 	 * @return the cloned payment info for code
 	 */
 	public BrainTreePaymentInfoModel getModifyOrderPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,

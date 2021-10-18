@@ -476,7 +476,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 
 	public static final String UID = "uid";
-	
+	public static final String BILLING_CHARGES = "billingCharges";
+	public static final String UNBOXED = "UNBOXED";
+
 	public static final String ORDER_BILL_PAID_EVENT_DEFINITION_KEY = "order.bill.paid.event.definition.key";
 	public static final String ORDER_BILL_PAID_EVENT_TEMPLATE = "order.bill.paid.event.template";
 

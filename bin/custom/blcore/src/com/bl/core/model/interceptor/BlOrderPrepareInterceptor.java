@@ -143,10 +143,12 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @param abstractOrderModel the order model
 	 */
 	private void setInCompletedOrderCount(final AbstractOrderModel abstractOrderModel) {
-		if(abstractOrderModel.getStatus().getCode().contains(OrderStatus.INCOMPLETE.getCode())) {
+		if(OrderStatus.INCOMPLETE.getCode().contains(abstractOrderModel.getStatus().getCode())) {
 			final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
 			customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() + 1);
 			modelService.save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "InCompleted order count : {} updated for the customer {} ",
+					customerModel.getIncompletedOrderCount(), customerModel.getUid());
 		}
 	}
 
@@ -159,6 +161,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   		final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
   		customerModel.setCompletedOrderCount(customerModel.getCompletedOrderCount() + 1);
   		modelService.save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Completed order count : {} updated for the customer {} ",
+					customerModel.getCompletedOrderCount(), customerModel.getUid());
 		}
 	}
 
@@ -169,13 +173,15 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setOrderValuePriorToShippedStatus(final AbstractOrderModel order) {
   	if(isOrderAfterShippedStatus(order.getStatus())) {
 			final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) order.getItemModelContext();
-			final OrderStatus status = itemModelCtx.getOriginalValue("status");
+			final OrderStatus status = itemModelCtx.getOriginalValue(BlCoreConstants.STATUS);
 			if(status.equals(OrderStatus.SHIPPED)) {
 				final CustomerModel customerModel = (CustomerModel) order.getUser();
 				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
 						AbstractOrderEntryModel::getTotalPrice).sum();
 				customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() - priceOfProducts);
 				modelService.save(customerModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
+						customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
 			}
 		}
 	}
@@ -186,10 +192,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @return boolean
 	 */
 	private boolean isOrderAfterShippedStatus(final OrderStatus orderStatus) {
-		return orderStatus.getCode().startsWith(OrderStatus.INCOMPLETE.getCode()) ||
-				orderStatus.getCode().startsWith("UNBOXED") ||
+		return OrderStatus.INCOMPLETE.getCode().startsWith(orderStatus.getCode()) ||
+				BlCoreConstants.UNBOXED.startsWith(orderStatus.getCode()) ||
 				isOrderStatusAfterShipped(orderStatus) ||
-				orderStatus.getCode().startsWith("COMPLETED");
+				BlCoreConstants.COMPLETED.startsWith(orderStatus.getCode());
 	}
 
 	private boolean isOrderStatusAfterShipped(final OrderStatus orderStatus) {

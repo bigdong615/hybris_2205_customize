@@ -122,7 +122,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
 				.getItemModelContext();
 		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx
-				.getOriginalValue("billingCharges");
+				.getOriginalValue(BlCoreConstants.BILLING_CHARGES);
 		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
 				.getBillingCharges();
 		currentBillingCharges.entrySet().forEach(billingCharge -> {
@@ -141,6 +141,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
 				customerModel.setTotalAmountPastDue(totalAmountPastDue);
 				interceptorContext.getModelService().save(customerModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
+						totalAmountPastDue, customerModel.getUid());
 			}
 		});
 	}

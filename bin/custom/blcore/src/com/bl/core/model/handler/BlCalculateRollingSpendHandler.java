@@ -31,10 +31,10 @@ public class BlCalculateRollingSpendHandler implements DynamicAttributeHandler<B
 		final List<AbstractOrderModel> orders = getOrderDao().getOneYearOldCompletedOrders(sameDayPastYear, customerModel);
 		AtomicDouble totalPrice = new AtomicDouble();
 		orders.forEach(order -> {
-			if(CollectionUtils.isNotEmpty(order.getGiftCard())) {
-				totalPrice.addAndGet(order.getGrandTotal() - order.getTotalTax());
-			} else {
+			if(CollectionUtils.isEmpty(order.getGiftCard())) {
 				totalPrice.addAndGet(order.getTotalPrice() - order.getTotalTax());
+			} else {
+				totalPrice.addAndGet(order.getGrandTotal() - order.getTotalTax());
 			}
 		});
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Rolling Spend value : {} for the customer {} ",

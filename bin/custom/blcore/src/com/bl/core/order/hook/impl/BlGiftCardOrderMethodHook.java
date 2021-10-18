@@ -4,6 +4,7 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.gitfcard.BlGiftCardService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -22,6 +23,8 @@ import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} to do the adjustments in case of gift card is applied on the order.
@@ -29,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
+  private static final Logger LOG = Logger.getLogger(BlGiftCardOrderMethodHook.class);
   private EventService eventService;
   private ModelService modelService;
 
@@ -84,6 +88,8 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     final Double priceOfProducts = order.getEntries().stream().mapToDouble(AbstractOrderEntryModel::getTotalPrice).sum();
     customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() + priceOfProducts);
     getModelService().save(customerModel);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
+        customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
   }
 
   /**
@@ -95,6 +101,8 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     final Double averageOrderValue = orders.stream().mapToDouble(OrderModel::getTotalPrice).sum();
     customerModel.setAverageOrderValue(averageOrderValue/orders.size());
     getModelService().save(customerModel);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Average order value : {} updated for the customer {} ",
+        customerModel.getAverageOrderValue(), customerModel.getUid());
   }
 
   /**
@@ -104,6 +112,8 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
   private void setOrderCountForCustomer(final CustomerModel customerModel) {
     customerModel.setOrderCount(customerModel.getOrderCount() + 1);
     getModelService().save(customerModel);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order count : {} updated for the customer {} ",
+        customerModel.getOrderCount(), customerModel.getUid());
   }
 
   /**
