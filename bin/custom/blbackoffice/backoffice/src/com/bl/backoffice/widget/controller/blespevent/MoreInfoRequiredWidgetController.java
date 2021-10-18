@@ -41,8 +41,6 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 	@Wire
 	private Textbox verificationText;
 
-	private static final int DURATION = 2000;
-
 	private OrderModel orderModel;
 
 	private DefaultBlESPEventService blEspEventService;
@@ -125,21 +123,7 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 			throw new WrongValueException(this.verificationText,
 					this.getLabel("blbackoffice.inforequired.missing.verification.text"));
 		}
-		/*
-		 * else { getDoubleValue(this.verificationText.getValue()); }
-		 */
-
 	}
-
-	/*
-	 * private Double getDoubleValue(final String verificationText) {
-	 *
-	 * Double doubleValue = 0d; try { doubleValue = Double.parseDouble(verificationText); } catch (final
-	 * NumberFormatException e) { throw new WrongValueException(this.verificationText,
-	 * this.getLabel("blbackoffice.inforequired.verification.text.notanumber")); }
-	 *
-	 * return doubleValue; }
-	 */
 
 	/**
 	 * This method will be used to show success message
