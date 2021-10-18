@@ -290,6 +290,7 @@
         <property name="customFieldsService" ref="customFieldsService"/>
         <property name="braintreeSubmitForSettlementService" ref="braintreeSubmitForSettlementService" />
         <property name="customerAccountService" ref="customerAccountService"/>
+        <property name="braintreePartialRefundService" ref="braintreePartialRefundService"/>
     </bean>
 
     <alias name="braintreeTransactionConverter" alias="transactionSearchResultConverter"/>
