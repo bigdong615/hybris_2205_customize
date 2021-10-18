@@ -121,5 +121,10 @@ public interface BlESPEventService {
      */
     public void sendOrderRefundEvent(final OrderModel orderModel,final double totalRefundAmount,final String refundMethod, final List<OrderCancelEntry> orderCancelEntries);
 
+    /**
+     *  Send  bill paid  by calling  Order Bill Paid ESP Event API
+     * @param orderModel ordermodel
+     */
+    void sendOrderBillPaidEvent(final OrderModel orderModel) ;
 
 }

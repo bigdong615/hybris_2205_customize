@@ -1562,6 +1562,7 @@
 		<property name="blExtendOrderRequestPopulator" ref="blExtendOrderRequestPopulator"/>
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
+		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1655,4 +1656,16 @@
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
 	
+	<!-- Fix for default package creation while placing order -->
+	<bean id="blConsignmentPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+    <property name="interceptor" ref="VoidInterceptor"/>
+    <property name="typeCode" value="Consignment"/>
+    <property name="replacedInterceptors" ref="consignmentPackagingInfoPrepareInterceptor"/>
+	</bean>
+
+	<!-- Order Bill Paid populator ESP -->
+	<bean id="blOrderBillPaidRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator">
+	</bean>
+
 </beans>

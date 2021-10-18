@@ -4,6 +4,7 @@ package com.bl.core.esp.service.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
+import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
@@ -21,6 +22,7 @@ import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
+import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -92,6 +94,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlExtraItemRequestPopulator blExtraItemRequestPopulator;
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
+    private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
     private ModelService modelService;
 
     /**
@@ -489,6 +492,33 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
     }
   }
+
+  /**
+   * Send  bill paid data by calling  Order Bill Paid ESP Event API
+   *
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderBillPaidEvent(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderBillPaidEventRequest orderBillPaidEventRequest = new OrderBillPaidEventRequest();
+      getBlOrderBillPaidRequestPopulator().populate(orderModel,
+          orderBillPaidEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try {
+        // Call send order bill paid ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderBillPaidEvent(
+            orderBillPaidEventRequest);
+      } catch (final BlESPIntegrationException exception) {
+        persistESPEventDetail(null, EspEventTypeEnum.BILL_PAID, orderModel.getCode(),
+            exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order bill paid ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BILL_PAID,
+          orderModel.getCode(), null, null);
+    }
+  }
+
   /**
    * Order Cancel Entries
    * @param totalRefundAmount
@@ -862,4 +892,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
     this.blOrderRefundRequestPopulator = blOrderRefundRequestPopulator;
   }
 
+  public BlOrderBillPaidRequestPopulator getBlOrderBillPaidRequestPopulator() {
+    return blOrderBillPaidRequestPopulator;
+  }
+
+  public void setBlOrderBillPaidRequestPopulator(
+      BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator) {
+    this.blOrderBillPaidRequestPopulator = blOrderBillPaidRequestPopulator;
+  }
 }
