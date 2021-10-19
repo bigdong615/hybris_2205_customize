@@ -1966,6 +1966,23 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		return resultList;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateSerialLastScanLocation(ConsignmentModel consignmentModel,String parentLocation)
+	{
+		consignmentModel.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
+			if (serialProduct instanceof BlSerialProductModel)
+			{
+				final BlSerialProductModel serial = (BlSerialProductModel) serialProduct;
+				serial.setLastLocationScanParent(parentLocation);
+				modelService.save(serial);
+				modelService.refresh(serial);
+			}
+		}));
+	}
 
 	/**
 	 * @return the blOrderService

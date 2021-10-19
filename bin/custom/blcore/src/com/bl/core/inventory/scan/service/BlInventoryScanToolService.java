@@ -292,5 +292,12 @@ public interface BlInventoryScanToolService {
 	 * @return true, if successful
 	 */
 	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes);
+	
+	/**
+	 * method will be used to update last scan location on serial
+	 * @param consignmentModel
+	 * @param barcodes
+	 */
+	public void updateSerialLastScanLocation(ConsignmentModel consignmentModel,String parentLocation);
 
 }
