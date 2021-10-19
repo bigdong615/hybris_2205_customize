@@ -2,6 +2,7 @@ package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -16,15 +17,16 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.util.Config;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -87,7 +89,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         final TaxLine taxLine = new TaxLine();
         taxLine.setQuantity(entry.getQuantity().intValue());
         taxLine.setNumber(entry.getEntryNumber());
-        taxLine.setItemCode(entry.getProduct().getCode());
+        taxLine.setItemCode(getTrimmedProductCodeFromProduct(entry.getProduct().getCode()));
         Double value = 0.0;
         if (BooleanUtils.isTrue(entry.getGearGuardProFullWaiverSelected())) {
           value = entry.getGearGuardProFullWaiverPrice() * entry.getQuantity().intValue();
@@ -95,7 +97,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           value = entry.getGearGuardWaiverPrice() * entry.getQuantity().intValue();
         }
         taxLine.setAmount(entry.getTotalPrice() + value);
-        taxLine.setDescription(entry.getInfo());
+        taxLine.setDescription(entry.getInfo() + BltaxapiConstants.PRODUCT_ID + getProductId(entry));
         taxLine.setTaxCode(setProductTaxCode(entry));
         taxLines.add(taxLine);
       }
@@ -107,7 +109,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
                           final TaxLine taxLine = new TaxLine();
                           taxLine.setQuantity(1);
                           taxLine.setNumber(0 + taxLines.size());
-                          taxLine.setItemCode(serialCode);
+                          taxLine.setItemCode(getTrimmedProductCodeFromProduct(serialCode));
                           taxLine.setAmount(billing.getChargedAmount().doubleValue());
                           taxLine.setDescription(StringUtils.EMPTY);
                           taxLine.setTaxCode(setPayBillTaxCode(billing.getBillChargeType()));
@@ -118,6 +120,25 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     return taxLines;
   }
+
+  /**
+   * This method created to get product id from entry
+   * @param abstractOrderEntryModel abstractOrderEntryModel
+   * @return String
+   */
+  private String getProductId(final AbstractOrderEntryModel abstractOrderEntryModel) {
+   final AtomicReference<String> stringAtomicReference = new AtomicReference<>(StringUtils.EMPTY);
+    if(abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel) {
+      final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) abstractOrderEntryModel.getProduct();
+      stringAtomicReference.set(StringUtils.isBlank(blSerialProductModel.getProductId()) ? StringUtils.EMPTY : blSerialProductModel.getProductId());
+    }
+   else {
+      final BlProductModel blProductModel = (BlProductModel) abstractOrderEntryModel.getProduct();
+      stringAtomicReference.set(StringUtils.isBlank(blProductModel.getProductId()) ? StringUtils.EMPTY : blProductModel.getProductId());
+    }
+    return stringAtomicReference.get();
+  }
+
 
   /**
    * this method created to prepare address for avalara request
@@ -150,21 +171,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setAddressType(BltaxapiConstants.EMPTY_STRING);
       addresses.setShipTo(shipTo);
     }
-      final AddressesData shipFrom = new AddressesData();
-      List<WarehouseModel> warehouseModels =  getDefaultWarehouseService().getDefWarehouse();
-       for(int i=0; i< warehouseModels.size() ;i++) {
-         if(null != warehouseModels.get(i).getOriginAddress())
-         {
-           final AddressModel addressModel = warehouseModels.get(i).getOriginAddress();
-           shipFrom.setLine1(addressModel.getLine1());
-           shipFrom.setCity(addressModel.getTown());
-           shipFrom.setRegion("CA");
-           shipFrom.setCountry(addressModel.getCountry().getIsocode());
-           shipFrom.setPostalCode(addressModel.getPostalcode());
-           addresses.setShipFrom(shipFrom);
-         }
-       }
-       return addresses;
+    final AddressesData shipFrom = new AddressesData();
+    shipFrom.setLine1(getValuesFromProperty(BltaxapiConstants.LINE_1));
+    shipFrom.setCity(getValuesFromProperty(BltaxapiConstants.CITY));
+    shipFrom.setRegion(getValuesFromProperty(BltaxapiConstants.REGION));
+    shipFrom.setCountry(getValuesFromProperty(BltaxapiConstants.COUNTRY));
+    shipFrom.setPostalCode(getValuesFromProperty(BltaxapiConstants.POSTAL_CODE));
+    addresses.setShipFrom(shipFrom);
+    return addresses;
   }
 
   /**
@@ -261,6 +275,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           .anyMatch(abstractOrderEntryModel ->
               abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)
           ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
+      shippingTaxLine.setDescription(BltaxapiConstants.SHIPPING);
       taxLines.add(shippingTaxLine);
     }
     if(Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
@@ -304,6 +319,33 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     return true;
   }
+
+  /**
+   * This method created to get trim the product code , if it more than 50 characters
+   * @param code code
+   * @return String
+   */
+  private String getTrimmedProductCodeFromProduct(String code) {
+    final AtomicReference<String> productCode = new AtomicReference<>(code);
+   if(productCode.get().length() > 50){
+     productCode.set(productCode.get().substring(0 , 50));
+   }
+    return productCode.get();
+  }
+
+  /**
+   * This method created to get values from property
+   * @param key key
+   * @return String
+   */
+  private String getValuesFromProperty(final String key) {
+    final AtomicReference<String> value = new AtomicReference<>(StringUtils.EMPTY);
+    if(StringUtils.isNotBlank(Config.getParameter(key))) {
+      value.set(Config.getParameter(key));
+    }
+    return value.get();
+  }
+
 
   public BlDatePickerService getBlDatePickerService() {
     return blDatePickerService;
