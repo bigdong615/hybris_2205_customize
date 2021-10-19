@@ -84,7 +84,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
-    data.setVerificationlevel(1);
+    data.setVerificationlevel(Integer.valueOf(orderModel.getVerificationLevel()));
     data.setVerificationtext(StringUtils.EMPTY);
     final List<PaymentTransactionModel> paymentTransactionModelList = orderModel.getDepositPaymentTransactions();
     if(Objects.nonNull(paymentTransactionModelList)){
