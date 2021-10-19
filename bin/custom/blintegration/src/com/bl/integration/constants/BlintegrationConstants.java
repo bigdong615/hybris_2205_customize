@@ -113,7 +113,49 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UTC = "UTC";
 	public static final String SCRAPE_TYPE = "upsScrapeServiceType";
 	public static final String FEDEX_TYPE = "fedex";
-	public static final String UPS_TYPE = "Ups";
+	public static final String UPS_TYPE = "UPS";
+	public static final String STATUS_TYPE = "StatusType";
+	public static final String M = "M";
+	public static final String MV = "MV";
+	public static final String REQUEST_OPTION_NUMBER = "1";
+	public static final String TRACKING_OPTION = "02";
+	public static final String SERVICE_TYPE = "ServiceType";
+	public static final String SERVICE_DESCRIPTION = "ServiceDescription";
+	public static final String SHIPMENT_WEIGHT = "ShipmentWeight";
+	public static final String SHIP_TIME_STAMP = "ShipTimestamp";
+	public static final String A_PACKAGE_WAS_DELIVERED = "APackageWasDelivered";
+	public static final String A_PACKAGE_WAS_DELIVERED_ON = "APackageWasDeliveredOn";
+	public static final String DELIVERY_TIME_STAMP = "DeliveryTimestamp";
+	public static final String SCHEDULED_DELIVERY_TIME_STAMP = "ScheduledDeliveryTimestamp";
+	public static final String RESCHEDULED_DELIVERY_TIME_STAMP = "RescheduledDeliveryTimestamp";
+	public static final String STATUS_CODE = "StatusCode";
+	public static final String ACTIVITY_TIME_STAMP = "ActivityTimeStamp";
+	public static final String PACKAGE_COUNT = "PackageCount";
+	public static final String ACTIVITY_COUNT = "ActivityCount";
+	public static final String ZERO = "0";
+	public static final String DELIVERY_DETAIL_ONE = "01";
+	public static final String DELIVERY_DETAIL_TWO = "02";
+	public static final String DELIVERY_DETAIL_THREE = "03";
+	public static final String DELIVERY_DETAIL_FOUR = "04";
+	public static final String PACAKAGE_ACTIVITY_D = "D";
+	public static final String PACAKAGE_ACTIVITY_P = "P";
+	public static final String PACAKAGE_ACTIVITY_I = "I";
+	public static final String DEFAULT = "000000";
+	public static final String TRACKING_NUMBER_IDENTIFIER = "TrackingNumberUniqueIdentifier";
+	public static final String PACAKAGE_SEQUENCE_NUMBER = "PackageSequenceNumber";
+	public static final String PACKAGING = "Packaging";
+	public static final String PACKAGE_WEIGHT = "PackageWeight";
+	public static final String SHIP = "SHIP";
+	public static final String ESTIMATED_DELIVERY = "ESTIMATED_DELIVERY";
+	public static final String TIME_STAMP = "Timestamp";
+	public static final String CITY = "City";
+	public static final String STATE = "State";
+	public static final String ADDRESS = "Address";
+	public static final String POSTAL_CODE = "PostalCode";
+	public static final String COUNTRY_CODE = "CountryCode";
+	public static final String DESTINATION_ADDRESS = "DestinationAddress";
+
+
 
 
 

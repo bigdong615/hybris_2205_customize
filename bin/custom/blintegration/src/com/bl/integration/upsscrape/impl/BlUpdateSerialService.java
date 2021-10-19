@@ -1,11 +1,14 @@
 package com.bl.integration.upsscrape.impl;
 
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.integration.Utils.BlUpdateStagedProductUtils;
+import com.bl.core.model.NotesModel;
 import com.bl.integration.dao.impl.DefaultBlOrderDao;
 import com.bl.integration.upsscrape.UpdateSerialService;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -16,12 +19,17 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class created to update the
  * @author Manikandan
  */
 public class BlUpdateSerialService implements UpdateSerialService {
+
+  private static final Logger LOG = Logger.getLogger(BlUpdateSerialService.class);
+
 
   private BaseStoreService baseStoreService;
   private UserService userService;
@@ -40,11 +48,21 @@ public class BlUpdateSerialService implements UpdateSerialService {
   @Override
   public void updateSerialProducts(final String packageCode, final String orderCode,
       final Date upsDeliveryDate, final int numberOfRepetition, final PackagingInfoModel packagingInfoModel) {
+    BlLogger.logFormattedMessage(LOG , Level.INFO , "Started Performing Update serial products for order{} -> package {} -> number of repitation{}"
+        , orderCode , packageCode , numberOfRepetition);
     final AbstractOrderModel orderModel = getDefaultBlOrderDao().getOrderByCode(orderCode);
     if (Objects.nonNull(orderModel)) {
       orderModel.setStatus(OrderStatus.LATE);
+      final NotesModel notesModel = getModelService().create(NotesModel.class);
+      notesModel.setType(NotesEnum.LATE_NOTES);
+      notesModel.setNote("Order is not returned on expected time stamp .. So marking order as late");
+      notesModel.setUserID(orderModel.getUser().getUid());
+      getModelService().save(notesModel);
+      orderModel.setOrderNotes(Lists.newArrayList(notesModel));
       saveAndRefershOrderModel(orderModel);
       performSerialUpdate(orderModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate);
+      BlLogger.logFormattedMessage(LOG , Level.INFO , "Finished Performing Update serial products for order{} -> package {} -> number of repitation{}"
+          , orderCode , packageCode , numberOfRepetition);
     }
   }
 
@@ -74,15 +92,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
    */
   private void updateSerialStatusBasedOnResponse(final BlProductModel blProductModel, final int numberOfRepetition,
       final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate){
-    if (blProductModel instanceof BlSerialProductModel) {
       updateSerialProduct(blProductModel , numberOfRepetition , packagingInfoModel , upsDeliveryDate);
-      final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-      if (Objects.isNull(numberOfRepetition) || numberOfRepetition < 3) {
-        updateSerialStatus(blSerialProductModel, packagingInfoModel, numberOfRepetition, upsDeliveryDate ); }
-      else if (numberOfRepetition == 3) {
-        updateStolenSerialStatus(blSerialProductModel, packagingInfoModel); }
-      saveAndRefershSerialModel(blSerialProductModel);
-    }
   }
 
   /**
@@ -126,6 +136,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
     latePackageDate.setTime(upsDeliveryDate);
     latePackageDate.add(Calendar.DAY_OF_MONTH ,2);
     packagingInfoModel.setLatePackageDate(latePackageDate.getTime());
+
+    if(packagingInfoModel.getNumberOfRepetitions() == 3){
+      updateStolenSerialStatus(blSerialProductModel, packagingInfoModel);
+    }
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);
   }
@@ -137,12 +151,16 @@ public class BlUpdateSerialService implements UpdateSerialService {
    */
   private void updateStolenSerialStatus(final BlSerialProductModel blSerialProductModel, final PackagingInfoModel packagingInfoModel){
     blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
-    BlUpdateStagedProductUtils
+    /*BlUpdateStagedProductUtils
         .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),
-            SerialStatusEnum.STOLEN);
+            SerialStatusEnum.STOLEN);*/
+    final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
+    abstractOrderModel.setStatus(OrderStatus.RECEIVED_IN_VERIFICATION);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
     getModelService().save(packagingInfoModel);
     getModelService().refresh(packagingInfoModel);
+    getModelService().save(abstractOrderModel);
+    getModelService().refresh(abstractOrderModel);
   }
 
 

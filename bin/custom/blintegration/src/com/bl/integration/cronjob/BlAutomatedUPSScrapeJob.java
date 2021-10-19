@@ -25,7 +25,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
    */
   @Override
   public PerformResult perform(final UPSScrapeCronJobModel upsScrapeCronJobModel) {
-    BlLogger.logMessage(LOG , Level.INFO , "Executing BlUPSScrapeJob perform method");
+    BlLogger.logMessage(LOG , Level.INFO , "Started Executing BlUPSScrapeJob perform method");
     try {
       getDefaultUPSScrapeService().performUPSScrapeForOrders();
       getDefaultUPSScrapeService().performUPSScrapeForLateOrder();
@@ -34,6 +34,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<UPSScrapeCro
       BlLogger.logMessage(LOG , Level.ERROR , "Error while executing BlUPSScrapeJob"  , e.getMessage());
       return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
     }
+    BlLogger.logMessage(LOG , Level.INFO , "Finished Executing BlUPSScrapeJob perform method");
     return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
   }
 

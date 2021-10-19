@@ -41,15 +41,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
 
 
-  private DefaultBlTrackWebServiceImpl defaultBlTrackWebService;
   /**
    * This Method Populate Rental Dates to target to display on storefront
    */
   @Override
   public void populate(final OrderModel source, final OrderHistoryData target)
   {
-
-    getDefaultBlTrackWebService().trackService(source , null);
     Assert.notNull(source, "Parameter source cannot be null.");
     Assert.notNull(target, "Parameter target cannot be null.");
 
@@ -310,16 +307,6 @@ private boolean isOrderCaptured(final AbstractOrderModel abstractOrderModel)
      }
 
     return orderStatus;
-  }
-
-
-  public DefaultBlTrackWebServiceImpl getDefaultBlTrackWebService() {
-    return defaultBlTrackWebService;
-  }
-
-  public void setDefaultBlTrackWebService(
-      DefaultBlTrackWebServiceImpl defaultBlTrackWebService) {
-    this.defaultBlTrackWebService = defaultBlTrackWebService;
   }
 
 }

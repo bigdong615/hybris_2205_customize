@@ -191,7 +191,7 @@
     <property name="userService" ref="userService"/>
     <property name="defaultBlOrderDao" ref="blDefaultOrderDao"/>
     <property name="defaultBlUPSTrackServiceImpl" ref="defaultBlUPSTrackServiceImpl"/>
-    <property name="modelService" ref="service"/>
+    <property name="service" ref="modelService"/>
   </bean>
 
   <bean id="defaultBlTrackWebServiceImpl" class="com.bl.integration.services.impl.DefaultBlTrackWebServiceImpl">

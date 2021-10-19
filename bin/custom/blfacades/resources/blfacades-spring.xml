@@ -574,7 +574,6 @@
 	<!--Added for MyAccount Order Page -->
 	<alias name="defaultBlOrderHistoryPopulator" alias="orderHistoryPopulator"/>
 	<bean id="defaultBlOrderHistoryPopulator" class="com.bl.facades.populators.BlOrderHistoryPopulator" parent="defaultOrderHistoryPopulator">
-<property name="defaultBlTrackWebService" ref="defaultBlTrackWebServiceImpl"/>
 	</bean>
 
 	<bean parent="modifyPopulatorList">

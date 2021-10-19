@@ -58,6 +58,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
     final Map<String, Object> results = new HashMap<>();
     if (Objects.nonNull(abstractOrderModel)) {
+      BlLogger.logMessage(LOG , Level.INFO , "Started performing UPS Scrape for Fedex Service");
       try {
         final TrackRequest trackRequest = new TrackRequest();
         trackRequest.setClientDetail(getCliendDetailsForFedex());
@@ -78,6 +79,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     }
 
     results.put(BlintegrationConstants.SCRAPE_TYPE , BlintegrationConstants.FEDEX_TYPE);
+    BlLogger.logMessage(LOG , Level.INFO , " Finished performing UPS Scrape for Fedex Service");
+
     return results;
   }
 
@@ -183,6 +186,12 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     }
   }
 
+  /**
+   * This method created to track the details from response
+   * @param responseResults responseResults
+   * @param completedTrackDetails completedTrackDetails
+   * @throws ParseException ParseException
+   */
   private void getTrackDetailFromResponse(final Map<String, Object> responseResults,
       final CompletedTrackDetail[] completedTrackDetails) throws ParseException {
     for (final CompletedTrackDetail completedTrackDetail : completedTrackDetails) {
@@ -190,13 +199,13 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         for (final TrackDetail trackDetails : completedTrackDetail.getTrackDetails()) {
           getPackageDetails(responseResults, trackDetails);
           responseResults
-              .put("TrackingNumber", getValuesFromResponse(trackDetails.getTrackingNumber()));
-          responseResults.put("TrackingNumberUniqueIdentifier",
+              .put(BlintegrationConstants.TRACKING_NUMBER, getValuesFromResponse(trackDetails.getTrackingNumber()));
+          responseResults.put(BlintegrationConstants.TRACKING_NUMBER_IDENTIFIER,
               trackDetails.getTrackingNumberUniqueIdentifier());
           getStatusFromResponse(responseResults, trackDetails);
-          responseResults.put("ServiceType", Objects.nonNull(trackDetails.getService()) ?
+          responseResults.put(BlintegrationConstants.SERVICE_TYPE, Objects.nonNull(trackDetails.getService()) ?
               trackDetails.getService().getType() : StringUtils.EMPTY);
-          responseResults.put("ShipmentWeight", Objects.nonNull(trackDetails.getShipmentWeight()) ?
+          responseResults.put(BlintegrationConstants.SHIPMENT_WEIGHT, Objects.nonNull(trackDetails.getShipmentWeight()) ?
               trackDetails.getShipmentWeight() : StringUtils.EMPTY);
           getTimeStampFromResponse(responseResults, trackDetails);
           getDestinationAddressFromResponse(responseResults, trackDetails);
@@ -206,55 +215,81 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     }
   }
 
+  /**
+   *This method created to get the status from response
+   * @param responseResults responseResults
+   * @param trackDetails trackDetails
+   */
   private void getStatusFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
-    responseResults.put("StatusCode", Objects.nonNull( trackDetails.getService()) ?
+    responseResults.put(BlintegrationConstants.STATUS_CODE, Objects.nonNull( trackDetails.getService()) ?
         getValuesFromResponse(trackDetails.getService().getType()) : StringUtils.EMPTY);
-    responseResults.put("StatusDescription",  Objects.nonNull( trackDetails.getStatusDetail()) ?
+    responseResults.put(BlintegrationConstants.STATUS_DESCRIPTION,  Objects.nonNull( trackDetails.getStatusDetail()) ?
         getValuesFromResponse(trackDetails.getStatusDetail().getDescription())
         :StringUtils.EMPTY);
   }
 
+  /**
+   * This method created to get the pacakage details
+   * @param responseResults responseResults
+   * @param trackDetails trackDetails
+   */
   private void getPackageDetails(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
-    responseResults.put("PackageSequenceNumber",
+    responseResults.put(BlintegrationConstants.PACAKAGE_SEQUENCE_NUMBER,
         getValuesFromResponse(String.valueOf(trackDetails.getPackageSequenceNumber())));
-    responseResults.put("PackageCount",
+    responseResults.put(BlintegrationConstants.PACKAGE_COUNT,
         getValuesFromResponse(String.valueOf(trackDetails.getPackageCount())));
-    responseResults.put("Packaging", Objects.nonNull(trackDetails.getPackaging())
+    responseResults.put(BlintegrationConstants.PACKAGING, Objects.nonNull(trackDetails.getPackaging())
         ? trackDetails.getPackaging() : StringUtils.EMPTY);
-    responseResults.put("PackageWeight", Objects.nonNull(trackDetails.getPackageWeight()) ?
+    responseResults.put(BlintegrationConstants.PACKAGE_WEIGHT, Objects.nonNull(trackDetails.getPackageWeight()) ?
         trackDetails.getPackageWeight() : StringUtils.EMPTY);
   }
 
+  /**
+   * This method created to get the time stamp from response
+   * @param responseResults responseResults
+   * @param trackDetails trackDetails
+   * @throws ParseException ParseException
+   */
   private void getTimeStampFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails)
       throws ParseException {
     if(ArrayUtils.isNotEmpty(trackDetails.getDatesOrTimes())) {
       for (final TrackingDateOrTimestamp trackingDateOrTimestamp : trackDetails
           .getDatesOrTimes()) {
         if (StringUtils
-            .equalsIgnoreCase("SHIP", Objects.nonNull(trackingDateOrTimestamp.getType()) ? trackingDateOrTimestamp.getType().getValue() : StringUtils.EMPTY)) {
-          responseResults.put("ShipTimestamp",
+            .equalsIgnoreCase(BlintegrationConstants.SHIP, Objects.nonNull(trackingDateOrTimestamp.getType()) ? trackingDateOrTimestamp.getType().getValue() : StringUtils.EMPTY)) {
+          responseResults.put(BlintegrationConstants.SHIP_TIME_STAMP,
               convertTime(trackingDateOrTimestamp.getDateOrTimestamp()));
         }
-        if (StringUtils.equalsIgnoreCase("ESTIMATED_DELIVERY",
+        if (StringUtils.equalsIgnoreCase(BlintegrationConstants.ESTIMATED_DELIVERY,
             Objects.nonNull(trackingDateOrTimestamp.getType())? trackingDateOrTimestamp.getType().getValue() : StringUtils.EMPTY)) {
-          responseResults.put("EstimatedDeliveryTimestamp",
+          responseResults.put(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP,
               convertTime(trackingDateOrTimestamp.getDateOrTimestamp()));
         }
       }
     }
   }
 
+  /**
+   * This method created to get the destination address from reposne
+   * @param responseResults responseResults
+   * @param trackDetails trackDetails
+   */
   private void getDestinationAddressFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
     final Address destinationAddress = trackDetails.getDestinationAddress();
-    if (destinationAddress != null) {
+    if (Objects.nonNull(destinationAddress)) {
       final Map<String, String> address = new LinkedHashMap<>();
-      address.put("City", destinationAddress.getCity());
-      address.put("PostalCode", destinationAddress.getPostalCode());
-      address.put("CountryCode", destinationAddress.getCountryCode());
-      responseResults.put("DestinationAddress", address);
+      address.put(BlintegrationConstants.CITY, destinationAddress.getCity());
+      address.put(BlintegrationConstants.POSTAL_CODE, destinationAddress.getPostalCode());
+      address.put(BlintegrationConstants.COUNTRY_CODE, destinationAddress.getCountryCode());
+      responseResults.put(BlintegrationConstants.DESTINATION_ADDRESS, address);
     }
   }
 
+  /**
+   * This method created to get the track details from response
+   * @param responseResults responseResults
+   * @param trackDetails trackDetails
+   */
   private void getTrackDetailsFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
     if (ArrayUtils.isNotEmpty(trackDetails.getEvents())) {
       final List<Map<String, Object>> list = new ArrayList<>();
@@ -262,14 +297,14 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         final Map<String, Object> map = new LinkedHashMap<>();
         final TrackEvent trackEvent = trackDetails.getEvents()[i];
         if (Objects.nonNull(trackEvent)) {
-          map.put("Timestamp", trackEvent.getTimestamp().getTime());
+          map.put(BlintegrationConstants.TIME_STAMP, trackEvent.getTimestamp().getTime());
           map.put(BlintegrationConstants.DESCRIPTION, trackEvent.getEventDescription());
           Address address = trackEvent.getAddress();
           if (Objects.nonNull(address)) {
             final Map<String, String> trackAddress = new LinkedHashMap<>();
-            trackAddress.put("City", address.getCity());
-            trackAddress.put("State", address.getStateOrProvinceCode());
-            map.put("Address", trackAddress);
+            trackAddress.put(BlintegrationConstants.CITY, address.getCity());
+            trackAddress.put(BlintegrationConstants.STATE, address.getStateOrProvinceCode());
+            map.put(BlintegrationConstants.ADDRESS, trackAddress);
           }
           list.add(map);
         }
@@ -278,6 +313,12 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
     }
   }
 
+  /**
+   * This method created to convert the time from response
+   * @param dateOrTimestamp dateOrTimestamp
+   * @return Date
+   * @throws ParseException ParseException
+   */
   private Date convertTime(final String dateOrTimestamp) throws ParseException {
     final SimpleDateFormat formatter = new SimpleDateFormat(BlintegrationConstants.DATE_FORMAT);
     Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone(BlintegrationConstants.UTC));
@@ -286,6 +327,11 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
 
+  /**
+   * This common method create to check the null values
+   * @param value values
+   * @return String
+   */
   private String getValuesFromResponse(final String value){
     return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;
   }
