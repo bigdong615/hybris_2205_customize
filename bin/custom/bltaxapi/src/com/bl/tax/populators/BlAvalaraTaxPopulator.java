@@ -51,7 +51,7 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
     }
 
   /**
-   * This method created to ger product id from product
+   * This method created to get product id from product
    * @param product product
    * @return String
    */

@@ -325,7 +325,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * @param code code
    * @return String
    */
-  private String getTrimmedProductCodeFromProduct(String code) {
+  private String getTrimmedProductCodeFromProduct(final String code) {
     final AtomicReference<String> productCode = new AtomicReference<>(code);
    if(productCode.get().length() > 50){
      productCode.set(productCode.get().substring(0 , 50));
