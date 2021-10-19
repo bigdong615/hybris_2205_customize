@@ -5,6 +5,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
+import com.bl.integration.Utils.BlUpdateStagedProductUtils;
 import com.bl.integration.dao.impl.DefaultBlOrderDao;
 import com.bl.integration.upsscrape.UpdateSerialService;
 import com.bl.logging.BlLogger;
@@ -128,7 +129,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
       final PackagingInfoModel packagingInfoModel, final int numberOfRepetition, final Date upsDeliveryDate)
   {
     blSerialProductModel.setSerialStatus(SerialStatusEnum.LATE);
-    /* BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),SerialStatusEnum.LATE);*/ // NOSONAR
+    BlUpdateStagedProductUtils
+        .changeSerialStatusInStagedVersion(blSerialProductModel.getCode(),SerialStatusEnum.LATE);
     packagingInfoModel.setNumberOfRepetitions(Objects.isNull(numberOfRepetition) ? 0 : numberOfRepetition + 1);
     packagingInfoModel.setPackageReturnedToWarehouse(Boolean.FALSE);
     packagingInfoModel.setIsScrapeScanCompleted(Boolean.TRUE);

@@ -123,7 +123,8 @@ public class BlUpdateStagedProductUtils {  // Change to BlProductUtils
   }
 
   public static ProductDao getProductDao() {
-    return productDao;
+    return null == productDao ? (ProductDao) Registry.getApplicationContext()
+        .getBean("productDao") : productDao;
   }
 
   public static void setProductDao(ProductDao productDao) {
