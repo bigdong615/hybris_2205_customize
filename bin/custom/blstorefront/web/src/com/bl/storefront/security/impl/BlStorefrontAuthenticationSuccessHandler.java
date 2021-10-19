@@ -13,9 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 
 /**
- * @author Ritika
  * This class is overridded to add restricted groups presence in the session
- *
+ * @author Ritika
  */
 public class BlStorefrontAuthenticationSuccessHandler extends
     StorefrontAuthenticationSuccessHandler {

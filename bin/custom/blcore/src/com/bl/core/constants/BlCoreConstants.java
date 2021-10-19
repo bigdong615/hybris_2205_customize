@@ -478,12 +478,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
 
-	public static final String UID = "uid";
+	//public static final String UID = "uid";
 	public static final String BILLING_CHARGES = "billingCharges";
 	public static final String UNBOXED = "UNBOXED";
 
 	public static final String ORDER_BILL_PAID_EVENT_DEFINITION_KEY = "order.bill.paid.event.definition.key";
 	public static final String ORDER_BILL_PAID_EVENT_TEMPLATE = "order.bill.paid.event.template";
+
+	public static final String RESTRICTED_PRINCIPALS_STRING_MV = "-restrictedPrincipals_string_mv";
+	public static final String COLON = ":";
+
 
 	private BlCoreConstants()
 	{

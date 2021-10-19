@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> extends
     SearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> {
 
-  public static final String RESTRICTED_PRINCIPALS_STRING_MV = "-restrictedPrincipals_string_mv";
   private CommerceCategoryService commerceCategoryService;
   private UserService userService;
 
@@ -81,11 +80,12 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * @param target
    */
   private void addUserGroupRestrictionForProduct( final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery,INDEXED_TYPE_SORT_TYPE> target) {
+    final StringBuilder stringBuilder = new StringBuilder();
     final Optional<PrincipalGroupModel> blGroup = getUserService().getCurrentUser().getGroups().stream()
         .filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP)).findAny();
     if (blGroup.isPresent()) {
-      String rawQuery = RESTRICTED_PRINCIPALS_STRING_MV;
-      target.getSearchQuery().addFilterRawQuery(rawQuery+":"+blGroup.get().getUid());
+      final String rawQuery = stringBuilder.append(BlCoreConstants.RESTRICTED_PRINCIPALS_STRING_MV).append(BlCoreConstants.COLON).append(blGroup.get().getUid()).toString();
+      target.getSearchQuery().addFilterRawQuery(rawQuery);
     }
   }
 
