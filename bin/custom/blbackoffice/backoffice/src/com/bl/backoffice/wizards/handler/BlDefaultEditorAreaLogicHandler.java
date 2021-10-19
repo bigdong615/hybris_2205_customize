@@ -37,9 +37,9 @@ import org.apache.log4j.Logger;
  */
 public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandler {
 
-  private static final Logger LOG = Logger.getLogger(BlDefaultEditorAreaLogicHandler.class);
+	private static final Logger LOG = Logger.getLogger(BlDefaultEditorAreaLogicHandler.class);
 
-  private DefaultBlCalculationService defaultBlCalculationService;
+	private DefaultBlCalculationService defaultBlCalculationService;
 
 	@Resource(name = "modelService")
 	ModelService modelService;
@@ -50,12 +50,12 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 	@Resource(name = "blOrderService")
 	BlOrderService blOrderService;
 
-  /**
-   * This method call when order is saving
-   */
-  @Override
-  public Object performSave(WidgetInstanceManager widgetInstanceManager, Object currentObject) throws ObjectSavingException {
-    if (currentObject instanceof OrderModel) {
+	/**
+	 * This method call when order is saving
+	 */
+	@Override
+	public Object performSave(WidgetInstanceManager widgetInstanceManager, Object currentObject) throws ObjectSavingException {
+		if (currentObject instanceof OrderModel) {
 			OrderModel orderModel = (OrderModel) currentObject;
 			orderModel.setCalculated(false);
 			final List<AbstractOrderEntryModel> previousChangedOrderEntriesList = getPreviousChangedOrderEntrysList(
@@ -110,10 +110,10 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				removeEntryFromConsignment(orderModel, previousChangedOrderEntriesList);
 
 			}
-        orderModel.getEntries().forEach(abstractOrderEntryModel -> {
-        	abstractOrderEntryModel.setCalculated(Boolean.FALSE);
-				});
-     	final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
+			orderModel.getEntries().forEach(abstractOrderEntryModel -> {
+				abstractOrderEntryModel.setCalculated(Boolean.FALSE);
+			});
+			final Object object = super.performSave(widgetInstanceManager, currentObject); // to call parent class before recalculating order.
 			try {
 				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
 					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
@@ -121,12 +121,12 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			} catch (CalculationException e) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
 			}
-      return object;
-     }
-    return super.performSave(widgetInstanceManager , currentObject);
-  }
-  
-  /**
+			return object;
+		}
+		return super.performSave(widgetInstanceManager , currentObject);
+	}
+
+	/**
 	 * method is used to remove entry from consignment
 	 *
 	 * @param orderModel
@@ -305,13 +305,13 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				new HashSet<>(removeEntry));
 	}
 
-  public DefaultBlCalculationService getDefaultBlCalculationService() {
-    return defaultBlCalculationService;
-  }
+	public DefaultBlCalculationService getDefaultBlCalculationService() {
+		return defaultBlCalculationService;
+	}
 
-  public void setDefaultBlCalculationService(
-      DefaultBlCalculationService defaultBlCalculationService) {
-    this.defaultBlCalculationService = defaultBlCalculationService;
-  }
+	public void setDefaultBlCalculationService(
+			DefaultBlCalculationService defaultBlCalculationService) {
+		this.defaultBlCalculationService = defaultBlCalculationService;
+	}
 
 }
