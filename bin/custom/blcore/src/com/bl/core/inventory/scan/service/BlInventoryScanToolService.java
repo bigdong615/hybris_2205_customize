@@ -298,6 +298,6 @@ public interface BlInventoryScanToolService {
 	 * @param consignmentModel
 	 * @param barcodes
 	 */
-	public void updateSerialLastScanLocation(ConsignmentModel consignmentModel,String parentLocation);
+	public void updateSerialLastScanLocation(final ConsignmentModel consignmentModel,final String parentLocation);
 
 }

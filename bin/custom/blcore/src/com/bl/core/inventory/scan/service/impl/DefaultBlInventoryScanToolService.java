@@ -1971,7 +1971,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void updateSerialLastScanLocation(ConsignmentModel consignmentModel,String parentLocation)
+	public void updateSerialLastScanLocation(final ConsignmentModel consignmentModel,final String parentLocation)
 	{
 		consignmentModel.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serialProduct -> {
 			if (serialProduct instanceof BlSerialProductModel)
@@ -1980,6 +1980,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				serial.setLastLocationScanParent(parentLocation);
 				modelService.save(serial);
 				modelService.refresh(serial);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "lastScanParentLocation updated to {} for serial {}", parentLocation,serial.getCode());
 			}
 		}));
 	}
