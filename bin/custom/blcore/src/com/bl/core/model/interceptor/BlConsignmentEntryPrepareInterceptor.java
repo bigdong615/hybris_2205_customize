@@ -2,6 +2,7 @@ package com.bl.core.model.interceptor;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import de.hybris.platform.core.model.user.CustomerModel;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
@@ -20,6 +21,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,12 +108,47 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				}
 			});
 			consignmentEntryModel.setBillingCharges(validatedBillingCharges);
+			setTotalAmountPastDue(consignmentEntryModel, interceptorContext);
 		}
 	}
 
 	/**
+	 * It updates the total amount past due when new billing charges are added
+	 * @param consignmentEntryModel the consignment entry model
+	 * @param interceptorContext interceptor context
+	 */
+	private void setTotalAmountPastDue(final ConsignmentEntryModel consignmentEntryModel, final
+			InterceptorContext interceptorContext) {
+		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
+				.getItemModelContext();
+		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx
+				.getOriginalValue(BlCoreConstants.BILLING_CHARGES);
+		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
+				.getBillingCharges();
+		currentBillingCharges.entrySet().forEach(billingCharge -> {
+			if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
+				final List<BlItemsBillingChargeModel> charges = billingCharges.get(billingCharge.getKey());
+				final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
+				currentCharges.removeAll(charges);
+				final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
+						.getOrder().getUser();
+				final BigDecimal newlyAddedCharges = currentCharges.stream()
+						.map(BlItemsBillingChargeModel::getChargedAmount)
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				BigDecimal totalAmountPastDue =
+						Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
+								customerModel.getTotalAmountPastDue();
+				totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
+				customerModel.setTotalAmountPastDue(totalAmountPastDue);
+				interceptorContext.getModelService().save(customerModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
+						totalAmountPastDue, customerModel.getUid());
+			}
+		});
+	}
+
+	/**
 	 * It triggers Exception Broken/Missing Event.
-	 *
 	 * @param consignmentEntryModel the ConsignmentEntryModel
 	 * @param interceptorContext    InterceptorContext
 	 */

@@ -24,26 +24,22 @@
 		<c:choose>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'creditCard')}">
 				<spring:theme code="text.extend.order.text" />
-				<format:price priceData="${amount}" displayFreeForZero="false" />
-		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
+			<i>	<format:price priceData="${amount}" displayFreeForZero="false" /> </i><spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'payPal')}">
 				<spring:theme code="text.extend.order.paypal" />
-				<format:price priceData="${amount}" displayFreeForZero="false" />
-		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
+				<i>	<format:price priceData="${amount}" displayFreeForZero="false" /> </i><spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'poPayment')}">
 				<spring:theme code="text.extend.order.po" />
-				<format:price priceData="${amount}" displayFreeForZero="false" />
-		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
+				<i>	<format:price priceData="${amount}" displayFreeForZero="false" /> </i><spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:when test="${fn:containsIgnoreCase(modifiedOrderPaymentMethod, 'giftCard')}">
 				<spring:theme code="text.extend.order.gift.card" />
-				<format:price priceData="${amount}" displayFreeForZero="false" />
-		<spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
+				<i>	<format:price priceData="${amount}" displayFreeForZero="false" /> </i><spring:theme code="text.myaccount.sent.email.confimation.message" /> <b>${orderData.user.uid}</b>
 			</c:when>
 			<c:otherwise>
-				<format:price priceData='${amount}' displayFreeForZero='false' /> &nbsp <spring:theme code="text.extend.order.refund"/>
+				<format:price priceData='${amount}' displayFreeForZero='false' />&nbsp;<spring:theme code="text.extend.order.refund"/>
 			</c:otherwise>
 		</c:choose>
 		<c:if test="${not empty appliedGcList}">
