@@ -11,11 +11,9 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
-import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeFindMerchantAccountRequest;
-import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.request.beans.BrainTreeLineItemBean;
 import com.braintree.command.result.BrainTreeAuthorizationResult;
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
@@ -31,6 +29,7 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.method.BrainTreePaymentService;
 import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.order.refund.partial.services.BraintreePartialRefundService;
 import com.braintree.order.submitForSettlement.service.BraintreeSubmitForSettlementService;
 import com.braintree.payment.dto.BraintreeInfo;
 import com.braintree.paypal.converters.impl.BillingAddressConverter;
@@ -69,7 +68,6 @@ import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
@@ -114,6 +112,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private CustomFieldsService customFieldsService;
 	private BraintreeSubmitForSettlementService braintreeSubmitForSettlementService;
 	private CustomerAccountService customerAccountService;
+  private BraintreePartialRefundService braintreePartialRefundService;
 	
 	@Override
 	public boolean createAuthorizationTransaction()
@@ -1501,14 +1500,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       {
         for(final PaymentTransactionModel paymentTransaction : orderModel.getPaymentTransactions())
         {
-          if(remainingRefundAmount.compareTo(BigDecimal.valueOf(0.0d)) == 0)
+          if(remainingRefundAmount.compareTo(BigDecimal.ZERO) == 0)
           {
             return Boolean.TRUE;
           }
           remainingRefundAmount = doRefund(orderModel, paymentTransaction, remainingRefundAmount);
         }
       }
-      if(remainingRefundAmount.compareTo(BigDecimal.valueOf(0.0d)) == 0)
+      if(remainingRefundAmount.compareTo(BigDecimal.ZERO) == 0)
       {
         return Boolean.TRUE;
       }
@@ -1531,68 +1530,85 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
    */
   private BigDecimal doRefund(final AbstractOrderModel orderModel, final PaymentTransactionModel paymentTransaction, final BigDecimal amountToRefund)
   {
+    BigDecimal refundToMake = amountToRefund;
     try
-    {
-      final BigDecimal amoutRemainingToRefund = checkRefundPossibilityAndGetAmount(paymentTransaction);
-      if(amoutRemainingToRefund.compareTo(BigDecimal.valueOf(0.0d)) >= 1)
+    {      
+      if(CollectionUtils.isNotEmpty(paymentTransaction.getEntries()))
       {
-        final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(paymentTransaction.getRequestId());
-        BigDecimal refundAmount = BigDecimal.valueOf(0.0);
-        BigDecimal remainingRefundAmount = BigDecimal.valueOf(0.0);
-        Boolean isCompleteRefundForTransaction = Boolean.FALSE;
-        if(amoutRemainingToRefund.compareTo(amountToRefund) <= 0)
+        for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransaction.getEntries())
         {
-          refundAmount = amoutRemainingToRefund;
-          remainingRefundAmount = amountToRefund.subtract(refundAmount);
-          isCompleteRefundForTransaction = Boolean.TRUE;
-        }
-        else
-        {
-          refundAmount = amountToRefund;
-        }
-        request.setAmount(refundAmount.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
-        request.setOrderId(orderModel.getCode());
-        request.setTransactionId(paymentTransaction.getRequestId());
-        final BrainTreeRefundTransactionResult brainTreeRefundTransactionResult = brainTreePaymentService.refundTransaction(request);
-        if (brainTreeRefundTransactionResult.isSuccess())
-        {
-          return doCreateRefundTransaction(paymentTransaction, remainingRefundAmount, isCompleteRefundForTransaction, brainTreeRefundTransactionResult);
-        }
-        else
-        {
-          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Unable to Refund order : {} for Amount : {} on transaction with code : {} with message from Braintree : {}",
-              orderModel.getCode(), amountToRefund, paymentTransaction.getCode(), brainTreeRefundTransactionResult.getErrorMessage());
-        }
-      }      
+          refundToMake = performRefund(orderModel, paymentTransaction, amountToRefund, refundToMake, paymentTransactionEntryModel);
+          if(refundToMake.compareTo(BigDecimal.ZERO) == 0)
+          {
+            break;
+          }
+        }  
+      }
     }
     catch (final Exception exception)
     {
       BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
-          "Error Occurred while refunding order : {} for Amount : {} on transaction with code : {}", orderModel.getCode(), amountToRefund,
+          "Error Occurred while refunding order : {} for Amount : {} on transaction with code : {}", orderModel.getCode(), amountToRefund.doubleValue(),
           paymentTransaction.getCode());
     }
-    return amountToRefund;
+    return refundToMake;
   }
 
   /**
-   * Do create refund transaction.
+   * Perform refund.
    *
+   * @param orderModel the order model
    * @param paymentTransaction the payment transaction
-   * @param remainingRefundAmount the remaining refund amount
-   * @param isCompleteRefundForTransaction the is complete refund for transaction
-   * @param brainTreeRefundTransactionResult the brain tree refund transaction result
+   * @param amountToRefund the amount to refund
+   * @param refundToMake the refund to make
+   * @param paymentTransactionEntryModel the payment transaction entry model
    * @return the big decimal
    */
-  private BigDecimal doCreateRefundTransaction(final PaymentTransactionModel paymentTransaction, BigDecimal remainingRefundAmount,
-      Boolean isCompleteRefundForTransaction, final BrainTreeRefundTransactionResult brainTreeRefundTransactionResult)
+  private BigDecimal performRefund(final AbstractOrderModel orderModel, final PaymentTransactionModel paymentTransaction,
+      final BigDecimal amountToRefund, BigDecimal refundToMake, PaymentTransactionEntryModel paymentTransactionEntryModel)
   {
-    if(isCompleteRefundForTransaction.booleanValue())
+    BrainTreeRefundTransactionResult result;
+    BigDecimal remainingAmountRefund = BigDecimal.ZERO;
+    try
     {
-      createRefundTransaction(paymentTransaction, brainTreeRefundTransactionResult);
-      return remainingRefundAmount;
+      if (getBraintreePartialRefundService().eligibleForPartialRefund(paymentTransactionEntryModel))
+      {
+        remainingAmountRefund = getRemainingAmountRefund(BigDecimal.ZERO, paymentTransactionEntryModel);
+        
+        if(remainingAmountRefund.compareTo(BigDecimal.ZERO) == 0)
+        {
+          return refundToMake;
+        }
+        if (refundToMake.compareTo(remainingAmountRefund) <= 0)
+        {
+          result = getBraintreePartialRefundService().partialRefundTransaction(((OrderModel) orderModel), paymentTransactionEntryModel, refundToMake);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Performed Refund for Amount : {} on transaction entry with code : {}",
+              refundToMake.doubleValue(), paymentTransactionEntryModel.getCode());
+          if (Objects.nonNull(result) && result.isSuccess())
+          {
+            refundToMake = BigDecimal.ZERO;
+          }
+        }
+        else
+        {
+          result =
+              getBraintreePartialRefundService().partialRefundTransaction(((OrderModel) orderModel), paymentTransactionEntryModel, remainingAmountRefund);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Performed Refund for Amount : {} on transaction entry with code : {}",
+              remainingAmountRefund.doubleValue(), paymentTransactionEntryModel.getCode());
+          if (Objects.nonNull(result) && result.isSuccess())
+          {
+            refundToMake = refundToMake.subtract(remainingAmountRefund);
+          }
+        }
+      }
     }
-    createPartialRefundTransaction(paymentTransaction, brainTreeRefundTransactionResult);
-    return remainingRefundAmount;
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while refunding order : {} for Amount : {} on transaction entry with code : {} with Message : {}", orderModel.getCode(),
+          amountToRefund.doubleValue(), paymentTransaction.getCode(), exception.getMessage());
+    }
+    return refundToMake;
   }
 
   /**
@@ -1603,46 +1619,54 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
    */
   private BigDecimal checkRefundPossibilityAndGetAmount(final PaymentTransactionModel paymentTransaction)
   {
-    BigDecimal amountToBeRefund = BigDecimal.valueOf(0.0d);
-    final boolean canRefund = paymentTransaction.getEntries().stream()
-        .anyMatch(transactionEntry -> transactionEntry.getType().equals((PaymentTransactionType.REFUND_STANDALONE)));
-    if (!canRefund)
+    BigDecimal capturedAmount = BigDecimal.ZERO;
+    if (CollectionUtils.isNotEmpty(paymentTransaction.getEntries()))
     {
-      BigDecimal capturedAmount = BigDecimal.valueOf(0.0d);
-      BigDecimal refundedAmount = BigDecimal.valueOf(0.0d);
       for (PaymentTransactionEntryModel transactionEntryModel : paymentTransaction.getEntries())
       {
-        if(transactionEntryModel.getType().equals(PaymentTransactionType.CAPTURE))
-        {
-          capturedAmount = capturedAmount.add(transactionEntryModel.getAmount());
-        }    
-        else if(transactionEntryModel.getType().equals(PaymentTransactionType.REFUND_PARTIAL))
-        {
-          refundedAmount = refundedAmount.add(transactionEntryModel.getAmount());
-        }
+        capturedAmount = getRemainingAmountRefund(capturedAmount, transactionEntryModel);
       }
-      if(capturedAmount.compareTo(BigDecimal.valueOf(0.0d)) == 0)
+    }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Amount Remaining to Refund : {} for PaymentTransactionModel : {}", capturedAmount.doubleValue(),
+        paymentTransaction.getCode());
+    return capturedAmount;
+  }
+
+  /**
+   * Gets the remaining amount refund from Captured Transaction Entry Model.
+   *
+   * @param capturedAmount the captured amount
+   * @param transactionEntryModel the transaction entry model
+   * @return the remaining amount refund
+   */
+  private BigDecimal getRemainingAmountRefund(BigDecimal capturedAmount, final PaymentTransactionEntryModel transactionEntryModel)
+  {
+    if (getBraintreePartialRefundService().eligibleForPartialRefund(transactionEntryModel))
+    {
+      if (Objects.nonNull(transactionEntryModel.getRefundedAmount()) && transactionEntryModel.getRefundedAmount().compareTo(BigDecimal.ZERO) > 0)
       {
-        return capturedAmount;
-      }
-      else if(refundedAmount.compareTo(capturedAmount) == 1)
-      {
-        return capturedAmount;
+        capturedAmount = capturedAmount.add(transactionEntryModel.getAmount().subtract(transactionEntryModel.getRefundedAmount()));
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount in PaymentTransactionEntryModel with Code : {} is {} and Refunded Amount is {}",
+            transactionEntryModel.getCode(), transactionEntryModel.getAmount().doubleValue(),
+            transactionEntryModel.getRefundedAmount().doubleValue());
       }
       else
       {
-        amountToBeRefund = (capturedAmount.subtract(refundedAmount)).setScale(2, RoundingMode.HALF_EVEN);
+        capturedAmount = capturedAmount.add(transactionEntryModel.getAmount());
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount in PaymentTransactionEntryModel with Code : {} is {}",
+            transactionEntryModel.getCode(), transactionEntryModel.getAmount().doubleValue());
       }
     }
-    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Amount Remaining to Refund : {} for Transaction : {}", amountToBeRefund.doubleValue(), paymentTransaction.getCode());
-    return amountToBeRefund;
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Remaining Amount to Refund is {} in PaymentTransactionEntryModel with Code : {}",
+        capturedAmount.doubleValue(),transactionEntryModel.getCode());
+    return capturedAmount;
   }
   
   @Override
   public BigDecimal getRemainingAmountToRefund(final AbstractOrderModel order)
   {
     Validate.notNull(order, ORDER_MUST_NOT_BE_NULL, StringUtils.EMPTY);
-    BigDecimal remainingAmoutToRefund = BigDecimal.valueOf(0.0d);
+    BigDecimal remainingAmoutToRefund = BigDecimal.ZERO;
     if(CollectionUtils.isNotEmpty(order.getPaymentTransactions()))
     {
       for(final PaymentTransactionModel paymentTransaction : order.getPaymentTransactions())
@@ -1650,6 +1674,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
         remainingAmoutToRefund = remainingAmoutToRefund.add(checkRefundPossibilityAndGetAmount(paymentTransaction));
       }
     }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total remaining amount to refund  is {} for order with Code : {}",
+        remainingAmoutToRefund.doubleValue(), order.getCode());
     return remainingAmoutToRefund;
   }
   
@@ -1677,6 +1703,22 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
           "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order.getCode(), poAmount);
     }
     return Boolean.FALSE;
+  }
+
+  /**
+   * @return the braintreePartialRefundService
+   */
+  public BraintreePartialRefundService getBraintreePartialRefundService()
+  {
+    return braintreePartialRefundService;
+  }
+
+  /**
+   * @param braintreePartialRefundService the braintreePartialRefundService to set
+   */
+  public void setBraintreePartialRefundService(BraintreePartialRefundService braintreePartialRefundService)
+  {
+    this.braintreePartialRefundService = braintreePartialRefundService;
   }
 	
 	
