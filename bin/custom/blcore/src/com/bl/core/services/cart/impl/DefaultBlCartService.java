@@ -522,8 +522,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 .getVerificationLevelEndRange();
             final Double cartTotalPrice = cartModel.getTotalPrice();
             if (null != verificationLevelStartRange && null != verificationLevelEndRange) {
-                if (cartTotalPrice >= verificationLevelStartRange
-                    && cartTotalPrice < verificationLevelEndRange) {
+                if (isQualifyForLevelOne(verificationLevelStartRange, verificationLevelEndRange,
+                    cartTotalPrice)) {
                     cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_ONE);
                 } else if (cartTotalPrice >= verificationLevelEndRange) {
                     cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_TWO);
@@ -537,6 +537,19 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 cartModel.getCode(),
                 exception);
         }
+    }
+
+    /**
+     * It checks, cart total is eligible for verification level value 1 or not.
+     * @param verificationLevelStartRange
+     * @param verificationLevelEndRange
+     * @param cartTotalPrice
+     * @return true/false
+     */
+    private boolean isQualifyForLevelOne(final Integer verificationLevelStartRange,
+        final Integer verificationLevelEndRange, final Double cartTotalPrice) {
+        return cartTotalPrice >= verificationLevelStartRange
+            && cartTotalPrice < verificationLevelEndRange;
     }
 
     /**
