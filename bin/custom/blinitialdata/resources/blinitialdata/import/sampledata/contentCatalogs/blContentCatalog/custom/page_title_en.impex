@@ -13,3 +13,4 @@ UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; ti
                    ;                         ; DeliveryOrPickupCartpage ; "Checkout - Delivery Info"
                    ;                         ; multiStepCheckoutSummaryPage ; "Checkout - Payment Info"
                    ;                         ; orderConfirmation       ; "Order Confirmed"
+                   ;                         ;multiStepCheckoutReviewPage;"Checkout - Review"
