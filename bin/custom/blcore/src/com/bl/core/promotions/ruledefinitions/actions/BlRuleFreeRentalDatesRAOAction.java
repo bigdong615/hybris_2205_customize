@@ -96,7 +96,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
   private int getFreeRentalDaysFromRentalDuration(final CartRAO cartRao,final  List<Date> freeRentalDates) {
     int totalFreeDays = 0;
     for(Date freeDate: freeRentalDates) {
-      if ((cartRao.getRentalArrivalDate().compareTo(freeDate) * freeDate.compareTo(cartRao.getRentalToDate()) >= 0)){
+      if (((null != cartRao.getRentalArrivalDate() && cartRao.getRentalToDate() != null) && cartRao.getRentalArrivalDate().compareTo(freeDate) * freeDate.compareTo(cartRao.getRentalToDate()) >= 0)){
         totalFreeDays = totalFreeDays + 1;
       }
     }

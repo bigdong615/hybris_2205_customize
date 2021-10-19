@@ -4,6 +4,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/rent/product")
 public class RentalProductPageController extends AbstractBlProductPageController {
+
+  private static final Logger LOG = Logger.getLogger(RentalProductPageController.class);
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
@@ -61,34 +66,45 @@ public class RentalProductPageController extends AbstractBlProductPageController
       final HttpServletRequest request, final HttpServletResponse response)
       throws CMSItemNotFoundException, UnsupportedEncodingException {
 
-    final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
-    final ProductData productData = productFacade
-        .getProductForCodeAndOptions(productCode, null);
-    productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
-    model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
+    try {
+      final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
+      final ProductData productData = productFacade
+          .getProductForCodeAndOptions(productCode, null);
+      productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
+      model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-    final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
-    if(Objects.nonNull(rentalDatesFromSession))
-    {
-   	 final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
-   	 if(StringUtils.isNotBlank(nextAvailableDate))
-   	 {
-   		 model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
-   		 final RentalDateDto rentalDuration = getRentalDuration();
-   		 if(Objects.nonNull(rentalDuration) && StringUtils.isNotBlank(rentalDuration.getSelectedFromDate())
-   				 && !nextAvailableDate.equalsIgnoreCase(rentalDuration.getSelectedFromDate()))
-   		 {
-   			 model.addAttribute(BlControllerConstants.DISABLE_BUTTON, Boolean.TRUE);
-   		 }
-   	 }
-    }
-      final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
-				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
-				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
-				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST) );
-     model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
+      final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
+          .getRentalDatesFromSession();
+      if (Objects.nonNull(rentalDatesFromSession)) {
+        final String nextAvailableDate = getBlCommerceStockService()
+            .getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
+        if (StringUtils.isNotBlank(nextAvailableDate)) {
+          model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
+          final RentalDateDto rentalDuration = getRentalDuration();
+          if (Objects.nonNull(rentalDuration) && StringUtils
+              .isNotBlank(rentalDuration.getSelectedFromDate())
+              && !nextAvailableDate.equalsIgnoreCase(rentalDuration.getSelectedFromDate())) {
+            model.addAttribute(BlControllerConstants.DISABLE_BUTTON, Boolean.TRUE);
+          }
+        }
+      }
+      final List<ProductOption> options = new ArrayList<>(
+          Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
+              ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY,
+              ProductOption.DESCRIPTION, ProductOption.GALLERY,
+              ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS,
+              ProductOption.CLASSIFICATION,
+              ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES,
+              ProductOption.PRICE_RANGE,
+              ProductOption.DELIVERY_MODE_AVAILABILITY, ProductOption.REQUIRED_DATA,
+              ProductOption.REQUIRED_WISHLIST));
+      model.addAttribute(BlControllerConstants.IS_WATCHING,
+          stockNotificationFacade.isWatchingProduct(productData));
       return productDetail(encodedProductCode, options, productData, model, request, response);
+    } catch(final Exception ex){
+      BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
+      return REDIRECT_PREFIX + ROOT;
+    }
   }
 
 }
