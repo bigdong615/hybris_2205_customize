@@ -11,6 +11,8 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryTermData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchRequest;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchFiltersPopulator;
+import de.hybris.platform.core.model.security.PrincipalGroupModel;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.IndexedType;
 import de.hybris.platform.solrfacetsearch.config.IndexedTypeSort;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -35,6 +38,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     SearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> {
 
   private CommerceCategoryService commerceCategoryService;
+  private UserService userService;
 
   /**
    * This method is overriden for adding  search filter query to existing query to fetch results accordingly
@@ -58,6 +62,9 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     }
     // BL-80 Add category restriction for used and rental gear category
     addCategoryRestriction(target);
+    if(!getUserService().isAnonymousUser(getUserService().getCurrentUser())){
+      addUserGroupRestrictionForProduct(target);
+    }
     // Add filter queries
     final List<SolrSearchFilterQueryData> filterQueries = target.getSearchQueryData()
         .getFilterQueries();
@@ -65,6 +72,20 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       for (final SolrSearchFilterQueryData solrSearchFilterQuery : filterQueries) {
         target.getSearchQuery().addFilterQuery(convertFilterQuery(solrSearchFilterQuery));
       }
+    }
+  }
+
+  /**
+   *  Add restricted user groups to exclude products from results
+   * @param target
+   */
+  private void addUserGroupRestrictionForProduct( final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery,INDEXED_TYPE_SORT_TYPE> target) {
+    final StringBuilder stringBuilder = new StringBuilder();
+    final Optional<PrincipalGroupModel> blGroup = getUserService().getCurrentUser().getGroups().stream()
+        .filter(group -> StringUtils.containsIgnoreCase(group.getUid(), BlCoreConstants.BL_GROUP)).findAny();
+    if (blGroup.isPresent()) {
+      final String rawQuery = stringBuilder.append(BlCoreConstants.RESTRICTED_PRINCIPALS_STRING_MV).append(BlCoreConstants.COLON).append(blGroup.get().getUid()).toString();
+      target.getSearchQuery().addFilterRawQuery(rawQuery);
     }
   }
 
@@ -247,5 +268,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       CommerceCategoryService commerceCategoryService) {
     this.commerceCategoryService = commerceCategoryService;
   }
+
+  public UserService getUserService() {
+    return userService;
+  }
+
+  public void setUserService(UserService userService) {
+    this.userService = userService;
+  }
+
 }
 

@@ -3,6 +3,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.facades.productreference.BlProductFacade;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.assistedserviceservices.utils.AssistedServiceSession;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
@@ -16,6 +17,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/buy/product")
 public class UsedProductPageController extends AbstractBlProductPageController {
 
+  private static final Logger LOG = Logger.getLogger(UsedProductPageController.class);
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
@@ -40,6 +44,7 @@ public class UsedProductPageController extends AbstractBlProductPageController {
       final HttpServletRequest request, final HttpServletResponse response)
       throws CMSItemNotFoundException, UnsupportedEncodingException {
     List<ProductOption> options;
+    try {
     final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
     final BlProductModel productModel = blproductFacade.getProductForCode(productCode);
 
@@ -64,6 +69,10 @@ public class UsedProductPageController extends AbstractBlProductPageController {
 				ProductOption.REQUIRED_SERIAL_DATA) );
     }
     return productDetail(encodedProductCode, options, productData, model, request, response);
+    } catch(final Exception ex){
+      BlLogger.logMessage(LOG, Level.ERROR,"Product Not found for Code{}",encodedProductCode, ex);
+      return REDIRECT_PREFIX + ROOT;
+    }
   }
 }
 
