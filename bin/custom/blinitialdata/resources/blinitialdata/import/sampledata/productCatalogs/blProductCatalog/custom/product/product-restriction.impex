@@ -1,0 +1,36 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Products
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs product-restriction.impex =========================");
+
+INSERT_UPDATE Usergroup;uid[unique=true];name;groups(uid)
+                       ;BLGroup1 ;BL Restriction Group1;employeegroup
+                       ;BLGroup2 ;BL Restriction Group2;employeegroup
+                       ;BLGroup3 ;BL Restriction Group3;employeegroup
+                       ;BLGroup4 ;BL Restriction Group4;employeegroup
+                       ;BLGroup5 ;BL Restriction Group5;employeegroup
+
+
+INSERT_UPDATE SearchRestriction ;code[unique=true];name[lang=en];query;principal(UID);restrictedType(code);active;generate
+                                ;blgroup1Restriction; BL Group1 Restriction;NOT EXISTS ({{SELECT {pk} FROM {BlProduct2PrincipalRelation} WHERE {source}={item:pk} AND {target} IN (?session.user.groups,?session.user) }});BLGroup1;BlProduct;true;true
+                                ;blgroup2Restriction; BL Group2 Restriction;NOT EXISTS ({{SELECT {pk} FROM {BlProduct2PrincipalRelation} WHERE {source}={item:pk} AND {target} IN (?session.user.groups,?session.user) }});BLGroup2;BlProduct;true;true
+                                ;blgroup3Restriction; BL Group3 Restriction;NOT EXISTS ({{SELECT {pk} FROM {BlProduct2PrincipalRelation} WHERE {source}={item:pk} AND {target} IN (?session.user.groups,?session.user) }});BLGroup3;BlProduct;true;true
+                                ;blgroup4Restriction; BL Group4 Restriction;NOT EXISTS ({{SELECT {pk} FROM {BlProduct2PrincipalRelation} WHERE {source}={item:pk} AND {target} IN (?session.user.groups,?session.user) }});BLGroup4;BlProduct;true;true
+                                ;blgroup5Restriction; BL Group5 Restriction;NOT EXISTS ({{SELECT {pk} FROM {BlProduct2PrincipalRelation} WHERE {source}={item:pk} AND {target} IN (?session.user.groups,?session.user) }});BLGroup5;BlProduct;true;true
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+UPDATE BlProduct;$catalogVersion;code[unique=true];restrictedPrincipals(uid)
+                ;;58mm_CP_Filter;BLGroup1
+                ;;Canon_EF_17-40mm_f4L_USM;BLGroup2
+                ;;Canon_EF_300mm_F_4_IS;BLGroup1
+                ;;Nikon_10.5mm_f2.8_Fisheye;BLGroup3
+                ;;Nikon_14mm_f2.8_AF_ED;BLGroup2
+                ;;Sennheiser_ME66;BLGroup4
+                ;;72mm_CP_Filter;BLGroup5
+                ;;hoodman_3;BLGroup5
+                ;;sony-battery ;BLGroup3
+                ;;olympus_ep2_extra_battery;BLGroup3

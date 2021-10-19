@@ -456,7 +456,7 @@
         <value code="REPAIRS"/>
         <value code="WAIVER_12_PERCENT_TOTAL"/>
       </enumtype>
-
+      
 	  </enumtypes>
 
     <maptypes>
@@ -635,6 +635,17 @@
           cardinality="many" collectiontype="list" />
         <targetElement qualifier="serialProduct" type="BlSerialProduct"
           cardinality="one" />
+      </relation>
+      <relation code="BlProduct2PrincipalRelation" autocreate="true" generate="true" localized="false">
+        <deployment table="BlProduct2PrincRel" typecode="12241"/>
+        <sourceElement qualifier="restrictedProducts" type="BlProduct" cardinality="many" ordered="false">
+          <description>catalog categories which are accessible for this principal</description>
+          <modifiers read="true" write="false" search="true" optional="true"/>
+        </sourceElement>
+        <targetElement qualifier="restrictedPrincipals" type="Principal" cardinality="many" collectiontype="set" ordered="true">
+          <description>Principals which are restricted to access this catalogProduct</description>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </targetElement>
       </relation>
     </relations>
 
@@ -2915,7 +2926,12 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <defaultvalue>false</defaultvalue>
                         <description>Reshuffler job will set the status as manual review for unavailability of products</description>
-                    </attribute> 
+                    </attribute>
+                    <attribute qualifier="orderCompletedDate" type="java.util.Date">
+              			<persistence type="property"/>
+              			<description>Date when order has been marked as completed</description>
+              			<modifiers read="true" write="true" search="true"/>
+           			</attribute>
                 </attributes>
             </itemtype>
 
@@ -3587,9 +3603,14 @@
                 <persistence type="property" />
                 <description>Number of orders in Completed status to date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="rollingSpend" type="java.math.BigDecimal">
+              <attribute autocreate="true" qualifier="incompletedOrderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
+                <description>Number of orders in Inompleted status to date</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="rollingSpend" type="java.math.BigDecimal">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="dynamic" attributeHandler="blCalculateRollingSpendHandler" />
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Total spend in a rolling 1 year period</description>
               </attribute>
@@ -3610,6 +3631,18 @@
                 <persistence type="property" />
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Sum of all outstanding bills</description>
+              </attribute>
+               <attribute autocreate="true" qualifier="averageOrderValue" type="double">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                <description>Average of all order value</description>
+              </attribute>
+              <attribute autocreate="true" qualifier="orderValuePriorToShippedStatus" type="double">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                <description>Price of all the orders which are in status shipped or prior to shipped</description>
               </attribute>
             </attributes>
             </itemtype>
@@ -6631,6 +6664,5 @@ new Integer(0)
                 </attributes>
             </itemtype>
         </typegroup>
-
 	</itemtypes>
 </items>

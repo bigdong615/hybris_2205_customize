@@ -466,6 +466,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String PAY_PAL_PROVIDER  = "BrainTreePayPalExpress";
 	public static final String PAY_PAL = "Paypal";
+  public static final String UID = "uid";
+	public static final String BL_GROUP ="BLGroup";
+  public static final String USER_RESTRICTION = "hasUserRestriction";
 
 	public static final String LATE_CHARGE = "LATE_CHARGE";
 	public static final String REPAIR_CHARGE = "REPAIR_CHARGE";
@@ -474,8 +477,17 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_REFUND_EVENT_TEMPLATE = "order.refund.event.template";
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
+
+	//public static final String UID = "uid";
+	public static final String BILLING_CHARGES = "billingCharges";
+	public static final String UNBOXED = "UNBOXED";
+
 	public static final String ORDER_BILL_PAID_EVENT_DEFINITION_KEY = "order.bill.paid.event.definition.key";
 	public static final String ORDER_BILL_PAID_EVENT_TEMPLATE = "order.bill.paid.event.template";
+
+	public static final String RESTRICTED_PRINCIPALS_STRING_MV = "-restrictedPrincipals_string_mv";
+	public static final String COLON = ":";
+
 
 	private BlCoreConstants()
 	{

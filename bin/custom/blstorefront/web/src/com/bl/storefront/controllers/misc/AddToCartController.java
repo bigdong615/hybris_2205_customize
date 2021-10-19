@@ -238,13 +238,17 @@ public class AddToCartController extends AbstractController {
         if (bindingErrors.hasErrors()) {
             return getViewWithBindingErrorMessages(model, bindingErrors);
         }
-
-        
+      try{
       final String warningPopup = productAllowedInAddToCart(code, serialCode);
   		if (warningPopup != null)
   		{
   			return warningPopup;
   		}
+      }catch(final Exception ex){
+          BlLogger.logMessage(LOG, Level.ERROR, "Product Not Addd to cart",ex);
+          return REDIRECT_CART_URL;
+      }
+
 
         final long qty = form.getQty();
 
