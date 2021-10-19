@@ -121,30 +121,46 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			InterceptorContext interceptorContext) {
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
 				.getItemModelContext();
-		final Map<String, List<BlItemsBillingChargeModel>> billingCharges = itemModelCtx
-				.getOriginalValue(BlCoreConstants.BILLING_CHARGES);
-		final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
-				.getBillingCharges();
-		currentBillingCharges.entrySet().forEach(billingCharge -> {
-			if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
-				final List<BlItemsBillingChargeModel> charges = billingCharges.get(billingCharge.getKey());
-				final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
-				currentCharges.removeAll(charges);
-				final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
-						.getOrder().getUser();
-				final BigDecimal newlyAddedCharges = currentCharges.stream()
-						.map(BlItemsBillingChargeModel::getChargedAmount)
-						.reduce(BigDecimal.ZERO, BigDecimal::add);
-				BigDecimal totalAmountPastDue =
-						Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
-								customerModel.getTotalAmountPastDue();
-				totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
-				customerModel.setTotalAmountPastDue(totalAmountPastDue);
-				interceptorContext.getModelService().save(customerModel);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
-						totalAmountPastDue, customerModel.getUid());
-			}
-		});
+		final Object originalBillingCharges = getInitialValue(consignmentEntryModel, BlCoreConstants.BILLING_CHARGES);
+		if(Objects.nonNull(originalBillingCharges)) {
+			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = (Map<String, List<BlItemsBillingChargeModel>>) originalBillingCharges;
+			final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
+					.getBillingCharges();
+			currentBillingCharges.entrySet().forEach(billingCharge -> {
+				if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
+					final List<BlItemsBillingChargeModel> charges = billingCharges
+							.get(billingCharge.getKey());
+					final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
+					currentCharges.removeAll(charges);
+					final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
+							.getOrder().getUser();
+					final BigDecimal newlyAddedCharges = currentCharges.stream()
+							.map(BlItemsBillingChargeModel::getChargedAmount)
+							.reduce(BigDecimal.ZERO, BigDecimal::add);
+					BigDecimal totalAmountPastDue =
+							Objects.isNull(customerModel.getTotalAmountPastDue()) ? BigDecimal.ZERO :
+									customerModel.getTotalAmountPastDue();
+					totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
+					customerModel.setTotalAmountPastDue(totalAmountPastDue);
+					interceptorContext.getModelService().save(customerModel);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+							"Total amount past due : {} updated for the customer {} ",
+							totalAmountPastDue, customerModel.getUid());
+				}
+			});
+		}
+	}
+
+	/**
+	 * It gets the initial value of the attribute before update
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 */
+	private Object getInitialValue(final ConsignmentEntryModel consignmentEntryModel, final String billingCharges) {
+		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
+				.getItemModelContext();
+		return itemModelCtx.exists() ? itemModelCtx.getOriginalValue(billingCharges) : null;
 	}
 
 	/**
