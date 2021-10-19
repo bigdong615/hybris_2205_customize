@@ -59,11 +59,11 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
     final AtomicReference<String> stringAtomicReference = new AtomicReference<>(StringUtils.EMPTY);
     if(product instanceof BlSerialProductModel) {
       final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) product;
-      stringAtomicReference.set(blSerialProductModel.getProductId());
+      stringAtomicReference.set(StringUtils.isBlank(blSerialProductModel.getProductId()) ? StringUtils.EMPTY : blSerialProductModel.getProductId());
     }
     else {
       final BlProductModel blProductModel = (BlProductModel) product;
-      stringAtomicReference.set(blProductModel.getProductId());
+      stringAtomicReference.set(StringUtils.isBlank(blProductModel.getProductId()) ? StringUtils.EMPTY : blProductModel.getProductId());
     }
     return stringAtomicReference.get();
   }
