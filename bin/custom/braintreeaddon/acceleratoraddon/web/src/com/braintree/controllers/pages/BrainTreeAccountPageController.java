@@ -1152,7 +1152,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
       final BigDecimal newAmount = BigDecimal.valueOf(Double.parseDouble(refundAmount)).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN);
       final AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
       final BigDecimal remainingAmountToRefund = brainTreeTransactionService.getRemainingAmountToRefund(order);
-      if(remainingAmountToRefund.compareTo(newAmount) <= 0)
+      if(newAmount.compareTo(remainingAmountToRefund) > 0)
       {
         return "Remaining Amount to Refund is : ".concat(String.valueOf(remainingAmountToRefund.doubleValue()));
       }

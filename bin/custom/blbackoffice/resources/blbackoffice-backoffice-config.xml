@@ -1271,6 +1271,8 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.coirequiredaction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.moreinforequiredaction"
+					property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>

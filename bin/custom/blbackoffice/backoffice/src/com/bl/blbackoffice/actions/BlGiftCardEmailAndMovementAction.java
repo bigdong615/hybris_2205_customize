@@ -15,6 +15,7 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.Date;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +62,7 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
       	// After send gift card purchase email to customer change order status
       	if(order.isGiftCardOrder()) {
           order.setStatus(OrderStatus.COMPLETED);
+          order.setOrderCompletedDate(new Date());
           modelService.save(order);
           modelService.refresh(order);
         }
