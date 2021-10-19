@@ -188,8 +188,10 @@
 	</bean>
 
 	<alias name="defaultLoginAuthenticationSuccessHandler" alias="loginAuthenticationSuccessHandler"/>
-	<bean id="defaultLoginAuthenticationSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontAuthenticationSuccessHandler" >
+	<bean id="defaultLoginAuthenticationSuccessHandler" class="com.bl.storefront.security.impl.BlStorefrontAuthenticationSuccessHandler" >
 		<property name="customerFacade" ref="customerFacade" />
+		<property name="userService" ref="userService" />
+		<property name="sessionService" ref="sessionService" />
 		<property name="defaultTargetUrl" value="/"/>
 		<property name="targetUrlParameter" value="targetUrlParameter"/>
 		<property name="useReferer" value="true"/>
@@ -221,8 +223,10 @@
 	</bean>
 
 	<alias name="defaultLoginCheckoutAuthenticationSuccessHandler" alias="loginCheckoutAuthenticationSuccessHandler"/>
-	<bean id="defaultLoginCheckoutAuthenticationSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontAuthenticationSuccessHandler" >
+	<bean id="defaultLoginCheckoutAuthenticationSuccessHandler" class="com.bl.storefront.security.impl.BlStorefrontAuthenticationSuccessHandler" >
 		<property name="customerFacade" ref="customerFacade" />
+		<property name="userService" ref="userService" />
+		<property name="sessionService" ref="sessionService" />
 		<property name="defaultTargetUrl" value="/checkout"/>
 		<property name="uiExperienceService" ref="uiExperienceService"/>
 		<property name="cartFacade" ref="cartFacade"/>

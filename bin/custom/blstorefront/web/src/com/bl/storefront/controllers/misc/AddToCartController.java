@@ -87,6 +87,7 @@ public class AddToCartController extends AbstractController {
     @Resource(name = "enumerationService")
     private EnumerationService enumerationService;
 
+
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
     private RentalDateDto getRentalsDuration() {
         return BlRentalDateUtils.getRentalsDuration();
@@ -224,13 +225,17 @@ public class AddToCartController extends AbstractController {
         if (bindingErrors.hasErrors()) {
             return getViewWithBindingErrorMessages(model, bindingErrors);
         }
-
-        
+      try{
       final String warningPopup = productAllowedInAddToCart(code, serialCode);
   		if (warningPopup != null)
   		{
   			return warningPopup;
   		}
+      }catch(final Exception ex){
+          BlLogger.logMessage(LOG, Level.ERROR, "Product Not Addd to cart",ex);
+          return REDIRECT_CART_URL;
+      }
+
 
         final long qty = form.getQty();
 
