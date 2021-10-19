@@ -1417,10 +1417,6 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<!--BL-803 UPS Scrape-->
-
-
-
   <!--BL-27: This process is override to call own strategy to provide email related things.-->
 	<bean depends-on="processContextResolutionStrategyMap" parent="mapMergeDirective">
 		<property name="key">
@@ -1660,6 +1656,12 @@
 		class="com.bl.core.esp.populators.BlExtraItemRequestPopulator">
 	</bean>
 
+	<!-- [BL-635] -->
+	<bean id="blRestrictedUserGroupResolver" class="com.bl.core.resolvers.BlRestrictedUserGroupResolver"
+		parent="abstractValueResolver">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
 	<!-- Fix for default package creation while placing order -->
 	<bean id="blConsignmentPackagingInfoPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
     	<property name="interceptor" ref="VoidInterceptor"/>
