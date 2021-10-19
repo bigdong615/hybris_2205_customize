@@ -80,7 +80,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     if (Objects.nonNull(userModel)) {
       orderVerificationRequiredEventData.setCustomerName(getRequestValue(userModel.getName()));
     }
-    orderVerificationRequiredEventData.setVerificationLevel("1"); // TO-DO setting dummy value, once we get actual value then set actual one.
+    orderVerificationRequiredEventData.setVerificationLevel(orderModel.getVerificationLevel());
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
