@@ -488,7 +488,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RESTRICTED_PRINCIPALS_STRING_MV = "-restrictedPrincipals_string_mv";
 	public static final String COLON = ":";
 
-
+	public static final String VERIFICATION_LEVEL_ZERO = "0";
+	public static final String VERIFICATION_LEVEL_ONE = "1";
+	public static final String VERIFICATION_LEVEL_TWO = "2";
+	
 	private BlCoreConstants()
 	{
 		//empty

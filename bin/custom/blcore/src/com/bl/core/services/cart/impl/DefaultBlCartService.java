@@ -487,7 +487,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
                     "Setting order type VIP : {} for cart code {}",
                     cartModel.getIsVipOrder(), cartModel.getCode());
-
+                setVerificationLevel(cartModel);
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
@@ -507,6 +507,36 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
         return (null != cartModel.getStore().getVipOrderThreshold()
             && cartModel.getTotalPrice() > cartModel.getStore().getVipOrderThreshold());
+    }
+
+    /**
+     * This method set verification level value based on cart total and verification level range value.
+     *
+     * @param cartModel the CartModel
+     */
+    private void setVerificationLevel(final CartModel cartModel) {
+        try {
+            final Integer verificationLevelStartRange = cartModel.getStore()
+                .getVerificationLevelStartRange();
+            final Integer verificationLevelEndRange = cartModel.getStore()
+                .getVerificationLevelEndRange();
+            final Double cartTotalPrice = cartModel.getTotalPrice();
+            if (null != verificationLevelStartRange && null != verificationLevelEndRange) {
+                if (cartTotalPrice >= verificationLevelStartRange
+                    && cartTotalPrice < verificationLevelEndRange) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_ONE);
+                } else if (cartTotalPrice >= verificationLevelEndRange) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_TWO);
+                } else if (cartTotalPrice < verificationLevelStartRange) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_ZERO);
+                }
+            }
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOGGER, Level.ERROR,
+                "Error occurred while setting up verification level value on cart {}",
+                cartModel.getCode(),
+                exception);
+        }
     }
 
     /**
