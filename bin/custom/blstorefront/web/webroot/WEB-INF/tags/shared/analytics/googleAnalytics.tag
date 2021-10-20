@@ -144,6 +144,26 @@ gtag('config', googleAnalyticsTrackingId);
   			  </c:forEach>
   			]
   		});
+
+  		gtag('event', 'checkout', {
+        	    "event_category": "Cart Page",
+            	"event_label": "View Cart",
+              "checkout_step" : 1,
+              "checkout_option" : "View Cart",
+        		  "items": [
+        				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+        					{
+        					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+        					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                            "list_position": ${status.index},
+        					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+        					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+        					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+        					}
+        					<c:if test='${not status.last}'>,</c:if>
+        			  </c:forEach>
+        			]
+        		});
   	</c:when>
 
   	<c:when test="${pageType == 'shippingPage'}">
@@ -202,6 +222,26 @@ gtag('config', googleAnalyticsTrackingId);
       		  	  </c:forEach>
       			]
       		});
+
+      		gtag('event', 'checkout', {
+                  	    "event_category": "Shipping Page",
+                      	"event_label": "Delivery Method",
+                        "checkout_step" : 2,
+                        "checkout_option" : "Delivery Method",
+                  		  "items": [
+                  				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                  					{
+                  					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                  					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                      "list_position": ${status.index},
+                  					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                  					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                  					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                  					}
+                  					<c:if test='${not status.last}'>,</c:if>
+                  			  </c:forEach>
+                  			]
+                  		});
       	</c:when>
 
       		<c:when test="${pageType == 'paymentPage'}">
@@ -260,6 +300,25 @@ gtag('config', googleAnalyticsTrackingId);
               			   </c:forEach>
               			]
               		});
+              		gtag('event', 'checkout', {
+                          	    "event_category": "Payment Page",
+                              	"event_label": "Payment Method",
+                                "checkout_step" : 3,
+                                "checkout_option" : "Payment Method",
+                          		  "items": [
+                          				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                          					{
+                          					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                          					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                              "list_position": ${status.index},
+                          					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                          					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                          					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                          					}
+                          					<c:if test='${not status.last}'>,</c:if>
+                          			  </c:forEach>
+                          			]
+                          		});
               	</c:when>
 
               		<c:when test="${pageType == 'reviewSummaryPage'}">
@@ -318,6 +377,25 @@ gtag('config', googleAnalyticsTrackingId);
                               					</c:forEach>
                               			]
                               		});
+           gtag('event', 'checkout', {
+                   	    "event_category": "Review Page",
+                       	"event_label": "Review Order",
+                         "checkout_step" : 4,
+                         "checkout_option" : "Review Order",
+                   		  "items": [
+                   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                   					{
+                   					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                   					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                       "list_position": ${status.index},
+                   					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                   					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                   					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                   					}
+                   					<c:if test='${not status.last}'>,</c:if>
+                   			  </c:forEach>
+                   			]
+                   		});
                               	</c:when>
 
 	<c:when test="${pageType == 'ORDERCONFIRMATION'}">

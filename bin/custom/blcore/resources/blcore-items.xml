@@ -730,6 +730,10 @@
           <persistence type="property"/>
           <description>Order Return Type For example : Replacement, Refund</description>
         </attribute>
+        <attribute qualifier="code" type="java.lang.String"  redeclare="true">
+          <persistence type="property"/>
+          <modifiers read="true" write="false" search="true" optional="true" unique="true"  initial="true"/>
+        </attribute>
       </attributes>
       </itemtype>
 
