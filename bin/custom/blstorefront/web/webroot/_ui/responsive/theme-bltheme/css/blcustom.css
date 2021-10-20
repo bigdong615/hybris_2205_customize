@@ -746,3 +746,12 @@ color:#fff !important;
   text-align: center !important;
   margin: 0 auto !important;     
 }
+.view-links .dropdown-menu li a {
+    color: #3d3c3c;
+    text-decoration: none;
+    white-space: normal;
+}
+#accountContent p i{
+ font-style: normal;
+    padding-right: 3px;	
+}
