@@ -1,38 +1,5 @@
 package com.bl.core.inventory.scan.service.impl;
 
-import com.bl.core.product.service.BlProductService;
-import com.bl.core.utils.BlDateTimeUtils;
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.user.UserService;
-import de.hybris.platform.warehousing.model.PackagingInfoModel;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
@@ -46,14 +13,43 @@ import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This service class is used perform Inventory Scanning Tool services
@@ -307,11 +303,37 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				barcodeList.get(BlInventoryScanLoggingConstants.ZERO));
 		if (blBINInventoryLocationModel != null) {
 			blBINInventoryLocationModel.setParentInventoryLocation(blLocalInventoryLocation);
+			updateParentOnSerialsOfThisBIN(blBINInventoryLocationModel, blLocalInventoryLocation);
 			modelService.save(blBINInventoryLocationModel);
 			modelService.refresh(blBINInventoryLocationModel);
 			return BlInventoryScanLoggingConstants.ONE; //successful scan SCAN_BARCODE_SUCCESS_MSG
 		} else {
 			return BlInventoryScanLoggingConstants.TWO; //enter valid BIN location VALID_BIN_LOCATION_ERROR_FAILURE_MSG
+		}
+	}
+
+	/**
+	 * Update parent location on all serials of the bin.
+	 *
+	 * @param blBINInventoryLocationModel the blBINInventoryLocationModel
+	 * @param blLocalInventoryLocation the parent location
+	 */
+	private void updateParentOnSerialsOfThisBIN(
+			final BlInventoryLocationModel blBINInventoryLocationModel,
+			final BlInventoryLocationModel blLocalInventoryLocation) {
+
+		final Collection<BlSerialProductModel> serialProductModels = getBlInventoryScanToolDao()
+				.getAllSerialsByBinLocation(blBINInventoryLocationModel.getCode());
+
+		if (CollectionUtils.isNotEmpty(serialProductModels)) {
+			serialProductModels.stream().forEach(serial -> {
+				serial.setLastLocationScanParent(blLocalInventoryLocation.getCode());
+				modelService.save(serial);
+				modelService.refresh(serial);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"Parent Location {} updated for the serial with code : {}",
+						blLocalInventoryLocation.getCode(), serial.getCode());
+			});
 		}
 	}
 
