@@ -66,6 +66,7 @@
 
 	<bean class="de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData">
 		<property name="blPage" type="String"/>
+		<property name="restrictedGroup" type="String"/>
 	</bean>
 
   <!--BL-166: This DTO contain product video related information-->

@@ -67,3 +67,6 @@ $contentCatalogsCustomOrderPagePath = /blinitialdata/import/sampledata/contentCa
 # Order Confirmation Page Impexes
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomOrderPagePath/sampledata_order_confirmation_page.impex"), "utf-8", 0, 0);
 
+# Page title related impexs.
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/page_title_en.impex"), "utf-8", 0, 0);
+

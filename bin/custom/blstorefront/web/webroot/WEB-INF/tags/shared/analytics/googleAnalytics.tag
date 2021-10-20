@@ -112,7 +112,7 @@ gtag('config', googleAnalyticsTrackingId);
       </c:choose>
   		gtag('event', 'cart', {
   		  "event_category": "Cart Page",
-      	"event_label": "Cart",
+      	"event_label": "View Cart",
   		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
   		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
   		  "currency": "USD",
@@ -168,7 +168,7 @@ gtag('config', googleAnalyticsTrackingId);
           </c:choose>
       		gtag('event', 'shipping', {
       		  "event_category": "Shipping Page",
-          	"event_label": "Delivery",
+          	"event_label": "Delivery Method",
       		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
       		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
       		  "currency": "USD",
@@ -226,7 +226,7 @@ gtag('config', googleAnalyticsTrackingId);
                   </c:choose>
               		gtag('event', 'billing', {
               		  "event_category": "Payment Page",
-                  	"event_label": "${cartType}",
+                  	"event_label": "Payment Method",
               		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
               		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
               		  "currency": "USD",
@@ -284,7 +284,7 @@ gtag('config', googleAnalyticsTrackingId);
                                   </c:choose>
                               		gtag('event', 'review', {
                               		  "event_category": "Review Page",
-                                  	"event_label": "${cartType}",
+                                  	"event_label": "Review Order",
                               		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
                               		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
                               		  "currency": "USD",
@@ -343,7 +343,7 @@ gtag('config', googleAnalyticsTrackingId);
                       </c:choose>
 		gtag('event', 'purchase', {
 		  "event_category": "Order Confirmation",
-    	"event_label": "${cartType}",
+    	"event_label": "Confirmed",
 		  "transaction_id": "${orderCode}",
 		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
 		  "value": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
@@ -354,7 +354,8 @@ gtag('config', googleAnalyticsTrackingId);
       "subtotal": "${ycommerce:encodeJavaScript(orderData.subTotal.value)}",
       "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
       "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
-      "checkout_step" : "purchase",
+      "checkout_step" : 5,
+      "checkout_option" : "purchase",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{

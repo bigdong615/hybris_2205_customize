@@ -42,5 +42,13 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String ISO_CODE = "tax.calcualtion.country.isocode";
 	public static final String CAPTURE = "Capture";
 	public static final String IS_AVALARA_EXCEPTION = "isAvalaraException";
+	public static final String LINE_1 = "tax.ship.from.line1";
+	public static final String CITY = "tax.ship.from.city";
+	public static final String REGION = "tax.ship.from.region";
+	public static final String COUNTRY = "tax.ship.from.country";
+	public static final String POSTAL_CODE = "tax.ship.from.postal.code";
+	public static final String PRODUCT_ID = "productID:";
+	public static final String MAX_CHARACTER = "tax.max.character";
+
 
 }
