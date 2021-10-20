@@ -420,7 +420,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 					return getViewForPage(model);
 				}
 				catch (final Exception e){
-					BlLogger.logMessage(LOG , Level.ERROR , "Error while executing addPaymentMethod" , e);
+					BlLogger.logMessage(LOG , Level.ERROR , "Error while executing addPaymentMethod " , e);
 				}
 			} else {
 			  if(isModifyOrderPaymentPage)

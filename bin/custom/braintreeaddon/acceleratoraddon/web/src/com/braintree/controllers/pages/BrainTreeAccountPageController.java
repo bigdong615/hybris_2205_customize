@@ -519,7 +519,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				return getViewForPage(model);
 			}
 			catch (final Exception e) {
-				BlLogger.logMessage(LOG , Level.ERROR , "Error while executing getPayBillDetailsForOrder" , e);
+				BlLogger.logMessage(LOG , Level.ERROR , "Error while executing getPayBillDetailsForOrder " , e);
 			}
 		}
 		else {
