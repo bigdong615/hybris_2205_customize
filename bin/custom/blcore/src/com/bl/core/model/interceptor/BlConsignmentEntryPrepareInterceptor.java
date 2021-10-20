@@ -131,10 +131,12 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 					final List<BlItemsBillingChargeModel> charges = billingCharges
 							.get(billingCharge.getKey());
 					final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
-					currentCharges.removeAll(charges);
+					final List<BlItemsBillingChargeModel> tempCurrentCharges = new ArrayList<>();
+					tempCurrentCharges.addAll(currentCharges);
+					tempCurrentCharges.removeAll(charges);
 					final CustomerModel customerModel = (CustomerModel) consignmentEntryModel.getConsignment()
 							.getOrder().getUser();
-					final BigDecimal newlyAddedCharges = currentCharges.stream()
+					final BigDecimal newlyAddedCharges = tempCurrentCharges.stream()
 							.map(BlItemsBillingChargeModel::getChargedAmount)
 							.reduce(BigDecimal.ZERO, BigDecimal::add);
 					BigDecimal totalAmountPastDue =
