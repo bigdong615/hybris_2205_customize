@@ -5,6 +5,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.tax.TaxResponse;
 import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.service.impl.BlAvalaraTaxCalculationService;
+import com.bl.tax.utils.BlTaxAPIUtils;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -40,7 +41,7 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
         for (int j = 0; j < abstractOrderModel.getEntries().size(); j++) {
           final String productCode = abstractOrderModel.getEntries().get(j).getProduct().getCode();
           if (StringUtils.equalsIgnoreCase(productCode , responseProductCode.get()) ||
-              StringUtils.equalsIgnoreCase(getProductIDFromProduct(abstractOrderModel.getEntries().get(j).getProduct()),
+              StringUtils.equalsIgnoreCase(BlTaxAPIUtils.getProductId(abstractOrderModel.getEntries().get(j).getProduct()),
                  split.length > 1 && Objects.nonNull(split[1]) ? split[1] : StringUtils.EMPTY)) {
             abstractOrderModel.getEntries().get(j).setAvalaraLineTax(taxResponse.getTaxLines().get(i).getTax());
           }
@@ -49,24 +50,6 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
     }
     getBlAvalaraTaxCalculationService().calculateTaxWithOrderTotal(abstractOrderModel , taxResponse);
     }
-
-  /**
-   * This method created to get product id from product
-   * @param product product
-   * @return String
-   */
-  private String getProductIDFromProduct(final ProductModel product) {
-    final AtomicReference<String> stringAtomicReference = new AtomicReference<>(StringUtils.EMPTY);
-    if(product instanceof BlSerialProductModel) {
-      final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) product;
-      stringAtomicReference.set(StringUtils.isBlank(blSerialProductModel.getProductId()) ? StringUtils.EMPTY : blSerialProductModel.getProductId());
-    }
-    else {
-      final BlProductModel blProductModel = (BlProductModel) product;
-      stringAtomicReference.set(StringUtils.isBlank(blProductModel.getProductId()) ? StringUtils.EMPTY : blProductModel.getProductId());
-    }
-    return stringAtomicReference.get();
-  }
 
 
   public BlAvalaraTaxCalculationService getBlAvalaraTaxCalculationService() {

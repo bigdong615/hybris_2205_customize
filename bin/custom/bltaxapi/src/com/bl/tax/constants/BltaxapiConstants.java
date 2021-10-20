@@ -48,6 +48,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String COUNTRY = "tax.ship.from.country";
 	public static final String POSTAL_CODE = "tax.ship.from.postal.code";
 	public static final String PRODUCT_ID = "productID:";
+	public static final String MAX_CHARACTER = "tax.max.character";
 
 
 }

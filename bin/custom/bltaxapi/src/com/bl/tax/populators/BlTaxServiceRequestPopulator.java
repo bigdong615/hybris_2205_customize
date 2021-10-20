@@ -12,6 +12,7 @@ import com.bl.tax.AddressesData;
 import com.bl.tax.TaxLine;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.constants.BltaxapiConstants;
+import com.bl.tax.utils.BlTaxAPIUtils;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -26,6 +27,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
@@ -97,7 +100,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           value = entry.getGearGuardWaiverPrice() * entry.getQuantity().intValue();
         }
         taxLine.setAmount(entry.getTotalPrice() + value);
-        taxLine.setDescription(entry.getInfo() + BltaxapiConstants.PRODUCT_ID + getProductId(entry));
+        taxLine.setDescription(entry.getInfo() + BltaxapiConstants.PRODUCT_ID + BlTaxAPIUtils.getProductId(entry.getProduct()));
         taxLine.setTaxCode(setProductTaxCode(entry));
         taxLines.add(taxLine);
       }
@@ -119,24 +122,6 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 
     }
     return taxLines;
-  }
-
-  /**
-   * This method created to get product id from entry
-   * @param abstractOrderEntryModel abstractOrderEntryModel
-   * @return String
-   */
-  private String getProductId(final AbstractOrderEntryModel abstractOrderEntryModel) {
-   final AtomicReference<String> stringAtomicReference = new AtomicReference<>(StringUtils.EMPTY);
-    if(abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel) {
-      final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) abstractOrderEntryModel.getProduct();
-      stringAtomicReference.set(StringUtils.isBlank(blSerialProductModel.getProductId()) ? StringUtils.EMPTY : blSerialProductModel.getProductId());
-    }
-   else {
-      final BlProductModel blProductModel = (BlProductModel) abstractOrderEntryModel.getProduct();
-      stringAtomicReference.set(StringUtils.isBlank(blProductModel.getProductId()) ? StringUtils.EMPTY : blProductModel.getProductId());
-    }
-    return stringAtomicReference.get();
   }
 
 
@@ -327,8 +312,12 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    */
   private String getTrimmedProductCodeFromProduct(final String code) {
     final AtomicReference<String> productCode = new AtomicReference<>(code);
-   if(productCode.get().length() > 50){
-     productCode.set(productCode.get().substring(0 , 50));
+    final AtomicInteger  maxCharacter = new AtomicInteger(0);
+    if(Objects.nonNull(Config.getInt(BltaxapiConstants.MAX_CHARACTER , 50))) {
+       maxCharacter.set(Config.getInt(BltaxapiConstants.MAX_CHARACTER, 50));
+    }
+    if(productCode.get().length() > maxCharacter.get()){
+     productCode.set(productCode.get().substring(0 , maxCharacter.get()));
    }
     return productCode.get();
   }
