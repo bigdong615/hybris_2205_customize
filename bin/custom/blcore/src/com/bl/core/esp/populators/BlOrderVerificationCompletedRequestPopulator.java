@@ -71,7 +71,7 @@ public class BlOrderVerificationCompletedRequestPopulator extends ESPEventCommon
     if (Objects.nonNull(userModel)) {
       orderVerificationCompletedEventData.setCustomerName(getRequestValue(userModel.getName()));
     }
-    orderVerificationCompletedEventData.setVerificationLevel("1"); // TO-DO setting dummy value, once we get actual value then set actual one.
+    orderVerificationCompletedEventData.setVerificationLevel(orderModel.getVerificationLevel());
     orderVerificationCompletedEventRequest.setData(orderVerificationCompletedEventData);
   }
 }

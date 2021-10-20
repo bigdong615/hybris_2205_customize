@@ -151,6 +151,12 @@ text-decoration :none ;
   .uploaded-doc {    
     flex-direction: inherit !important;
 }
+.litepicker .reset-button {
+  color: #3d3c3c;
+  position: fixed;
+  bottom:19px;
+  left:13px;
+}
   }
 /* BL-45 */
 
@@ -337,6 +343,7 @@ margin: 0;
   padding-left: 26px;
   background: url(../assets/icon-calendar-red.svg) no-repeat 4px center;
   background-size: 19px;
+  padding-right: 0;
 }
 #cat-slider .splide__arrow--prev, #overview-slider > .splide__arrows .splide__arrow--prev {
   margin-left: -31px;
@@ -365,6 +372,29 @@ margin: 0;
 #cat-slider .splide__arrows, #gear-slider > .splide__arrows, #blog-slider > .splide__arrows, #gear-slider-cart > .splide__arrows {
   z-index: 1;
 }
+.litepicker .container__days .day-item{
+  margin-bottom: 0;
+}
+.litepicker .container__footer .button-apply {
+  margin-left: 5px;
+  margin-right: 0;
+}
+.litepicker .container__footer {
+  padding:15px 17px 46px;
+  display: flex;
+}
+.litepicker .preview-date-range {
+  margin-right:10px !important;
+  float: left;
+  width: -webkit-fill-available;
+}
+.litepicker .container__footer .preview-date-range {
+  font-size: 90%;
+  padding-bottom: 0;
+  padding-top: 4px;
+  text-align: left;
+}
+
 
 }
 #product-thumbnails{display:block ;}

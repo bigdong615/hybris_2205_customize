@@ -3,6 +3,7 @@ package com.bl.backoffice.widget.controller;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 
 import java.util.ArrayList;
@@ -60,6 +61,9 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	@Resource(name = "blInventoryScanToolDao")
 	BlInventoryScanToolDao blInventoryScanToolDao;
+
+	@Resource(name = "modelService")
+	ModelService modelService;
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
@@ -378,7 +382,7 @@ public class BlShippingScanController extends DefaultWidgetController
 						.getFailedBinBarcodeList(barcodes);
 				if (MapUtils.isNotEmpty(failedBinBarcodeMap))
 				{
-					createResponseForScan(failedBinBarcodeMap);
+					createResponseForScan(failedBinBarcodeMap, barcodes);
 				}
 				break;
 
@@ -405,10 +409,12 @@ public class BlShippingScanController extends DefaultWidgetController
 	 * @param barcodes
 	 * @param failedBinBarcodeMap
 	 */
-	private void createResponseForScan(final Map<Integer, List<String>> failedBinBarcodeMap)
+	private void createResponseForScan(final Map<Integer, List<String>> failedBinBarcodeMap, final List<String> barcodes)
 	{
+		final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ZERO))
 		{
+			getBlInventoryScanToolService().updateSerialLastScanLocation(selectedConsignment, lastScannedItem);
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);

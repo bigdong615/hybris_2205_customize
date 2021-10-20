@@ -401,6 +401,7 @@ public class BlPackageScanController extends DefaultWidgetController
 
 		if (failedBinBarcodeMap.containsKey(BlInventoryScanLoggingConstants.ZERO))
 		{
+			getBlInventoryScanToolService().updateSerialLastScanLocation(selectedConsignment, lastScannedItem);
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);

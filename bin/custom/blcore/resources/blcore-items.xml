@@ -456,6 +456,12 @@
         <value code="REPAIRS"/>
         <value code="WAIVER_12_PERCENT_TOTAL"/>
       </enumtype>
+
+      <enumtype generate="true" code="VerificationStatusEnum" autocreate="true">
+        <value code="APPROVE"/>
+        <value code="DENY"/>
+        <value code="NA"/>
+      </enumtype>
       
 	  </enumtypes>
 
@@ -2052,6 +2058,12 @@
               <defaultvalue>Boolean.FALSE</defaultvalue>
                 <persistence type="property" />
               </attribute>
+              <attribute type="VerificationStatusEnum" qualifier="verificationStatus">
+                <modifiers read="true" write="true" optional="false" />
+                <defaultvalue>em().getEnumerationValue("VerificationStatusEnum", "NA")</defaultvalue>
+                <persistence type="property" />
+                <description>It indicates current status of an uploaded document</description>
+              </attribute>
             </attributes>
           </itemtype>
 
@@ -2937,7 +2949,12 @@
               			<persistence type="property"/>
               			<description>Date when order has been marked as completed</description>
               			<modifiers read="true" write="true" search="true"/>
-           			</attribute>
+           			    </attribute>
+                    <attribute qualifier="verificationLevel" type="java.lang.String">
+                        <persistence type="property"/>
+                        <description>It is used to set verification level value</description>
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -3435,7 +3452,19 @@
                     <modifiers read="true" write="true" search="true" initial="true" />
                     <description>Order Process code for internal Transfer Orders</description>
                   </attribute>
-                </attributes>                
+                  <attribute type="java.lang.Integer" qualifier="verificationLevelStartRange">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>Integer.valueOf(3000)</defaultvalue>
+                    <persistence type="property"/>
+                    <description>It is start range to compare with gear value to set verification level accordingly</description>
+                  </attribute>
+                  <attribute type="java.lang.Integer" qualifier="verificationLevelEndRange">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <defaultvalue>Integer.valueOf(12000)</defaultvalue>
+                    <persistence type="property"/>
+                    <description>It is end range to compare with gear value to set verification level accordingly</description>
+                  </attribute>
+                </attributes>
             </itemtype>
         </typegroup>
         <!-- BL-542 End-->

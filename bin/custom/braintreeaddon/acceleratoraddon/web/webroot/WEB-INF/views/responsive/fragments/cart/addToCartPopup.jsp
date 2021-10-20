@@ -55,7 +55,14 @@
                      <input type="hidden" id="productType" value="rental gear" />
                      <input type="hidden" id="quantity" value="${entry.quantity}" />
                   <div class="col-md-3 mt-4 text-md-end">
-                      <b>${entry.basePrice.formattedValue}</b>
+                      <c:choose>
+                          <c:when test="${replacementOrder == 'true'}">
+                              <b>$0.00</b>
+                          </c:when>
+                          <c:otherwise>
+                              <b>${entry.basePrice.formattedValue}</b>
+                          </c:otherwise>
+                      </c:choose>
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                           modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                           <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
