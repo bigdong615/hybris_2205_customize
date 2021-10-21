@@ -123,6 +123,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
+        data.setVerificationlevel(orderModel.getVerificationLevel());
         populateXMLData(orderModel, data);
         orderConfirmationEventRequest.setData(data);
     }
