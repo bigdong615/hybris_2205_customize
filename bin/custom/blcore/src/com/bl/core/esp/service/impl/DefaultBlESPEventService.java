@@ -50,7 +50,6 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
