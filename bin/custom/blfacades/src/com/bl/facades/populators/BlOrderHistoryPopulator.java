@@ -100,7 +100,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      if(source.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
           paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
               PaymentTransactionType.CAPTURE)))) {
-       target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
+       target.setIsRentalStartDateActive(Boolean.TRUE);
      }
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
