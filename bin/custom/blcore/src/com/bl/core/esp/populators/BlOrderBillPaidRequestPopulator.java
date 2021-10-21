@@ -4,6 +4,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidData;
+import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -14,11 +15,14 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -104,8 +108,10 @@ public class BlOrderBillPaidRequestPopulator extends
     if (Objects.nonNull(userModel)) {
       orderBillPaidData.setCustomerName(getRequestValue(userModel.getName()));
     }
-    //orderBillPaidData.setTotalBillAmount(); //TODO
-    populateOrderItemsInXML(orderModel, orderBillPaidData);
+    final OrderBillPaidExtraData orderBillPaidExtraData = orderBillPaidEventRequest.getExtraData();
+    orderBillPaidData.setTotalBillAmount(orderBillPaidExtraData.getTotalBillPaidAmount());
+    populateOrderItemsInXML(orderModel, orderBillPaidData,orderBillPaidExtraData);
+    orderBillPaidEventRequest.setExtraData(null);
     orderBillPaidEventRequest.setData(orderBillPaidData);
   }
 
@@ -116,8 +122,9 @@ public class BlOrderBillPaidRequestPopulator extends
    * @param orderBillPaidData
    */
   private void populateOrderItemsInXML(final OrderModel orderModel,
-      final OrderBillPaidData orderBillPaidData) {
+      final OrderBillPaidData orderBillPaidData, final OrderBillPaidExtraData orderBillPaidExtraData) {
     try {
+      final Map<String, List<String>> billPaidTypesMap = orderBillPaidExtraData.getBillPaidTypesMap();
       final Document orderItemsInXMLDocument = createNewXMLDocument();
       final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument,
           BlCoreConstants.ORDER_ITEMS_ROOT_ELEMENT);
@@ -142,7 +149,7 @@ public class BlOrderBillPaidRequestPopulator extends
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
               BlCoreConstants.ORDER_ITEM_QUANTITY,
               String.valueOf(entryModel.getQuantity()));
-          //TODO need to add bill type here as well.
+          setBillType(billPaidTypesMap, orderItemsInXMLDocument, entryModel, rootOrderItem);
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
               BlCoreConstants.BILLING_NOTES, getOrderNotesFromOrderModel(orderModel));
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
@@ -162,6 +169,29 @@ public class BlOrderBillPaidRequestPopulator extends
       BlLogger.logMessage(LOG, Level.ERROR, POPULATOR_ERROR, exception);
       throw new BlESPIntegrationException(exception.getMessage(),
           LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode(), exception);
+    }
+  }
+
+  /**
+   * This method sets billing charges type.
+   *
+   * @param billPaidTypesMap
+   * @param orderItemsInXMLDocument
+   * @param entryModel
+   * @param rootOrderItem
+   */
+  private void setBillType(final Map<String, List<String>> billPaidTypesMap,
+      final Document orderItemsInXMLDocument, final AbstractOrderEntryModel entryModel,
+      final Element rootOrderItem) {
+    if (MapUtils.isNotEmpty(billPaidTypesMap)) {
+      if (billPaidTypesMap.containsKey(entryModel.getProduct().getCode())) {
+        final List<String> billingTypes = billPaidTypesMap.get(entryModel.getProduct().getCode());
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+            BlCoreConstants.BILLING_TYPE, getBillingTypes(billingTypes));
+      }
+    } else {
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+          BlCoreConstants.BILLING_TYPE, StringUtils.EMPTY);
     }
   }
 }
