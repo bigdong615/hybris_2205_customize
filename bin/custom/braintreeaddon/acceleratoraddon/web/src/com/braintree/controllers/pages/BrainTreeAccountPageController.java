@@ -509,7 +509,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				PriceData payBillTotal = convertDoubleToPriceData(payBillAmount, order);
 				orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 				model.addAttribute(ORDER_DATA, orderDetails);
-        Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+        final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
         blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);

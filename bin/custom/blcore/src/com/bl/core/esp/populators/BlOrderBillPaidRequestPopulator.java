@@ -185,7 +185,7 @@ public class BlOrderBillPaidRequestPopulator extends
       final Element rootOrderItem) {
     if (MapUtils.isNotEmpty(billPaidTypesMap)) {
       if (billPaidTypesMap.containsKey(entryModel.getProduct().getCode())) {
-        List<String> billingTypes = billPaidTypesMap.get(entryModel.getProduct().getCode());
+        final List<String> billingTypes = billPaidTypesMap.get(entryModel.getProduct().getCode());
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
             BlCoreConstants.BILLING_TYPE, getBillingTypes(billingTypes));
       }

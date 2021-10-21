@@ -411,7 +411,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
 						return getViewForPage(model);
 					}
-					Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+					final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
 					blEspEventService.triggerBillPaidEspEvent(payBillTotal, billingChargeTypeMap, (OrderModel) order);
 					final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 							BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
