@@ -37,7 +37,7 @@
 				<tr>
         	<td class="discount">
         						<spring:theme code="Discount" /> </td>
-        					<td class="text-end" id="js-extendDiscount"> - <format:blPrice priceData="${orderData.extendOrderDiscount}"/></td>
+        					<td class="text-end discount" id="js-extendDiscount"> - <format:blPrice priceData="${orderData.extendOrderDiscount}"/></td>
         	</tr>
         </c:if>
 				<tr class="total">
