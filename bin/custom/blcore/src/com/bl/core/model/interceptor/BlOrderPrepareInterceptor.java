@@ -174,7 +174,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   	if(isOrderAfterShippedStatus(order.getStatus())) {
 			final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) order.getItemModelContext();
 			final OrderStatus status = itemModelCtx.getOriginalValue(BlCoreConstants.STATUS);
-			if(status.equals(OrderStatus.SHIPPED)) {
+			if(OrderStatus.SHIPPED.equals(status)) {
 				final CustomerModel customerModel = (CustomerModel) order.getUser();
 				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
 						AbstractOrderEntryModel::getTotalPrice).sum();
