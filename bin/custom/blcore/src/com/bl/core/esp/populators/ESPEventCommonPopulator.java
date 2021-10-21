@@ -181,7 +181,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         final AtomicReference<String> giftCardBalance = new AtomicReference<>(String.valueOf(0.0));
         if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
             orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
-                if(StringUtils.equals(orderModel.getCode() , giftCardMovementModel.getOrder().getCode())) {
+                if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() != null ? giftCardMovementModel.getOrder().getCode() :StringUtils.EMPTY))) {
                     giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
                 }
             }));
