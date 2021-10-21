@@ -158,7 +158,8 @@ gtag('config', googleAnalyticsTrackingId);
                             "list_position": ${status.index},
         					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
         					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-        					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+        					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+        					   "checkout_option" : "View Cart"
         					}
         					<c:if test='${not status.last}'>,</c:if>
         			  </c:forEach>
@@ -236,7 +237,8 @@ gtag('config', googleAnalyticsTrackingId);
                                       "list_position": ${status.index},
                   					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
                   					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-                  					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                  					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                  					   "checkout_option" : "Delivery Method"
                   					}
                   					<c:if test='${not status.last}'>,</c:if>
                   			  </c:forEach>
@@ -313,7 +315,8 @@ gtag('config', googleAnalyticsTrackingId);
                                               "list_position": ${status.index},
                           					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
                           					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-                          					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                          					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                          					  "checkout_option" : "Payment Method"
                           					}
                           					<c:if test='${not status.last}'>,</c:if>
                           			  </c:forEach>
@@ -390,7 +393,8 @@ gtag('config', googleAnalyticsTrackingId);
                                        "list_position": ${status.index},
                    					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
                    					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
-                   					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                   					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                   					   "checkout_option" : "Review Order"
                    					}
                    					<c:if test='${not status.last}'>,</c:if>
                    			  </c:forEach>
