@@ -184,9 +184,6 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
   }
 
-  private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
-    return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
-  }
 
   /**
    * This method converts double to price data

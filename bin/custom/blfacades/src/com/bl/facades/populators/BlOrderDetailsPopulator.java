@@ -109,28 +109,33 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
+   populateGiftCard(source , target);
+  }
 
-    if (CollectionUtils.isNotEmpty(source.getGiftCard()) && !source.isGiftCardOrder())
+
+  /**
+   * This method created to set the gift card details
+   * @param orderModel orderModel
+   * @param orderData orderData
+   */
+  private void populateGiftCard(final OrderModel orderModel, final OrderData orderData) {
+    if (CollectionUtils.isNotEmpty(orderModel.getGiftCard()) && !orderModel.isGiftCardOrder())
     {
       final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-      for (final GiftCardModel giftCardModel : source.getGiftCard())
+      for (final GiftCardModel giftCardModel : orderModel.getGiftCard())
       {
         final BLGiftCardData blGiftCardData = new BLGiftCardData();
         blGiftCardData.setCode(giftCardModel.getCode());
         final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
         //rounding off double value to 2 decimal places
         BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-        blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
-        blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
+        blGiftCardData.setRedeemamount(createPrice(orderModel , gcRedeemedAmount.doubleValue()));
+        blGiftCardData.setBalanceamount(createPrice(orderModel , giftCardModel.getBalance()));
         blGiftCardDataList.add(blGiftCardData);
       }
-      target.setGiftCardData(blGiftCardDataList);
+      orderData.setGiftCardData(blGiftCardDataList);
     }
-
-    
   }
-
-
 
   /**
    * This method created to populate dates for order details
@@ -168,8 +173,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
         BlFacadesConstants.TOTAL_PRICE_FIELD), source));
     target.setSubTotal(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getSubtotal() ,
         BlFacadesConstants.SUB_TOTAL_FIELD), source));
-    final Double discountAmount = Objects.nonNull(source.getTotalDiscounts()) ? source.getTotalDiscounts() : 0.0;
-    final Double giftCartAMount =  Objects.nonNull(source.getGiftCardAmount()) ? source.getGiftCardAmount() : 0.0;
+    final Double discountAmount = Objects.isNull(source.getTotalDiscounts()) ?  0.0 : source.getTotalDiscounts();
+    final Double giftCartAMount =  Objects.isNull(source.getGiftCardAmount()) ? 0.0: source.getGiftCardAmount();
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
