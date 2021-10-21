@@ -109,10 +109,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
-
    populateGiftCard(source , target);
-
-    
   }
 
 
@@ -121,22 +118,22 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    * @param source orderModel
    * @param target orderData
    */
-  private void populateGiftCard(final OrderModel source, final OrderData target) {
-    if (CollectionUtils.isNotEmpty(source.getGiftCard()) && !source.isGiftCardOrder())
+  private void populateGiftCard(final OrderModel orderModel, final OrderData orderData) {
+    if (CollectionUtils.isNotEmpty(orderModel.getGiftCard()) && !orderModel.isGiftCardOrder())
     {
       final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-      for (final GiftCardModel giftCardModel : source.getGiftCard())
+      for (final GiftCardModel giftCardModel : orderModel.getGiftCard())
       {
         final BLGiftCardData blGiftCardData = new BLGiftCardData();
         blGiftCardData.setCode(giftCardModel.getCode());
         final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
         //rounding off double value to 2 decimal places
         BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-        blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
-        blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
+        blGiftCardData.setRedeemamount(createPrice(orderModel , gcRedeemedAmount.doubleValue()));
+        blGiftCardData.setBalanceamount(createPrice(orderModel , giftCardModel.getBalance()));
         blGiftCardDataList.add(blGiftCardData);
       }
-      target.setGiftCardData(blGiftCardDataList);
+      orderData.setGiftCardData(blGiftCardDataList);
     }
   }
 

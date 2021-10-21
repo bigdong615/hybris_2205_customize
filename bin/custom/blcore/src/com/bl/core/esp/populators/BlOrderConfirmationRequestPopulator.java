@@ -127,8 +127,13 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         orderConfirmationEventRequest.setData(data);
     }
 
+  /**
+   * This method created to get order status from order model
+   * @param orderModel orderModel
+   * @return String
+   */
   private String getOrderStatus(final OrderModel orderModel) {
-    return Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY;
+    return Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY : orderModel.getStatus().getCode();
   }
 
 
@@ -267,6 +272,12 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
     }
 
+  /**
+   * This method created to populate data in XML format
+   * @param entryModel entryModel
+   * @param orderItemsInXMLDocument orderItemsInXMLDocument
+   * @param rootOrderItems rootOrderItems
+   */
     private void populateOrderDetailsInXMl(final AbstractOrderEntryModel entryModel, final Document orderItemsInXMLDocument,
         final Element rootOrderItems) {
       final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ORDER_ITEM_ROOT_ELEMENT);
