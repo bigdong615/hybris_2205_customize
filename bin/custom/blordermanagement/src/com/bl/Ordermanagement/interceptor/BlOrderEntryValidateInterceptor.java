@@ -1,5 +1,6 @@
 package com.bl.Ordermanagement.interceptor;
 
+import com.bl.core.model.BlProductModel;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,7 +23,9 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
+import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -77,7 +80,13 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 	@Resource(name="blShippingOptimizationStrategy")
 	private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
-
+	
+	@Resource(name="defaultBlUserService")
+	private DefaultBlUserService defaultBlUserService;
+	
+	@Resource(name = "blStockLevelDao")
+	private BlStockLevelDao blStockLevelDao;
+	
 	/**
 	 * method will validate order entry for modified order
 	 */
@@ -85,10 +94,11 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	public void onValidate(final OrderEntryModel orderEntryModel, final InterceptorContext interceptorContext)
 			throws InterceptorException
 	{
-		boolean isCsAgent = isCsUser();
-
-		if (isCsAgent)
+		if (getDefaultBlUserService().isCsUser())
 		{
+			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
+         orderEntryModel.setBundleMainEntry(Boolean.TRUE);
+			}
 			final List<BlSerialProductModel> serialProduct = orderEntryModel.getModifiedSerialProductList();
 			final WarehouseModel warehouse = orderEntryModel.getWarehouse();
 			if (CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
@@ -99,27 +109,6 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		}
 	}
 
-	/**
-	 * method will called to check is logged in user is CS user or not
-	 * @return
-	 */
-	private boolean isCsUser()
-	{
-		boolean isCsAgent = false;
-		final UserModel currentUser = userService.getCurrentUser();
-
-		for (final PrincipalGroupModel userGroup : currentUser.getGroups())
-		{
-			if (BlInventoryScanLoggingConstants.CUSTOMER_SUPPORT_AGENT_GROUP.equals(userGroup.getUid()))
-			{
-				isCsAgent = true;
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Logged in user {} is cs user", currentUser);
-				break;
-			}
-		}
-		return isCsAgent;
-	}
-	
 	/**
 	 * method will check for order modification from cs 
 	 * @param orderEntryModel
@@ -185,10 +174,17 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		entries.add(createConsignmentEntry);
 
 		consignment.setConsignmentEntries(entries);
-		Collection<StockLevelModel> serialStocks = defaultBlAllocationService.getSerialsForDateAndCodes(consignment.getOrder(),serialCodes);
+		
+		Collection<StockLevelModel> serialStocks = blStockLevelDao
+      .findSerialStockLevelsForDateAndCodes(serialCodes, consignment.getOptimizedShippingStartDate(),
+      		consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
+			
 		if(CollectionUtils.isNotEmpty(serialStocks))
 		{
-		serialStocks.forEach(stock -> stock.setReservedStatus(true));
+		serialStocks.forEach(stock -> {
+			stock.setReservedStatus(true);
+			stock.setOrder(orderEntryModel.getOrder().getCode());
+		});
 		modelService.saveAll(serialStocks);
 		}
 		modelService.save(consignment);
@@ -317,6 +313,22 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	public void setCalculationService(CalculationService calculationService)
 	{
 		this.calculationService = calculationService;
+	}
+
+	/**
+	 * @return the defaultBlUserService
+	 */
+	public DefaultBlUserService getDefaultBlUserService()
+	{
+		return defaultBlUserService;
+	}
+
+	/**
+	 * @param defaultBlUserService the defaultBlUserService to set
+	 */
+	public void setDefaultBlUserService(DefaultBlUserService defaultBlUserService)
+	{
+		this.defaultBlUserService = defaultBlUserService;
 	}
 
 }

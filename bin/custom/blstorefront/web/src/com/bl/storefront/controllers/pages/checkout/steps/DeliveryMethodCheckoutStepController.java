@@ -6,8 +6,10 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.blackout.BlBlackoutDateService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlReplaceMentOrderUtils;
@@ -24,6 +26,7 @@ import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.bl.storefront.util.BlAddressDataUtil;
+import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -73,6 +76,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
     private static final String CART_DATA = "cartData";
     private static final String SUCCESS = "SUCCESS";
+    private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 
     @Resource(name = "checkoutFacade")
     private BlCheckoutFacade checkoutFacade;
@@ -92,6 +96,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Resource(name ="cartFacade")
     private BlCartFacade blCartFacade;
     
+    @Resource(name = "blDatePickerService")
+    private BlDatePickerService blDatePickerService;
+    
+    @Resource(name = "blBlackoutDateService")
+    private BlBlackoutDateService blBlackoutDateService;
+
+    @Resource(name = "userFacade")
+    private BrainTreeUserFacade brainTreeUserFacade;
+    
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration() 
  	 {
@@ -103,7 +116,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
-        model.addAttribute("pageType",BlControllerConstants.SHIPPING_PAGE);
+		 final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		 if (blBlackoutDateService.checkForBlackoutDate(rentalDateDto))
+		 {
+			 return REDIRECT_CART_URL;
+		 }
+   	 model.addAttribute("pageType",BlControllerConstants.SHIPPING_PAGE);
         CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
             List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
@@ -125,7 +143,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         }
 
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
-        model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
+        model.addAttribute("deliveryAddresses", brainTreeUserFacade.getShippingAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
         model.addAttribute("addressForm", new BlAddressForm());
         model.addAttribute("blPickUpByForm", new BlPickUpByForm());
@@ -317,6 +335,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @ResponseBody
     public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
                       final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        addressForm.setShippingAddress(Boolean.TRUE);
         getAddressValidator().validate(addressForm, bindingResult);
         populateCommonModelAttributes(model, getCheckoutFacade().getCheckoutCart(), addressForm);
         if (bindingResult.hasErrors()) {

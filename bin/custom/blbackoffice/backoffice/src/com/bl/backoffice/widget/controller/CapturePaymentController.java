@@ -8,6 +8,7 @@ import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
@@ -80,12 +81,13 @@ public class CapturePaymentController extends DefaultWidgetController {
     @ViewEvent(componentID = CAPTURE_BUTTON, eventName = Events.ON_CLICK)
     public void capturePayment() {
         BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
-        if (getConsignmentModel().isOrderTransferConsignment()) {
+        if (getConsignmentModel().isOrderTransferConsignment() || getConsignmentModel()
+            .isInternalTransferConsignment()) {
             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ORDER_TRANSFER), true);
             return;
         }
-        if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()) {
-            //TODO: Add orderStatus check if order is shipped or not!! Already shipped then notify agent!!
+        if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode()) || getOrderModel().getIsCaptured()
+            || OrderStatus.CANCELLING.equals(getOrderModel().getStatus())) {
             showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER), true);
             return;
         }

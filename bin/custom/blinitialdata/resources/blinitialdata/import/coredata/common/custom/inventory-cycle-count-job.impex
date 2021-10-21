@@ -1,0 +1,10 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common inventory-cycle-count-job.impex =========================");
+
+INSERT_UPDATE ServicelayerJob; code[unique = true]      ; springId
+                             ; blInventoryCycleCountJob ; blInventoryCycleCountJob
+
+INSERT_UPDATE CronJob; code[unique = true]      ; job(code)                ; singleExecutable; sessionLanguage(isocode)
+                     ; blInventoryCycleCountJob ; blInventoryCycleCountJob ; false           ; en
+
+INSERT_UPDATE Trigger; cronjob(code)[unique = true]; cronExpression        ; active[default = false]
+                     ; blInventoryCycleCountJob    ; 30 1-16 0 ? * MON-FRI ;

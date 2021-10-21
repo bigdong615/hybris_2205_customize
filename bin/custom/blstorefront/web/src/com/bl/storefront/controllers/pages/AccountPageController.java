@@ -102,6 +102,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -432,6 +433,8 @@ public class AccountPageController extends AbstractSearchPageController
 		try
 		{
 			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+					Collectors.toList()));
 			model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
@@ -475,7 +478,8 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam("productCode") final String productCode, final Model model)
 	{
 		final OrderData orderData = blOrderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
-
+		orderData.setEntries(orderData.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		final Map<String, ReadOnlyOrderGridData> readOnlyMultiDMap = orderGridFormFacade.getReadOnlyOrderGridForProductInOrder(
 				productCode, Arrays.asList(ProductOption.BASIC, ProductOption.CATEGORIES), orderData);
 		model.addAttribute("readOnlyMultiDMap", readOnlyMultiDMap);
@@ -1315,6 +1319,8 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setEntries(orderDetails.getEntries().stream().filter(entry ->!entry.isBundleEntry() ).collect(
+				Collectors.toList()));
 		orderDetails.setIsExtendOrderPage(true);
 		model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
@@ -1377,14 +1383,6 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			else
 			{
-				final String ipAddress = request.getRemoteAddr();
-				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
-				{
-					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null ,
-							getI18nService().getCurrentLocale()));
-				}
-				else
-				{
 					final String referer = request.getHeader(BlControllerConstants.REFERER);
 					final List<String> errorList = new ArrayList<>();
 					final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
@@ -1399,7 +1397,7 @@ public class AccountPageController extends AbstractSearchPageController
 						model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 					}
 				}
-			}
+
 		}
 		catch (final VoucherOperationException e)
 		{

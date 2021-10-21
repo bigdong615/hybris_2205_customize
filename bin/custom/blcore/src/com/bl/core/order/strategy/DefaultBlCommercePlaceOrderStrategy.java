@@ -44,7 +44,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
       final CustomerModel customer = (CustomerModel) cartModel.getUser();
       validateParameterNotNull(customer, "Customer model cannot be null");
-
       final OrderModel orderModel = getOrderService().createOrderFromCart(cartModel);
       if (orderModel != null)
       {
@@ -62,7 +61,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
         // clear the promotionResults that where cloned from cart PromotionService.transferPromotionsToOrder will copy them over bellow.
         orderModel.setAllPromotionResults(Collections.<PromotionResultModel> emptySet());
-
         getModelService().saveAll(customer, orderModel);
 
         if (cartModel.getPaymentInfo() != null && cartModel.getPaymentInfo().getBillingAddress() != null)
@@ -72,6 +70,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           orderModel.getPaymentInfo().setBillingAddress(getModelService().clone(billingAddress));
           getModelService().save(orderModel.getPaymentInfo());
         }
+        setPickFormDetailsInAddress(orderModel);
         getModelService().save(orderModel);
         // Transfer promotions to the order
         getPromotionsService().transferPromotionsToOrder(cartModel, orderModel, false);
@@ -109,6 +108,23 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 
     this.afterPlaceOrder(parameter, result);
     return result;
+  }
+
+  /**
+   * It sets the pickup person details into delivery address
+   * @param orderModel the order model
+   */
+  private void setPickFormDetailsInAddress(final OrderModel orderModel) {
+    if(null != orderModel.getDeliveryAddress() && null != orderModel.getPickUpPersonFirstName()) {
+      final AddressModel deliveryAddress = orderModel.getDeliveryAddress();
+      deliveryAddress.setCompany(deliveryAddress.getFirstname());
+      deliveryAddress.setFirstname(orderModel.getPickUpPersonFirstName());
+      deliveryAddress.setLastname(orderModel.getPickUpPersonLastName());
+      deliveryAddress.setEmail(orderModel.getPickUpPersonEmail());
+      deliveryAddress.setPhone1(orderModel.getPickUpPersonPhone());
+      getModelService().save(deliveryAddress);
+      getModelService().refresh(deliveryAddress);
+    }
   }
 
 }

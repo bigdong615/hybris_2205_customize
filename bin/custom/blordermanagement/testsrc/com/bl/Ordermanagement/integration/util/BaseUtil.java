@@ -10,7 +10,10 @@
  */
 package com.bl.Ordermanagement.integration.util;
 
+import static org.junit.Assert.assertEquals;
+
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
+import com.bl.Ordermanagement.actions.order.CheckOrderAction;
 import de.hybris.platform.acceleratorservices.payment.cybersource.enums.TransactionTypeEnum;
 import de.hybris.platform.acceleratorservices.payment.data.OrderInfoData;
 import de.hybris.platform.catalog.CatalogVersionService;
@@ -83,16 +86,11 @@ import de.hybris.platform.warehousing.util.models.WorkflowDecisionTemplates;
 import de.hybris.platform.warehousing.util.models.WorkflowTemplates;
 import de.hybris.platform.workflow.WorkflowTemplateService;
 import de.hybris.platform.workflow.impl.DefaultWorkflowService;
-import com.bl.Ordermanagement.actions.order.CheckOrderAction;
-import com.bl.Ordermanagement.actions.order.SourceOrderAction;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
 
 
 /**

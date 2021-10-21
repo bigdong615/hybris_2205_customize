@@ -5,6 +5,8 @@ import de.hybris.platform.commerceservices.price.CommercePriceService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
+import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.util.PriceValue;
 import java.math.BigDecimal;
 
 
@@ -69,4 +71,33 @@ public interface BlCommercePriceService extends CommercePriceService
 	 */
 	 PriceInformation getWebPriceForBundleProduct(final ProductModel product);
 
+	/**
+	 * Gets dynamic price data for rental bundle product for given rental days.
+	 * @param product product
+	 * @param noOfRentalDays rental days
+	 * @return price
+	 * @throws CalculationException exception
+	 */
+	public PriceValue getDynamicBasePriceForBundle(
+			final ProductModel product,final int noOfRentalDays) throws CalculationException;
+
+	/**
+	 * Gets the dynamic price data for product for order.
+	 *
+	 * @param isConstrainedProduct the is constrained product
+	 * @param priceValue the price value
+	 * @param rentedDays the rented days
+	 * @return the dynamic price data for product for order
+	 */
+	BigDecimal getDynamicPriceDataForProductForOrder(final Boolean isConstrainedProduct, final Double priceValue, final Long rentedDays);
+
+	/**
+	 * Get Dynamic price for bundle product for order.
+	 * @param product bundle product
+	 * @param order order
+	 * @return price data
+	 * @throws CalculationException exception
+	 */
+	public PriceValue  getDynamicPriceForBundle(
+			final ProductModel product,final AbstractOrderModel order) throws CalculationException;
 }

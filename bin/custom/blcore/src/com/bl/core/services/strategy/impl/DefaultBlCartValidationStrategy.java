@@ -2,6 +2,7 @@ package com.bl.core.services.strategy.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.strategy.BlCartValidationStrategy;
 import com.bl.core.shipping.service.BlDeliveryModeService;
@@ -238,8 +239,12 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 	private Long getStocksForProductAndDate(final CartEntryModel cartEntryModel,
 			final List<WarehouseModel> listOfWarehouses, final Date rentalStartDate,
 			final Date rentalEndDate) {
-
-		return getBlCommerceStockService()
+		if(cartEntryModel.isBundleMainEntry()) {
+		return	getBlCommerceStockService()
+					.getAvailableCountForBundle((BlProductModel) cartEntryModel.getProduct(),
+							listOfWarehouses, rentalStartDate, rentalEndDate);
+		}
+    return getBlCommerceStockService()
 				.getAvailableCount(cartEntryModel.getProduct().getCode(), listOfWarehouses,
 						rentalStartDate, rentalEndDate);
 	}

@@ -515,10 +515,6 @@
                             </editorArea:editor-parameter>
                         </editorArea:attribute>
                     </editorArea:panel>
-                    <editorArea:panel name="warehousingbackoffice.shippingDate.panel">
-                        <editorArea:attribute qualifier="shippingDate"
-                                              label="warehousingbackoffice.consignment.expectedshippingdate" readonly="true"/>
-                    </editorArea:panel>
                     <editorArea:attribute qualifier="carrierDetails" label="warehousingbackoffice.consignment.carrierdetails">
                         <editorArea:editor-parameter>
                             <editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx</editorArea:name>
@@ -1586,7 +1582,7 @@
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.shipaction" property="currentObject"/>
                 <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.confirmpickupaction"
                           property="currentObject"/>
-                <y:action action-id="de.hybris.platform.warehousingbackoffice.actions.reallocateaction" property="currentObject"/>
+                <y:action action-id="custom.bl.widgets.actions.blreallocateaction" property="currentObject"/>
             </y:group>
         </y:actions>
     </context>

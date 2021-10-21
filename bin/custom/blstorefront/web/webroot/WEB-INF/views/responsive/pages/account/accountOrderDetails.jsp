@@ -163,8 +163,8 @@
                                					<div class="col-md-9 mt-3">
                                							<p class="gray80 body14">
                                							 <b class="gray100">
-                               							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</b></a>
-                               							 <spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
+                               							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</b></a> <br>
+                               							 <spring:theme code="text.myaccount.order.your.rental.qty"/>&nbsp;${cartEntry.quantity}<br>
                                							  <c:if test="${orderData.isRentalCart}">
                                		        <c:choose>
                                								<c:when test="${cartEntry.gearGuardProFullWaiverSelected}">
@@ -200,20 +200,20 @@
                                             <spring:theme code="text.review.page.delivery.pickup.title" />
                                             </h5>
                             									<div class="row mb-4">
-                            										<%-- <div class="col-6">
+                            										 <div class="col-6">
                             											<p class="gray80 body14">
                             												<b class="gray100"><spring:theme
-                            														code="text.review.page.delivery.mode.pickup" /></b>
+                            														code="text.review.page.delivery.mode.pickup" /></b> </br>
                             												${orderData.pickUpPersonFirstName}&nbsp;${orderData.pickUpPersonLastName}
                             												<br /> ${orderData.pickUpPersonEmail} <br />
                             												${orderData.pickUpPersonPhone} <br />
                             											</p>
-                            										</div> --%>
+                            										</div>
                             										<c:if test="${not empty orderData.deliveryAddress}">
                             											<div class="col-6">
                             												<p class="gray80 body14">
                             													<b class="gray100"><spring:theme
-                            															code="text.review.page.delivery.pickup.from" /></b></br>
+                            															code="text.review.page.delivery.pickup.from" /></b>
                             													<order:addressItem address="${orderData.deliveryAddress}" />
                             												</p>
                             											</div>

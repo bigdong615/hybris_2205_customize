@@ -359,8 +359,8 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 ; WIFI_ISSUES                     ; Wifi issues      
                                 
 INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
-                                ; GIFTCARD                        ; Gift Card 
-                                ; PACKAGE                          ;   package                      
+                                ; GIFTCARD                        ; GIFTCARD
+                                ; PACKAGE                          ;   PACKAGE
 #Media folder for verification documents
 INSERT_UPDATE MediaFolder;qualifier[unique=true];path[unique=true]
 ;verificationDocuments;verificationDocuments
@@ -486,3 +486,8 @@ INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=tru
 INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
                       ; blChangeOrderReturnDateToNextDateJob ; blChangeOrderReturnDateJob ;                                        ; true   ;  
                       ; blShareASaleCronJob                  ; blShareASaleJob            ;                                        ; true   ;
+
+REMOVE AttributeConstraint;id[unique=true];annotation[allownull=true];descriptor(enclosingType(code),qualifier);qualifier;severity(code,itemtype(code));target;type(code)
+                          ;CustomerName;de.hybris.platform.validation.annotations.NotBlank;Customer:name;name;ERROR:Severity;de.hybris.platform.core.model.user.CustomerModel;Customer
+
+$de.hybris.platform.core.Registry.getApplicationContext().getBean(de.hybris.platform.validation.services.ValidationService.class).reloadValidationEngine()

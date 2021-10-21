@@ -39,11 +39,19 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	@Override
 	public void populate(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-		super.populate(source, target);
-		populateDamageWaiverValues(source, target);
-		populateOptionsValues(source, target);
-		populateGiftCartPurcahseValues(source, target);
-		target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
+		if(source.isBundleEntry()) {
+      target.setBundleEntry(Boolean.TRUE);
+			addCommon(source, target);
+			addProduct(source,target);
+			addEntryGroups(source, target);
+			addComments(source, target);
+		}else{
+			super.populate(source, target);
+			populateDamageWaiverValues(source, target);
+			populateOptionsValues(source, target);
+			populateGiftCartPurcahseValues(source, target);
+			target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
+		}
 	}
 
 	/**
@@ -161,6 +169,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		productData.setProductId(blProductModel.getProductId());
 		productData.setIsVideo(blProductModel.getIsVideo());
 		productData.setIsBundle(blProductModel.isBundleProduct());
+		productData.setManufacturerAID(productModel.getManufacturerAID());
 		populateBundleEntryData(blProductModel, productData);
 	}
 

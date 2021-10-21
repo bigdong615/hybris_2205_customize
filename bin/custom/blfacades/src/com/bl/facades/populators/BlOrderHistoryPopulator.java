@@ -16,6 +16,9 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.payment.constants.GeneratedPaymentConstants.Enumerations.PaymentTransactionType;
+import de.hybris.platform.payment.dto.TransactionStatus;
+import de.hybris.platform.payment.dto.TransactionStatusDetails;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -201,23 +204,20 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   private String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel) {
 
     final AtomicReference<String> orderStatus = new AtomicReference<>();
-
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) ||
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) ||
         abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
             paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
       orderStatus.set(BlFacadesConstants.RECEIVED);
     }
 
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
-        paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
-            PaymentTransactionType.CAPTURE)))) {
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || isOrderCaptured(abstractOrderModel)) {
       orderStatus.set(BlFacadesConstants.SHIPPED);
     }
 
 
     if(BooleanUtils.isTrue(abstractOrderModel.isOrderReturnedToWarehouse()) && abstractOrderModel.getStatus().getCode().equalsIgnoreCase(
-        OrderStatus.UNBOXED.getCode())) {
+        OrderStatus.UNBOXED_COMPLETELY.getCode())) {
       orderStatus.set(BlFacadesConstants.RETURNED);
     }
 
@@ -252,6 +252,22 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     return orderStatus.get();
   }
 
+/**
+ * Checks if is order captured.
+ *
+ * @param abstractOrderModel the abstract order model
+ * @return true, if is order captured
+ */
+private boolean isOrderCaptured(final AbstractOrderModel abstractOrderModel)
+{
+	return abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
+        paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> {
+      	  return paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
+                 PaymentTransactionType.CAPTURE) && TransactionStatus.ACCEPTED.name().equals(paymentTransactionEntryModel.getTransactionStatus())
+     				&& paymentTransactionEntryModel.getTransactionStatusDetails().startsWith(TransactionStatusDetails.SUCCESFULL.name());
+        }));
+}
+
 
   /**
    * This method created to set used gear order status
@@ -260,16 +276,14 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.READY.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
         paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
       orderStatus =  BlFacadesConstants.SOLD;
     }
 
 
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
-        paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
-            PaymentTransactionType.CAPTURE)))) {
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || isOrderCaptured(abstractOrderModel)) {
       orderStatus = BlFacadesConstants.SHIPPED;
     }
 

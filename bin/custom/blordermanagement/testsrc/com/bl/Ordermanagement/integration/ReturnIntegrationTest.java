@@ -448,7 +448,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		order = sourcingUtil.createCameraShippedOrder();
 		modelService.save(order);
 		order.setPaymentTransactions(sourcingUtil.setDummyOrderTransaction(order));
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		ReturnRequestModel returnRequest = returnUtil
 				.createDefaultReturnRequest(order, 4L, ReturnAction.IMMEDIATE, RefundReason.DAMAGEDINTRANSIT, BigDecimal.valueOf(20),
 						order.getEntries().get(0));
@@ -703,7 +703,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		order.setPaymentTransactions(sourcingUtil.setDummyOrderTransaction(order));
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(CAMERA_CODE));
 		modelService.save(order);
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		order.getConsignments().forEach(e -> sourcingUtil.confirmDefaultConsignment(orderProcessModel, e));
 		sourcingUtil.refreshOrder(order);
 	}
@@ -715,7 +715,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		order.setPaymentTransactions(sourcingUtil.setDummyOrderTransaction(order));
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(CAMERA_CODE));
 		modelService.save(order);
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		order.getConsignments().forEach(e -> sourcingUtil.confirmDefaultConsignment(orderProcessModel, e));
 		sourcingUtil.refreshOrder(order);
 	}
@@ -727,7 +727,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		order.setPaymentTransactions(sourcingUtil.setDummyOrderTransaction(order));
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(CAMERA_CODE));
 		modelService.save(order);
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		order.getConsignments().forEach(e -> sourcingUtil.confirmDefaultConsignment(orderProcessModel, e));
 		sourcingUtil.refreshOrder(order);
 	}
@@ -740,7 +740,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(CAMERA_CODE));
 		modelService.save(order);
 		order.setPaymentTransactions(sourcingUtil.setDummyOrderTransaction(order));
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		sourcingUtil.refreshOrder(order);
 		return orderProcessModel;
 	}
@@ -756,7 +756,7 @@ public class ReturnIntegrationTest extends BaseAcceleratorSourcingIntegrationTes
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(CAMERA_CODE));
 		sourcingUtil.setDummyPriceRowModel(productService.getProductForCode(MEMORY_CARD_CODE));
 		modelService.save(order);
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		order.getConsignments().forEach(e -> sourcingUtil.confirmDefaultConsignment(orderProcessModel, e));
 		sourcingUtil.refreshOrder(order);
 	}

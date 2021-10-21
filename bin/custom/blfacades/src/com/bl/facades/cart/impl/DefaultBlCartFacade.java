@@ -177,8 +177,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
-        if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
-        	parameter.setRetailGear(blProductModel.getRetailGear());
+				if(BooleanUtils.isTrue(blProductModel.isBundleProduct())){
+					parameter.setBundleMainEntry(Boolean.TRUE);
+				}
+				if(BooleanUtils.isTrue(blProductModel.getRetailGear())){
+					parameter.setRetailGear(blProductModel.getRetailGear());
 				}
 				if (blProductService.isAquatechProduct(blProductModel)) {
 					parameter.setAqautechProduct(Boolean.TRUE);
@@ -564,6 +567,33 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
 					"Error while checking aquatech product rental dates for cart - {}", cartData.getCode());
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String removeRestrictedEntries(final List<AbstractOrderEntryModel> restrictedEntries,final CartModel cartModel, final boolean isCartPage) {
+		if (CollectionUtils.isNotEmpty(restrictedEntries)) {
+			final List<Integer> entryList = restrictedEntries.stream().map(AbstractOrderEntryModel::getEntryNumber).collect(Collectors.toList());
+			final String removedEntries = restrictedEntries.stream().map(entry-> entry.getProduct().getName(i18nService.getCurrentLocale())).collect(Collectors.joining(BlFacadesConstants.COMMA_SEPERATER));
+			Collections.reverse(entryList);
+			entryList.forEach(entryNumber -> {
+				try {
+					if (isCartPage) {
+						updateCartEntry(entryNumber, 0);
+					} else {
+						updateCartEntry(entryNumber, 0, cartModel);
+					}
+				} catch (final CommerceCartModificationException ex) {
+					BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,BlCoreConstants.EMPTY_STRING,ex,
+							"Couldn't update product with the entry number: {}",entryNumber);
+				}
+			});
+			return removedEntries;
+
+		}
+		return StringUtils.EMPTY;
 	}
 
 	/**

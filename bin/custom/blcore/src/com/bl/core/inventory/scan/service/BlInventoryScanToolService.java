@@ -284,5 +284,20 @@ public interface BlInventoryScanToolService {
 	 * @param blInventoryLocationModel
 	 */
 	void removeSerialsAndParentLocationFromBinOcLocation(final BlInventoryLocationModel blInventoryLocationModel);
+	
+	/**
+	 * Check if first entry is location.
+	 *
+	 * @param barcodes the barcodes
+	 * @return true, if successful
+	 */
+	public boolean checkIfFirstEntryIsLocation(final List<String> barcodes);
+	
+	/**
+	 * method will be used to update last scan location on serial
+	 * @param consignmentModel
+	 * @param barcodes
+	 */
+	public void updateSerialLastScanLocation(final ConsignmentModel consignmentModel,final String parentLocation);
 
 }

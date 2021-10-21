@@ -126,6 +126,7 @@ $(".js-voucher-apply-account-btn").on("click", function(e) {
                $('#js-extendOrderError-update').removeClass("d-none");
                $('#js-extendOrderError-update').html($('#js-extendOrderError').val());
                $(".js-voucher-code-text-account").addClass("error");
+               	 $('#errorMessages_account_voucher').addClass("d-none");
                }
                else {
                	$(".js-extendOrderError-update").addClass("error");

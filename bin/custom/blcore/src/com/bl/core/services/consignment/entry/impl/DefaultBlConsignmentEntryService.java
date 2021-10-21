@@ -75,11 +75,16 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				getModelService().save(consignmentEntry);
 				getModelService().refresh(consignmentEntry);
 				final AbstractOrderEntryModel orderEntry = consignmentEntry.getOrderEntry();
-				updateUnallotedQuantityOnOrderEntry(orderEntry);
+				updateUnallotedQuantityOnOrderEntry(orderEntry, updatedSerialList);
 				final ConsignmentModel consignment = consignmentEntry.getConsignment();
 				changeStatusOnConsignment(consignment);
 				final AbstractOrderModel order = consignment.getOrder();
 				changeStatusOnOrder(order);
+				if(CollectionUtils.isEmpty(updatedSerialList)) 
+				{
+					getModelService().remove(consignmentEntry);
+					getModelService().refresh(consignment);
+				}
 			});
 		}
 	}
@@ -90,7 +95,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param orderEntry
 	 *           the order entry
 	 */
-	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry)
+	private void updateUnallotedQuantityOnOrderEntry(final AbstractOrderEntryModel orderEntry, final Set<BlSerialProductModel> updatedSerialList)
 	{
 		if (Objects.nonNull(orderEntry))
 		{
@@ -98,6 +103,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Before increasing unAllotedQuantity : {}", unAllocatedQuantity);
 			unAllocatedQuantity = unAllocatedQuantity + 1;
 			orderEntry.setUnAllocatedQuantity(unAllocatedQuantity);
+			orderEntry.setSerialProducts(Lists.newArrayList(updatedSerialList));
 			getModelService().save(orderEntry);
 			getModelService().refresh(orderEntry);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "After increasing unAllotedQuantity : {}", unAllocatedQuantity);
@@ -156,7 +162,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	{
 		if (Objects.nonNull(order))
 		{
-			order.setStatus(OrderStatus.MANUAL_REVIEW);
+			order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Order : {} status to MANUAL_REVIEW", order.getCode());
@@ -194,6 +200,32 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
 		putProductOptionsInToItemsMap(entry, itemsMap);
 		entry.setItems(itemsMap);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry,
+			final AbstractOrderEntryModel orderEntry) {
+
+		final Map<String, ItemStatusEnum> itemsMap =
+				null == entry.getItems() ? new HashMap<>() : entry.getItems();
+
+		itemsMap.put(orderEntry.getProduct().getCode(), ItemStatusEnum.NOT_INCLUDED);
+
+		final List<BlProductModel> products = new ArrayList<>();
+
+		for (int i = 0; i < entry.getQuantity(); i++) {
+			products.add((BlProductModel) orderEntry.getProduct());
+		}
+
+		entry.setSerialProducts(products);
+		entry.setItems(itemsMap);
+
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Product with code {} added to the products list on consignment entry with consignment code {}",
+				orderEntry.getProduct().getCode(), entry.getConsignment().getCode());
 	}
 
 	/**

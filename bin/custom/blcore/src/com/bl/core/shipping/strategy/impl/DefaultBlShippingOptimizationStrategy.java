@@ -109,7 +109,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             int i = BlInventoryScanLoggingConstants.ZERO;
             for (Map.Entry<String, Long> entry : allocatedMap.entrySet()) {
                 final String key = entry.getKey().substring(0, entry.getKey().lastIndexOf('_'));
-                if (stockLevelsProductWise.get(key).size() >= entry.getValue()) {
+                if (stockLevelsProductWise.get(key) != null && stockLevelsProductWise.get(key).size() >= entry.getValue()) {
                     availabilityMap.put(key, stockLevelsProductWise.get(key));
                 } else {
                     i = BlInventoryScanLoggingConstants.ONE;
@@ -335,7 +335,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkTwoDayGround(final int result, final int carrierId, final int warehouseCode, final String customerZip,
                                       final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
-                carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
+                carrierId, warehouseCode, customerZip, BlInventoryScanLoggingConstants.TWO, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
             final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
@@ -365,7 +365,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     private boolean checkOvernightGround(final int result, final int carrierId, final int warehouseCode, final String customerZip,
                                          final ConsignmentModel consignmentModel, final String rentalStart, final String rentalEnd) {
         final ShippingOptimizationModel shippingOptimizationModel = getZoneDeliveryModeService().getOptimizedShippingRecord(
-                carrierId, warehouseCode, customerZip, result, BlInventoryScanLoggingConstants.ONE);
+                carrierId, warehouseCode, customerZip, BlInventoryScanLoggingConstants.ONE, BlInventoryScanLoggingConstants.ONE);
         if (shippingOptimizationModel != null) {
             final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SAVING +
@@ -448,21 +448,19 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                                                   final Date optimizedEndDate, final OptimizedShippingMethodEnum optimizedShippingMethod) {
         consignmentModel.setOptimizedShippingStartDate(optimizedDate);
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
-        if (result != BlInventoryScanLoggingConstants.ZERO) {
-            final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
-            consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
-            if(optimizedShippingType != null) {
-                if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
-                } else {
-                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                            optimizedShippingMethod.getCode()));
-                }
+        final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
+        consignmentModel.setOptimizedShippingMethodType(optimizedShippingType);
+        if (result != BlInventoryScanLoggingConstants.ZERO && optimizedShippingType != null) {
+            if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
+            } else {
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        optimizedShippingMethod.getCode()));
             }
         } else {
-            consignmentModel.setOptimizedShippingType(null);
-            consignmentModel.setOptimizedShippingMethodType(null);
+            consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                    OptimizedShippingMethodEnum.DEFAULT.getCode()));
         }
         getModelService().save(consignmentModel);
         getModelService().refresh(consignmentModel);

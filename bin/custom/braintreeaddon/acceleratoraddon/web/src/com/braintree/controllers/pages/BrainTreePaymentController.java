@@ -53,6 +53,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.braintree.exceptions.BraintreeCreditCardValidationException;
 
 @Controller
 @RequestMapping(value = "/braintree/checkout/hop")
@@ -162,8 +163,14 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       }
       catch (final Exception exception)
       {
-        
-    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
+        if(exception instanceof BraintreeCreditCardValidationException)
+        {
+          GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_CVV_ERROR_KEY),null);
+        }
+        else
+        {
+          GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
+        }    	
         return REDIRECT_TO_PAYMENT_METHOD;
       }
     }
@@ -187,8 +194,14 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
         }
         catch (final Exception exception)
         {
-          
-        	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
+          if(exception instanceof BraintreeCreditCardValidationException)
+          {
+            GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_CVV_ERROR_KEY),null);
+          }
+          else
+          {
+            GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
+          }         	
           return REDIRECT_TO_PAYMENT_METHOD;
         }
       }

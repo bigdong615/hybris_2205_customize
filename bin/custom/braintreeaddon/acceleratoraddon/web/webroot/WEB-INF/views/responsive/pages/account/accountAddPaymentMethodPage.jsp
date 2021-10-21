@@ -59,7 +59,7 @@
 						<div class="form-additionals" />
 						<input type="hidden" id="isAddressPresent" name="isAddressPresent"
 							value="true" />
-						<div id="billing-address-saved" class="collapse for-credit-card"
+						<div id="billing-address-saved" class="collapse fixed-line-height"
 							data-bs-parent="#billingDetails">
 
 							<c:choose>

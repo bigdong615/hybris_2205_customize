@@ -580,13 +580,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
-//              For now removing I am or someone else option for pick up
-//                if(cartModel.isPickUpByMe()) {
-//                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
-//                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
-//                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
-//                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
-//                }
                 getModelService().save(addressModel);
                 getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
@@ -623,7 +616,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving UPS pickUpByMe details", e);
         }
     }
@@ -633,23 +626,22 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public String savePickUpInfoOnCart(final BlPickUpByForm blPickUpByForm) {
-//        For now removing I am or someone else option for pick up
-//        final CartModel cartModel = getCart();
-//        try {
-//            if (cartModel != null && blPickUpByForm != null) {
-//                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
-//                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
-//                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
-//                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
-//                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
-//                getModelService().save(cartModel);
-//                getModelService().refresh(cartModel);
-//            }
+        final CartModel cartModel = getCart();
+        try {
+            if (cartModel != null && blPickUpByForm != null) {
+                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
+                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
+                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
+                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
+                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
             return BlFacadesConstants.RESULT_SUCCESS;
-//        } catch (Exception e) {
-//            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
-//            return "FAILURE";
-//        }
+        } catch (final Exception e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
+            return "FAILURE";
+        }
     }
 
     /**
@@ -701,12 +693,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setDeliveryAddress(null);
             cartModel.setDeliveryCost(null);
             cartModel.setDeliveryMode(null);
-//            For now removing I am or someone else option for pick up
-//            cartModel.setPickUpByMe(Boolean.TRUE);
-//            cartModel.setPickUpPersonFirstName(null);
-//            cartModel.setPickUpPersonLastName(null);
-//            cartModel.setPickUpPersonEmail(null);
-//            cartModel.setPickUpPersonPhone(null);
+            cartModel.setPickUpByMe(Boolean.TRUE);
+            cartModel.setPickUpPersonFirstName(null);
+            cartModel.setPickUpPersonLastName(null);
+            cartModel.setPickUpPersonEmail(null);
+            cartModel.setPickUpPersonPhone(null);
             cartModel.setDeliveryNotes(null);
             cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);

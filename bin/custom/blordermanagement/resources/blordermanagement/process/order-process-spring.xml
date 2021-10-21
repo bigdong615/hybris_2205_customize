@@ -33,11 +33,10 @@
 		<property name="addressConverter" ref="deliveryAddressGeocodeConverter"/>
 	</bean>
 		
-	<!--<bean id="sourceOrderAction" class="com.bl.Ordermanagement.actions.order.SourceOrderAction" parent="abstractAction">
-		<property name="sourcingService" ref="sourcingService"/>
+	<bean id="blInternalTransferSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlInternalTransferSourceOrderAction" parent="abstractAction">
 		<property name="allocationService" ref="allocationService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
-	</bean>-->
+	</bean>
 
 	<bean id="blSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlSourceOrderAction" parent="abstractAction">
 		<property name="blSourcingService" ref="blSourcingService"/>
@@ -45,6 +44,7 @@
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
 		<property name="blOrderService" ref="blOrderService"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 	
 	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />
@@ -76,7 +76,9 @@
 	<bean id="orderManualCheckedAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.OrderManualCheckedAction" parent="abstractOrderAction"/>
 
 	<!-- Consignment Subprocess Completion Action -->
-	<bean id="verifyOrderCompletionAction" class="com.bl.Ordermanagement.actions.order.VerifyOrderCompletionAction" parent="abstractAction"/>
+	<bean id="verifyOrderCompletionAction" class="com.bl.Ordermanagement.actions.order.VerifyOrderCompletionAction" parent="abstractAction">
+	<property name="blEspEventService" ref="blEspEventService"/>
+	</bean>
 	
 	<!-- Cancellation Actions -->
 	<bean id="cancelOrderAction" class="com.bl.Ordermanagement.actions.order.cancel.CancelOrderAction" parent="abstractAction">
@@ -105,5 +107,5 @@
 	<bean id="sendPaymentFailedNotificationAction" class="com.bl.Ordermanagement.actions.order.payment.SendPaymentFailedNotificationAction" parent="abstractAction">
 		<property name="eventService" ref="eventService"/>
 	</bean>
-	
+
 </beans>

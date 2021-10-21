@@ -1,6 +1,7 @@
 package com.bl.core.order.dao;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
 import java.util.Date;
 import java.util.List;
@@ -34,14 +35,29 @@ public interface BlOrderDao extends OrderDao
 	 * It gets the incomplete orders
 	 * @return list of orders
    * @param currentDate the current date
-   * @param date the date
 	 */
-	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(Date currentDate,
-      Date date);
+	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate);
 	/**
 	 * It gets the rental orders which are completed and shareASale value is false.
 	 * @return list of orders
 	 */
 	public List<AbstractOrderModel> getCompletedRentalOrderForShareASale();
 
+	/**
+	 * It fetches the orders which have the products which does not have enough stocks to get fulfilled
+	 * @param currentDate the current date
+	 * @param productCodes list of product code
+	 * @return list of order model
+	 */
+	public List<AbstractOrderModel> getOrdersOfUnavailableSoftAssignedSerials(final Date currentDate,
+			final List<String> productCodes);
+
+	/**
+	 * It loads the value of rolling spend attribute
+	 * @param oneYearPastDate the past date before one year
+	 * @param customerModel the customer model
+	 * @return list of order model
+	 */
+	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
+			final CustomerModel customerModel);
 }

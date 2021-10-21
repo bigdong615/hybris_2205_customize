@@ -41,7 +41,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
     if (isProductForCode(parameter).booleanValue()) {
       // So now work out what the maximum allowed to be added is (note that this may be negative!)
       final long actualAllowedQuantityChange = getAllowedQuantityChange(cartModel, productModel,
-          quantityToAdd, deliveryPointOfService);
+          quantityToAdd, deliveryPointOfService,parameter);
       final Integer maxOrderQuantity = productModel.getMaxOrderQuantity();
       final long cartLevel = checkCartLevel(productModel, cartModel, deliveryPointOfService);
       final long cartLevelAfterQuantityChange = actualAllowedQuantityChange + cartLevel;
@@ -64,7 +64,11 @@ public class DefaultBlCommerceAddToCartStrategy extends
         }
         if(BooleanUtils.isTrue(parameter.getRetailGear())){
           entryModel.getOrder().setIsNewGearOrder(true);
+          entryModel.getOrder().setIsRentalCart(Boolean.FALSE);
+          entryModel.getOrder().setRentalStartDate(null);
+          entryModel.getOrder().setRentalEndDate(null);
         }
+        entryModel.setBundleMainEntry(parameter.isBundleMainEntry());
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,
@@ -118,14 +122,16 @@ public class DefaultBlCommerceAddToCartStrategy extends
    * @return stock quantity
    */
   private long getAllowedQuantityChange(final CartModel cartModel, final ProductModel productModel,
-      final long quantityToAdd, final PointOfServiceModel deliveryPointOfService) {
+      final long quantityToAdd, final PointOfServiceModel deliveryPointOfService,final CommerceCartParameter parameter) {
 
     //based on used gear add to cart below commented code need to update/remove.
     /*if(productModel instanceof BlSerialProductModel) { //NOSONAR
       return getAllowedCartAdjustmentForProduct(cartModel, productModel, quantityToAdd,
           deliveryPointOfService);
     }*/ //NOSONAR
-
+ if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage())){
+   return quantityToAdd;
+ }
     return DEFAULT_STOCK_QUANTITY;
   }
 

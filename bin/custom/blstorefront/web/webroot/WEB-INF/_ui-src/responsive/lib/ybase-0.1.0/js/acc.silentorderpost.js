@@ -1,6 +1,6 @@
 ACC.silentorderpost = {
 
-	spinner: $("<img>").attr("src", ACC.config.commonResourcePath + "/images/spinner.gif"),
+	spinner: $("<img>").attr("src", ACC.config.commonResourcePath + "/images/spinner.gif").addClass("spiner-select"),
 
 	bindUseDeliveryAddress: function ()
 	{

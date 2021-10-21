@@ -1,6 +1,7 @@
 package com.bl.core.order.dao.impl;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.suggestion.dao.SimpleSuggestionDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -9,22 +10,19 @@ import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.impl.DefaultOrderDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -38,8 +36,13 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
 	private UserService userService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
+	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
+	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ISAUTHORISED + "} = ?isAuthorized ";
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {o:" + AbstractOrderModel.ISAUTHORISED
+			+ "} = ?isAuthorized ";
 
 	private static final String GET_ORDERS_BY_CODE_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.CODE + "} = ?code ";
@@ -51,11 +54,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
 			+ "} BETWEEN ?startDate AND ?endDate) AND {o:status} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'MANUAL_REVIEW'}})";
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
+			+ "} =?manualReviewStatusByReshuffler";
+
+	private static final String GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o JOIN " + OrderEntryModel._TYPECODE + " AS oe ON {oe:order} = {o:pk} JOIN " + BlProductModel._TYPECODE
+			+ " AS p ON {oe:product}={p:pk} LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {p:"
+			+ BlProductModel.CODE + "} IN (?productCodes) AND {con:" + ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate"
+			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})";
 
 	private static final String GET_COMPLETED_RENTAL_ORDERS_FOR_SHARE_A_SALE = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALCART + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
+
+	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ORDERCOMPLETEDDATE + "} > ?orderCompletedDate AND {o:"
+			+ OrderModel.USER + "} IN ({{SELECT {" + ItemModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {"
+			+ CustomerModel.UID + "} = ?uid}})";
 
 	/**
  	* {@inheritDoc}
@@ -63,57 +78,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	@Override
 	public List<AbstractOrderModel> getOrdersForAuthorization()
 	{
+		final Date currentDate = Date
+				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		final Date endDate = DateUtils.addDays(currentDate, 1);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_FOR_AUTHORIZATION_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.IS_AUTHORISED, Boolean.FALSE);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<AbstractOrderModel> ordersToAuthorizePayment = result.getResult();
-		final List<AbstractOrderModel> ordersToAuthPayment = new ArrayList<>();
 		if (CollectionUtils.isEmpty(ordersToAuthorizePayment))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No orders found to authorize the payment");
 			return Collections.emptyList();
-		} else {
-			ordersToAuthorizePayment.stream().forEach(order -> {
-				if(checkDifferenceBetweenShippingAndCurrentDate(order)) {
-					ordersToAuthPayment.add(order);
-				}
-			});
 		}
-		return ordersToAuthPayment;
-		
+		return ordersToAuthorizePayment;
 	}
 
-	/**
-	 * It checks the difference between shipping date and current date
-	 * @param order
-	 * @return true if difference between shipping date and current date is 0 or 1
-	 */
-	private boolean checkDifferenceBetweenShippingAndCurrentDate(final AbstractOrderModel order) {
-		final Set<ConsignmentModel> consignments = order.getConsignments();
-		final LocalDateTime currentDate = BlDateTimeUtils.getFormattedDateTime(Date
-				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		final Optional<ConsignmentModel> orderToAuthPayment = consignments.stream().filter(consignmentModel ->
-				isEligibleForPaymentAuthorization(consignmentModel.getOptimizedShippingStartDate(), currentDate)).findFirst();
-				if(orderToAuthPayment.isPresent()) {
-					return true;
-				}
-		return false;
-	}
-
-	/**
-	 * It checks the difference between shipping date and current date
-	 * @param shippingStartDate
-	 * @param currentDate
-	 * @return true if difference between shipping date and current date is 0 or 1
-	 */
-	private boolean isEligibleForPaymentAuthorization(final Date shippingStartDate, final LocalDateTime currentDate) {
-		if(null != shippingStartDate) {
-			final LocalDateTime optimizedShippingStartDate =BlDateTimeUtils.getFormattedDateTime(shippingStartDate);
-			final long DifferenceInDays = ChronoUnit.DAYS.between(currentDate, optimizedShippingStartDate);
-			return DifferenceInDays ==0 || DifferenceInDays == 1;
-		}
-		return false;
-	}
 	/**
 	 * {@inheritDoc}
 	 */
@@ -152,17 +133,39 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			return result.getResult();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate,
-			final Date date) {
+	public List<AbstractOrderModel> getIncompleteOrdersToBeProcessed(final Date currentDate) {
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_INCOMPLETE_ORDERS_TO_BE_PROCESSED_QUERY);
 		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
 		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		fQuery.addQueryParameter(MANUAL_REVIEW_STATUS_BY_RESHUFFLER, false);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		if (CollectionUtils.isEmpty(result.getResult()))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "There are no orders to be processed via reshuffler job with manual review status");
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via reshuffler job with manual review status for the day {} ", currentDate);
+		}
+		return result.getResult();
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersOfUnavailableSoftAssignedSerials(final Date currentDate,
+			final List<String> productCodes) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODES, productCodes);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no other orders for the unavailable products {} for the day {} ", productCodes, currentDate);
 		}
 		return result.getResult();
 	}
@@ -191,6 +194,25 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					BlCoreConstants.SHARE_A_SALE_ORDERS_NOT_EXIST);
+			return Collections.emptyList();
+		}
+		return abstractOrderModelList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
+			final CustomerModel customerModel) {
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(
+				GET_ONE_YEAR_OLD_COMPLETED_ORDERS);
+		query.addQueryParameter(ORDER_COMPLETED_DATE, oneYearPastDate);
+		query.addQueryParameter(BlCoreConstants.UID, customerModel.getUid());
+		final SearchResult<AbstractOrderModel> result = getFlexibleSearchService().search(query);
+		final List<AbstractOrderModel> abstractOrderModelList = result.getResult();
+		if (CollectionUtils.isEmpty(abstractOrderModelList)) {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Orders Found in past one year as per order completed date");
 			return Collections.emptyList();
 		}
 		return abstractOrderModelList;

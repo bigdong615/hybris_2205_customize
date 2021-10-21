@@ -1,5 +1,6 @@
 package com.bl.core.services.consignment.entry;
 
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 
 import java.util.Set;
@@ -40,4 +41,13 @@ public interface BlConsignmentEntryService
 	 *           the serial product models
 	 */
 	void setItemsMap(final ConsignmentEntryModel entry, final Set<BlSerialProductModel> serialProductModels);
+
+	/**
+	 * Created Map to display Shipper what all items are attached to the consignment.
+	 * @param entry
+	 *           the entry
+	 * @param orderEntry
+	 *           the serial product models
+	 */
+	void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry, final AbstractOrderEntryModel orderEntry);
 }

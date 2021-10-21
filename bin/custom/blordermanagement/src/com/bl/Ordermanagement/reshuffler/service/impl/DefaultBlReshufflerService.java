@@ -6,14 +6,17 @@ import com.bl.Ordermanagement.reshuffler.service.BlReshufflerService;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -24,6 +27,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.tx.Transaction;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
@@ -37,6 +41,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -68,6 +74,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   private BlAllocationService blAllocationService;
   private BlStockLevelDao blStockLevelDao;
   private BlConsignmentEntryService blConsignmentEntryService;
+  private BlProductService blProductService;
 
   /**
    * {@inheritDoc}
@@ -76,24 +83,48 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   public void processIncompleteOrders() {
     final Date currentDate = Date
         .from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-    final List<AbstractOrderModel> todayOrdersToBeProcessed = getOrderDao()
-        .getIncompleteOrdersToBeProcessed(currentDate, currentDate);
-    //Sort the orders by order total price
-    final List<AbstractOrderModel> ordersSortedByTotalPrice = todayOrdersToBeProcessed.stream()
-        .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
-        .collect(Collectors.toList());
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-				"List of orders to fulfill {} ", ordersSortedByTotalPrice.toString());
-    final BaseStoreModel baseStoreModel = getBaseStoreService()
-        .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
-    //Get all warehouses
-    final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
-    //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
-    // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
-    final Map<AbstractOrderModel, Set<String>> filteredOrders = filterOrdersForProcessing(
-        ordersSortedByTotalPrice,
-        warehouses, currentDate);
-    processOrders(filteredOrders, warehouses);
+    final Date endDate = DateUtils.addDays(currentDate, 2);
+    for (Date startDate = currentDate; startDate.before(endDate); startDate = DateUtils.addDays(startDate, 1)) {
+      processOrdersByDay(startDate, startDate.equals(currentDate));
+    }
+  }
+
+  /**
+   * It processed the orders day wise
+   * @param currentDate the date
+   * @param isPresentDay is present day
+   */
+  public void processOrdersByDay(final Date currentDate, final boolean isPresentDay) {
+    final List<AbstractOrderModel> ordersToBeProcessed = getOrderDao()
+        .getIncompleteOrdersToBeProcessed(currentDate);
+    if(CollectionUtils.isNotEmpty(ordersToBeProcessed)) {
+      //Sorted by delivery mode
+      final Set<AbstractOrderModel> removeDuplicateOrders = new HashSet<>(ordersToBeProcessed);
+      final List<AbstractOrderModel> ordersSortedByDeliveryMode = removeDuplicateOrders.stream()
+          .filter(order -> order.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel)
+          .collect(Collectors.toList());
+      final List<AbstractOrderModel> remainingOrders = new ArrayList<>(removeDuplicateOrders);
+      remainingOrders.removeAll(ordersSortedByDeliveryMode);
+      //Sort the orders by order total price
+      final List<AbstractOrderModel> ordersSortedByTotalPrice = remainingOrders.stream()
+          .sorted(Comparator.comparing(AbstractOrderModel::getTotalPrice).reversed())
+          .collect(Collectors.toList());
+      final List<AbstractOrderModel> finalSortedOrders = new ArrayList<>();
+      finalSortedOrders.addAll(ordersSortedByDeliveryMode);
+      finalSortedOrders.addAll(ordersSortedByTotalPrice);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "List of orders to fulfill {} for the day {} ", finalSortedOrders.toString(), currentDate);
+      final BaseStoreModel baseStoreModel = getBaseStoreService()
+          .getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+      //Get all warehouses
+      final List<WarehouseModel> warehouses = baseStoreModel.getWarehouses();
+      //It filters the orders which needs to be processed and ignore the orders which contains the SKU (when total number
+      // of sku needed for orders, will ship on same day, is not sufficient to fulfill from main and buffer inventory
+      final Map<AbstractOrderModel, Set<String>> filteredOrders = filterOrdersForProcessing(
+          finalSortedOrders,
+          warehouses, currentDate, isPresentDay);
+         processOrders(filteredOrders, warehouses);
+    }
   }
 
   /**
@@ -104,12 +135,34 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    */
   private void processOrders(final Map<AbstractOrderModel, Set<String>> filteredOrders,
       final List<WarehouseModel> warehouses) {
-    filteredOrders.entrySet().forEach(entry -> {
-      //It gets the preferred warehouse
-      final WarehouseModel location = getBlDeliveryStateSourcingLocationFilter()
-          .applyFilter(entry.getKey());
-      fulfillFromWH(location, entry, warehouses);
-    });
+      filteredOrders.entrySet().forEach(entry -> {
+        Transaction tx = Transaction.current();
+        tx.enableDelayedStore(false);
+        boolean fulfillmentCompleted = false;
+        try {
+        tx.begin();
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            "Processing the order {} ", entry.getKey().getCode());
+        //It gets the preferred warehouse
+        final WarehouseModel location = getBlDeliveryStateSourcingLocationFilter()
+            .applyFilter(entry.getKey());
+        fulfillmentCompleted = fulfillFromWH(location, entry, warehouses);
+        } catch (final Exception ex) {
+          BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred while fulfilling the order {} through BlReshufflerJob {} ",
+              entry.getKey().getCode(), ex);
+          BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while fulfilling the order", ex);
+        } finally {
+          if(fulfillmentCompleted){
+            tx.commit();
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                "Order fulfillment is successful for the order {} ", entry.getKey().getCode());
+          }else{
+            tx.rollback();
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+                "Order fulfillment is not successful for the order {} ", entry.getKey().getCode());
+          }
+        }
+      });
   }
 
   /**
@@ -134,42 +187,41 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    * @param entry the map with orders and associated unallocated products
    * @param warehouses list of warehouses
    */
-  private void fulfillFromWH(final WarehouseModel location,
+  private boolean fulfillFromWH(final WarehouseModel location,
       final Entry<AbstractOrderModel, Set<String>> entry,
       final List<WarehouseModel> warehouses) {
     final AbstractOrderModel order = entry.getKey();
     final Set<String> productCodes = entry.getValue();
     final WarehouseModel anotherWH = getAnotherWarehouse(warehouses, location);
-    final Set<String> modifiedProductCodes = modifyProductCodes(order, productCodes, location,
-        anotherWH);
+    final Set<String> modifiedProductCodes = modifyProductCodes(order, anotherWH);
     boolean noSplitting = false;
     modifiedProductCodes.addAll(productCodes);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-				"list of products {} to fulfill from this warehouse {} for the order {}",
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+				"list of products {} to fulfill from preferred warehouse {} for the order {}",
 				modifiedProductCodes.toString(), location.getCode(), order.getCode());
     final Collection<StockLevelModel> stockLevels = getStocks(modifiedProductCodes, location,
         entry.getKey());
     final Map<String, List<StockLevelModel>> availabilityMap = getBlCommerceStockService()
         .groupBySkuProductWithAvailability(stockLevels);
-    noSplitting = isSourcingNoSplittingPossible(modifiedProductCodes, availabilityMap, order,
-        anotherWH);
+    noSplitting = MapUtils.isNotEmpty(availabilityMap) ? isSourcingNoSplittingPossible(modifiedProductCodes,
+        availabilityMap, order, anotherWH) : false;
     if (noSplitting) {
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"all the products can be fulfilled from this warehouse {} for the order {}",
 					location.getCode(), order.getCode());
       final Collection<AbstractOrderEntryModel> orderEntries = getOrderEntries(order,
           modifiedProductCodes);
       final SourcingContext context = createSourcingContext(orderEntries);
-      final SourcingLocation sourcingLocation = createSourcingLocation(availabilityMap, location,
+      createSourcingLocation(availabilityMap, location,
           context);
-      assignSerialFromLocation(context, sourcingLocation, true, anotherWH);
+      assignSerialFromLocation(context, true, anotherWH);
       deleteOtherConsignmentIfAny(order, anotherWH);
       createConsignment(order, context, location);
+      setOrderStatus(order);
     } else {
-      final Set<String> modifiedProductForOtherWH = modifyProductCodes(order, productCodes,
-          anotherWH, location);
+      final Set<String> modifiedProductForOtherWH = modifyProductCodes(order, location);
       modifiedProductForOtherWH.addAll(productCodes);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"list of products {} to fulfill from this warehouse {} for the order {}",
 					modifiedProductForOtherWH.toString(), anotherWH, order.getCode());
       final Collection<StockLevelModel> stockLevelsFromOtherWh = getStocks(
@@ -177,27 +229,62 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           anotherWH, entry.getKey());
       final Map<String, List<StockLevelModel>> availabilityMapForOtherWH = getBlCommerceStockService()
           .groupBySkuProductWithAvailability(stockLevelsFromOtherWh);
-      noSplitting = isSourcingNoSplittingPossible(modifiedProductForOtherWH,
-          availabilityMapForOtherWH, order, location);
+      noSplitting = MapUtils.isNotEmpty(availabilityMapForOtherWH) ? isSourcingNoSplittingPossible(modifiedProductForOtherWH,
+          availabilityMapForOtherWH, order, location) : false;
       if (noSplitting) {
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"all the products can be fulfilled from this warehouse {} for the order {}",
 						anotherWH, order.getCode());
         final Collection<AbstractOrderEntryModel> orderEntries = getOrderEntries(order,
             modifiedProductForOtherWH);
         final SourcingContext context = createSourcingContext(orderEntries);
-        final SourcingLocation sourcingLocation = createSourcingLocation(availabilityMapForOtherWH,
+        createSourcingLocation(availabilityMapForOtherWH,
             anotherWH, context);
-        assignSerialFromLocation(context, sourcingLocation, true, location);
+        assignSerialFromLocation(context, true, location);
         deleteOtherConsignmentIfAny(order, location);
         createConsignment(order, context, anotherWH);
+        setOrderStatus(order);
       }
     }
     if (!noSplitting) {
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"all the products can not be fulfilled from single warehouse for the order {}",
 					order.getCode());
       fulfillFromMultipleWarehouses(entry, location, anotherWH, productCodes);
+    }
+    return true;
+  }
+
+  /**
+   * It sets the order status to Ready if all the unallocated products are fulfilled
+   * through reshuffler job
+   * @param order the order
+   */
+  private void setOrderStatus(final AbstractOrderModel order) {
+    final boolean allQuantityFulfilled = order.getEntries().stream().allMatch(entry -> {
+        setUnallocatedQtyToZero(entry);
+       return entry.getQuantity() == entry.getSerialProducts().size();
+    });
+    if(allQuantityFulfilled) {
+      order.setStatus(OrderStatus.RECEIVED);
+      getModelService().save(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",
+          order.getCode(), order.getStatus().getCode());
+    }
+  }
+
+  /**
+   * It sets unallocated quantity to zero if all the unallocated products are fulfilled
+   * @param entry the order entry
+   */
+  private void setUnallocatedQtyToZero(final AbstractOrderEntryModel entry) {
+    if(entry.getUnAllocatedQuantity() > 0 && entry.getQuantity() == entry.getSerialProducts().size()) {
+      entry.setUnAllocatedQuantity(0L);
+      getModelService().save(entry);
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "All the products are fulfilled of this entry {} for the order {} ",
+          entry, entry.getOrder().getCode());
     }
   }
 
@@ -211,35 +298,43 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final ConsignmentModel consignmentModel = getConsignment(anotherWH, order);
     final Set<String> productCodes = new HashSet<>();
     if(Objects.nonNull(consignmentModel)) {
-			consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
-				consignmentEntryModel.getSerialProducts().forEach(serialProduct -> {
-					if (serialProduct instanceof BlSerialProductModel) {
-						productCodes.add(((BlSerialProductModel) serialProduct).getCode());
-					}
-					final AbstractOrderEntryModel orderEntry = consignmentEntryModel.getOrderEntry();
-					final List<BlProductModel> serialProducts = orderEntry.getSerialProducts()
-							.stream()
-							.filter(product -> product instanceof BlSerialProductModel && ((BlSerialProductModel)
-									product).getWarehouseLocation().getCode().equals(anotherWH.getCode()))
-							.collect(Collectors.toList());
-					final List<BlProductModel> serialProductList = orderEntry.getSerialProducts();
-					serialProductList.removeAll(serialProducts);
-					orderEntry.setSerialProducts(serialProductList);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-							"It updates the serial product list {} for the order entry",
-							serialProductList.toString(), orderEntry);
-					getModelService().save(orderEntry);
-				});
-			});
+      final Iterator<ConsignmentEntryModel> consignmentEntries = consignmentModel.getConsignmentEntries().iterator();
+      while (consignmentEntries.hasNext()) {
+        final ConsignmentEntryModel consignmentEntryModel = consignmentEntries.next();
+        consignmentEntryModel.getSerialProducts().forEach(serialProduct -> {
+          if (serialProduct instanceof BlSerialProductModel) {
+            productCodes.add(((BlSerialProductModel) serialProduct).getCode());
+          }
+          final AbstractOrderEntryModel orderEntry = consignmentEntryModel.getOrderEntry();
+          final List<BlProductModel> serialProducts = consignmentEntryModel.getSerialProducts();
+          final List<BlProductModel> serialProductList = orderEntry.getSerialProducts();
+          final List<BlProductModel> updatedSerialProducts = new ArrayList<>(serialProductList);
+          updatedSerialProducts.removeAll(serialProducts);
+          orderEntry.setSerialProducts(updatedSerialProducts);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+              "It updates the serial product list {} for the order entry {} of the order {} ",
+              serialProductList.toString(), orderEntry, order.getCode());
+          getModelService().save(orderEntry);
+        });
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            "consignment to delete", consignmentEntryModel);
+        getModelService().remove(consignmentEntryModel);
+      }
 			if (CollectionUtils.isNotEmpty(productCodes)) {
 				final Collection<StockLevelModel> stocks = getBlStockLevelDao()
 						.findSerialStockLevelsForDateAndCodes(productCodes,
 								consignmentModel.getOptimizedShippingStartDate(),
 								consignmentModel.getOptimizedShippingEndDate(), Boolean.TRUE);
-				stocks.forEach(stock -> stock.setReservedStatus(false));
+				stocks.forEach(stock -> {
+				  stock.setReservedStatus(false);
+				  stock.setOrder(null);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+              "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+              stock.getSerialProductCode());
+        });
 				this.getModelService().saveAll(stocks);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"consignment to delete", consignmentModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"consignment to delete", consignmentModel.getCode());
 				getModelService().remove(consignmentModel);
 				getModelService().refresh(order);
 			}
@@ -269,12 +364,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 	/**
 	 * It assigns the serial as per serial priority rules
 	 * @param context
-	 * @param sourcingLocation
 	 * @param fulfilledFromSingleWH
 	 * @param warehouseModel
 	 */
   private void assignSerialFromLocation(final SourcingContext context,
-      final SourcingLocation sourcingLocation,
       final boolean fulfilledFromSingleWH, final WarehouseModel warehouseModel) {
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
     SourcingResult result = new SourcingResult();
@@ -287,8 +380,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                 serialProduct instanceof BlSerialProductModel
                     && ((BlSerialProductModel) serialProduct).getWarehouseLocation()
                     .getCode().equals(warehouseModel.getCode())).collect(Collectors.toList());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"The number of products {} to consider from the other warehouse {}",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"The number of products {} to consider from the other warehouse {} ",
 						entries.size(), warehouseModel.getCode());
       }
       Long quantity = 0L;
@@ -297,12 +390,13 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
               : 0L;
       if (splitConsignmentQuantity > 0L) {
         quantity = entry.getSplitConsignmentQuantity();
+        entry.setSplitConsignmentQuantity(0L);
         getModelService().save(entry);
 
       } else {
         quantity = entry.getUnAllocatedQuantity() + entries.size();
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"The quantity {} to be fulfilled for the order entry {}",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"The quantity {} to be fulfilled for the order entry {} ",
 						quantity, entry);
       }
       getBlAssignSerialService()
@@ -364,40 +458,39 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
         .isNotEmpty(stockLevelsFromOtherWH)) {
       final List<String> products = new ArrayList<>();
       final List<String> productsFromOtherWH = new ArrayList<>();
-      entry.getValue().forEach(skuProduct -> {
+      entry.getValue().forEach(skuProduct ->
         populateProductFulfillDetailsForBothWH(availabilityMap, skuProduct, order, products,
-            availabilityMapForOtherWH, productsFromOtherWH, allEntriesCanBeFulfilled);
-      });
+            availabilityMapForOtherWH, productsFromOtherWH, allEntriesCanBeFulfilled));
       warehouseWithProducts.put(location, products);
       warehouseWithProducts.put(anotherWH, productsFromOtherWH);
     } else if (CollectionUtils.isNotEmpty(stockLevels)) {
       final List<String> products = new ArrayList<>();
-      entry.getValue().forEach(skuProduct -> {
+      entry.getValue().forEach(skuProduct ->
         populateProductFulfillDetails(availabilityMap, skuProduct, order, products,
-            allEntriesCanBeFulfilled);
-      });
+            allEntriesCanBeFulfilled));
       warehouseWithProducts.put(location, products);
     } else if (CollectionUtils.isNotEmpty(stockLevelsFromOtherWH)) {
       final List<String> productsFromOtherWH = new ArrayList<>();
-      entry.getValue().forEach(skuProduct -> {
+      entry.getValue().forEach(skuProduct ->
         populateProductFulfillDetails(availabilityMapForOtherWH, skuProduct, order,
-            productsFromOtherWH, allEntriesCanBeFulfilled);
-      });
+            productsFromOtherWH, allEntriesCanBeFulfilled));
       warehouseWithProducts.put(anotherWH, productsFromOtherWH);
+    } else {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "This product {} of the order {} does not have enough stock to fulfill ", entry.getValue(), order.getCode());
     }
     if (allEntriesCanBeFulfilled.get()) {
       warehouseWithProducts.entrySet().forEach(entryPerWH -> {
         final Set<String> products = new HashSet<>();
-        entryPerWH.getValue().forEach(product -> {
-          products.add(product);
-        });
+        entryPerWH.getValue().forEach(products::add);
         if (entryPerWH.getKey().equals(location)) {
           final Collection<AbstractOrderEntryModel> entries = getOrderEntries(order, products);
           final SourcingContext context = createSourcingContext(entries);
           final SourcingLocation sourcingLocation = createSourcingLocation(availabilityMap,
               location, context);
-          assignSerialFromLocation(context, sourcingLocation, false, anotherWH);
+          assignSerialFromLocation(context, false, anotherWH);
           createConsignment(order, context, location);
+          setOrderStatus(order);
         } else {
           if (entryPerWH.getKey().equals(anotherWH)) {
             final Collection<AbstractOrderEntryModel> orderEntries = getOrderEntries(order,
@@ -405,9 +498,10 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             final SourcingContext context = createSourcingContext(orderEntries);
             final SourcingLocation sourcingLocation = createSourcingLocation(
                 availabilityMapForOtherWH, anotherWH, context);
-            assignSerialFromLocation(context, sourcingLocation, false, location);
+            assignSerialFromLocation(context, false, location);
             //create consignment
             createConsignment(order, context, anotherWH);
+            setOrderStatus(order);
           }
         }
       });
@@ -440,32 +534,32 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     if (orderEntryModel.isPresent()) {
       final AbstractOrderEntryModel orderEntry = orderEntryModel.get();
       final Long unallocatedQty = orderEntry.getUnAllocatedQuantity();
-      if (orderEntry.getUnAllocatedQuantity() <= availableQty) {
+      if (unallocatedQty <= availableQty) {
         products.add(orderEntry.getProduct().getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"all quantity {} to fulfill from the preferred warehouse for the order entry",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"all quantity {} to fulfill from the preferred warehouse for the order entry {} ",
 						availableQty, orderEntry);
-      } else if (orderEntry.getUnAllocatedQuantity() <= availableQtyFromOtherWH) {
+      } else if (unallocatedQty <= availableQtyFromOtherWH) {
         productsFromOtherWH.add(orderEntry.getProduct().getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"all quantity {} to fulfill from the preferred warehouse for the order entry",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"all quantity {} to fulfill from the preferred warehouse for the order entry {} ",
 						availableQtyFromOtherWH, orderEntry);
-      } else if (orderEntry.getUnAllocatedQuantity() <= availableQty + availableQtyFromOtherWH) {
+      } else if (unallocatedQty <= availableQty + availableQtyFromOtherWH) {
         products.add(orderEntry.getProduct().getCode());
         orderEntry.setSplitConsignmentQuantity(availableQty);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"{} quantity to fulfill from the preferred warehouse for the order entry",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"{} quantity to fulfill from the preferred warehouse for the order entry {} ",
 						availableQty, orderEntry);
-        orderEntry.setUnAllocatedQuantity(orderEntry.getUnAllocatedQuantity() - availableQty);
+        orderEntry.setUnAllocatedQuantity(unallocatedQty - availableQty);
         productsFromOtherWH.add(orderEntry.getProduct().getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"{} quantity to fulfill from the other warehouse for the order entry",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"{} quantity to fulfill from the other warehouse for the order entry {} ",
 						orderEntry.getUnAllocatedQuantity() - availableQty, orderEntry);
         getModelService().save(orderEntry);
       } else {
         allEntriesCanBeFulfilled.set(Boolean.FALSE);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"This entry {} does not have enough stock to fulfill ", orderEntry);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"This entry {} of the order {} does not have enough stock to fulfill ", orderEntry, order.getCode());
       }
     }
   }
@@ -488,16 +582,15 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             orderEntry.getProduct().getCode()
                 .equals(skuProduct)).findFirst();
     if (orderEntryModel.isPresent()) {
-      final Long unallocatedQty = orderEntryModel.get().getUnAllocatedQuantity();
       if (orderEntryModel.get().getUnAllocatedQuantity() <= availableQty) {
         productWithQty.add(orderEntryModel.get().getProduct().getCode());
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"all quantity {} to fulfill from the preferred warehouse for the order entry",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"all quantity {} to fulfill from the preferred warehouse for the order entry {} ",
 						availableQty, orderEntryModel);
       } else {
         allEntriesCanBeFulfilled.set(Boolean.FALSE);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"This entry {} does not have enough stock to fulfill ", orderEntryModel);
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+						"This entry {} of the order {} does not have enough stock to fulfill ", orderEntryModel, order.getCode());
       }
     }
   }
@@ -505,26 +598,22 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 	/**
 	 * It gets the products from the consignment of the other warehouse
 	 * @param order the order
-	 * @param productCodes list of product code
-	 * @param preferredWH the preferred warehouse
 	 * @param otherWH the other warehouse
 	 * @return list of product code
 	 */
   private Set<String> modifyProductCodes(final AbstractOrderModel order,
-      final Set<String> productCodes,
-      final WarehouseModel preferredWH, final WarehouseModel otherWH) {
+    final WarehouseModel otherWH) {
     final Set<String> products = new HashSet<>();
     final Optional<ConsignmentModel> consignment = order.getConsignments().stream()
         .filter(consignmentModel ->
             consignmentModel.getWarehouse().getCode().equals(otherWH.getCode())).findAny();
     if (consignment.isPresent()) {
-      consignment.get().getConsignmentEntries().forEach(consignmentEntryModel -> {
+      consignment.get().getConsignmentEntries().forEach(consignmentEntryModel ->
         consignmentEntryModel.getSerialProducts().forEach(serialProduct -> {
           if (serialProduct instanceof BlSerialProductModel) {
             products.add(((BlSerialProductModel) serialProduct).getBlProduct().getCode());
           }
-        });
-      });
+        }));
     }
     return products;
   }
@@ -543,40 +632,46 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
             new SourcingResult();
     final ConsignmentModel consignment = getConsignment(warehouseModel, order);
     if (Objects.isNull(consignment)) {
-      getBlAllocationService().createConsignment(order,
+      final ConsignmentModel newConsignment = getBlAllocationService().createConsignment(order,
           BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + order.getCode()
               + BlOrdermanagementConstants.UNDER_SCORE
               + order.getConsignments().size(),
           result);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"A new consignment has been created {} ", consignment);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"A new consignment has been created {} ", newConsignment.getCode());
     } else {
       final List<AbstractOrderEntryModel> orderEntries = new ArrayList<>();
-      context.getOrderEntries().forEach(orderEntry -> {
+      context.getOrderEntries().forEach(orderEntry ->
         consignment.getConsignmentEntries().forEach(consignmentEntryModel -> {
           if (consignmentEntryModel.getOrderEntry().equals(orderEntry)) {
             updateConsignmentEntry(consignmentEntryModel, result, orderEntry);
             orderEntries.add(orderEntry);
-						BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-								"This consignment entry already exists {} of the consignment {}", consignmentEntryModel, consignment);
+						BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+								"This consignment entry already exists {} of the consignment {}", consignmentEntryModel, consignment.getCode());
           }
-        });
-      });
-      final List<AbstractOrderEntryModel> contextOrderEntries = new ArrayList<>();
+        }));
+      final List<AbstractOrderEntryModel> contextOrderEntries = new ArrayList<>(context.getOrderEntries());
       contextOrderEntries.removeAll(orderEntries);
       context.setOrderEntries(contextOrderEntries);
+      final SourcingResult sourcingResult = context.getResult().getResults().iterator().next();
       final Set<ConsignmentEntryModel> entries = context.getOrderEntries().stream()
           .map(entryModel ->
-              getBlAllocationService()
-                  .createConsignmentEntry(entryModel, entryModel.getQuantity(), consignment,
-                      context.getResult().getResults().iterator().next())
+            getBlAllocationService()
+                .createConsignmentEntry(entryModel, Long.valueOf(result.getSerialProductMap()
+                        .get(entryModel.getEntryNumber()).size()), consignment,
+                    sourcingResult)
           ).collect(Collectors.toSet());
+      entries.forEach( consignmentEntryModel -> {
+        final Set<BlSerialProductModel> serialProductModels =
+            null == result.getSerialProductMap() ? new HashSet<>() : result.getSerialProductMap()
+                .get(consignmentEntryModel.getOrderEntry().getEntryNumber());
+        reserveStocksForSerialProductsThroughReshuffler(serialProductModels, consignmentEntryModel);
+      });
       entries.addAll(consignment.getConsignmentEntries());
       consignment.setConsignmentEntries(entries);
+      consignment.setStatus(ConsignmentStatus.READY);
       getModelService().save(consignment);
     }
-    order.setStatus(OrderStatus.READY);
-    getModelService().save(order);
   }
 
 	/**
@@ -590,6 +685,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
       final AbstractOrderEntryModel orderEntry) {
     final List<BlProductModel> consignmentEntrySerialProducts =
         null != entry.getSerialProducts() ? entry.getSerialProducts() : new ArrayList<>();
+    final List<BlProductModel> associatedSerialProducts = new ArrayList<>(consignmentEntrySerialProducts);
 
     final Set<BlSerialProductModel> serialProductModels =
         null != result.getSerialProductMap() ? result.getSerialProductMap()
@@ -597,13 +693,48 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 
     if (CollectionUtils.isNotEmpty(serialProductModels)) {
 
-      consignmentEntrySerialProducts.addAll(serialProductModels);
+      associatedSerialProducts.addAll(serialProductModels);
       entry.setSerialProducts(
-          consignmentEntrySerialProducts);   //setting serial products from result
+          associatedSerialProducts);   //setting serial products from result
+      entry.setQuantity(Long.valueOf(associatedSerialProducts.size()));
 
-      getBlConsignmentEntryService().setItemsMap(entry, serialProductModels);
-      getBlAllocationService().setSerialCodesToBillingCharges(entry, serialProductModels);
+      final Set<BlSerialProductModel> serialProducts = new HashSet<>();
+          associatedSerialProducts.forEach(serial -> {
+          if(serial instanceof BlSerialProductModel) {
+            serialProducts.add((BlSerialProductModel) serial);
+          }
+      });
+      getBlConsignmentEntryService().setItemsMap(entry, serialProducts);
+      getBlAllocationService().setSerialCodesToBillingCharges(entry, serialProducts);
       getModelService().save(entry);
+      reserveStocksForSerialProductsThroughReshuffler(serialProductModels, entry);
+    }
+  }
+
+  /**
+   * It reserves the stocks for the assigned serial products
+   * @param serialProductModels set of serial product model
+   * @param entry the consignment entry
+   */
+  public void reserveStocksForSerialProductsThroughReshuffler(final Set<BlSerialProductModel> serialProductModels,
+      final ConsignmentEntryModel entry) {
+    final Set<String> allocatedProductCodes = new HashSet<>();
+    allocatedProductCodes
+        .addAll(serialProductModels.stream().map(BlSerialProductModel::getCode).collect(
+            Collectors.toSet()));
+    final Collection<StockLevelModel> serialStocks = blStockLevelDao
+        .findSerialStockLevelsForDateAndCodes(allocatedProductCodes, entry.getConsignment().getOptimizedShippingStartDate(),
+            entry.getConsignment().getOptimizedShippingEndDate(), Boolean.FALSE);
+    if (CollectionUtils.isNotEmpty(serialStocks) && serialStocks.stream()
+        .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+      serialStocks.forEach(stock -> {
+        stock.setReservedStatus(true);
+        stock.setOrder(entry.getOrderEntry().getOrder().getCode());
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            "Stock status is changed to {} for the serial product {} ", stock.getReservedStatus(),
+            stock.getSerialProductCode());
+      });
+      this.getModelService().saveAll(serialStocks);
     }
   }
 
@@ -619,17 +750,19 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   Map<String, List<StockLevelModel>> availabilityMap, final AbstractOrderModel order,
       final WarehouseModel warehouseModel) {
     return modifiedProductCodes.stream().allMatch(skuProduct -> {
-      final Long availableQty = getAvailabilityForProduct(skuProduct, availabilityMap);
-      final Optional<AbstractOrderEntryModel> orderEntryModel = order.getEntries().stream()
-          .filter(orderEntry ->
-              orderEntry.getProduct().getCode()
+      final Optional<AbstractOrderEntryModel> orderEntry = order.getEntries().stream()
+          .filter(entry ->
+              entry.getProduct().getCode()
                   .equals(skuProduct)).findFirst();
-      final List<BlProductModel> entries = orderEntryModel.get().getSerialProducts().stream()
+      final AbstractOrderEntryModel orderEntryModel = orderEntry.get();
+      final Long availableQty = getBlProductService().isAquatechProduct(orderEntryModel.getProduct()) ? orderEntryModel
+          .getQuantity() : getAvailabilityForProduct(skuProduct, availabilityMap);
+      final List<BlProductModel> entries = orderEntryModel.getSerialProducts().stream()
           .filter(serialProduct ->
               serialProduct instanceof BlSerialProductModel
                   && ((BlSerialProductModel) serialProduct).getWarehouseLocation()
                   .getCode().equals(warehouseModel.getCode())).collect(Collectors.toList());
-      return orderEntryModel.get().getUnAllocatedQuantity() + entries.size() <= availableQty;
+      return orderEntryModel.getUnAllocatedQuantity() + entries.size() <= availableQty;
     });
   }
 
@@ -650,8 +783,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
           .map(StockLevelModel::getSerialProductCode).collect(Collectors.toSet());
 
       stockLevel = Long.valueOf(serialProductCodes.size());
-
     }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "available quantity {} for the product {} ", stockLevel, skuProduct);
     return stockLevel;
   }
 
@@ -665,6 +799,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final Date shippingEndDate =
         Objects.nonNull(consignment) ? consignment.getOptimizedShippingEndDate() :
             order.getActualRentalEndDate();
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "Stocks to be fetched from start {} to end date {} for the warehouse {} of the order {} for the products {} ",
+        shippingStartDate, shippingEndDate, location, order.getCode(), productCodes);
     return getBlCommerceStockService()
         .getStockForProductCodesAndDate(productCodes,
             location, shippingStartDate, shippingEndDate);
@@ -686,11 +823,12 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
 	 * @param todayOrdersToBeProcessed the list of orders
 	 * @param warehouses the list of warehouse
 	 * @param currentDate the current date
-	 * @return order with associated unallocated products
+	 * @param isPresentDay
+   * @return order with associated unallocated products
 	 */
   private Map<AbstractOrderModel, Set<String>> filterOrdersForProcessing(
       final List<AbstractOrderModel> todayOrdersToBeProcessed,
-      final List<WarehouseModel> warehouses, final Date currentDate) {
+      final List<WarehouseModel> warehouses, final Date currentDate, final boolean isPresentDay) {
     //This map will contain order id with unallocated products
     final Map<AbstractOrderModel, Set<String>> ordersWithUnallocatedProducts = new LinkedHashMap<>();
     //This map will contain unallocated products with quantity
@@ -713,28 +851,64 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     // List of unallocated products code
     final List<String> unallocatedProductList = unallocatedProductWithQty.keySet()
         .stream().collect(Collectors.toList());
+    if(CollectionUtils.isEmpty(unallocatedProductList)) {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "unallocated quantity is not set for the order {} ", todayOrdersToBeProcessed);
+      return Collections.emptyMap();
+    }
     //It finds stock for unallocated products for the day when the products will ship out
     final Map<String, Long> getStockForUnallocatedProducts = getBlCommerceStockService().
         getStockForUnallocatedProduct(unallocatedProductList, warehouses, currentDate, currentDate);
-    //The products which are available to fulfill
-    final List<String> availableProducts = new ArrayList<>();
+    //The products which are not available to fulfill
+    final List<String> unavailableProducts = new ArrayList<>();
     unallocatedProductWithQty.entrySet().forEach(entry -> {
-      final Optional<Entry<String, Long>> matchedProducts = getStockForUnallocatedProducts
+      final Optional<Entry<String, Long>> unmatchedProducts = getStockForUnallocatedProducts
           .entrySet().stream()
           .filter(entryForUnallocatedProducts ->
               (entryForUnallocatedProducts.getKey().equals(entry.getKey()) &&
-                  entryForUnallocatedProducts.getValue() >= (entry.getValue()))).findFirst();
-      if (matchedProducts.isPresent()) {
-        availableProducts.add(matchedProducts.get().getKey());
+                  entryForUnallocatedProducts.getValue() < (entry.getValue()))).findFirst();
+      if (unmatchedProducts.isPresent()) {
+        unavailableProducts.add(unmatchedProducts.get().getKey());
       }
     });
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-				"List of orders that can not be fulfilled {} ", availableProducts.toString());
-    if (CollectionUtils.isNotEmpty(availableProducts)) {
-      //The orders which will not be considered in reshuffler job, will be in manual review only
-      ordersWithUnallocatedProducts.entrySet().removeIf(entry -> Collections
-          .disjoint(entry.getValue(), availableProducts));
+    final Set<String> productsWithStocks = getStockForUnallocatedProducts.entrySet().stream().map(Entry::getKey).collect(Collectors.toSet());
+    unallocatedProductList.removeAll(productsWithStocks);
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+        "List of products with 0 stocks {} ", unallocatedProductList.toString());
+    unavailableProducts.addAll(unallocatedProductList);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+				"List of products that can not be fulfilled {} ", unavailableProducts.toString());
+		if(CollectionUtils.isNotEmpty(unavailableProducts)) {
+		  if(isPresentDay) {
+        final List<AbstractOrderModel> orderModelList = getOrderDao()
+            .getOrdersOfUnavailableSoftAssignedSerials(currentDate, unavailableProducts);
+        final Set<String> orderCodes = orderModelList.stream().map(AbstractOrderModel::getCode)
+            .collect(Collectors.toSet());
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            "List of orders which have unallocated products to be shipped in same day {} ",
+            orderCodes);
+        if (CollectionUtils.isNotEmpty(orderCodes)) {
+          final List<StockLevelModel> stocks = getBlStockLevelDao()
+              .getStocksOfSoftAssignedSerialsOfOrders(orderCodes);
+          final Set<String> ordersNotToBeFulfilled = stocks.stream().map(StockLevelModel::getOrder)
+              .collect(Collectors.toSet());
+          ordersNotToBeFulfilled.forEach(orderCode -> {
+            final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
+            orderModel.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
+            orderModel.setManualReviewStatusByReshuffler(true);
+          });
+          getModelService().saveAll();
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+              "List of orders that have been set in manual review status {} ",
+              ordersNotToBeFulfilled);
+        }
+      }
+      ordersWithUnallocatedProducts.entrySet().removeIf(entry -> !(Collections
+          .disjoint(entry.getValue(), unavailableProducts)));
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          "List of orders that can be fulfilled {} ", ordersWithUnallocatedProducts);
     }
+		//The orders which will not be considered in reshuffler job, will be in manual review only
     return ordersWithUnallocatedProducts;
   }
 
@@ -812,6 +986,22 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
   public void setBlConsignmentEntryService(
       BlConsignmentEntryService blConsignmentEntryService) {
     this.blConsignmentEntryService = blConsignmentEntryService;
+  }
+
+  /**
+   * @return the blProductService
+   */
+  public BlProductService getBlProductService()
+  {
+    return blProductService;
+  }
+
+  /**
+   * @param blProductService the blProductService to set
+   */
+  public void setBlProductService(BlProductService blProductService)
+  {
+    this.blProductService = blProductService;
   }
 
 }

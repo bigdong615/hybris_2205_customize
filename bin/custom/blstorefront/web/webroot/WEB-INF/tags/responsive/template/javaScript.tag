@@ -592,7 +592,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight  : 380,
                                              } );
@@ -629,7 +629,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );
@@ -919,7 +919,7 @@
              var primarySlider = new Splide( '#product-slider', {
                  type       : 'fade',
                  pagination : false,
-                 arrows     : false,
+                 arrows     : true,
                  keyboard   : false,
                  fixedHeight : 380,
              } );
@@ -952,7 +952,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );
@@ -1057,7 +1057,7 @@
              var primarySlider = new Splide( '#product-slider', {
                  type       : 'fade',
                  pagination : false,
-                 arrows     : false,
+                 arrows     : true,
                  keyboard   : false,
                  fixedHeight : 380,
              } );
@@ -1090,7 +1090,7 @@
                                              var primarySlider = new Splide( '#product-slider', {
                                                  type       : 'fade',
                                                  pagination : false,
-                                                 arrows     : false,
+                                                 arrows     : true,
                                                  keyboard   : false,
                                                  fixedHeight : 380,
                                              } );
@@ -1471,6 +1471,11 @@
                            let oneYearFromNow = new Date();
                            let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
                            const disallowedDates = [['2001-01-01', today]];
+                           </script>
+                           </c:if>
+                           <c:if test="${enableDatePicker == true and cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'Review') == false}">
+        					
+        			<script>
                         const picker = new Litepicker({
                             element: document.getElementById('litepicker'),
                             plugins: ['mobilefriendly'],
@@ -1621,6 +1626,7 @@
                               buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                         });
                   </script>
+                  
         		</c:if>
         		
         		<!-- Order Confirmation Page -->

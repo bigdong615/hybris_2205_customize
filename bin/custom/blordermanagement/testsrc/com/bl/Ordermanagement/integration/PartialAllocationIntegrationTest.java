@@ -77,11 +77,11 @@ public class PartialAllocationIntegrationTest extends BaseAcceleratorSourcingInt
 		LOG.info("Second sourcing processing");
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
 
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		modelService.refresh(order);
 		assertEquals(2, order.getConsignments().size());
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class PartialAllocationIntegrationTest extends BaseAcceleratorSourcingInt
 		LOG.info("Second sourcing processing");
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
 
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		//then verify the order has been partially fullfilled
 		modelService.refresh(order);
@@ -126,14 +126,14 @@ public class PartialAllocationIntegrationTest extends BaseAcceleratorSourcingInt
 		LOG.info("Second sourcing processing");
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
 
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		//then verify the order has been fulfilled
 		modelService.refresh(order);
 		assertEquals(2, order.getConsignments().size());
 
 		sourcingUtil.refreshOrder(order);
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 		order.getConsignments().stream()
 				.anyMatch(e -> e.getConsignmentEntries().stream().anyMatch(a -> a.getQuantity().longValue() == 1L));
 	}
@@ -149,9 +149,9 @@ public class PartialAllocationIntegrationTest extends BaseAcceleratorSourcingInt
 		modelService.saveAll();
 		LOG.info("Second sourcing processing");
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 		sourcingUtil.refreshOrder(order);
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 		assertEquals(Boolean.TRUE,
 				verifyOrderAndConsignment
 						.verifyConsignment(order, CODE_MEMORY_CARD, CODE_BOSTON, Long.valueOf(0L), Long.valueOf(2L), Long.valueOf(2L)));
@@ -170,9 +170,9 @@ public class PartialAllocationIntegrationTest extends BaseAcceleratorSourcingInt
 		modelService.saveAll();
 		LOG.info("Second sourcing processing");
 		sourcingUtil.getOrderBusinessProcessService().triggerChoiceEvent(order, ORDER_ACTION_EVENT_NAME, RE_SOURCE_CHOICE);
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 		sourcingUtil.refreshOrder(order);
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 		assertEquals(Boolean.TRUE,
 				verifyOrderAndConsignment
 						.verifyConsignment_Camera(order, CODE_BOSTON, Long.valueOf(0L), Long.valueOf(3L), Long.valueOf(3L)));

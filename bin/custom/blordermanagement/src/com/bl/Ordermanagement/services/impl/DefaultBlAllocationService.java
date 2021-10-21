@@ -11,6 +11,7 @@ import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
@@ -81,9 +82,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   public ConsignmentModel createConsignment(final AbstractOrderModel order, final String code,
       final SourcingResult result) {
 
-    if (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
+    if (BooleanUtils.isFalse(order.getInternalTransferOrder()) && (MapUtils.isEmpty(result.getAllocation()) || (MapUtils
         .isEmpty(result.getSerialProductMap()) && !blOrderService
-        .isAquatechProductsPresentInOrder(order))) {
+        .isAquatechProductsPresentInOrder(order)))) {
 
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
     }
@@ -111,8 +112,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             ((BlPickUpZoneDeliveryModeModel) order.getDeliveryMode()).getInternalStoreAddress());
       }
 
-      consignment
-          .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
 
       //adding optimized shipping dates, this will be updated in optimized shipping strategy methods
       consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
@@ -122,6 +121,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         flagConsignmentAndSetShippingDateForOrderTransfers(consignment, order, result.getWarehouse());
       }
 
+      if (isInternalTransferOder(order)) {
+        consignment.setInternalTransferConsignment(order.getInternalTransferOrder());
+      }
 
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
@@ -135,6 +137,15 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment.setWarehouse(result.getWarehouse());
       if (consignment.getFulfillmentSystemConfig() == null) {
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
+      }
+
+      //update order notes
+      setConsignmentsInNotes(order, consignment);
+
+      //for internal transfer orders, saving and returning consignment without checking availability
+      if (isInternalTransferOder(order)) {
+        this.getModelService().save(consignment);
+        return consignment;
       }
 
       if (BooleanUtils.isTrue(order.getIsRentalCart())) {
@@ -159,11 +170,23 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
             this.optimizeShippingMethodForConsignment(consignment, result);
             this.getModelService().save(consignment);
-            serialStocks.forEach(stock -> stock.setReservedStatus(true));
+
+            final Collection<StockLevelModel> serialStocksForOptimizedDates = blStockLevelDao
+                .findSerialStockLevelsForDateAndCodes(new HashSet<>(allocatedProductCodes),
+                    consignment.getOptimizedShippingStartDate(),
+                    consignment.getOptimizedShippingEndDate(), Boolean.FALSE);
+
+            serialStocksForOptimizedDates.forEach(stock -> {
+              stock.setReservedStatus(true);
+              stock.setOrder(order.getCode());
+              BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+                  "Stock status is changed to {} for the serial product {} for the order {} ", stock.getReservedStatus(),
+                  stock.getSerialProductCode(), stock.getOrder());
+            });
 
             //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
 
-            this.getModelService().saveAll(serialStocks);
+            this.getModelService().saveAll(serialStocksForOptimizedDates);
 
             return consignment;
 
@@ -194,6 +217,35 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       }
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
+    }
+  }
+
+  private boolean isInternalTransferOder(final AbstractOrderModel orderModel) {
+
+    return orderModel.getInternalTransferOrder();
+  }
+
+  /**
+   * Update consignment in order notes.
+   *
+   * @param abstractOrderModel - the order model
+   * @param consignmentModel      - newly created consignment
+   */
+  private void setConsignmentsInNotes(final AbstractOrderModel abstractOrderModel,
+      final ConsignmentModel consignmentModel) {
+
+    final List<NotesModel> orderNotesFromOrder = abstractOrderModel.getOrderNotes();
+    if (CollectionUtils.isNotEmpty(orderNotesFromOrder)) {
+
+      orderNotesFromOrder.forEach(orderNote -> {
+        final Set<ConsignmentModel> orderNoteConsignments = new HashSet<>(
+            orderNote.getConsignment());
+        orderNoteConsignments.add(consignmentModel);
+        orderNote.setConsignment(orderNoteConsignments);
+      });
+      this.getModelService().saveAll(orderNotesFromOrder);
+
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment is set in to Order Notes");
     }
   }
 
@@ -352,6 +404,10 @@ public Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrder
           new ArrayList<>(productModels));   //setting aquatech products from result
 
       setItemsMapForAquatechProducts(entry, productModels);
+    }
+
+    if (isInternalTransferOder(orderEntry.getOrder())) {
+      getBlConsignmentEntryService().setItemsMapForInternalTransferOrders(entry, orderEntry);
     }
 
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();

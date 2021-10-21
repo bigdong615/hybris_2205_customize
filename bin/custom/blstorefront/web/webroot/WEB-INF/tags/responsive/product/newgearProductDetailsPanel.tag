@@ -30,6 +30,9 @@
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10 col-xl-9">
                         <div class="row">
+                          <div class="hide-on-desktop" id="productInfo">
+                          <h1 class="mb-4">${product.displayName}</h1>
+                        </div>
                               <div id="productImage" class="col-lg-6 text-center">
                                 <product:productImagePanel galleryImages="${galleryImages}" />
                               </div>
@@ -37,7 +40,9 @@
                               <c:forEach items="${product.categories}" var="categoryData">
                                 <c:url var="brandUrl" value="${categoryData.url}"/>
                               </c:forEach>
-                              <h1 class="mb-4">${product.displayName}</h1>
+                             <div class="hide-on-mobile">
+                          <h1 class="mb-4">${product.displayName}</h1>
+                        </div>
                                <c:choose>
                                   <c:when test="${product.isNewGearInStock eq true}">
                                     <span class="badge badge-limited-stock"><spring:theme

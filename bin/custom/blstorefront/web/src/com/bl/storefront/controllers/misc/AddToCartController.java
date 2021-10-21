@@ -6,7 +6,9 @@ package com.bl.storefront.controllers.misc;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -32,6 +34,7 @@ import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +46,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
@@ -86,6 +90,9 @@ public class AddToCartController extends AbstractController {
 
     @Resource(name = "enumerationService")
     private EnumerationService enumerationService;
+
+    @Resource(name="sessionService")
+    protected SessionService sessionService;
 
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
     private RentalDateDto getRentalsDuration() {
@@ -152,6 +159,13 @@ public class AddToCartController extends AbstractController {
 
         model.addAttribute(BlControllerConstants.PRODUCT_REFERENCE, productReferences);
         model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT, productsLimit);
+
+        if(BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != sessionService.getAttribute(
+                BlCoreConstants.RETURN_REQUEST)) {
+            model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.TRUE);
+        } else {
+            model.addAttribute(BlControllerConstants.REPLACEMENT_ORDER, Boolean.FALSE);
+        }
 
         return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 
@@ -224,13 +238,17 @@ public class AddToCartController extends AbstractController {
         if (bindingErrors.hasErrors()) {
             return getViewWithBindingErrorMessages(model, bindingErrors);
         }
-
-        
+      try{
       final String warningPopup = productAllowedInAddToCart(code, serialCode);
   		if (warningPopup != null)
   		{
   			return warningPopup;
   		}
+      }catch(final Exception ex){
+          BlLogger.logMessage(LOG, Level.ERROR, "Product Not Addd to cart",ex);
+          return REDIRECT_CART_URL;
+      }
+
 
         final long qty = form.getQty();
 

@@ -233,5 +233,28 @@ public interface BrainTreePaymentService extends PaymentMethod
 	 * @return payment info
 	 */
 	BrainTreePaymentInfoModel completeCreateSubscriptionForModifyPayment(final CustomerModel customer, final String paymentInfoId,final AbstractOrderModel order);
+	
+	/**
+	 * It fetches the payment info model by payment info id to make deposit.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @param depositAmount the deposit amount
+	 * @return BrainTreePaymentInfoModel
+	 */
+  public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCodeToDeposit(final CustomerModel customer, final String
+      paymentInfoId, final String nonce, final Double depositAmount);
+  
+  /**
+   * Gets the cloned payment info for code.
+   *
+   * @param customer the customer
+   * @param paymentInfoId the payment info id
+   * @param nonce the nonce
+   * @return the cloned payment info for code
+   */
+  public BrainTreePaymentInfoModel getModifyOrderPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+      final String nonce, final Double newAmount);
 
 }

@@ -68,7 +68,9 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlCartService extends DefaultCartService implements BlCartService {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
+	private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
+	
+	private static final String DATE_IS_BLACKOUT_DATE = "Date : {} isBlackoutDate : {}";
 
     private CommerceCartService commerceCartService;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -98,6 +100,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             }
             cartModel.setIsNewGearOrder(false);
             cartModel.setIsRentalCart(false);
+            cartModel.setRentalStartDate(null);
+            cartModel.setRentalEndDate(null);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
@@ -221,16 +225,18 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate) {
         final CartModel cartModel = getSessionCart();
         final String cartCode = cartModel.getCode();
-        cartModel.setRentalStartDate(rentalStartDate);
-        cartModel.setRentalEndDate(rentalEndDate);
-        try {
-            getModelService().save(cartModel);
-            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
+        if(BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
+            cartModel.setRentalStartDate(rentalStartDate);
+            cartModel.setRentalEndDate(rentalEndDate);
+            try {
+                getModelService().save(cartModel);
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
                     rentalStartDate, rentalEndDate, cartCode);
-        } catch (final Exception exception) {
-            BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
-                    "Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate,
+            } catch (final Exception exception) {
+                BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, "Error while saving rental Start Date: {} and End Date: {} on cart - {}",
+                    rentalStartDate, rentalEndDate,
                     cartCode);
+            }
         }
     }
 
@@ -481,7 +487,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
                     "Setting order type VIP : {} for cart code {}",
                     cartModel.getIsVipOrder(), cartModel.getCode());
-
+                setVerificationLevel(cartModel);
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
@@ -504,6 +510,49 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
     /**
+     * This method set verification level value based on cart total and verification level range value.
+     *
+     * @param cartModel the CartModel
+     */
+    private void setVerificationLevel(final CartModel cartModel) {
+        try {
+            final Integer verificationLevelStartRange = cartModel.getStore()
+                .getVerificationLevelStartRange();
+            final Integer verificationLevelEndRange = cartModel.getStore()
+                .getVerificationLevelEndRange();
+            final Double cartTotalPrice = cartModel.getTotalPrice();
+            if (null != verificationLevelStartRange && null != verificationLevelEndRange) {
+                if (isQualifyForLevelOne(verificationLevelStartRange, verificationLevelEndRange,
+                    cartTotalPrice)) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_ONE);
+                } else if (cartTotalPrice >= verificationLevelEndRange) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_TWO);
+                } else if (cartTotalPrice < verificationLevelStartRange) {
+                    cartModel.setVerificationLevel(BlCoreConstants.VERIFICATION_LEVEL_ZERO);
+                }
+            }
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOGGER, Level.ERROR,
+                "Error occurred while setting up verification level value on cart {}",
+                cartModel.getCode(),
+                exception);
+        }
+    }
+
+    /**
+     * It checks, cart total is eligible for verification level value 1 or not.
+     * @param verificationLevelStartRange
+     * @param verificationLevelEndRange
+     * @param cartTotalPrice
+     * @return true/false
+     */
+    private boolean isQualifyForLevelOne(final Integer verificationLevelStartRange,
+        final Integer verificationLevelEndRange, final Double cartTotalPrice) {
+        return cartTotalPrice >= verificationLevelStartRange
+            && cartTotalPrice < verificationLevelEndRange;
+    }
+
+    /**
      * This method returns true if this is Front desk order.
      *
      * @param cartModel
@@ -523,28 +572,48 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  	@Override
  	public boolean isSelectedDateIsBlackoutDate(final Date dateToCheck, final BlackoutDateTypeEnum blackoutDateType)
  	{
- 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check : {} ", dateToCheck);
- 		final AtomicBoolean isGivenDateIsBlackoutDate = new AtomicBoolean(Boolean.FALSE);
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date to check for Blackout: {} ", dateToCheck);
  		final List<BlBlackoutDateModel> allBlackoutDatesForGivenType = getBlBlackoutDatesDao()
 				.getAllBlackoutDatesForGivenType(blackoutDateType);
  		final boolean isRentalStartDate = Objects.nonNull(blackoutDateType) && BlackoutDateTypeEnum.RENTAL_START_DATE.equals(blackoutDateType);
  		if (CollectionUtils.isEmpty(allBlackoutDatesForGivenType))
  		{
- 			return isGivenDateIsBlackoutDate.get();
+ 			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.FALSE);
+ 			return Boolean.FALSE;
  		}
  		if(isRentalStartDate)
  		{
  			allBlackoutDatesForGivenType.removeIf(blackoutDate -> !BlackoutDateShippingMethodEnum.ALL.equals(blackoutDate.getBlockedShippingMethod()));
  		}
- 		allBlackoutDatesForGivenType.forEach(blackoutDate -> {
+ 		final List<BlBlackoutDateModel> allHolidaysForGivenType = getBlBlackoutDatesDao().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+ 		if(CollectionUtils.isNotEmpty(allHolidaysForGivenType))
+ 		{
+ 			allBlackoutDatesForGivenType.addAll(allHolidaysForGivenType);
+ 		}
+ 		for(final BlBlackoutDateModel blackoutDate : allBlackoutDatesForGivenType)
+ 		{
  			if (DateUtils.isSameDay(dateToCheck, blackoutDate.getBlackoutDate()))
  			{
- 				isGivenDateIsBlackoutDate.set(Boolean.TRUE);
- 				return;
+ 				BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.TRUE);
+ 				return Boolean.TRUE;
  			}
- 		});
- 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Date : {} isBlackoutDate : {}", dateToCheck, isGivenDateIsBlackoutDate.get());
- 		return isGivenDateIsBlackoutDate.get();
+ 		}
+ 		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, DATE_IS_BLACKOUT_DATE, dateToCheck, Boolean.FALSE);
+ 		return Boolean.FALSE;
+ 	}
+ 	
+ 	/**
+    * @inheritDoc
+    */
+   @Override
+ 	public boolean isRentalCartOnly()
+ 	{
+ 		final CartModel cartModel = getSessionCart();
+ 		if(Objects.nonNull(cartModel))
+ 		{
+ 			return BooleanUtils.isTrue(cartModel.getIsRentalCart()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
+ 		}
+ 		return Boolean.FALSE;
  	}
 
     /**

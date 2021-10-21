@@ -1244,3 +1244,14 @@ function hideShorting(){
           }
       });
  });
+
+ const mediaQuery = window.matchMedia('(min-width: 769px)')
+ if (mediaQuery.matches) {
+	 var div = document.getElementById('pr-reviewsnippet');
+	 div.remove();
+ }
+ setTimeout(function(){
+	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
+	if (hideArrow < 2 ){                                              
+	document.querySelector("#product-slider .splide__arrows").style.visibility="hidden";
+	} },1000);

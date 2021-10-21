@@ -151,6 +151,12 @@ text-decoration :none ;
   .uploaded-doc {    
     flex-direction: inherit !important;
 }
+.litepicker .reset-button {
+  color: #3d3c3c;
+  position: fixed;
+  bottom:19px;
+  left:13px;
+}
   }
 /* BL-45 */
 
@@ -317,15 +323,84 @@ margin: 0;
   left: auto!important;
   right: 0 !important;
 }
-@media only screen and (max-width: 767px) and (min-width: 0px){
+@media only screen and (max-width: 768px) and (min-width: 0px){
 .product-sort .dropdown-menu[style] {
     left: inherit !important;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
   .expertHelpIcon {margin-top: 4px !important;}   
-  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; }  
+  .dropdown:hover > a.nav-link:before {background: none !important;height: 0 !important; } 
+  .hide-on-desktop{text-align: left !important;display: block !important;}
+  .hide-on-mobile{display: none;}  
+  .splide__arrows{display:block !important;z-index: 99999;}
+  #product-thumbnails{display:none !important ;}
+  .splide {margin-bottom: 18px;}
+  #globalSearch, #productDates {width:86%;}
+.wrapup-search{background:#fff;box-shadow: 6px 0px 2px 0px #7c7c7c inset;}
+#globalSearch .input-group {padding-right: 0;}
+#globalSearch .input-group input#mobile-litepicker {
+  padding-left: 26px;
+  background: url(../assets/icon-calendar-red.svg) no-repeat 4px center;
+  background-size: 19px;
+  padding-right: 0;
 }
+#cat-slider .splide__arrow--prev, #overview-slider > .splide__arrows .splide__arrow--prev {
+  margin-left: -31px;
+}
+#cat-slider .splide__arrow--next, #overview-slider > .splide__arrows .splide__arrow--next {
+  margin-right: -31px;
+}
+.scroll-hide{width: 95%;}
+.splide__arrows {width: 90%;margin-left:4.5%;}
+#globalSearch .input-group span, #productDates .input-group span {
+  padding-left: 0;
+  font-weight: 700;
+  line-height: 50px;
+  border-right: 2px solid #ddd;
+  padding-right: 5px;
+}
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+   padding-left: 7px;
+}
+.card .splide__arrow {
+  padding: 0px;
+  background: rgba(255,255,255,.6);
+  border-radius: 50%;
+  z-index: 99;
+}
+#cat-slider .splide__arrows, #gear-slider > .splide__arrows, #blog-slider > .splide__arrows, #gear-slider-cart > .splide__arrows {
+  z-index: 1;
+}
+.litepicker .container__days .day-item{
+  margin-bottom: 0;
+}
+.litepicker .container__footer .button-apply {
+  margin-left: 5px;
+  margin-right: 0;
+}
+.litepicker .container__footer {
+  padding:15px 17px 46px;
+  display: flex;
+}
+.litepicker .preview-date-range {
+  margin-right:10px !important;
+  float: left;
+  width: -webkit-fill-available;
+}
+.litepicker .container__footer .preview-date-range {
+  font-size: 90%;
+  padding-bottom: 0;
+  padding-top: 4px;
+  text-align: left;
+}
+
+
+}
+#product-thumbnails{display:block ;}
+.splide__arrows{display:none;}
+#addToCart-gear-sliders .splide__arrows{display:block;opacity: 9}
+.hide-on-desktop{display:none ;}
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
 }
@@ -622,7 +697,7 @@ ul.ui-autocomplete.active {
   line-height:1px;
 }  
 .view-links .dropdown-menu>li>a {  
-    padding: 3px 20px 0 0;
+    padding:0px 20px 0 0;
 }
 .gift-card-input{
 padding-left:0;
@@ -677,40 +752,36 @@ color:#fff !important;
 .search-term{text-transform: capitalize;}
 .arrival-notification{background:#fff !important;border: 1px solid #cccccc !important;color: #3d3c3c !important;}
 .arrival-notification:hover{background:none !important;border:1px solid #ccc!important;color: #3d3c3c !important;}
+#costSummary i.icon-support {width:12px;}
+.zero-margine{margin: 0;}
+.left-aligne{text-align:left;padding-left:30px ;margin:0;}
+.fixed-line-height .dropdown ul li a{line-height: 20px;padding-left: 0 !important;width: 100%;overflow: hidden;}
 
-/* THIS PIECE OF CSS IS USED FOR POWER REVIEW ON PDP PROVIDED BY TED STARTS HERE */
-
-/* snippet rules */
-#pr-reviewsnippet { /* move reviews away from badges */
-    margin-top:8px; 
-}    
-.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-stars-container {
-    display:inline;
-}    
-.p-w-r .pr-snippet-rating-decimal { /* hide # box */
-    display:none; 
+.refund-space{
+    margin-right:16px;
 }
-.p-w-r .pr-snippet-write-review-link { /* hide summary write link */
-    display:none; 
+.gc-textbox{
+    border: 1px solid #ced4da !important;
 }
-.p-w-r .pr-snippet-stars-reco-inline.pr-snippet-minimal .pr-snippet-read-and-write a {
-    font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
-    font-weight: 400;
-    vertical-align:middle;
-    margin: 0 0 15px 5px;
+.gc-button-left{
+	margin-left: 428px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
-
-/* read a review rules */
-.pr-snippet-stars pr-snippet-stars-png,
-.p-w-r .pr-read-review, 
-.p-w-r .pr-review-display, 
-.p-w-r .pr-read-review, .p-w-r .pr-review-display, 
-.p-w-r .pr-review-snapshot, .p-w-r .pr-review-display .pr-rd-footer { /* match the page background */
-    background-color: #F3F3F3;
+.remove-gc-style{
+	color: #52bfc0;
 }
-
-.reviewActions { /* hide design buttons for now */
-    display: none;
+.spiner-select{
+  width: 32px !important;
+  text-align: center !important;
+  margin: 0 auto !important;     
 }
-
-/* ENDS HERE */
+.view-links .dropdown-menu li a {
+    color: #3d3c3c;
+    text-decoration: none;
+    white-space: normal;
+}
+#accountContent p i{
+ font-style: normal;
+    padding-right: 3px;	
+}

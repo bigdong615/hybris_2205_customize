@@ -13,6 +13,7 @@ $commonCustomPath = /blinitialdata/import/coredata/common/custom
 # Essential Data Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/essential-data.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/shipping-optimization-job.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/inventory-cycle-count-job.impex"), "utf-8", 0, 0);
 
 # State-Warehouse mapping Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/statewarehousemapping.impex"), "utf-8", 0, 0);

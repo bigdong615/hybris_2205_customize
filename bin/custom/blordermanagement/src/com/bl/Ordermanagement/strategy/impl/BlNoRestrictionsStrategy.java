@@ -54,7 +54,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "Sourcing is In-complete after tried sourcing from all possible location");
       updateOrderStatusForSourcingIncomplete(sourcingContext);
-
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. !!!");
     }
   }
 
@@ -93,7 +93,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   }
 
   /**
-   * This method will mark the order as manual review when some of the products can not be sourced.
+   * This method will mark the order as RECEIVED_MANUAL_REVIEW when some of the products can not be sourced.
    *
    * @param sourcingContext the sourcingContext
    */
@@ -102,7 +102,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     //can not be sourced all the products from all warehouses
     sourcingContext.getResult().setComplete(false);
     AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-    order.setStatus(OrderStatus.MANUAL_REVIEW);
+    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
     modelService.save(order);
 
   }

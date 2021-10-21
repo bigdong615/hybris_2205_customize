@@ -68,6 +68,11 @@ public class BinOcLocationScanToolHandler implements FlowActionHandler {
     if(Objects.nonNull(blInventoryLocation) && InventoryLocationTypeEnum.BIN.equals(blInventoryLocation.getInventoryType())){
       clearBinRelationForParentLocationAndSerial(blInventoryLocation);
     }
+    else if(Objects.nonNull(blInventoryLocation) && !InventoryLocationTypeEnum.BIN.equals(blInventoryLocation.getInventoryType())) {
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlInventoryScanLoggingConstants.TYPE_NOT_SUPPORTED, locationCode);
+      this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.BIN_OCLOCATION_NOTIFICATION_HANDLER, BlInventoryScanLoggingConstants.TYPE_NOT_SUPPORTED_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);
+    }
+
     else{
       BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlInventoryScanLoggingConstants.LOCATION_NOT_FOUND, locationCode);
       this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.BIN_OCLOCATION_NOTIFICATION_HANDLER, BlInventoryScanLoggingConstants.VALID_BIN_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE, StringUtils.EMPTY);

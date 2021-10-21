@@ -1,25 +1,33 @@
 package com.bl.core.services.order.impl;
 
 import com.bl.core.enums.CustomerCollectionStatusEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlRepairLogModel;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.repair.log.dao.BlRepairLogDao;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
-
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.AbstractOrderEntryService;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -35,7 +43,10 @@ public class DefaultBlOrderService implements BlOrderService {
 
   private BlProductService productService;
   private ModelService modelService;
+	@Resource(name="abstractOrderEntryService")
+	private AbstractOrderEntryService abstractOrderEntryService;
   private BlRepairLogDao blRepairLogDao;
+	private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * {@inheritDoc}
@@ -94,18 +105,27 @@ public class DefaultBlOrderService implements BlOrderService {
   private void doChangeOrderStatusForSingleStatus(final AbstractOrderModel order,
 			final HashSet<ConsignmentStatus> itemStatuses)
 	{
-		final ConsignmentStatus consignmentStatus = itemStatuses.iterator().next();
-
-		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.PARTIALLY_UNBOXED,
-				OrderStatus.UNBOXED,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
+	  	String consignmentStatus = itemStatuses.iterator().next().toString();
+		 
+		if(consignmentStatus.equals(ConsignmentStatus.UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_COMPLETELY.toString();
+		}
+		if(consignmentStatus.equals(ConsignmentStatus.PARTIALLY_UNBOXED.toString()))
+		{
+			consignmentStatus = OrderStatus.UNBOXED_PARTIALLY.toString();
+		}
+		final List<OrderStatus> statusToCheck = Arrays.asList(OrderStatus.COMPLETED,OrderStatus.UNBOXED_PARTIALLY,
+				OrderStatus.UNBOXED_COMPLETELY,OrderStatus.INCOMPLETE_ITEMS_IN_REPAIR,OrderStatus.INCOMPLETE_MISSING_ITEMS,
 				OrderStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS);
-		statusToCheck.forEach(status -> {
-			if(status.toString().equals(consignmentStatus.toString()))
+		for(final OrderStatus status : statusToCheck)
+		{
+			if(status.toString().equals(consignmentStatus))
 			{
 				changeStatusOnOrder(order, status);
-				return;
+				break;
 			}
-		});
+		}
 	}
   
   /**
@@ -137,7 +157,7 @@ public class DefaultBlOrderService implements BlOrderService {
 		}
 		else if(itemStatuses.contains(ConsignmentStatus.PARTIALLY_UNBOXED))
 		{
-			changeStatusOnOrder(order, OrderStatus.PARTIALLY_UNBOXED);
+			changeStatusOnOrder(order, OrderStatus.UNBOXED_PARTIALLY);
 		}
 	}
 	
@@ -153,10 +173,18 @@ public class DefaultBlOrderService implements BlOrderService {
 		try
 		{
 			order.setStatus(orderStatus);
+			if(orderStatus.equals(OrderStatus.COMPLETED)) {
+				order.setOrderCompletedDate(new Date());
+			}
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing order status to : {} for order code : {}",
 					orderStatus,order.getCode());
+
+			// To call Order Unboxed ESP event service
+			if(OrderStatus.UNBOXED_COMPLETELY.equals(orderStatus)) {
+				getDefaultBlESPEventService().sendOrderUnboxed((OrderModel) order);
+			}
 		}
 		catch (final ModelSavingException exception)
 		{
@@ -193,7 +221,81 @@ public class DefaultBlOrderService implements BlOrderService {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AbstractOrderEntryModel createBundleOrderEntry(final ProductReferenceModel productReferenceModel,
+			final AbstractOrderModel orderModel,
+			final AbstractOrderEntryModel existingEntry,final AtomicInteger entryNumber){
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,StringUtils.EMPTY,
+				"Creating entry for Order {}, Parent bundle Product {} with entry number {}",
+				orderModel.getCode(),existingEntry.getProduct().getCode(), entryNumber.get());
+		final AbstractOrderEntryModel newEntryModel = abstractOrderEntryService.createEntry(orderModel);
+		final Long quantity = productReferenceModel.getQuantity()!= null ? productReferenceModel.getQuantity():1L;
+		newEntryModel.setQuantity(existingEntry.getQuantity()*quantity);
+		newEntryModel.setProduct(productReferenceModel.getTarget());
+		newEntryModel.setBundleEntry(Boolean.TRUE);
+		newEntryModel.setBundleProductCode(existingEntry.getProduct().getCode());
+		newEntryModel.setBasePrice(0.0d);
+		newEntryModel.setTotalPrice(0.0d);
+		newEntryModel.setUnit(existingEntry.getUnit());
+		newEntryModel.setEntryNumber(entryNumber.get());
+		getModelService().save(newEntryModel);
+		return newEntryModel;
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel) {
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(
+				orderModel.getEntries().stream().filter(orderEntryModel -> !orderEntryModel.isBundleEntry())
+						.collect(Collectors.toList()));
+		final AtomicInteger entryNumber = new AtomicInteger(orderModel.getEntries().size());
+		orderModel.getEntries().forEach(existingEntry -> {
+			if (existingEntry.isBundleMainEntry()) {
+				final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(existingEntry);
+				productReferenceModels.forEach(productReferenceModel -> {
+					final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, orderModel, existingEntry,entryNumber);
+					orderEntryModelList.add(newEntryModel);
+					entryNumber.getAndIncrement();
+				});
+				existingEntry.setEntryCreated(Boolean.TRUE);
+				existingEntry.setBundleProductCode(existingEntry.getProduct().getCode());
+				getModelService().save(existingEntry);
+			}
+		});
+		orderModel.setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(orderModel.getCalculated())){
+			orderModel.setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(orderModel);
+	}
+
+	@Override
+	public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel){
+		final List<AbstractOrderEntryModel> orderEntryModelList = new ArrayList<>();
+		orderEntryModelList.addAll(entryModel.getOrder().getEntries());
+		final AtomicInteger entryNumber = new AtomicInteger(entryModel.getOrder().getEntries().size());
+		final List<ProductReferenceModel> productReferenceModels = productService.getBundleProductReferenceModelFromEntry(entryModel);
+		productReferenceModels.forEach(productReferenceModel -> {
+			final AbstractOrderEntryModel newEntryModel = createBundleOrderEntry(productReferenceModel, entryModel.getOrder(), entryModel,entryNumber);
+			orderEntryModelList.add(newEntryModel);
+			entryNumber.getAndIncrement();
+		});
+		entryModel.setEntryCreated(Boolean.TRUE);
+		entryModel.setBundleProductCode(entryModel.getProduct().getCode());
+		getModelService().save(entryModel);
+		entryModel.getOrder().setEntries(orderEntryModelList);
+		if(BooleanUtils.isFalse(entryModel.getOrder().getCalculated())){
+			entryModel.getOrder().setCalculated(Boolean.TRUE);
+		}
+		getModelService().save(entryModel.getOrder());
+		getModelService().refresh(entryModel.getOrder());
+	}
   public BlProductService getProductService() {
     return productService;
   }
@@ -233,4 +335,14 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 {
 	this.blRepairLogDao = blRepairLogDao;
 }
+
+	public DefaultBlESPEventService getDefaultBlESPEventService() {
+		return defaultBlESPEventService;
+	}
+
+	public void setDefaultBlESPEventService(
+			DefaultBlESPEventService defaultBlESPEventService) {
+		this.defaultBlESPEventService = defaultBlESPEventService;
+	}
+
 }

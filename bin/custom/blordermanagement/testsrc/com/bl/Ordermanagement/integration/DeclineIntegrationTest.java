@@ -96,7 +96,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
@@ -158,7 +158,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
@@ -222,7 +222,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PICKING_TEMPLATE_CODE);
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PACKING_TEMPLATE_CODE);
@@ -277,7 +277,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PICKING_TEMPLATE_CODE);
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PACKING_TEMPLATE_CODE);
@@ -329,7 +329,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PICKING_TEMPLATE_CODE);
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PACKING_TEMPLATE_CODE);
@@ -383,7 +383,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PICKING_TEMPLATE_CODE);
 		workflowUtil.moveConsignmentWorkflow(orderProcessModel, consignmentResult, WorkflowUtil.PACKING_TEMPLATE_CODE);
@@ -432,7 +432,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		// Given
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
@@ -488,7 +488,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 1);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
@@ -542,7 +542,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		//Given
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		Collection<ConsignmentModel> consignmentModels = order.getConsignments();
 		LOG.info("Number of consignments: " + consignmentModels.size());
@@ -577,7 +577,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 				.verifyConsignment_Camera(order, CODE_MONTREAL, Long.valueOf(2L), Long.valueOf(1L), Long.valueOf(1L)));
 		assertEquals(Boolean.TRUE, verifyOrderAndConsignment
 				.verifyConsignment_Camera(order, CODE_BOSTON, Long.valueOf(0L), Long.valueOf(2L), Long.valueOf(2L)));
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		//then verify the ATP
 		// Global ATP should be 1, since Montreal Warehouse is banned and Boston's availability is 1 after fulfilling the previously declined order.
@@ -610,7 +610,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		order.setDeliveryMode(deliveryMode);
 		modelService.saveAll();
 
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		Collection<ConsignmentModel> consignmentModels = order.getConsignments();
 		LOG.info("Number of consignments: " + consignmentModels.size());
@@ -659,7 +659,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		//when decline the order
 		sourcingUtil.getConsignmentBusinessProcessService()
 				.triggerChoiceEvent(cons, CONSIGNMENT_ACTION_EVENT_NAME, REALLOCATE_CONSIGNMENT_CHOICE);
-		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.READY, timeOut);
+		sourcingUtil.waitForOrderStatus(orderProcessModel, order, OrderStatus.RECEIVED, timeOut);
 
 		//refresh order until the newest value read
 		while(order.getConsignments().size() != 3){
@@ -667,7 +667,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		}
 		//Then Verify Order
 		assertEquals(3, order.getConsignments().size());
-		assertTrue(order.getStatus().equals(OrderStatus.READY));
+		assertTrue(order.getStatus().equals(OrderStatus.RECEIVED));
 
 		//Verify Consignments and verify the task assignment workflow
 		sourcingUtil.validateConsignmentsAndTaskWorkflow(order, 1, 2, 1);
@@ -689,7 +689,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		Collection<ConsignmentModel> consignmentResult = order.getConsignments();
@@ -767,7 +767,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		// Given
 		stockLevels.Camera(warehouses.Montreal(), 6);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		Collection<ConsignmentModel> consignmentResult = order.getConsignments();
 		ConsignmentModel oldCons = consignmentResult.iterator().next();
 
@@ -839,7 +839,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 
 		// And placing order
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		Collection<ConsignmentModel> consignmentResult = order.getConsignments();
 		ConsignmentModel cons = consignmentResult.iterator().next();
 
@@ -904,7 +904,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 
 		// When create consignment
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		final ConsignmentModel consignmentResult_Montreal = order.getConsignments().stream()
 				.filter(e -> CODE_MONTREAL.equals(e.getWarehouse().getCode())).findFirst().get();
 
@@ -973,7 +973,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 
 		// When create consignment
 		order = sourcingUtil.createCameraAndMemoryCardShippingOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		Collection<ConsignmentModel> consignmentResult = order.getConsignments();
 		ConsignmentModel cons = consignmentResult.iterator().next();
 
@@ -1027,7 +1027,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 1);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 
 		//when decline the order
@@ -1088,7 +1088,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 				.getStockLevelForProductAndPointOfService(products.Camera(), pointsOfService.Montreal_External()));
 
 		order = sourcingUtil.createCameraShippedOrder();
-		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		final OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		modelService.refresh(order);
 
 		// Verify consignment is allocated from the external warehouse
@@ -1163,7 +1163,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 
 		//create consignment
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 		assertEquals(1, order.getConsignments().size());
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();
 
@@ -1211,7 +1211,7 @@ public class DeclineIntegrationTest extends BaseAcceleratorSourcingIntegrationTe
 		stockLevels.MemoryCard(warehouses.Montreal(), 6);
 		stockLevels.Camera(warehouses.Boston(), 3);
 		order = sourcingUtil.createCameraShippedOrder();
-		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.READY);
+		OrderProcessModel orderProcessModel = sourcingUtil.runOrderProcessForOrderBasedPriority(order, OrderStatus.RECEIVED);
 
 		// When create consignment
 		final ConsignmentModel consignmentResult = order.getConsignments().iterator().next();

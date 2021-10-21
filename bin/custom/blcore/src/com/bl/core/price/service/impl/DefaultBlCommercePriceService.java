@@ -7,6 +7,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
@@ -19,6 +20,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.jalo.order.price.PriceInformation;
 
+import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.PriceValue;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +50,9 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
 	private BlDatePickerService blDatePickerService;
 	private BaseStoreService baseStoreService;
+
+	@Resource(name="productService")
+	private BlProductService productService;
 
 	/**
 	 * {@inheritDoc}
@@ -122,6 +128,69 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		}
 		return null;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PriceValue  getDynamicBasePriceForBundle(
+		final ProductModel product,final int noOfRentalDays) throws CalculationException
+{
+		List<PriceInformation> lPrices = new ArrayList<>();
+	  final List<ProductReferenceModel> productReferences = productService.getBundleProductReferenceModel(product);
+		if (CollectionUtils.isNotEmpty(productReferences)) {
+			productReferences.forEach(productReferenceModel -> {
+				final ProductModel target = productReferenceModel.getTarget();
+				 BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+				if(baseStoreModel == null){
+					baseStoreModel =getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+				}
+				final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(target);
+				if (CollectionUtils.isNotEmpty(prices))
+				{
+					final PriceInformation defaultPriceInformation = prices.get(0);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price is {} for product {}",
+							defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+					final PriceInformation info = noOfRentalDays != BlCoreConstants.DEFAULT_RENTAL_DAY ?getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+							defaultPriceInformation, Long.valueOf(noOfRentalDays)) :defaultPriceInformation;
+
+					final Double discount = baseStoreModel.getBundleDiscount();
+					final double discountPrice = (info.getPriceValue().getValue() * discount) / 100;
+					final double  bundlePrice= info.getPriceValue().getValue() - discountPrice;
+					final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+							.createNewPriceInformation(info, BigDecimal.valueOf(bundlePrice));
+					lPrices.add(newPriceInformation);
+				}
+			});
+			if(CollectionUtils.isEmpty(lPrices)){
+				return null;
+			}
+			AtomicDouble rPrice = new AtomicDouble(0.0d);
+			lPrices.forEach(refPrice -> rPrice.addAndGet(refPrice.getPriceValue().getValue()));
+			final PriceInformation newPriceInformation = getBlProductDynamicPriceStrategy()
+					.createNewPriceInformation(lPrices.get(0), BigDecimal.valueOf(rPrice.get()));
+			return newPriceInformation.getPriceValue();
+		}
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PriceValue getDynamicPriceForBundle(
+			final ProductModel product, final AbstractOrderModel abstractOrder) throws CalculationException {
+		if (abstractOrder != null && abstractOrder.getRentalStartDate() != null) {
+			Long rentalDays = BlDateTimeUtils
+					.getDaysBetweenDates(abstractOrder.getRentalStartDate(), abstractOrder.getRentalEndDate())
+					+ 1;
+			rentalDays = Objects.nonNull(rentalDays) ? rentalDays : BlCoreConstants.DEFAULT_RENTAL_DAY;
+			return getDynamicBasePriceForBundle(product, rentalDays.intValue());
+		} else {
+			final PriceInformation priceInformation = getWebPriceForBundleProduct(product);
+			return priceInformation != null ? priceInformation.getPriceValue() : null;
+		}
+	}
 	/**
 	 * Gets the dynamic price data for product.
 	 *
@@ -134,12 +203,22 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	@Override
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue)
 	{
+		return getDynamicPriceDataForProductForOrder(isConstrainedProduct, priceValue, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigDecimal getDynamicPriceDataForProductForOrder(final Boolean isConstrainedProduct, final Double priceValue, final Long rentedDays)
+	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {}", priceValue);
-		final Long rentalDays = getRentalDaysFromSession();
+		final Long rentalDays = Objects.nonNull(rentedDays) ? rentedDays : getRentalDaysFromSession();
 		return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
 				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)
 				: BigDecimal.valueOf(priceValue);
 	}
+
 	/**
 	 * Gets the dynamic price data for product.
 	 *

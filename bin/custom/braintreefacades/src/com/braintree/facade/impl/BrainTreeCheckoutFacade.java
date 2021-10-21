@@ -4,6 +4,7 @@ import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
@@ -24,7 +25,6 @@ import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.google.common.util.concurrent.AtomicDouble;
-
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.catalog.model.CompanyModel;
@@ -50,6 +50,7 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -399,6 +400,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	 * It sets the payment details
 	 * @param paymentInfoId the payment info id
 	 * @param paymentMethodNonce the payment method nonce
+	 * @param order the order
 	 * @return boolean
 	 */
 	public boolean setPaymentDetailsForModifyPayment(final String paymentInfoId, final String paymentMethodNonce, final AbstractOrderModel order) {
@@ -518,6 +520,20 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			paymentInfoId, final String nonce) {
 		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
+	
+	/**
+	 * It gets payment info model by payment info id for Deposit.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the payment method nonce
+	 * @param depositAmount the deposit amount
+	 * @return BrainTreePaymentInfoModel
+	 */
+  public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCodeToDeposit(final CustomerModel customer, final String
+      paymentInfoId, final String nonce, final double depositAmount) {
+    return brainTreePaymentService.getBrainTreePaymentInfoForCodeToDeposit(customer, paymentInfoId, nonce, depositAmount);
+  }
 
 	/**
 	 * It sets the order and consignment status and payBill flag as true on successful payment
@@ -531,23 +547,40 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 							if(BooleanUtils.isFalse(billing.isBillPaid())) {
 								billing.setBillPaid(true);
 								getModelService().save(billing);
+								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
 							}
 						}))));
 		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
 				.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serial -> {
-						if(((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
+						if(serial instanceof BlSerialProductModel && (((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
 								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.UNBOXED) ||
-								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.SHIPPED)) {
+								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.SHIPPED))) {
 							isOrderComplete.set(false);
 					}
 					})));
 		if(isOrderComplete.get()) {
 			order.setStatus(OrderStatus.COMPLETED);
+			order.setOrderCompletedDate(new Date());
 			getModelService().save(order);
 			order.getConsignments().forEach(consignmentModel -> {
 				consignmentModel.setStatus(ConsignmentStatus.COMPLETED);
 				getModelService().save(consignmentModel);
 			});
+		}
+	}
+
+	/**
+	 * It updates the total amount past due on successful bill payment
+	 * @param user the user
+	 * @param billing the billing charge instance
+	 */
+	private void setTotalAmountPastDue(final UserModel user, final BlItemsBillingChargeModel billing) {
+		final CustomerModel customerModel = (CustomerModel) user;
+		if(Objects.nonNull(customerModel.getTotalAmountPastDue())) {
+			customerModel.setTotalAmountPastDue(customerModel.getTotalAmountPastDue().subtract(billing.getChargedAmount()));
+			getModelService().save(customerModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total amount past due : {} updated for the customer {} ",
+					customerModel.getTotalAmountPastDue(), customerModel.getUid());
 		}
 	}
 
@@ -762,6 +795,21 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			cart.setIsAuthorizationVoided(Boolean.TRUE);
 			getModelService().save(cart);
 		}
+	}
+	
+	/**
+	 * Gets the cloned payment info for code.
+	 *
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @param newAmount the new amount
+	 * @return the cloned payment info for code
+	 */
+	public BrainTreePaymentInfoModel getModifyOrderPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+      final String nonce, final Double newAmount)
+	{
+	  return getBrainTreePaymentService().getModifyOrderPaymentInfoForCode(customer, paymentInfoId, nonce, newAmount);
 	}
 
 	private Map<String, String> getCustomFields()

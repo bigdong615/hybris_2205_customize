@@ -29,6 +29,7 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.method.BrainTreePaymentService;
 import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.order.refund.partial.services.BraintreePartialRefundService;
 import com.braintree.order.submitForSettlement.service.BraintreeSubmitForSettlementService;
 import com.braintree.payment.dto.BraintreeInfo;
 import com.braintree.paypal.converters.impl.BillingAddressConverter;
@@ -36,6 +37,7 @@ import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.commerceservices.enums.CustomerType;
@@ -71,9 +73,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -82,7 +89,8 @@ import org.apache.log4j.Logger;
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
 {
 	
-	private static final double ZERO_PRICE = 0.0;
+	private static final String ORDER_MUST_NOT_BE_NULL = "Order Must not be null";
+  private static final double ZERO_PRICE = 0.0;
 	private static final int ZERO = 0;
 
 	private static final Logger LOG = Logger.getLogger(BrainTreeTransactionServiceImpl.class);
@@ -104,6 +112,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private CustomFieldsService customFieldsService;
 	private BraintreeSubmitForSettlementService braintreeSubmitForSettlementService;
 	private CustomerAccountService customerAccountService;
+  private BraintreePartialRefundService braintreePartialRefundService;
 	
 	@Override
 	public boolean createAuthorizationTransaction()
@@ -145,16 +154,38 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 			if(submitForSettlement) {
 				createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
+				addTotalDepositedAmountOnOrder(orderModel, paymentInfo, result);
 				return result.isSuccess();
 			} else {
 				return handleAuthorizationResult(result, orderModel);
 			}
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+			BlLogger.logMessage(LOG, Level.ERROR,
 					"Error occurred while creating authorization for the order {}", orderModel.getCode(), ex);
 		}
 			return false;
 	}
+
+  /**
+   * Adds the total deposited amount on order.
+   *
+   * @param orderModel the order model
+   * @param paymentInfo the payment info
+   * @param result the result
+   */
+  private void addTotalDepositedAmountOnOrder(final AbstractOrderModel orderModel, final BrainTreePaymentInfoModel paymentInfo, 
+      BrainTreeAuthorizationResult result)
+  {
+    if(result.isSuccess() && Objects.nonNull(paymentInfo) && BooleanUtils.isTrue(paymentInfo.isIsDepositPayment()))
+    {
+      final AtomicDouble depositAmountTotal = new AtomicDouble(ObjectUtils.defaultIfNull(orderModel.getDepositAmountTotal(), Double.valueOf(0.0d)));
+      depositAmountTotal.addAndGet(paymentInfo.getDepositAmount());
+      orderModel.setDepositAmountTotal(depositAmountTotal.get());
+      getModelService().save(orderModel);
+      getModelService().refresh(orderModel);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Deposit Amount Total : {} for order : {}", depositAmountTotal.get(), orderModel.getCode());
+    }
+  }
 
 	/**
 	 * {@inheritDoc}
@@ -221,17 +252,17 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				.authorize(authorizationRequest, customer);
 
 		if(!StringUtils.isBlank(brainTreeAuthorizationResult.getPaymentMethodToken())){
-			savePaymentMethodFromBTByToken(brainTreeAuthorizationResult.getPaymentMethodToken(), cart);
+			savePaymentMethodFromBTByToken(paymentInfo, brainTreeAuthorizationResult.getPaymentMethodToken(), cart);
 		}
 
 		return brainTreeAuthorizationResult;
 	}
 
-	private void savePaymentMethodFromBTByToken(final String paymentMethodToken, final AbstractOrderModel cart)
+	private void savePaymentMethodFromBTByToken(final BrainTreePaymentInfoModel paymentInfo, final String paymentMethodToken, final AbstractOrderModel cart)
 	{
 		final PayPalAccount paymentMethod = brainTreePaymentService.getPaymentMethodFromBTByToken(paymentMethodToken);
 
-		brainTreePaymentService.updatePaymentInfo(cart.getPaymentInfo(), paymentMethod);
+		brainTreePaymentService.updatePaymentInfo(isPaymentForDeposit(paymentInfo) ? paymentInfo : cart.getPaymentInfo(), paymentMethod);
 
 		LOG.warn(paymentMethod);
 
@@ -321,7 +352,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		authorizationRequest.setCreditCardStatementName(creditCardStatementName);
 		authorizationRequest.setVenmoProfileId(venmoProfileId);
 
-		setAddressInPaymentInfo(authorizationRequest, shippingAddress, cart.getPaymentInfo());
+		setAddressInPaymentInfo(authorizationRequest, shippingAddress, (paymentInfo.isCreateNewTransaction() || paymentInfo.isIsDepositPayment()) ? paymentInfo : cart.getPaymentInfo());
 
 		if (StringUtils.isNotEmpty(merchantAccountIdForCurrentSite))
 		{
@@ -562,20 +593,34 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			transactionEntry.setTransactionStatusDetails(TransactionStatusDetails.BANK_DECLINE.name());
 		}
 
-		savePaymentTransaction(transactionEntry, order);
+		savePaymentTransaction(transactionEntry, order, paymentInfo);
 
-		if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
-		{
-			getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
-//			getBrainTreePaymentTransactionService().continueOrderProcess(order); //NOSONAR
-		}
-		else
-		{
-			getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PARTIAL_CAPTURE);
-		}
+		changeOrderStatusForPayment(order, paymentInfo);
 
 		return transactionEntry;
 	}
+
+  /**
+   * Change order status for payment.
+   *
+   * @param order the order
+   * @param paymentInfo the payment info
+   */
+  private void changeOrderStatusForPayment(final OrderModel order, final BrainTreePaymentInfoModel paymentInfo)
+  {
+    if (Objects.isNull(paymentInfo) || (!paymentInfo.isCreateNewTransaction() && !paymentInfo.isIsDepositPayment()))
+    {
+      if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
+      {
+        getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
+        // getBrainTreePaymentTransactionService().continueOrderProcess(order); //NOSONAR
+      }
+      else
+      {
+        getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PARTIAL_CAPTURE);
+      }
+    }
+  }
 
 	private BigDecimal getTotalAmount(AbstractOrderModel order, BigDecimal totalAmount)
 	{
@@ -743,87 +788,198 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 	private void savePaymentTransaction(final PaymentTransactionEntryModel paymentTransactionEntry, final AbstractOrderModel cart)
 	{
-		final List<PaymentTransactionModel> paymentTransactions;
-		List<PaymentTransactionEntryModel> paymentTransactionEntrys;
-		PaymentTransactionModel braintreePaymentTransaction = null;
-
-		modelService.refresh(cart);
-		if (!cart.getPaymentTransactions().isEmpty())
-		{
-			paymentTransactions = Lists.newArrayList(cart.getPaymentTransactions());
-		}
-		else
-		{
-			paymentTransactions = Lists.newArrayList();
-		}
-
-		for (PaymentTransactionModel transaction : paymentTransactions)
-		{
-			if (BRAINTREE_PROVIDER_NAME.equals(transaction.getPaymentProvider()))
-			{
-				if (transaction.getRequestId().equals(FAKE_REQUEST_ID))
-				{
-					transaction.setRequestId(paymentTransactionEntry.getRequestId());
-					transaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
-					transaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
-
-					if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
-					{
-						BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
-						transaction.setRequestToken(paymentInfo.getNonce());
-						transaction.setInfo(paymentInfo);
-					}
-					paymentTransactions.add(transaction);
-				}
-				braintreePaymentTransaction = transaction;
-				break;
-			}
-		}
-
-		if (braintreePaymentTransaction == null)
-		{
-			braintreePaymentTransaction = modelService.create(PaymentTransactionModel.class);
-			braintreePaymentTransaction.setRequestId(paymentTransactionEntry.getRequestId());
-			braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
-			braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
-
-			if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
-			{
-				BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
-				braintreePaymentTransaction.setRequestToken(paymentInfo.getNonce());
-				braintreePaymentTransaction.setInfo(paymentInfo);
-			}
-			paymentTransactions.add(braintreePaymentTransaction);
-		}
-
-		if (braintreePaymentTransaction.getEntries() != null)
-		{
-			paymentTransactionEntrys = Lists.newArrayList(braintreePaymentTransaction.getEntries());
-		}
-		else
-		{
-			paymentTransactionEntrys = Lists.newArrayList();
-		}
-
-		paymentTransactionEntrys.add(paymentTransactionEntry);
-		braintreePaymentTransaction.setEntries(paymentTransactionEntrys);
-		cart.setPaymentTransactions(paymentTransactions);
-
-		modelService.saveAll(paymentTransactionEntry, braintreePaymentTransaction, cart);
+	  savePaymentTransaction(paymentTransactionEntry, cart, null);
 	}
+	
+	private void savePaymentTransaction(final PaymentTransactionEntryModel paymentTransactionEntry, final AbstractOrderModel cart, 
+	    final BrainTreePaymentInfoModel brainTreePaymentInfoModel)
+	{
+	  final List<PaymentTransactionModel> paymentTransactions;
+    List<PaymentTransactionEntryModel> paymentTransactionEntrys;
+    PaymentTransactionModel braintreePaymentTransaction = null;
+
+    modelService.refresh(cart);
+    
+    paymentTransactions = getPaymentTransactionsList(cart, brainTreePaymentInfoModel);
+
+    braintreePaymentTransaction =
+        getBraintreePaymentTransaction(paymentTransactionEntry, cart, brainTreePaymentInfoModel, paymentTransactions, braintreePaymentTransaction);    
+
+    if (braintreePaymentTransaction == null)
+    {
+      braintreePaymentTransaction = modelService.create(PaymentTransactionModel.class);
+      braintreePaymentTransaction.setRequestId(paymentTransactionEntry.getRequestId());
+      braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
+      braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
+
+      if(isPaymentForDeposit(brainTreePaymentInfoModel))
+      {
+        braintreePaymentTransaction.setRequestToken(brainTreePaymentInfoModel.getNonce());
+        braintreePaymentTransaction.setInfo(brainTreePaymentInfoModel);
+      }
+      else if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
+      {
+        BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
+        braintreePaymentTransaction.setRequestToken(paymentInfo.getNonce());
+        braintreePaymentTransaction.setInfo(paymentInfo);
+      }
+      paymentTransactions.add(braintreePaymentTransaction);
+    }
+
+    if (CollectionUtils.isNotEmpty(braintreePaymentTransaction.getEntries()))
+    {
+      paymentTransactionEntrys = Lists.newArrayList(braintreePaymentTransaction.getEntries());
+    }
+    else
+    {
+      paymentTransactionEntrys = Lists.newArrayList();
+    }
+    
+    paymentTransactionEntrys.add(paymentTransactionEntry);
+    braintreePaymentTransaction.setEntries(paymentTransactionEntrys);
+    if(isPaymentForDeposit(brainTreePaymentInfoModel))
+    {
+      cart.setDepositPaymentTransactions(paymentTransactions);
+      final ArrayList<PaymentInfoModel> paymentInfos = Lists.newArrayList(CollectionUtils.emptyIfNull(cart.getDepositPaymentInfo()));
+      paymentInfos.add(brainTreePaymentInfoModel);
+      cart.setDepositPaymentInfo(paymentInfos);
+    }
+    else
+    {
+      cart.setPaymentTransactions(paymentTransactions);
+    }
+    
+    modelService.saveAll(paymentTransactionEntry, braintreePaymentTransaction, cart);
+	}
+
+  /**
+   * Gets the braintree payment transaction.
+   *
+   * @param paymentTransactionEntry the payment transaction entry
+   * @param cart the cart
+   * @param brainTreePaymentInfoModel the brain tree payment info model
+   * @param paymentTransactions the payment transactions
+   * @param braintreePaymentTransaction the braintree payment transaction
+   * @return the braintree payment transaction
+   */
+  private PaymentTransactionModel getBraintreePaymentTransaction(final PaymentTransactionEntryModel paymentTransactionEntry,
+      final AbstractOrderModel cart, final BrainTreePaymentInfoModel brainTreePaymentInfoModel,
+      final List<PaymentTransactionModel> paymentTransactions, PaymentTransactionModel braintreePaymentTransaction)
+  {
+    if ((Objects.nonNull(brainTreePaymentInfoModel) && brainTreePaymentInfoModel.isCreateNewTransaction()) || isPaymentForDeposit(brainTreePaymentInfoModel))
+    {
+      braintreePaymentTransaction = null;
+    }
+    else
+    {
+      for (PaymentTransactionModel transaction : paymentTransactions)
+      {
+        if (BRAINTREE_PROVIDER_NAME.equals(transaction.getPaymentProvider()))
+        {
+          braintreePaymentTransaction = getPaymentTransactionForOrder(paymentTransactionEntry, cart, paymentTransactions, transaction);
+          break;
+        }
+      }
+    }
+    return braintreePaymentTransaction;
+  }
+
+  /**
+   * Gets the payment transaction for order.
+   *
+   * @param paymentTransactionEntry the payment transaction entry
+   * @param cart the cart
+   * @param paymentTransactions the payment transactions
+   * @param transaction the transaction
+   * @return the payment transaction for order
+   */
+  private PaymentTransactionModel getPaymentTransactionForOrder(final PaymentTransactionEntryModel paymentTransactionEntry,
+      final AbstractOrderModel cart, final List<PaymentTransactionModel> paymentTransactions, PaymentTransactionModel transaction)
+  {
+    PaymentTransactionModel braintreePaymentTransaction;
+    if (transaction.getRequestId().equals(FAKE_REQUEST_ID))
+    {
+      transaction.setRequestId(paymentTransactionEntry.getRequestId());
+      transaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
+      transaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
+
+      if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
+      {
+        BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
+        transaction.setRequestToken(paymentInfo.getNonce());
+        transaction.setInfo(paymentInfo);
+      }
+      paymentTransactions.add(transaction);
+    }
+    braintreePaymentTransaction = transaction;
+    return braintreePaymentTransaction;
+  }
+
+  /**
+   * Gets the payment transactions list.
+   *
+   * @param cart the cart
+   * @param brainTreePaymentInfoModel the brain tree payment info model
+   * @return the payment transactions list
+   */
+  private List<PaymentTransactionModel> getPaymentTransactionsList(final AbstractOrderModel cart,
+      final BrainTreePaymentInfoModel brainTreePaymentInfoModel)
+  {
+    final List<PaymentTransactionModel> paymentTransactions;
+    if (isPaymentForDeposit(brainTreePaymentInfoModel))
+    {
+      if (CollectionUtils.isNotEmpty(cart.getDepositPaymentTransactions()))
+      {
+        paymentTransactions = Lists.newArrayList(cart.getDepositPaymentTransactions());
+      }
+      else
+      {
+        paymentTransactions = Lists.newArrayList();
+      }
+    }
+    else
+    {
+      if (!cart.getPaymentTransactions().isEmpty())
+      {
+        paymentTransactions = Lists.newArrayList(cart.getPaymentTransactions());
+      }
+      else
+      {
+        paymentTransactions = Lists.newArrayList();
+      }
+    }
+    return paymentTransactions;
+  }
+
+  /**
+   * Checks if is payment for deposit.
+   *
+   * @param brainTreePaymentInfoModel the brain tree payment info model
+   * @return true, if is payment for deposit
+   */
+  private boolean isPaymentForDeposit(final BrainTreePaymentInfoModel brainTreePaymentInfoModel)
+  {
+    return Objects.nonNull(brainTreePaymentInfoModel) && brainTreePaymentInfoModel.isIsDepositPayment();
+  }
 
 	private PaymentTransactionEntryModel createTransactionEntry(final PaymentTransactionType type, final AbstractOrderModel cart,
 			final BrainTreeAuthorizationResult result, BrainTreePaymentInfoModel paymentInfo)
 	{
 		PaymentTransactionEntryModel paymentTransactionEntry = null;
+		
 		for (PaymentTransactionModel paymentTransactionModel : cart.getPaymentTransactions()) {
-			for (PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel
-					.getEntries()) {
-				if (paymentTransactionEntryModel.getRequestId().equals(FAKE_REQUEST_ID)) {
-					paymentTransactionEntry = paymentTransactionEntryModel;
-					break;
-				}
-			}
+      for (PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransactionModel
+          .getEntries()) {
+        if (paymentTransactionEntryModel.getRequestId().equals(FAKE_REQUEST_ID)) {
+          paymentTransactionEntry = paymentTransactionEntryModel;
+          break;
+        }
+      }
+    }
+		
+		if(isPaymentForDeposit(paymentInfo))
+		{
+		  paymentTransactionEntry = null;
 		}
 
 		if (paymentTransactionEntry == null)
@@ -911,13 +1067,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 		}
 
-		if (cardPaymentInfoModel != null && BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
-		{
-			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
-		}
+		setDefaultCard(customer, cardPaymentInfoModel);
 
 		return cardPaymentInfoModel;
 	}
+
+	
 
 	@Override
 	public BrainTreePaymentInfoModel createSubscription(final AddressModel billingAddress, final CustomerModel customer,
@@ -954,6 +1109,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				getModelService().save(customer);
 			}
 		}
+		setDefaultCard(customer, cardPaymentInfoModel);
+
+		if(braintreeInfo.isDepositPayment()){
+			cardPaymentInfoModel.setIsDepositPayment(Boolean.TRUE);
+			cardPaymentInfoModel.setDepositAmount(braintreeInfo.getDepositAmount());
+		}
 
 		return cardPaymentInfoModel;
 	}
@@ -961,20 +1122,20 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	@Override
 	public void createOrderTransaction(AbstractOrderModel cart, BrainTreeCreatePaymentMethodResult result)
 	{
+	  final PaymentTransactionEntryModel paymentTransactionEntryModel = modelService.create(PaymentTransactionEntryModel.class);
+    paymentTransactionEntryModel.setType(PaymentTransactionType.ORDER);
+    paymentTransactionEntryModel.setTransactionStatus(TransactionStatus.ACCEPTED.name());
+    paymentTransactionEntryModel.setTransactionStatusDetails(TransactionStatusDetails.SUCCESFULL.name());
+    paymentTransactionEntryModel.setRequestId(result.getPaymentMethodToken());
+    paymentTransactionEntryModel.setTime(new Date());
+    paymentTransactionEntryModel.setAmount(new BigDecimal(cart.getTotalPrice())
+        .setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
+    paymentTransactionEntryModel.setCurrency(cart.getCurrency());
+    paymentTransactionEntryModel.setRequestToken(result.getRequestToken());
+    final String code = BRAINTREE_PROVIDER_NAME + "_cart_" + cart.getCode() + "_stamp_" + System.currentTimeMillis();
+    paymentTransactionEntryModel.setCode(code);
 
-		final PaymentTransactionEntryModel paymentTransactionEntryModel = modelService.create(PaymentTransactionEntryModel.class);
-		paymentTransactionEntryModel.setType(PaymentTransactionType.ORDER);
-		paymentTransactionEntryModel.setTransactionStatus(TransactionStatus.ACCEPTED.name());
-		paymentTransactionEntryModel.setTransactionStatusDetails(TransactionStatusDetails.SUCCESFULL.name());
-		paymentTransactionEntryModel.setRequestId(result.getPaymentMethodToken());
-		paymentTransactionEntryModel.setTime(new Date());
-		paymentTransactionEntryModel.setAmount(new BigDecimal(cart.getTotalPrice()).setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
-		paymentTransactionEntryModel.setCurrency(cart.getCurrency());
-		paymentTransactionEntryModel.setRequestToken(result.getRequestToken());
-		final String code = BRAINTREE_PROVIDER_NAME + "_cart_" + cart.getCode() + "_stamp_" + System.currentTimeMillis();
-		paymentTransactionEntryModel.setCode(code);
-
-		savePaymentTransactionIntentOrder(paymentTransactionEntryModel, cart);
+    savePaymentTransactionIntentOrder(paymentTransactionEntryModel, cart);
 	}
 
 	private BrainTreePaymentInfoModel createCreditCardPaymentInfo(final AddressModel billingAddress,
@@ -1121,6 +1282,18 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private Map<String, String> getCustomFields()
 	{
 		return customFieldsService.getDefaultCustomFieldsMap();
+	}
+	
+	/**
+	 * This method is used to set Default card 
+	 * @param customer
+	 * @param cardPaymentInfoModel
+	 */
+	private void setDefaultCard(final CustomerModel customer, final BrainTreePaymentInfoModel cardPaymentInfoModel) {
+		if (BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
+		}
 	}
 
 	/**
@@ -1302,7 +1475,251 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		this.customerAccountService = customerAccountService;
 	}
 
-	
+  @Override
+  public boolean doCapturePaymentForModifiedOrder(final AbstractOrderModel orderModel, final BigDecimal amount, final boolean submitForSettlement,
+      final BrainTreePaymentInfoModel paymentInfo) throws BraintreeErrorException
+  {
+    BigDecimal amountRefunded = amount;
+    if (Objects.nonNull(orderModel) && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()))
+    {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount to Capture : {} for Order : {}", amountRefunded.doubleValue(), orderModel.getCode());
+      return createAuthorizationTransactionOfOrder(orderModel, amountRefunded, submitForSettlement, paymentInfo);
+    }
+    return Boolean.FALSE;
+  }
+  
+  @Override
+  public boolean initiateRefundProcess(final AbstractOrderModel orderModel, final BigDecimal amountToRefund)
+  {
+    Validate.notNull(orderModel, ORDER_MUST_NOT_BE_NULL, StringUtils.EMPTY);
+    Validate.notNull(amountToRefund, "Amount Must not be null", StringUtils.EMPTY);
+    try
+    {
+      BigDecimal remainingRefundAmount = amountToRefund;
+      if(CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()))
+      {
+        for(final PaymentTransactionModel paymentTransaction : orderModel.getPaymentTransactions())
+        {
+          if(remainingRefundAmount.compareTo(BigDecimal.ZERO) == 0)
+          {
+            return Boolean.TRUE;
+          }
+          remainingRefundAmount = doRefund(orderModel, paymentTransaction, remainingRefundAmount);
+        }
+      }
+      if(remainingRefundAmount.compareTo(BigDecimal.ZERO) == 0)
+      {
+        return Boolean.TRUE;
+      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while refunding order : {} for Amount : {}", orderModel.getCode(), amountToRefund);
+    }
+    return Boolean.FALSE;
+  }
+  
+  /**
+   * Do refund.
+   *
+   * @param orderModel the order model
+   * @param paymentTransaction the payment transaction
+   * @param amountToRefund the amount to refund
+   * @return true, if successful
+   */
+  private BigDecimal doRefund(final AbstractOrderModel orderModel, final PaymentTransactionModel paymentTransaction, final BigDecimal amountToRefund)
+  {
+    BigDecimal refundToMake = amountToRefund;
+    try
+    {      
+      if(CollectionUtils.isNotEmpty(paymentTransaction.getEntries()))
+      {
+        for(PaymentTransactionEntryModel paymentTransactionEntryModel : paymentTransaction.getEntries())
+        {
+          refundToMake = performRefund(orderModel, paymentTransaction, amountToRefund, refundToMake, paymentTransactionEntryModel);
+          if(refundToMake.compareTo(BigDecimal.ZERO) == 0)
+          {
+            break;
+          }
+        }  
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while refunding order : {} for Amount : {} on transaction with code : {}", orderModel.getCode(), amountToRefund.doubleValue(),
+          paymentTransaction.getCode());
+    }
+    return refundToMake;
+  }
+
+  /**
+   * Perform refund.
+   *
+   * @param orderModel the order model
+   * @param paymentTransaction the payment transaction
+   * @param amountToRefund the amount to refund
+   * @param refundToMake the refund to make
+   * @param paymentTransactionEntryModel the payment transaction entry model
+   * @return the big decimal
+   */
+  private BigDecimal performRefund(final AbstractOrderModel orderModel, final PaymentTransactionModel paymentTransaction,
+      final BigDecimal amountToRefund, BigDecimal refundToMake, PaymentTransactionEntryModel paymentTransactionEntryModel)
+  {
+    BrainTreeRefundTransactionResult result;
+    BigDecimal remainingAmountRefund = BigDecimal.ZERO;
+    try
+    {
+      if (getBraintreePartialRefundService().eligibleForPartialRefund(paymentTransactionEntryModel))
+      {
+        remainingAmountRefund = getRemainingAmountRefund(BigDecimal.ZERO, paymentTransactionEntryModel);
+        
+        if(remainingAmountRefund.compareTo(BigDecimal.ZERO) == 0)
+        {
+          return refundToMake;
+        }
+        if (refundToMake.compareTo(remainingAmountRefund) <= 0)
+        {
+          result = getBraintreePartialRefundService().partialRefundTransaction(((OrderModel) orderModel), paymentTransactionEntryModel, refundToMake);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Performed Refund for Amount : {} on transaction entry with code : {}",
+              refundToMake.doubleValue(), paymentTransactionEntryModel.getCode());
+          if (Objects.nonNull(result) && result.isSuccess())
+          {
+            refundToMake = BigDecimal.ZERO;
+          }
+        }
+        else
+        {
+          result =
+              getBraintreePartialRefundService().partialRefundTransaction(((OrderModel) orderModel), paymentTransactionEntryModel, remainingAmountRefund);
+          BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Performed Refund for Amount : {} on transaction entry with code : {}",
+              remainingAmountRefund.doubleValue(), paymentTransactionEntryModel.getCode());
+          if (Objects.nonNull(result) && result.isSuccess())
+          {
+            refundToMake = refundToMake.subtract(remainingAmountRefund);
+          }
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while refunding order : {} for Amount : {} on transaction entry with code : {} with Message : {}", orderModel.getCode(),
+          amountToRefund.doubleValue(), paymentTransaction.getCode(), exception.getMessage());
+    }
+    return refundToMake;
+  }
+
+  /**
+   * Check refund possibility and get amount.
+   *
+   * @param paymentTransaction the payment transaction
+   * @return the big decimal
+   */
+  private BigDecimal checkRefundPossibilityAndGetAmount(final PaymentTransactionModel paymentTransaction)
+  {
+    BigDecimal capturedAmount = BigDecimal.ZERO;
+    if (CollectionUtils.isNotEmpty(paymentTransaction.getEntries()))
+    {
+      for (PaymentTransactionEntryModel transactionEntryModel : paymentTransaction.getEntries())
+      {
+        capturedAmount = getRemainingAmountRefund(capturedAmount, transactionEntryModel);
+      }
+    }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Amount Remaining to Refund : {} for PaymentTransactionModel : {}", capturedAmount.doubleValue(),
+        paymentTransaction.getCode());
+    return capturedAmount;
+  }
+
+  /**
+   * Gets the remaining amount refund from Captured Transaction Entry Model.
+   *
+   * @param capturedAmount the captured amount
+   * @param transactionEntryModel the transaction entry model
+   * @return the remaining amount refund
+   */
+  private BigDecimal getRemainingAmountRefund(BigDecimal capturedAmount, final PaymentTransactionEntryModel transactionEntryModel)
+  {
+    if (getBraintreePartialRefundService().eligibleForPartialRefund(transactionEntryModel))
+    {
+      if (Objects.nonNull(transactionEntryModel.getRefundedAmount()) && transactionEntryModel.getRefundedAmount().compareTo(BigDecimal.ZERO) > 0)
+      {
+        capturedAmount = capturedAmount.add(transactionEntryModel.getAmount().subtract(transactionEntryModel.getRefundedAmount()));
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount in PaymentTransactionEntryModel with Code : {} is {} and Refunded Amount is {}",
+            transactionEntryModel.getCode(), transactionEntryModel.getAmount().doubleValue(),
+            transactionEntryModel.getRefundedAmount().doubleValue());
+      }
+      else
+      {
+        capturedAmount = capturedAmount.add(transactionEntryModel.getAmount());
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount in PaymentTransactionEntryModel with Code : {} is {}",
+            transactionEntryModel.getCode(), transactionEntryModel.getAmount().doubleValue());
+      }
+    }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Remaining Amount to Refund is {} in PaymentTransactionEntryModel with Code : {}",
+        capturedAmount.doubleValue(),transactionEntryModel.getCode());
+    return capturedAmount;
+  }
+  
+  @Override
+  public BigDecimal getRemainingAmountToRefund(final AbstractOrderModel order)
+  {
+    Validate.notNull(order, ORDER_MUST_NOT_BE_NULL, StringUtils.EMPTY);
+    BigDecimal remainingAmoutToRefund = BigDecimal.ZERO;
+    if(CollectionUtils.isNotEmpty(order.getPaymentTransactions()))
+    {
+      for(final PaymentTransactionModel paymentTransaction : order.getPaymentTransactions())
+      {
+        remainingAmoutToRefund = remainingAmoutToRefund.add(checkRefundPossibilityAndGetAmount(paymentTransaction));
+      }
+    }
+    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total remaining amount to refund  is {} for order with Code : {}",
+        remainingAmoutToRefund.doubleValue(), order.getCode());
+    return remainingAmoutToRefund;
+  }
+  
+  @Override
+  public boolean doModifiedOrderPoPayment(final AbstractOrderModel order, final String poNumber, final String poNote, final BigDecimal poAmount)
+  {
+    try
+    {
+      Validate.notNull(order, ORDER_MUST_NOT_BE_NULL, StringUtils.EMPTY);
+      Validate.notNull(poAmount, "Po Amount Must not be null", StringUtils.EMPTY);
+      Validate.notBlank(poNumber, "Po Number must not be blank", StringUtils.EMPTY);
+
+      order.setModifiedOrderPoNumber(poNumber);
+      order.setModifiedOrderPoNotes(poNote);
+      order.setModifiedOrderPoAmount(poAmount.doubleValue());
+      getModelService().save(order);
+      getModelService().refresh(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Payment for Modified Order : {} with Po number : {} and Po Amount : {} is done",
+          order.getCode(), poNumber, poAmount);
+      return Boolean.TRUE;
+    }
+    catch (final Exception exception)
+    {
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+          "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order.getCode(), poAmount);
+    }
+    return Boolean.FALSE;
+  }
+
+  /**
+   * @return the braintreePartialRefundService
+   */
+  public BraintreePartialRefundService getBraintreePartialRefundService()
+  {
+    return braintreePartialRefundService;
+  }
+
+  /**
+   * @param braintreePartialRefundService the braintreePartialRefundService to set
+   */
+  public void setBraintreePartialRefundService(BraintreePartialRefundService braintreePartialRefundService)
+  {
+    this.braintreePartialRefundService = braintreePartialRefundService;
+  }
 	
 	
 }

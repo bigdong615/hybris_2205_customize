@@ -15,7 +15,6 @@ window.dataLayer = window.dataLayer || [];
   gtag('js', new Date());
 gtag('config', googleAnalyticsTrackingId);
 
-
 <c:choose>
 	<c:when test="${pageType == 'PRODUCT'}">
 		<c:set var="categories" value="" />
@@ -30,8 +29,8 @@ gtag('config', googleAnalyticsTrackingId);
 		<c:set var="stockStatus" value="${empty stockStatus ? 'Item In Stock' : 'Item Out of Stock'}" />
 
     gtag('event', 'view_item', {
-       'event_category': 'engagement',
-       'event_label' : 'Product',
+       'event_category': 'Product View',
+       'event_label' : '${product.code}',
       "items": [
         {
           "id": "${product.code}",
@@ -53,7 +52,7 @@ gtag('config', googleAnalyticsTrackingId);
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
 				<c:if test="${not empty searchPageData.results}">
 						gtag('event', 'view_item_list', {
-							"event_category": "engagement",
+							"event_category": "Category View",
 							"event_label": "${ycommerce:encodeJavaScript(listName)}",
 							"items": [
               				<c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
@@ -91,16 +90,354 @@ gtag('config', googleAnalyticsTrackingId);
 
 	</c:when>
 
+  <c:when test="${pageType == 'CART'}">
+      <c:set var="couponCodes" value=""/>
+      <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
+        <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+      </c:forEach>
+      <c:set var="cartType" value=""/>
+      <c:choose>
+      <c:when test="${cartData.hasGiftCart}">
+        <c:set var="cartType" value="Gift Cart"/>
+      </c:when>
+      <c:when test="${cartData.isNewGearOrder}">
+         <c:set var="cartType" value="New Gear Cart"/>
+      </c:when>
+      <c:when test="${cartData.isRentalCart}">
+         <c:set var="cartType" value="Rental Cart"/>
+      </c:when>
+      <c:otherwise>
+        <c:set var="cartType" value="Used Gear Cart"/>
+      </c:otherwise>
+      </c:choose>
+  		gtag('event', 'cart', {
+  		  "event_category": "Cart Page",
+      	"event_label": "View Cart",
+  		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
+  		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+  		  "currency": "USD",
+  		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+       	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
+        "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
+        "checkout_step" : 1,
+        "checkout_option" : "View Cart",
+  		  "items": [
+  				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+  					{
+  					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+  					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+  					  "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+  					  <c:choose>
+  						<c:when test="${not empty entry.product.categories}">
+  							"category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+  						</c:when>
+  						<c:otherwise>
+  							"category": "",
+  						</c:otherwise>
+  					  </c:choose>
+              "list_position": ${status.index},
+  					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+  					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+  					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+  					}
+  					<c:if test='${not status.last}'>,</c:if>
+  			  </c:forEach>
+  			]
+  		});
+
+  		gtag('event', 'checkout', {
+        	    "event_category": "Cart Page",
+            	"event_label": "View Cart",
+              "checkout_step" : 1,
+              "checkout_option" : "View Cart",
+        		  "items": [
+        				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+        					{
+        					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+        					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                            "list_position": ${status.index},
+        					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+        					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+        					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+        					   "checkout_option" : "View Cart"
+        					}
+        					<c:if test='${not status.last}'>,</c:if>
+        			  </c:forEach>
+        			]
+        		});
+  	</c:when>
+
+  	<c:when test="${pageType == 'shippingPage'}">
+          <c:set var="couponCodes" value=""/>
+          <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
+            <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+          </c:forEach>
+          <c:set var="cartType" value=""/>
+          <c:choose>
+          <c:when test="${cartData.hasGiftCart}">
+            <c:set var="cartType" value="Gift Cart Order"/>
+          </c:when>
+          <c:when test="${cartData.isNewGearOrder}">
+             <c:set var="cartType" value="New Gear Order"/>
+          </c:when>
+          <c:when test="${cartData.isRentalCart}">
+             <c:set var="cartType" value="Rental Order"/>
+          </c:when>
+          <c:otherwise>
+            <c:set var="cartType" value="Used Gear Order"/>
+          </c:otherwise>
+          </c:choose>
+      		gtag('event', 'shipping', {
+      		  "event_category": "Shipping Page",
+          	"event_label": "Delivery Method",
+      		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
+      		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+      		  "currency": "USD",
+      		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+           	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
+            "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
+            "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
+            "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+            "checkout_step" : 2,
+            "checkout_option": "Delivery Method",
+      		  "items": [
+      				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+      					{
+      					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+      					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+      					  "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+      					  <c:choose>
+      						<c:when test="${not empty entry.product.categories}">
+      							"category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+      						</c:when>
+      						<c:otherwise>
+      							"category": "",
+      						</c:otherwise>
+      					  </c:choose>
+                  "list_position": ${status.index},
+      					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+      					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+      					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+      					}
+      					<c:if test='${not status.last}'>,</c:if>
+      		  	  </c:forEach>
+      			]
+      		});
+
+      		gtag('event', 'checkout', {
+                  	    "event_category": "Shipping Page",
+                      	"event_label": "Delivery Method",
+                        "checkout_step" : 2,
+                        "checkout_option" : "Delivery Method",
+                  		  "items": [
+                  				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                  					{
+                  					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                  					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                      "list_position": ${status.index},
+                  					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                  					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                  					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                  					   "checkout_option" : "Delivery Method"
+                  					}
+                  					<c:if test='${not status.last}'>,</c:if>
+                  			  </c:forEach>
+                  			]
+                  		});
+      	</c:when>
+
+      		<c:when test="${pageType == 'paymentPage'}">
+                  <c:set var="couponCodes" value=""/>
+                  <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
+                    <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+                  </c:forEach>
+                  <c:set var="cartType" value=""/>
+                  <c:choose>
+                  <c:when test="${cartData.hasGiftCart}">
+                    <c:set var="cartType" value="Gift Cart Order"/>
+                  </c:when>
+                   <c:when test="${cartData.isNewGearOrder}">
+                     <c:set var="cartType" value="New Gear Order"/>
+                   </c:when>
+                   <c:when test="${cartData.isRentalCart}">
+                     <c:set var="cartType" value="Rental Order"/>
+                   </c:when>
+                  <c:otherwise>
+                    <c:set var="cartType" value="Used Gear Order"/>
+                  </c:otherwise>
+                  </c:choose>
+              		gtag('event', 'billing', {
+              		  "event_category": "Payment Page",
+                  	"event_label": "Payment Method",
+              		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
+              		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+              		  "currency": "USD",
+              		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+                   	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
+                    "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
+                    "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
+                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+                    "checkout_step" : 3,
+                    "checkout_option" : "Payment Method",
+              		  "items": [
+              				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+              					{
+              					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+              					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+              					  "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+              					  <c:choose>
+              						<c:when test="${not empty entry.product.categories}">
+              							"category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+              						</c:when>
+              						<c:otherwise>
+              							"category": "",
+              						</c:otherwise>
+              					  </c:choose>
+                          "list_position": ${status.index},
+              					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+              					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+              					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+              					}
+              					<c:if test='${not status.last}'>,</c:if>
+              			   </c:forEach>
+              			]
+              		});
+              		gtag('event', 'checkout', {
+                          	    "event_category": "Payment Page",
+                              	"event_label": "Payment Method",
+                                "checkout_step" : 3,
+                                "checkout_option" : "Payment Method",
+                          		  "items": [
+                          				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                          					{
+                          					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                          					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                              "list_position": ${status.index},
+                          					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                          					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                          					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                          					  "checkout_option" : "Payment Method"
+                          					}
+                          					<c:if test='${not status.last}'>,</c:if>
+                          			  </c:forEach>
+                          			]
+                          		});
+              	</c:when>
+
+              		<c:when test="${pageType == 'reviewSummaryPage'}">
+                                  <c:set var="couponCodes" value=""/>
+                                  <c:forEach items='${cartData.appliedVouchers}' var='voucher' varStatus='status'>
+                                    <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+                                  </c:forEach>
+                                  <c:set var="cartType" value=""/>
+                                  <c:choose>
+                                  <c:when test="${cartData.hasGiftCart}">
+                                    <c:set var="cartType" value="Gift Cart Order"/>
+                                  </c:when>
+                                   <c:when test="${cartData.isNewGearOrder}">
+                                     <c:set var="cartType" value="New Gear Order"/>
+                                   </c:when>
+                                   <c:when test="${cartData.isRentalCart}">
+                                     <c:set var="cartType" value="Rental Order"/>
+                                   </c:when>
+                                  <c:otherwise>
+                                    <c:set var="cartType" value="Used Gear Order"/>
+                                  </c:otherwise>
+                                  </c:choose>
+                              		gtag('event', 'review', {
+                              		  "event_category": "Review Page",
+                                  	"event_label": "Review Order",
+                              		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
+                              		  "value": ${ycommerce:encodeJavaScript(cartData.totalPrice.value)},
+                              		  "currency": "USD",
+                              		  "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+                                   	"damageWaiver" : "${ycommerce:encodeJavaScript(cartData.totalDamageWaiverCost.value)}",
+                                    "subtotal": "${ycommerce:encodeJavaScript(cartData.subTotal.value)}",
+                                    "deliveryCost" : "${ycommerce:encodeJavaScript(cartData.deliveryCost.value)}",
+                                    "tax": "${ycommerce:encodeJavaScript(cartData.taxAvalaraCalculated.value)}",
+                                    "checkout_step" : 4,
+                                    "checkout_option" : "Review Order",
+                              		  "items": [
+                              				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                              					{
+                              					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                              					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                              					  "brand": "${ycommerce:encodeJavaScript(entry.product.manufacturer)}",
+                              					  <c:choose>
+                              						<c:when test="${not empty entry.product.categories}">
+                              							"category": "${ycommerce:encodeJavaScript(entry.product.categories[fn:length(entry.product.categories) - 1].name)}",
+                              						</c:when>
+                              						<c:otherwise>
+                              							"category": "",
+                              						</c:otherwise>
+                              					  </c:choose>
+                                          "list_position": ${status.index},
+                              					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                              					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                              					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
+                              					}
+                              					<c:if test='${not status.last}'>,</c:if>
+                              					</c:forEach>
+                              			]
+                              		});
+           gtag('event', 'checkout', {
+                   	    "event_category": "Review Page",
+                       	"event_label": "Review Order",
+                         "checkout_step" : 4,
+                         "checkout_option" : "Review Order",
+                   		  "items": [
+                   				<c:forEach items='${cartData.entries}' var='entry' varStatus='status'>
+                   					{
+                   					  "id": "${ycommerce:encodeJavaScript(entry.product.code)}",
+                   					  "name": "${ycommerce:encodeJavaScript(entry.product.name)}",
+                                       "list_position": ${status.index},
+                   					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
+                   					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+                   					  "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}",
+                   					   "checkout_option" : "Review Order"
+                   					}
+                   					<c:if test='${not status.last}'>,</c:if>
+                   			  </c:forEach>
+                   			]
+                   		});
+                              	</c:when>
+
 	<c:when test="${pageType == 'ORDERCONFIRMATION'}">
 		<c:set var="orderCode" value="${ycommerce:encodeJavaScript(orderData.code)}"/>
-
+    <c:set var="couponCodes" value=""/>
+    <c:forEach items='${orderData.appliedVouchers}' var='voucher' varStatus='status'>
+      <c:set var="couponCodes" value="${couponCodes}${voucher}${not status.last ? ',':''}"/>
+    </c:forEach>
+    <c:set var="cartType" value=""/>
+                      <c:choose>
+                      <c:when test="${orderData.hasGiftCart}">
+                        <c:set var="cartType" value="Gift Cart Order"/>
+                      </c:when>
+                       <c:when test="${orderData.isNewGearOrder}">
+                         <c:set var="cartType" value="New Gear Order"/>
+                       </c:when>
+                       <c:when test="${orderData.isRentalCart}">
+                         <c:set var="cartType" value="Rental Order"/>
+                       </c:when>
+                      <c:otherwise>
+                        <c:set var="cartType" value="Used Gear Order"/>
+                      </c:otherwise>
+                      </c:choose>
 		gtag('event', 'purchase', {
+		  "event_category": "Order Confirmation",
+    	"event_label": "Confirmed",
 		  "transaction_id": "${orderCode}",
 		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
 		  "value": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
 		  "currency": "USD",
 		  "tax": ${ycommerce:encodeJavaScript(orderData.totalTax.value)},
 		  "shipping": ${ycommerce:encodeJavaScript(orderData.deliveryCost.value)},
+		  "damageWaiver" : "${ycommerce:encodeJavaScript(orderData.totalDamageWaiverCost.value)}",
+      "subtotal": "${ycommerce:encodeJavaScript(orderData.subTotal.value)}",
+      "deliveryCost" : "${ycommerce:encodeJavaScript(orderData.deliveryCost.value)}",
+      "coupon": "${ycommerce:encodeJavaScript(couponCodes)}",
+      "checkout_step" : 5,
+      "checkout_option" : "purchase",
 		  "items": [
 				<c:forEach items='${orderData.entries}' var='entry' varStatus='status'>
 					{
@@ -118,17 +455,14 @@ gtag('config', googleAnalyticsTrackingId);
             "list_position": ${status.index},
 
 					  "quantity": ${ycommerce:encodeJavaScript(entry.quantity)},
-					  "price": "${ycommerce:encodeJavaScript(entry.product.price.value)}"
+					  "price": "${ycommerce:encodeJavaScript(entry.basePrice.value)}",
+					   "subtotal": "${ycommerce:encodeJavaScript(entry.totalPrice.value)}"
 					}
 					<c:if test='${not status.last}'>
 						,
 					</c:if>
 			  </c:forEach>
-			],
-
-			<c:if test="${not empty orderData.appliedVouchers}">
-				"coupon": "${ycommerce:encodeJavaScript(orderData.appliedVouchers[0])}"
-			</c:if>
+			]
 		});
 	</c:when>
 	<c:otherwise>
@@ -137,8 +471,8 @@ gtag('config', googleAnalyticsTrackingId);
 
 function trackAddToCart_google(productCode, productName,quantity,productBrand,productType,productCategory) {
 	gtag('event', 'add_to_cart', {
-	   "event_category": "ecommerce",
-     "event_label": "Cart",
+	   "event_category": "Cart",
+     "event_label": "Add to Cart",
 	   "currency" : "USD",
 	   "value": quantity,
 	  "items": [
@@ -155,8 +489,8 @@ function trackAddToCart_google(productCode, productName,quantity,productBrand,pr
 
 function trackRemoveFromCart(productCode,productName,initialQuantity) {
 	gtag('event', 'remove_from_cart', {
-	 "event_category": "ecommerce",
-   "event_label": "RemoveFromCart",
+	 "event_category": "Cart",
+   "event_label": "Remove From Cart",
 	  "currency" : "USD",
     "items": [
       {
@@ -189,8 +523,9 @@ window.mediator.subscribe('productClick_gtm', function(data) {
 	}
 });
 function trackProductClick(productCode, productName,brand,productType) {
-	gtag('event', 'select_content', {
-	  "event_category": "engagement",
+	gtag('event', 'product_click', {
+	  "event_category": "Product",
+	  "event_label": productCode,
     "content_type": "product",
     "items": [
       {
@@ -211,7 +546,7 @@ window.mediator.subscribe('searchRentalDate', function(data) {
 });
 
 function trackDatePickerClick(daysInAdvance,lengthOfRental) {
-	gtag('event', 'select_content', {
+	gtag('event', 'select_date', {
       'event_category': 'Search Rental Date',
       'event_label': daysInAdvance,
       'value' : lengthOfRental
@@ -223,7 +558,7 @@ window.mediator.subscribe('trackSearch', function(data) {
 });
 
 function trackSearchClick(searchText) {
-	gtag('event', 'select_content', {
+	gtag('event', 'select_search', {
       'event_category': 'Search',
       'event_label': searchText
 	});
@@ -285,7 +620,7 @@ window.mediator.subscribe('applyCreditCart', function(data) {
  function trackCreditCart(paymentError){
     gtag('event', 'cardPayment', {
     'event_label': paymentError,
-    'event_category': 'Checkout',
+    'event_category': 'Checkout [Billing]',
     'non_interaction': true
   });
  }
@@ -300,7 +635,7 @@ window.mediator.subscribe('applyPayPal', function(data) {
 function trackPayPalClick(paymentError) {
   gtag('event', 'PayPalPayment', {
    'event_label': paymentError,
-   'event_category': 'Checkout',
+   'event_category': 'Checkout [Billing]',
    'non_interaction': true
   });
 }
@@ -315,7 +650,7 @@ window.mediator.subscribe('applyPO', function(data) {
 function trackPOClick(paymentError) {
    gtag('event', 'POPayment', {
    'event_label': paymentError,
-   'event_category': 'Checkout',
+   'event_category': 'Checkout [Billing]',
    'non_interaction': true
  });
 }
@@ -328,9 +663,9 @@ window.mediator.subscribe('changeDamageWaiver', function(data) {
 });
 
 function trackChangeDamageWaiverClick(productCode,damageWaiverType) {
-   gtag('event', 'ChangeDamageWaiver', {
-   'event_label': damageWaiverType,
+   gtag('event', 'Change Damage Waiver', {
    'event_category': 'Cart',
+   'event_label': damageWaiverType,
     'value' : productCode
  });
 }

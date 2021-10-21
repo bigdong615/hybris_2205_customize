@@ -22,11 +22,13 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;BlAccountRentalOrderExtendConfirmationComponent; Account Rental Order Extend Confirmation;extendOrderConfirmation.jsp;;BlAccountRentalOrderExtendConfirmationComponent
 								 ;;PayBillComponent;Bill Pay Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillPage.jsp;;PayBillComponent
 								 ;;PayBillSuccessComponent;Bill Pay Success Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillSuccessPage.jsp;;PayBillSuccessComponent
-								 ;;ModifyPaymentComponent;Modify Payment Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifyPaymentPage.jsp;;ModifyPaymentComponent 
+								 ;;ModifyPaymentComponent;Modify Payment Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountModifyPaymentPage.jsp;;ModifyPaymentComponent
+                                  ;                         ; DepositPaymentComponent                         ; Deposit Payment Component                ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositPaymentPage.jsp ;                         ; DepositPaymentComponent                         
+                                  ;                         ; DepositPaymentSuccessComponent                  ; Deposit Payment Success Component        ; /WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountDepositSuccessPage.jsp ;                         ; DepositPaymentSuccessComponent                  
+								  
 # CMS View Order Action
 INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
                              ;;ViewOrderAction;/my-account/order/{orderCode};View Order Action;ViewOrderAction
-
 
 # ContentSlot
 INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef);;;
@@ -46,6 +48,8 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
 						 ;;BodyContentSlot-bill-pay;Body Content Slot for Bill Payment;true;PayBillComponent;;;
 						 ;;BodyContentSlot-bill-pay-success;Body Content Slot for Bill Payment Success;true;PayBillSuccessComponent;;;
 						 ;;BodyContentSlot-modify-payment;Body Content Slot for Modify Payment;true;ModifyPaymentComponent;;; 
+                          ;                         ; BodyContentSlot-deposit-payment           ; Body Content Slot for Deposit Payment           ; true   ; DepositPaymentComponent                         ;  ;  ;  
+                          ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;  
 						                         
 # ContentSlotForPage
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
@@ -76,3 +80,9 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
 # ContentSlotForPage for extend order confirmation page
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderConfirmation'];contentSlot(uid,$contentCV)[unique=true];;;
                                 ;;BodyContent-rentalOrderExtendConfirmation;BodyContent;;BodyContent-rentalOrderExtendConfirmation;;;
+
+# ContentSlotForPage      
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                        ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
+                                 ;                         ; BodyContentSlot-deposit-payment         ; BodyContent           ; deposit-payment                   ; BodyContentSlot-deposit-payment          ;  ;  ;  
+                                 ;                         ; BodyContentSlot-deposit-payment-success ; BodyContent           ; deposit-payment-success           ; BodyContentSlot-deposit-payment-success  ;  ;  ;  
+                                

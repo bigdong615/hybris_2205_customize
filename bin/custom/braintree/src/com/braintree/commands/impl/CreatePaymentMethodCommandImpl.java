@@ -54,6 +54,7 @@ public class CreatePaymentMethodCommandImpl extends
 			{
 				result.setErrorCode(creditCardVerification.getProcessorResponseCode());
 				result.setErrorMessage(getLocalizedErrorMessage(BraintreeConstants.GENERAL_VALIDATION_ERROR_MESSAGE));
+				result.setCvvValidationCode(creditCardVerification.getCvvResponseCode());
 				getLoggingHandler().handleCardVerificationError(creditCardVerification);
 			}
 			getLoggingHandler().handleErrors(brainTreeResult.getErrors().getAllDeepValidationErrors());
@@ -83,7 +84,8 @@ public class CreatePaymentMethodCommandImpl extends
 			result.setCardNumber(card.getMaskedNumber());
 			result.setCardholderName(card.getCardholderName());
 			result.setImageSource(card.getImageUrl());
-      result.setBraintreeAddressId(card.getBillingAddress().getId());
+            result.setBraintreeAddressId(card.getBillingAddress().getId());
+            result.setIsDefault(card.isDefault());
 			getLoggingHandler().handleResult("[PAYMENT METHOD]", card);
 		}
 		else if (brainTreeResult.getTarget() instanceof VenmoAccount)

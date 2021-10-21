@@ -6,6 +6,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.order.BlOrderService;
@@ -53,6 +54,9 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
   private BlOrderService blOrderService;
 
+
+  private DefaultBlESPEventService defaultBlESPEventService;
+
   /**
    * {@inheritDoc}
    */
@@ -78,7 +82,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
       setOrderToManualReviewStatus(order);
       BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), ex,
-          " Changing order status to MANUAL_REVIEW for order code {}", order.getCode());
+          " Changing order status to RECEIVED_MANUAL_REVIEW for order code {}", order.getCode());
     } catch (final Exception e) {
 
       setOrderSuspendedStatus(order);
@@ -94,7 +98,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
-        order.setStatus(OrderStatus.READY);
+        order.setStatus(OrderStatus.RECEIVED);
 
         if (order.getEntries().stream()
             .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
@@ -102,6 +106,13 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
           setOrderToManualReviewStatus(order);
         } else {
         getModelService().save(order);
+        }
+        // To call the order confirmation Order ESP event
+
+        try {
+          getDefaultBlESPEventService().sendOrderConfirmation(order);
+        }  catch (final Exception ex) {
+          BlLogger.logMessage(LOG , Level.ERROR , "Error while executing order confimration ESP Event");
         }
 
       } catch (final AmbiguousIdentifierException ex) {
@@ -115,7 +126,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
         setOrderToManualReviewStatus(order);
         BlLogger.logFormattedMessage(LOG, Level.WARN, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(), ex,
-            " Changing order status to MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
+            " Changing order status to RECEIVED_MANUAL_REVIEW due to allocation error for order code {}", order.getCode());
       } catch (final BlShippingOptimizationException soe) {
 
         setOrderSuspendedStatus(order);
@@ -279,13 +290,13 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   }
 
   /**
-   * Set order status to MANUAL_REVIEW.
+   * Set order status to RECEIVED_MANUAL_REVIEW.
    *
    * @param order - order
    */
   private void setOrderToManualReviewStatus(final OrderModel order) {
 
-    order.setStatus(OrderStatus.MANUAL_REVIEW);
+    order.setStatus(OrderStatus.RECEIVED_MANUAL_REVIEW);
     getModelService().save(order);
   }
 
@@ -352,4 +363,17 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   public void setBlOrderService(final BlOrderService blOrderService) {
     this.blOrderService = blOrderService;
   }
+
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
+
+
+
 }
