@@ -115,8 +115,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   /**
    * This method created to set the gift card details
-   * @param source orderModel
-   * @param target orderData
+   * @param orderModel orderModel
+   * @param orderData orderData
    */
   private void populateGiftCard(final OrderModel orderModel, final OrderData orderData) {
     if (CollectionUtils.isNotEmpty(orderModel.getGiftCard()) && !orderModel.isGiftCardOrder())
