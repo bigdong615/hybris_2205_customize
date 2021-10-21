@@ -87,7 +87,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
         data.setStatus(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()) ?
             BlCoreConstants.RECEIVED :
-            getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
+            getRequestValue(getOrderStatus(orderModel)));
         data.setDateplaced(formatter.format(orderModel.getDate()));
         if(Objects.nonNull(orderModel.getDeliveryMode())) {
           final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) orderModel
@@ -127,6 +127,15 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         populateXMLData(orderModel, data);
         orderConfirmationEventRequest.setData(data);
     }
+
+  /**
+   * This method created to get order status from order model
+   * @param orderModel orderModel
+   * @return String
+   */
+  private String getOrderStatus(final OrderModel orderModel) {
+    return Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY : orderModel.getStatus().getCode();
+  }
 
 
   /**
@@ -217,7 +226,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                     getRequestValue(billingAddress.getEmail()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES,getOrderNotesFromOrderModel(orderModel));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_USED,
-                    String.valueOf(getDoubleValueForRequest(orderModel.getGiftCardAmount())));
+                    String.valueOf(Objects.isNull(orderModel.getGiftCardAmount()) ? 0.0: orderModel.getGiftCardAmount()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_BALANCE, getGiftCardBalance(orderModel));
 
               final Transformer transformer = getTransformerFactoryObject();
@@ -247,23 +256,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
 
             if (CollectionUtils.isNotEmpty(orderModel.getEntries())) {
                 for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
-                    final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ORDER_ITEM_ROOT_ELEMENT);
-                    if (Objects.nonNull(entryModel.getProduct())) {
-                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
-                            getRequestValue(entryModel.getProduct().getCode()));
-                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
-                           entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
-                    }
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-                        entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
-                    if (Objects.nonNull(entryModel.getBasePrice())) {
-                        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
-                    }
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
-                        String.valueOf(getDamageWaiverPriceFromEntry(entryModel)));
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
-                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
-                        String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+                    populateOrderDetailsInXMl(entryModel , orderItemsInXMLDocument , rootOrderItems);
                 }
             }
 
@@ -280,6 +273,32 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
     }
 
+  /**
+   * This method created to populate data in XML format
+   * @param entryModel entryModel
+   * @param orderItemsInXMLDocument orderItemsInXMLDocument
+   * @param rootOrderItems rootOrderItems
+   */
+    private void populateOrderDetailsInXMl(final AbstractOrderEntryModel entryModel, final Document orderItemsInXMLDocument,
+        final Element rootOrderItems) {
+      final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ORDER_ITEM_ROOT_ELEMENT);
+      if (Objects.nonNull(entryModel.getProduct())) {
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+            getRequestValue(entryModel.getProduct().getCode()));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+            entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
+      }
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
+          entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
+      if (Objects.nonNull(entryModel.getBasePrice())) {
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
+      }
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
+          String.valueOf(getDamageWaiverPriceFromEntry(entryModel)));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
+          String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+    }
 
 
 }
