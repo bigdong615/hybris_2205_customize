@@ -1,9 +1,12 @@
 package com.bl.core.esp.service;
 
+import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import java.util.List;
+import java.util.Map;
 
 public interface BlESPEventService {
 
@@ -123,8 +126,17 @@ public interface BlESPEventService {
 
     /**
      *  Send  bill paid  by calling  Order Bill Paid ESP Event API
-     * @param orderModel ordermodel
+     * @param orderModel OrderModel
+     * @param orderBillPaidExtraData OrderBillPaidExtraData
      */
-    void sendOrderBillPaidEvent(final OrderModel orderModel) ;
+    void sendOrderBillPaidEvent(final OrderModel orderModel, final OrderBillPaidExtraData orderBillPaidExtraData) ;
 
+    /**
+     * It triggers bill paid esp event.
+     * @param payBillTotal
+     * @param billingChargeTypeMap
+     * @param orderModel
+     */
+    void triggerBillPaidEspEvent(final String payBillTotal,
+        final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel);
 }

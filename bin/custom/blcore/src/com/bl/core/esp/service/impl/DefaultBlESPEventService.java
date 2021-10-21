@@ -23,6 +23,7 @@ import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
+import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -49,11 +50,13 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,6 +66,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -499,9 +503,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderBillPaidEvent(final OrderModel orderModel) {
+  public void sendOrderBillPaidEvent(final OrderModel orderModel, final OrderBillPaidExtraData orderBillPaidExtraData) {
     if (Objects.nonNull(orderModel)) {
       final OrderBillPaidEventRequest orderBillPaidEventRequest = new OrderBillPaidEventRequest();
+      orderBillPaidEventRequest.setExtraData(orderBillPaidExtraData);
       getBlOrderBillPaidRequestPopulator().populate(orderModel,
           orderBillPaidEventRequest);
       ESPEventResponseWrapper espEventResponseWrapper = null;
@@ -516,6 +521,29 @@ public class DefaultBlESPEventService implements BlESPEventService {
       // Save send order bill paid ESP Event Detail
       persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BILL_PAID,
           orderModel.getCode(), null, null);
+    }
+  }
+
+  /**
+   * It triggers bill paid esp event.
+   *
+   * @param payBillTotal
+   * @param billingChargeTypeMap
+   * @param orderModel
+   */
+  @Override
+  public void triggerBillPaidEspEvent(final String payBillTotal,
+      final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel) {
+    final OrderBillPaidExtraData orderBillPaidExtraData = new OrderBillPaidExtraData();
+    if (MapUtils.isNotEmpty(billingChargeTypeMap)) {
+      orderBillPaidExtraData.setBillPaidTypesMap(billingChargeTypeMap);
+    }
+    orderBillPaidExtraData.setTotalBillPaidAmount(payBillTotal);
+    try{
+      sendOrderBillPaidEvent(orderModel, orderBillPaidExtraData);
+    }catch (final Exception exception){
+      BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Bill Paid ESP Event",
+          exception);
     }
   }
 

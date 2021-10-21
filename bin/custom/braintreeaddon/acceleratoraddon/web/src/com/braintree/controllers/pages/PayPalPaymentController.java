@@ -50,6 +50,8 @@ import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -409,7 +411,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
 						return getViewForPage(model);
 					}
-					brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+					Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+					blEspEventService.triggerBillPaidEspEvent(payBillTotal, billingChargeTypeMap, (OrderModel) order);
 					final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 							BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 					storeCmsPageInModel(model, payBillSuccessPage);

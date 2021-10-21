@@ -24,6 +24,7 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -42,6 +43,7 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
@@ -51,6 +53,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -539,8 +542,9 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	 * It sets the order and consignment status and payBill flag as true on successful payment
 	 * @param order the order
 	 */
-	public void setPayBillFlagTrue(final AbstractOrderModel order) {
+	public Map<String,List<String>> setPayBillFlagTrue(final AbstractOrderModel order) {
 		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
+		Map<String,List<String>> productCodeWiseItemCharge = new HashMap<>();
 		order.getConsignments()
 				.forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 						.getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
@@ -548,7 +552,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 								billing.setBillPaid(true);
 								getModelService().save(billing);
 								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
-							}
+                storeBillingChargesTypeToMap(productCodeWiseItemCharge, consignmentEntry, billing);
+              }
 						}))));
 		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
 				.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serial -> {
@@ -567,9 +572,31 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 				getModelService().save(consignmentModel);
 			});
 		}
+		return productCodeWiseItemCharge;
 	}
 
-	/**
+  /**
+   * It stores billing charge type to a map.
+   *
+   * @param productCodeWiseItemCharge
+   * @param consignmentEntry
+   * @param billing
+   */
+  private void storeBillingChargesTypeToMap(
+      final Map<String, List<String>> productCodeWiseItemCharge,
+      final ConsignmentEntryModel consignmentEntry, final BlItemsBillingChargeModel billing) {
+    final String productCode = consignmentEntry.getOrderEntry().getProduct().getCode();
+    if (productCodeWiseItemCharge.containsKey(productCode)) {
+      final List<String> billChargeType = productCodeWiseItemCharge.get(productCode);
+      billChargeType.add(billing.getBillChargeType().getCode());
+      productCodeWiseItemCharge.put(productCode, billChargeType);
+    } else {
+      productCodeWiseItemCharge.put(productCode, Lists
+          .newArrayList(billing.getBillChargeType().getCode()));
+    }
+  }
+
+  /**
 	 * It updates the total amount past due on successful bill payment
 	 * @param user the user
 	 * @param billing the billing charge instance
