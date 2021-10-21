@@ -110,6 +110,18 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
 
+   populateGiftCard(source , target);
+
+    
+  }
+
+
+  /**
+   * This method created to set the gift card details
+   * @param source orderModel
+   * @param target orderData
+   */
+  private void populateGiftCard(final OrderModel source, final OrderData target) {
     if (CollectionUtils.isNotEmpty(source.getGiftCard()) && !source.isGiftCardOrder())
     {
       final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
@@ -126,11 +138,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       }
       target.setGiftCardData(blGiftCardDataList);
     }
-
-    
   }
-
-
 
   /**
    * This method created to populate dates for order details
