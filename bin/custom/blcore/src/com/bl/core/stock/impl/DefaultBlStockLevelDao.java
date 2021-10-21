@@ -318,7 +318,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			final List<StockLevelModel> stockLevels = result.getResult();
 			if (CollectionUtils.isEmpty(stockLevels))
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 						"No Stock Levels found for product codes : {} and date between : {} and {}", productCodes, startDate, endDate);
 				return Collections.emptyList();
 			}
