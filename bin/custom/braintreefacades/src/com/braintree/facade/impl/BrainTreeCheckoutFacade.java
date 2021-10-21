@@ -552,9 +552,9 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 						}))));
 		order.getConsignments().forEach(consignment -> consignment.getConsignmentEntries()
 				.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(serial -> {
-						if(((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
+						if(serial instanceof BlSerialProductModel && (((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.BOXED) ||
 								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.UNBOXED) ||
-								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.SHIPPED)) {
+								((BlSerialProductModel) serial).getSerialStatus().equals(SerialStatusEnum.SHIPPED))) {
 							isOrderComplete.set(false);
 					}
 					})));

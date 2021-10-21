@@ -502,23 +502,30 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		
 
 		if (isSuccess) {
-		  blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
-			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-			order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
-		    PriceData payBillTotal  = convertDoubleToPriceData(payBillAmount, order);
-			orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
-			model.addAttribute(ORDER_DATA, orderDetails);
-			brainTreeCheckoutFacade.setPayBillFlagTrue(order);
-			final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
-					BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
-			storeCmsPageInModel(model, payBillSuccessPage);
-			setUpMetaDataForContentPage(model, payBillSuccessPage);
-			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
-					ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-			return getViewForPage(model);
-		} else {
+			try {
+				blOrderFacade.setResolvedStatusOnRepairLog(orderCode);
+				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+				order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+				PriceData payBillTotal = convertDoubleToPriceData(payBillAmount, order);
+				orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
+				model.addAttribute(ORDER_DATA, orderDetails);
+				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+				storeCmsPageInModel(model, payBillSuccessPage);
+				setUpMetaDataForContentPage(model, payBillSuccessPage);
+				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+						ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+				return getViewForPage(model);
+			}
+			catch (final Exception e) {
+				BlLogger.logMessage(LOG , Level.ERROR , "Error while executing getPayBillDetailsForOrder " , e);
+			}
+		}
+		else {
 			return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
 		}
+		return REDIRECT_PREFIX + MY_ACCOUNT + orderCode + PAY_BILL;
 	}
 
 	@PostMapping(value = "/modify-payment-success")

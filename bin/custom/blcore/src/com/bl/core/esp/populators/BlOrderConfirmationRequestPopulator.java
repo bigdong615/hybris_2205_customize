@@ -216,7 +216,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                     getRequestValue(billingAddress.getEmail()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES,getOrderNotesFromOrderModel(orderModel));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_USED,
-                    String.valueOf(getDoubleValueForRequest(orderModel.getGiftCardAmount())));
+                    String.valueOf(Objects.nonNull(orderModel.getGiftCardAmount()) ? orderModel.getGiftCardAmount() : 0.0));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_GIFT_CARD_BALANCE, getGiftCardBalance(orderModel));
 
               final Transformer transformer = getTransformerFactoryObject();

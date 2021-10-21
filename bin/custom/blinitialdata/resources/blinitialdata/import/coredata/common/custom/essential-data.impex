@@ -453,38 +453,50 @@ INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]
                                         ; REPAIR_CHARGE     			; REPAIR CHARGE 
                                         ; CUSTOMER_RESPONSIBLE_REPAIRS	; CUSTOMER RESPONSIBLE REPAIRS
 
- 
-INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]                                       
-                                             ; FEDEX_SAT_DELIVERY_BL                   ; FedEx Saturday Delivery on BL                       
-                                             ; FEDEX_STANDARD_ROUND_TRIP               ; FedEx Standard Round Trip                           
-                                             ; FEDEX_OVERNIGHT_ROUND_TRIP              ; FedEx Overnight Round Trip                          
-                                             ; UPS_STANDARD_ROUND_TRIP                 ; UPS Standard Round Trip                             
-                                             ; UPS_STANDARD_AM_ROUND_TRIP              ; UPS Standard Am Round Trip                          
-                                             ; UPS_OVERNIGHT_SAVER_ROUND_TRIP          ; Test UPS Overnight Saver Round Trip                 
-                                             ; UPS_OVERNIGHT_ROUND_TRIP                ; UPS Overnight Round Trip                            
-                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP          ; Ups Store Overnight Round Trip                      
-                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP        ; Ups Store Standard Am Round Trip                    
-                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP    ; Ups Store Overnight Saver Round Trip                
-                                             ; UPS_STORE_STANDARD_ROUND_TRIP           ; Ups Store Standard Round Trip                       
-                                             ; BL_SAN_CARLOS                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office) 
-                                             ; COLORTEK                                ; Pick-up in Boston, MA (Colortek)                    
-                                             ; FOTO_EXPRESS                            ; Pick-up in San Jose, CA (Foto Express)              
-                                             ; WEBCAM                                  ; Pick-up in Philadelphia, PA (WEBBCAM)               
-                                             ; BL_WALTHAM                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)    
-                                             ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)             
-                                             ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)          
-                                             ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)          
-                                             ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL                       
-                                             ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL                        
-                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL                              
-                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_SAT_BL   ; FEDEX Overnight AM Saturday on BL                   
-                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_SAT_BL     ; Ups Overnight AM Saturday on BL                     
-                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL                            
-                                             ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL                      
-                                             ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL                         
-                                             ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area                                      
-                                             ; SAME_DAY_DELIVERY                       ; SF Bay Area                                         
-                                             
+
+INSERT_UPDATE BlackoutDateShippingMethodEnum ; code[unique=true]                       ; name[lang=en]
+                                             ; FEDEX_SAT_DELIVERY_BL                   ; FedEx Saturday Delivery on BL
+                                             ; FEDEX_STANDARD_ROUND_TRIP               ; FedEx Standard Round Trip
+                                             ; FEDEX_OVERNIGHT_ROUND_TRIP              ; FedEx Overnight Round Trip
+                                             ; UPS_STANDARD_ROUND_TRIP                 ; UPS Standard Round Trip
+                                             ; UPS_STANDARD_AM_ROUND_TRIP              ; UPS Standard Am Round Trip
+                                             ; UPS_OVERNIGHT_SAVER_ROUND_TRIP          ; Test UPS Overnight Saver Round Trip
+                                             ; UPS_OVERNIGHT_ROUND_TRIP                ; UPS Overnight Round Trip
+                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP          ; Ups Store Overnight Round Trip
+                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP        ; Ups Store Standard Am Round Trip
+                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP    ; Ups Store Overnight Saver Round Trip
+                                             ; UPS_STORE_STANDARD_ROUND_TRIP           ; Ups Store Standard Round Trip
+                                             ; BL_SAN_CARLOS                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office)
+                                             ; COLORTEK                                ; Pick-up in Boston, MA (Colortek)
+                                             ; FOTO_EXPRESS                            ; Pick-up in San Jose, CA (Foto Express)
+                                             ; WEBCAM                                  ; Pick-up in Philadelphia, PA (WEBBCAM)
+                                             ; BL_WALTHAM                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)
+                                             ; KENMORE                                 ; Pick-up in Kenmore, WA (Kenmore Camera)
+                                             ; TUTTLE_CAMERA                           ; Pick-up in Long Beach, CA (Tuttle Cameras)
+                                             ; PEAK_DESIGN                             ; Pick-up in San Francisco, CA (Peak Design)
+                                             ; FEDEX_STANDARD_SAT_DELIVERY_BL          ; FEDEX Saturday Delivery on BL
+                                             ; UPS_STANDARD_OVERNIGHT_EARLY_AM_ON_BL   ; Ups Overnight Early AM on BL
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_BL         ; Ups Overnight AM on BL
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_SAT_BL   ; FEDEX Overnight AM Saturday on BL
+                                             ; UPS_STANDARD_OVERNIGHT_AM_ON_SAT_BL     ; Ups Overnight AM Saturday on BL
+                                             ; FEDEX_STANDARD_OVERNIGHT_AM_ON_BL       ; FEDEX Overnight AM on BL
+                                             ; FEDEX_STANDARD_OVERNIGHT_EARLY_AM_ON_BL ; FEDEX Overnight Early AM on BL
+                                             ; UPS_STANDARD_SAT_DELIVERY_BL            ; Ups Saturday Delivery on BL
+                                             ; NEXT_DAY_RUSH_DELIVERY                  ; NYC Metro Area
+                                             ; SAME_DAY_DELIVERY                       ; SF Bay Area
+                                             ; BL_SAN_CARLOS_BL                           ; Pick-up in San Carlos, CA (BorrowLenses.com Office)
+                                             ; BL_WALTHAM_BL                              ; Pick-up in Waltham, MA (BorrowLenses.com Office)
+                                             ; FOTO_EXPRESS_BL                            ; Pick-up in San Jose, CA (Foto Express)
+                                             ; PEAK_DESIGN_BL                             ; Pick-up in San Francisco, CA (Peak Design)
+                                             ; WEBCAM_BL                                  ; Pick-up in Philadelphia, PA (WEBBCAM)
+                                             ; COLORTEK_BL                                ; Pick-up in Boston, MA (Colortek)
+                                             ; KENMORE_BL                                 ; Pick-up in Kenmore, WA (Kenmore Camera)
+                                             ; TUTTLE_CAMERA_BL                           ; Pick-up in Long Beach, CA (Tuttle Cameras)
+                                             ; UPS_STORE_STANDARD_ROUND_TRIP_BL           ; Ups Store Standard Round Trip
+                                             ; UPS_STORE_OVERNIGHT_ROUND_TRIP_BL          ; Ups Store Overnight Round Trip
+                                             ; UPS_STORE_STANDARD_AM_ROUND_TRIP_BL        ; Ups Store Standard Am Round Trip
+                                             ; UPS_STORE_OVERNIGHT_SAVER_ROUND_TRIP_BL    ; Ups Store Overnight Saver Round Trip
+
 INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
                               ; blChangeOrderReturnDateJob ; blChangeOrderReturnDateJob 
                               ; blShareASaleJob            ; blShareASaleJob

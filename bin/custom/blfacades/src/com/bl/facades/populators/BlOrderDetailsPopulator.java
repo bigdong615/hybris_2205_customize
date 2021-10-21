@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -167,8 +168,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
         BlFacadesConstants.TOTAL_PRICE_FIELD), source));
     target.setSubTotal(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getSubtotal() ,
         BlFacadesConstants.SUB_TOTAL_FIELD), source));
-    final Double discountAmount = source.getTotalDiscounts();
-    final Double giftCartAMount = source.getGiftCardAmount();
+    final Double discountAmount = Objects.nonNull(source.getTotalDiscounts()) ? source.getTotalDiscounts() : 0.0;
+    final Double giftCartAMount =  Objects.nonNull(source.getGiftCardAmount()) ? source.getGiftCardAmount() : 0.0;
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));

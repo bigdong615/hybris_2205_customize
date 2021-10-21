@@ -111,7 +111,7 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 		final Map<Integer, Double> constrainedRatiosMap = getConstrainedRatiosMap(
 				getBlPricingRatioService().getConstrainedPricingRatio());
 		final BigDecimal constrainedDynamicPrice = calculateDynamicPriceforRentalDays(constrainedRatiosMap, selectedNumberOfDays,
-				BigDecimal.valueOf(priceValue.longValue()));
+				priceValue);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Dynamic Price for Constrained Product : {}",
 				constrainedDynamicPrice.toString());
 		return constrainedDynamicPrice;
@@ -130,7 +130,7 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	{
 		final Map<Integer, Double> standardRatiosMap = getStandardRatiosMap(getBlPricingRatioService().getStandardPricingRatio());
 		final BigDecimal standardDynamicPrice = calculateDynamicPriceforRentalDays(standardRatiosMap, selectedNumberOfDays,
-				BigDecimal.valueOf(priceValue.longValue()));
+				priceValue);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Dynamic Price for Standard Product : {}",
 				standardDynamicPrice.toString());
 		return standardDynamicPrice;
