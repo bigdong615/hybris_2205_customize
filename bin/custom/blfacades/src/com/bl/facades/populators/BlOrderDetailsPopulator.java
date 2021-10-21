@@ -168,8 +168,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
         BlFacadesConstants.TOTAL_PRICE_FIELD), source));
     target.setSubTotal(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getSubtotal() ,
         BlFacadesConstants.SUB_TOTAL_FIELD), source));
-    final Double discountAmount = Objects.nonNull(source.getTotalDiscounts()) ? source.getTotalDiscounts() : 0.0;
-    final Double giftCartAMount =  Objects.nonNull(source.getGiftCardAmount()) ? source.getGiftCardAmount() : 0.0;
+    final Double discountAmount = Objects.isNull(source.getTotalDiscounts()) ?  0.0 : source.getTotalDiscounts();
+    final Double giftCartAMount =  Objects.isNull(source.getGiftCardAmount()) ? 0.0: source.getGiftCardAmount();
     final Double totalDisount = discountAmount + giftCartAMount;
     target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
         BlFacadesConstants.DISCOUNT_FIELD), source));
