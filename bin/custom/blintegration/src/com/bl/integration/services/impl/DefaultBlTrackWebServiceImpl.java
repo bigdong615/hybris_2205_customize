@@ -65,7 +65,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         trackRequest.setWebAuthenticationDetail(getWebAuthenticationDetailsForFedex());
         trackRequest.setTransactionDetail(getTransactionDetailForFedex(abstractOrderModel));
         trackRequest.setVersion(getVersionIdForFedex());
-        getTrackageIndentifierNumber(trackRequest);
+        getTrackageIndentifierNumber(trackRequest , packagingInfoModel);
         final TrackServiceLocator service = new TrackServiceLocator();
         final TrackPortType port;
         updateEndPoint(service);
@@ -140,11 +140,14 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   /**
    * This method created to set the tracking details
    * @param trackRequest trackRequest
+   * @param packagingInfoModel
    */
-  private void getTrackageIndentifierNumber(final TrackRequest trackRequest) {
+  private void getTrackageIndentifierNumber(final TrackRequest trackRequest,
+      PackagingInfoModel packagingInfoModel) {
     final TrackPackageIdentifier packageIdentifier = new TrackPackageIdentifier();
     final TrackSelectionDetail selectionDetail = new TrackSelectionDetail();
-    packageIdentifier.setValue("744802117499787"); // Used for testing
+    packageIdentifier.setValue(Objects.nonNull(packagingInfoModel.getTrackingNumber())
+        ? packagingInfoModel.getTrackingNumber(): StringUtils.EMPTY);
     packageIdentifier.setType(TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG);
     selectionDetail.setPackageIdentifier(packageIdentifier);
     trackRequest.setSelectionDetails(new TrackSelectionDetail[]{selectionDetail});
