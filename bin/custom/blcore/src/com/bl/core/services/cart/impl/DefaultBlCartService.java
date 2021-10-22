@@ -474,19 +474,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void updateOrderTypes() {
         final CartModel cartModel = getSessionCart();
         try {
-            if (Objects.nonNull(cartModel) && Objects.nonNull(cartModel.getDeliveryMode())
-                && Objects.nonNull(cartModel.getStore())) {
+            if (isCartEligibleForSettingOrderType(cartModel)) {
 
-                if (isFrontDeskOrder(cartModel)) {
+                if (BooleanUtils.isFalse(cartModel.isGiftCardOrder())) {
+                    if (isFrontDeskOrder(cartModel)) {
 
-                    cartModel.setOrderType(OrderTypeEnum.FD);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to FD for cart code {}", cartModel.getCode());
-                } else {
+                        cartModel.setOrderType(OrderTypeEnum.FD);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to FD for cart code {}", cartModel.getCode());
+                    } else {
 
-                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                        cartModel.setOrderType(OrderTypeEnum.SHIPPING);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                    }
                 }
 
                 cartModel.setIsVipOrder(isVipOrder(cartModel));
@@ -502,6 +503,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 "Error occurred while updating order types for cart {}", cartModel.getCode(),
                 exception);
         }
+    }
+
+    /**
+     * It checks, is cart eligible to set order types or vip order and verification level.
+     * @param cartModel the CartModel
+     * @return true false
+     */
+    private boolean isCartEligibleForSettingOrderType(final CartModel cartModel) {
+        boolean flag = false;
+        if(Objects.nonNull(cartModel)) {
+            flag =  (Objects.nonNull(cartModel.getDeliveryMode())
+                && Objects.nonNull(cartModel.getStore())) || (cartModel.isGiftCardOrder());
+        }
+        return flag;
     }
 
     /**
