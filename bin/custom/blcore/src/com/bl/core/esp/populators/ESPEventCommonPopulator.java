@@ -332,7 +332,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
        final StringBuilder paymentType= new StringBuilder();
         if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
             return orderModel.getTotalPrice() == 0 ? paymentType.append(BlCoreConstants.GIFT_CARD_TYPE).toString() :
-                paymentType.append(creditCart + StringUtils.SPACE).append("+").append( StringUtils.SPACE + BlCoreConstants.GC_TYPE).toString();
+                paymentType.append(creditCart).append(StringUtils.SPACE).append(BlCoreConstants.PLUS).append(StringUtils.SPACE ).append(BlCoreConstants.GC_TYPE).toString();
         }
         return paymentType.append(creditCart).toString();
     }
