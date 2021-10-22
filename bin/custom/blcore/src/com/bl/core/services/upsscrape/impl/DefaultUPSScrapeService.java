@@ -20,12 +20,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.xmlgraphics.util.DateFormatUtil;
 
 /**
  * This class created for UPS scrape Service
@@ -194,8 +192,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     if (MapUtils.isNotEmpty(stringObjectMap)) {
       if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))) {
         final Date estimatedDeliveryTimestamp = (Date) stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP);
-        if (estimatedDeliveryTimestamp.before(new Date()) || DateUtils
-            .isSameDay(new Date(), estimatedDeliveryTimestamp)) {
+        if (estimatedDeliveryTimestamp.before(new Date()) || DateUtils.isSameDay(new Date(), estimatedDeliveryTimestamp)) {
           updatePackageDetails(abstractOrderModel, String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)), packagingInfoModel);
         }
       } else if (StringUtils.equalsIgnoreCase(BlintegrationConstants.DELIVERED,

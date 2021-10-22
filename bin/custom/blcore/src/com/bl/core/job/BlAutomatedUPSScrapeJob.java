@@ -1,6 +1,5 @@
 package com.bl.core.job;
 
-import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.impl.DefaultUPSScrapeService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.cronjob.enums.CronJobResult;
