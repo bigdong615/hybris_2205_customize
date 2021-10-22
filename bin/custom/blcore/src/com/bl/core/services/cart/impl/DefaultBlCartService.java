@@ -474,19 +474,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void updateOrderTypes() {
         final CartModel cartModel = getSessionCart();
         try {
-            if (Objects.nonNull(cartModel) && Objects.nonNull(cartModel.getDeliveryMode())
-                && Objects.nonNull(cartModel.getStore())) {
+            if ((Objects.nonNull(cartModel) && Objects.nonNull(cartModel.getDeliveryMode())
+                && Objects.nonNull(cartModel.getStore())) || (Objects.nonNull(cartModel)
+                && cartModel.isGiftCardOrder())) {
 
-                if (isFrontDeskOrder(cartModel)) {
+                if (BooleanUtils.isFalse(cartModel.isGiftCardOrder())) {
+                    if (isFrontDeskOrder(cartModel)) {
 
-                    cartModel.setOrderType(OrderTypeEnum.FD);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to FD for cart code {}", cartModel.getCode());
-                } else {
+                        cartModel.setOrderType(OrderTypeEnum.FD);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to FD for cart code {}", cartModel.getCode());
+                    } else {
 
-                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                        cartModel.setOrderType(OrderTypeEnum.SHIPPING);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                    }
                 }
 
                 cartModel.setIsVipOrder(isVipOrder(cartModel));
