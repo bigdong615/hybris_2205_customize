@@ -3713,7 +3713,12 @@
 					<persistence type="property" />
 				</attribute>
 				
-				<attribute qualifier="trackingNumber" type="java.lang.String">
+				<attribute qualifier="outBoundTrackingNumber" type="java.lang.String">
+					<description>Shipment Package tracking number</description>
+					<persistence type="property" />
+				</attribute>
+				
+				<attribute qualifier="inBoundTrackingNumber" type="java.lang.String">
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>

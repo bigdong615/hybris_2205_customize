@@ -88,7 +88,10 @@
                     <strong>$!{ctx.messages.orderDate}</strong>
                 </td>
                 <td>
-                    <strong>$!{ctx.messages.trackingNumber}</strong>
+                    <strong>$!{ctx.messages.outBoundTrackingNumber}</strong>
+                </td>
+                 <td>
+                    <strong>$!{ctx.messages.inBoundTrackingNumber}</strong>
                 </td>
             </tr>
             <tr>
@@ -99,8 +102,11 @@
                     $!{ctx.order.date}
                 </td>
                  <td>
-                    $!{ctx.consignment.packagingInfo.trackingNumber}
-                </td>                
+                    $!{ctx.consignment.packagingInfo.outBoundTrackingNumber}
+                </td>  
+                <td>
+                    $!{ctx.consignment.packagingInfo.inBoundTrackingNumber}
+                </td>               
                 </tr>
             <tr>
                 <td colspan="2"><div class="pick-slip-border"></div></td>
