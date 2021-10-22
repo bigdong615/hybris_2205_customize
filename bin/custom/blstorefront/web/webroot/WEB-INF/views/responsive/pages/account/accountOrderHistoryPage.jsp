@@ -165,6 +165,9 @@
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
+                								<c:if test="${order.orderStatus ne null && order.orderStatus eq 'Shipped'}">
+                								 <p class="my-2">${order.orderStatus}</p>
+                								 </c:if>
                 					  </c:when>
                            <c:otherwise>
                 					   <p class="my-2">${order.orderStatus}</p>

@@ -19,6 +19,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
@@ -181,7 +182,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         final AtomicReference<String> giftCardBalance = new AtomicReference<>(String.valueOf(0.0));
         if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
             orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
-                if(StringUtils.equals(orderModel.getCode() , giftCardMovementModel.getOrder().getCode())) {
+                if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() != null ? giftCardMovementModel.getOrder().getCode() :StringUtils.EMPTY))) {
                     giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
                 }
             }));
@@ -302,6 +303,25 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
             }
         }
         return productUrl.get();
+    }
+
+    /**
+     * It returns billing charges type
+     *
+     * @param billingTypeList
+     * @return billType
+     */
+    protected String getBillingTypes(final List<String> billingTypeList) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        int count = 0;
+        for (String billType : billingTypeList) {
+            stringBuilder.append(billType);
+            if (count != billingTypeList.size() - 1) {
+                stringBuilder.append(BlCoreConstants.SHARE_A_SALE_COMMA);
+            }
+            count++;
+        }
+        return stringBuilder.toString();
     }
 
     public ConfigurationService getConfigurationService() {

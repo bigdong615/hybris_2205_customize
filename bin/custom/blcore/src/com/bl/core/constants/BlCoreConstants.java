@@ -491,6 +491,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String VERIFICATION_LEVEL_ZERO = "0";
 	public static final String VERIFICATION_LEVEL_ONE = "1";
 	public static final String VERIFICATION_LEVEL_TWO = "2";
+
+	public static final String BILLING_TYPE = "billtype";
 	
 	private BlCoreConstants()
 	{

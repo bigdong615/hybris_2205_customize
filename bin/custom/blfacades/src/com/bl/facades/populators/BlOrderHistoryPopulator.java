@@ -100,7 +100,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      if(source.getPaymentTransactions().stream().anyMatch(paymentTransactionModel ->
           paymentTransactionModel.getEntries().stream().anyMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
               PaymentTransactionType.CAPTURE)))) {
-       target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
+       target.setIsRentalStartDateActive(Boolean.TRUE);
      }
    }
    target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
@@ -184,9 +184,6 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
   }
 
-  private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
-    return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
-  }
 
   /**
    * This method converts double to price data
