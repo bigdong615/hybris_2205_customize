@@ -1974,7 +1974,7 @@ function checkShippingBlackout(deliveryMode){
             shipToUPSStoreLocationContinueForReplacementOrder(shippingMethod);
         }
     } else if(shippingCategory == 'pickup') {
-        pickUpPartnerLocationContinue();
+        pickUpPartnerLocationContinueForReplacementOrder();
     } else {
         SFOrNYCShippingSectionContinueForReplacementOrder();
     }
@@ -2421,6 +2421,121 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
     };
     return addressForm;
  }
+
+ function pickUpPartnerLocationContinueForReplacementOrder(shippingMethod) {
+ 	 hideErrorForInputValidation();
+      if($('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id') != undefined) {
+         // track Tealium event on continue shipping.
+         utag.link({
+          "tealium_event"    : "continue_shipping_click",
+          "shipping_method"   : "PickUP",
+          "shipping_method_not_available"     : "0"
+         });
+         ACC.track.trackShippingSelection('PickUP','','Item In Stock');
+         var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
+         if(checkShippingBlackout(deliveryMode)) {
+         	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+         	$('#validationMessage').append(validationDiv);
+         }
+         else {
+         	var firstName = $("#store-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
+         	var lastName = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
+         	var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
+         	var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
+         	if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "Pick")) {
+         		if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
+         			savePickUpByFormOnReplacementCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                     $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
+         		}
+         	} else {
+         		showErrorForInputValidationPick('Pick');
+         	}
+         }
+      } else {
+         showErrorForUPSOrPickAddressError();
+      }
+  }
+
+
+ function savePickUpByFormOnReplacementCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ var deliveryMode = $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id');
+ if(checkShippingBlackout(deliveryMode))
+	  {
+	  	var validationDiv = $('<div class="notification notification-error mb-4" />').html(ACC.blackoutError.blockedShipping);
+		$('#validationMessage').append(validationDiv);
+	  }
+     else if(checkAvailability(deliveryMethod))
+     {
+         $.ajax({
+             url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
+             data: JSON.stringify(blPickUpByForm),
+             type: "POST",
+             contentType : 'application/json; charset=utf-8',
+             mimeType : 'application/json',
+             cache : false,
+             beforeSend: function(){
+                $('.page-loader-new-layout').show();
+             },
+             success: function (data) {
+                 if(data != null) {
+                     if(upsStoreAddress != null) {
+                        // track Tealium event on continue shipping.
+                          utag.link({
+                          "tealium_event"    : "continue_shipping_click",
+                          "shipping_method"   : "Ship It-Ship to UPS",
+                          "shipping_method_not_available"     : "0"
+                        });
+                        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
+                        addNewAddress(upsStoreAddress, deliveryMethod)
+                            .then((data) => {
+                                saveDeliveryModeForOrderReplacement(deliveryMethod, status);
+                            })
+                            .catch((error) => {
+                              console.log(error)
+                            })
+                     } else {
+                       // track Tealium event on continue shipping.
+                         utag.link({
+                         "tealium_event"    : "continue_shipping_click",
+                         "shipping_method"   : "PickUP",
+                         "shipping_method_not_available"     : "0"
+                                  });
+                        ACC.track.trackShippingSelection('PickUP','','Item In Stock');
+                        saveDeliveryModeForOrderReplacement(deliveryMethod, status);
+                     }
+                 }
+             },
+             complete: function() {
+
+             },
+             error: function (data) {
+                $('.page-loader-new-layout').hide();
+             }
+         });
+     }
+     else
+     {
+     if(upsStoreAddress != null) {
+        // track Tealium event on continue shipping.
+             utag.link({
+              "tealium_event"    : "continue_shipping_click",
+              "shipping_method"   : "Ship It-Ship to UPS",
+              "shipping_method_not_available"     : "1"
+                                          });
+       ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
+       }else{
+         // track Tealium event on continue shipping.
+          utag.link({
+         "tealium_event"    : "continue_shipping_click",
+         "shipping_method"   : "PickUP",
+         "shipping_method_not_available"     : "1"
+                });
+        ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
+       }
+     	window.location.reload();
+     }
+  }
+
 
 
 

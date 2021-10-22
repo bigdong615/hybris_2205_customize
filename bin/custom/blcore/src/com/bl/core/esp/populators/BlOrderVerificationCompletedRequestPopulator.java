@@ -9,6 +9,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -62,11 +63,20 @@ public class BlOrderVerificationCompletedRequestPopulator extends ESPEventCommon
           .getDeliveryMode());
       orderVerificationCompletedEventData.setShippingMethodType(getRequestValue(zoneDeliveryModeModel.getShippingGroup().getName()));
       orderVerificationCompletedEventData.setShippingMethod(getRequestValue(zoneDeliveryModeModel.getCode()));
-      orderVerificationCompletedEventData.setExpectedShipping(formatter.format(orderModel.getActualRentalStartDate()));
+    } else {
+      orderVerificationCompletedEventData.setShippingMethodType(StringUtils.EMPTY);
+      orderVerificationCompletedEventData.setShippingMethod(StringUtils.EMPTY);
     }
-    orderVerificationCompletedEventData.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
-    orderVerificationCompletedEventData.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
-    orderVerificationCompletedEventData.setRentalDuration((int) getRentalDuration(orderModel));
+    if (BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils
+        .isFalse(orderModel.isGiftCardOrder())) {
+      orderVerificationCompletedEventData
+          .setExpectedShipping(formatter.format(orderModel.getActualRentalStartDate()));
+      orderVerificationCompletedEventData
+          .setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
+      orderVerificationCompletedEventData
+          .setReturnDate(formatter.format(orderModel.getRentalEndDate()));
+      orderVerificationCompletedEventData.setRentalDuration((int) getRentalDuration(orderModel));
+    }
     final UserModel userModel = orderModel.getUser();
     if (Objects.nonNull(userModel)) {
       orderVerificationCompletedEventData.setCustomerName(getRequestValue(userModel.getName()));

@@ -18,7 +18,6 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.validators.PaymentMethodValidator;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
@@ -45,6 +44,7 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -509,7 +509,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				PriceData payBillTotal = convertDoubleToPriceData(payBillAmount, order);
 				orderDetails.setOrderTotalWithTaxForPayBill(payBillTotal);
 				model.addAttribute(ORDER_DATA, orderDetails);
-				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+        final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+        blEspEventService.triggerBillPaidEspEvent(billPayTotal, billingChargeTypeMap, (OrderModel) order);
 				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
 						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
 				storeCmsPageInModel(model, payBillSuccessPage);
