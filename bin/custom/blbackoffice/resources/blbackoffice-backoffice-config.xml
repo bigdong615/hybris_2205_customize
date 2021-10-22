@@ -1359,6 +1359,7 @@
 					<editorArea:attribute qualifier="isVipOrder" />
 					<editorArea:attribute qualifier="isRentalCart"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
+					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
