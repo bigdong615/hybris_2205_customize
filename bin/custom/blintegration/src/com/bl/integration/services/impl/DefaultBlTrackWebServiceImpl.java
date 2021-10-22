@@ -143,8 +143,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   private void getTrackageIndentifierNumber(final TrackRequest trackRequest, final PackagingInfoModel packagingInfoModel) {
     final TrackPackageIdentifier packageIdentifier = new TrackPackageIdentifier();
     final TrackSelectionDetail selectionDetail = new TrackSelectionDetail();
-    packageIdentifier.setValue(Objects.isNull(packagingInfoModel.getTrackingNumber()) ? StringUtils.EMPTY
-        : packagingInfoModel.getTrackingNumber());
+    packageIdentifier.setValue(Objects.isNull(packagingInfoModel.getInBoundTrackingNumber()) ? StringUtils.EMPTY
+        : packagingInfoModel.getInBoundTrackingNumber());
     packageIdentifier.setType(TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG);
     selectionDetail.setPackageIdentifier(packageIdentifier);
     trackRequest.setSelectionDetails(new TrackSelectionDetail[]{selectionDetail});

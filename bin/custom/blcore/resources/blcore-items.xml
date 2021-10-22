@@ -2135,7 +2135,6 @@
           </itemtype>
         </typegroup>
 
-
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"
              jaloclass="com.bl.core.jalo.BLPricingLogic">
