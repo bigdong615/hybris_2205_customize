@@ -169,9 +169,7 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
 ;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
 ;blReshufflerCronJob ;blReshufflerJob ; ;true;;
-
-INSERT_UPDATE UPSScrapeCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
-                              ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
+ ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
 
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression

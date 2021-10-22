@@ -3,6 +3,7 @@ package com.bl.core.order.dao;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.util.Date;
 import java.util.List;
 
@@ -60,4 +61,18 @@ public interface BlOrderDao extends OrderDao
 	 */
 	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
 			final CustomerModel customerModel);
+
+
+
+	/**
+	 * This method created to get the list of order
+	 * @return List<AbstractOrderModel>
+	 */
+	List<AbstractOrderModel> getOrdersForUPSScrape();
+
+	/**
+	 * This method created to get the list of packges
+	 * @return List<PackagingInfoModel>
+	 */
+	List<PackagingInfoModel> getRescheduledPackagesForUPSScrape();
 }

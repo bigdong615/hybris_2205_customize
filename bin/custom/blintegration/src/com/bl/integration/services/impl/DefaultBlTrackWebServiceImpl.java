@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -55,7 +56,6 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   @Override
   public Map<String, Object> trackService(final AbstractOrderModel abstractOrderModel , final
       PackagingInfoModel packagingInfoModel) {
-
     final Map<String, Object> results = new HashMap<>();
     if (Objects.nonNull(abstractOrderModel)) {
       BlLogger.logMessage(LOG , Level.INFO , "Started performing UPS Scrape for Fedex Service");
@@ -67,17 +67,15 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         trackRequest.setVersion(getVersionIdForFedex());
         getTrackageIndentifierNumber(trackRequest , packagingInfoModel);
         final TrackServiceLocator service = new TrackServiceLocator();
-        final TrackPortType port;
         updateEndPoint(service);
-        port = service.getTrackServicePort();
+        final TrackPortType port = service.getTrackServicePort();
         final TrackReply response  = port.track(trackRequest);
         convertResponse(response , results);
       } catch (final Exception e) {
-        BlLogger.logMessage(LOG, Level.ERROR, "Error While Calling Track service", e);
-        return new LinkedHashMap<>();
+        BlLogger.logMessage(LOG, Level.ERROR, "Error While Calling Track service ", e);
+        return Collections.emptyMap();
       }
     }
-
     results.put(BlintegrationConstants.SCRAPE_TYPE , BlintegrationConstants.FEDEX_TYPE);
     BlLogger.logMessage(LOG , Level.INFO , " Finished performing UPS Scrape for Fedex Service");
 
@@ -139,26 +137,25 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to set the tracking details
-   * @param trackRequest trackRequest
-   * @param packagingInfoModel
+   * @param trackRequest trackRequest request for UPS scrape service
+   * @param packagingInfoModel get the package details
    */
-  private void getTrackageIndentifierNumber(final TrackRequest trackRequest,
-      PackagingInfoModel packagingInfoModel) {
+  private void getTrackageIndentifierNumber(final TrackRequest trackRequest, final PackagingInfoModel packagingInfoModel) {
     final TrackPackageIdentifier packageIdentifier = new TrackPackageIdentifier();
     final TrackSelectionDetail selectionDetail = new TrackSelectionDetail();
-    packageIdentifier.setValue(Objects.nonNull(packagingInfoModel.getTrackingNumber())
-        ? packagingInfoModel.getTrackingNumber(): StringUtils.EMPTY);
+    packageIdentifier.setValue(Objects.isNull(packagingInfoModel.getTrackingNumber()) ? StringUtils.EMPTY
+        : packagingInfoModel.getTrackingNumber());
     packageIdentifier.setType(TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG);
     selectionDetail.setPackageIdentifier(packageIdentifier);
     trackRequest.setSelectionDetails(new TrackSelectionDetail[]{selectionDetail});
-    TrackRequestProcessingOptionType processingOption = TrackRequestProcessingOptionType.INCLUDE_DETAILED_SCANS;
+    final TrackRequestProcessingOptionType processingOption = TrackRequestProcessingOptionType.INCLUDE_DETAILED_SCANS;
     trackRequest.setProcessingOptions(new TrackRequestProcessingOptionType[]{processingOption});
   }
 
 
   /**
    * This method created to upadate the End point
-   * @param serviceLocator serviceLocator
+   * @param serviceLocator serviceLocator to set the end point URL
    */
   private void updateEndPoint(final TrackServiceLocator serviceLocator) {
     serviceLocator.setTrackServicePortEndpointAddress(
@@ -166,13 +163,12 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
   /**
-   * This method created to get the values from propery
-   * @param key key
-   * @return String
+   * This method created to get the values from property
+   * @param key key to fetch from property
+   * @return String value
    */
   private String getValuesFromProperty(final String key) {
-    return StringUtils.isNotBlank(Config.getParameter(key)) ? Config.getParameter(key)
-        : StringUtils.EMPTY;
+    return StringUtils.isBlank(Config.getParameter(key)) ? StringUtils.EMPTY : Config.getParameter(key);
   }
 
   /**
@@ -302,7 +298,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
         if (Objects.nonNull(trackEvent)) {
           map.put(BlintegrationConstants.TIME_STAMP, trackEvent.getTimestamp().getTime());
           map.put(BlintegrationConstants.DESCRIPTION, trackEvent.getEventDescription());
-          Address address = trackEvent.getAddress();
+          final Address address = trackEvent.getAddress();
           if (Objects.nonNull(address)) {
             final Map<String, String> trackAddress = new LinkedHashMap<>();
             trackAddress.put(BlintegrationConstants.CITY, address.getCity());

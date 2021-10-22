@@ -155,13 +155,6 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String COUNTRY_CODE = "CountryCode";
 	public static final String DESTINATION_ADDRESS = "DestinationAddress";
 
-
-
-
-
-
-
-
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class

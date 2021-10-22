@@ -1678,4 +1678,30 @@
 		class="com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator">
 	</bean>
 
+
+	<!--BL-803 UPS Scrape -->
+	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.core.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
+		<property name="defaultUPSScrapeService" ref="defaultUPSScrapeService"/>
+	</bean>
+
+	<bean id="defaultUPSScrapeService" class="com.bl.core.services.upsscrape.impl.DefaultUPSScrapeService">
+		<property name="blUpdateSerialService" ref="defaultBlUpdateSerialService"/>
+		<property name="defaultBlTrackWebService" ref="defaultBlTrackWebServiceImpl"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="userService" ref="userService"/>
+		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlUPSTrackServiceImpl" ref="defaultBlUPSTrackServiceImpl"/>
+		<property name="service" ref="modelService"/>
+	</bean>
+
+	<bean id="defaultBlUpdateSerialService" class="com.bl.core.services.upsscrape.impl.BlUpdateSerialService">
+		<property name="modelService" ref="modelService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="userService" ref="userService"/>
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+
 </beans>

@@ -2133,11 +2133,6 @@
               </attribute>
             </attributes>
           </itemtype>
-
-
-          <itemtype code="UPSScrapeCronJob" extends="CronJob">
-            <description>This CronJob is to Run UPS Scrape Cron job</description>
-          </itemtype>
         </typegroup>
 
 
@@ -3790,7 +3785,17 @@
             <description>To identify by UPS scrape is scanned this pacakege or not</description>
             <defaultvalue>false</defaultvalue>
           </attribute>
-				</attributes>
+        <attribute qualifier="delayedDate" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+          <description>This date refers to the delayed return date of this package by UPS scrape.</description>
+        </attribute>
+          <attribute qualifier="returningDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This date refers to returning date of this package by UPS scrape.</description>
+          </attribute>
+        </attributes>
 			</itemtype>
 		</typegroup>
 
@@ -6524,9 +6529,7 @@ new Integer(0)
 		</attribute>
 	</attributes>
 </itemtype>
-  
 </typegroup>
-
 
         <typegroup name="BlInventoryCycleCount">
             <itemtype code="BlInventoryCycleCount" autocreate="true" generate="true" >

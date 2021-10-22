@@ -50,21 +50,18 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     final Map<String, Object> stringObjectMap = new HashMap<>();
       try {
         final TrackService trackService = new TrackService();
-        TrackPortType trackPortType = trackService.getTrackPort();
-
+        final TrackPortType trackPortType = trackService.getTrackPort();
         final BindingProvider bindingProvider = (BindingProvider)trackPortType;
         getEndPointURLForUPS(bindingProvider);
-        TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
+        final TrackResponse response = trackPortType.processTrack(getTrackRequestForUPS(packagingInfoModel), getSecurityDetailsForUPS());
         convertResponse(response , stringObjectMap);
-      } catch(Exception e) {
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService" , e.getMessage());
+      } catch(final Exception e) {
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService " , e);
       }
     stringObjectMap.put(BlintegrationConstants.SCRAPE_TYPE , BlintegrationConstants.UPS_TYPE);
     BlLogger.logMessage(LOG  , Level.INFO , "Finished UPS Scrape for UPS service");
     return stringObjectMap;
   }
-
-
 
   /**
    * This method created to get the URL for UPS service
@@ -145,12 +142,20 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     }
   }
 
-  private void convertResponseFromResults(ShipmentType shipmentType, int activityCount, int packageCount, Map<String, Object> stringObjectMap) {
+  /**
+   * This method created to convert the response from results
+   * @param shipmentType shipmentType of pacakge
+   * @param activityCount activityCount
+   * @param packageCount package Count
+   * @param stringObjectMap stringObjectMap results to be updated
+   */
+  private void convertResponseFromResults(final ShipmentType shipmentType, final int activityCount, int packageCount,
+      final Map<String, Object> stringObjectMap) {
     if (shipmentType.getPackage() != null && shipmentType.getPackage().size() > 0) {
-      for (PackageType pkg : shipmentType.getPackage()) {
+      for (final PackageType pkg : shipmentType.getPackage()) {
         packageCount++;
         if (pkg.getDeliveryDetail() != null && pkg.getDeliveryDetail().size() > 0) {
-          for (DeliveryDetailType deliveryDetail : pkg.getDeliveryDetail()) {
+          for (final DeliveryDetailType deliveryDetail : pkg.getDeliveryDetail()) {
             convertDeliveryDetailsFromResponse(deliveryDetail , stringObjectMap);
           }
         }
@@ -159,43 +164,56 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     }
   }
 
-  private void performConvertResponse(
-      final Map<String, Object> stringObjectMap, final PackageType pkg, int activityCount) {
+  /**
+   * This method created to convert the response for pacakage
+   * @param stringObjectMap stringObjectMap results to be updated
+   * @param pkg package from response
+   * @param activityCount activityCount
+   */
+  private void performConvertResponse(final Map<String, Object> stringObjectMap, final PackageType pkg, int activityCount) {
     if (pkg.getActivity() != null) {
       activityCount += pkg.getActivity().size();
     }
     // Find the newest activity
-    ActivityType lastActivity = findLastRelevantActivity(pkg.getActivity());
+    final ActivityType lastActivity = findLastRelevantActivity(pkg.getActivity());
     if (lastActivity != null) {
       convertStatusResponse(stringObjectMap , lastActivity);
     }
-    covertPacakageResponse(stringObjectMap, pkg);
-    BlLogger.logMessage(LOG , Level.INFO , "activity count" , String.valueOf(activityCount));
+    covertPackageResponse(stringObjectMap, pkg);
+    BlLogger.logMessage(LOG , Level.INFO , "activity count " , String.valueOf(activityCount));
   }
 
-  private void covertPacakageResponse(
-      Map<String, Object> stringObjectMap, PackageType pkg) {
-    ActivityType delivered = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_D);
+  /**
+   * This method created to convert the response for package
+   * @param stringObjectMap results to be updated
+   * @param pkg package from response
+   */
+  private void covertPackageResponse(final Map<String, Object> stringObjectMap, final PackageType pkg) {
+    final ActivityType delivered = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_D);
     if (delivered != null) {
       stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED, BlintegrationConstants.REQUEST_OPTION_NUMBER);
       stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED_ON, convertUPSDateTime(delivered.getDate(), delivered
           .getTime()));
     }
-
     if (StringUtils.isBlank((String) stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
-      ActivityType pickedUp = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_P);
+      final ActivityType pickedUp = findActivityType(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_P);
       if (pickedUp != null) {
         stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP, convertUPSDateTime(pickedUp.getDate(), pickedUp.getTime()));
       }
     }
     if (StringUtils.isBlank((String) stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
-      ActivityType inTransit = findFirstActivity(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_I);
+      final ActivityType inTransit = findFirstActivity(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_I);
       if (inTransit != null) {
         stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP ,  convertUPSDateTime(inTransit.getDate(), inTransit.getTime()));
       }
     }
   }
 
+  /**
+   * This method created to convert delivery details from response
+   * @param deliveryDetail package delivery date
+   * @param stringObjectMap results to be updated
+   */
   private void convertDeliveryDetailsFromResponse(final DeliveryDetailType deliveryDetail,
      final  Map<String, Object> stringObjectMap) {
     final String type = deliveryDetail.getType().getCode();
@@ -214,8 +232,12 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     }
   }
 
-  private void convertShipmentResponse(final Map<String, Object> stringObjectMap,
-      final ShipmentType shipmentType){
+  /**
+   * This method created to convert shipment response
+   * @param stringObjectMap results to be updated
+   * @param shipmentType shipment type of package
+   */
+  private void convertShipmentResponse(final Map<String, Object> stringObjectMap, final ShipmentType shipmentType){
     stringObjectMap.put(BlintegrationConstants.TRACKING_NUMBER , shipmentType.getInquiryNumber().getValue());
     if (Objects.nonNull(shipmentType.getShipmentWeight())) {
       stringObjectMap.put(BlintegrationConstants.SHIPMENT_WEIGHT, shipmentType.getShipmentWeight().getWeight());
@@ -225,8 +247,13 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     stringObjectMap.put(BlintegrationConstants.A_PACKAGE_WAS_DELIVERED_ON, StringUtils.EMPTY);
   }
 
+  /**
+   * This method created to convert status from response
+   * @param stringObjectMap results to be updated
+   * @param lastActivity last activity from ActivityType
+   */
   private void convertStatusResponse(final Map<String, Object> stringObjectMap,
-     final  ActivityType lastActivity){
+     final ActivityType lastActivity){
     stringObjectMap.put(BlintegrationConstants.STATUS_TYPE, lastActivity.getStatus().getType());
     stringObjectMap.put(BlintegrationConstants.STATUS_DESCRIPTION, lastActivity.getStatus().getDescription());
     stringObjectMap.put(BlintegrationConstants.STATUS_CODE, lastActivity.getStatus().getCode());
@@ -236,9 +263,9 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to covert UPS Date
-   * @param upsDate  upsDate
-   * @param upsTime upsTime
-   * @return String
+   * @param upsDate expected date of delivery
+   * @param upsTime expected time
+   * @return String string
    */
 
   private String convertUPSDateTime(final String upsDate, String upsTime) {
@@ -259,16 +286,16 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to find the first activity from response
-   * @param activities
-   * @param type
-   * @return
+   * @param activities list of activities from response
+   * @param type type of activity
+   * @return ActivityType to be updated
    */
   private ActivityType findFirstActivity(final List<ActivityType> activities, final String type) {
     ActivityType found = null;
     if (activities != null) {
-      for (ActivityType activity : activities) {
+      for (final ActivityType activity : activities) {
         String statusType = null;
-        String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
+        final String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
         if (activity.getStatus() != null) {
           statusType = activity.getStatus().getType();
           if (StringUtils.isBlank(statusType) || !type.equals(statusType)) {
@@ -277,7 +304,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
           if (found == null) {
             found = activity;
           } else {
-            String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
+            final String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
             if (activityDateTime.length() != 19) {
               continue;
             }
@@ -297,19 +324,19 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to find the relevant activity
-   * @param activities activities
-   * @return ActivityType
+   * @param activities ist of activiies from response
+   * @return ActivityType activity types
    */
   private ActivityType findLastRelevantActivity(final List<ActivityType> activities) {
     ActivityType found = null;
     if (activities != null) {
-      for (ActivityType activity : activities) {
-        String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
+      for (final ActivityType activity : activities) {
+        final String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
         if (activity.getStatus() != null) {
           if (found == null) {
             found = activity;
           } else {
-            String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
+            final String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
             if (activityDateTime.length() != 19) {
               continue;
             }
@@ -341,7 +368,4 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
     return found;
   }
-
-
-
 }
