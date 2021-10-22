@@ -492,15 +492,6 @@
 		<property name="status" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("status")</annotations>
 		</property>
-		<property name="dateplaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("date placed")</annotations>
-		</property>
-		<property name="returndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("return date")</annotations>
-		</property>
-		<property name="actualreturndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("actual return date")</annotations>
-		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Date Placed")</annotations>
 		</property>
