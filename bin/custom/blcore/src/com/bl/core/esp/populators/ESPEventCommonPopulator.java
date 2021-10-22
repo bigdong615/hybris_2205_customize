@@ -304,7 +304,6 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         }
         return productUrl.get();
     }
-
     /**
      * It returns billing charges type
      *
@@ -322,6 +321,20 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
             count++;
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * This method check Gift card payment type
+     * @param orderModel
+     * @return string
+     */
+    protected String checkIsGiftCardUsed(final OrderModel orderModel , final String creditCart){
+       final StringBuilder paymentType= new StringBuilder();
+        if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
+            return orderModel.getTotalPrice() == 0 ? paymentType.append(BlCoreConstants.GIFT_CARD_TYPE).toString() :
+                paymentType.append(creditCart + StringUtils.SPACE).append("+").append( StringUtils.SPACE + BlCoreConstants.GC_TYPE).toString();
+        }
+        return paymentType.append(creditCart).toString();
     }
 
     public ConfigurationService getConfigurationService() {

@@ -12,6 +12,7 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -66,10 +67,16 @@ public class BlOrderPaymentDeclinedRequestPopulator extends ESPEventCommonPopula
     data.setDateplaced(formatter.format(orderModel.getDate()));
     data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
     if (Objects.nonNull(orderModel.getPaymentInfo())) {
-      final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-      data.setPaymenttype(getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
+           final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+      data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+          ? BlCoreConstants.PAY_PAL :checkIsGiftCardUsed(orderModel,getRequestValue(brainTreePaymentInfoModel.getPaymentProvider())));
+
+    }
+    else if(StringUtils.isNotBlank(orderModel.getPoNumber())){
+      data.setPaymenttype(BlCoreConstants.PO);
     }
     data.setPaymenttext(StringUtils.EMPTY);
     orderPaymentDeclinedEventRequest.setData(data);
   }
+
 }
