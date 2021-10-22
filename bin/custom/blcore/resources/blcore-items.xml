@@ -2954,6 +2954,12 @@
                         <description>It is used to set verification level value</description>
                         <modifiers read="true" write="true" search="true"/>
                     </attribute>
+                    <attribute type="VerificationStatusEnum" qualifier="verificationStatus">
+                      <modifiers read="true" write="true" optional="false" />
+                      <defaultvalue>em().getEnumerationValue("VerificationStatusEnum", "NA")</defaultvalue>
+                      <persistence type="property" />
+                      <description>It indicates current status of an uploaded document</description>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -3708,7 +3714,12 @@
 					<persistence type="property" />
 				</attribute>
 				
-				<attribute qualifier="trackingNumber" type="java.lang.String">
+				<attribute qualifier="outBoundTrackingNumber" type="java.lang.String">
+					<description>Shipment Package tracking number</description>
+					<persistence type="property" />
+				</attribute>
+				
+				<attribute qualifier="inBoundTrackingNumber" type="java.lang.String">
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>

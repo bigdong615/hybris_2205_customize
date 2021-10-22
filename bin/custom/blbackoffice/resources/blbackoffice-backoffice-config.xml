@@ -1329,8 +1329,8 @@
 					<editorArea:customPanel name="customersupportbackoffice.order.details.total"
 						spring-bean="blTotalPriceWithTaxRenderer"/>
 				</ea:section>
-				<editorArea:section name="customersupportbackoffice.section.order.general.information"
-					columns="3">
+				<ea:section name="Notes section" columns="1">
+					<editorArea:panel colspan="2" name="Notes" rowspan="2">
 					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor"
 						qualifier="orderNotes" readonly="false">
 						<editorArea:editor-parameter>
@@ -1351,10 +1351,15 @@
 							<editorArea:value>true</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
+					</editorArea:panel>
+				</ea:section>
+				<editorArea:section name="customersupportbackoffice.section.order.general.information"
+					columns="3">
 					<editorArea:attribute qualifier="orderType"/>
 					<editorArea:attribute qualifier="isVipOrder" />
 					<editorArea:attribute qualifier="isRentalCart"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
+					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
 				</editorArea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1442,7 +1447,7 @@
 	<context type="Notes" component="base" module="blbackoffice">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
-				<y:label>type+ ' - ' +userID</y:label>
+				<y:label>type+ ' - ' +note</y:label>
 			</y:labels>
 		</y:base>
 	</context>
@@ -1497,7 +1502,8 @@
                     <editorArea:attribute qualifier="labelURL"/>
                     <editorArea:attribute qualifier="totalShippingPrice"/>
                     <editorArea:attribute qualifier="shipmentIdentificationNumber"/>
-                    <editorArea:attribute qualifier="trackingNumber"/>
+                    <editorArea:attribute qualifier="outBoundTrackingNumber"/>
+                    <editorArea:attribute qualifier="inBoundTrackingNumber"/>
                     <editorArea:attribute qualifier="graphicImage"/>
                     <editorArea:attribute qualifier="hTMLImage"/>
                     <editorArea:attribute qualifier="consignmentPOS"/>
@@ -1619,7 +1625,9 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
 				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:panel colspan="2" name="Notes" rowspan="2">
 					<editorArea:attribute qualifier="orderNotes"/>
+					</editorArea:panel>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -1629,7 +1637,9 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
 				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:panel colspan="2" name="Notes" rowspan="2">
 					<editorArea:attribute qualifier="orderNotes"/>
+					</editorArea:panel>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -1722,12 +1732,14 @@
 			xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<editorArea:tab name="blbackoffice.customer.notes.tab.name" position="10">
 				<editorArea:section name="blbackoffice.order.notes.section.customer.notes">
+					<editorArea:panel colspan="2" name="Customer Notes" rowspan="2">
 					<editorArea:attribute qualifier="customerNotes" readonly="false">
 						<editorArea:editor-parameter>
 							<editorArea:name>disableRemoveReference</editorArea:name>
 							<editorArea:value>true</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
+					</editorArea:panel>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -1736,7 +1748,7 @@
 	<context type="CustomerNotes" component="base">
 		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 			<y:labels>
-				<y:label>customerNoteType+ ' - ' +userID</y:label>
+				<y:label>customerNoteType+ ' - ' +note</y:label>
 			</y:labels>
 		</y:base>
 	</context>

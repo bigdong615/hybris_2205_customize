@@ -442,16 +442,20 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				cartData.getEntries().forEach(entry -> {
 					final int cartEntryQty = entry.getQuantity().intValue();
 					final String productCode = entry.getProduct().getCode();
+					BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Checking avaiblity for product code : {} with quantity : {}", productCode, cartEntryQty);
 					//skip for aquatech products
 					if (!blCartService.isAquatechProductsPresentInCart(getProductService()
 							.getProductForCode(productCode))) {
 
 						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
+						BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Available Quantity : {} for product code : {} with quantity : {}", availableQty, productCode, cartEntryQty);
 						if (availableQty == 0) {
 							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Free Rental Day Promo found for cart code : {}", cartData.getCode());
 								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
 										Arrays.asList(getContactUsLink())));
 							}else {
+								BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Zero availability is found for product : {}", productCode);
 								final String nextAvailabilityDate = getBlCommerceStockService()
 										.getNextAvailabilityDateInCheckout(productCode,
 												rentalDatesFromSession, warehouses, cartEntryQty);

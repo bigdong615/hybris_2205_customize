@@ -614,10 +614,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			serialProductsOnPackage.forEach(serial -> {
 				if (serial instanceof BlSerialProductModel)
 				{
-					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber()); // NOSONAR
+					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getOutBoundTrackingNumber()); // NOSONAR
 					modelService.save(serial);
 					BlLogger.logFormattedMessage(LOG, Level.DEBUG, "OC location updated to Tracking number {} for serial {}",
-							getPackagingInfoModel().getTrackingNumber(), serial.getCode());
+							getPackagingInfoModel().getOutBoundTrackingNumber(), serial.getCode());
 				}
 			});
 			return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.ZERO, Collections.emptyList()));

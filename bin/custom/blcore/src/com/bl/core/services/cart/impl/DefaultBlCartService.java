@@ -21,6 +21,7 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
@@ -297,18 +298,23 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
                                                           final RentalDateDto rentalDatesFromSession) {
-
+   	 BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "DefaultBlCartService : getAvailabilityForRentalCart : Checking Availability for cart code : {} ", cartData.getCode());
         final List<String> lProductCodes =  cartData.getEntries().stream().filter(cartEntry -> !cartEntry.getProduct().isIsBundle())
             .map(cartEntry -> cartEntry.getProduct().getCode())
             .collect(Collectors.toList());
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Checking Cart Availability for products : {} ", lProductCodes);
         final List<ProductData> bundleProductList = cartData.getEntries().stream().filter(cartEntry -> cartEntry.getProduct().isIsBundle())
-            .map(cartEntry -> cartEntry.getProduct())
+            .map(OrderEntryData::getProduct)
             .collect(Collectors.toList());
         final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "last date to check : {} ", lastDateToCheck);
         final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(BlackoutDateTypeEnum.HOLIDAY);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "blackout dates : {} ", blackOutDates);
         final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
                 rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Start date : {} ", startDate);
         final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "End date : {} ", endDate);
         final Map<String, Long> stockLevelProductWise =
             CollectionUtils.isNotEmpty(lProductCodes) ? getBlCommerceStockService()
                 .groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses)
