@@ -100,6 +100,7 @@ public class BlControllerConstants
 	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
 	public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
 
+	public static final String REPLACEMENT_ORDER = "replacementOrder";
 	public static final String PRODUCT_REFERENCE = "productReferences";
 	public static final String MAXIMUM_LIMIT = "productsLimit";
 	public static final String ADDRESS_PAGE_IDENTIFIER = "Addresses";
@@ -196,6 +197,9 @@ public class BlControllerConstants
 	public static final String CLEAR_BRANDS = "clearBrands";
 	public static final String BRANDS = "brands";
 	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
+	public static final String HAS_USER_RESTRICTION = "hasUserRestriction";
+	public static final String BL_GROUP = "BLGroup";
+
 
 	private BlControllerConstants()
 	{

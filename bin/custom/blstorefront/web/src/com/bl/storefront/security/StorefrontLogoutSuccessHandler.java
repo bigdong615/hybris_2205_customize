@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.security;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.security.GUIDCookieStrategy;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 
 public class StorefrontLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler
 {
+
 	private GUIDCookieStrategy guidCookieStrategy;
 	private List<String> restrictedPages;
 
@@ -47,6 +49,7 @@ public class StorefrontLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandle
 	public void onLogoutSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException, ServletException
 	{
 		getGuidCookieStrategy().deleteCookie(request, response);
+		request.getSession().removeAttribute(BlControllerConstants.HAS_USER_RESTRICTION);
 
 		// Delegate to default redirect behaviour
 		super.onLogoutSuccess(request, response, authentication);

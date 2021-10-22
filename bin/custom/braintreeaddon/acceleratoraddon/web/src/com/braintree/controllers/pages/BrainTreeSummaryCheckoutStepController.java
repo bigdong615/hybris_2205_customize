@@ -70,6 +70,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 	public static final String REVIEW_SUMMARY_PAGE = "reviewSummaryPage";
 	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
+	private static final String MULTI_CHECKOUT_REVIEW_CMS_PAGE_LABEL = "multiStepCheckoutReviewPage";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -145,8 +146,8 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		placeOrderForm.setCustomFields(defaultCustomFields);
 		model.addAttribute("placeOrderForm", placeOrderForm);
 
-		storeCmsPageInModel(model, getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL));
-		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL));
+		storeCmsPageInModel(model, getContentPageForLabelOrId(MULTI_CHECKOUT_REVIEW_CMS_PAGE_LABEL));
+		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(MULTI_CHECKOUT_REVIEW_CMS_PAGE_LABEL));
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY,
 				getResourceBreadcrumbBuilder().getBreadcrumbs("checkout.multi.summary.breadcrumb"));
 		model.addAttribute("metaRobots", "noindex,nofollow");

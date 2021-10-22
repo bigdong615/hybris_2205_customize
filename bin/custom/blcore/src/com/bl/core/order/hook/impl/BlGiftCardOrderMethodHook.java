@@ -58,7 +58,7 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     setOrderValuePriorToShippedStatus(order, customerModel);
 
     // add tax to total only if order is NET
-    if(CollectionUtils.isNotEmpty(order.getGiftCard())) {
+    if(CollectionUtils.isNotEmpty(order.getGiftCard()) && !order.isGiftCardOrder()) {
       giftCardService.calculateGiftCard(order, order.getGrandTotal());
 
       final List<GiftCardModel> giftCards = order.getGiftCard();
