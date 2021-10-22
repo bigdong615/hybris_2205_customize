@@ -223,6 +223,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		paymentInfo.setDuplicate(isDuplicate);
 		if(isModifyOrderPaymentPage)
 		{
+			paymentInfo.setModifyPayment(Boolean.TRUE);
 		  paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 		}
 		modelService.save(paymentInfo);
@@ -377,7 +378,6 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 				billingAddress.setEmail(brainTreeSubscriptionInfoData.getEmail());
 			}
 		}
-
 		return billingAddress;
 	}
 

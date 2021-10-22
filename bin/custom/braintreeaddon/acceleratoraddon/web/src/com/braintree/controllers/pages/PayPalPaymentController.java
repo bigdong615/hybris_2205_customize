@@ -165,7 +165,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
 		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
-        final DeliveryModeModel selectedDeliveryMode = cartService.getSessionCart().getDeliveryMode();
+		final DeliveryModeModel selectedDeliveryMode = cartService.getSessionCart().getDeliveryMode();
 		final String payPalEmail = payPalExpressResponse.getDetails().getEmail();
 		if (ANONYMOUS_USER.equals(getSessionCartUserUid()))
 		{
@@ -240,6 +240,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			final AddressData hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
 					payPalExpressResponse.getDetails(), payPalBillingAddress);
 			hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			hybrisBillingAddress.setPhone(payPalExpressResponse.getDetails().getPhone());
 			subscriptionInfo.setAddressData(hybrisBillingAddress);
 		}
 		else
@@ -308,7 +309,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
         }
 
         String payPalEmail = payPalExpressResponse.getDetails().getEmail();
-
         String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
 
         if (payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
@@ -335,6 +335,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			 hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
 					 payPalExpressResponse.getDetails(), payPalBillingAddress);
 			 hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			 hybrisBillingAddress.setPhone(payPalExpressResponse.getDetails().getPhone());
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
 		 }
 		 else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
@@ -355,6 +356,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 							.completeCreateSubscription(
 									subscriptionInfo, (CustomerModel) order.getUser(), order, false, false, isDepositPaymentPage, payBillAmount, isModifyOrderPaymentPage);
 					if (null != paymentInfo) {
+						setPaymentType(paymentInfo, isDepositPaymentPage);
 						isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
 								BigDecimal.valueOf(payBillAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN), true, paymentInfo);
 					}
@@ -434,6 +436,19 @@ public class PayPalPaymentController extends AbstractCheckoutController
     }
 
 	/**
+	 * It sets the payment type
+	 * @param paymentInfo the payment info
+	 * @param isDepositPaymentPage is deposit payment page
+	 */
+	private void setPaymentType(final BrainTreePaymentInfoModel paymentInfo, final boolean isDepositPaymentPage) {
+		if(!isDepositPaymentPage) {
+			paymentInfo.setBillPayment(Boolean.TRUE);
+			paymentInfo.setCreateNewTransaction(Boolean.TRUE);
+			modelService.save(paymentInfo);
+		}
+	}
+
+	/**
 	 * It triggers Deposit Request Event.
 	 * @param orderModel the OrderModel
 	 */
@@ -462,7 +477,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
         }
 
         String payPalEmail = payPalExpressResponse.getDetails().getEmail();
-
         String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
 
         final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
@@ -474,6 +488,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			 hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
 					 payPalExpressResponse.getDetails(), payPalBillingAddress);
 			 hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			 hybrisBillingAddress.setPhone(payPalExpressResponse.getDetails().getPhone());
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
 		 }
 		 else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
@@ -566,7 +581,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		subscriptionInfo.setShouldBeSaved(shouldBeSaved);
 		subscriptionInfo.setNonce(nonce);
 		subscriptionInfo.setEmail(payPalEmail);
-
 		return subscriptionInfo;
 	}
 
@@ -603,7 +617,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		}
 
 		String payPalEmail = payPalExpressResponse.getDetails().getEmail();
-
 		String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
 
 		if (payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
@@ -630,6 +643,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
 					payPalExpressResponse.getDetails(), payPalBillingAddress);
 			hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			hybrisBillingAddress.setPhone(payPalExpressResponse.getDetails().getPhone());
 			subscriptionInfo.setAddressData(hybrisBillingAddress);
 		}
 		else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
@@ -652,6 +666,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						.completeCreateSubscription(subscriptionInfo,
 								(CustomerModel) order.getUser(), order, false, false);
 				if(null != paymentInfo) {
+					paymentInfo.setModifyPayment(Boolean.TRUE);
+					paymentInfo.setCreateNewTransaction(Boolean.TRUE);
+					modelService.save(paymentInfo);
 					isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
 							BigDecimal.valueOf(order.getTotalPrice()), true, paymentInfo);
 				}

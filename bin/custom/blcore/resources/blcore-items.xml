@@ -457,6 +457,12 @@
         <value code="WAIVER_12_PERCENT_TOTAL"/>
       </enumtype>
       
+      <enumtype generate="true" code="PaymentTransactionTypeEnum" autocreate="true" dynamic="true">
+            <value code="EXTEND_ORDER"/>
+            <value code="MODIFY_PAYMENT"/>
+            <value code="BILL_PAYMENT"/>
+      </enumtype>
+      
 	  </enumtypes>
 
     <maptypes>
@@ -6652,6 +6658,19 @@ new Integer(0)
                     </attribute>
                 </attributes>
             </itemtype>
+        </typegroup>
+        
+        <typegroup name="Payment">
+            <itemtype code="PaymentTransaction" autocreate="false" generate="false">
+                <description>Extending PaymentTransaction type with additional attributes.</description>
+                <attributes>
+                	<attribute qualifier="transactionType" type="PaymentTransactionTypeEnum">
+                     	<persistence type="property" />
+                     	<modifiers read="true" write="true" optional="true"/>
+                     	<description>The type of the transaction</description>
+                   </attribute>
+                </attributes>
+             </itemtype>
         </typegroup>
 	</itemtypes>
 </items>

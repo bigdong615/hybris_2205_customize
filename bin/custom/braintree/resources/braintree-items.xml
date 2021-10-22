@@ -231,6 +231,21 @@
                         <description>New amount</description>
                         <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                  </attribute>
+                 <attribute qualifier="billPayment" type="boolean">
+              	         <description>It describes whether this payment info is for bill payment</description>
+                         <persistence type="property" />
+                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+                <attribute qualifier="modifyPayment" type="boolean">
+              	         <description>It describes whether this payment info is for modify payment method</description>
+                         <persistence type="property" />
+                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
+                <attribute qualifier="extendOrder" type="boolean">
+              	         <description>It describes whether this payment info is for modify payment method</description>
+                         <persistence type="property" />
+                         <defaultvalue>Boolean.FALSE</defaultvalue>
+                </attribute>
 			</attributes>
 		</itemtype>
 
