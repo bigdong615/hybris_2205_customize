@@ -19,6 +19,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
         convertResponse(response , stringObjectMap);
       } catch(final Exception e) {
         BlLogger.logMessage(LOG , Level.ERROR , "Error while executing trackUPSService " , e);
+        return Collections.emptyMap();
       }
     stringObjectMap.put(BlintegrationConstants.SCRAPE_TYPE , BlintegrationConstants.UPS_TYPE);
     BlLogger.logMessage(LOG  , Level.INFO , "Finished UPS Scrape for UPS service");
@@ -84,7 +86,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     requestOption.add(BlintegrationConstants.REQUEST_OPTION_NUMBER);
     request.setRequestOption(requestOption);
     trackRequest.setRequest(request);
-    trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getTrackingNumber()) ? StringUtils.EMPTY : packagingInfoModel.getTrackingNumber());
+    trackRequest.setInquiryNumber("1Z12345E0205271688");
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
     return trackRequest;
   }

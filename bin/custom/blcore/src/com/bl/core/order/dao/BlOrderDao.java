@@ -75,4 +75,6 @@ public interface BlOrderDao extends OrderDao
 	 * @return List<PackagingInfoModel>
 	 */
 	List<PackagingInfoModel> getRescheduledPackagesForUPSScrape();
+
+	List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape();
 }

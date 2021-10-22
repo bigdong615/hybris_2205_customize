@@ -86,6 +86,11 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ PackagingInfoModel.ISSCRAPESCANCOMPLETED + "} = ?isScrapeScanCompleted AND {"
 			+ PackagingInfoModel.LATEPACKAGEDATE + "} BETWEEN ?startDate AND ?endDate ";
 
+	private static final String DELAYED_OR_UPDATED_PACKAGES_TO_BE_UPS_SCRAPE = "SELECT {" + ItemModel.PK + BlintegrationConstants.FROM
+			+ PackagingInfoModel._TYPECODE + "}" + "WHERE  {" + PackagingInfoModel.RETURNINGDATE + "} BETWEEN ?startDate AND ?endDate OR {"
+			+ PackagingInfoModel.DELAYEDDATE +"} BETWEEN ?startDate AND ?endDate";
+
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -259,6 +264,27 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(PACKAGES_TO_BE_UPS_SCRAPE);
 		fQuery.addQueryParameter(BlintegrationConstants.PACKAGE_RETURNED_TO_WAREHOUSE , Boolean.FALSE);
 		fQuery.addQueryParameter(BlintegrationConstants.IS_SCRAPE_SCAN_COMPLETED , Boolean.TRUE);
+		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(getFormattedEndDay(new Date())));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<PackagingInfoModel> packagingInfoModels = result.getResult();
+		if (CollectionUtils.isEmpty(packagingInfoModels))
+		{
+			BlLogger.logMessage(LOG , Level.INFO , "No Results found for getRescheduledPackagesForUPSScrape which latePackage has",
+					convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
+			return Collections.emptyList();
+		}
+		return packagingInfoModels;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(DELAYED_OR_UPDATED_PACKAGES_TO_BE_UPS_SCRAPE);
+		fQuery.addQueryParameter(BlintegrationConstants.PACKAGE_RETURNED_TO_WAREHOUSE , Boolean.FALSE);
 		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
 		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(getFormattedEndDay(new Date())));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
