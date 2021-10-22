@@ -1502,7 +1502,8 @@
                     <editorArea:attribute qualifier="labelURL"/>
                     <editorArea:attribute qualifier="totalShippingPrice"/>
                     <editorArea:attribute qualifier="shipmentIdentificationNumber"/>
-                    <editorArea:attribute qualifier="trackingNumber"/>
+                    <editorArea:attribute qualifier="outBoundTrackingNumber"/>
+                    <editorArea:attribute qualifier="inBoundTrackingNumber"/>
                     <editorArea:attribute qualifier="graphicImage"/>
                     <editorArea:attribute qualifier="hTMLImage"/>
                     <editorArea:attribute qualifier="consignmentPOS"/>
