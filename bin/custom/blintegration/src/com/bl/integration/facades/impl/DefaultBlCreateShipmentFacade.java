@@ -128,9 +128,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
 		packagingInfo.setInBoundTrackingNumber(shipmentPackage.getTrackingNumber());
-
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}", packagingInfo.getInBoundTrackingNumber());
 	}
 
 	/**
@@ -143,9 +143,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	{
 		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
-
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}", packagingInfo.getOutBoundTrackingNumber());		
 	}
 
 	/**
