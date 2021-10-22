@@ -1,4 +1,4 @@
-package com.bl.integration.Utils;
+package com.bl.integration.utils;
 
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
@@ -18,7 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
  * This Util class created for updating serial product status on staged version.
  * @author Manikandan
  */
-public class BlUpdateStagedProductUtils {  // Change to BlProductUtils
+public class BlUpdateStagedProductUtils {
 
   private BlUpdateStagedProductUtils() {
     //empty to avoid instantiating utils class

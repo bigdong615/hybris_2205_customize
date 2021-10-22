@@ -86,7 +86,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     requestOption.add(BlintegrationConstants.REQUEST_OPTION_NUMBER);
     request.setRequestOption(requestOption);
     trackRequest.setRequest(request);
-    trackRequest.setInquiryNumber("1Z12345E0205271688");
+    trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getTrackingNumber())
+        ? StringUtils.EMPTY : packagingInfoModel.getTrackingNumber());
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
     return trackRequest;
   }
@@ -177,7 +178,10 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
       activityCount += pkg.getActivity().size();
     }
     // Find the newest activity
-    final ActivityType lastActivity = findLastRelevantActivity(pkg.getActivity());
+     ActivityType lastActivity = null;
+    if(CollectionUtils.isNotEmpty(pkg.getActivity())) {
+     lastActivity = findLastRelevantActivity(pkg.getActivity());
+    }
     if (lastActivity != null) {
       convertStatusResponse(stringObjectMap , lastActivity);
     }
@@ -204,9 +208,14 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
       }
     }
     if (StringUtils.isBlank((String) stringObjectMap.get(BlintegrationConstants.SHIP_TIME_STAMP))) {
-      final ActivityType inTransit = findFirstActivity(pkg.getActivity(), BlintegrationConstants.PACAKAGE_ACTIVITY_I);
-      if (inTransit != null) {
-        stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP ,  convertUPSDateTime(inTransit.getDate(), inTransit.getTime()));
+       ActivityType inTransit = null;
+      if(CollectionUtils.isNotEmpty(pkg.getActivity())) {
+        inTransit = findFirstActivity(pkg.getActivity());
+      }
+        if (inTransit != null) {
+          stringObjectMap.put(BlintegrationConstants.SHIP_TIME_STAMP,
+              convertUPSDateTime(inTransit.getDate(), inTransit.getTime()));
+
       }
     }
   }
@@ -292,32 +301,20 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
    * @param type type of activity
    * @return ActivityType to be updated
    */
-  private ActivityType findFirstActivity(final List<ActivityType> activities, final String type) {
+  private ActivityType findFirstActivity(final List<ActivityType> activities) {
     ActivityType found = null;
-    if (activities != null) {
       for (final ActivityType activity : activities) {
-        String statusType = null;
         final String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
         if (activity.getStatus() != null) {
-          statusType = activity.getStatus().getType();
-          if (StringUtils.isBlank(statusType) || !type.equals(statusType)) {
-            continue;
-          }
           if (found == null) {
             found = activity;
           } else {
-            final String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
-            if (activityDateTime.length() != 19) {
-              continue;
-            }
-            if (foundActivityDateTime.length() != 19 || activityDateTime.compareTo(foundActivityDateTime) < 0) {
+            if (convertUPSDateTime(found.getDate(), found.getTime()).length() != 19 || activityDateTime.compareTo(convertUPSDateTime(found.getDate(), found.getTime())) < 0) {
               found = activity;
             }
           }
         }
       }
-    }
-
     return found;
   }
 
@@ -331,24 +328,19 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
    */
   private ActivityType findLastRelevantActivity(final List<ActivityType> activities) {
     ActivityType found = null;
-    if (activities != null) {
       for (final ActivityType activity : activities) {
         final String activityDateTime = convertUPSDateTime(activity.getDate(), activity.getTime());
-        if (activity.getStatus() != null) {
+        if (null != activity.getStatus()) {
           if (found == null) {
             found = activity;
           } else {
             final String foundActivityDateTime = convertUPSDateTime(found.getDate(), found.getTime());
-            if (activityDateTime.length() != 19) {
-              continue;
-            }
             if (foundActivityDateTime.length() != 19 || activityDateTime.compareTo(foundActivityDateTime) > 0) {
               found = activity;
             }
           }
         }
       }
-    }
     return found;
   }
 

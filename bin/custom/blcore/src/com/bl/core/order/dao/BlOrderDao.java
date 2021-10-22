@@ -62,19 +62,21 @@ public interface BlOrderDao extends OrderDao
 	public List<AbstractOrderModel> getOneYearOldCompletedOrders(final Date oneYearPastDate,
 			final CustomerModel customerModel);
 
-
-
 	/**
 	 * This method created to get the list of order
-	 * @return List<AbstractOrderModel>
+	 * @return List<AbstractOrderModel> list of orders to be send to UPS scrape
 	 */
 	List<AbstractOrderModel> getOrdersForUPSScrape();
 
 	/**
 	 * This method created to get the list of packges
-	 * @return List<PackagingInfoModel>
+	 * @return List<PackagingInfoModel> list of pacakges to be send to UPS scrape
 	 */
 	List<PackagingInfoModel> getRescheduledPackagesForUPSScrape();
 
+	/**
+	 * This method created to get the list of packges which delayed or updated
+	 * @return List<PackagingInfoModel> list of pacakges to be send to UPS scrape
+	 */
 	List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape();
 }

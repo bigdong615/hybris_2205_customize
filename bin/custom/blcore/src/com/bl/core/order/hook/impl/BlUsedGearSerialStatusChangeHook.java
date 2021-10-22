@@ -3,7 +3,7 @@ package com.bl.core.order.hook.impl;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
-import com.bl.integration.Utils.BlUpdateStagedProductUtils;
+import com.bl.integration.utils.BlUpdateStagedProductUtils;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
