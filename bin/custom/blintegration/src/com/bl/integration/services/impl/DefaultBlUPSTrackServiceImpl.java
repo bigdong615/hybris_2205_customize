@@ -39,10 +39,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
   private static final Logger LOG = Logger.getLogger(DefaultBlUPSTrackServiceImpl.class);
 
   /**
-   * This method created for track ups service
-   * @param abstractOrderModel abstractOrderModel
-   * @param packagingInfoModel packagingInfoModel
-   * @return Map<String, Object>
+   * {@inheritDoc}
    */
   @Override
   public Map<String, Object> trackUPSService(final AbstractOrderModel abstractOrderModel , final
@@ -76,7 +73,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to set the tracking details for UPS
-   * @param packagingInfoModel  packagingInfoModel
+   * @param packagingInfoModel  packagingInfoModel to prepare request
    * @return TrackRequest
    */
   private TrackRequest getTrackRequestForUPS(final PackagingInfoModel packagingInfoModel){
@@ -110,8 +107,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to get the values from propery
-   * @param key key
-   * @return String
+   * @param key to get values from Property file
+   * @return String values get from property
    */
   private String getValuesFromProperty(final String key) {
     return StringUtils.isNotBlank(Config.getParameter(key)) ? Config.getParameter(key)
@@ -120,8 +117,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to convert response
-   * @param response response
-   * @param stringObjectMap map
+   * @param response response from UPS scrape service
+   * @param stringObjectMap response to be updated
    */
   private void convertResponse(final TrackResponse response, final Map<String, Object> stringObjectMap) {
     if(Objects.nonNull(response)){
@@ -134,7 +131,6 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
                   stringObjectMap.put(BlintegrationConstants.SERVICE_DESCRIPTION, service.getDescription());
                 }
                 convertShipmentResponse(stringObjectMap , shipmentType);
-
                 int packageCount = 0;
                 int activityCount = 0;
                 convertResponseFromResults(shipmentType , packageCount , activityCount ,stringObjectMap);
@@ -147,8 +143,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
 
   /**
    * This method created to convert the response from results
-   * @param shipmentType shipmentType of pacakge
-   * @param activityCount activityCount
+   * @param shipmentType shipmentType of package
+   * @param activityCount activity Count
    * @param packageCount package Count
    * @param stringObjectMap stringObjectMap results to be updated
    */
@@ -168,7 +164,7 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
   }
 
   /**
-   * This method created to convert the response for pacakage
+   * This method created to convert the response for package
    * @param stringObjectMap stringObjectMap results to be updated
    * @param pkg package from response
    * @param activityCount activityCount
@@ -298,7 +294,6 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
   /**
    * This method created to find the first activity from response
    * @param activities list of activities from response
-   * @param type type of activity
    * @return ActivityType to be updated
    */
   private ActivityType findFirstActivity(final List<ActivityType> activities) {
@@ -317,9 +312,6 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
       }
     return found;
   }
-
-
-
 
   /**
    * This method created to find the relevant activity

@@ -1,4 +1,4 @@
-package com.bl.integration.utils;
+package com.bl.core.utils;
 
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
@@ -24,8 +24,6 @@ public class BlUpdateStagedProductUtils {
     //empty to avoid instantiating utils class
   }
 
-  public static final String PRODUCT_CATALOG = "catalog";
-  public static final String VERSION = "version";
   public static final String STAGED = "Staged";
   public static final String CATALOG_VALUE = "blProductCatalog";
 

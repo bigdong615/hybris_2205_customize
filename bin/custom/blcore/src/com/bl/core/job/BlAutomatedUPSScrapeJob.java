@@ -21,7 +21,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<CronJobModel
 
   /**
    * This method created to perform UPS scrape service
-   * @param cronJobModel instance of cronJobModel
+   * @param cronJobModel instance of cronJobModel to run
    * @return PerformResult based on success or failure
    */
   @Override
@@ -45,8 +45,7 @@ public class BlAutomatedUPSScrapeJob extends AbstractJobPerformable<CronJobModel
     return defaultUPSScrapeService;
   }
 
-  public void setDefaultUPSScrapeService(
-      DefaultUPSScrapeService defaultUPSScrapeService) {
+  public void setDefaultUPSScrapeService(final DefaultUPSScrapeService defaultUPSScrapeService) {
     this.defaultUPSScrapeService = defaultUPSScrapeService;
   }
 

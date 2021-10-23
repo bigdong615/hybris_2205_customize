@@ -43,7 +43,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
   private DefaultBlUPSTrackServiceImpl defaultBlUPSTrackServiceImpl;
 
   /**
-   * This method created to perform UPS scrape service
+   * {@inheritDoc}
    */
   @Override
   public void performUPSScrapeForOrders() {
@@ -52,7 +52,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     orderModelList.forEach(abstractOrderModel -> abstractOrderModel.getConsignments().forEach(consignmentModel ->
         consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
           final String carrierCode = getCarrierType(packagingInfoModel);
-          BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier" ,carrierCode);
+          BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier " ,carrierCode);
           try {
             if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 3) {
               if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
@@ -64,14 +64,15 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
             final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
             postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
           }
-          catch (Exception e){
-            BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {}" , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
+          catch (final Exception e){
+            BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
+            BlLogger.logMessage(LOG , Level.ERROR , "Error while performing UPS Scrape job" , e);
           }
         })));
   }
-
   /**
-   * This method created to perform late order for USP scrape
+   *
+   * {@inheritDoc}
    */
   @Override
   public void performUPSScrapeForLateOrder() {
@@ -96,15 +97,14 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       }
       catch (final Exception e){
         BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while fetching package{} from Order" , e);
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while fetching package from Order" , e);
       }
     });
     BlLogger.logMessage(LOG , Level.INFO , "Finished Performing UPS scrape for Late orders");
-
   }
 
   /**
-   * This method created to perform late order for USP scrape
+   * {@inheritDoc}
    */
   @Override
   public void performUPSScrapeForDelayedOrUpdatedOrder() {
@@ -128,8 +128,8 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
       }
       catch (final Exception e){
-        BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while fetching package{} from Order" , e);
+        BlLogger.logFormattedMessage(LOG , Level.ERROR , "while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
+        BlLogger.logMessage(LOG , Level.ERROR , "Error while fetching package from Order" , e);
       }
     });
     BlLogger.logMessage(LOG , Level.INFO , "Finished Performing UPS scrape Delayed or updated orders");
@@ -191,10 +191,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
       final Map<String, Object>  stringObjectMap){
     if (MapUtils.isNotEmpty(stringObjectMap)) {
       if (Objects.nonNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))) {
-        final Date estimatedDeliveryTimestamp = (Date) stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP);
-        if (estimatedDeliveryTimestamp.before(new Date()) || DateUtils.isSameDay(new Date(), estimatedDeliveryTimestamp)) {
-          updatePackageDetails(abstractOrderModel, String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)), packagingInfoModel);
-        }
+        updatePackagesDetailsForEstimatedDelivery(stringObjectMap , abstractOrderModel , packagingInfoModel);
       } else if (StringUtils.equalsIgnoreCase(BlintegrationConstants.DELIVERED,
           String.valueOf(stringObjectMap.get(BlintegrationConstants.STATUS_DESCRIPTION)))) {
         updatePackageDetails(abstractOrderModel, String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)), packagingInfoModel);
@@ -207,21 +204,46 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         BlLogger.logMessage(LOG , Level.INFO , "Package is not shipped yet");
       }
       else {
-        getBlUpdateSerialService().updateSerialProducts(Objects.isNull(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER))
-            ? StringUtils.EMPTY : String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)),
-                abstractOrderModel.getCode(), Objects.isNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))
-                 ? new Date(): (Date)stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP),
-            Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) ? 0 : packagingInfoModel.getNumberOfRepetitions(),
-                packagingInfoModel);
+       updateSerialStatusBasedIfDeliveryIsLateOrNotFound(stringObjectMap , abstractOrderModel , packagingInfoModel);
       }
     }
   }
 
   /**
-   * This method created to update package details for reponse
-   * @param stringObjectMap stringObjectMap
-   * @param abstractOrderModel abstractOrderModel
-   * @param packagingInfoModel packagingInfoModel
+   * This method created to update the serial if UPS scrape not found delivery details or Late
+   * @param stringObjectMap response from UPS scrape
+   * @param abstractOrderModel order model to be update
+   * @param packagingInfoModel package to be update
+   */
+  private void updateSerialStatusBasedIfDeliveryIsLateOrNotFound(final Map<String, Object> stringObjectMap,
+      final AbstractOrderModel abstractOrderModel, final PackagingInfoModel packagingInfoModel) {
+    getBlUpdateSerialService().updateSerialProducts(Objects.isNull(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER))
+            ? StringUtils.EMPTY : String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)),
+        abstractOrderModel.getCode(), Objects.isNull(stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP))
+            ? new Date(): (Date)stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP),
+        Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) ? 0 : packagingInfoModel.getNumberOfRepetitions(),
+        packagingInfoModel);
+  }
+
+  /**
+   * This method created to update the pacakage details based on estimated delivery
+   * @param stringObjectMap response from UPS scrape
+   * @param abstractOrderModel order model to be update after scrape
+   * @param packagingInfoModel packaging model to be update
+   */
+  private void updatePackagesDetailsForEstimatedDelivery(final Map<String, Object> stringObjectMap, final AbstractOrderModel abstractOrderModel,
+      final PackagingInfoModel packagingInfoModel) {
+    final Date estimatedDeliveryTimestamp = (Date) stringObjectMap.get(BlintegrationConstants.ESTIMATED_DELIVERY_TIME_STAMP);
+    if (estimatedDeliveryTimestamp.before(new Date()) || DateUtils.isSameDay(new Date(), estimatedDeliveryTimestamp)) {
+      updatePackageDetails(abstractOrderModel, String.valueOf(stringObjectMap.get(BlintegrationConstants.TRACKING_NUMBER)), packagingInfoModel);
+    }
+  }
+
+  /**
+   * This method created to update package details for response
+   * @param stringObjectMap stringObjectMap response from UPS scrape
+   * @param abstractOrderModel abstractOrderModel order to be update
+   * @param packagingInfoModel packagingInfoModel to be update
    */
   private void updatePackageDetailsForResponse(final Map<String, Object> stringObjectMap,
       final AbstractOrderModel abstractOrderModel, final PackagingInfoModel packagingInfoModel) {
@@ -238,8 +260,8 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
 
   /**
    * This method created to get the carrier type
-   * @param packagingInfoModel packagingInfoModel
-   * @return String
+   * @param packagingInfoModel packagingInfoModel to get the carrier type
+   * @return String carrier code
    */
   private String getCarrierType(final PackagingInfoModel packagingInfoModel){
     final AtomicReference<String> carrierCode = new AtomicReference<>(StringUtils.EMPTY);

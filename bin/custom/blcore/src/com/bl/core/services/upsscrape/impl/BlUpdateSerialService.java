@@ -7,7 +7,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UpdateSerialService;
-import com.bl.integration.utils.BlUpdateStagedProductUtils;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
@@ -37,17 +37,12 @@ public class BlUpdateSerialService implements UpdateSerialService {
   private BlOrderDao orderDao;
 
   /**
-   * This method created to update the serial product status
-   * @param packageCode packageCode
-   * @param orderCode orderCode
-   * @param upsDeliveryDate upsDeliveryDate
-   * @param numberOfRepetition numberOfRepetition
-   * @param packagingInfoModel packagingInfoModel
+   * {@inheritDoc}
    */
   @Override
   public void updateSerialProducts(final String packageCode, final String orderCode,
       final Date upsDeliveryDate, final int numberOfRepetition, final PackagingInfoModel packagingInfoModel) {
-    BlLogger.logFormattedMessage(LOG , Level.INFO , "Started Performing Update serial products for order{} -> package {} -> number of repetitions  {}"
+    BlLogger.logFormattedMessage(LOG , Level.INFO , "Started Performing Update serial products for order {} -> package {} -> number of repetitions  {}"
         , orderCode , packageCode , numberOfRepetition);
     final AbstractOrderModel orderModel = getOrderDao().getOrderByCode(orderCode);
     if (Objects.nonNull(orderModel)) {
@@ -67,10 +62,11 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
 
   /**
-   * This method created to update the serial product status
-   * @param upsDeliveryDate upsDeliveryDate
-   * @param numberOfRepetition numberOfRepetition
-   * @param packagingInfoModel packagingInfoModel
+   * This method created to update the serial product status based on response
+   * @param orderModel order model to update after UPS scrape
+   * @param packagingInfoModel to update the serial products which belongs to package
+   * @param numberOfRepetition total number of repetition of packages
+   * @param upsDeliveryDate ups delivery date from response
    */
   private void performSerialUpdate(final AbstractOrderModel orderModel ,final PackagingInfoModel packagingInfoModel , final int numberOfRepetition ,
       final Date upsDeliveryDate){
@@ -84,10 +80,10 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
   /**
    * This method created to update serial status based on response
-   * @param blProductModel blProductModel
-   * @param numberOfRepetition numberOfRepetition
-   * @param packagingInfoModel packagingInfoModel
-   * @param upsDeliveryDate upsDeliveryDate
+   * @param blProductModel blProductModel to update after UPS Scrape
+   * @param numberOfRepetition total number of repetition of packages
+   * @param packagingInfoModel to update the serial products which belongs to package
+   * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialStatusBasedOnResponse(final BlProductModel blProductModel, final int numberOfRepetition,
       final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate){
@@ -95,11 +91,11 @@ public class BlUpdateSerialService implements UpdateSerialService {
   }
 
   /**
-   * This method created to update the serial status
-   * @param blProductModel blProductModel
-   * @param numberOfRepetition numberOfRepetition
-   * @param packagingInfoModel packagingInfoModel
-   * @param upsDeliveryDate upsDeliveryDate
+   * This method created to update serial status based on number Of Repetition
+   * @param blProductModel blProductModel to update after UPS Scrape
+   * @param numberOfRepetition total number of repetition of packages
+   * @param packagingInfoModel to update the serial products which belongs to package
+   * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialProduct(final BlProductModel blProductModel, final int numberOfRepetition,
       final PackagingInfoModel packagingInfoModel, final Date upsDeliveryDate) {
@@ -117,11 +113,11 @@ public class BlUpdateSerialService implements UpdateSerialService {
   }
 
   /**
-   * This method created to update serial status
-   * @param blSerialProductModel blSerialProductModel
-   * @param packagingInfoModel packagingInfoModel
-   * @param numberOfRepetition numberOfRepetition
-   * @param upsDeliveryDate upsDeliveryDate
+   * This method created to update serial status as Late based on number Of Repetition
+   * @param blSerialProductModel blSerialProductModel to update after UPS Scrape
+   * @param numberOfRepetition total number of repetition of packages
+   * @param packagingInfoModel to update the serial products which belongs to package
+   * @param upsDeliveryDate ups delivery date from response
    */
   private void updateSerialStatus(final BlSerialProductModel blSerialProductModel,
       final PackagingInfoModel packagingInfoModel, final int numberOfRepetition, final Date upsDeliveryDate)
@@ -144,10 +140,11 @@ public class BlUpdateSerialService implements UpdateSerialService {
     getModelService().refresh(packagingInfoModel);
   }
 
+
   /**
-   * This method created to update serial status as stolen
-   * @param blSerialProductModel blSerialProductModel
-   * @param packagingInfoModel packagingInfoModel
+   * This method created to update serial status as STOLEN based on number Of Repetition
+   * @param blSerialProductModel blSerialProductModel to update after UPS Scrape
+   * @param packagingInfoModel to update the serial products which belongs to package
    */
   private void updateStolenSerialStatus(final BlSerialProductModel blSerialProductModel, final PackagingInfoModel packagingInfoModel){
     blSerialProductModel.setSerialStatus(SerialStatusEnum.STOLEN);
@@ -163,8 +160,8 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
 
   /**
-   * This common method created to save and refresh blserial products
-   * @param blSerialProductModel blSerialProductModel
+   * This common method created to save and refresh BLSerial product
+   * @param blSerialProductModel blSerialProductModel to be save and refresh
    */
   private void saveAndRefreshSerialModel(final BlSerialProductModel blSerialProductModel) {
     getModelService().save(blSerialProductModel);
@@ -174,7 +171,7 @@ public class BlUpdateSerialService implements UpdateSerialService {
 
   /**
    * This common method created to save and refresh abstractOrderModel
-   * @param abstractOrderModel AbstractOrderModel
+   * @param abstractOrderModel AbstractOrderModel to be save and refresh
    */
   private void saveAndRefreshOrderModel(final AbstractOrderModel abstractOrderModel) {
     getModelService().save(abstractOrderModel);

@@ -16,6 +16,9 @@ public interface UPSScrapeService {
    */
    void performUPSScrapeForLateOrder();
 
+  /**
+   * This method created for UPS scrape Delayed and Updated Orders
+   */
   void performUPSScrapeForDelayedOrUpdatedOrder();
 
 }

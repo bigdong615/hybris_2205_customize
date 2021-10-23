@@ -112,7 +112,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to Set the Transaction details for fedex
-   * @param abstractOrderModel abstractOrderModel
+   * @param abstractOrderModel abstractOrderModel to get the order code
    * @return TransactionDetail
    */
   private TransactionDetail getTransactionDetailForFedex(
@@ -173,8 +173,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to convert the response
-   * @param response response
-   * @param responseResults responseResults
+   * @param response response from UPS scrape
+   * @param responseResults response Results results to update
    */
   private void convertResponse(final TrackReply response , final Map<String, Object> responseResults) throws ParseException {
     if(Objects.nonNull(response)) {
@@ -187,8 +187,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to track the details from response
-   * @param responseResults responseResults
-   * @param completedTrackDetails completedTrackDetails
+   * @param responseResults responseResults to get updated
+   * @param completedTrackDetails completed TrackDetails
    * @throws ParseException ParseException
    */
   private void getTrackDetailFromResponse(final Map<String, Object> responseResults,
@@ -216,8 +216,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    *This method created to get the status from response
-   * @param responseResults responseResults
-   * @param trackDetails trackDetails
+   * @param responseResults responseResults to be updated
+   * @param trackDetails trackDetails of response
    */
   private void getStatusFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
     responseResults.put(BlintegrationConstants.STATUS_CODE, Objects.nonNull( trackDetails.getService()) ?
@@ -228,9 +228,9 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
   /**
-   * This method created to get the pacakage details
-   * @param responseResults responseResults
-   * @param trackDetails trackDetails
+   * This method created to get the package details
+   * @param responseResults responseResults to be updated
+   * @param trackDetails trackDetails of response
    */
   private void getPackageDetails(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
     responseResults.put(BlintegrationConstants.PACAKAGE_SEQUENCE_NUMBER,
@@ -245,7 +245,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to get the time stamp from response
-   * @param responseResults responseResults
+   * @param responseResults responseResults to be updated
    * @param trackDetails trackDetails
    * @throws ParseException ParseException
    */
@@ -269,8 +269,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
   }
 
   /**
-   * This method created to get the destination address from reposne
-   * @param responseResults responseResults
+   * This method created to get the destination address from reponse
+   * @param responseResults response Results to be updated
    * @param trackDetails trackDetails
    */
   private void getDestinationAddressFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
@@ -286,7 +286,7 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to get the track details from response
-   * @param responseResults responseResults
+   * @param responseResults response Results to be updated
    * @param trackDetails trackDetails
    */
   private void getTrackDetailsFromResponse(final Map<String, Object> responseResults, final TrackDetail trackDetails) {
@@ -314,8 +314,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This method created to convert the time from response
-   * @param dateOrTimestamp dateOrTimestamp
-   * @return Date
+   * @param dateOrTimestamp dateOrTimestamp from response
+   * @return Date return formatted date
    * @throws ParseException ParseException
    */
   private Date convertTime(final String dateOrTimestamp) throws ParseException {
@@ -328,8 +328,8 @@ public class DefaultBlTrackWebServiceImpl implements BlTrackWebService {
 
   /**
    * This common method create to check the null values
-   * @param value values
-   * @return String
+   * @param value values to check for null
+   * @return String return value if not null else empty
    */
   private String getValuesFromResponse(final String value){
     return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;

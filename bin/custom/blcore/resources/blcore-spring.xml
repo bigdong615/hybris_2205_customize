@@ -1679,7 +1679,8 @@
 	</bean>
 
 
-	<!--BL-803 UPS Scrape -->
+	<!--BL-803 UPS Scrape Starts-->
+
 	<bean id="defaultBlAutomatedUPSScrapeJob" class="com.bl.core.job.BlAutomatedUPSScrapeJob" parent="abstractJobPerformable">
 		<property name="defaultUPSScrapeService" ref="defaultUPSScrapeService"/>
 	</bean>
@@ -1702,6 +1703,8 @@
 		<property name="userService" ref="userService"/>
 		<property name="orderDao" ref="orderDao"/>
 	</bean>
+
+	<!--BL-803 UPS Scrape Ends-->
 
 
 </beans>

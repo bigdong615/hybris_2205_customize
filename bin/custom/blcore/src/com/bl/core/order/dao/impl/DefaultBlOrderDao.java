@@ -23,10 +23,8 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -244,13 +242,13 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	public List<AbstractOrderModel> getOrdersForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
-		fQuery.addQueryParameter(BlintegrationConstants.OPTIMIZED_SHIPPING_START_DATE, convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
-		fQuery.addQueryParameter( BlintegrationConstants.OPTIMIZED_SHIPPING_END_DATE, convertDateIntoSpecificFormat(getFormattedEndDay(new Date())));
+		fQuery.addQueryParameter(BlintegrationConstants.OPTIMIZED_SHIPPING_START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter( BlintegrationConstants.OPTIMIZED_SHIPPING_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
 			BlLogger.logMessage(LOG , Level.INFO , "No Results found for UPS Scrape service which optimizedShippingEndDate has ",
-					convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
 		return orders;
@@ -264,14 +262,14 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(PACKAGES_TO_BE_UPS_SCRAPE);
 		fQuery.addQueryParameter(BlintegrationConstants.PACKAGE_RETURNED_TO_WAREHOUSE , Boolean.FALSE);
 		fQuery.addQueryParameter(BlintegrationConstants.IS_SCRAPE_SCAN_COMPLETED , Boolean.TRUE);
-		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
-		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(getFormattedEndDay(new Date())));
+		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<PackagingInfoModel> packagingInfoModels = result.getResult();
 		if (CollectionUtils.isEmpty(packagingInfoModels))
 		{
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for getRescheduledPackagesForUPSScrape which latePackage has",
-					convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
+			BlLogger.logMessage(LOG , Level.INFO , "No Results found for getRescheduledPackagesForUPSScrape which latePackage has ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
 		return packagingInfoModels;
@@ -285,54 +283,28 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(DELAYED_OR_UPDATED_PACKAGES_TO_BE_UPS_SCRAPE);
 		fQuery.addQueryParameter(BlintegrationConstants.PACKAGE_RETURNED_TO_WAREHOUSE , Boolean.FALSE);
-		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
-		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(getFormattedEndDay(new Date())));
+		fQuery.addQueryParameter(BlintegrationConstants.START_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlintegrationConstants.END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<PackagingInfoModel> packagingInfoModels = result.getResult();
 		if (CollectionUtils.isEmpty(packagingInfoModels))
 		{
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for getRescheduledPackagesForUPSScrape which latePackage has",
-					convertDateIntoSpecificFormat(getFormattedStartDay(new Date())));
+			BlLogger.logMessage(LOG , Level.INFO , "No Results found for getRescheduledPackagesForUPSScrape which latePackage has ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
 		return packagingInfoModels;
 	}
 
-	public Date getFormattedStartDay(final Date day) {
-		final Calendar startDate = Calendar.getInstance();
-		startDate.setTime(day);
-		startDate.set(Calendar.HOUR_OF_DAY, BlintegrationConstants.START_HOURS);
-		startDate.set(Calendar.MINUTE, BlintegrationConstants.START_MINUTES);
-		startDate.set(Calendar.SECOND, BlintegrationConstants.START_SECONDS);
-		return startDate.getTime();
-	}
-
-	/**
-	 * To get the formatted date
-   * @param day the date
-   * @return Calendar
-   */
-	public static Date getFormattedEndDay(final Date day) {
-		final Calendar startDate = new GregorianCalendar();
-		startDate.setTime(day);
-		startDate.set(Calendar.HOUR_OF_DAY, BlintegrationConstants.END_HOURS);
-		startDate.set(Calendar.MINUTE, BlintegrationConstants.END_MINUTES);
-		startDate.set(Calendar.SECOND, BlintegrationConstants.END_SECONDS);
-		return startDate.getTime();
-	}
-
 	/**
 	 * This method created to convert date into specific format
-	 * @param dateToConvert date
-	 * @return String
+	 * @param dateToConvert the date which required to convert
+	 * @return String after conversion into specific format
 	 */
 	private String convertDateIntoSpecificFormat(final Date dateToConvert) {
 		final SimpleDateFormat sdf = new SimpleDateFormat(BlintegrationConstants.DATE_FORMATTER);
 		return sdf.format(dateToConvert);
 	}
-
-
-
 
 	/**
 	 * @return the userService

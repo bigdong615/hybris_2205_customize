@@ -69,14 +69,14 @@ public interface BlOrderDao extends OrderDao
 	List<AbstractOrderModel> getOrdersForUPSScrape();
 
 	/**
-	 * This method created to get the list of packges
-	 * @return List<PackagingInfoModel> list of packges to be send to UPS scrape
+	 * This method created to get the list of packages
+	 * @return List<PackagingInfoModel> list of packages to be send to UPS scrape
 	 */
 	List<PackagingInfoModel> getRescheduledPackagesForUPSScrape();
 
 	/**
-	 * This method created to get the list of packges which delayed or updated
-	 * @return List<PackagingInfoModel> list of packges to be send to UPS scrape
+	 * This method created to get the list of packages which delayed or updated
+	 * @return List<PackagingInfoModel> list of packages to be send to UPS scrape
 	 */
 	List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape();
 }
