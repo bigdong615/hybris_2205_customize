@@ -240,6 +240,6 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
     $(" #productDates .input-group").addClass("red-border");
-	
+
 }
 $(".js-hr-tag").last().hide();
