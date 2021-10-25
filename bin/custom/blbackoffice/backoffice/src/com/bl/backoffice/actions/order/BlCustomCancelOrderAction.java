@@ -21,7 +21,8 @@ public class BlCustomCancelOrderAction extends CancelOrderAction {
     @Override
     public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext) {
         final OrderModel orderModel = actionContext.getData();
-        if (orderModel.getOriginalVersion() == null && CollectionUtils.isNotEmpty(orderModel.getConsignments())) {
+        if (orderModel.getOriginalVersion() == null && orderModel.getVersionID() == null && CollectionUtils.isNotEmpty(
+                orderModel.getConsignments())) {
             this.sendOutput(SOCKET_OUTPUT_CTX, orderModel);
             return new ActionResult<>(ActionResult.SUCCESS);
         }

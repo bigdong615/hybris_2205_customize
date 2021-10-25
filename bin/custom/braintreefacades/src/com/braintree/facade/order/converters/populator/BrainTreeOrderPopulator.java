@@ -58,8 +58,8 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 					.findFirst();
 			notesModel.ifPresent(model -> target.setOrderNotes(model.getNote()));
 		}
-		final double promoDiscount = source.getTotalDiscounts();
-		final double gifCardDiscount = source.getGiftCardAmount();
+		final double promoDiscount = Objects.isNull(source.getTotalDiscounts()) ? 0.0 : source.getTotalDiscounts();
+		final double gifCardDiscount = Objects.isNull(source.getGiftCardAmount()) ? 0.0 : source.getGiftCardAmount();
 		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
 	}
 

@@ -379,7 +379,7 @@ public class DefaultBlStockService implements BlStockService
 			for (final BlSerialProductModel serial : skuProduct.getSerialProducts())
 			{
 				if (null != serial.getSerialStatus() && !((SerialStatusEnum.COMING_FROM_PURCHASE).equals(serial.getSerialStatus()))
-						&& null != serial.getWarehouseLocation())
+						&& null != serial.getWarehouseLocation() && !SerialStatusEnum.STOLEN.equals(serial.getSerialStatus()))
 				{
 					final Date stockDate = Boolean.FALSE.equals(serial.getForRent()) ? null : date;
 					createStockLevelForSerial(serial, stockDate);
