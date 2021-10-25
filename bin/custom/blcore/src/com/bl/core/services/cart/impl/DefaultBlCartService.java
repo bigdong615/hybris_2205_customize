@@ -16,10 +16,10 @@ import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
-import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -41,11 +41,9 @@ import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.promotions.result.PromotionOrderResults;
 import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -391,48 +389,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void changeSerialStatusInStagedVersion(final String productCode, final SerialStatusEnum serialStatus) {
-        Collection<CatalogVersionModel> catalogModels =  getCatalogVersionDao().findCatalogVersions(BlCoreConstants
-            .CATALOG_VALUE, BlCoreConstants.STAGED);
-        List<BlSerialProductModel> products = getProductsOfStagedVersion(productCode, catalogModels.iterator().next());
-        if(CollectionUtils.isNotEmpty(products)) {
-            BlSerialProductModel product = products.get(0);
-            product.setSerialStatus(serialStatus);
-            getModelService().save(product);
-        }
-    }
-
-    /**
-     * It gets serialProductModel of staged version
-     *
-     * @param productCode the product code
-     * @param catalogVersionModel the catalog version model
-     * @return List<BlSerialProductModel> the blSerialProducts
-     */
-    public List<BlSerialProductModel> getProductsOfStagedVersion(final String productCode,
-        final CatalogVersionModel catalogVersionModel) {
-        return getSessionService().executeInLocalView(new SessionExecutionBody()
-        {
-            @Override
-            public Object execute()
-            {
-                try
-                {
-                    getSearchRestrictionService().disableSearchRestrictions();
-                    return getProductDao().findProductsByCode(catalogVersionModel,
-                        productCode);
-                }
-                finally
-                {
-                    getSearchRestrictionService().enableSearchRestrictions();
-                }
-            }
-        });
-    }
 
     /**
 	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
@@ -443,7 +399,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
 		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
 		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-		      changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
+		      BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
 		      getModelService().save(blSerialProductModel);
 		  }
 	}
@@ -474,19 +430,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void updateOrderTypes() {
         final CartModel cartModel = getSessionCart();
         try {
-            if (Objects.nonNull(cartModel) && Objects.nonNull(cartModel.getDeliveryMode())
-                && Objects.nonNull(cartModel.getStore())) {
+            if (isCartEligibleForSettingOrderType(cartModel)) {
 
-                if (isFrontDeskOrder(cartModel)) {
+                if (BooleanUtils.isFalse(cartModel.isGiftCardOrder())) {
+                    if (isFrontDeskOrder(cartModel)) {
 
-                    cartModel.setOrderType(OrderTypeEnum.FD);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to FD for cart code {}", cartModel.getCode());
-                } else {
+                        cartModel.setOrderType(OrderTypeEnum.FD);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to FD for cart code {}", cartModel.getCode());
+                    } else {
 
-                    cartModel.setOrderType(OrderTypeEnum.SHIPPING);
-                    BlLogger.logMessage(LOGGER, Level.DEBUG,
-                        "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                        cartModel.setOrderType(OrderTypeEnum.SHIPPING);
+                        BlLogger.logMessage(LOGGER, Level.DEBUG,
+                            "Setting order type to SHIPPING for cart code {}", cartModel.getCode());
+                    }
                 }
 
                 cartModel.setIsVipOrder(isVipOrder(cartModel));
@@ -502,6 +459,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
                 "Error occurred while updating order types for cart {}", cartModel.getCode(),
                 exception);
         }
+    }
+
+    /**
+     * It checks, is cart eligible to set order types or vip order and verification level.
+     * @param cartModel the CartModel
+     * @return true false
+     */
+    private boolean isCartEligibleForSettingOrderType(final CartModel cartModel) {
+        boolean flag = false;
+        if(Objects.nonNull(cartModel)) {
+            flag =  (Objects.nonNull(cartModel.getDeliveryMode())
+                && Objects.nonNull(cartModel.getStore())) || (cartModel.isGiftCardOrder());
+        }
+        return flag;
     }
 
     /**

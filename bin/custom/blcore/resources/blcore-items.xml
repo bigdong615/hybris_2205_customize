@@ -2134,7 +2134,7 @@
             </attributes>
           </itemtype>
         </typegroup>
-         
+
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"
              jaloclass="com.bl.core.jalo.BLPricingLogic">
@@ -3796,7 +3796,34 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This date refers to the late return date of this package.</description>
           </attribute>
-				</attributes>
+          <attribute qualifier="numberOfRepetitions" type="java.lang.Integer">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This refers to number of repetitions </description>
+          </attribute>
+          <attribute qualifier="packageReturnedToWarehouse" type="boolean">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>To identify by UPS scrape</description>
+            <defaultvalue>false</defaultvalue>
+          </attribute>
+          <attribute qualifier="isScrapeScanCompleted" type="boolean">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>To identify by UPS scrape is scanned this pacakege or not</description>
+            <defaultvalue>false</defaultvalue>
+          </attribute>
+        <attribute qualifier="delayedDate" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+          <description>This date refers to the delayed return date of this package by UPS scrape.</description>
+        </attribute>
+          <attribute qualifier="returningDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <description>This date refers to returning date of this package by UPS scrape.</description>
+          </attribute>
+        </attributes>
 			</itemtype>
 		</typegroup>
 
@@ -6530,7 +6557,115 @@ new Integer(0)
 		</attribute>
 	</attributes>
 </itemtype>
-  
+
+  <itemtype code="UPSScrapeOrder" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+    <custom-properties>
+      <property name="query">
+        <value>
+          "select {ord.code} as orderCode ,{con.code} as consignmentCode , {package.inBoundTrackingNumber},{con.optimizedShippingEndDate} ,{package.returningDate} from {PackagingInfo as package} ,{Consignment as con} ,{Order as ord} where {package.consignment} = {con.pk} AND {con.Order} = {ord.pk} AND CONVERT(VARCHAR,{con:optimizedShippingEndDate},110) = CONVERT(VARCHAR,?endDate,110) AND {isScrapeScanCompleted} = 1"
+        </value>
+      </property>
+    </custom-properties>
+    <attributes>
+      <attribute generate="false" autocreate="true" qualifier="orderCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="consignmentCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(1)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+
+      <attribute generate="false" autocreate="true" qualifier="inBoundTrackingNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(2)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="optimizedShippingEndDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(3)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="returningDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(4)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="endDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.TRUE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+    </attributes>
+  </itemtype>
 </typegroup>
 
         <typegroup name="BlInventoryCycleCount">
