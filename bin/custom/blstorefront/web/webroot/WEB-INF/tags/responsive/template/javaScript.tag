@@ -1670,7 +1670,7 @@
         } ).mount();
     </script>
         		</c:if>
-    	<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'review') == true}">
+    	<c:if test="${cmsPage.uid eq 'multiStepCheckoutReviewPage' and fn:containsIgnoreCase(currentPage, 'review') == true}">
         	<input type="hidden" id="isFromReviewPage" value="true">
         		<script>
         			$(document).ready(function() {			
