@@ -243,7 +243,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	 * @param isCheckout
 	 */
 	private void setPaymentInfoInCart(AbstractOrderModel cart, BrainTreePaymentInfoModel paymentInfo, boolean isCheckout) {
-		if((!paymentInfo.isIsDepositPayment()) && (isCheckout || (cart instanceof OrderModel))) {
+		if((!paymentInfo.isIsDepositPayment() && !paymentInfo.isModifyPayment()) && (isCheckout || (cart instanceof OrderModel))) {
 			cart.setPaymentInfo(paymentInfo);
 			modelService.save(cart);
 		}
