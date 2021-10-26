@@ -321,7 +321,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
       final AtomicBoolean isEligibleToTrigger = new AtomicBoolean(Boolean.FALSE);
       final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
-
+ if(CollectionUtils.isNotEmpty(consignments))
+ {
       for(ConsignmentModel consignmentModel : consignments){
         final WarehouseModel warehouses = consignmentModel.getWarehouse();
         final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
@@ -335,6 +336,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
           break;
         }
     }
+ }
       if(isEligibleToTrigger.get()){
         getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
       }
