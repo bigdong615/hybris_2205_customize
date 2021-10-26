@@ -125,7 +125,9 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			final Map<String, List<BlItemsBillingChargeModel>> currentBillingCharges = consignmentEntryModel
 					.getBillingCharges();
 			currentBillingCharges.entrySet().forEach(billingCharge -> {
-				if (billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size()) {
+				if (billingCharge.getValue() != null && billingCharges.get(billingCharge.getKey()) != null
+						&& billingCharge.getValue().size() > billingCharges.get(billingCharge.getKey()).size())
+				{
 					final List<BlItemsBillingChargeModel> charges = billingCharges
 							.get(billingCharge.getKey());
 					final List<BlItemsBillingChargeModel> currentCharges = billingCharge.getValue();
