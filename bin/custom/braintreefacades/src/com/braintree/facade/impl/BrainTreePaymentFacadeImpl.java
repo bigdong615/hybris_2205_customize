@@ -59,7 +59,7 @@ import org.apache.log4j.Logger;
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 {
 	private static final String CVV_MATCH_CODE = "M";
-  private final static Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
+  private static final Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
 	private BrainTreeUserFacade brainTreeUserFacade;
 	private BrainTreePaymentService brainTreePaymentService;
 	private CartService cartService;
@@ -196,7 +196,6 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		checkBraintreeResult(result);
 
 		addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, result);
-//		} //NOSONAR
 		if (isStoreInVault && StringUtils.isEmpty(customer.getBraintreeCustomerId())) {
 			LOG.debug("... creating customer on the braintree side");
 			getBrainTreePaymentService().createCustomer(customer, billingAddress);
@@ -436,9 +435,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 
 			validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
 
-			final BrainTreePaymentInfoData paymentData = getBrainTreePaymentInfoDataConverter()
+			return getBrainTreePaymentInfoDataConverter()
 					.convert((BrainTreePaymentInfoModel) paymentInfo);
-			return paymentData;
 		}
 		return null;
 	}
@@ -465,8 +463,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		final CartModel cartModel = getCommerceCartService().getCartForCodeAndUser(cartCode, getUserService().getCurrentUser());
 		final BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cartModel.getPaymentInfo();
 		validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
-		final BrainTreePaymentInfoData paymentData = getBrainTreePaymentInfoDataConverter().convert(paymentInfo);
-		return paymentData;
+		return getBrainTreePaymentInfoDataConverter().convert(paymentInfo);
 	}
 
 	public void forceUnduplicateCartForReplenishment(final String cartCode) {

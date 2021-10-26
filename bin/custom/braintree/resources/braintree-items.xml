@@ -237,12 +237,12 @@
                          <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
                 <attribute qualifier="modifyPayment" type="boolean">
-              	         <description>It describes whether this payment info is for modify payment method</description>
+              	         <description>It describes whether this payment info is for modify payment</description>
                          <persistence type="property" />
                          <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>
                 <attribute qualifier="extendOrder" type="boolean">
-              	         <description>It describes whether this payment info is for modify payment method</description>
+              	         <description>It describes whether this payment info is for extend order</description>
                          <persistence type="property" />
                          <defaultvalue>Boolean.FALSE</defaultvalue>
                 </attribute>

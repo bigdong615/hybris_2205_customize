@@ -263,7 +263,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       if(Objects.nonNull(transaction)) {
         transaction.getEntries().stream().forEach(transactionEntry -> {
             if(TransactionStatus.ACCEPTED.name().equals(transactionEntry.getTransactionStatus())
-            && TransactionStatusDetails.SUCCESFULL.name().startsWith(transactionEntry.getTransactionStatusDetails()) && PaymentTransactionType
+            && transactionEntry.getTransactionStatusDetails().contains(TransactionStatusDetails.SUCCESFULL.name()) && PaymentTransactionType
             .CAPTURE.equals(transactionEntry.getType())) {
               isPaymentCaptured.set(Boolean.TRUE);
           }

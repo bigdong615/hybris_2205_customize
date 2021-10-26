@@ -614,7 +614,6 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
       {
         getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
-        // getBrainTreePaymentTransactionService().continueOrderProcess(order); //NOSONAR
       }
       else
       {
@@ -816,14 +815,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       if(Objects.nonNull(brainTreePaymentInfoModel)) {
       	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction);
 			}
-      if(isPaymentForDeposit(brainTreePaymentInfoModel))
+      if(isPaymentForDeposit(brainTreePaymentInfoModel) || (Objects.nonNull(brainTreePaymentInfoModel)
+					&& brainTreePaymentInfoModel.isCreateNewTransaction()))
       {
         braintreePaymentTransaction.setRequestToken(brainTreePaymentInfoModel.getNonce());
         braintreePaymentTransaction.setInfo(brainTreePaymentInfoModel);
-      } else if(Objects.nonNull(brainTreePaymentInfoModel) || brainTreePaymentInfoModel.isCreateNewTransaction()) {
-				braintreePaymentTransaction.setRequestToken(brainTreePaymentInfoModel.getNonce());
-				braintreePaymentTransaction.setInfo(brainTreePaymentInfoModel);
-			}
+      }
       else if (cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel)
       {
         BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
@@ -1280,7 +1277,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		braintreePaymentTransaction
 				.setPlannedAmount(paymentTransactionEntry.getAmount().setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
 
-		if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {
+		if (cart.getPaymentInfo() != null) {
 			BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
 			braintreePaymentTransaction.setInfo(paymentInfo);
 		}
