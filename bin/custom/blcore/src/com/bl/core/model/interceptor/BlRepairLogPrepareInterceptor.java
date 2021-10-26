@@ -74,14 +74,20 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				}
 				blRepairLogModel.setSerialProduct(blSerialProductModel);
 				blRepairLogModel.setSerialCode(blSerialProductModel.getCode());
-				blRepairLogModel.setOrder(blSerialProductModel.getAssociatedOrder());
+				if(Objects.nonNull(blSerialProductModel.getAssociatedOrder()))
+				{
+					blRepairLogModel.setOrder(blSerialProductModel.getAssociatedOrder());
+				}
 				blRepairLogModel.setAssociatedConsignment(blSerialProductModel.getAssociatedConsignment());
 				blRepairLogModel.setConsignmentEntry(blSerialProductModel.getConsignmentEntry());
 				addCurrentUserToRepairLog(blRepairLogModel);
 				getBlRepairLogService().getSelectedGearGaurdFromOrder(blRepairLogModel, blSerialProductModel);
 				getBlRepairLogService().updateTrackingNumberOnRepairLog(blRepairLogModel, blSerialProductModel);
 				getBlRepairLogService().setRepairReasonOnRepairLog(blRepairLogModel, blSerialProductModel);
-				blRepairLogModel.setLastUserChangedConditionRating(blSerialProductModel.getUserChangedConditionRating());
+				if(StringUtils.isBlank(blRepairLogModel.getLastUserChangedConditionRating()))
+				{
+					blRepairLogModel.setLastUserChangedConditionRating(blSerialProductModel.getUserChangedConditionRating());
+				}
 			}
 		}
 		catch (final Exception exception)
@@ -100,16 +106,19 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 	 */
 	private void addCurrentUserToRepairLog(final BlRepairLogModel blRepairLogModel)
 	{
-		final UserModel currentUser = getUserService().getCurrentUser();
-		if (Objects.nonNull(currentUser))
+		if(StringUtils.isBlank(blRepairLogModel.getUserId()))
 		{
-			final String currentUserUid = currentUser.getUid();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
-			blRepairLogModel.setUserId(currentUserUid);
-		}
-		else
-		{
-			BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+			final UserModel currentUser = getUserService().getCurrentUser();
+			if (Objects.nonNull(currentUser))
+			{
+				final String currentUserUid = currentUser.getUid();
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
+				blRepairLogModel.setUserId(currentUserUid);
+			}
+			else
+			{
+				BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
+			}
 		}
 	}
 
