@@ -239,6 +239,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<AbstractOrderModel> getOrdersForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_BE_UPS_SCRAPE);
@@ -257,6 +258,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<PackagingInfoModel> getRescheduledPackagesForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(PACKAGES_TO_BE_UPS_SCRAPE);
@@ -279,6 +281,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape()
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(DELAYED_OR_UPDATED_PACKAGES_TO_BE_UPS_SCRAPE);
