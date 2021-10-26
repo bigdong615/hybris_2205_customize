@@ -1010,4 +1010,51 @@
 		<property name="billPaidTypesMap" type="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" equals="true"/>
 	</bean>
 
+	<!--Order Manual Allocation ESP-->
+	<bean class="com.bl.esp.dto.manualallocation.data.OrderManualAllocationData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldOrderId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Old Order ID")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Status")</annotations>
+		</property>
+		<property name="orderType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order Type")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
+		</property>
+		<property name="shippingMethodType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
+		</property>
+		<property name="shippingMethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
+		</property>
+		<property name="expectedShipping" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping")</annotations>
+		</property>
+		<property name="arrivalDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
+		</property>
+		<property name="returnDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
+		</property>
+		<property name="orderItems" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order items")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order Manual Allocation Event Request Object-->
+	<bean class="com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.manualallocation.data.OrderManualAllocationData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
 </beans>
