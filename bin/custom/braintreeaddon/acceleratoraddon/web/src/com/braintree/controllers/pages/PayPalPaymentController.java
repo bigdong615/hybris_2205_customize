@@ -453,11 +453,15 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	 * @param isDepositPaymentPage is deposit payment page
 	 */
 	private void setPaymentType(final BrainTreePaymentInfoModel paymentInfo, final boolean isDepositPaymentPage) {
-		if(!isDepositPaymentPage) {
+	  if(paymentInfo.isModifyPayment())
+	  {
+	    paymentInfo.setCreateNewTransaction(Boolean.TRUE);
+	  }
+	  else if(!isDepositPaymentPage) {
 			paymentInfo.setBillPayment(Boolean.TRUE);
 			paymentInfo.setCreateNewTransaction(Boolean.TRUE);
-			modelService.save(paymentInfo);
 		}
+	  modelService.save(paymentInfo);
 	}
 
 	/**
