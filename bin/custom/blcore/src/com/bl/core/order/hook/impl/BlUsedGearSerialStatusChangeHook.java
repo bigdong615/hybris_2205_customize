@@ -3,6 +3,7 @@ package com.bl.core.order.hook.impl;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
@@ -45,7 +46,7 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 				if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus()))
 				{
 					blSerialProductModel.setSerialStatus(SerialStatusEnum.SOLD);
-					getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.SOLD);
+					BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.SOLD);
 					blSerialProductModel.setHardAssigned(true);
 					setBufferInventoryFlag(blSerialProductModel);
 					getModelService().save(blSerialProductModel);

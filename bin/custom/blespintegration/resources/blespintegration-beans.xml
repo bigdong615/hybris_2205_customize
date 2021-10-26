@@ -174,6 +174,9 @@
 		<property name="orderitemsinfo" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("order items info")</annotations>
 		</property>
+		<property name="verificationlevel" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
 	</bean>
 
 	<!-- Order verification more info Event data Request Object -->
@@ -488,15 +491,6 @@
 		</property>
 		<property name="status" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("status")</annotations>
-		</property>
-		<property name="dateplaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("date placed")</annotations>
-		</property>
-		<property name="returndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("return date")</annotations>
-		</property>
-		<property name="actualreturndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("actual return date")</annotations>
 		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Date Placed")</annotations>
@@ -992,7 +986,7 @@
 		<property name="customerName" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Customer Name")</annotations>
 		</property>
-		<property name="totalBillAmount" type="java.lang.Double" equals="true">
+		<property name="totalBillAmount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Bill Amount")</annotations>
 		</property>
 		<property name="orderItems" type="java.lang.String" equals="true">
@@ -1008,6 +1002,12 @@
 		<property name="data" type="com.bl.esp.dto.billpaid.data.OrderBillPaidData" equals="true">
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
+		<property name="extraData" type="com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData" equals="true"/>
+	</bean>
+
+	<bean class="com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData">
+		<property name="totalBillPaidAmount" type="java.lang.String" equals="true"/>
+		<property name="billPaidTypesMap" type="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" equals="true"/>
 	</bean>
 
 </beans>

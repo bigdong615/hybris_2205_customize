@@ -111,7 +111,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	{
  		final String barcodeList = "select distinct({pkg.pk}) from {PackagingInfo as pkg}, {BlSerialProduct as serial},{Consignment as c}, "
  				+ "{ConsignmentStatus as cs} where {pkg.serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {pkg.consignment} = {c.pk} "
- 				+ "and {c.status} = {cs.pk} and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED') and {serial.barcode} in (?barcodeList)";
+ 				+ "and {c.status} = {cs.pk} and {cs.code} in ('BL_SHIPPED', 'PARTIALLY_UNBOXED') and {serial.barcode} in (?barcodeList)";
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("barcodeList", barcodes);
  		final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel> search(query).getResult();
@@ -148,7 +148,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  		BlLogger.logMessage(LOG, Level.INFO, "DefaultBlInventoryScanToolDao : getAllConsignmentForSerial");
  		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
  				+ "{ConsignmentStatus as cs} where {c:status} = {cs:pk} and {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
- 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED', 'DELIVERY_COMPLETED')";
+ 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('BL_SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED')";
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("serial", serial);
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();

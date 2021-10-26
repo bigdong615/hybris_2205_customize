@@ -50,6 +50,8 @@ import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -381,41 +383,50 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				return CheckoutOrderPageErrorPage;
 			}
 			if (isSuccess) {
-			  final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
-        final PriceData billPayTotal  = convertDoubleToPriceData(payBillAmount, order);
-        orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
-        model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
-        if (isDepositPaymentPage)
-        {
-					final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
-					triggerDepositRequestEvent(orderModel);
-					model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
-          model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE, BraintreeaddonControllerConstants.PAY_PAL);
-          final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
-          storeCmsPageInModel(model, depositPaymentSuccessPage);
-          setUpMetaDataForContentPage(model, depositPaymentSuccessPage);
-          model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-          return getViewForPage(model);
-        }
-        else if (isModifyOrderPaymentPage)
-        {
-          model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
-          model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, billPayTotal);
-          model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD, BraintreeaddonControllerConstants.PAYPAL_PAYMENT_METHOD);
-          final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
-          storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
-          setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
-          return getViewForPage(model);
-        }
-				brainTreeCheckoutFacade.setPayBillFlagTrue(order);
-				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
-						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
-				storeCmsPageInModel(model, payBillSuccessPage);
-				setUpMetaDataForContentPage(model, payBillSuccessPage);
-				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PAY_PAL);
-				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
-						ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-				return getViewForPage(model);
+				try {
+
+					final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+					final PriceData billPayTotal = convertDoubleToPriceData(payBillAmount, order);
+					orderDetails.setOrderTotalWithTaxForPayBill(billPayTotal);
+					model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+					if (isDepositPaymentPage) {
+						final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+						triggerDepositRequestEvent(orderModel);
+						model.addAttribute(BraintreeaddonControllerConstants.DEPOSIT_AMOUNT, billPayTotal);
+						model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_TYPE,
+								BraintreeaddonControllerConstants.PAY_PAL);
+						final ContentPageModel depositPaymentSuccessPage = getContentPageForLabelOrId(
+								BraintreeaddonControllerConstants.DEPOSIT_SUCCESS_CMS_PAGE);
+						storeCmsPageInModel(model, depositPaymentSuccessPage);
+						setUpMetaDataForContentPage(model, depositPaymentSuccessPage);
+						model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+								ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+						return getViewForPage(model);
+					} else if (isModifyOrderPaymentPage) {
+						model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
+						model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, billPayTotal);
+						model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD,
+								BraintreeaddonControllerConstants.PAYPAL_PAYMENT_METHOD);
+						final ContentPageModel modifiedOrderPaymentSuccessPage = getContentPageForLabelOrId(
+								BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_SUCCESS_CMS_PAGE);
+						storeCmsPageInModel(model, modifiedOrderPaymentSuccessPage);
+						setUpMetaDataForContentPage(model, modifiedOrderPaymentSuccessPage);
+						return getViewForPage(model);
+					}
+					final Map<String, List<String>> billingChargeTypeMap = brainTreeCheckoutFacade.setPayBillFlagTrue(order);
+					blEspEventService.triggerBillPaidEspEvent(payBillTotal, billingChargeTypeMap, (OrderModel) order);
+					final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+							BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+					storeCmsPageInModel(model, payBillSuccessPage);
+					setUpMetaDataForContentPage(model, payBillSuccessPage);
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PAY_PAL);
+					model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+							ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+					return getViewForPage(model);
+				}
+				catch (final Exception e){
+					BlLogger.logMessage(LOG , Level.ERROR , "Error while executing addPaymentMethod " , e);
+				}
 			} else {
 			  if(isModifyOrderPaymentPage)
 			  {
@@ -433,6 +444,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         }
 				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
 			}
+			return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
     }
 
 	/**

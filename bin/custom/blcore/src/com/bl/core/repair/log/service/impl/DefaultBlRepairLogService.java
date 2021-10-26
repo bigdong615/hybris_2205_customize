@@ -118,7 +118,7 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 				if (Objects.nonNull(packageForSerial))
 				{
 					((VendorRepairLogModel) blRepairLogModel)
-							.setTrackingNumber(StringUtils.stripToEmpty(packageForSerial.getTrackingNumber()));
+							.setTrackingNumber(StringUtils.stripToEmpty(packageForSerial.getOutBoundTrackingNumber()));
 				}
 				else
 				{
