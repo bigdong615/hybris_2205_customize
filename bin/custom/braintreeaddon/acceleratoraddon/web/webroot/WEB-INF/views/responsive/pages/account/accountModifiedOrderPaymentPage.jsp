@@ -140,7 +140,7 @@
 								<div class="col-1 text-center pt-2">
 									<button class="btn-checkbox" type="button"
 										data-bs-toggle="collapse" data-bs-target="#credit-card-expand"
-										aria-controls="credit-card-expand" aria-expanded="false" onClick="$('#validationMessage').empty();">
+										aria-controls="credit-card-expand" aria-expanded="false" onClick="clearErrorMessages();">
 										<input type="radio" class="paypalselection"
 											id="paymentMethodBT" name="paymentMethodSelection" value="bt">
 										<label for="paymentMethodBT"></label>
@@ -227,7 +227,7 @@
 								<c:otherwise>
 									<button class="btn-checkbox" type="button"
 										data-bs-toggle="collapse" data-bs-target="#paypal-expand"
-										aria-controls="paypal-expand" aria-expanded="false" onClick="$('#validationMessage').empty();">
+										aria-controls="paypal-expand" aria-expanded="false" onClick="clearErrorMessages();">
 										<input type="radio"
 											class="paypalselection js-enable-extend-button"
 											id="paymentMethodPayPal-modify-order-payment" name="paymentMethodSelection"
@@ -274,7 +274,7 @@
                         	<c:otherwise>
                 				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
                 					    data-bs-target="#po-expand" aria-controls="po-expand"
-                					    aria-expanded="false">
+                					    aria-expanded="false" onClick="clearErrorMessages();">
                 					    <input type="radio" class="paypalselection" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
                 						  for="paymentMethodPo"></label>
                 				    </button>
