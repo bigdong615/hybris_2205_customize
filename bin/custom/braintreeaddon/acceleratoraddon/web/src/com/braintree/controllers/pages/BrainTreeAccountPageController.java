@@ -602,6 +602,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 					.getBrainTreePaymentInfoForCode(
 							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
 			if (null != paymentInfo) {
+				paymentInfo.setExtendOrder(Boolean.FALSE);
+				paymentInfo.setModifyPayment(Boolean.FALSE);
 				paymentInfo.setBillPayment(Boolean.TRUE);
 				paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 				modelService.save(paymentInfo);

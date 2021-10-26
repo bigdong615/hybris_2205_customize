@@ -223,6 +223,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		paymentInfo.setDuplicate(isDuplicate);
 		if(isModifyOrderPaymentPage)
 		{
+			paymentInfo.setBillPayment(Boolean.FALSE);
+			paymentInfo.setExtendOrder(Boolean.FALSE);
 			paymentInfo.setModifyPayment(Boolean.TRUE);
 		  paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 		}

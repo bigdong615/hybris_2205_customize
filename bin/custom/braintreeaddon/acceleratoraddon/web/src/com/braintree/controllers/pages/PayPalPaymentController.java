@@ -458,6 +458,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	    paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 	  }
 	  else if(!isDepositPaymentPage) {
+			paymentInfo.setExtendOrder(Boolean.FALSE);
+			paymentInfo.setModifyPayment(Boolean.FALSE);
 			paymentInfo.setBillPayment(Boolean.TRUE);
 			paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 		}
@@ -682,7 +684,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						.completeCreateSubscription(subscriptionInfo,
 								(CustomerModel) order.getUser(), order, false, false);
 				if(null != paymentInfo) {
-					paymentInfo.setModifyPayment(Boolean.TRUE);
+					paymentInfo.setBillPayment(Boolean.FALSE);
+					paymentInfo.setModifyPayment(Boolean.FALSE);
+					paymentInfo.setExtendOrder(Boolean.TRUE);
 					paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 					modelService.save(paymentInfo);
 					isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
