@@ -108,15 +108,6 @@ public interface BlCartService extends CartService {
     boolean isFreeRentalDayPromoApplied();
 
     /**
-     * Change serial status of product of Staged version
-     *  @param productCode
-     * @param addedToCart
-     * @return
-     */
-    void changeSerialStatusInStagedVersion(final String productCode,
-        final SerialStatusEnum serialStaus);
-    
-    /**
      * This method saves PO payment details.
      * @param poNumber
      * @param poNotes

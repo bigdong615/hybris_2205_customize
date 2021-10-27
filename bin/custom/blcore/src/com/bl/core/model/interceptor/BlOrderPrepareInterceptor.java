@@ -6,6 +6,7 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
+import com.bl.core.enums.VerificationStatusEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -131,6 +132,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       triggerEspShipped(abstractOrderModel, interceptorContext);
 			triggerNewShippingInfoEvent(abstractOrderModel, interceptorContext);
 			triggerExceptionExtraItemEvent(abstractOrderModel,interceptorContext);
+			triggerVerificationCompletedEvent(abstractOrderModel,interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
@@ -319,7 +321,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
       final AtomicBoolean isEligibleToTrigger = new AtomicBoolean(Boolean.FALSE);
       final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
-
+ if(CollectionUtils.isNotEmpty(consignments))
+ {
       for(ConsignmentModel consignmentModel : consignments){
         final WarehouseModel warehouses = consignmentModel.getWarehouse();
         final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
@@ -333,6 +336,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
           break;
         }
     }
+ }
       if(isEligibleToTrigger.get()){
         getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
       }
@@ -417,6 +421,28 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 					BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Exception extra item Event",
 							exception);
 				}
+			}
+		}
+	}
+
+	/**
+	 * It triggers verification completed event.
+	 *
+	 * @param abstractOrderModel the AbstractOrderModel
+	 * @param interceptorContext the InterceptorContext
+	 */
+	private void triggerVerificationCompletedEvent(final AbstractOrderModel abstractOrderModel,
+			final InterceptorContext interceptorContext) {
+		if (abstractOrderModel instanceof OrderModel && BooleanUtils
+				.isTrue(getDefaultBlUserService().isCsUser()) && interceptorContext
+				.isModified(abstractOrderModel, AbstractOrderModel.VERIFICATIONSTATUS) && abstractOrderModel
+				.getVerificationStatus().equals(
+						VerificationStatusEnum.APPROVE)) {
+			try {
+				getBlEspEventService().sendOrderVerificationCompletedEvent((OrderModel) abstractOrderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger verification completed Event",
+						exception);
 			}
 		}
 	}

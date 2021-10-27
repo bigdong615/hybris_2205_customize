@@ -12,6 +12,7 @@ import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
@@ -306,7 +307,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.FALSE);
           //Added code for serial status changes
 		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
-		  getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
+		  BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
 		  getModelService().save(blSerialProductModel);
       }
     }
@@ -441,16 +442,20 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				cartData.getEntries().forEach(entry -> {
 					final int cartEntryQty = entry.getQuantity().intValue();
 					final String productCode = entry.getProduct().getCode();
+					BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Checking avaiblity for product code : {} with quantity : {}", productCode, cartEntryQty);
 					//skip for aquatech products
 					if (!blCartService.isAquatechProductsPresentInCart(getProductService()
 							.getProductForCode(productCode))) {
 
 						final int availableQty = availabilityForRentalCart.get(productCode).intValue();
+						BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Available Quantity : {} for product code : {} with quantity : {}", availableQty, productCode, cartEntryQty);
 						if (availableQty == 0) {
 							if(getBlCartService().isFreeRentalDayPromoApplied()){
+								BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Free Rental Day Promo found for cart code : {}", cartData.getCode());
 								entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
 										Arrays.asList(getContactUsLink())));
 							}else {
+								BlLogger.logFormatMessageInfo(LOGGER, Level.INFO, "Zero availability is found for product : {}", productCode);
 								final String nextAvailabilityDate = getBlCommerceStockService()
 										.getNextAvailabilityDateInCheckout(productCode,
 												rentalDatesFromSession, warehouses, cartEntryQty);

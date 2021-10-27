@@ -41,7 +41,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
   private static final Logger LOG = Logger.getLogger(BlDefaultEditorAreaLogicHandler.class);
 
   private DefaultBlCalculationService defaultBlCalculationService;
-  
+
 	@Resource(name = "modelService")
 	ModelService modelService;
 
@@ -139,7 +139,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
   }
 
 
-	/**
+  /**
 	 * method is used to remove entry from consignment
 	 *
 	 * @param orderModel

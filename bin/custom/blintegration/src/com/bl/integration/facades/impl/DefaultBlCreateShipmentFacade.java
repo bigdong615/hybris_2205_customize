@@ -68,7 +68,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
 			if (upsResponse != null)
 			{
-				saveResponseOnPackage(upsResponse, packagingInfo);
+				saveResponseOnOutboundPackage(upsResponse, packagingInfo);
 			}
 		}
 		else
@@ -98,7 +98,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 					getBlUpsShippingDataPopulator().populateUPSReturnShipmentRequest(packagingInfo, warehouseModel));
 			if (upsResponse != null)
 			{
-				saveResponseOnPackage(upsResponse, packagingInfo);
+				saveResponseOnInBoundPackage(upsResponse, packagingInfo);
 			}
 		}
 		else
@@ -119,12 +119,44 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	}
 
 	/**
-	 * method will be used to save the UPS shipment response on package
+	 * method will be used to save the UPS Inbound shipment response on package
 	 *
 	 * @param upsResponse
 	 * @param packagingInfo
 	 */
-	private void saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
+	private void saveResponseOnInBoundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
+	{
+		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
+		packagingInfo.setInBoundTrackingNumber(shipmentPackage.getTrackingNumber());
+		getModelService().save(packagingInfo);
+		getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}", packagingInfo.getInBoundTrackingNumber());
+	}
+
+	/**
+	 * method will be used to save the UPS Outbound shipment response on package
+	 *
+	 * @param upsResponse
+	 * @param packagingInfo
+	 */
+	private void saveResponseOnOutboundPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
+	{
+		final UPSShipmentPackageResult shipmentPackage = saveResponseOnPackage(upsResponse, packagingInfo);
+		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
+		getModelService().save(packagingInfo);
+		getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}", packagingInfo.getOutBoundTrackingNumber());		
+	}
+
+	/**
+	 * method will be used to save shipment response on package
+	 *
+	 * @param upsResponse
+	 * @param packagingInfo
+	 * @return
+	 */
+	private UPSShipmentPackageResult saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse,
+			final PackagingInfoModel packagingInfo)
 	{
 		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
 
@@ -133,14 +165,10 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
-
-		packagingInfo.setTrackingNumber(shipmentPackage.getTrackingNumber());
 		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
 		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());
 		packagingInfo.setLabelURL(upsShipmentURL + shipmentPackage.getTrackingNumber());
-
-		getModelService().save(packagingInfo);
-		getModelService().refresh(packagingInfo);
+		return shipmentPackage;
 	}
 
 	/**

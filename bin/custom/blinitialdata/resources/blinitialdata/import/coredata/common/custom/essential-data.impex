@@ -156,6 +156,7 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blAutomatedStockCreationJob;blAutomatedStockCreationJob
 ;blAuthorizePaymentJob;blAuthorizePaymentJob
 ;blBufferInventoryJob;blBufferInventoryJob
+;defaultBlAutomatedUPSScrapeJob;defaultBlAutomatedUPSScrapeJob
 ;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
 ;blReshufflerJob;blReshufflerJob
 
@@ -168,13 +169,16 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blBufferInventoryCronJob ;blBufferInventoryJob ; ;true;;
 ;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
 ;blReshufflerCronJob ;blReshufflerJob ; ;true;;
+ ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
+
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?
 ;blAuthorizePaymentCronJob; 0 0 0/3 1/1 * ?
 ;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
+;blUPSScrapeCronJob; 0 0 0 * * ?
 ;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
- 
+
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
                                     ; PHOTO                                   ; 26               
