@@ -119,8 +119,6 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 	 */
 	private void setTotalAmountPastDue(final ConsignmentEntryModel consignmentEntryModel, final
 			InterceptorContext interceptorContext) {
-		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) consignmentEntryModel
-				.getItemModelContext();
 		final Object originalBillingCharges = getInitialValue(consignmentEntryModel, BlCoreConstants.BILLING_CHARGES);
 		if(Objects.nonNull(originalBillingCharges)) {
 			final Map<String, List<BlItemsBillingChargeModel>> billingCharges = (Map<String, List<BlItemsBillingChargeModel>>) originalBillingCharges;

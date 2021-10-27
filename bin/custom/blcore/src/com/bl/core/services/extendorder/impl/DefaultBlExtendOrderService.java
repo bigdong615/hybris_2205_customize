@@ -1,13 +1,13 @@
 package com.bl.core.services.extendorder.impl;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.PaymentTransactionTypeEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.extendorder.BlExtendOrderService;
 import com.bl.core.stock.BlStockLevelDao;
-import de.hybris.platform.commerceservices.constants.GeneratedCommerceServicesConstants.Enumerations.OrderStatus;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -15,6 +15,10 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.payment.dto.TransactionStatus;
+import de.hybris.platform.payment.dto.TransactionStatusDetails;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
@@ -25,7 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -120,11 +126,12 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   }
   /**
    * This method created to update the extend order details once the extend is successfully
+   * @param extendOrderModel the extended order model
    */
   public void updateExtendOrder(final AbstractOrderModel extendOrderModel) {
 
     if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder()) &&
-        extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED) || StringUtils.isNotBlank(extendOrderModel.getPoNumber())) {
+        isExtendOrderPaymentCaptured(extendOrderModel) || StringUtils.isNotBlank(extendOrderModel.getPoNumber())) {
 
       final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
       final OrderModel originalOrder = getCustomerAccountService()
@@ -243,6 +250,28 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     return false;
   }
 
+  /**
+   * This method created to check whether the payment captured for extend order
+   * @param extendOrderModel the extended order model
+   * @return boolean based on results
+   */
+  private boolean isExtendOrderPaymentCaptured(final AbstractOrderModel extendOrderModel) {
+    final AtomicBoolean isPaymentCaptured = new AtomicBoolean(false);
+    if(CollectionUtils.isNotEmpty(extendOrderModel.getPaymentTransactions())) {
+      final PaymentTransactionModel transaction= extendOrderModel.getPaymentTransactions().stream().filter(paymentTransactionModel ->
+          PaymentTransactionTypeEnum.EXTEND_ORDER.equals(paymentTransactionModel.getTransactionType())).findAny().orElse(null);
+      if(Objects.nonNull(transaction)) {
+        transaction.getEntries().stream().forEach(transactionEntry -> {
+            if(TransactionStatus.ACCEPTED.name().equals(transactionEntry.getTransactionStatus())
+            && transactionEntry.getTransactionStatusDetails().contains(TransactionStatusDetails.SUCCESFULL.name()) && PaymentTransactionType
+            .CAPTURE.equals(transactionEntry.getType())) {
+              isPaymentCaptured.set(Boolean.TRUE);
+          }
+        });
+      }
+    }
+    return isPaymentCaptured.get();
+  }
 
   public ModelService getModelService() {
     return modelService;
