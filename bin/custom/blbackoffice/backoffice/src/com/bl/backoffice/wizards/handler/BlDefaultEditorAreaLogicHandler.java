@@ -8,7 +8,6 @@ import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
-import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectNotFoundException;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.widgets.baseeditorarea.DefaultEditorAreaLogicHandler;
@@ -314,13 +313,5 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
       DefaultBlCalculationService defaultBlCalculationService) {
     this.defaultBlCalculationService = defaultBlCalculationService;
   }
-
-	public WidgetInstanceManager getWidgetInstanceManager() {
-		return this.widgetInstanceManager;
-	}
-
-	public void setWidgetInstanceManager(WidgetInstanceManager widgetInstanceManager) {
-		this.widgetInstanceManager = widgetInstanceManager;
-	}
 
 }
