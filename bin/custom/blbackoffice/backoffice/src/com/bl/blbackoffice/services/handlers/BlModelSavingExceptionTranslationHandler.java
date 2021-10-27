@@ -71,7 +71,8 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 		{
 			final String message = exception.getCause().getMessage();
 			return message.contains(BlCoreConstants.BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR)
-					|| message.contains(BlCoreConstants.BL_BLACKOUT_DATE_MODEL);
+					|| message.contains(BlCoreConstants.BL_BLACKOUT_DATE_MODEL)
+					|| message.contains(BlCoreConstants.BL_PRODUCT_VALIDATE_INTERCEPTOR);
 		}
 		return Boolean.FALSE;
 	}
