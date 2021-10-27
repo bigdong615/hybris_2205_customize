@@ -8,6 +8,7 @@ import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
+import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectNotFoundException;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.widgets.baseeditorarea.DefaultEditorAreaLogicHandler;
@@ -50,7 +51,10 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 	@Resource(name = "blOrderService")
 	BlOrderService blOrderService;
 
-  /**
+	private transient WidgetInstanceManager widgetInstanceManager;
+
+
+	/**
    * This method call when order is saving
    */
   @Override
@@ -121,12 +125,21 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			} catch (CalculationException e) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
 			}
-      return object;
+			Object reloadedCurrentObject = null;
+			try {
+				reloadedCurrentObject = this.performRefresh(widgetInstanceManager,currentObject);
+				widgetInstanceManager.getModel().setValue("currentObject", reloadedCurrentObject);
+				Collection reloadedForNotification = Collections.singleton(this.performRefresh(widgetInstanceManager, currentObject));
+			return reloadedCurrentObject;
+			} catch (ObjectNotFoundException e) {
+				e.printStackTrace();
+			}
      }
     return super.performSave(widgetInstanceManager , currentObject);
   }
-  
-  /**
+
+
+	/**
 	 * method is used to remove entry from consignment
 	 *
 	 * @param orderModel
@@ -313,5 +326,13 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
       DefaultBlCalculationService defaultBlCalculationService) {
     this.defaultBlCalculationService = defaultBlCalculationService;
   }
+
+	public WidgetInstanceManager getWidgetInstanceManager() {
+		return this.widgetInstanceManager;
+	}
+
+	public void setWidgetInstanceManager(WidgetInstanceManager widgetInstanceManager) {
+		this.widgetInstanceManager = widgetInstanceManager;
+	}
 
 }
