@@ -1468,7 +1468,11 @@ public class AccountPageController extends AbstractSearchPageController
 						.getBrainTreePaymentInfoForCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
-
+					paymentInfo.setBillPayment(Boolean.FALSE);
+					paymentInfo.setModifyPayment(Boolean.FALSE);
+					paymentInfo.setExtendOrder(Boolean.TRUE);
+					paymentInfo.setCreateNewTransaction(Boolean.TRUE);
+					modelService.save(paymentInfo);
 					isSuccess = brainTreeTransactionService
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);

@@ -986,6 +986,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
       if(Objects.nonNull(brainTreePaymentInfoModel))
       {
         brainTreePaymentInfoModel.setCreateNewTransaction(Boolean.TRUE);
+        brainTreePaymentInfoModel.setModifyPayment(Boolean.TRUE);
         brainTreePaymentInfoModel.setNewAmount(newAmount);
         getModelService().save(brainTreePaymentInfoModel);
         getModelService().refresh(brainTreePaymentInfoModel);

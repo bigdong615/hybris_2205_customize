@@ -88,7 +88,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 	  
-	  if (getDefaultBlUserService().isCsUser() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalCart() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			modifyOrderDate(abstractOrderModel);

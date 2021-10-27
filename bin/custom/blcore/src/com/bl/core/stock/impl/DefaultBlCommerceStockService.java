@@ -116,8 +116,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
 		stockResult.setAvailableCount(availability);
-		final StockLevelStatus stockLevelStatus = setStockLevelStatus(stockResult);
-		stockResult.setStockLevelStatus(stockLevelStatus);
+		stockResult.setStockLevelStatus(( availability >= 1L  ? StockLevelStatus.INSTOCK :StockLevelStatus.OUTOFSTOCK ));
 		return stockResult;
 	}
 
