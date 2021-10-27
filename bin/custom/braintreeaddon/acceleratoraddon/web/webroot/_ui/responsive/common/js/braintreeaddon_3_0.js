@@ -588,7 +588,7 @@ function isBrainTreeMethodSelected() {
 
 function creditCardValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage.message);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	 $('#validationMessage').append(validationDiv);
 }
 
@@ -921,7 +921,15 @@ function createHostedFields(clientInstance) {
 				}			
 				
 				var billingFormErrorCounts = validateBillingAddressFields();
-				if(billingFormErrorCounts > 0)
+				var ccEnable = $('#paymentMethodBT').is(':checked');
+				if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
+				{	
+					hasNoError = false;				
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+					$('#validationMessage').append(validationDiv);
+					$('.page-loader-new-layout').hide();
+				}
+				else if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
 					var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
@@ -951,7 +959,7 @@ function createHostedFields(clientInstance) {
 
 						 hasNoError = false;
 						   $('#submit_silentOrderPostForm').removeAttr("disabled");
-						    creditCardValidation(tokenizeErr);
+						    creditCardValidation(tokenizeErr.message);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
 							$('.page-loader-new-layout').hide();
 							handleClientError(tokenizeErr);							
@@ -1507,7 +1515,7 @@ $("#deposit-amount , #modify_order-payment-amount").on("input", function(evt) {
 	if(self.val().indexOf('.') == 0 || self.val().split(".").length > 2)
 	{
 		$('#depositPaymentErrorMessage').empty();
-		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper deposit amount');
+		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Enter proper amount');
 		$('#depositPaymentErrorMessage').append(validationDiv);		
 	}
 });
@@ -1568,6 +1576,12 @@ function getAmount()
 	{
 		return '';
 	}
+}
+
+function clearErrorMessages()
+{
+	$('#validationMessage').empty();
+	$('#depositPaymentErrorMessage').empty();
 }
 
 function isPayPalEnabled()
@@ -1684,18 +1698,14 @@ $("#paymentMethodPayPal-modify-order-payment").change(function () {
 	$('#payPalErrorMessage').empty();
 	var depositAmount = getAmount();
 	$(".js-modify-order-capture-payment").attr("disabled",true);
+	createPayPalPaymentMarkFlow(createPayPalOptions());	
+	$("#paymentMethodPayPal-modify-order-payment").addClass("initialized");
 	if(depositAmount == '')
 	{
 		var validationDiv = $('<div class="notification notification-error mb-4" />').text('Please Enter Amount');
-		$('#payPalErrorMessage').append(validationDiv);		
+		$('#depositPaymentErrorMessage').append(validationDiv);		
 		$('.page-loader-new-layout').hide();
-	}
-	else
-	{
-		createPayPalPaymentMarkFlow(createPayPalOptions());	
-		$("#paymentMethodPayPal-modify-order-payment").addClass("initialized");
-	}
-    
+	}    
 });
 
 $("#paymentMethodPo").change(function () {

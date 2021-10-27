@@ -353,6 +353,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 StringBuilder resultBuilder = new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED);
                 resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH).append(this.getTwoDecimalDoubleValue(
                         totalAmountToRefund - refundAmount));
+                // trigger Esp Refund event for GC
+                final AbstractOrderModel order = this.getOrderModel();
+                if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                    try {
+                        final double amount = totalAmountToRefund - refundAmount;
+                        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                            amount);
+                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,amount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                   }
+                    catch (final Exception e){
+                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                    }
+                }
                 this.logCancelRefundLogger(resultBuilder.toString(), this.getOrderModel().getCode());
                 this.successMessageBox(String.valueOf(resultBuilder));
             }
@@ -381,6 +395,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     this.logAmountForGiftCardTransactions(totalAmountToRefund - refundAmount);
                     this.setRefundDetailsOnNonCapturedOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
                             BlInventoryScanLoggingConstants.ZERO), refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
+                    // trigger Esp Refund event for GC
+                    final AbstractOrderModel order = this.getOrderModel();
+                    if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                        try {
+                            final double amount = totalAmountToRefund - refundAmount;
+                            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                                amount);
+                            getBlEspEventService().sendOrderRefundEvent((OrderModel) order,amount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                        }
+                        catch (final Exception e){
+                            BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                                BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                        }
+                    }
                     resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH).append(
                             this.getTwoDecimalDoubleValue(totalAmountToRefund - refundAmount));
                 }
@@ -389,6 +417,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
                         BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue(totalAmountToRefund));
                 resultBuilder.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH).append(totalAmountToRefund);
+                // trigger Esp Refund event for GC
+                final AbstractOrderModel order = this.getOrderModel();
+                if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                    try {
+                        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                            totalAmountToRefund);
+                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,totalAmountToRefund,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                        this.setOrderCancelEntries(null);
+                    }
+                    catch (final Exception e){
+                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                    }
+                }
             }
         }
         this.logCancelRefundLogger((resultBuilder.toString() + BlCustomCancelRefundConstants.FOR_ORDER), this.getOrderModel().getCode());
@@ -480,6 +522,19 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                         BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue(totalAmountToRefund));
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                         totalAmountToRefund);
+                // trigger Esp Refund event for GC
+                final AbstractOrderModel order = this.getOrderModel();
+                if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                    try {
+                        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                            totalAmountToRefund);
+                        getBlEspEventService().sendOrderRefundEvent((OrderModel) order,totalAmountToRefund,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                    }
+                    catch (final Exception e){
+                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                    }
+                }
                 this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED +
                         BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH + this.getTwoDecimalDoubleValue(totalAmountToRefund));
             }
@@ -506,6 +561,20 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     BlInventoryScanLoggingConstants.ZERO), refundAmount, this.getTwoDecimalDoubleValue((totalAmountToRefund - refundAmount)));
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(),
                     totalAmountToRefund - refundAmount);
+            // trigger Esp Refund event for GC
+            final AbstractOrderModel order = this.getOrderModel();
+            if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
+                try {
+                    final double amount = totalAmountToRefund - refundAmount;
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                        amount);
+                    getBlEspEventService().sendOrderRefundEvent((OrderModel) order,amount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
+                }
+                catch (final Exception e){
+                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                }
+            }
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND + BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH
                 + this.getTwoDecimalDoubleValue(totalAmountToRefund - refundAmount));
         }
@@ -610,21 +679,23 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), totalRefundAmount);
                 this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED +
                         BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT + this.getTwoDecimalDoubleValue(totalRefundAmount));
-            } else {
-                this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
-                this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
                 // trigger Esp Refund event for GC
                 final AbstractOrderModel order = captureEntry.getPaymentTransaction().getOrder();
                 if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
                     try {
+                        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                                this.getTotalRefundAmount());
                         getBlEspEventService().sendOrderRefundEvent((OrderModel) order,this.getTotalRefundAmount(),BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
                         this.setOrderCancelEntries(null);
                     }
                     catch (final Exception e){
                         BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+                                BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
                     }
                 }
+            } else {
+                this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
+                this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
             }
         } else {
             this.partialRefund(this.cancelAndRefundEntries, captureEntry);
@@ -707,38 +778,51 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()));
         this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
                 BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((result.getAmount().doubleValue() + gcAmount)));
+        double grandSubTotal = 0.0d;
+        final StringBuilder paymentType= new StringBuilder();
+        String gcString = StringUtils.EMPTY;
+        if(gcAmount > BlInventoryScanLoggingConstants.ZERO) {
+            grandSubTotal = grandSubTotal + gcAmount;
+            gcString = BlCoreConstants.GC_TYPE;
+           }
+        if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
+            try {
+                grandSubTotal = grandSubTotal + this.getTwoDecimalDoubleValue(result.getAmount().doubleValue());
+                BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                    grandSubTotal);
+                final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+                String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                    ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
+                getBlEspEventService()
+                    .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
+                        getOrderCancelEntries());
+            }
+            catch (final Exception e){
+                BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
+                    BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
+            }
+        }
         if(gcAmount > BlInventoryScanLoggingConstants.ZERO) {
             this.logAmountForGiftCardTransactions(gcAmount);
-            // trigger Esp Refund event for GC
-            if(getDefaultBlUserService().isCsUser()){
-                try {
-                    getBlEspEventService().sendOrderRefundEvent(this.getOrderModel(),gcAmount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
-                }
-                catch (final Exception e){
-                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
-                }
-            }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND_WITH_GC, this.getOrderModel().getCode(), gcAmount);
             this.successMessageBox(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER +
                     this.getOrderModel().getCode() + BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT +
                     this.getTwoDecimalDoubleValue(gcAmount));
         } else {
-            // trigger Esp Refund event for cc/paypal
-            if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
-                try {
-                    getBlEspEventService()
-                        .sendOrderRefundEvent(this.getOrderModel(), this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()), ((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider(),
-                            getOrderCancelEntries());
-                }
-                catch (final Exception e){
-                    BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                        BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
-                }
-            }
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.CANCEL_AND_REFUND_TXN_HAS_BEEN_INITIATED_SUCCESSFULLY, this.getOrderModel().getCode());
             this.successMessageBox(BlCustomCancelRefundConstants.ORDER_CANCELLED_AND_REFUND_AMOUNT_HAS_BEEN_INITIATED_SUCCESSFULLY);
         }
+    }
+    /**
+     * This method return Message If Gc Applied
+     * @param String
+     */
+    String getMessageIfGcApplied(final String object){
+        if(StringUtils.isNotBlank(object)){
+            final StringBuilder paymentType= new StringBuilder();
+            return paymentType.append(StringUtils.SPACE).append("+").append(StringUtils.SPACE).append(object).toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -815,6 +899,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             final AbstractOrderModel order = captureEntry.getPaymentTransaction().getOrder();
             if(order instanceof OrderModel && getDefaultBlUserService().isCsUser()) {
                 try {
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                        totalAmt);
                     getBlEspEventService().sendOrderRefundEvent((OrderModel) order,totalAmt,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
                 }
                 catch (final Exception e){
@@ -885,21 +971,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
         } else {
             StringBuilder stringSuccess = new StringBuilder(BlCustomCancelRefundConstants.SUCCESS_CANCEL_REFUND);
+            double grandSubTotal = 0.0d;
+            final StringBuilder paymentType= new StringBuilder();
+            String gcString = StringUtils.EMPTY;
             this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(totalAmt));
             this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
                     BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((totalAmt + gcAmount)));
             if (gcAmount > BlInventoryScanLoggingConstants.ZERO) {
-                // trigger Esp Refund event for GC
-                if(getDefaultBlUserService().isCsUser()){
-                    try {
-                        getBlEspEventService().sendOrderRefundEvent(this.getOrderModel(),gcAmount,BlCustomCancelRefundConstants.GIFTCARD,getOrderCancelEntries());
-                    }
-                    catch (final Exception e){
-                        BlLogger.logMessage(LOGGER, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
-                            BlCustomCancelRefundConstants.REFUND_EVENT_API_CALL_FAILED, e);
-
-                    }
-                }
+                grandSubTotal = grandSubTotal + gcAmount;
+                gcString = BlCoreConstants.GC_TYPE;
                 this.logAmountForGiftCardTransactions(gcAmount);
                 stringSuccess.append(BlCustomCancelRefundConstants.PLEASE_CREATE_GIFT_CARD_WITH)
                         .append(this.getTwoDecimalDoubleValue(gcAmount));
@@ -908,11 +988,18 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER,
                     this.getOrderModel().getCode());
             this.successMessageBox(stringSuccess.toString());
-            // trigger Esp Refund event for cc/paypal
+            grandSubTotal = grandSubTotal + totalAmt;
+
+            // trigger Esp Refund event for  GC or cc/paypal
             if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
                 try {
+                    BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
+                        grandSubTotal);
+                    final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+                    final String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                        ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
                     getBlEspEventService()
-                        .sendOrderRefundEvent(this.getOrderModel(),totalAmt, ((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider(),
+                        .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
                             getOrderCancelEntries());
                 }
                 catch (final Exception e){
