@@ -1121,11 +1121,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         } else {
             order.setRefundShippingTotalAmount(order.getRefundShippingTotalAmount() == null ? shipping : this.getTwoDecimalDoubleValue(
                     (order.getRefundShippingTotalAmount() + shipping)));
+            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Shipping Amount : {}", shipping);
             order.setRefundTaxTotalAmount(order.getRefundTaxTotalAmount() == null ? taxValue : this.getTwoDecimalDoubleValue(
                     (order.getRefundTaxTotalAmount() + taxValue)));
+            BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Tax Amount : {}", taxValue);
         }
         order.setRefundTotalAmount(order.getRefundTotalAmount() == null ? gcAmt : this.getTwoDecimalDoubleValue(
                 (order.getRefundTotalAmount() + gcAmt)));
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Refund Amount : {}", gcAmt);
         getModelService().save(order);
         getModelService().refresh(order);
     }
@@ -1137,13 +1140,16 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void setRefundDetailsOnOrder(final double shipping, final double amt) {
         final OrderModel order = this.getOrderModel();
-        double taxValue = this.getTaxAmount(BlCustomCancelRefundConstants.ZERO);
+        final double taxValue = this.getTaxAmount(BlCustomCancelRefundConstants.ZERO);
         order.setRefundTotalAmount(order.getRefundTotalAmount() == null ? amt : this.getTwoDecimalDoubleValue(
                 (order.getRefundTotalAmount() + amt)));
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Refund Amount : {}", amt);
         order.setRefundShippingTotalAmount(order.getRefundShippingTotalAmount() == null ? shipping : this.getTwoDecimalDoubleValue(
                 (order.getRefundShippingTotalAmount() + shipping)));
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Shipping Amount : {}", shipping);
         order.setRefundTaxTotalAmount(order.getRefundTaxTotalAmount() == null ? taxValue : this.getTwoDecimalDoubleValue(
                 (order.getRefundTaxTotalAmount() + taxValue)));
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Adding Tax Amount : {}", taxValue);
         getModelService().save(order);
         getModelService().refresh(order);
     }
