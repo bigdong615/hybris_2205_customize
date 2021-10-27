@@ -314,8 +314,8 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         final String datePattern = Config.isSQLServerUsed() ? ("CONVERT(VARCHAR,{c.optimizedShippingStartDate},110) in ('"
                  + yDay + "', '" + today + "')") : ("to_char({c.optimizedShippingStartDate},'" +
                 BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN + "') in ('" + yDay + "', '" + today + "')");
-        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs} where " +
-                datePattern + " and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
+        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}, {Order as order} where " +
+                datePattern + " and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP' and {c.order} = {order.pk} and {order.isRentalCart} = 1");
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING);

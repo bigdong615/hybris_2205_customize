@@ -199,7 +199,10 @@ public class SearchPageController extends AbstractSearchPageController
 
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
-
+		final String currentCartType = blCartFacade.identifyCartType();
+		if(StringUtils.isNotEmpty(currentCartType)){
+			model.addAttribute(currentCartType,true);
+		}
 		return getViewForPage(model);
 	}
 
