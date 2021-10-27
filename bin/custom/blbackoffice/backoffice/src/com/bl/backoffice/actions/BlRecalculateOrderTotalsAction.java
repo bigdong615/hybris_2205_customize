@@ -1,19 +1,15 @@
 package com.bl.backoffice.actions;
 
-import com.hybris.cockpitng.core.impl.DefaultWidgetModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.order.CalculationService;
-import de.hybris.platform.order.exceptions.CalculationException;
-
-import javax.annotation.Resource;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.order.exceptions.CalculationException;
+import javax.annotation.Resource;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -50,8 +46,6 @@ public class BlRecalculateOrderTotalsAction implements CockpitAction<OrderModel,
 			BlLogger.logMessage(LOG, Level.ERROR, e.getMessage());
 			return new ActionResult("success");
 		}
-		DefaultWidgetModel widget = (DefaultWidgetModel)abstractOrderModel.getParameter("parentWidgetModel");
-		widget.setValue("currentObject", orderModel);
 		return new ActionResult("success");
 
 	}

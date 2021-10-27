@@ -51,10 +51,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 	@Resource(name = "blOrderService")
 	BlOrderService blOrderService;
 
-	private transient WidgetInstanceManager widgetInstanceManager;
-
-
-	/**
+  /**
    * This method call when order is saving
    */
   @Override
@@ -125,19 +122,10 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			} catch (CalculationException e) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);
 			}
-			Object reloadedCurrentObject = null;
-			try {
-				reloadedCurrentObject = this.performRefresh(widgetInstanceManager,currentObject);
-				widgetInstanceManager.getModel().setValue("currentObject", reloadedCurrentObject);
-				Collection reloadedForNotification = Collections.singleton(this.performRefresh(widgetInstanceManager, currentObject));
-			return reloadedCurrentObject;
-			} catch (ObjectNotFoundException e) {
-				e.printStackTrace();
-			}
+      return object;
      }
     return super.performSave(widgetInstanceManager , currentObject);
   }
-
 
   /**
 	 * method is used to remove entry from consignment
