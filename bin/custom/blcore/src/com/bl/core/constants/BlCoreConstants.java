@@ -497,6 +497,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD_TYPE = "GiftCard";
 	public static final String GC_TYPE = "GC";
 	public static final String PLUS = "+";
+	public static final String BL_PRODUCT_VALIDATE_INTERCEPTOR = "BlProductValidateInterceptor";
+
 	private BlCoreConstants()
 	{
 		//empty
