@@ -463,6 +463,12 @@
         <value code="NA"/>
       </enumtype>
       
+      <enumtype generate="true" code="PaymentTransactionTypeEnum" autocreate="true" dynamic="true">
+            <value code="EXTEND_ORDER"/>
+            <value code="MODIFY_PAYMENT"/>
+            <value code="BILL_PAYMENT"/>
+      </enumtype>
+      
 	  </enumtypes>
 
     <maptypes>
@@ -2555,6 +2561,24 @@
             <itemtype code="AbstractOrder" autocreate="false" generate="false">
                 <description>Extending AbstractOrder type with additional attributes.</description>
                 <attributes>
+                    <attribute qualifier="refundTotalAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total refund of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="refundTaxTotalAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total tax refund of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="refundShippingTotalAmount" type="java.lang.Double">
+                        <modifiers optional="true" read="true" write="true" search="false"/>
+                        <description>Total shipping refund of original order</description>
+                        <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                    </attribute>
                     <attribute qualifier="originalOrderTotalAmount" type="java.lang.Double">
                         <modifiers optional="true" read="true" write="true" search="false"/>
                         <description>Total cost of original order</description>
@@ -6842,6 +6866,19 @@ new Integer(0)
                     </attribute>
                 </attributes>
             </itemtype>
+        </typegroup>
+        
+        <typegroup name="Payment">
+            <itemtype code="PaymentTransaction" autocreate="false" generate="false">
+                <description>Extending PaymentTransaction type with additional attributes.</description>
+                <attributes>
+                	<attribute qualifier="transactionType" type="PaymentTransactionTypeEnum">
+                     	<persistence type="property" />
+                     	<modifiers read="true" write="true" optional="true"/>
+                     	<description>The type of the transaction</description>
+                   </attribute>
+                </attributes>
+             </itemtype>
         </typegroup>
 	</itemtypes>
 </items>

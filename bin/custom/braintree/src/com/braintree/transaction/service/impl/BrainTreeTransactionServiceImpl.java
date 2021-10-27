@@ -11,6 +11,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import com.bl.core.enums.PaymentTransactionTypeEnum;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeFindMerchantAccountRequest;
@@ -613,7 +614,6 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
       {
         getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
-        // getBrainTreePaymentTransactionService().continueOrderProcess(order); //NOSONAR
       }
       else
       {
@@ -812,7 +812,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       braintreePaymentTransaction.setPaymentProvider(BRAINTREE_PROVIDER_NAME);
       braintreePaymentTransaction.setPlannedAmount(formatAmount(paymentTransactionEntry.getAmount()));
 
-      if(isPaymentForDeposit(brainTreePaymentInfoModel))
+      if(Objects.nonNull(brainTreePaymentInfoModel)) {
+      	setTransactionTypeForAdditionalPayment(brainTreePaymentInfoModel, braintreePaymentTransaction);
+			}
+      if(isPaymentForDeposit(brainTreePaymentInfoModel) || (Objects.nonNull(brainTreePaymentInfoModel)
+					&& brainTreePaymentInfoModel.isCreateNewTransaction()))
       {
         braintreePaymentTransaction.setRequestToken(brainTreePaymentInfoModel.getNonce());
         braintreePaymentTransaction.setInfo(brainTreePaymentInfoModel);
@@ -848,11 +852,26 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
     {
       cart.setPaymentTransactions(paymentTransactions);
     }
-    
     modelService.saveAll(paymentTransactionEntry, braintreePaymentTransaction, cart);
 	}
 
-  /**
+	/**
+	 * It sets the transaction type for every additional payment
+	 * @param brainTreePaymentInfoModel braintree payment info model
+	 * @param braintreePaymentTransaction braintree payment transaction
+	 */
+	private void setTransactionTypeForAdditionalPayment(final BrainTreePaymentInfoModel brainTreePaymentInfoModel,
+			final PaymentTransactionModel braintreePaymentTransaction) {
+  	if(brainTreePaymentInfoModel.isBillPayment()) {
+  		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.BILL_PAYMENT);
+		} else if(brainTreePaymentInfoModel.isModifyPayment()) {
+  		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.MODIFY_PAYMENT);
+		} else if(brainTreePaymentInfoModel.isExtendOrder()) {
+  		braintreePaymentTransaction.setTransactionType(PaymentTransactionTypeEnum.EXTEND_ORDER);
+		}
+	}
+
+	/**
    * Gets the braintree payment transaction.
    *
    * @param paymentTransactionEntry the payment transaction entry
@@ -1258,7 +1277,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		braintreePaymentTransaction
 				.setPlannedAmount(paymentTransactionEntry.getAmount().setScale(DEFAULT_CURRENCY_DIGIT, RoundingMode.HALF_UP));
 
-		if (cart.getPaymentInfo() != null && cart.getPaymentInfo() instanceof BrainTreePaymentInfoModel) {
+		if (cart.getPaymentInfo() != null) {
 			BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
 			braintreePaymentTransaction.setInfo(paymentInfo);
 		}
