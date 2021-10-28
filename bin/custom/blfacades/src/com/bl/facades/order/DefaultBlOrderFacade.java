@@ -213,12 +213,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, BlFacadesConstants.START_DATE_PATTERN);
     final Date endDate = BlDateTimeUtils.convertStringDateToDate(selectedDate, BlFacadesConstants.END_DATE_PATTERN);
     startDate = setAdditionalDaysForStartDate(startDate);
-    final Date stockStartDate = setAdditionalDaysForStock(startDate);
     final Date stockEndDate = setAdditionalDaysForStock(endDate);
     final List<StockResult> stockResults = new ArrayList<>();
     final AtomicReference<Date> optimizedRentalEndDateForExtendOrder = new AtomicReference<>();
     final Map<String, Date> stringStringMap = new HashMap<>();
-    checkStockAvailablity(orderModel , orderData , stockStartDate ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap );
+    checkStockAvailablity(orderModel , orderData ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap );
     if (CollectionUtils.isEmpty(stockResults)) {
       BlLogger.logMessage(LOG , Level.INFO , "optimizedRentalEndDateForExtendOrder" , String.valueOf(optimizedRentalEndDateForExtendOrder.get()));
       populateExtendOrderDetails(startDate , endDate , selectedDate , orderModel , orderData , stockEndDate , stringStringMap);
@@ -229,8 +228,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   /**
    * This method created to check the stock availability for extend order
    */
-  private void checkStockAvailablity(final OrderModel orderModel, final OrderData orderData,
-      final Date stockStartDate, final List<StockResult> stockResults,
+  private void checkStockAvailablity(final OrderModel orderModel, final OrderData orderData, final List<StockResult> stockResults,
       final Date extendRentalEndDate,
       final AtomicReference<Date> optimizedRentalEndDateForExtendOrder,
       final Map<String, Date> stringStringMap) {

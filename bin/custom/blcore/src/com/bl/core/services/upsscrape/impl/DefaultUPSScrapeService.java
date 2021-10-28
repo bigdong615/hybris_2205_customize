@@ -59,16 +59,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
           final String carrierCode = getCarrierType(packagingInfoModel);
           BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier " ,carrierCode);
           try {
-              if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
-                  || packagingInfoModel.getNumberOfRepetitions() < 3)) {
-                if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
-                  performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
-                } else if (StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
-                  performFedexService(abstractOrderModel, packagingInfoModel, stringObjectMap);
-                }
-              }
-            final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
-            postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
+            performUPSScrapeService(packagingInfoModel , carrierCode , stringObjectMap , abstractOrderModel);
           }
           catch (final Exception e){
             BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
@@ -77,6 +68,26 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         })));
   }
 
+  /**
+   * This method created to perform the UPS scrape Service for UPS and Fedex service
+   * @param packagingInfoModel package to be scan by service
+   * @param carrierCode carrier code
+   * @param stringObjectMap results to be updated
+   * @param abstractOrderModel abstract order model to get the request
+   */
+  private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, String carrierCode,
+      final AtomicReference<Map<String, Object>> stringObjectMap, final AbstractOrderModel abstractOrderModel){
+    if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
+        || packagingInfoModel.getNumberOfRepetitions() < 3)) {
+      if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
+        performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
+      } else if (StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
+        performFedexService(abstractOrderModel, packagingInfoModel, stringObjectMap);
+      }
+    }
+    final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
+    postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
+  }
 
 
   /**
