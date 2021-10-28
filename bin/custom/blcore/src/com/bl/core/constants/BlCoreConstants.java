@@ -501,6 +501,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_MANUAL_ALLOCATION_EVENT_DEFINITION_KEY = "order.manual.allocation.event.definition.key";
 	public static final String ORDER_MANUAL_ALLOCATION_EVENT_TEMPLATE = "order.manual.allocation.event.template";
 	public static final String ORDER_MANUAL_ALLOCATION_SUBSCRIBER_ID = "order.manual.allocation.event.subscriber.id";
+	public static final String UNALLOCATED_QUANTITY = "unallocatedquantity";
+	public static final String SERIAL_ALLOCATED = "serialallocated";
+	public static final String SERIAL_ALLOCATED_YES = "Yes";
+	public static final String SERIAL_ALLOCATED_NO = "No";
+
 	private BlCoreConstants()
 	{
 		//empty

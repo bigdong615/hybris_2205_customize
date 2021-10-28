@@ -140,7 +140,12 @@ public class BlOrderManualAllocationRequestPopulator extends
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
               BlCoreConstants.ORDER_ITEM_QUANTITY,
               String.valueOf(entryModel.getQuantity()));
-          //TODO- Need to add two more elements here, Serial allocated and unallocated quantity.
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+              BlCoreConstants.SERIAL_ALLOCATED,
+              String.valueOf(isSerialAllocated(entryModel)));
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+              BlCoreConstants.UNALLOCATED_QUANTITY,
+              String.valueOf(entryModel.getUnAllocatedQuantity()));
         }
       }
 
@@ -156,6 +161,21 @@ public class BlOrderManualAllocationRequestPopulator extends
       throw new BlESPIntegrationException(exception.getMessage(),
           LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode(), exception);
     }
+  }
+
+  /**
+   * It returns string value Yes or No, based on comparison between unAllocatedQuantity and quantity
+   * of orderEntry.
+   *
+   * @param abstractOrderEntryModel
+   * @return Yes/No
+   */
+  private String isSerialAllocated(final AbstractOrderEntryModel abstractOrderEntryModel) {
+    String isSerialAllocated = BlCoreConstants.SERIAL_ALLOCATED_YES;
+    if (abstractOrderEntryModel.getUnAllocatedQuantity() == abstractOrderEntryModel.getQuantity()) {
+      isSerialAllocated = BlCoreConstants.SERIAL_ALLOCATED_NO;
+    }
+    return isSerialAllocated;
   }
 
   @Override
