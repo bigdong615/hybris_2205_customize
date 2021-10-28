@@ -1362,6 +1362,7 @@ public class AccountPageController extends AbstractSearchPageController
 			if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM)) {
 				model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 			}
+			BlLogger.logMessage(LOG , Level.ERROR , "Error While performing Extend order " , e);
 		}
 		return Account.AccountOrderExtendSummaryPage;
 	}
