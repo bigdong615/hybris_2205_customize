@@ -243,7 +243,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           cal.setTime(extendRentalEndDate);
           final LocalDate localDate = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
           optimizedRentalEndDateForExtendOrder.set(BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd , localDate, blackOutDates));
-          checkProductForAvailablity(blProductModel , getnewStockStartDate(orderModel , consignmentModel) , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
+          checkProductForAvailablity(blProductModel , getNewStockStartDate(orderModel , consignmentModel) , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
           if(CollectionUtils.isEmpty(stockResults)){
             stringStringMap.put(consignmentModel.getCode() , optimizedRentalEndDateForExtendOrder.get());
           }
@@ -702,7 +702,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * @param consignmentModel consignment to get the optimizedShippingEndDate
    * @return date from consignment
    */
-  private Date getnewStockStartDate(final OrderModel abstractOrderModel, final ConsignmentModel consignmentModel) {
+  private Date getNewStockStartDate(final OrderModel abstractOrderModel, final ConsignmentModel consignmentModel) {
     final AtomicReference<Date> dateAtomicReference = new AtomicReference<>(additonalDaysForStock(consignmentModel));
     if(CollectionUtils.isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())){
       final  List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
