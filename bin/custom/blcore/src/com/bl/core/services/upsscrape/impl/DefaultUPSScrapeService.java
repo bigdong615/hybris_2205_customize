@@ -75,7 +75,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
    * @param stringObjectMap results to be updated
    * @param abstractOrderModel abstract order model to get the request
    */
-  private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, String carrierCode,
+  private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, final String carrierCode,
       final AtomicReference<Map<String, Object>> stringObjectMap, final AbstractOrderModel abstractOrderModel){
     if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
         || packagingInfoModel.getNumberOfRepetitions() < 3)) {
@@ -295,7 +295,12 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     return carrierCode.get();
   }
 
-  private boolean isOrderAllowToScan(PackagingInfoModel packagingInfoModel) {
+  /**
+   * This method created to check whether the order is extend or not for UPS scarpe
+   * @param packagingInfoModel package to be get scan for UPS scrape
+   * @return response based on condition
+   */
+  private boolean isOrderAllowToScan(final PackagingInfoModel packagingInfoModel) {
     final AtomicBoolean isAllowed = new AtomicBoolean(true);
     final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
     if (null != packagingInfoModel.getConsignment() &&
@@ -315,10 +320,16 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     return isAllowed.get();
   }
 
+  /**
+   * This method created to get the extend order list from original order
+   * @param abstractOrderModel order model to get the list of extend order
+   * @param consignment consignment to get the optimizedShippingEndDate
+   * @return optimizedShippingEndDate
+   */
   private Date getDateFromExtendOrderCopyList(final AbstractOrderModel abstractOrderModel,
-      ConsignmentModel consignment) {
+      final ConsignmentModel consignment) {
     final AtomicReference<Date> optimizedShippingEndDate = new AtomicReference<>();
-      final  List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
+      final List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
         final int size = orderModelList.size();
         for (final AbstractOrderModel extendOrder :orderModelList) {
           if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
