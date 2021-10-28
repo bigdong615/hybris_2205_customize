@@ -218,7 +218,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     final List<StockResult> stockResults = new ArrayList<>();
     final AtomicReference<Date> optimizedRentalEndDateForExtendOrder = new AtomicReference<>();
     final Map<String, Date> stringStringMap = new HashMap<>();
-    checkStockAvailablity(orderModel , orderData , stockStartDate ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap);
+    checkStockAvailablity(orderModel , orderData , stockStartDate ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap );
     if (CollectionUtils.isEmpty(stockResults)) {
       BlLogger.logMessage(LOG , Level.INFO , "optimizedRentalEndDateForExtendOrder" , String.valueOf(optimizedRentalEndDateForExtendOrder.get()));
       populateExtendOrderDetails(startDate , endDate , selectedDate , orderModel , orderData , stockEndDate , stringStringMap);
@@ -230,7 +230,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * This method created to check the stock availability for extend order
    */
   private void checkStockAvailablity(final OrderModel orderModel, final OrderData orderData,
-      final Date stockStartDate, final List<StockResult> stockResults, final Date extendRentalEndDate,
+      final Date stockStartDate, final List<StockResult> stockResults,
+      final Date extendRentalEndDate,
       final AtomicReference<Date> optimizedRentalEndDateForExtendOrder,
       final Map<String, Date> stringStringMap) {
     for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
@@ -244,7 +245,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           cal.setTime(extendRentalEndDate);
           final LocalDate localDate = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
           optimizedRentalEndDateForExtendOrder.set(BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd , localDate, blackOutDates));
-          checkProductForAvailablity(blProductModel , stockStartDate , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
+          checkProductForAvailablity(blProductModel , getnewStockStartDate(orderModel , consignmentModel) , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
           if(CollectionUtils.isEmpty(stockResults)){
             stringStringMap.put(consignmentModel.getCode() , optimizedRentalEndDateForExtendOrder.get());
           }
@@ -264,6 +265,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
     }
   }
+
+
 
   /**
    * This method created to check for product availability bases on serial product of existing order
@@ -684,6 +687,36 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         }
       });
     }
+  }
+
+  private Date getnewStockStartDate(final OrderModel abstractOrderModel, final ConsignmentModel consignmentModel) {
+
+    final AtomicReference<Date> dateAtomicReference = new AtomicReference<>(additonalDayForStock(consignmentModel));
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())){
+      final  List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
+      final int size = orderModelList.size();
+      for (final AbstractOrderModel extendOrder :orderModelList) {
+        if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+            .getExtendOrderStatus().getCode()
+            .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+            && orderModelList.get(size - 1).getPk()
+            .equals(extendOrder.getPk())) {
+          extendOrder.getConsignments().forEach(extendOrderconsignmentModel -> {
+            if(consignmentModel.getCode().equalsIgnoreCase(extendOrderconsignmentModel.getCode())){
+              dateAtomicReference.set(additonalDayForStock(extendOrderconsignmentModel));
+            }
+          });
+        }
+      }
+    }
+    return dateAtomicReference.get();
+  }
+
+  private Date additonalDayForStock(final ConsignmentModel consignmentModel){
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(consignmentModel.getOptimizedShippingEndDate());
+    calendar.add(Calendar.DAY_OF_MONTH ,1);
+    return calendar.getTime();
   }
 
   public BlCartService getBlCartService() {

@@ -83,8 +83,8 @@ public class DefaultBlUPSTrackServiceImpl implements BlUPSTrackService {
     requestOption.add(BlintegrationConstants.REQUEST_OPTION_NUMBER);
     request.setRequestOption(requestOption);
     trackRequest.setRequest(request);
-    trackRequest.setInquiryNumber(StringUtils.isBlank(packagingInfoModel.getInBoundTrackingNumber())
-        ? StringUtils.EMPTY : packagingInfoModel.getInBoundTrackingNumber());
+    trackRequest.setInquiryNumber("1Z19E5968748538530"/*StringUtils.isBlank(packagingInfoModel.getInBoundTrackingNumber())
+        ? StringUtils.EMPTY : packagingInfoModel.getInBoundTrackingNumber()*/);
     trackRequest.setTrackingOption(BlintegrationConstants.TRACKING_OPTION);
     return trackRequest;
   }
