@@ -85,7 +85,6 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 	public void getSelectedGearGaurdFromOrder(final BlRepairLogModel blRepairLogModel,
 			final BlSerialProductModel blSerialProductModel)
 	{
-		blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.NONE);
 		if (Objects.nonNull(blSerialProductModel.getConsignmentEntry())
 				&& Objects.nonNull(blSerialProductModel.getConsignmentEntry().getOrderEntry()))
 		{
@@ -97,6 +96,10 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 			else if (BooleanUtils.toBoolean(orderEntry.getGearGuardProFullWaiverSelected()))
 			{
 				blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.GEAR_GAURD_PRO);
+			}
+			else
+			{
+				blRepairLogModel.setSelectedGearGaurd(GearGaurdEnum.NONE);
 			}
 		}
 	}

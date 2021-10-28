@@ -59,7 +59,7 @@ import org.apache.log4j.Logger;
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 {
 	private static final String CVV_MATCH_CODE = "M";
-  private final static Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
+  private static final Logger LOG = Logger.getLogger(BrainTreePaymentFacadeImpl.class);
 	private BrainTreeUserFacade brainTreeUserFacade;
 	private BrainTreePaymentService brainTreePaymentService;
 	private CartService cartService;
@@ -196,7 +196,6 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		checkBraintreeResult(result);
 
 		addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, result);
-//		} //NOSONAR
 		if (isStoreInVault && StringUtils.isEmpty(customer.getBraintreeCustomerId())) {
 			LOG.debug("... creating customer on the braintree side");
 			getBrainTreePaymentService().createCustomer(customer, billingAddress);
@@ -223,6 +222,9 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		paymentInfo.setDuplicate(isDuplicate);
 		if(isModifyOrderPaymentPage)
 		{
+			paymentInfo.setBillPayment(Boolean.FALSE);
+			paymentInfo.setExtendOrder(Boolean.FALSE);
+			paymentInfo.setModifyPayment(Boolean.TRUE);
 		  paymentInfo.setCreateNewTransaction(Boolean.TRUE);
 		}
 		modelService.save(paymentInfo);
@@ -242,7 +244,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	 * @param isCheckout
 	 */
 	private void setPaymentInfoInCart(AbstractOrderModel cart, BrainTreePaymentInfoModel paymentInfo, boolean isCheckout) {
-		if((!paymentInfo.isIsDepositPayment()) && (isCheckout || (cart instanceof OrderModel))) {
+		if((!paymentInfo.isIsDepositPayment() && !paymentInfo.isModifyPayment()) && (isCheckout || (cart instanceof OrderModel))) {
 			cart.setPaymentInfo(paymentInfo);
 			modelService.save(cart);
 		}
@@ -377,7 +379,6 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 				billingAddress.setEmail(brainTreeSubscriptionInfoData.getEmail());
 			}
 		}
-
 		return billingAddress;
 	}
 
@@ -434,9 +435,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 
 			validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
 
-			final BrainTreePaymentInfoData paymentData = getBrainTreePaymentInfoDataConverter()
+			return getBrainTreePaymentInfoDataConverter()
 					.convert((BrainTreePaymentInfoModel) paymentInfo);
-			return paymentData;
 		}
 		return null;
 	}
@@ -463,8 +463,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		final CartModel cartModel = getCommerceCartService().getCartForCodeAndUser(cartCode, getUserService().getCurrentUser());
 		final BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cartModel.getPaymentInfo();
 		validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
-		final BrainTreePaymentInfoData paymentData = getBrainTreePaymentInfoDataConverter().convert(paymentInfo);
-		return paymentData;
+		return getBrainTreePaymentInfoDataConverter().convert(paymentInfo);
 	}
 
 	public void forceUnduplicateCartForReplenishment(final String cartCode) {

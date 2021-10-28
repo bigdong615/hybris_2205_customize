@@ -88,7 +88,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 	  
-	  if (getDefaultBlUserService().isCsUser() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalCart() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			modifyOrderDate(abstractOrderModel);
@@ -321,7 +321,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
       final AtomicBoolean isEligibleToTrigger = new AtomicBoolean(Boolean.FALSE);
       final Set<ConsignmentModel> consignments = abstractOrderModel.getConsignments();
-
+ if(CollectionUtils.isNotEmpty(consignments))
+ {
       for(ConsignmentModel consignmentModel : consignments){
         final WarehouseModel warehouses = consignmentModel.getWarehouse();
         final String deliveryMode = Objects.nonNull(consignmentModel.getDeliveryMode()) ? consignmentModel.getDeliveryMode().getCode() : StringUtils.EMPTY;
@@ -335,6 +336,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
           break;
         }
     }
+ }
       if(isEligibleToTrigger.get()){
         getBlEspEventService().sendOrderShippedEvent((OrderModel) abstractOrderModel);
       }
