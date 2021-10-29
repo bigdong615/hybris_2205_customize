@@ -203,24 +203,28 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
    * This method create to allocate the stocks for respective serials which are extended
    */
   private void updateSerialStocks(final List<String> allocatedProductCodes , final AbstractOrderModel extendOrderModel) {
-    final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(extendOrderModel,
-        new HashSet<>(allocatedProductCodes));
+    if(CollectionUtils.isNotEmpty(extendOrderModel.getConsignments())) {
+      extendOrderModel.getConsignments().forEach(consignmentModel -> {
+        final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(consignmentModel,
+            new HashSet<>(allocatedProductCodes));
+        if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
+            .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+          serialStocks.forEach(stock -> stock.setReservedStatus(true));
+          this.getModelService().saveAll(serialStocks);
+        }
+      });
 
-    if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
-        .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
-      serialStocks.forEach(stock -> stock.setReservedStatus(true));
-      this.getModelService().saveAll(serialStocks);
     }
   }
 
   /**
    * This method created for getting stock for serial product
    */
-  private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
+  private Collection<StockLevelModel> getSerialsForDateAndCodes(final ConsignmentModel consignmentModel,
       final Set<String> serialProductCodes) {
 
-    return getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
-            order.getActualRentalEndDate(), Boolean.FALSE);
+    return getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialProductCodes, consignmentModel.getOptimizedShippingStartDate(),
+        consignmentModel.getOptimizedShippingEndDate(), Boolean.FALSE);
   }
 
 

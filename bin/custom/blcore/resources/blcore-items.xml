@@ -6564,6 +6564,8 @@ new Integer(0)
 	</attributes>
 </itemtype>
 
+  <!-- BL-807 UPS scrape for Order Completed by UPS Scrape View -->
+
   <itemtype code="UPSScrapeOrder" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
     <custom-properties>
       <property name="query">
@@ -6672,6 +6674,177 @@ new Integer(0)
       </attribute>
     </attributes>
   </itemtype>
+
+  <!--BL -807 UPS scrape for which Serial Returning Today and Shipping Today View-->
+  <itemtype code="UPSScrapeSerialView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+    <custom-properties>
+      <property name="query">
+        <value>
+          "select {serial.code} as SerialProductCode, {rc.optimizedShippingEndDate} as SerialReturningDate, {nc.optimizedShippingStartDate} as SerialShippingDate , {status.code} as SerialStatus from {PackagingInfo as package},{PackagingInfo as npackage},{Consignment as rc} ,{BlSerialProduct as serial} ,{Consignment as nc} ,{SerialStatusEnum as status} where {package.serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {package.isScrapeScanCompleted} = 1 AND {rc.pk} = {package.consignment} AND CONVERT(VARCHAR,{rc.optimizedShippingEndDate} ,110) = CONVERT(VARCHAR,?shippedDate,110) AND {npackage.serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {serial.serialStatus} LIKE CONCAT('%',CONCAT({status.pk},'%')) AND {nc.pk} = {npackage.consignment} AND CONVERT(VARCHAR,{nc:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?shippedDate,110) "
+        </value>
+      </property>
+    </custom-properties>
+    <attributes>
+      <attribute generate="false" autocreate="true" qualifier="SerialShippingDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(2)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="SerialReturningDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(1)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="SerialProductCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="shippedDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.TRUE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="SerialStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(3)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+    </attributes>
+  </itemtype>
+
+<!--BL-807 To View the Serial which returning today-->
+  <itemtype code="UPSScrapeSerialReturningView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
+    <custom-properties>
+      <property name="query">
+        <value>
+          "select {serial.code} as SerialProductCode,  {rc.optimizedShippingEndDate} as SerialReturningDate,  {status.code} as SerialStatus from {PackagingInfo as package},{Consignment as rc} ,{BlSerialProduct as serial} ,{SerialStatusEnum as status}  where  {package.serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {rc.pk} = {package.consignment} AND {package.isScrapeScanCompleted} = 1 AND CONVERT(VARCHAR,{rc.optimizedShippingEndDate} ,110) = CONVERT(VARCHAR,?dateShipped,110) AND {serial.serialStatus} LIKE CONCAT('%',CONCAT({status.pk},'%'))"
+        </value>
+      </property>
+    </custom-properties>
+    <attributes>
+      <attribute generate="false" autocreate="true" qualifier="SerialProductCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="SerialReturningDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(1)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="SerialStatus" type="java.lang.String" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.FALSE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(2)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+      <attribute generate="false" autocreate="true" qualifier="dateShipped" type="java.util.Date" metatype="ViewAttributeDescriptor">
+        <persistence type="jalo" qualifier=""/>
+        <modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+        <custom-properties>
+          <property name="param">
+            <value>
+              Boolean.TRUE
+            </value>
+          </property>
+          <property name="position">
+            <value>
+              new Integer(0)
+            </value>
+          </property>
+        </custom-properties>
+      </attribute>
+    </attributes>
+  </itemtype>
+
 </typegroup>
 
         <typegroup name="BlInventoryCycleCount">

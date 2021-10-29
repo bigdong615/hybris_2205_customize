@@ -1,6 +1,7 @@
 package com.bl.core.services.upsscrape.impl;
 
 import com.bl.core.enums.CarrierEnum;
+import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.services.upsscrape.UPSScrapeService;
 import com.bl.integration.constants.BlintegrationConstants;
@@ -10,6 +11,7 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -18,8 +20,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -54,15 +59,7 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
           final String carrierCode = getCarrierType(packagingInfoModel);
           BlLogger.logMessage(LOG , Level.INFO , "Performing UPS Scrape job for carrier " ,carrierCode);
           try {
-            if(Objects.isNull(packagingInfoModel.getNumberOfRepetitions()) || packagingInfoModel.getNumberOfRepetitions() < 3) {
-              if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
-                performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
-              } else if(StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
-                performFedexService(abstractOrderModel, packagingInfoModel, stringObjectMap);
-              }
-            }
-            final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
-            postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
+            performUPSScrapeService(packagingInfoModel , carrierCode , stringObjectMap , abstractOrderModel);
           }
           catch (final Exception e){
             BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while fetching package{} from Order {} " , e.getMessage() , packagingInfoModel.getPk() , abstractOrderModel.getCode());
@@ -70,6 +67,29 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
           }
         })));
   }
+
+  /**
+   * This method created to perform the UPS scrape Service for UPS and Fedex service
+   * @param packagingInfoModel package to be scan by service
+   * @param carrierCode carrier code
+   * @param stringObjectMap results to be updated
+   * @param abstractOrderModel abstract order model to get the request
+   */
+  private void performUPSScrapeService(final PackagingInfoModel packagingInfoModel, final String carrierCode,
+      final AtomicReference<Map<String, Object>> stringObjectMap, final AbstractOrderModel abstractOrderModel){
+    if (isOrderAllowToScan(packagingInfoModel) && (Objects.isNull(packagingInfoModel.getNumberOfRepetitions())
+        || packagingInfoModel.getNumberOfRepetitions() < 3)) {
+      if (StringUtils.equalsIgnoreCase(CarrierEnum.UPS.getCode(), carrierCode)) {
+        performUPSService(abstractOrderModel, packagingInfoModel, stringObjectMap);
+      } else if (StringUtils.equalsIgnoreCase(CarrierEnum.FEDEX.getCode(), carrierCode)) {
+        performFedexService(abstractOrderModel, packagingInfoModel, stringObjectMap);
+      }
+    }
+    final Map<String, Object> stringObjectMap1 = stringObjectMap.get();
+    postResponseAction(abstractOrderModel , packagingInfoModel , stringObjectMap1);
+  }
+
+
   /**
    *
    * {@inheritDoc}
@@ -274,6 +294,61 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
     }
     return carrierCode.get();
   }
+
+  /**
+   * This method created to check whether the order is extend or not for UPS scarpe
+   * @param packagingInfoModel package to be get scan for UPS scrape
+   * @return response based on condition
+   */
+  private boolean isOrderAllowToScan(final PackagingInfoModel packagingInfoModel) {
+    final AtomicBoolean isAllowed = new AtomicBoolean(true);
+    final AbstractOrderModel abstractOrderModel = packagingInfoModel.getConsignment().getOrder();
+    if (null != packagingInfoModel.getConsignment() &&
+        BooleanUtils.isFalse(abstractOrderModel.getIsExtendedOrder()) && CollectionUtils
+        .isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())) {
+      final Date optimizedShippingEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
+      if(Objects.nonNull(optimizedShippingEndDate)) {
+        if (DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
+          isAllowed.set(Boolean.TRUE);
+        }
+        else {
+          isAllowed.set(Boolean.FALSE);
+        }
+      }
+    }
+    if(CollectionUtils.isEmpty(abstractOrderModel.getExtendedOrderCopyList())){
+      isAllowed.set(Boolean.TRUE);
+    }
+    return isAllowed.get();
+  }
+
+  /**
+   * This method created to get the extend order list from original order
+   * @param abstractOrderModel order model to get the list of extend order
+   * @param consignment consignment to get the optimizedShippingEndDate
+   * @return optimizedShippingEndDate
+   */
+  private Date getDateFromExtendOrderCopyList(final AbstractOrderModel abstractOrderModel,
+      final ConsignmentModel consignment) {
+    final AtomicReference<Date> optimizedShippingEndDate = new AtomicReference<>();
+      final List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
+        final int size = orderModelList.size();
+        for (final AbstractOrderModel extendOrder :orderModelList) {
+          if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+              .getExtendOrderStatus().getCode()
+              .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+              && orderModelList.get(size - 1).getPk()
+              .equals(extendOrder.getPk())) {
+            extendOrder.getConsignments().forEach(consignmentModel -> {
+              if(consignmentModel.getCode().equalsIgnoreCase(consignment.getCode())){
+                optimizedShippingEndDate.set(consignmentModel.getOptimizedShippingEndDate());
+              }
+            });
+          }
+      }
+    return optimizedShippingEndDate.get();
+  }
+
 
   public BlUpdateSerialService getBlUpdateSerialService() {
     return blUpdateSerialService;
