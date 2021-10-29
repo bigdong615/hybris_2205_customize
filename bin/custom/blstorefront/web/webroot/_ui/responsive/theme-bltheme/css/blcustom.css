@@ -132,7 +132,7 @@ text-decoration :none ;
 .btnwidth .btnwidthplp {width :100%; margin-top:1%;}
 .btnwidth .btnwidthusedgear{width :100%;}
 /* BL-606 */
-.splide__slide .card h6.product, #productList .card h6.product {height :42px; overflow: hidden;}
+.splide__slide .card h6.product, #productList .card h6.product {height :45px; overflow: hidden;}
 @media only screen and (max-width: 1025px) and (min-width: 991px)   {
   .splide__slide .card h6.product, #productList .card h6.product {height :43px; overflow: hidden;}
   #gear-slider .splide__slide .card h6.product {height :35px; overflow: hidden;}
