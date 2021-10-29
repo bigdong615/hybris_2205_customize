@@ -93,7 +93,7 @@
 					<td class="text-end" id="cart-shipping-options">
 					<c:choose>
 					 <c:when test="${isReplacementOrderCart eq true}">
-					   $0.00
+					   <spring:theme code="text.replacement.option.cost"/>
 					 </c:when>
 					 <c:otherwise>
 					     <format:blPrice priceData="${cartData.totalOptionsCost}" />

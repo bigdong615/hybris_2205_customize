@@ -358,6 +358,10 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     return optionPrice.get();
   }
 
+  /**
+   * This method created to check whether the order is replacement order
+   * @return boolean value
+   */
   private boolean isReplacementOrder() {
     return BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(
         BlCoreConstants.RETURN_REQUEST);

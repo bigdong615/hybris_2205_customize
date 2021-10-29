@@ -125,7 +125,7 @@
                  ${entry.option.optionName}
                  <c:choose>
                      <c:when test="${isReplacementOrderCart eq true}">
-                    <span class="float-end"> $0.00 </span>
+                    <span class="float-end"><spring:theme code="text.replacement.option.cost"/></span>
                      </c:when>
                   <c:otherwise>
                        <c:if test="${not empty entry.option.optionPrice}"><span class="float-end"><format:price
@@ -139,7 +139,7 @@
 						<li><a class="dropdown-item" href="#" href="#" data-id="${subOptions.optionCode}" data-entry="${entry.entryNumber}" data-product-code="${entry.product.code}">${subOptions.optionName} </a><span class="float-end">
 						  <c:choose>
                 <c:when test="${isReplacementOrderCart eq true}">
-                $0.00
+                <spring:theme code="text.replacement.option.cost"/>
                 </c:when>
                 <c:otherwise>
 						        <format:price  priceData="${subOptions.optionPrice}" />
