@@ -2541,10 +2541,3 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
      	window.location.reload();
      }
   }
-
-
-
-
-
-    
-   
