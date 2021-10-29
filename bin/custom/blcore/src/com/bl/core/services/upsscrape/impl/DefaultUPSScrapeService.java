@@ -307,11 +307,13 @@ public class DefaultUPSScrapeService implements UPSScrapeService {
         BooleanUtils.isFalse(abstractOrderModel.getIsExtendedOrder()) && CollectionUtils
         .isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())) {
       final Date optimizedShippingEndDate = getDateFromExtendOrderCopyList(abstractOrderModel , packagingInfoModel.getConsignment());
-      if (Objects.nonNull(optimizedShippingEndDate) && DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
-        isAllowed.set(Boolean.TRUE);
-      }
-      if (Objects.nonNull(optimizedShippingEndDate) && !DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
-        isAllowed.set(Boolean.FALSE);
+      if(Objects.nonNull(optimizedShippingEndDate)) {
+        if (DateUtils.isSameDay(optimizedShippingEndDate, new Date())) {
+          isAllowed.set(Boolean.TRUE);
+        }
+        else {
+          isAllowed.set(Boolean.FALSE);
+        }
       }
     }
     if(CollectionUtils.isEmpty(abstractOrderModel.getExtendedOrderCopyList())){
