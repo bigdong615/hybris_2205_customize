@@ -1,9 +1,11 @@
 package com.bl.tax.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlReplaceMentOrderUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -22,6 +24,7 @@ import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.Config;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   private ProductService productService;
   private BlDatePickerService blDatePickerService;
   private DefaultWarehouseService defaultWarehouseService;
+  private SessionService sessionService;
 
   /*
    * this method created to prepare taxrequest from abstractOrderModel
@@ -347,13 +351,17 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     if(CollectionUtils.isNotEmpty(entry.getOptions())){
       entry.getOptions().forEach(blOptionsModel -> {
         if(null!=blOptionsModel.getUnitPrice()) {
-          optionPrice.addAndGet(blOptionsModel.getUnitPrice());
+          optionPrice.addAndGet(BooleanUtils.isTrue(isReplacementOrder()) ? 0.0 : blOptionsModel.getUnitPrice());
         }
       });
     }
     return optionPrice.get();
   }
 
+  private boolean isReplacementOrder() {
+    return BooleanUtils.isTrue(BlReplaceMentOrderUtils.isReplaceMentOrder()) && null != getSessionService().getAttribute(
+        BlCoreConstants.RETURN_REQUEST);
+  }
 
   public BlDatePickerService getBlDatePickerService() {
     return blDatePickerService;
@@ -379,6 +387,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   public void setDefaultWarehouseService(
       DefaultWarehouseService defaultWarehouseService) {
     this.defaultWarehouseService = defaultWarehouseService;
+  }
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(SessionService sessionService) {
+    this.sessionService = sessionService;
   }
 
 }

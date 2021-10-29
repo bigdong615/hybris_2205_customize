@@ -90,8 +90,16 @@
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.rental.options" /> </td>
-					<td class="text-end" id="cart-shipping-options"><format:blPrice
-							priceData="${cartData.totalOptionsCost}" /></td>
+					<td class="text-end" id="cart-shipping-options">
+					<c:choose>
+					 <c:when test="${isReplacementOrderCart eq true}">
+					   $0.00
+					 </c:when>
+					 <c:otherwise>
+					     <format:blPrice priceData="${cartData.totalOptionsCost}" />
+				   </c:otherwise>
+				   </c:choose>
+				   </td>
 				</tr>
 				</c:if>
 			</c:if>
