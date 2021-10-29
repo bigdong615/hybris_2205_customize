@@ -2,7 +2,6 @@ package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -13,6 +12,7 @@ import com.bl.tax.TaxLine;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.utils.BlTaxAPIUtils;
+import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -59,7 +59,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       throws ConversionException{
     taxRequest.setCompanyCode(BltaxapiConstants.COMPANY_CODE);
     taxRequest.setCode(abstractOrder.getCode());
-    taxRequest.setType(BltaxapiConstants.SALESORDER);
+    taxRequest.setType(BooleanUtils.isTrue(abstractOrder.getIsOrderSubmit()) ? BltaxapiConstants.SALESINVOICE : BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(taxRequest);
     taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
     taxRequest.setSalesPersonCode(null);
@@ -99,7 +99,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         } else if (BooleanUtils.isTrue(entry.getGearGuardWaiverSelected())) {
           value = entry.getGearGuardWaiverPrice() * entry.getQuantity().intValue();
         }
-        taxLine.setAmount(entry.getTotalPrice() + value);
+        taxLine.setAmount(entry.getTotalPrice() + value + getOptionPrice(entry));
         taxLine.setDescription(entry.getInfo() + BltaxapiConstants.PRODUCT_ID + BlTaxAPIUtils.getProductId(entry.getProduct()));
         taxLine.setTaxCode(setProductTaxCode(entry));
         taxLines.add(taxLine);
@@ -123,6 +123,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
     return taxLines;
   }
+
+
 
 
   /**
@@ -171,8 +173,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    */
 
   private String setProductTaxCode(final AbstractOrderEntryModel entry) {
-      return entry.getProduct() instanceof BlSerialProductModel ? BltaxapiConstants.SALES_TAX_CODE
-          : BltaxapiConstants.RENTAL_TAX_CODE;
+      return entry.getProduct() instanceof BlSerialProductModel ? getValuesFromProperty(BltaxapiConstants.SALES_TAX_CODE)
+          : getValuesFromProperty(BltaxapiConstants.RENTAL_TAX_CODE);
     }
 
   /**
@@ -184,13 +186,13 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     switch (billChargeType.getCode())
     {
       case "LATE_CHARGE":
-        return BltaxapiConstants.LATE_FEE_TAX_CODE;
+        return getValuesFromProperty(BltaxapiConstants.LATE_FEE_TAX_CODE);
 
       case "REPAIR_CHARGE":
-        return BltaxapiConstants.REPAIR_TAX_CODE;
+        return getValuesFromProperty(BltaxapiConstants.REPAIR_TAX_CODE);
 
       case "MISSING_CHARGE":
-        return BltaxapiConstants.MISSING_TAX_CODE;
+        return getValuesFromProperty(BltaxapiConstants.MISSING_TAX_CODE);
 
       default:
         return null;
@@ -259,7 +261,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shippingTaxLine.setTaxCode( abstractOrder.getEntries().stream()
           .anyMatch(abstractOrderEntryModel ->
               abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)
-          ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
+          ? getValuesFromProperty(BltaxapiConstants.SHIPPING_SALES_TAX_CODE) : getValuesFromProperty(BltaxapiConstants.RENTAL_TAX_CODE));
       shippingTaxLine.setDescription(BltaxapiConstants.SHIPPING);
       taxLines.add(shippingTaxLine);
     }
@@ -269,7 +271,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
       final Double totalDiscount = null != abstractOrder.getTotalDiscounts() ? abstractOrder.getTotalDiscounts() :0.0;
       discountTaxLine.setAmount(- totalDiscount);
-      discountTaxLine.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
+      discountTaxLine.setTaxCode(getValuesFromProperty(BltaxapiConstants.DISCOUNT_TAX_CODE));
       taxLines.add(discountTaxLine);
     }
   }
@@ -333,6 +335,23 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       value.set(Config.getParameter(key));
     }
     return value.get();
+  }
+
+  /**
+   * This method created to get the option price from the order entry
+   * @param entry to get the option
+   * @return total amount of option
+   */
+  private Double getOptionPrice(final AbstractOrderEntryModel entry) {
+    final AtomicDouble optionPrice = new AtomicDouble(0.0);
+    if(CollectionUtils.isNotEmpty(entry.getOptions())){
+      entry.getOptions().forEach(blOptionsModel -> {
+        if(null!=blOptionsModel.getUnitPrice()) {
+          optionPrice.addAndGet(blOptionsModel.getUnitPrice());
+        }
+      });
+    }
+    return optionPrice.get();
   }
 
 

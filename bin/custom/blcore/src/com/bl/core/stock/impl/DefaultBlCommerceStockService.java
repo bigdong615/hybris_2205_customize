@@ -10,6 +10,7 @@ import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
@@ -36,6 +37,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -253,7 +255,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (CollectionUtils.isNotEmpty(stockLevels))
 		{
 			final Map<Object, List<StockLevelModel>> stockLevelsDatewise = stockLevels.stream()
-					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getDate()));
+					.collect(Collectors.groupingBy(StockLevelModel::getDate));
 			final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
 			final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
 			final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
@@ -330,7 +332,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findStockLevelsForProductCodesAndDate(
 				productCodes, warehouse, startDate, endDate);
 		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
-				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
+				.collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode));
 		final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
 		final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
 		final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
@@ -361,7 +363,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 				warehouses, startDate, endDate);
 		final Map<String, Long> productsWithQty = new HashMap<>();
 		final Map<Object, List<StockLevelModel>> stockLevelsProductWise = stockLevels.stream()
-				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getSerialProductCode()));
+				.collect(Collectors.groupingBy(StockLevelModel::getSerialProductCode));
 		for(Map.Entry<Object, List<StockLevelModel>> entry : stockLevelsProductWise.entrySet()) {
 				final String productCode = entry.getValue().get(0).getProductCode();
 				final Long quantity = ObjectUtils.defaultIfNull(productsWithQty.get(productCode), Long.valueOf(0));
@@ -381,7 +383,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		Map<String, List<StockLevelModel>> stockLevelsProductWise = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(stockLevels)) {
 			stockLevelsProductWise = stockLevels.stream()
-					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
+					.collect(Collectors.groupingBy(StockLevelModel::getProductCode));
 		}
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Stock Levels found for grouping");
 		return stockLevelsProductWise;
@@ -567,7 +569,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		while (nextAvailableDate == null && continueCheck)
 		{
 			Date nextStockUnavailableDate = getDateIfStockNotAvailable(productCode, lWareHouses, newRentalStartDate,
-					newRentalEndDate, quantity);
+					newRentalEndDate, quantity, blackOutDates);
 			if (Objects.nonNull(nextStockUnavailableDate))
 			{
 				newRentalStartDate = nextStockUnavailableDate;
@@ -606,7 +608,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @return the date
 	 */
 	private Date getDateIfStockNotAvailable(final String productCode, final Collection<WarehouseModel> warehouses,
-			final Date newRentalStartDate, final Date newRentalEndDate, final int qtyToCheck)
+			final Date newRentalStartDate, final Date newRentalEndDate, final int qtyToCheck, final List<Date> listOfBlackOutDates)
 	{
 		final Collection<StockLevelModel> stockLevels = getStockForDate(productCode, warehouses, newRentalStartDate,
 				newRentalEndDate).stream().filter(stockLevel -> !stockLevel.getReservedStatus()).collect(Collectors.toList());
@@ -614,9 +616,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		{
 			final Map<Date, Long> stockLevelsDatewise = getStockLevelsWithDate(stockLevels);
 			return getNextDateIfStockNotAvailable(productCode,stockLevelsDatewise, (int) getNumberOfDays(newRentalStartDate, newRentalEndDate),
-					qtyToCheck, newRentalStartDate, newRentalEndDate);
+					qtyToCheck, newRentalStartDate, newRentalEndDate, listOfBlackOutDates);
 		}
-		return getNextDate(1, newRentalEndDate);
+		return getNextDate(1, newRentalEndDate, listOfBlackOutDates);
 	}
 
 	/**
@@ -646,8 +648,11 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @return the next date if stock not available
 	 */
 	private Date getNextDateIfStockNotAvailable(final String productCode, final Map<Date, Long> stockLevelsDatewise,
-			final int numberOfDays, final int qtyToCheck, final Date newRentalStartDate, final Date newRentalEndDate)
+			final int numberOfDays, final int qtyToCheck, final Date newRentalStartDate, final Date newRentalEndDate, final List<Date> listOfBlackOutDates)
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+				"Available Stock dates map size : {} and number of days : {} and dates are : {} and {} for qty : {}",
+				stockLevelsDatewise.size(), numberOfDays, newRentalStartDate, newRentalEndDate, qtyToCheck);
 		if (stockLevelsDatewise.size() == numberOfDays)
 		{
 			for (final Map.Entry<Date, Long> entry : stockLevelsDatewise.entrySet())
@@ -657,17 +662,19 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 							"Low available Quantity {} against Quantity to check {} on date - {} for product {}",
 							entry.getValue().intValue(), qtyToCheck, entry.getKey(), productCode);
-					return getNextDate(1, entry.getKey());
+					return getNextDate(1, entry.getKey(), listOfBlackOutDates);
 				}
 			}
 		}
 		else
 		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Available Stock dates for product {} are {}", productCode,
+					stockLevelsDatewise.keySet());
 			final List<Date> missingDatesForStock = getMissingDatesForStock(stockLevelsDatewise, newRentalStartDate,
 					newRentalEndDate);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Missing Stock dates for product {} are {}", productCode,
 					missingDatesForStock);
-			return getNextDate(1, missingDatesForStock.get(missingDatesForStock.size() - 1));
+			return getNextDate(1, Iterables.getLast(missingDatesForStock, newRentalEndDate), listOfBlackOutDates);
 		}
 		return null;
 	}
@@ -687,17 +694,23 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			return Lists.newArrayList(stockLevelsDatewise.keySet());
 		}
 		final List<Date> lAvailableDates = new ArrayList<>(stockLevelsDatewise.keySet());
+		final List<Date> startAndEndDateList = new ArrayList<>();
 		final List<Date> lMissingDates = new ArrayList<>();
 		final Calendar cal = Calendar.getInstance();
 		cal.setTime(newRentalStartDate);
 		do
 		{
-			lMissingDates.add(cal.getTime());
+			startAndEndDateList.add(cal.getTime());
 			cal.add(Calendar.DATE, 1);
 		}
 		while (cal.getTime().before(newRentalEndDate));
-		lMissingDates.add(newRentalEndDate);
-		lMissingDates.removeAll(lAvailableDates);
+		startAndEndDateList.add(newRentalEndDate);
+		startAndEndDateList.forEach(missingDate -> {
+			if(lAvailableDates.stream().noneMatch(date -> DateUtils.isSameDay(date, missingDate)))
+			{
+				lMissingDates.add(missingDate);
+			}
+		});
 		Collections.sort(lMissingDates);
 		return lMissingDates;
 	}
@@ -781,9 +794,10 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 *           the date
 	 * @return the next date
 	 */
-	private Date getNextDate(final int numberOfDaysToAdd, final Date date)
+	private Date getNextDate(final int numberOfDaysToAdd, final Date date, final List<Date> listOfBlackOutDates)
 	{
-		return Date.from(BlDateTimeUtils.getFormattedDateTime(date).plusDays(numberOfDaysToAdd).atZone(ZoneId.systemDefault()).toInstant());
+		return BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd,
+				BlDateTimeUtils.convertDateToStringDate(date, BlCoreConstants.DATE_FORMAT), listOfBlackOutDates);
 	}
 
 	/**

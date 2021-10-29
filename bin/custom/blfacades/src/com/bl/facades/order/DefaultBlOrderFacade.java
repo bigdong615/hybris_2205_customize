@@ -2,8 +2,10 @@ package com.bl.facades.order;
 
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.ItemBillingChargeTypeEnum;
+import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
@@ -56,15 +58,22 @@ import de.hybris.platform.servicelayer.time.TimeService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.BaseStoreModel;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -204,12 +213,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, BlFacadesConstants.START_DATE_PATTERN);
     final Date endDate = BlDateTimeUtils.convertStringDateToDate(selectedDate, BlFacadesConstants.END_DATE_PATTERN);
     startDate = setAdditionalDaysForStartDate(startDate);
-    final Date stockStartDate = setAdditionalDaysForStock(startDate);
     final Date stockEndDate = setAdditionalDaysForStock(endDate);
     final List<StockResult> stockResults = new ArrayList<>();
-    checkStockAvailablity(orderModel , orderData , stockStartDate , stockEndDate , stockResults);
+    final AtomicReference<Date> optimizedRentalEndDateForExtendOrder = new AtomicReference<>();
+    final Map<String, Date> stringStringMap = new HashMap<>();
+    checkStockAvailablity(orderModel , orderData ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap );
     if (CollectionUtils.isEmpty(stockResults)) {
-      populateExtendOrderDetails(startDate , endDate , selectedDate , orderModel , orderData , stockEndDate);
+      BlLogger.logFormattedMessage(LOG , Level.DEBUG , "optimizedRentalEndDateForExtendOrder : New optimized shipping end date as {} for extend order {} " ,
+          String.valueOf(optimizedRentalEndDateForExtendOrder.get()) , orderModel.getCode());
+      populateExtendOrderDetails(startDate , endDate , selectedDate , orderModel , orderData , stockEndDate , stringStringMap);
     }
     return orderData;
   }
@@ -217,13 +229,25 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   /**
    * This method created to check the stock availability for extend order
    */
-  private void checkStockAvailablity(final OrderModel orderModel , final OrderData orderData , final Date stockStartDate ,
-      final Date stockEndDate , List<StockResult> stockResults) {
+  private void checkStockAvailablity(final OrderModel orderModel, final OrderData orderData, final List<StockResult> stockResults,
+      final Date extendRentalEndDate,
+      final AtomicReference<Date> optimizedRentalEndDateForExtendOrder,
+      final Map<String, Date> stringStringMap) {
     for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
       for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
         for (final BlProductModel blProductModel : consignmentEntryModel
             .getSerialProducts()) {
-          checkProductForAvailablity(blProductModel , stockStartDate , stockEndDate , stockResults , orderData);
+          final List<Date> blackOutDates = getBlDatePickerService().getAllBlackoutDatesForGivenType(
+              BlackoutDateTypeEnum.HOLIDAY);
+          final int numberOfDaysToAdd = getNumberOfDaysForDeliveryMethod().get(consignmentModel.getOptimizedShippingType().getCode());
+          final Calendar cal = Calendar.getInstance();
+          cal.setTime(extendRentalEndDate);
+          final LocalDate localDate = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+          optimizedRentalEndDateForExtendOrder.set(BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd , localDate, blackOutDates));
+          checkProductForAvailablity(blProductModel , getNewStockStartDate(orderModel , consignmentModel) , optimizedRentalEndDateForExtendOrder.get() , stockResults , orderData);
+          if(CollectionUtils.isEmpty(stockResults)){
+            stringStringMap.put(consignmentModel.getCode() , optimizedRentalEndDateForExtendOrder.get());
+          }
         }
 
       }
@@ -241,11 +265,13 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     }
   }
 
+
+
   /**
    * This method created to check for product availability bases on serial product of existing order
    */
   private void checkProductForAvailablity(final BlProductModel blProductModel , final Date stockStartDate ,
-      final Date stockEndDate , final List<StockResult> stockResults , final OrderData orderData )
+      final Date stockEndDate , final List<StockResult> stockResults , final OrderData orderData)
     {
       if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType().equals(
           ProductTypeEnum.SUBPARTS)) {
@@ -270,8 +296,10 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   /**
    * This method created to populate the extend order details
    */
-  private void populateExtendOrderDetails(final Date startDate ,final Date endDate , final String selectedDate ,
-      final OrderModel orderModel , final OrderData orderData , final Date stockEndDate) {
+  private void populateExtendOrderDetails(final Date startDate, final Date endDate,
+      final String selectedDate,
+      final OrderModel orderModel, final OrderData orderData, final Date stockEndDate,
+      final Map<String, Date> stringStringMap) {
     long defaultAddedTimeForExtendRental = BlDateTimeUtils
         .getDaysBetweenDates(startDate, endDate) + 1;
     if (StringUtils.isEmpty(selectedDate)) {
@@ -296,6 +324,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     // To set extend startDate and Extend end date on order model .
     extendOrderModel.setExtendRentalStartDate(startDate);
     extendOrderModel.setExtendRentalEndDate(endDate);
+    setOptimizedShippingEndDateForConsignment(stringStringMap , extendOrderModel);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "Order with code {} extended from extended rental start date {} to extended rental end date {}.", extendOrderModel.getCode() ,
@@ -336,6 +365,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     // To set current extendOrderModel to session
     BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
   }
+
+
 
   /**
    * This method created to set the extend order details
@@ -628,6 +659,84 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setResolvedStatusOnRepairLog(final String orderCode)
   {
 	  getBlOrderService().setResolvedStatusOnRepairLog(orderCode);
+  }
+
+
+  /**
+   * This method created to map the Optimized shipping date
+   * @return Map<String, Integer>
+   */
+  private Map<String, Integer> getNumberOfDaysForDeliveryMethod(){
+    final Map<String, Integer> numberOfPostDeliveryDays = new LinkedHashMap<>();
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode() , 3);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode() , 2);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode() , 2);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode() , 2);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode() , 1);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.NEXT_DAY_AIR.getCode() , 1);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode() , 1);
+    numberOfPostDeliveryDays.put(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode() , 1);
+    return numberOfPostDeliveryDays;
+  }
+
+  /**
+   * This method create to set the optimizedShippingEnd on consignment
+   * @param stringStringMap response from UPS Scrape service
+   * @param extendOrderModel order model to get update
+   */
+  private void setOptimizedShippingEndDateForConsignment(final Map<String, Date> stringStringMap,
+      final OrderModel extendOrderModel) {
+    if(CollectionUtils.isNotEmpty(extendOrderModel.getConsignments()) && MapUtils.isNotEmpty(stringStringMap)){
+      extendOrderModel.getConsignments().forEach(consignmentModel -> {
+        if(Objects.nonNull(stringStringMap.get(consignmentModel.getCode()))){
+          consignmentModel.setOptimizedShippingEndDate(stringStringMap.get(consignmentModel.getCode()));
+          getModelService().save(consignmentModel);
+          getModelService().refresh(consignmentModel);
+          BlLogger.logFormattedMessage(LOG , Level.DEBUG , "New OptimizedShippingEndDate  as {} for extend order {}" ,
+              String.valueOf(consignmentModel.getOptimizedShippingEndDate()) , extendOrderModel.getCode());
+        }
+      });
+    }
+  }
+
+  /**
+   * This method create to get the stock start date for extend order
+   * @param abstractOrderModel model to get the extend order list
+   * @param consignmentModel consignment to get the optimizedShippingEndDate
+   * @return date from consignment
+   */
+  private Date getNewStockStartDate(final OrderModel abstractOrderModel, final ConsignmentModel consignmentModel) {
+    final AtomicReference<Date> dateAtomicReference = new AtomicReference<>(additonalDaysForStock(consignmentModel));
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getExtendedOrderCopyList())){
+      final  List<AbstractOrderModel> orderModelList = abstractOrderModel.getExtendedOrderCopyList();
+      final int size = orderModelList.size();
+      for (final AbstractOrderModel extendOrder :orderModelList) {
+        if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+            .getExtendOrderStatus().getCode()
+            .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+            && orderModelList.get(size - 1).getPk()
+            .equals(extendOrder.getPk())) {
+          extendOrder.getConsignments().forEach(extendOrderconsignmentModel -> {
+            if(consignmentModel.getCode().equalsIgnoreCase(extendOrderconsignmentModel.getCode())){
+              dateAtomicReference.set(additonalDaysForStock(extendOrderconsignmentModel));
+            }
+          });
+        }
+      }
+    }
+    return dateAtomicReference.get();
+  }
+
+  /**
+   * This method created to add the number of days for stock
+   * @param consignmentModel to get the optimized shipping end date
+   * @return date from consignment
+   */
+  private Date additonalDaysForStock(final ConsignmentModel consignmentModel){
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(consignmentModel.getOptimizedShippingEndDate());
+    calendar.add(Calendar.DAY_OF_MONTH ,1);
+    return calendar.getTime();
   }
 
   public BlCartService getBlCartService() {
