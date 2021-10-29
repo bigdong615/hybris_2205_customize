@@ -219,7 +219,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     final Map<String, Date> stringStringMap = new HashMap<>();
     checkStockAvailablity(orderModel , orderData ,  stockResults , endDate ,  optimizedRentalEndDateForExtendOrder , stringStringMap );
     if (CollectionUtils.isEmpty(stockResults)) {
-      BlLogger.logMessage(LOG , Level.INFO , "optimizedRentalEndDateForExtendOrder" , String.valueOf(optimizedRentalEndDateForExtendOrder.get()));
+      BlLogger.logFormattedMessage(LOG , Level.DEBUG , "optimizedRentalEndDateForExtendOrder : New optimized shipping end date as {} for extend order {} " ,
+          String.valueOf(optimizedRentalEndDateForExtendOrder.get()) , orderModel.getCode());
       populateExtendOrderDetails(startDate , endDate , selectedDate , orderModel , orderData , stockEndDate , stringStringMap);
     }
     return orderData;
@@ -691,7 +692,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           consignmentModel.setOptimizedShippingEndDate(stringStringMap.get(consignmentModel.getCode()));
           getModelService().save(consignmentModel);
           getModelService().refresh(consignmentModel);
-          BlLogger.logMessage(LOG , Level.INFO , "Updated OptimizedShippingEndDate for extend order " + consignmentModel.getOptimizedShippingEndDate());
+          BlLogger.logFormattedMessage(LOG , Level.DEBUG , "New OptimizedShippingEndDate  as {} for extend order {}" ,
+              String.valueOf(consignmentModel.getOptimizedShippingEndDate()) , extendOrderModel.getCode());
         }
       });
     }
