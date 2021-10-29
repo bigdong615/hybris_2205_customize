@@ -691,6 +691,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           consignmentModel.setOptimizedShippingEndDate(stringStringMap.get(consignmentModel.getCode()));
           getModelService().save(consignmentModel);
           getModelService().refresh(consignmentModel);
+          BlLogger.logMessage(LOG , Level.INFO , "Updated OptimizedShippingEndDate for extend order " + consignmentModel.getOptimizedShippingEndDate());
         }
       });
     }

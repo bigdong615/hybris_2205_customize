@@ -342,7 +342,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * @param entry to get the option
    * @return total amount of option
    */
-  private Double getOptionPrice(AbstractOrderEntryModel entry) {
+  private Double getOptionPrice(final AbstractOrderEntryModel entry) {
     final AtomicDouble optionPrice = new AtomicDouble(0.0);
     if(CollectionUtils.isNotEmpty(entry.getOptions())){
       entry.getOptions().forEach(blOptionsModel -> {
