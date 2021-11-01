@@ -213,7 +213,7 @@
                             											<div class="col-6">
                             												<p class="gray80 body14">
                             													<b class="gray100"><spring:theme
-                            															code="text.review.page.delivery.pickup.from" /></b>
+                            															code="text.review.page.delivery.pickup.from" /></b> <br />
                             													<order:addressItem address="${orderData.deliveryAddress}" />
                             												</p>
                             											</div>
@@ -225,7 +225,7 @@
                             										<div class="col-6">
                             											<p class="gray80 body14">
                             												<b class="gray100"><spring:theme
-                            														code="text.review.page.delivery.mode" /></b>
+                            														code="text.review.page.delivery.mode" /></b> <br />
                             												${orderData.deliveryMode.name}
                             											</p>
                             										</div>
@@ -233,7 +233,7 @@
                             											<div class="col-6">
                             												<p class="gray80 body14">
                             													<b class="gray100"><spring:theme
-                            															code="text.review.page.delivery.shipping.to" /></b>
+                            															code="text.review.page.delivery.shipping.to" /></b> <br />
                             													<order:addressItem address="${orderData.deliveryAddress}" />
                             												</p>
                             											</div>
