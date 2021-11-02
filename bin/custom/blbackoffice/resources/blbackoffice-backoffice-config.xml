@@ -1262,8 +1262,8 @@
 					property="currentObject"/>
 				<y:action action-id="com.bl.blbackoffice.actions.order.customCancelOrderAction"
 					property="currentObject"/>
-				<y:action action-id="com.bl.blbackoffice.actions.order.customOrderRefundAction"
-					property="currentObject"/>
+				<!--<y:action action-id="com.bl.blbackoffice.actions.order.customOrderRefundAction"
+					property="currentObject"/>-->
 				<y:action
 					action-id="de.hybris.ordermanagementbackoffice.actions.returns.createreturnrequestaction"
 					property="currentObject"/>
