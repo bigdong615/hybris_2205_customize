@@ -602,7 +602,7 @@ footer .social a:hover { opacity: .7; }
 #addToCart .splide__slide img { width: 80%; }
 #addToCart b { display: block; }
 #addToCart .modal-footer { justify-content: flex-end; border-top: none; }
-#addToCart .card h6.product { font-size: 16px; height: 40px; }
+#addToCart .card h6.product { font-size: 16px; height: 45px; }
 .cart-check { display: inline-block; width: 20px; height: 20px; background: url(../assets/icon-check-teal.svg) no-repeat center; background-size: 20px; margin-left: 10px; }
 /* Sign In Modal */
 #signIn .modal-title { width: 100%; }
