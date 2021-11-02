@@ -65,7 +65,7 @@
           </c:otherwise>
         </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                <button type="button" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart btnwidthplp " data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                       <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
