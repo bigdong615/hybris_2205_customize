@@ -52,18 +52,18 @@
                             </div>
                             <div class="col-12 col-md-4 text-start text-md-end my-auto bookmarkpage">
                             <form id="removewishlistForm_${loopindex.index}" action="${removeProduct}" method="post" >
-                             <input type="hidden" name="removeProductEntry" value="${wishlistDatas.product.code}" id="removeProductEntry{loopindex.index}" />
+                             <input type="hidden" name="removeProductEntry" value="${wishlistDatas.product.code}" id="removeProductEntry${loopindex.index}" />
                              <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                              <button type="submit" name="REMOVE" class="body14 lightteal">Remove</button>
                              </form>
                               <form id="addToCartAndRemoveForm_${loopindex.index}" action="${addToCartAndRemoveUrl}" method="post">
                                   <input type="hidden" name="addtocartremoveProductEntry" value="${wishlistDatas.product.code}" id="addtocartremoveProductEntry{loopindex.index}" />
                                    <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
-                                 <button type="submit" class="btn btn-primary">
+                                
+                               </form>
+ <button type="submit" class="btn btn-primary bookmark-addToCart" data-id="addToCartAndRemoveForm_${loopindex.index}">
                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                  </button>
-                               </form>
-
                             </div>
                         </div>
                     </div>
@@ -72,4 +72,4 @@
      </c:otherwise>
     </c:choose>
  </div>
-
+  
