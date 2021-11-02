@@ -1,11 +1,15 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.product.service.BlProductService;
 import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
@@ -72,6 +76,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private BlCommercePriceService commercePriceService;
   private BlWishlistOptionsPopulator blWishlistOptionsPopulator;
   private BlProductService blProductService;
+  private BlCommerceStockService blCommerceStockService;
+  private BlDatePickerService blDatePickerService;
 
   /**
    * this method is created for populating values from source to target
@@ -285,6 +291,23 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
         target.setStock(getStockConverter().convert(blProductModel));
       }
+
+      final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
+          .getRentalDatesFromSession();
+      if (Objects.nonNull(rentalDatesFromSession)) {
+        final String nextAvailableDate = getBlCommerceStockService()
+            .getNextAvailabilityDateInPDP(blProductModel.getCode(), rentalDatesFromSession);
+        target.setNextAvailableDate(nextAvailableDate);
+        if (StringUtils.isNotBlank(nextAvailableDate)) {
+          final RentalDateDto rentalDuration =  BlRentalDateUtils.getRentalsDuration();
+          if (Objects.nonNull(rentalDuration) && StringUtils
+              .isNotBlank(rentalDuration.getSelectedFromDate())
+              && !nextAvailableDate.equalsIgnoreCase(rentalDuration.getSelectedFromDate())) {
+            target.setDisableButton(Boolean.TRUE);
+          }
+        }
+      }
+
 		}
 		catch (final UnknownIdentifierException ex)
 		{
@@ -600,4 +623,22 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   public void setBlProductService(final BlProductService blProductService) {
     this.blProductService = blProductService;
   }
+
+  public BlCommerceStockService getBlCommerceStockService() {
+    return blCommerceStockService;
+  }
+
+  public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+    this.blCommerceStockService = blCommerceStockService;
+  }
+
+  public BlDatePickerService getBlDatePickerService() {
+    return blDatePickerService;
+  }
+
+  public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+    this.blDatePickerService = blDatePickerService;
+  }
+
+
 }
