@@ -6,6 +6,7 @@ package com.braintree.transaction.service;
 import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.model.BrainTreeTransactionDetailModel;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import java.math.BigDecimal;
@@ -22,11 +23,11 @@ public interface BrainTreePaymentTransactionService
 
 	void continueOrderProcess(OrderModel orderModel);
 
-	void setOrderStatus(final OrderModel orderModel, final OrderStatus orderStatus);
+	void setOrderStatus(final AbstractOrderModel orderModel, final OrderStatus orderStatus);
 
 	boolean isValidTransactionId(final OrderModel orderModel, final String transactionId);
 
-	boolean isOrderFullyCaptured(OrderModel orderModel);
+	boolean isOrderFullyCaptured(AbstractOrderModel orderModel);
 
 	boolean canPerformDelayedCapture(OrderModel orderModel, BigDecimal amountForCapture) throws BraintreeErrorException;
 

@@ -330,10 +330,10 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      */
     protected String checkIsGiftCardUsed(final OrderModel orderModel , final String creditCart){
        final StringBuilder paymentType= new StringBuilder();
-        if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
+        /*if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
             return orderModel.getTotalPrice() == 0 ? paymentType.append(BlCoreConstants.GIFT_CARD_TYPE).toString() :
                 paymentType.append(creditCart).append(StringUtils.SPACE).append(BlCoreConstants.PLUS).append(StringUtils.SPACE ).append(BlCoreConstants.GC_TYPE).toString();
-        }
+        }*/
         return paymentType.append(creditCart).toString();
     }
 

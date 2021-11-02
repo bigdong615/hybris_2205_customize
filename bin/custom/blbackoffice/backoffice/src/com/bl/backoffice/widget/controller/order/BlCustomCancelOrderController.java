@@ -785,14 +785,18 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             grandSubTotal = grandSubTotal + gcAmount;
             gcString = BlCoreConstants.GC_TYPE;
            }
+        // trigger Esp Refund event for  GC or cc/paypal
         if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
             try {
                 grandSubTotal = grandSubTotal + this.getTwoDecimalDoubleValue(result.getAmount().doubleValue());
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
                     grandSubTotal);
                 final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-                String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+               /* String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
                     ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
+                */
+               String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                    ? BlCoreConstants.PAY_PAL :((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider();
                 getBlEspEventService()
                     .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
                         getOrderCancelEntries());
@@ -996,8 +1000,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
                         grandSubTotal);
                     final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+                    /*final String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                        ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();*/
                     final String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
-                        ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
+                        ? BlCoreConstants.PAY_PAL :((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider();
                     getBlEspEventService()
                         .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
                             getOrderCancelEntries());
