@@ -56,7 +56,7 @@ BL-31 Added for error message in login and create account popup
   @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
 .litepicker .container__months .month-item { transform: none !important; }
 
-input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #000000!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
 
 .cart h1 {
     font-size: 34px;
@@ -165,7 +165,7 @@ text-decoration :none ;
 
 #addToCart-gear-sliders > .splide__arrows .splide__arrow--next, #blog-slider > .splide__arrows .splide__arrow--next, #gear-slider-cart > .splide__arrows .splide__arrow--next { margin-right: -30px; }
 
-input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #000000!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
 input.error::placeholder { color:#e64b4f;  }
 @media(max-width:767px){#addToCart-gear-sliders > .splide__arrows{display: none;} }
 
