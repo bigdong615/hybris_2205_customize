@@ -6,6 +6,7 @@ import com.braintree.order.capture.partial.process.OrderCompleteProcessService;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.exceptions.BraintreeErrorException;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -96,7 +97,7 @@ public class BrainTreePaymentTransactionServiceImpl implements BrainTreePaymentT
 	}
 
 	@Override
-	public boolean isOrderFullyCaptured(OrderModel orderModel)
+	public boolean isOrderFullyCaptured(AbstractOrderModel orderModel)
 	{
 		final List<PaymentTransactionModel> paymentTransactions = orderModel.getPaymentTransactions();
 		if (CollectionUtils.isNotEmpty(paymentTransactions))
@@ -136,7 +137,7 @@ public class BrainTreePaymentTransactionServiceImpl implements BrainTreePaymentT
 	}
 
 	@Override
-	public void setOrderStatus(final OrderModel orderModel, final OrderStatus orderStatus)
+	public void setOrderStatus(final AbstractOrderModel orderModel, final OrderStatus orderStatus)
 	{
 		orderModel.setStatus(orderStatus);
 		getModelService().save(orderModel);
