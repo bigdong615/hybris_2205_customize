@@ -294,7 +294,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
       final RentalDateDto rentalDatesFromSession = getBlDatePickerService()
           .getRentalDatesFromSession();
-      if (Objects.nonNull(rentalDatesFromSession)) {
+      if (Objects.nonNull(rentalDatesFromSession) && Objects.nonNull(blProductModel)) {
         final String nextAvailableDate = getBlCommerceStockService()
             .getNextAvailabilityDateInPDP(blProductModel.getCode(), rentalDatesFromSession);
         target.setNextAvailableDate(nextAvailableDate);
