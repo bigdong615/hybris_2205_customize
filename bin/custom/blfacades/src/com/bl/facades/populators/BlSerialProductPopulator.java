@@ -115,12 +115,43 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 										BooleanUtils.isFalse(Objects.isNull(serialProductModel.getSoftAssigned())
 												? Boolean.FALSE : serialProductModel
 												.getSoftAssigned()));  // To display the serial if hard assigned and soft assigned as false
-
-						serialProductDataList.add(serialProductData);
+						if(isToAddSerialInList(target, serialProductData))
+						{
+							serialProductDataList.add(serialProductData);
+						}						
 					}
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
+	}
+	
+	/**
+	 * Checks if is to add serial in list.
+	 *
+	 * @param sku the sku
+	 * @param serial the serial
+	 * @return true, if is to add serial in list
+	 */
+	private boolean isToAddSerialInList(final ProductData sku, final SerialProductData serial)
+	{
+		if(BooleanUtils.isTrue(sku.getHasIncentivizedPrice()))
+		{
+			return BooleanUtils.isTrue(serial.isSerialSoftAssignedOrHardAssigned()) && checkSerial(sku, serial);
+		}
+		return checkSerial(sku, serial);
+	}
+
+	/**
+	 * Check serial status and check weather the serial assigned to any order or not.
+	 *
+	 * @param sku the sku
+	 * @param serial the serial
+	 * @return true, if successful
+	 */
+	private boolean checkSerial(final ProductData sku, final SerialProductData serial)
+	{
+		return BooleanUtils.isFalse(SerialStatusEnum.SOLD.equals(serial.getSerialStatus()))
+				|| (BooleanUtils.isTrue(sku.getForRent()) && BooleanUtils.isTrue(serial.isIsSerialNotAssignedToRentalOrder()));
 	}
 
 	/**
