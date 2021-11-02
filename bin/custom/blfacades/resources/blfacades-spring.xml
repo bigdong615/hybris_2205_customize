@@ -200,6 +200,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blPromotionService" ref="blPromotionService"/>
 		<property name="blProductService" ref="productService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 
 
