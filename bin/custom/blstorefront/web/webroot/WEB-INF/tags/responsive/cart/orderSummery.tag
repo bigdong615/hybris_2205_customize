@@ -225,7 +225,7 @@
 			    </p>
 				<c:forEach items="${cartData.promotionAmountMap}" var="amountMap">
                 <c:if test="${amountMap.key eq voucher}">
-                  <span class="float-end" style="width: 20%;"><format:price priceData="${amountMap.value}" /></span>
+                  <span class="float-end" style="width: 20%;">- $${amountMap.value}</span>
                 </c:if>
               </c:forEach>
             </c:if>        
