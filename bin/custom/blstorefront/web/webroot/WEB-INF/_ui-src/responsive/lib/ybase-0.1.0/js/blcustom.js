@@ -1287,3 +1287,7 @@ $('.bookmark-addToCart').on("click", function(e) {
         }
 	});
 });
+
+$('.forcolor-change').click(function(){
+$( ".forcolor-change" ).addClass( 'hide-error');
+  });

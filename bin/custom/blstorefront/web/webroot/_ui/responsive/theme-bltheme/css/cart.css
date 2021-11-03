@@ -71,8 +71,9 @@ Designed by Veneer Studio
 .rental-arrow { margin-top: 44%; opacity: .5; }
 
 /* form fields */
+#delivery-shippingAddressForm .hide-error{ padding-right: 30px; color: #000!important; }
 input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
-.error { padding-right: 30px; border-color: #e64b4f!important; color: #000000!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
+.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
 input.success { padding-right: 30px; border-color: #52bfc0!important; color: #52bfc0!important; background: url(../assets/icon-check-teal.svg) right 8px center no-repeat; }
 #order .shipProduct .dropdown a, #order .paymentOption .dropdown a, #order .shipProduct .dropdown button, #order .paymentOption .dropdown button { padding: 10px 35px 10px 10px; }
 #order .paymentOption .dropdown > a { margin: 6px 0; }
