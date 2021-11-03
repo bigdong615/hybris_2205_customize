@@ -44,14 +44,15 @@
                   </c:choose>
      			   </sec:authorize>
 				</c:when>
-				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock'}">
-					<button type="submit" class="btn btn-outline btn-disabled btnwidthplp"
+				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock' || not empty product.nextAvailableDate && product.disableButton eq 'true'}">
+					<button type="submit" class="btn btn-outline btn-disabled btnwidthplp js-add-to-cart js-disable-btn"
 						aria-disabled="true" disabled="disabled">
 						<spring:theme code="text.add.to.rental" />
 					</button>
 				</c:when>
 				<c:otherwise>
 				<c:choose>
+
 				  <c:when test="${allowAddToCart || isRentalCart}">
                 <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
