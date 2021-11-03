@@ -1870,7 +1870,7 @@
                     <attribute qualifier="serialId" type="java.lang.String">
                         <persistence type="property"/>
                         <modifiers read="true" write="false" optional="false" initial="true"/>
-                        <description>BlSerialProduct's SerialNumber</description>
+                        <description>BlSerialProduct's SerialId</description>
                     </attribute>
                     <attribute qualifier="serialBarcode" type="java.lang.String">
                         <persistence type="property"/>
