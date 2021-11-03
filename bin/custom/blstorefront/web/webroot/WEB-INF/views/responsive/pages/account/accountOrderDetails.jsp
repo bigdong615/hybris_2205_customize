@@ -276,8 +276,13 @@
                                    			</div>
                                    		</div> --%>
                                    	</div>
-                                   	<div class="col-12 col-md-5">
+                                    <div class="col-12 col-md-5">
                                    	  <div class="po-order-notes">
+                                   	    <c:if test="${not empty orderData.orderNotes}">
+                                          <p class="gray80 body14">
+                                             <b class="gray100"><spring:theme code="text.review.page.payment.notes"/></b> ${orderData.orderNotes}
+                                          </p>
+                                        </c:if>
                                    		  <p class="gray80 body14">
                                    			  <b class="gray100"><spring:theme code="text.order.confirmation.print.page.po.notes"/></b>
                                    			  <c:choose>
@@ -289,12 +294,12 @@
                                    				  </c:otherwise>
                                    			  </c:choose>
                                    		  </p>
-                                   	  </div>
-                                   	</div>
+                                      </div>
+                                    </div>
                                    </div>
                                   </c:otherwise>
                                 </c:choose>
-                            </div>
+                               </div>
                             </c:if>
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
