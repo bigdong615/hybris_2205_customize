@@ -395,7 +395,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
 				.create(BlInventoryLocationScanHistoryModel.class);
 		blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
-		blInventoryLocationScanHistory.setSerialNumber(blSerialProduct.getProductId());
+		blInventoryLocationScanHistory.setSerialId(blSerialProduct.getProductId());
 		blInventoryLocationScanHistory.setSerialBarcode(blSerialProduct.getBarcode());
 		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
 		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);

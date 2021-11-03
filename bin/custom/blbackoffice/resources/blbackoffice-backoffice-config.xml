@@ -1090,7 +1090,7 @@
     <context type="BlInventoryLocationScanHistory" component="listview" merge-by="replace">
         <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
             <list-view:column qualifier="serialProduct"/>
-            <list-view:column qualifier="serialNumber"/>
+            <list-view:column qualifier="serialId"/>
             <list-view:column qualifier="serialBarcode"/>
             <list-view:column qualifier="scanUser"/>
             <list-view:column qualifier="scanTime"/>
@@ -1102,7 +1102,7 @@
         <advanced-search:advanced-search>
             <advanced-search:field-list>
                 <advanced-search:field name="serialProduct" selected="true"/>
-                <advanced-search:field name="serialNumber" selected="true"/>
+                <advanced-search:field name="serialId" selected="true"/>
                 <advanced-search:field name="serialBarcode" selected="true"/>
                 <advanced-search:field name="scanUser" selected="true"/>
                 <advanced-search:field name="blInventoryLocation" selected="true"/>
@@ -1114,7 +1114,7 @@
     <context type="BlInventoryLocationScanHistory" component="simple-search" merge-by="replace">
         <ss:simple-search>
             <ss:field name="serialProduct"/>
-            <ss:field name="serialNumber"/>
+            <ss:field name="serialId"/>
             <ss:field name="serialBarcode"/>
             <ss:field name="blInventoryLocation"/>
         </ss:simple-search>

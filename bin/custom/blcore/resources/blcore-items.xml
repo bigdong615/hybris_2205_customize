@@ -1867,7 +1867,7 @@
                 <description>This table is for keeping track of Inventory being moved in warehouse by different users.</description>
                 <deployment table="blInvLocScanHistory" typecode="12205" />
                 <attributes>
-                    <attribute qualifier="serialNumber" type="java.lang.String">
+                    <attribute qualifier="serialId" type="java.lang.String">
                         <persistence type="property"/>
                         <modifiers read="true" write="false" optional="false" initial="true"/>
                         <description>BlSerialProduct's SerialNumber</description>
