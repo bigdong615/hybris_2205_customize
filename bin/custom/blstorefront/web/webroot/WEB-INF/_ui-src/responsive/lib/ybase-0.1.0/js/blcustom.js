@@ -1244,14 +1244,50 @@ function hideShorting(){
           }
       });
  });
-
+ 
  const mediaQuery = window.matchMedia('(min-width: 769px)')
  if (mediaQuery.matches) {
 	 var div = document.getElementById('pr-reviewsnippet');
-	 div.remove();
+	 if(div != undefined){
+		 div.remove();
+     }
  }
  setTimeout(function(){
 	let hideArrow = document.querySelectorAll("#product-slider ul li").length;
 	if (hideArrow < 2 ){                                              
 	document.querySelector("#product-slider .splide__arrows").style.visibility="hidden";
 	} },1000);
+ 
+$('.bookmark-addToCart').on("click", function(e) {
+	e.preventDefault();
+	var formId = $(this).data("id");
+	$.ajax({
+        url: ACC.config.encodedContextPath + "/bookmark/onlyRentalCartPresent",
+        type: 'POST',
+        success: function (response) {
+        	if(response.giftCardNotAllowedWarninLayer == 'success')
+			{
+				var formToSubmit = $("#" + formId);
+				formToSubmit.submit();
+			}
+			else if(response != '')
+			{        	
+				var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+		      	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+		          	{
+		          		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+		          		$('#gcAlreadyAddedWarning').modal("show");
+		          	}
+			}
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+              $('.modal-backdrop').addClass('remove-popup-background');
+              // log the error to the console
+              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+        }
+	});
+});
+
+$('.forcolor-change').click(function(){
+$( ".forcolor-change" ).addClass( 'hide-error');
+  });

@@ -177,6 +177,7 @@ public interface ControllerConstants
 				String AddToCartGiftCardPopup = "fragments/cart/addToCartGiftCardPopup"; // NOSONAR
 				String MultipleGiftCardWarningPopup = "fragments/cart/multipleGiftCardWarningPopup"; // NOSONAR
 				String GiftCardNotAllowedWarningPopup = "fragments/cart/giftCardNotAllowedWarningPopup"; // NOSONAR
+				String SUCCESS_JSON = "fragments/cart/successJson"; // NOSONAR
 				String AddToCartWarningPopup = "fragments/cart/addToCartWarningPopup"; // NOSONAR
 				String MiniCartPanel = "fragments/cart/miniCartPanel"; // NOSONAR
 				String MiniCartErrorPanel = "fragments/cart/miniCartErrorPanel"; // NOSONAR
