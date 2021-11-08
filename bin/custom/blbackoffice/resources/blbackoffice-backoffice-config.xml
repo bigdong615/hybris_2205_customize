@@ -2309,6 +2309,11 @@
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node code="BlTestingGearNeeded" id="BlTestingGearNeeded"/>
 			<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
+			<n:navigation-node id="blnventoryscan_UPS_Scrape_return_order">
+				<n:type-node code="UPSScrapeOrder" id="blnventoryscan_UPS_Scrape_completed_order"/>
+				<n:type-node code="UPSScrapeSerialView" id="blnventoryscan_UPS_Scrape_completed_and_Shipped_serial"/>
+				<n:type-node code="UPSScrapeSerialReturningView" id="blnventoryscan_UPS_Scrape_completed_serial"/>
+			</n:navigation-node>
 			<n:type-node code="CronJob" id="CronJob"/>
 		</n:explorer-tree>
 	</context>
