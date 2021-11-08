@@ -94,9 +94,9 @@
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
               <c:if test="${product.retailGear ne true}">
-             <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <c:choose>
                             	<c:when test="${not empty productReferences and productsLimit > 0}">
+                            	<h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
                             	<div id="addToCart-gear-sliders" class="splide mt-4">
                                 		<div class="splide__track">
                                               <ul class="splide__list">
