@@ -339,6 +339,9 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;BlInventoryCycleCountDetails;+;-;-;-
 ;;;BlInventoryCycleCountProductDetails;+;-;-;-
 ;;;BlInventoryCycleCountScanHistory;+;-;-;-
+;;;UPSScrapeOrder;+;-;-;-
+;;;UPSScrapeSerialView;+;-;-;-
+;;;UPSScrapeSerialReturningView;+;-;-;-
 $END_USERRIGHTS;;;;
 
  
