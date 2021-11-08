@@ -52,7 +52,7 @@
             <formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="townCity" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="postcode" inputCSS="form-control" mandatory="true" />
             <formElement:formSelectBox idKey="address.countryIso" labelKey="" path="countryIso" mandatory="true" skipBlank="false"
-                skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 0}" selectCSSClass="form-control"/>
+                skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 0}" selectCSSClass="form-control forcolor-change"/>
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control" mandatory="false" />
             <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control" mandatory="false" />
         </form:form>

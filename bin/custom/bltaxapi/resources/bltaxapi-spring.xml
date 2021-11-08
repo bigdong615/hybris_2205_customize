@@ -47,6 +47,7 @@
     <property name="productService" ref="productService"/>
     <property name="blDatePickerService" ref="blDatePickerService"/>
     <property name="defaultWarehouseService" ref="warehouseService"/>
+    <property name="sessionService" ref="sessionService"/>
   </bean>
 
   <!--Added for creating response for avalar tax -->

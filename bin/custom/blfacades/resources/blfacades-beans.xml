@@ -51,6 +51,8 @@
 		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="specifications" type="java.lang.String"/>
 		<property name="manufacturerAID" type="java.lang.String"/>
+		<property name="nextAvailableDate" type="java.lang.String"/>
+		<property name="disableButton" type="boolean"/>
   </bean>
 
 
