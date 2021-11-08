@@ -40,6 +40,7 @@ import org.apache.log4j.Level;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -298,14 +299,33 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         final Map<String, String> responseMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(allVoidTransactionModels)) {
             allVoidTransactionModels.forEach(voidTransaction -> {
-                try {
-                    braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
-                } catch (final BraintreeErrorException e) {
-                    responseMap.put(BlCustomCancelRefundConstants.FAILED, e.getMessage());
+                final String[] expireTime = voidTransaction.getTransactionStatusDetails().split(BlCustomCancelRefundConstants.SPLIT_PATTERN);
+                if(expireTime.length == BlCoreConstants.TWO_DAYS) {
+                    this.checkTransaction(responseMap, voidTransaction, expireTime);
                 }
             });
         }
         return responseMap;
+    }
+
+    /**
+     * execute void checking expiry date
+     * @param responseMap map
+     * @param voidTransaction transaction
+     * @param expireTime time
+     */
+    private void checkTransaction(final Map<String, String> responseMap, final PaymentTransactionEntryModel voidTransaction,
+                                  final String[] expireTime) {
+        try {
+            if(Boolean.TRUE.equals(new Date().before(new SimpleDateFormat(BlCustomCancelRefundConstants.PARSE_PATTERN)
+                    .parse(expireTime[BlCoreConstants.ONE_DAY].trim())))) {
+                braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
+            }
+        } catch (final BraintreeErrorException e) {
+            responseMap.put(BlCustomCancelRefundConstants.FAILED, e.getMessage());
+        } catch (final ParseException e) {
+            BlLogger.logFormatMessageInfo(LOGGER, ERROR, BlCustomCancelRefundConstants.PARSING_EXCEPTION, expireTime[BlCoreConstants.ONE_DAY].trim());
+        }
     }
 
     /**
