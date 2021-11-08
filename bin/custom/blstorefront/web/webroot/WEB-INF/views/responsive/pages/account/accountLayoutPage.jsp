@@ -162,4 +162,8 @@
        </div>
     </div>
  </section>
+ <div class="modal fade" id="gcAlreadyAddedWarning" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                               </div>
+
 </template:page>

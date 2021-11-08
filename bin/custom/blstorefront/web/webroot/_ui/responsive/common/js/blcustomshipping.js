@@ -2109,6 +2109,7 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
 
 
   function shipToUPSStoreLocationContinueForReplacementOrder(shippingMethod) {
+  hideErrorForInputValidation();
       if($('#changeUPSStoreButton').is(":visible")) {
           utag.link({
             "tealium_event"    : "continue_shipping_click",
@@ -2124,13 +2125,18 @@ function shipToHomeReplacementShippingContinue(shippingMethod) {
 	  }
 	  else
 	  {
-	  	addNewAddress(createUPSStoreAddress(), deliveryMethod)
-              .then((data) => {
-                  saveDeliveryModeForOrderReplacement(deliveryMethod, false);
-              })
-              .catch((error) => {
-                console.log(error)
-              })
+	  	 var firstName = $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]');
+              	 var lastName = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.lastName"]');
+              	 var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
+              	 var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
+              	 if(validateFormData(firstName, lastName, null, null, null, null, email, phone, "UPS")) {
+              		 if($('#showErrorForInvalidEmailInputValidation').css('display') == "none" && $('#showErrorForInvalidPhoneInputValidation').css('display') == "none"){
+              			 savePickUpByFormOnReplacementCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                                $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+              		 }
+              	 } else {
+              		 showErrorForInputValidationPick('Ship');
+              	 }
 	  }
           
       } else {
@@ -2535,17 +2541,3 @@ function onClickOfSaveSuggestedAddressForReplacementOrder() {
      	window.location.reload();
      }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-    
-   
