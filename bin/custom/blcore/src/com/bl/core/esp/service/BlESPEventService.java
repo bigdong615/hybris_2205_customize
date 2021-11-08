@@ -139,5 +139,9 @@ public interface BlESPEventService {
     void triggerBillPaidEspEvent(final String payBillTotal,
         final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel);
 
+    /**
+     * This method created for Order pull back items added ESP Event
+     * @param orderModel order model  to get the values
+     */
     void sendOrderPullBackItemsAdded(final OrderModel orderModel);
 }
