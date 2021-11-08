@@ -10,6 +10,7 @@ import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -175,4 +176,12 @@ public interface BlESPEventRestService {
    * @return
    */
   ESPEventResponseWrapper sendOrderBillPaidEvent(final OrderBillPaidEventRequest orderBillPaidEventRequest);
+
+  /**
+   * Send Order Pull Back Items Added Event by calling Order Pull Back Items Added ESP Event API
+   *
+   * @param orderPullBackRequest the orderPullBackRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderPullBackItemsAdded(final OrderPullBackRequest orderPullBackRequest);
 }

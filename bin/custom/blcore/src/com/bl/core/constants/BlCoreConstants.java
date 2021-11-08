@@ -405,6 +405,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
 	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
 
+
+	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.added.event.definition.key";
+	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_TEMPLATE = "order.pull.back.item.added.event.template";
+
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";

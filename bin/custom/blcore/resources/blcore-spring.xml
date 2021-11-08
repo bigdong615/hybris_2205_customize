@@ -1563,6 +1563,7 @@
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
+		<property name="blOrderPullBackRequestPopulator" ref="blOrderPullBackRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1706,5 +1707,9 @@
 
 	<!--BL-803 UPS Scrape Ends-->
 
+
+	<bean id="blOrderPullBackRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackRequestPopulator">
+	</bean>
 
 </beans>

@@ -1010,4 +1010,55 @@
 		<property name="billPaidTypesMap" type="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" equals="true"/>
 	</bean>
 
+
+	<!-- Order pull back ESP -->
+
+	<bean class="com.bl.esp.dto.orderpullback.data.OrderPullBackItems" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+	<property name="oldOrderId" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("Old Order ID")</annotations>
+	</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="ordertype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order Type")</annotations>
+		</property>
+		<property name="dateplaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="shippingmethodtype" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method type")</annotations>
+		</property>
+		<property name="shippingmethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("shipping method")</annotations>
+		</property>
+		<property name="expectedshippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("expected shipping date")</annotations>
+		</property>
+		<property name="arrivaldate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("arrival date")</annotations>
+		</property>
+		<property name="returndate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("return date")</annotations>
+		</property>
+		<property name="itemsxml" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("items xml")</annotations>
+		</property>
+	</bean>
+
+	<!-- Order pull back Event Request Object-->
+	<bean class="com.bl.esp.dto.orderpullback.OrderPullBackRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.orderpullback.data.OrderPullBackItems" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+
 </beans>

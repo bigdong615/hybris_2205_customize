@@ -138,4 +138,6 @@ public interface BlESPEventService {
      */
     void triggerBillPaidEspEvent(final String payBillTotal,
         final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel);
+
+    void sendOrderPullBackItemsAdded(final OrderModel orderModel);
 }

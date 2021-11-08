@@ -12,6 +12,7 @@ import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPullBackRequestPopulator;
 import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
 import com.bl.core.esp.populators.BlOrderRefundRequestPopulator;
 import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
@@ -33,6 +34,7 @@ import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -98,7 +100,9 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
+  private BlOrderPullBackRequestPopulator blOrderPullBackRequestPopulator;
     private ModelService modelService;
+
 
     /**
      * This method created to prepare the request and response from ESP service
@@ -746,7 +750,31 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
     }
 
-    public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
+
+  /**
+   * This method created to prepare the request and response from ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderPullBackItemsAdded(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
+      getBlOrderPullBackRequestPopulator().populate(orderModel, orderPullBackRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Pull Back Added Items  ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderPullBackItemsAdded(orderPullBackRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_ADDED,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save snd order Pull Back Added Items  ESP Event API
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_ADDED,orderModel.getCode(),null, null);
+    }
+  }
+
+
+  public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
     }
 
@@ -927,4 +955,15 @@ public class DefaultBlESPEventService implements BlESPEventService {
       BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator) {
     this.blOrderBillPaidRequestPopulator = blOrderBillPaidRequestPopulator;
   }
+
+  public BlOrderPullBackRequestPopulator getBlOrderPullBackRequestPopulator() {
+    return blOrderPullBackRequestPopulator;
+  }
+
+  public void setBlOrderPullBackRequestPopulator(
+      BlOrderPullBackRequestPopulator blOrderPullBackRequestPopulator) {
+    this.blOrderPullBackRequestPopulator = blOrderPullBackRequestPopulator;
+  }
+
+
 }
