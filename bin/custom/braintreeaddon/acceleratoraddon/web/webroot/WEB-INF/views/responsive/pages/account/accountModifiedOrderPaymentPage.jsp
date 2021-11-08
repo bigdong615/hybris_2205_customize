@@ -59,14 +59,21 @@
 				<div class="row">
 					<div class="col-5 col-md-4">
 						<p class="body14">
-							<spring:theme code="text.myaccount.order" /><br> <spring:theme code="text.myaccount.extend.order.date.placed" /><br> <spring:theme code="text.myaccount.extend.order.rentalDays" /><br> <spring:theme code="text.myaccount.extend.order.cost" />
+							<spring:theme code="text.myaccount.order" /><br> 
+							<spring:theme code="text.myaccount.extend.order.date.placed" /><br>
+							 <c:if test="${orderData.isRentalCart}">
+								<spring:theme code="text.myaccount.extend.order.rentalDays" /><br>
+							</c:if>
+							<spring:theme code="text.myaccount.extend.order.cost" />
 						</p>
 					</div>
 					<div class="col-7 col-md-8">
 						<p class="body14 gray60">
 							#${fn:escapeXml(orderData.code)}<br>
 							${orderData.orderedFormatDate}<br>
-							${orderData.totalRentalDays} days<br>
+							<c:if test="${orderData.isRentalCart}">
+								${orderData.totalRentalDays} days<br>
+							</c:if>
 							<format:price priceData="${orderData.totalPriceWithTax}" />
 						</p>
 					</div>
@@ -91,7 +98,7 @@
 							<p class="gray80 body14">
 								<b class="gray100"><a href="${productUrl}"
 									style="text-decoration: none"> ${cartEntry.product.name}</b></a></b>
-								<spring:theme code="text.myaccount.order.your.rental.qty" />
+								<spring:theme code="text.myaccount.order.your.rental.qty" />&nbsp;
 								${cartEntry.quantity}<br>
 								<c:if test="${orderData.isRentalCart}">
 									<c:choose>
