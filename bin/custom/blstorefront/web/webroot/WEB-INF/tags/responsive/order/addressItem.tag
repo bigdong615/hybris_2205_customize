@@ -11,10 +11,11 @@
 </c:if>
 <c:if test="${not storeAddress }">
 	<c:if test="${not empty address.title}">
-	    ${fn:escapeXml(address.title)}&nbsp;
+	    ${fn:escapeXml(address.title)}&nbsp;<br/>
 	</c:if>
-	${fn:escapeXml(address.firstName)}&nbsp;${fn:escapeXml(address.lastName)}
-	<br>
+	<c:if test="${!(not empty address.companyName && (fn:startsWith(address.companyName, 'Pick-up') || fn:startsWith(address.companyName, 'THE UPS STORE')))}">
+	    ${fn:escapeXml(address.firstName)}&nbsp;${fn:escapeXml(address.lastName)} <br/>
+	</c:if>
 </c:if>
 ${fn:escapeXml(address.line1)}
 <c:if test="${not empty address.line2}">

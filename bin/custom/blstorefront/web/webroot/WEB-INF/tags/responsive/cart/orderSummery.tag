@@ -25,11 +25,12 @@
     <hr>
     <c:choose>
       <c:when test="${cartData.isRentalCart}">
-        <p>
+        <p style="display: flex;">
           <b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
             type="text" class="form-control cart-picker"
-            id="summary-litepicker"
+            id="summary-litepicker" style="margin: 0; padding: 0;"
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+
         </p>
       </c:when>
       <c:otherwise>
@@ -90,8 +91,16 @@
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.rental.options" /> </td>
-					<td class="text-end" id="cart-shipping-options"><format:blPrice
-							priceData="${cartData.totalOptionsCost}" /></td>
+					<td class="text-end" id="cart-shipping-options">
+					<c:choose>
+					 <c:when test="${isReplacementOrderCart eq true}">
+					   <spring:theme code="text.replacement.option.cost"/>
+					 </c:when>
+					 <c:otherwise>
+					     <format:blPrice priceData="${cartData.totalOptionsCost}" />
+				   </c:otherwise>
+				   </c:choose>
+				   </td>
 				</tr>
 				</c:if>
 			</c:if>
@@ -217,7 +226,7 @@
 			    </p>
 				<c:forEach items="${cartData.promotionAmountMap}" var="amountMap">
                 <c:if test="${amountMap.key eq voucher}">
-                  <span class="float-end" style="width: 20%;">-${amountMap.value}</span>
+                  <span class="float-end" style="width: 20%;">- $${amountMap.value}</span>
                 </c:if>
               </c:forEach>
             </c:if>        

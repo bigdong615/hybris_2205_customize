@@ -40,6 +40,7 @@ import org.apache.log4j.Level;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -298,14 +299,33 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         final Map<String, String> responseMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(allVoidTransactionModels)) {
             allVoidTransactionModels.forEach(voidTransaction -> {
-                try {
-                    braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
-                } catch (final BraintreeErrorException e) {
-                    responseMap.put(BlCustomCancelRefundConstants.FAILED, e.getMessage());
+                final String[] expireTime = voidTransaction.getTransactionStatusDetails().split(BlCustomCancelRefundConstants.SPLIT_PATTERN);
+                if(expireTime.length == BlCoreConstants.TWO_DAYS) {
+                    this.checkTransaction(responseMap, voidTransaction, expireTime);
                 }
             });
         }
         return responseMap;
+    }
+
+    /**
+     * execute void checking expiry date
+     * @param responseMap map
+     * @param voidTransaction transaction
+     * @param expireTime time
+     */
+    private void checkTransaction(final Map<String, String> responseMap, final PaymentTransactionEntryModel voidTransaction,
+                                  final String[] expireTime) {
+        try {
+            if(Boolean.TRUE.equals(new Date().before(new SimpleDateFormat(BlCustomCancelRefundConstants.PARSE_PATTERN)
+                    .parse(expireTime[BlCoreConstants.ONE_DAY].trim())))) {
+                braintreeBackofficeOrderFacade.executeVoid(voidTransaction);
+            }
+        } catch (final BraintreeErrorException e) {
+            responseMap.put(BlCustomCancelRefundConstants.FAILED, e.getMessage());
+        } catch (final ParseException e) {
+            BlLogger.logFormatMessageInfo(LOGGER, ERROR, BlCustomCancelRefundConstants.PARSING_EXCEPTION, expireTime[BlCoreConstants.ONE_DAY].trim());
+        }
     }
 
     /**
@@ -785,14 +805,18 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             grandSubTotal = grandSubTotal + gcAmount;
             gcString = BlCoreConstants.GC_TYPE;
            }
+        // trigger Esp Refund event for  GC or cc/paypal
         if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
             try {
                 grandSubTotal = grandSubTotal + this.getTwoDecimalDoubleValue(result.getAmount().doubleValue());
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
                     grandSubTotal);
                 final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
-                String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+               /* String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
                     ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
+                */
+               String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                    ? BlCoreConstants.PAY_PAL :((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider();
                 getBlEspEventService()
                     .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
                         getOrderCancelEntries());
@@ -996,8 +1020,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
                         grandSubTotal);
                     final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
+                    /*final String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
+                        ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();*/
                     final String paymentMethodType= StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
-                        ? BlCoreConstants.PAY_PAL :paymentType.append(((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider()).append(getMessageIfGcApplied(gcString)).toString();
+                        ? BlCoreConstants.PAY_PAL :((BrainTreePaymentInfoModel)this.getOrderModel().getPaymentInfo()).getPaymentProvider();
                     getBlEspEventService()
                         .sendOrderRefundEvent(this.getOrderModel(),grandSubTotal, paymentMethodType,
                             getOrderCancelEntries());

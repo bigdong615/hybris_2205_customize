@@ -91,5 +91,9 @@ public class BlCustomCancelRefundConstants extends GeneratedBlloggingConstants {
     public static final String SUCCESSFULLY_CANCELLED_AND_INITIATED_REFUND_FOR_ORDER = "Successfully cancelled and initiated refund for order: ";
     public static final String PLEASE_CREATE_GIFT_CARD_WITH_AMOUNT = ". Please create gift card with amount: ";
 
+    public static final String SPLIT_PATTERN = "Expires at:";
+    public static final String PARSE_PATTERN = "E MMM d HH:mm:ss z yyyy";
+    public static final String PARSING_EXCEPTION = "Exception while parsing date: {}";
+
     private BlCustomCancelRefundConstants() {}
 }

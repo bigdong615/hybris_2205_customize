@@ -246,12 +246,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		final BlSerialProductModel blSerialProductModel = null;
 		
 		final CartModel cartModel = blCartService.getSessionCart();
+		// Removing previous cart model to ensure if the card is not used earlier
+		getModelService().remove(cartModel);
+		final CartModel giftCardCartModel = getBlCartService().getSessionCart();
 		final CommerceCartParameter parameter = new CommerceCartParameter();
 		try
 		{
 			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(productCode);
 			//For Gift card product
-			if(Objects.nonNull(blProductModel) && Objects.nonNull(cartModel))
+			if(Objects.nonNull(blProductModel) && Objects.nonNull(giftCardCartModel))
 			{	
 			parameter.setProduct(blProductModel);
 			parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
@@ -265,7 +268,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		   parameter.setRecipientMessage(giftCardForm.getMessage());
 			parameter.setCreateNewEntry(false);
 			parameter.setEnableHooks(true);
-			parameter.setCart(cartModel);
+			parameter.setCart(giftCardCartModel);
 			parameter.setQuantity(quantity);
 			}
 		}
@@ -280,7 +283,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		}
 
 		final CommerceCartModification commerceCartModification = getCommerceCartService().addToCart(parameter);
-		setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
+		setCartType(blSerialProductModel, giftCardCartModel, commerceCartModification,parameter);
 
 		return getCartModificationConverter().convert(commerceCartModification);
 
@@ -821,6 +824,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
+	
+	/**
+    * @inheritDoc
+    */
+   @Override
+ 	public boolean isRentalCartOnly()
+ 	{
+   	return getBlCartService().isRentalCartOnly();
+ 	}
 
   /**
    * Gets the bl cart service.

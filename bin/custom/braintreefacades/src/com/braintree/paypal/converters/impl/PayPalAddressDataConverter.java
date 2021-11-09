@@ -34,7 +34,7 @@ public class PayPalAddressDataConverter implements Converter<AddressModel, PayPa
 	public PayPalAddressData convert(final AddressModel hybrisAddress, final PayPalAddressData paypalAddress)
 			throws ConversionException
 	{
-		String recipientName = hybrisAddress.getFirstname() + " " + hybrisAddress.getLastname();
+		String recipientName = StringUtils.stripToEmpty(hybrisAddress.getFirstname()) + " " + StringUtils.stripToEmpty(hybrisAddress.getLastname());
 		if (hybrisAddress.getTitle() != null){
 			recipientName = hybrisAddress.getTitle().getName() + " " + recipientName;
 		}

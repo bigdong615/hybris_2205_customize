@@ -19,11 +19,13 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -85,9 +87,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setType(getOrderType(orderModel));
         data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-        data.setStatus(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()) ?
-            BlCoreConstants.RECEIVED :
-            getRequestValue(getOrderStatus(orderModel)));
+        data.setStatus(getRequestValue(getOrderStatus(orderModel)));
         data.setDateplaced(formatter.format(orderModel.getDate()));
         if(Objects.nonNull(orderModel.getDeliveryMode())) {
           final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) orderModel
@@ -116,7 +116,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         if (Objects.nonNull(orderModel.getPaymentInfo())) {
             final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
             data.setPaymenttype(StringUtils.equalsIgnoreCase(BlCoreConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
-                ? BlCoreConstants.PAY_PAL :checkIsGiftCardUsed(orderModel, getRequestValue(brainTreePaymentInfoModel.getPaymentProvider())));
+                ? BlCoreConstants.PAY_PAL : brainTreePaymentInfoModel.getPaymentProvider());
         }
         if(StringUtils.isNotBlank(orderModel.getPoNumber())){
           data.setPaymenttype(BlCoreConstants.PO);
@@ -175,7 +175,9 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+              if(StringUtils.isNotEmpty(orderModel.getPickUpPersonEmail())){
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS, getStoreOpeningHours(shippingAddress));
+              }
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES, StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
               final Transformer transformer = getTransformerFactoryObject();
@@ -191,6 +193,23 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             }
         }
     }
+
+  /**
+   * It returns opening hours of a store.
+   *
+   * @param shippingAddress the AddressModel
+   * @return opening hours
+   */
+  private String getStoreOpeningHours(final AddressModel shippingAddress) {
+    final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
+    final StringBuilder stringBuilder = new StringBuilder();
+    if (MapUtils.isNotEmpty(openingDaysDetails)) {
+      openingDaysDetails.forEach(
+          (key, value) -> stringBuilder.append(key).append(BlCoreConstants.COLON).append(value)
+              .append(StringUtils.SPACE));
+    }
+    return stringBuilder.toString();
+  }
 
 
   /**

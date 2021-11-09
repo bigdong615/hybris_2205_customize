@@ -156,7 +156,12 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
-				createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
+				if(orderModel instanceof CartModel){
+					createCaptureTransactionEntry(orderModel, result, paymentInfo);
+				}
+				else {
+					createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
+				}
 				addTotalDepositedAmountOnOrder(orderModel, paymentInfo, result);
 				return result.isSuccess();
 			} else {
@@ -585,7 +590,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		return createCaptureTransactionEntry(order, result, null);
 	}
 
-	private PaymentTransactionEntryModel createCaptureTransactionEntry(final OrderModel order,
+	private PaymentTransactionEntryModel createCaptureTransactionEntry(final AbstractOrderModel order,
 			final BrainTreeAuthorizationResult result, final BrainTreePaymentInfoModel paymentInfo) {
 		final PaymentTransactionEntryModel transactionEntry = createTransactionEntry(
 				PaymentTransactionType.CAPTURE, order, result, paymentInfo);
@@ -609,12 +614,13 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
    * @param order the order
    * @param paymentInfo the payment info
    */
-  private void changeOrderStatusForPayment(final OrderModel order, final BrainTreePaymentInfoModel paymentInfo)
+  private void changeOrderStatusForPayment(final AbstractOrderModel order, final BrainTreePaymentInfoModel paymentInfo)
   {
     if (Objects.isNull(paymentInfo) || (!paymentInfo.isCreateNewTransaction() && !paymentInfo.isIsDepositPayment()))
     {
       if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(order))
       {
+
         getBrainTreePaymentTransactionService().setOrderStatus(order, OrderStatus.PAYMENT_CAPTURED);
       }
       else
