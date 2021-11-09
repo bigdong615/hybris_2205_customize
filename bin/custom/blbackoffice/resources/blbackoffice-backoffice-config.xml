@@ -2175,7 +2175,7 @@
 		</df:dynamicForms>
 	</context>
 
-	<context merge-by="replace" parent="CatalogUnawareMediaModel" type="VerificationDocumentMedia"
+	<context merge-by="replace" parent="CatalogUnawareMedia" type="VerificationDocumentMedia"
 		component="editor-area"
 		principal="verificationdocagentrole">
 		<ea:editorArea name="">
@@ -2192,6 +2192,8 @@
 					<ea:attribute qualifier="documentType" />
 					<ea:attribute qualifier="expiryDate" />
 					<ea:attribute qualifier="creationTime" />
+					<ea:attribute qualifier="code" />
+					<ea:attribute qualifier="URL" />
 				</ea:section>
 			</ea:tab>
 		</ea:editorArea>
