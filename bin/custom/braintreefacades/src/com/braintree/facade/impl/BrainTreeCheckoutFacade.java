@@ -52,14 +52,18 @@ import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -552,6 +556,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 								billing.setBillPaid(true);
 								getModelService().save(billing);
 								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
+								setOutstandingBill(consignment.getOrder().getUser(), billing);
                 storeBillingChargesTypeToMap(productCodeWiseItemCharge, consignmentEntry, billing);
               }
 						}))));
@@ -575,7 +580,22 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return productCodeWiseItemCharge;
 	}
 
-  /**
+	/**
+	 * It removes the billing charges instance which has been paid by the customer
+	 * @param user the customer model
+	 * @param billing the billing charges
+	 */
+	private void setOutstandingBill(final UserModel user, final BlItemsBillingChargeModel billing) {
+		final CustomerModel customerModel = (CustomerModel) user;
+		if (CollectionUtils.isNotEmpty(customerModel.getOutstandingBills())) {
+			final List<BlItemsBillingChargeModel> outstandingBills = new ArrayList<>(customerModel.getOutstandingBills());
+			outstandingBills.remove(billing);
+			customerModel.setOutstandingBills(outstandingBills);
+			getModelService().save(customerModel);
+		}
+	}
+
+	/**
    * It stores billing charge type to a map.
    *
    * @param productCodeWiseItemCharge
