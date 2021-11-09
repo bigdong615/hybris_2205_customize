@@ -199,7 +199,11 @@ public class BlControllerConstants
 	public static final String ENABLE_DATE_PICKER = "enableDatePicker";
 	public static final String HAS_USER_RESTRICTION = "hasUserRestriction";
 	public static final String BL_GROUP = "BLGroup";
-
+	
+	public static final String MESSAGE_KEY = "messageKey";
+	public static final String GC_ERROR_MESSAGE_KEY = "giftcard.PurchaseForm.not.allow.addtocart.popup";
+	public static final String USED_CART_ERROR_MESSAGE_KEY = "text.addtocart.interception.popup";
+	public static final String USED_CART_LOG_ERROR_MESSAGE = "Used Cart Found";
 
 	private BlControllerConstants()
 	{
