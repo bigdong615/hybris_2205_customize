@@ -39,7 +39,6 @@ import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
-
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
@@ -71,13 +70,11 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -126,9 +123,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	public boolean createAuthorizationTransaction(Map<String, String> customFields)
 	{
 		final CartModel cart = cartService.getSessionCart();
-		customFields = getCustomFields(cart);
 		try {
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, getCustomFields(cart),
 				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
@@ -156,12 +152,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
-				if(orderModel instanceof CartModel){
-					createCaptureTransactionEntry(orderModel, result, paymentInfo);
-				}
-				else {
-					createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
-				}
+				createCaptureTransactionEntry(orderModel, result, paymentInfo);
 				addTotalDepositedAmountOnOrder(orderModel, paymentInfo, result);
 				return result.isSuccess();
 			} else {
@@ -1311,6 +1302,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		return customFieldsService.getDefaultCustomFieldsMap();
 	}
 
+	/**
+	 * It gets the custom fields
+	 * @param order the order model
+	 * @return custom fields
+	 */
 	private Map<String, String> getCustomFields(final AbstractOrderModel order)
 	{
 		return customFieldsService.getDefaultCustomFieldsMap(order);
@@ -1732,7 +1728,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
     catch (final Exception exception)
     {
       BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
-          "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order.getCode(), poAmount);
+          "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order, poAmount);
     }
     return Boolean.FALSE;
   }
