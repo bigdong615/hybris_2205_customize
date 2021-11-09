@@ -113,9 +113,7 @@
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
             <value code="PACKAGE"/>
-          <value code="SUPPORT"/>
-          <value code="ACCESSORIES"/>
-           <value code="NEWGEAR"/>
+            <value code="NEWGEAR"/>
         </enumtype>
 
         <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">

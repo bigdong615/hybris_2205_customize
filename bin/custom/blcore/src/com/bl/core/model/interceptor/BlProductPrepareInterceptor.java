@@ -15,6 +15,7 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class is for setting the auto generated product Id on BlProduct when it is created and has
@@ -37,6 +39,8 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   private EnumerationService enumerationService;
   private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
+  @Value("${excluded.product.type.enum.list}")
+  private String excludedProducts;
 
   @Override
   public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
@@ -129,7 +133,8 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.PACKAGE.equals(blProductModel.getProductType()) && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
+    final String[] excludedProductList = excludedProducts.split(",");
+    if (retailPrice != null && retailPrice > 0.0D && !(Arrays.asList(excludedProductList).contains(blProductModel.getProductType().getCode())) ) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
