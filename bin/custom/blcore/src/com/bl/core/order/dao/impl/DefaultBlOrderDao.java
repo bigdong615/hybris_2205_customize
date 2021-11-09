@@ -57,8 +57,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
 			+ "} BETWEEN ?startDate AND ?endDate) AND {o:status} IN "
-			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND {" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
-			+ "} =?manualReviewStatusByReshuffler";
+			+ "({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED_MANUAL_REVIEW'}}) AND ({o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER
+			+ "} =?manualReviewStatusByReshuffler OR {o:" + OrderModel.MANUALREVIEWSTATUSBYRESHUFFLER + "}  is null)";
 
 	private static final String GET_ORDERS_OF_UNAVAILABLE_SOFT_ASSIGNED_SERIALS = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o JOIN " + OrderEntryModel._TYPECODE + " AS oe ON {oe:order} = {o:pk} JOIN " + BlProductModel._TYPECODE

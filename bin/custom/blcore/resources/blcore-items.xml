@@ -3035,7 +3035,7 @@
                     </attribute>
                     <attribute qualifier="addressID" type="java.lang.String">
 						<persistence type="property"/>
-						<modifiers read="true" write="true" optional="true" unique="true"/>
+						<modifiers read="true" write="true" optional="true"/>
 						<description>Address ID as unique identifier for legacy addresses</description>
 			  		</attribute>
                 </attributes>
@@ -3572,11 +3572,6 @@
                 <persistence type="property" />
                 <description>identifies Photo or Video customer</description>
               </attribute>
-              <!-- <attribute autocreate="true" qualifier="outstandingBillType" type="BillTypeEnum">
-                <modifiers read="true" write="true" search="true" optional="true" />
-                <persistence type="property" />
-                <description>Type of outstanding bill (associated with most recent order)</description>
-              </attribute> -->
               <attribute autocreate="true" qualifier="badBehaviorNotes" type="java.lang.String">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property">
@@ -3682,7 +3677,7 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Total spend in a rolling 1 year period</description>
               </attribute>
-              <attribute autocreate="true" qualifier="outstandingBill" type="BillingChargesMap">
+              <attribute autocreate="true" qualifier="outstandingBills" type="BlItemCharges">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Outstanding bill due on associated bill</description>

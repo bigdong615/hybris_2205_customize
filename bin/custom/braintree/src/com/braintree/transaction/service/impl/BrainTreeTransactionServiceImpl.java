@@ -71,6 +71,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -125,12 +126,13 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	public boolean createAuthorizationTransaction(Map<String, String> customFields)
 	{
 		final CartModel cart = cartService.getSessionCart();
+		customFields = getCustomFields(cart);
 		try {
 			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
 				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+			BlLogger.logMessage(LOG, Level.ERROR,
 				"Error occurred while creating authorization for the cart {} while placing an order", cart.getCode(), ex);
 		}
 		return false;
@@ -147,10 +149,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BrainTreeAuthorizationResult result = null;
 			//Added condition for modifyPayment with zero order total (full Gift Card Order)
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
-				result = brainTreeAuthorize(orderModel, getCustomFields(),
+				result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
 			}else {
-				 result = brainTreeAuthorize(orderModel, getCustomFields(),
+				 result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
@@ -1301,6 +1303,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private Map<String, String> getCustomFields()
 	{
 		return customFieldsService.getDefaultCustomFieldsMap();
+	}
+
+	private Map<String, String> getCustomFields(final AbstractOrderModel order)
+	{
+		return customFieldsService.getDefaultCustomFieldsMap(order);
 	}
 	
 	/**
