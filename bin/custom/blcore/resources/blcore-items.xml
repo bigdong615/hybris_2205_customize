@@ -3047,6 +3047,11 @@
                         <modifiers read="true" write="true" search="true" optional="true" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
+                    <attribute qualifier="addressID" type="java.lang.String">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true"/>
+						<description>Address ID as unique identifier for legacy addresses</description>
+			  		</attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -3581,11 +3586,6 @@
                 <persistence type="property" />
                 <description>identifies Photo or Video customer</description>
               </attribute>
-              <attribute autocreate="true" qualifier="outstandingBillType" type="BillTypeEnum">
-                <modifiers read="true" write="true" search="true" optional="true" />
-                <persistence type="property" />
-                <description>Type of outstanding bill (associated with most recent order)</description>
-              </attribute>
               <attribute autocreate="true" qualifier="badBehaviorNotes" type="java.lang.String">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property">
@@ -3691,11 +3691,10 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Total spend in a rolling 1 year period</description>
               </attribute>
-              <attribute autocreate="true" qualifier="outstandingBillAmount" type="java.math.BigDecimal">
+              <attribute autocreate="true" qualifier="outstandingBills" type="BlItemCharges">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
-                <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
-                <description>Amount due on associated bill</description>
+                <description>Outstanding bill due on associated bill</description>
               </attribute>
               <attribute autocreate="true" qualifier="blRewards" type="java.math.BigDecimal">
                 <modifiers read="true" write="true" search="true" optional="true" />
