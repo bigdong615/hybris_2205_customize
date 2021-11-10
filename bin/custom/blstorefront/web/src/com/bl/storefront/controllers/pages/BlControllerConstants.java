@@ -204,6 +204,12 @@ public class BlControllerConstants
 	public static final String GC_ERROR_MESSAGE_KEY = "giftcard.PurchaseForm.not.allow.addtocart.popup";
 	public static final String USED_CART_ERROR_MESSAGE_KEY = "text.addtocart.interception.popup";
 	public static final String USED_CART_LOG_ERROR_MESSAGE = "Used Cart Found";
+	
+	public static final String RENTAL_START_MESSAGE = "rentalStartMessageKey";
+	public static final String RENTAL_END_MESSAGE = "rentalEndMessageKey";
+	public static final String RENTAL_TO_DATE_ARGUMENT = "rentalErrorToDate";
+	public static final String RENTAL_START_MESSAGE_KEY = "blackout.rental.start.date.error";
+	public static final String RENTAL_END_MESSAGE_KEY = "blackout.rental.end.date.error";
 
 	private BlControllerConstants()
 	{

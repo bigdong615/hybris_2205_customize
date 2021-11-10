@@ -59,7 +59,17 @@
 								     <form:form id="updateBlOptionsForm" action="${cartUpdatelOptionsFormAction}" method="post" >
 					                      <input type="hidden" name="entryNumber" value="" />
 					                      <input type="hidden" name="bloptions" value="" />
-           						        </form:form>        
+           						        </form:form>  
+           						        <c:if test="${not empty rentalStartMessageKey}">
+	           						        <div class="notification notification-error blackout-error-div">
+	           						        	<spring:theme code="${rentalStartMessageKey}"/>
+	           						        </div>
+           						        </c:if>
+           						        <c:if test="${not empty rentalEndMessageKey}">
+	           						        <div class="notification notification-error blackout-error-div">
+	           						        	<spring:theme code="${rentalEndMessageKey}" arguments="${rentalErrorToDate}"/>
+	           						        </div>
+	           						    </c:if>      
                               <div class="cart-actions">
                                   <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
@@ -76,7 +86,7 @@
                                   </sec:authorize>
 
                               </div>
-
+								
                               <!--BL-533 changes -->
                               <p class="mt-5 d-none body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
