@@ -1204,7 +1204,7 @@ public class CartPageController extends AbstractCartPageController
 
 	{
 		final CartData cartData = getCartFacade().getSessionCart();
-		if (isUsedGearTimerEnd && BooleanUtils.isFalse(cartData.getIsRentalCart()))
+		if (isUsedGearTimerEnd && BooleanUtils.isFalse(cartData.getIsRentalCart()) && BooleanUtils.isFalse(cartData.getHasGiftCart()))
 		{
 			getBlCartFacade().removeCartEntries();
 			return REDIRECT_CART_URL;
