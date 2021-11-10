@@ -189,4 +189,16 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     return super.getTokenAndTriggerEvent(orderPullBackRequest);
   }
 
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderPullBackItemsRemoved(
+      final OrderPullBackRequest orderPullBackRequest) {
+
+    return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
+
 }

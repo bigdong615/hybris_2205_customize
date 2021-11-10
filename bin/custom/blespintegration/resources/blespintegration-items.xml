@@ -33,6 +33,7 @@
 					<value code="BILL_PAID" />
 					<value code="ORDER_REFUND" />
 				<value code="ORDER_PULL_BACK_ITEMS_ADDED" />
+				<value code="ORDER_PULL_BACK_ITEMS_REMOVED" />
 
 			</enumtype>
 			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">

@@ -184,4 +184,12 @@ public interface BlESPEventRestService {
    * @return
    */
   ESPEventResponseWrapper sendOrderPullBackItemsAdded(final OrderPullBackRequest orderPullBackRequest);
+
+  /**
+   * Send Order Pull Back Items Removed Event by calling Order Pull Back Items Removed ESP Event API
+   *
+   * @param orderPullBackRequest the orderPullBackRequest
+   * @return
+   */
+  ESPEventResponseWrapper sendOrderPullBackItemsRemoved(final OrderPullBackRequest orderPullBackRequest);
 }

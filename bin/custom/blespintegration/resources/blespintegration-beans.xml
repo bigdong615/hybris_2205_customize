@@ -1027,25 +1027,25 @@
 			<annotations>@JsonProperty("Order Type")</annotations>
 		</property>
 		<property name="dateplaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("date placed")</annotations>
+			<annotations>@JsonProperty("Date Placed")</annotations>
 		</property>
 		<property name="shippingmethodtype" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("shipping method type")</annotations>
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
 		</property>
 		<property name="shippingmethod" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("shipping method")</annotations>
+			<annotations>@JsonProperty("Shipping Method")</annotations>
 		</property>
 		<property name="expectedshippingdate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("expected shipping date")</annotations>
+			<annotations>@JsonProperty("Expected Shipping Date")</annotations>
 		</property>
 		<property name="arrivaldate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("arrival date")</annotations>
+			<annotations>@JsonProperty("Arrival Date")</annotations>
 		</property>
 		<property name="returndate" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("return date")</annotations>
+			<annotations>@JsonProperty("Return Date")</annotations>
 		</property>
 		<property name="itemsxml" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("items xml")</annotations>
+			<annotations>@JsonProperty("Items XML")</annotations>
 		</property>
 	</bean>
 

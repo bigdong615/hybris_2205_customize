@@ -144,4 +144,10 @@ public interface BlESPEventService {
      * @param orderModel order model  to get the values
      */
     void sendOrderPullBackItemsAdded(final OrderModel orderModel);
+
+    /**
+     * This method created for Order pull back items removed ESP Event
+     * @param orderModel order model  to get the values
+     */
+    void sendOrderPullBackItemsRemoved(final OrderModel orderModel);
 }
