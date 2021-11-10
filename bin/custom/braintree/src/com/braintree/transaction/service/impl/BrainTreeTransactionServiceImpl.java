@@ -39,7 +39,6 @@ import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
-
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
@@ -76,7 +75,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -126,11 +124,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	{
 		final CartModel cart = cartService.getSessionCart();
 		try {
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, getCustomFields(cart),
 				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+			BlLogger.logMessage(LOG, Level.ERROR,
 				"Error occurred while creating authorization for the cart {} while placing an order", cart.getCode(), ex);
 		}
 		return false;
@@ -147,19 +145,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BrainTreeAuthorizationResult result = null;
 			//Added condition for modifyPayment with zero order total (full Gift Card Order)
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
-				result = brainTreeAuthorize(orderModel, getCustomFields(),
+				result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
 			}else {
-				 result = brainTreeAuthorize(orderModel, getCustomFields(),
+				 result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
-				if(orderModel instanceof CartModel){
-					createCaptureTransactionEntry(orderModel, result, paymentInfo);
-				}
-				else {
-					createCaptureTransactionEntry((OrderModel) orderModel, result, paymentInfo);
-				}
+				createCaptureTransactionEntry(orderModel, result, paymentInfo);
 				addTotalDepositedAmountOnOrder(orderModel, paymentInfo, result);
 				return result.isSuccess();
 			} else {
@@ -1308,6 +1301,16 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	{
 		return customFieldsService.getDefaultCustomFieldsMap();
 	}
+
+	/**
+	 * It gets the custom fields
+	 * @param order the order model
+	 * @return custom fields
+	 */
+	private Map<String, String> getCustomFields(final AbstractOrderModel order)
+	{
+		return customFieldsService.getDefaultCustomFieldsMap(order);
+	}
 	
 	/**
 	 * This method is used to set Default card 
@@ -1725,7 +1728,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
     catch (final Exception exception)
     {
       BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
-          "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order.getCode(), poAmount);
+          "Error Occurred while making payment with PO number : {} on modified order : {} for Amount : {}", poNumber, order, poAmount);
     }
     return Boolean.FALSE;
   }
