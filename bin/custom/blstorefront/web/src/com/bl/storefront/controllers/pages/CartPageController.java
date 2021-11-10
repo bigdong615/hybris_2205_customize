@@ -328,12 +328,13 @@ public class CartPageController extends AbstractCartPageController
 			final Date rentalStartDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(blCartService.isSelectedDateIsBlackoutDate(rentalStartDate, BlackoutDateTypeEnum.RENTAL_START_DATE))
 			{
-				GlobalMessages.addErrorMessage(model, "blackout.rental.start.date.error");
+				model.addAttribute(BlControllerConstants.RENTAL_START_MESSAGE,BlControllerConstants.RENTAL_START_MESSAGE_KEY);
 			}
 			final Date rentalEndDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(blCartService.isSelectedDateIsBlackoutDate(rentalEndDate, BlackoutDateTypeEnum.RENTAL_END_DATE))
 			{
-				GlobalMessages.addMessage(model,GlobalMessages.ERROR_MESSAGES_HOLDER , "blackout.rental.end.date.error", new Object[]{getRentalsDuration().getSelectedToDate()});
+				model.addAttribute(BlControllerConstants.RENTAL_END_MESSAGE,BlControllerConstants.RENTAL_END_MESSAGE_KEY);
+				model.addAttribute(BlControllerConstants.RENTAL_TO_DATE_ARGUMENT,getRentalsDuration().getSelectedToDate());
 			}
 		}
 	}
