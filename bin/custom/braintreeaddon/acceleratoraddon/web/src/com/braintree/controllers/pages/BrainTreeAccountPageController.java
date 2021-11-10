@@ -598,8 +598,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				model.addAttribute(BlControllerConstants.PAYMENT_METHOD, BlControllerConstants.PO);
 			}
 		} else if(null != order) {
+			// It creates a cloned payment info from the original payment info
 			final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
-					.getBrainTreePaymentInfoForCode(
+					.getClonedBrainTreePaymentInfoCode(
 							(CustomerModel) order.getUser(), paymentInfoId, paymentMethodNonce);
 			if (null != paymentInfo) {
 				paymentInfo.setExtendOrder(Boolean.FALSE);
