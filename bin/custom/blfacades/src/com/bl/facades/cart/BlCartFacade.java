@@ -209,4 +209,11 @@ public interface BlCartFacade extends CartFacade {
 	 * @return restricted entries name
 	 */
   String removeRestrictedEntries(final List<AbstractOrderEntryModel> restrictedEntries, final CartModel cartModel, final boolean isCartPage);
+  
+  /**
+   * Checks if is rental cart only.
+   *
+   * @return true, if is rental cart only
+   */
+  boolean isRentalCartOnly();
 }
