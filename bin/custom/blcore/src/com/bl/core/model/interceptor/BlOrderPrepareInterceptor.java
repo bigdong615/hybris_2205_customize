@@ -163,9 +163,14 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   	if(OrderStatus.COMPLETED.equals(abstractOrderModel.getStatus())) {
   		final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
   		customerModel.setCompletedOrderCount(customerModel.getCompletedOrderCount() + 1);
-  		modelService.save(customerModel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Completed order count : {} updated for the customer {} ",
 					customerModel.getCompletedOrderCount(), customerModel.getUid());
+			final Object previousStatus = abstractOrderModel.getItemModelContext()
+					.getOriginalValue(AbstractOrderModel.STATUS);
+			if(Objects.nonNull(previousStatus) && OrderStatus.INCOMPLETE.getCode().contains(previousStatus.toString())) {
+				customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() - 1);
+			}
+			modelService.save(customerModel);
 		}
 	}
 
@@ -176,7 +181,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setOrderValuePriorToShippedStatus(final AbstractOrderModel order) {
   	if(isOrderAfterShippedStatus(order.getStatus())) {
 			final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) order.getItemModelContext();
-			final OrderStatus status = itemModelCtx.getOriginalValue(BlCoreConstants.STATUS);
+			final OrderStatus status = itemModelCtx.getOriginalValue(AbstractOrderModel.STATUS);
 			if(OrderStatus.SHIPPED.equals(status)) {
 				final CustomerModel customerModel = (CustomerModel) order.getUser();
 				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
@@ -198,7 +203,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		return OrderStatus.INCOMPLETE.getCode().startsWith(orderStatus.getCode()) ||
 				BlCoreConstants.UNBOXED.startsWith(orderStatus.getCode()) ||
 				isOrderStatusAfterShipped(orderStatus) ||
-				BlCoreConstants.COMPLETED.startsWith(orderStatus.getCode());
+				OrderStatus.COMPLETED.getCode().startsWith(orderStatus.getCode());
 	}
 
 	private boolean isOrderStatusAfterShipped(final OrderStatus orderStatus) {
