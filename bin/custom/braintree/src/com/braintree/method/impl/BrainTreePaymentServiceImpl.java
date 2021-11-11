@@ -1003,8 +1003,11 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
     }
     return null;
   }
-  
-  private BrainTreePaymentInfoModel getClonedPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public BrainTreePaymentInfoModel getClonedPaymentInfoForCode(final CustomerModel customer, final String paymentInfoId,
       final String nonce)
   {
     try
