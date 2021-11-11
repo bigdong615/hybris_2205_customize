@@ -1033,8 +1033,8 @@
 		<property name="shippingMethod" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Shipping Method")</annotations>
 		</property>
-		<property name="expectedShipping" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Expected Shipping")</annotations>
+		<property name="expectedShippingdate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping Date")</annotations>
 		</property>
 		<property name="arrivalDate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Arrival Date")</annotations>
