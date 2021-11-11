@@ -811,3 +811,7 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
 .asmAutoComplete ul.ui-autocomplete li:hover{
   background: none !important;
 }
+
+.blackout-error-div{
+	margin-bottom: 40px !important;
+}
