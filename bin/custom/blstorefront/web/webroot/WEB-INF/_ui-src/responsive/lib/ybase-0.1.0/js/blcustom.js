@@ -863,9 +863,13 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
+        $('.gc-error-message').empty();
         var form = $('#giftCardPurchaseForm');
         var amount = form.find('input[name=amount]').val();
+        var message = form.find('textarea[name=message]').val();
+        var email = form.find('input[name=email]').val();
         if (amount < 25 || amount > 500) {
+            $('.gc-error-message').append(ACC.giftCardError.amount);
             $('.notification').show();
             $("body").removeClass("modal-open");
             $("body").removeAttr("style");
@@ -875,6 +879,24 @@ function startUsedGearCartTimer() {
         }
         if (amount >25 || amount < 500){
         	 $('.notification').hide();
+        }
+        if(message != null &&  message.length > 255){
+          $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+          $('.notification').show();
+          $("body").removeClass("modal-open");
+          $("body").removeAttr("style");
+          $('tn-gift-card-pdp').show();
+          $(".modal-backdrop").remove();
+          return false;
+        }
+        if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+          $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+          $('.notification').show();
+          $("body").removeClass("modal-open");
+          $("body").removeAttr("style");
+          $('tn-gift-card-pdp').show();
+          $(".modal-backdrop").remove();
+          return false;
         }
          var form = $('#giftCardPurchaseForm');
     
@@ -1051,6 +1073,26 @@ $('#placeOrderSummary').one("click", function(e) {
 				if($("#giftCardPurchaseForm").length > 0)
 				{
 					var giftCardForm = $("#giftCardPurchaseForm");
+					 var message = giftCardForm.find('textarea[name=message]').val();
+					 var email = giftCardForm.find('input[name=email]').val();
+              if(message != null &&  message.length > 255){
+                        $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+                        $('.notification').show();
+                        $("body").removeClass("modal-open");
+                        $("body").removeAttr("style");
+                        $('tn-gift-card-pdp').show();
+                        $(".modal-backdrop").remove();
+                        return false;
+              }
+              if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+               $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+                $('.notification').show();
+                $("body").removeClass("modal-open");
+                $("body").removeAttr("style");
+                $('tn-gift-card-pdp').show();
+                $(".modal-backdrop").remove();
+                return false;
+              }
 					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
 					var email = createHiddenParameter("email",giftCardForm.find('input[name="email"]').val());
 					var message = createHiddenParameter("message",giftCardForm.find('textarea[name="message"]').val());
@@ -1122,7 +1164,28 @@ function hideShorting(){
   
   $("#submitCard").on("click",function(e) {
 	  e.preventDefault();
+	  $('.gc-error-message').empty();
 		var submitForm = $("#giftCardPurchaseForm");
+    var message = submitForm.find('textarea[name=message]').val();
+    var email = submitForm.find('input[name=email]').val();
+    if(message != null &&  message.length > 255){
+              $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+              $('.notification').show();
+              $("body").removeClass("modal-open");
+              $("body").removeAttr("style");
+              $('tn-gift-card-pdp').show();
+              $(".modal-backdrop").remove();
+              return false;
+    }
+    if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+      $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+      $('.notification').show();
+      $("body").removeClass("modal-open");
+      $("body").removeAttr("style");
+      $('tn-gift-card-pdp').show();
+      $(".modal-backdrop").remove();
+      return false;
+    }
 		submitForm.submit();
   });
 
