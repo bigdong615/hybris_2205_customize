@@ -1564,6 +1564,7 @@
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 	</bean>
 
 
@@ -1706,5 +1707,10 @@
 
 	<!--BL-803 UPS Scrape Ends-->
 
+	<!-- Order Manual Allocation populator ESP -->
+	<bean id="blOrderManualAllocationRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
 
 </beans>
