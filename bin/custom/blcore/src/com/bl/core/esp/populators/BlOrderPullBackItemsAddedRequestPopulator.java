@@ -7,6 +7,8 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.util.Assert;
 
 /**
@@ -37,7 +39,7 @@ public class BlOrderPullBackItemsAddedRequestPopulator extends ESPEventCommonPop
     data.setOrderid(order.getCode());
     data.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
-    populateOrderDataForOrderPullBackItems(order , data , BlCoreConstants.ORDER_PULL_BACK_ADDED_ITEMS_EVENT_TEMPLATE);
+    populateOrderDataForOrderPullBackItems(order , data , StringUtils.EMPTY);
     orderPullBackRequest.setData(data);
   }
 

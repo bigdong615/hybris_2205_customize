@@ -366,8 +366,6 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
             Objects.nonNull(order.getStatus()) ? order.getStatus().getCode() : StringUtils.EMPTY));
         data.setOrdertype(getOrderType(order));
         data.setDateplaced(formatter.format(order.getDate()));
-        data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().
-            getString(templateName)));
         if(Objects.nonNull(order.getDeliveryMode())) {
             final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) order
                 .getDeliveryMode());

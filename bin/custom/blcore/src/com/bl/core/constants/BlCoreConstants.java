@@ -407,10 +407,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 
 	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.added.event.definition.key";
-	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_TEMPLATE = "order.pull.back.item.added.event.template";
 
 	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.removed.event.definition.key";
-	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE = "order.pull.back.item.removed.event.template";
+	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE = "pullBackOrderRemoveItems";
 
 	public static final String BORROW_LENSES_SUBSCRIBER_ID = "borrow.lenses.subscriber.id";
 
