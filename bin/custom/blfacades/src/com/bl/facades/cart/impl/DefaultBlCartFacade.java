@@ -824,6 +824,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
 		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
+	
+	/**
+    * @inheritDoc
+    */
+   @Override
+ 	public boolean isRentalCartOnly()
+ 	{
+   	return getBlCartService().isRentalCartOnly();
+ 	}
 
   /**
    * Gets the bl cart service.
