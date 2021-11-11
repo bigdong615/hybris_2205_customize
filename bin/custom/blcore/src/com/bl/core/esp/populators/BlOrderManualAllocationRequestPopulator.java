@@ -82,9 +82,6 @@ public class BlOrderManualAllocationRequestPopulator extends
         .setSubscriberid(getConfigurationService().getConfiguration().getString(
             BlCoreConstants.ORDER_MANUAL_ALLOCATION_SUBSCRIBER_ID));
     orderManualAllocationData.setOldOrderId(StringUtils.EMPTY);
-    orderManualAllocationData
-        .setTemplate(getRequestValue(getConfigurationService().getConfiguration().
-            getString(BlCoreConstants.ORDER_MANUAL_ALLOCATION_EVENT_TEMPLATE)));
     orderManualAllocationData.setStatus(getRequestValue(
         Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode()
             : StringUtils.EMPTY));
@@ -103,7 +100,7 @@ public class BlOrderManualAllocationRequestPopulator extends
     if (BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils
         .isFalse(orderModel.isGiftCardOrder())) {
       orderManualAllocationData
-          .setExpectedShipping(formatter.format(orderModel.getActualRentalStartDate()));
+          .setExpectedShippingdate(formatter.format(orderModel.getActualRentalStartDate()));
       orderManualAllocationData.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
       orderManualAllocationData.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
     }
