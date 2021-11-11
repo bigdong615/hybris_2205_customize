@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
  * This populator created for order pull back added items ESP Event service
  * @author Manikandan
  */
-public class BlOrderPullBackRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderPullBackRequest> {
+public class BlOrderPullBackItemsAddedRequestPopulator extends ESPEventCommonPopulator<OrderModel, OrderPullBackRequest> {
 
   /**
    * Populate the  instance with values from the OrderModel.

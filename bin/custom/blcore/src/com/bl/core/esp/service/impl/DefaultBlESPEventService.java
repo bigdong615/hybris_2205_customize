@@ -13,7 +13,7 @@ import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator;
-import com.bl.core.esp.populators.BlOrderPullBackRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
 import com.bl.core.esp.populators.BlOrderRefundRequestPopulator;
 import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
@@ -101,7 +101,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
-  private BlOrderPullBackRequestPopulator blOrderPullBackRequestPopulator;
+  private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
 
 
   private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
@@ -763,7 +763,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void sendOrderPullBackItemsAdded(final OrderModel orderModel) {
     if (Objects.nonNull(orderModel)) {
       final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
-      getBlOrderPullBackRequestPopulator().populate(orderModel, orderPullBackRequest);
+      getBlOrderPullBackItemsAddedRequestPopulator().populate(orderModel, orderPullBackRequest);
       ESPEventResponseWrapper espEventResponseWrapper = null;
       try
       {
@@ -984,13 +984,13 @@ public class DefaultBlESPEventService implements BlESPEventService {
     this.blOrderBillPaidRequestPopulator = blOrderBillPaidRequestPopulator;
   }
 
-  public BlOrderPullBackRequestPopulator getBlOrderPullBackRequestPopulator() {
-    return blOrderPullBackRequestPopulator;
+  public BlOrderPullBackItemsAddedRequestPopulator getBlOrderPullBackItemsAddedRequestPopulator() {
+    return blOrderPullBackItemsAddedRequestPopulator;
   }
 
-  public void setBlOrderPullBackRequestPopulator(
-      BlOrderPullBackRequestPopulator blOrderPullBackRequestPopulator) {
-    this.blOrderPullBackRequestPopulator = blOrderPullBackRequestPopulator;
+  public void setBlOrderPullBackItemsAddedRequestPopulator(
+      BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator) {
+    this.blOrderPullBackItemsAddedRequestPopulator = blOrderPullBackItemsAddedRequestPopulator;
   }
 
 

@@ -1563,7 +1563,7 @@
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
-		<property name="blOrderPullBackRequestPopulator" ref="blOrderPullBackRequestPopulator"/>
+		<property name="blOrderPullBackItemsAddedRequestPopulator" ref="blOrderPullBackItemsAddedRequestPopulator"/>
 		<property name="blOrderPullBackItemRemovedRequestPopulator" ref="blOrderPullBackItemRemovedRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
@@ -1710,8 +1710,8 @@
 
 
 	<!-- BL-1516 Order Pull Back Items Added ESP Event populator -->
-	<bean id="blOrderPullBackRequestPopulator" parent="espEventCommonPopulator"
-		class="com.bl.core.esp.populators.BlOrderPullBackRequestPopulator">
+	<bean id="blOrderPullBackItemsAddedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator">
 	</bean>
 
 	<!-- BL-1515 Order Pull Back Items Removed ESP Event populator -->
