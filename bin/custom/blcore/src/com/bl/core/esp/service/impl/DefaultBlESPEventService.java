@@ -23,6 +23,7 @@ import com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
@@ -53,6 +54,7 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -784,9 +786,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param orderModel to get the values
    */
   @Override
-  public void sendOrderPullBackItemsRemoved(final OrderModel orderModel) {
+  public void sendOrderPullBackItemsRemoved(final OrderModel orderModel , final List<BlSerialProductModel> blSerialProductModels) {
     if (Objects.nonNull(orderModel)) {
       final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
+     orderPullBackRequest.setSerialProducts(blSerialProductModels);
       getBlOrderPullBackItemRemovedRequestPopulator().populate(orderModel, orderPullBackRequest);
       ESPEventResponseWrapper espEventResponseWrapper = null;
       try

@@ -1057,6 +1057,7 @@
 		<property name="data" type="com.bl.esp.dto.orderpullback.data.OrderPullBackItems" equals="true">
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
+		<property name="serialProducts" type="java.util.List&lt;com.bl.core.model.BlSerialProductModel>" />
 	</bean>
 
 

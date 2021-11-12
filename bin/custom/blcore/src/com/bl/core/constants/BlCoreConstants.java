@@ -508,6 +508,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PLUS = "+";
 	public static final String BL_PRODUCT_VALIDATE_INTERCEPTOR = "BlProductValidateInterceptor";
 
+	public static final String FEDEX = "fedex";
+	public static final String UPS = "ups";
+	public static final String USPS = "usps";
+
 	private BlCoreConstants()
 	{
 		//empty

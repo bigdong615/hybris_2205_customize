@@ -26,6 +26,7 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -60,7 +61,12 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
 
     private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+
+    private static final List<String> LIST_OF_OC_LOCATIONS = Arrays.asList(BlCoreConstants.FEDEX, BlCoreConstants.UPS,BlCoreConstants.USPS);
+
+
     private static final Logger LOG = Logger.getLogger(ESPEventCommonPopulator.class);
+
 
 
     /**
@@ -358,8 +364,10 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * This method created to populate order data from order model
      * @param order order model to get the data
      * @param data data to get updated
+     * @param blSerialProductModels
      */
-    protected void populateOrderDataForOrderPullBackItems(final OrderModel order, final OrderPullBackItems data , final String templateName) {
+    protected void populateOrderDataForOrderPullBackItems(final OrderModel order,
+        final OrderPullBackItems data, final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
         final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
         data.setOldOrderId(StringUtils.EMPTY);
         data.setStatus(getRequestValue(
@@ -375,7 +383,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         data.setExpectedshippingdate(formatter.format(order.getRentalStartDate()));
         data.setArrivaldate(formatter.format(order.getRentalStartDate()));
         data.setReturndate(formatter.format(order.getRentalEndDate()));
-        populateOrderItemsInXML(order , data , templateName);
+        populateOrderItemsInXML(order , data , templateName , blSerialProductModels);
     }
 
     /**
@@ -383,19 +391,21 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param orderModel order model to get the data
      * @param data date to get updated
      * @param templateName template for request
+     * @param blSerialProductModels
      */
     private void populateOrderItemsInXML(final OrderModel orderModel, final OrderPullBackItems data,
-        final String templateName) {
+        final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
         try {
             final Document orderItemsInXMLDocument = createNewXMLDocument();
             final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
-
-            if (CollectionUtils.isNotEmpty(orderModel.getEntries())) {
-                for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
-                    populateOrderDetailsInXMl(entryModel , orderItemsInXMLDocument , rootOrderItems , templateName);
+                if(StringUtils.equalsIgnoreCase(templateName , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE) && CollectionUtils.isNotEmpty(blSerialProductModels)){
+                    populateOrderDetailsForRemovedEntriesInXMl(orderItemsInXMLDocument , rootOrderItems , blSerialProductModels);
                 }
-            }
-
+                else if(CollectionUtils.isNotEmpty(orderModel.getEntries())) {
+                    for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
+                        populateOrderDetailsInXMl(entryModel, orderItemsInXMLDocument, rootOrderItems);
+                    }
+                }
             final Transformer transformer = getTransformerFactoryObject();
             final StringWriter writer = new StringWriter();
 
@@ -415,22 +425,40 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param entryModel entryModel
      * @param orderItemsInXMLDocument orderItemsInXMLDocument
      * @param rootOrderItems rootOrderItems
-     * @param templateName template to use for Request
      */
     private void populateOrderDetailsInXMl(final AbstractOrderEntryModel entryModel,
         final Document orderItemsInXMLDocument,
-        final Element rootOrderItems, final String templateName) {
+        final Element rootOrderItems) {
         final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
-        if (Objects.nonNull(entryModel.getProduct())) {
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
                 getRequestValue(entryModel.getProduct().getCode()));
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
                 entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
-            if(StringUtils.equalsIgnoreCase(templateName , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE)){
-                createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_QUANTITY,
-                    String.valueOf(entryModel.getQuantity()));
-            }
-        }
+
+    }
+
+
+    /**
+     * This method created to populate removed entry data in XML format
+     * @param orderItemsInXMLDocument  orderItemsInXMLDocument
+     * @param rootOrderItems rootOrderItems
+     * @param blSerialProductModels list of removed entries
+     */
+    private void populateOrderDetailsForRemovedEntriesInXMl(final Document orderItemsInXMLDocument,
+        final Element rootOrderItems, final List<BlSerialProductModel> blSerialProductModels) {
+        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+
+        blSerialProductModels.forEach(blSerialProductModel -> {
+                if(Objects.nonNull(blSerialProductModel)) {
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                        getRequestValue(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                        getProductTitle(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_QUANTITY,
+                        BlCoreConstants.ONE);
+                }
+        });
+
     }
 
     public ConfigurationService getConfigurationService() {

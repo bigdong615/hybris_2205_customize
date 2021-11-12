@@ -1,7 +1,10 @@
 package com.bl.core.esp.service;
 
+import com.bl.core.jalo.BlSerialProduct;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import java.util.List;
@@ -149,5 +152,5 @@ public interface BlESPEventService {
      * This method created for Order pull back items removed ESP Event
      * @param orderModel order model  to get the values
      */
-    void sendOrderPullBackItemsRemoved(final OrderModel orderModel);
+    void sendOrderPullBackItemsRemoved(final OrderModel orderModel , 	final List<BlSerialProductModel> previousChangedOrderEntriesList);
 }
