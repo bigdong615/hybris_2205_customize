@@ -868,7 +868,7 @@ function startUsedGearCartTimer() {
         var amount = form.find('input[name=amount]').val();
         var message = form.find('textarea[name=message]').val();
         var email = form.find('input[name=email]').val();
-        if (amount < 25 || amount > 500) {
+        if ((amount != undefined) && (amount < 25 || amount > 500)) {
             $('.gc-error-message').append(ACC.giftCardError.amount);
             $('.notification').show();
             $("body").removeClass("modal-open");
@@ -880,7 +880,7 @@ function startUsedGearCartTimer() {
         if (amount >25 || amount < 500){
         	 $('.notification').hide();
         }
-        if(message != null &&  message.length > 255){
+        if((message != undefined) && message != null &&  message.length > 255){
           $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
           $('.notification').show();
           $("body").removeClass("modal-open");
@@ -889,7 +889,7 @@ function startUsedGearCartTimer() {
           $(".modal-backdrop").remove();
           return false;
         }
-        if( !validateGiftEmail(email)){
+        if( (email != undefined) && (!validateGiftEmail(email))){
           $('.gc-error-message').append(ACC.giftCardError.emailValidation);
           $('.notification').show();
           $("body").removeClass("modal-open");
@@ -1183,7 +1183,7 @@ function hideShorting(){
               $(".modal-backdrop").remove();
               return false;
     }
-    if( !validateGiftEmail(email)){
+    if((email != undefined) && (!validateGiftEmail(email))){
       $('.gc-error-message').append(ACC.giftCardError.emailValidation);
       $('.notification').show();
       $("body").removeClass("modal-open");
