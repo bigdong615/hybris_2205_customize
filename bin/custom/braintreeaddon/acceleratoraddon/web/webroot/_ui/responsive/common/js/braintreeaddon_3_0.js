@@ -922,10 +922,10 @@ function createHostedFields(clientInstance) {
 				
 				var billingFormErrorCounts = validateBillingAddressFields();
 				var ccEnable = $('#paymentMethodBT').is(':checked');
-				if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
+				if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
 				{	
 					hasNoError = false;				
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
 				}
@@ -1191,17 +1191,15 @@ $('#submit_silentOrderPostForm').click(function () {
 		creditCardValidation(ACC.ccError.cardCVV);
 	}
 	
-	if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
-	{
-		
-		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+	if(ccEnable == true && $('#savedAddresses').length > 0 && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
+	{		
+		var validationDiv = $('<div class="notification notification-error mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
 		$('#validationMessage').append(validationDiv);
 	}
-	else if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == true)
+	else if(ccEnable == true && $("#savedBillingAddressId").val() == '')
 	{
-		
 		var billingFormErrorCounts = validateBillingAddressFields();
-		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+		var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 		$('#validationMessage').append(validationDiv);
 	}
