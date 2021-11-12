@@ -15,6 +15,7 @@
 				ccError: {},
 				payPalError: {},
 				blackoutError: {},
+				giftCardError: {},
 				deActivateAccount: {}};
 			ACC.config.contextPath = '${ycommerce:encodeJavaScript(contextPath)}';
 			ACC.config.encodedContextPath = '${ycommerce:encodeJavaScript(encodedContextPath)}';
@@ -48,7 +49,11 @@
 			
 			ACC.payPalError.paypalPaymentFail = '<spring:theme code="text.paypal.payment.error.message" htmlEscape="false" javaScriptEscape="true" />'
 			ACC.blackoutError.blockedShipping = '<spring:theme code="blackout.blocked.shipping.error" arguments="${rentalDate.selectedFromDate }" htmlEscape="false" javaScriptEscape="true" />'
-			
+
+			ACC.giftCardError.amount='<spring:theme code="giftcard.pdp.amount.limit" htmlEscape="false" javaScriptEscape="true" />'
+			ACC.giftCardError.recipientMessage= '<spring:theme code="giftCard.message.invalid" htmlEscape="false" javaScriptEscape="true" />'
+			ACC.giftCardError.emailValidation= '<spring:theme code="giftCard.email.invalid.format" htmlEscape="false" javaScriptEscape="true" />'
+
 			ACC.deActivateAccount.login = '<spring:theme code="login.error.account.deactivate.title" htmlEscape="false" javaScriptEscape="true"/>'
 			<c:if test="${request.secure}">
 				<c:url var="autocompleteUrl" value="/search/autocompleteSecure" />
