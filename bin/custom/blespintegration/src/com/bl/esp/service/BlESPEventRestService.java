@@ -4,6 +4,7 @@ package com.bl.esp.service;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -178,6 +179,7 @@ public interface BlESPEventRestService {
   ESPEventResponseWrapper sendOrderBillPaidEvent(final OrderBillPaidEventRequest orderBillPaidEventRequest);
 
   /**
+<<<<<<< HEAD
    * Send Order Pull Back Items Added Event by calling Order Pull Back Items Added ESP Event API
    *
    * @param orderPullBackRequest the orderPullBackRequest
@@ -192,4 +194,13 @@ public interface BlESPEventRestService {
    * @return
    */
   ESPEventResponseWrapper sendOrderPullBackItemsRemoved(final OrderPullBackRequest orderPullBackRequest);
+
+
+  /** Send Order Manual Allocation by calling Order Manual Allocation ESP Event API
+   *
+   * @param orderManualAllocationEventRequest the OrderManualAllocationEventRequest
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendOrderManualAllocationEvent(
+      final OrderManualAllocationEventRequest orderManualAllocationEventRequest);
 }

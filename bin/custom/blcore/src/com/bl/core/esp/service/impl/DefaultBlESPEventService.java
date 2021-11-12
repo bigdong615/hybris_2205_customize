@@ -9,6 +9,7 @@ import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
@@ -29,6 +30,7 @@ import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -54,7 +56,6 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -108,6 +109,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
   private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
+    private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
 
 
     /**
@@ -553,6 +555,28 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }catch (final Exception exception){
       BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger Bill Paid ESP Event",
           exception);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendOrderManualAllocationEvent(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderManualAllocationEventRequest orderManualAllocationEventRequest = new OrderManualAllocationEventRequest();
+      getBlOrderManualAllocationRequestPopulator().populate(orderModel,
+          orderManualAllocationEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try {
+        // Call send order manual allocation ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderManualAllocationEvent(
+            orderManualAllocationEventRequest);
+      } catch (final BlESPIntegrationException exception) {
+        persistESPEventDetail(null, EspEventTypeEnum.MANUAL_ALLOCATION,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+      }
+      // Save send order manual allocation ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.MANUAL_ALLOCATION,orderModel.getCode(),null,null);
     }
   }
 
@@ -1008,4 +1032,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
 
 
+  public BlOrderManualAllocationRequestPopulator getBlOrderManualAllocationRequestPopulator() {
+    return blOrderManualAllocationRequestPopulator;
+  }
+
+  public void setBlOrderManualAllocationRequestPopulator(
+      BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator) {
+    this.blOrderManualAllocationRequestPopulator = blOrderManualAllocationRequestPopulator;
+  }
 }

@@ -6,7 +6,7 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
-
+<%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
@@ -42,7 +42,9 @@
                  <c:if test="${product.retailGear eq true}">
                  <c:set var="isNewGear" value="${product.retailGear}"/>
                  </c:if>
-                  <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
+                  <div class="col-md-2 text-center">
+                   <product:productPrimaryImage product="${product}" format="thumbnail"/>
+                  </div>
                   <div class="col-md-7 mt-4"><b>${product.name}</b>
                   <c:if test="${not empty rentalDate.selectedFromDate && product.retailGear eq false}">
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
@@ -94,9 +96,9 @@
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
               <c:if test="${product.retailGear ne true}">
-             <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <c:choose>
                             	<c:when test="${not empty productReferences and productsLimit > 0}">
+                            	<h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
                             	<div id="addToCart-gear-sliders" class="splide mt-4">
                                 		<div class="splide__track">
                                               <ul class="splide__list">

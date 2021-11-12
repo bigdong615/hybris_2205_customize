@@ -507,6 +507,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GC_TYPE = "GC";
 	public static final String PLUS = "+";
 	public static final String BL_PRODUCT_VALIDATE_INTERCEPTOR = "BlProductValidateInterceptor";
+	public static final String ORDER_MANUAL_ALLOCATION_EVENT_DEFINITION_KEY = "order.manual.allocation.event.definition.key";
+	public static final String ORDER_MANUAL_ALLOCATION_SUBSCRIBER_ID = "order.manual.allocation.event.subscriber.id";
+	public static final String UNALLOCATED_QUANTITY = "unallocatedquantity";
+	public static final String SERIAL_ALLOCATED = "serialallocated";
+	public static final String SERIAL_ALLOCATED_YES = "Yes";
+	public static final String SERIAL_ALLOCATED_NO = "No";
 
 	public static final String FEDEX = "fedex";
 	public static final String UPS = "ups";

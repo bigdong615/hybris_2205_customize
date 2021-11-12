@@ -153,4 +153,10 @@ public interface BlESPEventService {
      * @param orderModel order model  to get the values
      */
     void sendOrderPullBackItemsRemoved(final OrderModel orderModel , 	final List<BlSerialProductModel> previousChangedOrderEntriesList);
+
+    /**
+     *  Send manual allocation data by calling  order manual allocation ESP Event API
+     * @param orderModel OrderModel
+     */
+    void sendOrderManualAllocationEvent(final OrderModel orderModel) ;
 }

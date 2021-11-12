@@ -144,6 +144,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 									customerModel.getTotalAmountPastDue();
 					totalAmountPastDue = totalAmountPastDue.add(newlyAddedCharges);
 					customerModel.setTotalAmountPastDue(totalAmountPastDue);
+					setOutstandingBills(customerModel, tempCurrentCharges);
 					interceptorContext.getModelService().save(customerModel);
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 							"Total amount past due : {} updated for the customer {} ",
@@ -151,6 +152,18 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				}
 			});
 		}
+	}
+
+	/**
+	 * It sets the due bill payment model on customer
+	 * @param customerModel the customer model
+	 * @param tempCurrentCharges the billing charges
+	 */
+	private void setOutstandingBills(final CustomerModel customerModel,
+			final List<BlItemsBillingChargeModel> tempCurrentCharges) {
+		final List<BlItemsBillingChargeModel> outstandingBills = new ArrayList<>(customerModel.getOutstandingBills());
+		outstandingBills.addAll(tempCurrentCharges);
+		customerModel.setOutstandingBills(outstandingBills);
 	}
 
 	/**
