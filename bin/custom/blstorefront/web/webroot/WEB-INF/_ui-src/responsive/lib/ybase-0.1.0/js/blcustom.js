@@ -1048,7 +1048,7 @@ function onUsedCloseModal()
 }
 
 //BL-625 place order with order notes.
-$('#placeOrderSummary').one("click", function(e) {
+$('#placeOrderSummary').on("click", function(e) {
 	$('#placeOrder').click();
 });
 
@@ -1063,9 +1063,11 @@ $('#placeOrderSummary').one("click", function(e) {
     	reviewPageError: reviewPageError
     	});
     }
- $('#placeOrder').one(
+ $('#placeOrder').on(
 			"click",
 			function(e) {
+			$('#placeOrder').attr("disabled",true);
+			$('#placeOrderSummary').attr("disabled",true);
 				var submitForm = $("#placeOrderForm1");
 				
 				var csrfTokan = createHiddenParameter("CSRFToken",
@@ -1082,6 +1084,8 @@ $('#placeOrderSummary').one("click", function(e) {
                         $("body").removeAttr("style");
                         $('tn-gift-card-pdp').show();
                         $(".modal-backdrop").remove();
+                        $('#placeOrder').attr("disabled",false);
+                        $('#placeOrderSummary').attr("disabled",false);
                         return false;
               }
               if( !validateGiftEmail(email)){
@@ -1091,6 +1095,8 @@ $('#placeOrderSummary').one("click", function(e) {
                 $("body").removeAttr("style");
                 $('tn-gift-card-pdp').show();
                 $(".modal-backdrop").remove();
+                $('#placeOrder').attr("disabled",false);
+                $('#placeOrderSummary').attr("disabled",false);
                 return false;
               }
 					var name = createHiddenParameter("name",giftCardForm.find('input[name="name"]').val());
