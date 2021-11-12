@@ -889,7 +889,7 @@ function startUsedGearCartTimer() {
           $(".modal-backdrop").remove();
           return false;
         }
-        if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+        if( !validateGiftEmail(email)){
           $('.gc-error-message').append(ACC.giftCardError.emailValidation);
           $('.notification').show();
           $("body").removeClass("modal-open");
@@ -1084,7 +1084,7 @@ $('#placeOrderSummary').one("click", function(e) {
                         $(".modal-backdrop").remove();
                         return false;
               }
-              if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+              if( !validateGiftEmail(email)){
                $('.gc-error-message').append(ACC.giftCardError.emailValidation);
                 $('.notification').show();
                 $("body").removeClass("modal-open");
@@ -1177,7 +1177,7 @@ function hideShorting(){
               $(".modal-backdrop").remove();
               return false;
     }
-    if( email != null && /\s/.test(email) && !email.match(\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+\\b)){
+    if( !validateGiftEmail(email)){
       $('.gc-error-message').append(ACC.giftCardError.emailValidation);
       $('.notification').show();
       $("body").removeClass("modal-open");
@@ -1189,6 +1189,14 @@ function hideShorting(){
 		submitForm.submit();
   });
 
+/* Validate email data*/
+     function validateGiftEmail(email) {
+     	if (email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
+       	{
+         return true;
+       	}
+         return false;
+       }
   //BL-917: Replacement order
   $('.return-button-cls').on("click",function(e) {
     e.preventDefault();
