@@ -881,7 +881,7 @@ function startUsedGearCartTimer() {
         	 $('.notification').hide();
         }
         if((message != undefined) && message != null &&  message.length > 255){
-          $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+          $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
           $('.notification').show();
           $("body").removeClass("modal-open");
           $("body").removeAttr("style");
@@ -890,7 +890,7 @@ function startUsedGearCartTimer() {
           return false;
         }
         if( (email != undefined) && (!validateGiftEmail(email))){
-          $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+          $('.gc-error-message').html(ACC.giftCardError.emailValidation);
           $('.notification').show();
           $("body").removeClass("modal-open");
           $("body").removeAttr("style");
@@ -1078,7 +1078,7 @@ $('#placeOrderSummary').on("click", function(e) {
 					 var message = giftCardForm.find('textarea[name=message]').val();
 					 var email = giftCardForm.find('input[name=email]').val();
               if(message != null &&  message.length > 255){
-                        $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+                        $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
                         $('.notification').show();
                         $("body").removeClass("modal-open");
                         $("body").removeAttr("style");
@@ -1089,7 +1089,7 @@ $('#placeOrderSummary').on("click", function(e) {
                         return false;
               }
               if( !validateGiftEmail(email)){
-               $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+               $('.gc-error-message').html(ACC.giftCardError.emailValidation);
                 $('.notification').show();
                 $("body").removeClass("modal-open");
                 $("body").removeAttr("style");
@@ -1175,7 +1175,7 @@ function hideShorting(){
     var message = submitForm.find('textarea[name=message]').val();
     var email = submitForm.find('input[name=email]').val();
     if(message != null &&  message.length > 255){
-              $('.gc-error-message').append(ACC.giftCardError.recipientMessage);
+              $('.gc-error-message').html(ACC.giftCardError.recipientMessage);
               $('.notification').show();
               $("body").removeClass("modal-open");
               $("body").removeAttr("style");
@@ -1184,7 +1184,7 @@ function hideShorting(){
               return false;
     }
     if((email != undefined) && (!validateGiftEmail(email))){
-      $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+      $('.gc-error-message').html(ACC.giftCardError.emailValidation);
       $('.notification').show();
       $("body").removeClass("modal-open");
       $("body").removeAttr("style");
