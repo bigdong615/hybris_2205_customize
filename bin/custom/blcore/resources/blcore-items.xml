@@ -1877,6 +1877,11 @@
                         <modifiers read="true" write="false" optional="false" initial="true"/>
                         <description>BlSerialProduct's barcode</description>
                     </attribute>
+                    <attribute qualifier="ocParent" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="false" optional="true" initial="true"/>
+                        <description>Parent Inventory Location Code</description>
+                    </attribute>
                     <attribute qualifier="serialProduct" type="BLSerialProduct">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="false" initial="true"/>

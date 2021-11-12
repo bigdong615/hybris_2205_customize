@@ -82,7 +82,7 @@ public class PullReadyToShipOrdersJob extends
         }
 
       } catch (final Exception ex) {
-        ex.printStackTrace();
+
         BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex.getMessage(),
             "Error occurred while performing PullReadyToShipOrdersJob");
         return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.FAILURE);
