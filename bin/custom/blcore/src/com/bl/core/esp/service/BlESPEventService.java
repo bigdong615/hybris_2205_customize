@@ -138,4 +138,10 @@ public interface BlESPEventService {
      */
     void triggerBillPaidEspEvent(final String payBillTotal,
         final Map<String, List<String>> billingChargeTypeMap, final OrderModel orderModel);
+
+    /**
+     *  Send manual allocation data by calling  order manual allocation ESP Event API
+     * @param orderModel OrderModel
+     */
+    void sendOrderManualAllocationEvent(final OrderModel orderModel) ;
 }

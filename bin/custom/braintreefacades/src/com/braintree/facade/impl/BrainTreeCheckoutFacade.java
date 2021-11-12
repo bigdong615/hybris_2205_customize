@@ -524,6 +524,18 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			paymentInfoId, final String nonce) {
 		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
+
+	/**
+	 * It gets payment info model by payment info id for extend order
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the payment method nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getClonedBrainTreePaymentInfoCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce) {
+		return brainTreePaymentService.getClonedPaymentInfoForCode(customer, paymentInfoId, nonce);
+	}
 	
 	/**
 	 * It gets payment info model by payment info id for Deposit.
