@@ -308,7 +308,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
       }
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-          entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
+          entryModel.getProduct() instanceof BlSerialProductModel ? getSerialProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
       if (Objects.nonNull(entryModel.getBasePrice())) {
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
       }

@@ -45,6 +45,7 @@
 	<bean id="blDefaultEditorAreaLogicHandler"
 		class="com.bl.backoffice.wizards.handler.BlDefaultEditorAreaLogicHandler" parent="defaultEditorAreaLogicHandler">
 		<property name="defaultBlCalculationService" ref="calculationService"/>
+		<property name="defaultBlESPEventService" ref="blEspEventService"/>
 	</bean>
 
 	<!--To render the order-->
