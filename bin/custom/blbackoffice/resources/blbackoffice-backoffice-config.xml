@@ -1095,6 +1095,7 @@
             <list-view:column qualifier="scanUser"/>
             <list-view:column qualifier="scanTime"/>
             <list-view:column qualifier="blInventoryLocation"/>
+            <list-view:column qualifier="ocParent"/>
         </list-view:list-view>
     </context>
 

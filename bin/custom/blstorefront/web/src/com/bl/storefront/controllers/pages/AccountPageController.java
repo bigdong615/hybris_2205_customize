@@ -1463,10 +1463,9 @@ public class AccountPageController extends AbstractSearchPageController
 						}
 					}
 				else {
-
-					// Needs to uncomment below code once Payment related PR merged
+				// It creates a cloned payment info from the original payment info
 				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
-						.getBrainTreePaymentInfoForCode(
+						.getClonedBrainTreePaymentInfoCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
 					paymentInfo.setBillPayment(Boolean.FALSE);

@@ -65,6 +65,8 @@
 						placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />"
 						name="message">${entry.recipientMessage}</textarea>
 				</div>
+				<div class="notification notification-warning mb-2 gc-error-message"
+        								style="display: none;"></div>
 			</form:form>
 		</div>
 	</div>
