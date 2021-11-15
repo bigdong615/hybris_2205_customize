@@ -137,7 +137,13 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			try {
 				if (BooleanUtils.isFalse(orderModel.getInternalTransferOrder())) {
 					getDefaultBlCalculationService().recalculateOrderForTax(orderModel);
-					performSendOrderPullBackItemsRemovedESPEventService(blSerialProductModels , orderModel);
+					try {
+						performSendOrderPullBackItemsRemovedESPEventService(blSerialProductModels , orderModel);
+					}
+					catch (final Exception e) {
+						BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY ,  e,
+								"BlDefaultEditorAreaLogicHandler :Exception while performing Order pull back removed ESP Event for order {}", orderModel.getCode());
+					}
 				}
 			} catch (CalculationException e) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Error while BlDefaultEditorAreaLogicHandler", e);

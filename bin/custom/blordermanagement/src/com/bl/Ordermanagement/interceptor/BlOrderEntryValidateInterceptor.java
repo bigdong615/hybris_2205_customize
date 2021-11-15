@@ -1,5 +1,6 @@
 package com.bl.Ordermanagement.interceptor;
 
+import com.bl.BlloggingStandalone;
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.impl.DefaultBlAllocationService;
@@ -42,6 +43,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -154,7 +156,8 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			}
 		}
 		catch (final Exception e){
-			BlLogger.logMessage(LOG , Level.ERROR , "Error while performing order pull back items added ESP Event" , e.getMessage());
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY ,  e,
+					"BlOrderEntryValidateInterceptor :- Error while performing order pull back items added ESP Event", orderEntryModel.getOrder().getCode());
 		}
 
 	}
