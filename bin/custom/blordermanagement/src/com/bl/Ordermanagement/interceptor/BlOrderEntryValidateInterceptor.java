@@ -146,9 +146,15 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			createNewConsignment(orderEntryModel, sourceResult);
 		}
 
-		if(orderEntryModel.getOrder().getConsignments().stream().anyMatch(consignmentModel1 ->
-				DateUtils.isSameDay(consignmentModel1.getOptimizedShippingStartDate() , orderEntryModel.getModifiedtime()))){
-			getDefaultBlESPEventService().sendOrderPullBackItemsAdded(orderEntryModel.getOrder());
+		try {
+			if (orderEntryModel.getOrder().getConsignments().stream().anyMatch(consignmentModel1 ->
+					DateUtils.isSameDay(consignmentModel1.getOptimizedShippingStartDate(),
+							orderEntryModel.getModifiedtime()))) {
+				getDefaultBlESPEventService().sendOrderPullBackItemsAdded(orderEntryModel.getOrder());
+			}
+		}
+		catch (final Exception e){
+			BlLogger.logMessage(LOG , Level.ERROR , "Error while performing order pull back items added ESP Event" , e.getMessage());
 		}
 
 	}

@@ -179,7 +179,6 @@ public interface BlESPEventRestService {
   ESPEventResponseWrapper sendOrderBillPaidEvent(final OrderBillPaidEventRequest orderBillPaidEventRequest);
 
   /**
-<<<<<<< HEAD
    * Send Order Pull Back Items Added Event by calling Order Pull Back Items Added ESP Event API
    *
    * @param orderPullBackRequest the orderPullBackRequest

@@ -26,7 +26,6 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,10 +60,6 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
 
     private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
-
-    private static final List<String> LIST_OF_OC_LOCATIONS = Arrays.asList(BlCoreConstants.FEDEX, BlCoreConstants.UPS,BlCoreConstants.USPS);
-
-
     private static final Logger LOG = Logger.getLogger(ESPEventCommonPopulator.class);
 
 
@@ -313,7 +308,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param serialProductCode serial product code
      * @return string
      */
-    protected String getProductUrl(final String serialProductCode) {
+    protected String getSerialProductUrl(final String serialProductCode) {
         final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
         final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlCoreConstants.CATALOG_VALUE,BlCoreConstants.ONLINE);
         final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
@@ -403,7 +398,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
                 }
                 else if(CollectionUtils.isNotEmpty(orderModel.getEntries())) {
                     for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
-                        populateOrderDetailsInXMl(entryModel, orderItemsInXMLDocument, rootOrderItems);
+                        populateOrderDetailsInXML(entryModel, orderItemsInXMLDocument, rootOrderItems);
                     }
                 }
             final Transformer transformer = getTransformerFactoryObject();
@@ -426,7 +421,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param orderItemsInXMLDocument orderItemsInXMLDocument
      * @param rootOrderItems rootOrderItems
      */
-    private void populateOrderDetailsInXMl(final AbstractOrderEntryModel entryModel,
+    private void populateOrderDetailsInXML(final AbstractOrderEntryModel entryModel,
         final Document orderItemsInXMLDocument,
         final Element rootOrderItems) {
         final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);

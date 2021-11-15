@@ -9,7 +9,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.util.Collections;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
-import org.hsqldb.lib.Collection;
 import org.springframework.util.Assert;
 
 /**
