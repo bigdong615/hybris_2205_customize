@@ -111,7 +111,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
             getRequestValue(getProductTitle(orderExceptionsExtraData.getSerialCode())));
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
             BlCoreConstants.ITEM_PRODUCT_URL,
-            getRequestValue(getProductUrl(orderExceptionsExtraData.getSerialCode())));
+            getRequestValue(getSerialProductUrl(orderExceptionsExtraData.getSerialCode())));
         createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
             BlCoreConstants.ITEM_AMOUNT_DUE_ROOT_ELEMENT,
             getRequestValue(String.valueOf(orderExceptionsExtraData.getTotalChargedAmount())));

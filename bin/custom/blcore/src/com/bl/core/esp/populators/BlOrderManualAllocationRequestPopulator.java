@@ -80,7 +80,7 @@ public class BlOrderManualAllocationRequestPopulator extends
     orderManualAllocationData.setOrderid(orderModel.getCode());
     orderManualAllocationData
         .setSubscriberid(getConfigurationService().getConfiguration().getString(
-            BlCoreConstants.ORDER_MANUAL_ALLOCATION_SUBSCRIBER_ID));
+            BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID));
     orderManualAllocationData.setOldOrderId(StringUtils.EMPTY);
     orderManualAllocationData.setStatus(getRequestValue(
         Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode()
