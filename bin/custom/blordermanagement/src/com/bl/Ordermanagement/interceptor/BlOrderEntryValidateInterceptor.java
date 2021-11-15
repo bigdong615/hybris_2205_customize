@@ -157,7 +157,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		}
 		catch (final Exception e){
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY ,  e,
-					"BlOrderEntryValidateInterceptor :- Error while performing order pull back items added ESP Event", orderEntryModel.getOrder().getCode());
+					"BlOrderEntryValidateInterceptor :- Error while performing order pull back items added ESP Event for order {}", orderEntryModel.getOrder().getCode());
 		}
 
 	}
