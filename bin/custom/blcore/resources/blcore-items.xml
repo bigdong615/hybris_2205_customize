@@ -7083,7 +7083,7 @@ new Integer(0)
           <modifiers read="true" write="true" optional="false"  unique="true"/>
           <persistence type="property" />
         </attribute>
-        <attribute qualifier="logUserName" type="Employee">
+        <attribute qualifier="logUserName" type="java.lang.String">
           <modifiers read="true" write="true" optional="true" />
           <persistence type="property" />
         </attribute>
