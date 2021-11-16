@@ -861,7 +861,7 @@ public class CartPageController extends AbstractCartPageController
 				{
 					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
 					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
+							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
 				}
 				else
 				{
