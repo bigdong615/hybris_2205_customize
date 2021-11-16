@@ -229,9 +229,24 @@
 							<ea:value>##0.000</ea:value>
 						</ea:editor-parameter>
 					</ea:attribute>
-					<ea:attribute qualifier="length"/>
-					<ea:attribute qualifier="width"/>
-					<ea:attribute qualifier="height"/>
+					<ea:attribute qualifier="length">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+					<ea:attribute qualifier="width">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+					<ea:attribute qualifier="height">
+						<ea:editor-parameter>
+							<ea:name>numberFormat</ea:name>
+							<ea:value>##0.000</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.multimedia" position="18">

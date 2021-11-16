@@ -1496,6 +1496,24 @@
 							<editorArea:value>##0.000</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
+					<editorArea:attribute qualifier="height">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="length">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="width">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
 				</ea:section>
 			</ea:tab>
 		</editorArea:editorArea>
