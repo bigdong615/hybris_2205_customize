@@ -7081,22 +7081,27 @@ new Integer(0)
       <attributes>
         <attribute qualifier="serialsLogID" type="java.lang.String">
           <modifiers read="true" write="true" optional="false"  unique="true"/>
+          <description>Unique Serial Log ID</description>
           <persistence type="property" />
         </attribute>
         <attribute qualifier="logUserName" type="java.lang.String">
-          <modifiers read="true" write="true" optional="true" />
+          <modifiers read="true" write="true" optional="false" />
+          <description>User Name who logged changes</description>
           <persistence type="property" />
         </attribute>
         <attribute qualifier="serialNumber" type="java.lang.String">
           <modifiers read="true" write="true" optional="false" />
+          <description>Serial Number associated to serial</description>
           <persistence type="property" />
         </attribute>
         <attribute qualifier="serialsId" type="BlSerialProduct">
           <modifiers read="true" write="true" optional="false" />
+          <description>Serial product which is logged</description>
           <persistence type="property" />
         </attribute>
         <attribute qualifier="itemBarcode" type="java.lang.String">
           <modifiers read="true" write="true" optional="true" />
+          <description>Serial Barcode</description>
           <persistence type="property" />
         </attribute>
         <attribute qualifier="logTime" type="java.util.Date">
