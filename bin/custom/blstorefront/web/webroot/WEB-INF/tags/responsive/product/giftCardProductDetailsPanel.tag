@@ -71,9 +71,9 @@
 								<textarea class="form-control mt-2 mb-4"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />" name="message"></textarea>
 							</div>
-							<div class="notification notification-warning mb-2"
-								style="display: none;"><spring:theme
-							code="giftcard.pdp.amount.limit" /></div>
+
+							<div class="notification notification-warning mb-2 gc-error-message"
+								style="display: none;"></div>
 
 							<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
 						       <c:set value="hidebutton" var="hidebutton" />

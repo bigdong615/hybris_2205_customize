@@ -10,6 +10,7 @@ import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -187,5 +188,27 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
     return super.getTokenAndTriggerEvent(orderExtraItemRequest);
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderPullBackItemsAdded(
+      final OrderPullBackRequest orderPullBackRequest) {
+
+    return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
+
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderPullBackItemsRemoved(
+      final OrderPullBackRequest orderPullBackRequest) {
+
+    return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
 
 }

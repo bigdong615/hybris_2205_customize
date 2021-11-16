@@ -397,6 +397,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
 		blInventoryLocationScanHistory.setSerialId(blSerialProduct.getProductId());
 		blInventoryLocationScanHistory.setSerialBarcode(blSerialProduct.getBarcode());
+		blInventoryLocationScanHistory.setOcParent(blInventoryLocation.getParentInventoryLocation() != null ?
+				blInventoryLocation.getParentInventoryLocation().getCode() : StringUtils.EMPTY);
 		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
 		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
 		blInventoryLocationScanHistory.setScanTime(new Date());

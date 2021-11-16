@@ -178,7 +178,9 @@
 
 <!-- BL-982 Modify order changes-->   
 	<alias name="blOrderEntryValidateInterceptor" alias="blOrderEntryValidateInterceptor"/>
-	<bean id="blOrderEntryValidateInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryValidateInterceptor"/>
+	<bean id="blOrderEntryValidateInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryValidateInterceptor">
+    <property name="defaultBlESPEventService" ref="blEspEventService"/>
+  </bean>
 
 	<bean id="blOrderEntryValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blOrderEntryValidateInterceptor"/>

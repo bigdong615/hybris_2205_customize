@@ -3,9 +3,12 @@ package com.bl.core.model.interceptor;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.dao.BlProductDao;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
 
 
@@ -18,6 +21,8 @@ import java.util.Objects;
 public class BlSerialProductValidateInterceptor implements ValidateInterceptor<BlSerialProductModel>
 {
 
+	private BlProductDao productDao;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -25,9 +30,19 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 	public void onValidate(final BlSerialProductModel blSerialProductModel, final InterceptorContext interceptorContext)
 			throws InterceptorException
 	{
-		if (Objects.nonNull(blSerialProductModel) && !interceptorContext.isNew(blSerialProductModel))
+		if (Objects.nonNull(blSerialProductModel))
 		{
-			validateConditionalRatings(blSerialProductModel, interceptorContext);
+			if(!interceptorContext.isNew(blSerialProductModel)) {
+				validateConditionalRatings(blSerialProductModel, interceptorContext);
+			}
+
+			if (StringUtils.isNotBlank(blSerialProductModel.getBarcode()) && interceptorContext.isModified(blSerialProductModel,
+					BlSerialProductModel.BARCODE)) {
+				final BlSerialProductModel serialProductModel = getProductDao().getSerialByBarcode(blSerialProductModel.getBarcode());
+				if(null != serialProductModel && !serialProductModel.getProductId().equals(blSerialProductModel.getProductId())) {
+					throw new InterceptorException("Barcode should be unique!");
+				}
+			}
 		}
 	}
 
@@ -95,5 +110,13 @@ public class BlSerialProductValidateInterceptor implements ValidateInterceptor<B
 			final ConditionRatingValueEnum value, final InterceptorContext interceptorContext)
 	{
 		return interceptorContext.isModified(blSerialProductModel, attributeName) && value.getCode().equals(BlCoreConstants.ZERO);
+	}
+
+	public BlProductDao getProductDao() {
+		return productDao;
+	}
+
+	public void setProductDao(BlProductDao productDao) {
+		this.productDao = productDao;
 	}
 }

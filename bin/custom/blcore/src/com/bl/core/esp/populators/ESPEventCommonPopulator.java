@@ -8,8 +8,12 @@ import com.bl.core.enums.GearGaurdEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.esp.dto.orderpullback.data.OrderPullBackItems;
+import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.order.ESPEventCommonOrderDataRequest;
 import com.bl.esp.order.ESPEventCommonRequest;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
@@ -17,8 +21,11 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,9 +35,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -46,6 +57,12 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     private ConfigurationService configurationService;
     private ProductService productService;
     private CatalogVersionService catalogVersionService;
+
+
+    private static final String POPULATOR_ERROR = "Error while populating data for ESP Event";
+    private static final Logger LOG = Logger.getLogger(ESPEventCommonPopulator.class);
+
+
 
     /**
      * Populate common attributes with values from the OrderModel.
@@ -291,7 +308,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param serialProductCode serial product code
      * @return string
      */
-    protected String getProductUrl(final String serialProductCode) {
+    protected String getSerialProductUrl(final String serialProductCode) {
         final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
         final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlCoreConstants.CATALOG_VALUE,BlCoreConstants.ONLINE);
         final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
@@ -335,6 +352,108 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
                 paymentType.append(creditCart).append(StringUtils.SPACE).append(BlCoreConstants.PLUS).append(StringUtils.SPACE ).append(BlCoreConstants.GC_TYPE).toString();
         }*/
         return paymentType.append(creditCart).toString();
+    }
+
+
+    /**
+     * This method created to populate order data from order model
+     * @param order order model to get the data
+     * @param data data to get updated
+     * @param blSerialProductModels
+     */
+    protected void populateOrderDataForOrderPullBackItems(final OrderModel order,
+        final OrderPullBackItems data, final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
+        final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+        data.setOldOrderId(StringUtils.EMPTY);
+        data.setStatus(getRequestValue(
+            Objects.nonNull(order.getStatus()) ? order.getStatus().getCode() : StringUtils.EMPTY));
+        data.setOrdertype(getOrderType(order));
+        data.setDateplaced(formatter.format(order.getDate()));
+        if(Objects.nonNull(order.getDeliveryMode())) {
+            final ZoneDeliveryModeModel delivery = ((ZoneDeliveryModeModel) order
+                .getDeliveryMode());
+            data.setShippingmethodtype(getRequestValue(delivery.getShippingGroup().getName()));
+            data.setShippingmethod(getRequestValue(delivery.getCode()));
+        }
+        data.setExpectedshippingdate(formatter.format(order.getRentalStartDate()));
+        data.setArrivaldate(formatter.format(order.getRentalStartDate()));
+        data.setReturndate(formatter.format(order.getRentalEndDate()));
+        populateOrderItemsInXML(order , data , templateName , blSerialProductModels);
+    }
+
+    /**
+     * This method created to populate order
+     * @param orderModel order model to get the data
+     * @param data date to get updated
+     * @param templateName template for request
+     * @param blSerialProductModels
+     */
+    private void populateOrderItemsInXML(final OrderModel orderModel, final OrderPullBackItems data,
+        final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
+        try {
+            final Document orderItemsInXMLDocument = createNewXMLDocument();
+            final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
+                if(StringUtils.equalsIgnoreCase(templateName , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE) && CollectionUtils.isNotEmpty(blSerialProductModels)){
+                    populateOrderDetailsForRemovedEntriesInXMl(orderItemsInXMLDocument , rootOrderItems , blSerialProductModels);
+                }
+                else if(CollectionUtils.isNotEmpty(orderModel.getEntries())) {
+                    for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
+                        populateOrderDetailsInXML(entryModel, orderItemsInXMLDocument, rootOrderItems);
+                    }
+                }
+            final Transformer transformer = getTransformerFactoryObject();
+            final StringWriter writer = new StringWriter();
+
+            //transform document to string
+            transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
+            data.setItemsxml(writer.getBuffer().toString());
+
+        } catch (final Exception exception) {
+            BlLogger.logMessage(LOG , Level.ERROR , POPULATOR_ERROR , exception);
+            throw new BlESPIntegrationException(exception.getMessage() , LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode() , exception);
+        }
+    }
+
+
+    /**
+     * This method created to populate data in XML format
+     * @param entryModel entryModel
+     * @param orderItemsInXMLDocument orderItemsInXMLDocument
+     * @param rootOrderItems rootOrderItems
+     */
+    private void populateOrderDetailsInXML(final AbstractOrderEntryModel entryModel,
+        final Document orderItemsInXMLDocument,
+        final Element rootOrderItems) {
+        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                getRequestValue(entryModel.getProduct().getCode()));
+            createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
+
+    }
+
+
+    /**
+     * This method created to populate removed entry data in XML format
+     * @param orderItemsInXMLDocument  orderItemsInXMLDocument
+     * @param rootOrderItems rootOrderItems
+     * @param blSerialProductModels list of removed entries
+     */
+    private void populateOrderDetailsForRemovedEntriesInXMl(final Document orderItemsInXMLDocument,
+        final Element rootOrderItems, final List<BlSerialProductModel> blSerialProductModels) {
+        final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
+
+        blSerialProductModels.forEach(blSerialProductModel -> {
+                if(Objects.nonNull(blSerialProductModel)) {
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
+                        getRequestValue(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
+                        getProductTitle(blSerialProductModel.getCode()));
+                    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_QUANTITY,
+                        BlCoreConstants.ONE);
+                }
+        });
+
     }
 
     public ConfigurationService getConfigurationService() {
