@@ -101,6 +101,11 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 							final List<AbstractOrderEntryModel> removeEntryList = gettingAllRemovedEntry(
 									cloneOfOriginalList, allExistingBundleEntryList);
 
+
+							if(CollectionUtils.isNotEmpty(removeEntryList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
+									OrderStatus.SHIPPED.getCode())){
+								addSerialProductToList(removeEntryList , blSerialProductModels);
+							}
 							// removing consignment from removed entry list
 							removeEntryFromConsignment(orderModel,
 									removeEntryList.stream().filter(entryModel -> !entryModel.isBundleMainEntry())
@@ -112,6 +117,10 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 							//update and save remaining entry.
 							((OrderModel) currentObject).setEntries(previousChangedOrderEntriesList);
 						} else {
+							if(CollectionUtils.isNotEmpty(cloneOfOriginalList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
+									OrderStatus.SHIPPED.getCode())){
+								addSerialProductToList(cloneOfOriginalList , blSerialProductModels);
+							}
 							removeEntryFromConsignment(orderModel, cloneOfOriginalList);
 						}
 					}
