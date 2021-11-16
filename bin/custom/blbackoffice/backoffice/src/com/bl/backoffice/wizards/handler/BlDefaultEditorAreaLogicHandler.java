@@ -102,10 +102,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 									cloneOfOriginalList, allExistingBundleEntryList);
 
 
-							if(CollectionUtils.isNotEmpty(removeEntryList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
-									OrderStatus.SHIPPED.getCode())){
-								addSerialProductToList(removeEntryList , blSerialProductModels);
-							}
+
+							checkRemovedEntriesSerials(removeEntryList , orderModel , blSerialProductModels);
 							// removing consignment from removed entry list
 							removeEntryFromConsignment(orderModel,
 									removeEntryList.stream().filter(entryModel -> !entryModel.isBundleMainEntry())
@@ -117,10 +115,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 							//update and save remaining entry.
 							((OrderModel) currentObject).setEntries(previousChangedOrderEntriesList);
 						} else {
-							if(CollectionUtils.isNotEmpty(cloneOfOriginalList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
-									OrderStatus.SHIPPED.getCode())){
-								addSerialProductToList(cloneOfOriginalList , blSerialProductModels);
-							}
+							checkRemovedEntriesSerials(cloneOfOriginalList , orderModel , blSerialProductModels);
 							removeEntryFromConsignment(orderModel, cloneOfOriginalList);
 						}
 					}
@@ -131,11 +126,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 					final List<AbstractOrderEntryModel> updatedOrderEntry = orderModel.getEntries();
 					previousChangedOrderEntriesList.removeIf(updatedOrderEntry::contains);
 				}
-
-				if(CollectionUtils.isNotEmpty(previousChangedOrderEntriesList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
-						OrderStatus.SHIPPED.getCode())){
-					addSerialProductToList(previousChangedOrderEntriesList , blSerialProductModels);
-				}
+				checkRemovedEntriesSerials(previousChangedOrderEntriesList , orderModel , blSerialProductModels);
 				removeEntryFromConsignment(orderModel, previousChangedOrderEntriesList);
 
 			}
@@ -163,6 +154,20 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
      }
     return super.performSave(widgetInstanceManager , currentObject);
   }
+
+	/**
+	 * This method created to add serial products from removed entries
+	 * @param removeEntryList entries removed from order
+	 * @param orderModel order model to get updated
+	 * @param blSerialProductModels list of serial products
+	 */
+	private void checkRemovedEntriesSerials(final List<AbstractOrderEntryModel> removeEntryList, final OrderModel orderModel,
+			final List<BlSerialProductModel> blSerialProductModels) {
+		if(CollectionUtils.isNotEmpty(removeEntryList) && StringUtils.equalsIgnoreCase(orderModel.getStatus().getCode() ,
+				OrderStatus.SHIPPED.getCode())){
+			addSerialProductToList(removeEntryList , blSerialProductModels);
+		}
+	}
 
 	/**
 	 * This method created to add the serial product list
