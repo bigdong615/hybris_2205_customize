@@ -16,7 +16,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <spring:url value="/cart/voucher/apply" var="applyVoucher"
 	htmlEscape="false" />
-${pageType}uuuuuuuuu
+
 <div id="orderSummary" class="card">
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
