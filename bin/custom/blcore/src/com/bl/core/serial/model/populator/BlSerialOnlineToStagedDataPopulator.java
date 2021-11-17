@@ -49,6 +49,7 @@ public class BlSerialOnlineToStagedDataPopulator implements Populator<BlSerialPr
 			stagedSerial.setNoDaysRented(onlineSerial.getNoDaysRented());
 			stagedSerial.setOcLocation(onlineSerial.getOcLocation());
 			stagedSerial.setUserChangedConditionRating(onlineSerial.getUserChangedConditionRating());
+			stagedSerial.setIsBufferedInventory(onlineSerial.getIsBufferedInventory());
 
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 					"Populated Staged Serial Data with code : {} and pk : {} with Online Serial Data with code : {} and pk : {}",

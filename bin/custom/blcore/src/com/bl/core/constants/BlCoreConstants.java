@@ -516,6 +516,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String FEDEX = "fedex";
 	public static final String UPS = "ups";
 	public static final String USPS = "usps";
+	
+	public static final String ANONYMOUS = "anonymous";
 
 	private BlCoreConstants()
 	{

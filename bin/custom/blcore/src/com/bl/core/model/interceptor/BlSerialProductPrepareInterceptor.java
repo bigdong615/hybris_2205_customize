@@ -32,7 +32,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -85,6 +85,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			updateStockRecordsForBufferInventoryFlag(blSerialProduct, ctx);
 			removeSerialAssignedToFutureOrder(blSerialProduct, ctx);
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
+			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 		}
 	}
 	
@@ -599,6 +600,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				&& Objects.nonNull(blSerialProduct.getSerialStatus())
 				&& (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.REPAIR_NEEDED)
 						|| blSerialProduct.getSerialStatus().equals(SerialStatusEnum.PARTS_NEEDED));
+	}
+	
+	/**
+	 * Sets the flag for buffered inventory on serial.
+	 *
+	 * @param blSerialProduct
+	 *           the new flag for buffered inventory on serial
+	 */
+	private void setFlagForBufferedInventoryOnSerial(final BlSerialProductModel blSerialProduct)
+	{
+		if (BooleanUtils.isTrue(blSerialProduct.getIsBufferedInventory())
+				&& getBlStockService().isInactiveStatus(blSerialProduct.getSerialStatus()))
+		{
+			blSerialProduct.setIsBufferedInventory(Boolean.FALSE);
+		}
 	}
 
 	/**
