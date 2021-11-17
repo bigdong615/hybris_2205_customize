@@ -396,6 +396,8 @@ ACC.cart = {
             $("#applyVoucherForm").submit();
         }
         else {
+        $('.js-promo-error').html("");
+        $('.js-promo-error').addClass("d-none");
           $("#errorMessages_voucher").removeClass("d-none");
             $("#errorMessages_voucher").html("Please enter your coupon code and click apply.");
             $(".js-voucher-code-text").addClass("error");
