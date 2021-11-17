@@ -142,17 +142,19 @@
                                      </c:if>
                                      </c:forEach>
                                  </c:if>
+
+                                    <div class="notification notification-error d-none"id="errorMessages_voucher" ></div>
                                   <c:choose>
                                   <c:when test="${isReplacementOrderCart eq true}">
 
                                   </c:when>
                                   <c:otherwise>
-                                    <c:if test="${cartData.isNewGearOrder eq false}">
+                                    <c:if test="${cartData.isNewGearOrder eq false && cartData.isRentalCart eq true}">
                                       <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                                     </c:if>
                                   </c:otherwise>
                                   </c:choose>
-                            <div class="notification notification-error d-none"id="errorMessages_voucher" />
+
 
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>
                             <div class="order-actions my-4">
