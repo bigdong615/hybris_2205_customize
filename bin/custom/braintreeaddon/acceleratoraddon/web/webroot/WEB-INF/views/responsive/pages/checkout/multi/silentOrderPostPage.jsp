@@ -434,7 +434,7 @@
 						    </c:otherwise>
 						</c:choose>
 							<c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                      <div class="notification notification-error">
+                      <div class="notification notification-error js-promo-error">
                            ${fn:escapeXml(errorMsg)}
                       </div>
               </c:if>
@@ -446,10 +446,11 @@
                    </c:if>
                    </c:forEach>
                </c:if>
+                              <div class="notification notification-error d-none"id="errorMessages_voucher" ></div>
+
                <c:if test="${cartData.isNewGearOrder eq false && cartData.isRentalCart eq true}">
                      <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                </c:if>
-               <div class="notification notification-error d-none"id="errorMessages_voucher" />
             </div>
 					</div>
 				</div>	
