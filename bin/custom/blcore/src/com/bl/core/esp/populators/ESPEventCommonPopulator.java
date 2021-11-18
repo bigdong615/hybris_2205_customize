@@ -5,6 +5,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
+import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -360,9 +361,12 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param order order model to get the data
      * @param data data to get updated
      * @param blSerialProductModels
+     * @param orderEntry
      */
     protected void populateOrderDataForOrderPullBackItems(final OrderModel order,
-        final OrderPullBackItems data, final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
+        final OrderPullBackItems data, final String templateName,
+        final List<BlSerialProductModel> blSerialProductModels,
+        final AbstractOrderEntryModel orderEntry) {
         final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
         data.setOldOrderId(StringUtils.EMPTY);
         data.setStatus(getRequestValue(
@@ -378,7 +382,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         data.setExpectedshippingdate(formatter.format(order.getRentalStartDate()));
         data.setArrivaldate(formatter.format(order.getRentalStartDate()));
         data.setReturndate(formatter.format(order.getRentalEndDate()));
-        populateOrderItemsInXML(order , data , templateName , blSerialProductModels);
+        populateOrderItemsInXML(order , data , templateName , blSerialProductModels , orderEntry);
     }
 
     /**
@@ -387,18 +391,20 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param data date to get updated
      * @param templateName template for request
      * @param blSerialProductModels
+     * @param orderEntry
      */
     private void populateOrderItemsInXML(final OrderModel orderModel, final OrderPullBackItems data,
-        final String templateName, final List<BlSerialProductModel> blSerialProductModels) {
+        final String templateName, final List<BlSerialProductModel> blSerialProductModels,
+        final AbstractOrderEntryModel orderEntry) {
         try {
             final Document orderItemsInXMLDocument = createNewXMLDocument();
             final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlCoreConstants.ITEMS_ROOT_ELEMENT);
                 if(StringUtils.equalsIgnoreCase(templateName , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE) && CollectionUtils.isNotEmpty(blSerialProductModels)){
                     populateOrderDetailsForRemovedEntriesInXMl(orderItemsInXMLDocument , rootOrderItems , blSerialProductModels);
                 }
-                else if(CollectionUtils.isNotEmpty(orderModel.getEntries())) {
-                    for (final AbstractOrderEntryModel entryModel : orderModel.getEntries()) {
-                        populateOrderDetailsInXML(entryModel, orderItemsInXMLDocument, rootOrderItems);
+                else if(Objects.nonNull(orderEntry) && CollectionUtils.isNotEmpty(orderEntry.getModifiedSerialProductList())) {
+                    for (final BlSerialProductModel blSerialProductModel : orderEntry.getModifiedSerialProductList()) {
+                        populateOrderDetailsInXML(blSerialProductModel, orderItemsInXMLDocument, rootOrderItems , orderEntry);
                     }
                 }
             final Transformer transformer = getTransformerFactoryObject();
@@ -417,18 +423,20 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
     /**
      * This method created to populate data in XML format
-     * @param entryModel entryModel
+     * @param orderEntry entryModel
      * @param orderItemsInXMLDocument orderItemsInXMLDocument
      * @param rootOrderItems rootOrderItems
+     * @param blSerialProductModel blserial product
      */
-    private void populateOrderDetailsInXML(final AbstractOrderEntryModel entryModel,
+    private void populateOrderDetailsInXML(final BlSerialProductModel blSerialProductModel,
         final Document orderItemsInXMLDocument,
-        final Element rootOrderItems) {
+        final Element rootOrderItems,
+        final AbstractOrderEntryModel orderEntry) {
         final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlCoreConstants.ITEM_ROOT_ELEMENT);
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_CODE,
-                getRequestValue(entryModel.getProduct().getCode()));
+                getRequestValue(blSerialProductModel.getCode()));
             createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_TITLE,
-                entryModel.getProduct() instanceof BlSerialProductModel ? getProductTitle(entryModel.getProduct().getCode()) :entryModel.getProduct().getName());
+                orderEntry.getProduct() instanceof BlSerialProductModel ? getProductTitle(orderEntry.getProduct().getCode()) :orderEntry.getProduct().getName());
 
     }
 
