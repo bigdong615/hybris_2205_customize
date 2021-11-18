@@ -56,6 +56,7 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -786,9 +787,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param orderModel ordermodel
    */
   @Override
-  public void sendOrderPullBackItemsAdded(final OrderModel orderModel) {
+  public void sendOrderPullBackItemsAdded(final OrderModel orderModel , final
+      AbstractOrderEntryModel abstractOrderEntryModel) {
     if (Objects.nonNull(orderModel)) {
       final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
+      orderPullBackRequest.setOrderEntry(abstractOrderEntryModel);
       getBlOrderPullBackItemsAddedRequestPopulator().populate(orderModel, orderPullBackRequest);
       ESPEventResponseWrapper espEventResponseWrapper = null;
       try
