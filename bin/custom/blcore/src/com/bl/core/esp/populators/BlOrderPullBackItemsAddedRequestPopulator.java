@@ -40,7 +40,8 @@ public class BlOrderPullBackItemsAddedRequestPopulator extends ESPEventCommonPop
     data.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
     populateOrderDataForOrderPullBackItems(order , data , StringUtils.EMPTY,
-        Collections.emptyList());
+        Collections.emptyList(), orderPullBackRequest.getOrderEntry());
+    orderPullBackRequest.setOrderEntry(null);
     orderPullBackRequest.setData(data);
   }
 

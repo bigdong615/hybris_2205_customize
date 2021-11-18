@@ -37,7 +37,8 @@ public class BlOrderPullBackItemRemovedRequestPopulator  extends ESPEventCommonP
     data.setOrderid(order.getCode());
     data.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
-    populateOrderDataForOrderPullBackItems(order , data , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE , orderPullBackRequest.getSerialProducts());
+    populateOrderDataForOrderPullBackItems(order , data , BlCoreConstants.ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE , orderPullBackRequest.getSerialProducts() ,
+        null);
     orderPullBackRequest.setSerialProducts(null);
     orderPullBackRequest.setData(data);
   }
