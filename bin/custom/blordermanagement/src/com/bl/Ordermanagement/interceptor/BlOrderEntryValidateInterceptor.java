@@ -152,7 +152,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if (orderEntryModel.getOrder().getConsignments().stream().anyMatch(consignmentModel1 ->
 					DateUtils.isSameDay(consignmentModel1.getOptimizedShippingStartDate(),
 							orderEntryModel.getModifiedtime()))) {
-				getDefaultBlESPEventService().sendOrderPullBackItemsAdded(orderEntryModel.getOrder());
+				getDefaultBlESPEventService().sendOrderPullBackItemsAdded(orderEntryModel.getOrder() , orderEntryModel);
 			}
 		}
 		catch (final Exception e){
