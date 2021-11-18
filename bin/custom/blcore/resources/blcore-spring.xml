@@ -505,6 +505,8 @@
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1726,5 +1728,15 @@
 	<bean id="blOrderPullBackItemRemovedRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator">
 	</bean>
+	
+	<bean id="blSerialOnlineToStagedDataPopulator" class="com.bl.core.serial.model.populator.BlSerialOnlineToStagedDataPopulator"/>
+	
+	<bean id="blSerialProductAfterSaveListener" class="com.bl.core.after.save.listener.BlSerialProductAfterSaveListener">
+        <property name="modelService" ref="modelService"/>
+        <property name="productService" ref="productService"/>
+        <property name="catalogVersionDao" ref="catalogVersionDao"/>
+        <property name="populator" ref="blSerialOnlineToStagedDataPopulator"/>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
 
 </beans>
