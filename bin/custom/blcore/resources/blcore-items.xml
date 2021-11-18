@@ -1373,6 +1373,12 @@
                            initial="true"/>
                          <description>Serial barcode assigned specifically to the serial</description>
                      </attribute>
+                   <attribute qualifier="serialNumber" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" unique="true" optional="true"
+                           initial="true"/>
+                         <description>Serial number assigned to the serials</description>
+                     </attribute>
                      <attribute qualifier="warehouseLocation" type="Warehouse">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" unique="true" optional="true"/>
@@ -7067,5 +7073,95 @@ new Integer(0)
                 </attributes>
              </itemtype>
         </typegroup>
-	</itemtypes>
+
+  <typegroup name="SerialLog">
+    <itemtype code="BlSerialLog" autocreate="true" generate="true">
+      <description>BlSerialLog</description>
+      <deployment table="serialLog" typecode="12242" />
+      <attributes>
+        <attribute qualifier="serialsLogID" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false"  unique="true"/>
+          <description>Unique Serial Log ID</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="logUserName" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false" />
+          <description>User Name who logged changes</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="serialNumber" type="java.lang.String">
+          <modifiers read="true" write="true" optional="false" />
+          <description>Serial Number associated to serial</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="serialsId" type="BlSerialProduct">
+          <modifiers read="true" write="true" optional="false" />
+          <description>Serial product which is logged</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="itemBarcode" type="java.lang.String">
+          <modifiers read="true" write="true" optional="true" />
+          <description>Serial Barcode</description>
+          <persistence type="property" />
+        </attribute>
+        <attribute qualifier="logTime" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Time when serial logging happened</description>
+        </attribute>
+        <attribute qualifier="willBeActiveOn" type="java.util.Date">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Time when serial is first active</description>
+        </attribute>
+        <attribute qualifier="logChanged" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" />
+          <description>Pattern Log Changed</description>
+        </attribute>
+        <attribute qualifier="serialStatus" type="SerialStatusEnum">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="false"/>
+          <description>The status of the Serial Product</description>
+        </attribute>
+        <attribute qualifier="notes" type="java.lang.String">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Notes on the serial</description>
+        </attribute>
+        <attribute qualifier="conditions" type="java.lang.String">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>Conditions applied on the Serial</description>
+        </attribute>
+        <attribute qualifier="firmwareVersion" type="java.lang.String">
+             <persistence type="property" />
+             <modifiers read="true" write="true" optional="true" />
+             <description>The version the SKU's firmware is currently at</description>
+        </attribute>
+        <attribute qualifier="isAvailableForSale" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+          <description>If the serial is available for sale</description>
+        </attribute>
+        <attribute qualifier="forSalePrice" type="java.math.BigDecimal">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>For Sale Price of Serial</description>
+        </attribute>
+        <attribute qualifier="forSalePricingValue" type="java.math.BigDecimal">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>For Sale Pricing Value</description>
+        </attribute>
+        <attribute qualifier="withOrderId" type="Order">
+          <modifiers read="true" write="true" optional="true" />
+          <description>Order ID Associated to the log</description>
+          <persistence type="property" />
+        </attribute>
+      </attributes>
+    </itemtype>
+  </typegroup>
+</itemtypes>
 </items>
