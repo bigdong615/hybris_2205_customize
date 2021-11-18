@@ -1058,6 +1058,7 @@
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
 		<property name="serialProducts" type="java.util.List&lt;com.bl.core.model.BlSerialProductModel>" />
+		<property name="orderEntry" type="de.hybris.platform.core.model.order.AbstractOrderEntryModel" />
 	</bean>
 
 
