@@ -3860,7 +3860,7 @@
             <description>packageId it should be unique for Package and if package is associated with order then
               we need the package ID and warehouse in the packages attribute on the order schema.</description>
           </attribute>
-          <attribute type="packageType" qualifier="PackageTypeEnum">
+          <attribute type="PackageTypeEnum" qualifier="packageType">
             <modifiers read="true" write="true" optional="true" />
             <persistence type="property" />
             <description>Package Enum will be setted based on Product.</description>
