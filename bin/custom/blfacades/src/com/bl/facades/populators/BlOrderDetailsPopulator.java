@@ -109,33 +109,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
-   populateGiftCard(source , target);
   }
 
-
-  /**
-   * This method created to set the gift card details
-   * @param orderModel orderModel
-   * @param orderData orderData
-   */
-  private void populateGiftCard(final OrderModel orderModel, final OrderData orderData) {
-    if (CollectionUtils.isNotEmpty(orderModel.getGiftCard()) && !orderModel.isGiftCardOrder())
-    {
-      final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-      for (final GiftCardModel giftCardModel : orderModel.getGiftCard())
-      {
-        final BLGiftCardData blGiftCardData = new BLGiftCardData();
-        blGiftCardData.setCode(giftCardModel.getCode());
-        final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
-        //rounding off double value to 2 decimal places
-        BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-        blGiftCardData.setRedeemamount(createPrice(orderModel , gcRedeemedAmount.doubleValue()));
-        blGiftCardData.setBalanceamount(createPrice(orderModel , giftCardModel.getBalance()));
-        blGiftCardDataList.add(blGiftCardData);
-      }
-      orderData.setGiftCardData(blGiftCardDataList);
-    }
-  }
 
   /**
    * This method created to populate dates for order details

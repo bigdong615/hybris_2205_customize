@@ -85,7 +85,10 @@ public class DefaultBlProductService extends DefaultProductService implements Bl
 	  {
 		  final String currentUserUid = currentUser.getUid();
 		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current user id : {}", currentUserUid);
-		  blSerialProduct.setUserChangedConditionRating(currentUserUid);
+		  if(!currentUserUid.equalsIgnoreCase(BlCoreConstants.ANONYMOUS))
+		  {
+			  blSerialProduct.setUserChangedConditionRating(currentUserUid);
+		  }
 	  }
 	  else
 	  {

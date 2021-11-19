@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 public class CustomFieldsServiceImpl implements CustomFieldsService
@@ -106,12 +107,14 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "field_6":
-				final LocalDateTime rentalStartDate = getFormattedDateTime(order.getRentalStartDate());
-				final LocalDateTime rentalEndDate = getFormattedDateTime(order.getRentalEndDate());
-				customFields.put(customFieldName
-								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
-						String.valueOf(ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1))));
-				break;
+				if(BooleanUtils.isTrue(order.getIsRentalCart())) {
+					final LocalDateTime rentalStartDate = getFormattedDateTime(order.getRentalStartDate());
+					final LocalDateTime rentalEndDate = getFormattedDateTime(order.getRentalEndDate());
+					customFields.put(customFieldName
+									.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
+							String.valueOf(ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1))));
+					break;
+				}
 			default:
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""), "");
