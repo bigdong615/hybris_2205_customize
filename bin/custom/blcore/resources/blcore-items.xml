@@ -309,7 +309,12 @@
             <value code="PARTS_NEEDED_REPAIR" />
       </enumtype>
       
-      <enumtype code="ItemBillingChargeTypeEnum" autocreate="true" generate="true" dynamic="true"/>
+      <enumtype code="ItemBillingChargeTypeEnum" autocreate="true" generate="true" dynamic="true">
+        <value code="MISSING_CHARGE" />
+        <value code="LATE_CHARGE" />
+        <value code="REPAIR_CHARGE" />
+        <value code="CUSTOMER_RESPONSIBLE_REPAIRS" />
+      </enumtype>
       
       <enumtype generate="true" code="RepairTechClaimEnum" autocreate="true" dynamic="true">
       	<value code="TECH_ONE" />
@@ -467,6 +472,12 @@
             <value code="EXTEND_ORDER"/>
             <value code="MODIFY_PAYMENT"/>
             <value code="BILL_PAYMENT"/>
+      </enumtype>
+
+      <enumtype code="PackageTypeEnum" autocreate="true" generate="true" dynamic="true">
+        <value code="SERIAL_PRODUCT" />
+        <value code="BARCODED_SUBPART" />
+        <value code="NON_BARCODED_SUBPART" />
       </enumtype>
       
 	  </enumtypes>
@@ -3849,6 +3860,31 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This date refers to returning date of this package by UPS scrape.</description>
           </attribute>
+
+          <!--Newly Created attribute-->
+          <attribute qualifier="orderCode" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>order code to map package from order </description>
+          </attribute>
+          <attribute qualifier="packageId" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true" unique="true"/>
+            <description>packageId it should be unique for Package and if package is associated with order then
+              we need the package ID and warehouse in the packages attribute on the order schema.</description>
+          </attribute>
+          <attribute type="packageType" qualifier="PackageTypeEnum">
+            <modifiers read="true" write="true" optional="true" />
+            <persistence type="property" />
+            <description>Package Enum will be setted based on Product.</description>
+          </attribute>
+          <attribute qualifier="subpartName" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>if package entry contains non barcoded subpart then we will require subpart name in this attribute</description>
+          </attribute>
+
+
         </attributes>
 			</itemtype>
 		</typegroup>
@@ -4017,7 +4053,24 @@
                          <modifiers read="true" write="true" search="true" optional="true" />
                          <description>This attribute is used to add notes for unpaid bill.</description>
                          <persistence type="property"/>
-                  </attribute>   
+                  </attribute>
+
+        <!--Newly Created attributes-->
+        <attribute qualifier="code" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" unique="true"/>
+          <description>unique code for billing charge</description>
+        </attribute>
+        <attribute qualifier="serialCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>serial code to map bill charge against serial</description>
+        </attribute>
+        <attribute qualifier="orderCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>order number to map for which order the serial is charged</description>
+        </attribute>
 			</attributes>
 		</itemtype>
       </typegroup>
