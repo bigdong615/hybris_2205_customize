@@ -246,7 +246,7 @@
 				var="uploadedDocument" varStatus="loopindex">
 				<c:if test="${!uploadedDocument.removedByCustomer}">
 				<div class="uploaded-doc">
-			$${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
+			${uploadedDocument.realFileName} <br/> ${uploadedDocument.expiryDate}
 			<input type="hidden" class="existing-doc">
 				</div>
 
