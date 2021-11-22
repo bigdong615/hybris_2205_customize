@@ -472,6 +472,12 @@
             <value code="MODIFY_PAYMENT"/>
             <value code="BILL_PAYMENT"/>
       </enumtype>
+
+      <enumtype code="PackageTypeEnum" autocreate="true" generate="true" dynamic="true">
+        <value code="SERIAL_PRODUCT" />
+        <value code="BARCODED_SUBPART" />
+        <value code="NON_BARCODED_SUBPART" />
+      </enumtype>
       
 	  </enumtypes>
 
@@ -1634,6 +1640,8 @@
 				<modifiers read="true" write="true" optional="true" />
 				<persistence type="property" />
 			</attribute>
+
+
                  </attributes>
              </itemtype>
 
@@ -2794,11 +2802,6 @@
                     <persistence type="property" />
                     <description>flag to identify whether the order has been extended or not</description>
                   </attribute>
-                  <attribute qualifier="extendStartEndDate" type="java.util.Date">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>return date of a for extend order</description>
-                  </attribute>
                   <attribute qualifier="extendRentalEndDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
@@ -2808,11 +2811,6 @@
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>To get the number of days extended .</description>
-                  </attribute>
-                  <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>To get the Total number of days.</description>
                   </attribute>
                   <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
                     <modifiers read="true" write="true" search="true" optional="true" initial="true" />
@@ -3853,6 +3851,31 @@
             <modifiers read="true" write="true" search="true" optional="true"/>
             <description>This date refers to returning date of this package by UPS scrape.</description>
           </attribute>
+
+          <!--Newly Created attribute-->
+          <attribute qualifier="orderCode" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>order code to map package from order </description>
+          </attribute>
+          <attribute qualifier="packageId" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true" unique="true"/>
+            <description>packageId it should be unique for Package and if package is associated with order then
+              we need the package ID and warehouse in the packages attribute on the order schema.</description>
+          </attribute>
+          <attribute type="PackageTypeEnum" qualifier="packageType">
+            <modifiers read="true" write="true" optional="true" />
+            <persistence type="property" />
+            <description>Package Enum will be setted based on Product.</description>
+          </attribute>
+          <attribute qualifier="subpartName" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>if package entry contains non barcoded subpart then we will require subpart name in this attribute</description>
+          </attribute>
+
+
         </attributes>
 			</itemtype>
 		</typegroup>
@@ -4021,7 +4044,24 @@
                          <modifiers read="true" write="true" search="true" optional="true" />
                          <description>This attribute is used to add notes for unpaid bill.</description>
                          <persistence type="property"/>
-                  </attribute>   
+                  </attribute>
+
+        <!--Newly Created attributes-->
+        <attribute qualifier="code" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true" unique="true"/>
+          <description>unique code for billing charge</description>
+        </attribute>
+        <attribute qualifier="serialCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>serial code to map bill charge against serial</description>
+        </attribute>
+        <attribute qualifier="orderCode" type="java.lang.String">
+          <persistence type="property"/>
+          <modifiers read="true" write="true" optional="true"/>
+          <description>order number to map for which order the serial is charged</description>
+        </attribute>
 			</attributes>
 		</itemtype>
       </typegroup>

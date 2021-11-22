@@ -316,7 +316,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     Calendar extendStartDate = Calendar.getInstance();
     extendStartDate.setTime(startDate);
     extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
-    extendOrderModel.setExtendStartEndDate(extendStartDate.getTime());
     extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
     extendOrderModel.setActualRentalEndDate(stockEndDate);
 
