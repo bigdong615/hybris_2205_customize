@@ -509,7 +509,7 @@ hr { background-color: #D4D3D3; opacity: 1; }
 input[type=radio],
 input[type=checkbox]{ visibility: hidden; position: absolute; }
 input[type=radio] + label:before,
-input[type=checkbox] + label:before{ height:16px; width:16px; margin-right:3.5px; content: " "; display:inline-block; vertical-align: baseline; border:1px solid #999; margin-bottom: -2px; }
+input[type=checkbox] + label:before{ height:16px; width:16px; margin-right:8px; content: " "; display:inline-block; vertical-align: baseline; border:1px solid #999; margin-bottom: -2px; }
 input[type=radio]:checked + label:before,
 input[type=checkbox]:checked + label:before{ background: #52bfc0 url(../assets/icon-check-white.svg) no-repeat center; border-color: #52bfc0; background-size: 10px; }
 
