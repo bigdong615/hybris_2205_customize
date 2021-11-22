@@ -30,4 +30,9 @@
 		<formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="billTo_phoneNumber" inputCSS="form-control mb-3" mandatory="false" />
 		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>
 	
-	
+
+<script>
+$('.forcolor').click(function(){
+$( ".forcolor" ).addClass( 'hide-error');
+  });
+</script>
