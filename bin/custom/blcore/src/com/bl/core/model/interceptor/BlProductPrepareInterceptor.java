@@ -19,6 +19,7 @@ import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class is for setting the auto generated product Id on BlProduct when it is created and has
@@ -45,7 +47,8 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
   private BlPricingService blPricingService;
   private SessionService sessionService;
   private SearchRestrictionService searchRestrictionService;
-
+  @Value("${excluded.product.type.enum.list}")
+  private String excludedProducts;
   @Override
   public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
 
@@ -176,7 +179,8 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.PACKAGE.equals(blProductModel.getProductType()) && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
+    final String[] excludedProductList = excludedProducts.split(BlCoreConstants.SHARE_A_SALE_COMMA);
+    if (retailPrice != null && retailPrice > 0.0D && !(Arrays.asList(excludedProductList).contains(blProductModel.getProductType().getCode())) ) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
