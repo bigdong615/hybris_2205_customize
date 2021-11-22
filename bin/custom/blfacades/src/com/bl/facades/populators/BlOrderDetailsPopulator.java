@@ -400,7 +400,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   {
 	  for (final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements())
 	  {
-		  if (doCheckGC(source, blGiftCardDataList, giftCardModel, giftCardMovementModel))
+		  if (doCheckGC(source, giftCardMovementModel))
 		  {
 			  final BLGiftCardData blGiftCardData = new BLGiftCardData();
 			  blGiftCardData.setCode(giftCardModel.getCode());
@@ -422,8 +422,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    *           the gift card movement model
    * @return true, if successful
    */
-  private boolean doCheckGC(final OrderModel source, final List<BLGiftCardData> blGiftCardDataList,
-		  final GiftCardModel giftCardModel, final GiftCardMovementModel giftCardMovementModel)
+  private boolean doCheckGC(final OrderModel source, final GiftCardMovementModel giftCardMovementModel)
   {
 	  return null != giftCardMovementModel.getOrder()
 			  && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode());
@@ -440,7 +439,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 	  if(CollectionUtils.isNotEmpty(gcList))
 	  {
 		  gcList.forEach(giftCard -> {
-			  if(!appliedGcList.stream().anyMatch(gc -> gc.getCode().equalsIgnoreCase(giftCard.getCode())))
+			  if(appliedGcList.stream().noneMatch(gc -> gc.getCode().equalsIgnoreCase(giftCard.getCode())))
 			  {
 				  appliedGcList.add(giftCard);
 			  }
