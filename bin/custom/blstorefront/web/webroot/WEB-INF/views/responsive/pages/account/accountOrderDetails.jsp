@@ -249,54 +249,29 @@
                              <c:when test="${not empty orderData.paymentInfo}">
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.payment.title"/></h5>
                                 <div class="row mb-4">
-                               <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}"/>
+                               <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}" displayOrderNote="true"/>
+                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 1 }">
+	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}" begin="1">
+	                               		<order:accountPaymentDetails orderData="${orderData}" paymentInfo="${modifiedPaymentInfo}" displayOrderNote="false"/>
+	                               </c:forEach>
+                               </c:if>
+                               <c:if test="${not empty orderData.modifiedOrderPoNumber}">
+                               			<order:accountOrderPoPayment orderData="${orderData}" displayOrderNote="false" poNote="${orderData.modifiedOrderPoNotes}"/>	
+                               		</c:if>
                                 </div>
                                </c:when>
                                <c:otherwise>
                                <div class="row">
-                                   	<div class="col-2 text-center">
-                                   		<img
-                                   			src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-po.png"
-                                   			style="width: 50px;">
-                                   	</div>
-                                   	<div class="col-10 col-md-5">
-                                   		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
-                                   		
-                                   		<!--Commented below code to resolved BL-1107 -->
-                                   		<%-- <div class="row">
-                                   			<div class="col-6">
-                                   				<p class="body14">
-                                   					<spring:theme code="text.review.page.payment.amount" />
-                                   				</p>
-                                   			</div>
-                                   			<div class="col-6">
-                                   				<p class="body14 gray80">
-                                   					<format:price priceData="${orderData.totalPriceWithTax}" />
-                                   				</p>
-                                   			</div>
-                                   		</div> --%>
-                                   	</div>
-                                    <div class="col-12 col-md-5">
-                                   	  <div class="po-order-notes">
-                                   	    <c:if test="${not empty orderData.orderNotes}">
-                                          <p class="gray80 body14">
-                                             <b class="gray100"><spring:theme code="text.review.page.payment.notes"/></b> ${orderData.orderNotes}
-                                          </p>
-                                        </c:if>
-                                   		  <p class="gray80 body14">
-                                   			  <b class="gray100"><spring:theme code="text.order.confirmation.print.page.po.notes"/></b>
-                                   			  <c:choose>
-                                   				  <c:when test="${orderData.poNotes == ''}">
-                                                <spring:theme code="text.review.page.payment.notes.na"/>
-                                   				  </c:when>
-                                   				  <c:otherwise>
-                                               ${orderData.poNotes}
-                                   				  </c:otherwise>
-                                   			  </c:choose>
-                                   		  </p>
-                                      </div>
-                                    </div>
-                                   </div>
+                               		<order:accountOrderPoPayment orderData="${orderData}" displayOrderNote="true" poNote="${orderData.poNotes}"/>
+                               		<c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 }">
+	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}">
+	                               		<order:accountPaymentDetails orderData="${orderData}" paymentInfo="${modifiedPaymentInfo}" displayOrderNote="false"/>
+	                               </c:forEach>
+                               </c:if>
+                               		<c:if test="${not empty orderData.modifiedOrderPoNumber}">
+                               			<order:accountOrderPoPayment orderData="${orderData}" displayOrderNote="false" poNote="${orderData.modifiedOrderPoNotes}"/>	
+                               		</c:if>
+                               </div>
                                   </c:otherwise>
                                 </c:choose>
                                </div>

@@ -13,6 +13,8 @@ import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.braintree.model.BrainTreePaymentInfoModel;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.commercefacades.order.converters.populator.OrderPopulator;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
@@ -30,8 +32,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -61,6 +65,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		final double promoDiscount = Objects.isNull(source.getTotalDiscounts()) ? 0.0 : source.getTotalDiscounts();
 		final double gifCardDiscount = Objects.isNull(source.getGiftCardAmount()) ? 0.0 : source.getGiftCardAmount();
 		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
+		populateModifiedOrderPaymentInfos(source, target);
 	}
 
 	/**
@@ -117,17 +122,10 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 	protected void addPaymentInformation(final AbstractOrderModel source, final AbstractOrderData prototype)
 	{
 		final PaymentInfoModel paymentInfo = source.getPaymentInfo();
-		if (paymentInfo instanceof CreditCardPaymentInfoModel)
+		final CCPaymentInfoData paymentInfoData = getPaymentInfoData(paymentInfo);
+		if(Objects.nonNull(paymentInfoData))
 		{
-			final CCPaymentInfoData paymentInfoData = getCreditCardPaymentInfoConverter()
-					.convert((CreditCardPaymentInfoModel) paymentInfo);
-			prototype.setPaymentInfo(paymentInfoData);
-		}
-		else if (paymentInfo instanceof BrainTreePaymentInfoModel)
-		{
-			final CCPaymentInfoData paymentInfoData = getBrainTreePaymentInfoConverter()
-					.convert((BrainTreePaymentInfoModel) paymentInfo);
-			prototype.setPaymentInfo(paymentInfoData);
+		  prototype.setPaymentInfo(paymentInfoData);
 		}
 	}
 
@@ -206,5 +204,51 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		// Since we have already calculated the total with Tax , so returning cart total as total price with tax
 		return Objects.nonNull(source) && Objects.nonNull(source.getTotalPrice()) ? source
 				.getTotalPrice() : 0.0d;
+	}
+	
+	/**
+	 * Populate modified order payment infos.
+	 *
+	 * @param source the source
+	 * @param target the target
+	 */
+	private void populateModifiedOrderPaymentInfos(final AbstractOrderModel source, final AbstractOrderData target)
+	{
+	  final List<CCPaymentInfoData> modifiedOrderPaymentInfos = Lists.newArrayList();
+	  if(CollectionUtils.isNotEmpty(source.getPaymentTransactions()))
+	  {
+	    source.getPaymentTransactions().forEach(paymentTransaction -> {
+	      final PaymentInfoModel paymentInfoModel = paymentTransaction.getInfo();
+	      final CCPaymentInfoData paymentInfoData = getPaymentInfoData(paymentInfoModel);
+	      if(Objects.nonNull(paymentInfoData))
+	      {
+	        modifiedOrderPaymentInfos.add(paymentInfoData);
+	      }
+	    });
+	  }
+	  target.setModifiedOrderPaymentInfos(modifiedOrderPaymentInfos);
+	  target.setModifiedOrderPoNumber(ObjectUtils.defaultIfNull(source.getModifiedOrderPoNumber(), StringUtils.EMPTY));
+	  target.setModifiedOrderPoNotes(ObjectUtils.defaultIfNull(source.getModifiedOrderPoNotes(), StringUtils.EMPTY));
+	}
+	
+	/**
+	 * Gets the payment info data.
+	 *
+	 * @param paymentInfo the payment info
+	 * @return the payment info data
+	 */
+	private CCPaymentInfoData getPaymentInfoData(final PaymentInfoModel paymentInfo)
+	{
+	  if (paymentInfo instanceof CreditCardPaymentInfoModel)
+    {
+	    return getCreditCardPaymentInfoConverter()
+          .convert((CreditCardPaymentInfoModel) paymentInfo);
+    }
+    else if (paymentInfo instanceof BrainTreePaymentInfoModel)
+    {
+      return getBrainTreePaymentInfoConverter()
+          .convert((BrainTreePaymentInfoModel) paymentInfo);
+    }
+	  return null;
 	}
 }

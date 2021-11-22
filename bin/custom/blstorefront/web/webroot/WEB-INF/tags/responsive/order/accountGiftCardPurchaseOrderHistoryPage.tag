@@ -91,7 +91,7 @@
 						</h5>
 						<div class="row mb-4">
 							<order:accountPaymentDetails orderData="${orderData}"
-								paymentInfo="${orderData.paymentInfo}" />
+								paymentInfo="${orderData.paymentInfo}" displayOrderNote="true"/>
 						</div>
 					</c:when>
 					<c:otherwise>

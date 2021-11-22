@@ -1508,7 +1508,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
       final BrainTreePaymentInfoModel paymentInfo) throws BraintreeErrorException
   {
     BigDecimal amountRefunded = amount;
-    if (Objects.nonNull(orderModel) && CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions()))
+    if (Objects.nonNull(orderModel) && (StringUtils.isNotBlank(orderModel.getPoNumber()) || CollectionUtils.isNotEmpty(orderModel.getPaymentTransactions())))
     {
       BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total Amount to Capture : {} for Order : {}", amountRefunded.doubleValue(), orderModel.getCode());
       return createAuthorizationTransactionOfOrder(orderModel, amountRefunded, submitForSettlement, paymentInfo);

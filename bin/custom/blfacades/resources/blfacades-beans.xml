@@ -207,6 +207,9 @@
         <property name="totalPayBillTax" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
         <property name="orderTotalWithTaxForPayBill" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
         <property name="customerOwnedOrderNote" type="java.lang.String"/>
+        <property name="modifiedOrderPaymentInfos" type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.CCPaymentInfoData>"/>
+        <property name="modifiedOrderPoNumber" type="java.lang.String"/>
+		<property name="modifiedOrderPoNotes" type="java.lang.String"/>
   </bean>
 
 	<!-- ExtendOrderData -->
