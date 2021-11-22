@@ -4058,6 +4058,11 @@
           <modifiers read="true" write="true" optional="true"/>
           <description>order number to map for which order the serial is charged</description>
         </attribute>
+        <attribute qualifier="customer" type="Customer">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify the customer on billing charges.</description>
+        </attribute>
 			</attributes>
 		</itemtype>
       </typegroup>
