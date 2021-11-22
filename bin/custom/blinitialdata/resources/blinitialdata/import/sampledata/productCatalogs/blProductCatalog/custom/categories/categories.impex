@@ -66,27 +66,27 @@ INSERT_UPDATE Category; code[unique = true]             ; active; name[lang = en
                       ; video-lighting-batteries ; true  ; Lighting Batteries           ; true          ; Lighting Batteries           ; Lighting Batteries | Rent Video Lighting | BorrowLenses               ;                                                  ;                ; true
                       ; cameraRigs               ; true  ; Camera Rigs                  ; true          ; Camera Rigs                  ;                                                                       ;                                                  ;                ; true
 # new category created
-                      ; accessories               ; true  ; accessories                   ; true          ; accessories                   ;                                                                       ;                                                  ;                ; true
-; Support               ; true  ; Support                   ; true          ; Support                   ;                                                                       ;                                                  ;                ; true
-; wimberley               ; true  ; wimberley                   ; true          ; wimberley                   ;                                                                       ;                                                  ;                ; true
-; product               ; true  ; product                   ; true          ; product                   ;                                                                       ;                                                  ;                ; true
-; underwater               ; true  ; underwater                   ; true          ; underwater                   ;                                                                       ;                                                  ;                ; true
-; aquatech               ; true  ; aquatech                   ; true          ; aquatech                   ;                                                                       ;                                                  ;                ; true
-; sirui               ; true  ; sirui                   ; true          ; sirui                   ;                                                                       ;                                                  ;                ; true
-; asus               ; true  ; asus                   ; true          ; asus                   ;                                                                       ;                                                  ;                ; true
-; logitech               ; true  ; logitech                   ; true          ; logitech                   ;                                                                       ;                                                  ;                ; true
-; Aden               ; true  ; Aden                   ; true          ; Aden                   ;                                                                       ;                                                  ;                ; true
-; prograde               ; true  ; prograde                   ; true          ; prograde                   ;                                                                       ;                                                  ;                ; true
-; Photoflex               ; true  ; Photoflex                   ; true          ; Photoflex                   ;                                                                       ;                                                  ;                ; true
-; Zacuto               ; true  ; Zacuto                   ; true          ; Zacuto                   ;                                                                       ;                                                  ;                ; true
-; bright_tangerine               ; true  ; bright tangerine                   ; true          ; bright tangerine                   ;                                                                       ;                                                  ;                ; true
-; magewell               ; true  ; magewell                   ; true          ; magewell                   ;                                                                       ;                                                  ;                ; true
-; tilta               ; true  ; tilta                   ; true          ; tilta                   ;                                                                       ;                                                  ;                ; true
-; smallrig               ; true  ; smallrig                   ; true          ; smallrig                   ;                                                                       ;                                                  ;                ; true
-; core-swx               ; true  ; core swx                   ; true          ; core swx                   ;                                                                       ;                                                  ;                ; true
-; strobes               ; true  ; strobes                   ; true          ; strobes                   ;                                                                       ;                                                  ;                ; true
-; 360fly               ; true  ; 360fly                   ; true          ; 360fly                   ;                                                                       ;                                                  ;                ; true
-; service               ; true  ; service                   ; true          ; service                   ;                                                                       ;                                                  ;                ; true
+                      ; accessories               ; true  ; accessories                   ; false          ; accessories                   ;                                                                       ;                                                  ;                ; true
+                      ; Support                   ; true  ; Support                       ; false          ; Support                   ;                                                                       ;                                                  ;                ; true
+                      ; wimberley                ; true  ; wimberley                      ; false          ; wimberley                   ;                                                                       ;                                                  ;                ; true
+                      ; product                  ; true  ; product                        ; false          ; product                   ;                                                                       ;                                                  ;                ; true
+                      ; underwater               ; true  ; underwater                     ; false          ; underwater                   ;                                                                       ;                                                  ;                ; true
+                      ; aquatech                 ; true  ; aquatech                       ; false          ; aquatech                   ;                                                                       ;                                                  ;                ; true
+                      ; sirui                    ; true  ; sirui                          ; false          ; sirui                   ;                                                                       ;                                                  ;                ; true
+                      ; asus                     ; true  ; asus                           ; false          ; asus                   ;                                                                       ;                                                  ;                ; true
+                      ; logitech                 ; true  ; logitech                       ; false          ; logitech                   ;                                                                       ;                                                  ;                ; true
+                      ; Aden                     ; true  ; Aden                           ; false          ; Aden                   ;                                                                       ;                                                  ;                ; true
+                      ; prograde                 ; true  ; prograde                        ; false          ; prograde                   ;                                                                       ;                                                  ;                ; true
+                      ; Photoflex                ; true  ; Photoflex                        ; false          ; Photoflex                   ;                                                                       ;                                                  ;                ; true
+                      ; Zacuto                   ; true  ; Zacuto                           ; false          ; Zacuto                   ;                                                                       ;                                                  ;                ; true
+                      ; bright_tangerine         ; true  ; bright tangerine                 ; false          ; bright tangerine                   ;                                                                       ;                                                  ;                ; true
+                      ; magewell                 ; true  ; magewell                         ; false          ; magewell                   ;                                                                       ;                                                  ;                ; true
+                      ; tilta                    ; true  ; tilta                            ; false          ; tilta                   ;                                                                       ;                                                  ;                ; true
+                      ; smallrig                 ; true  ; smallrig                         ; false          ; smallrig                   ;                                                                       ;                                                  ;                ; true
+                      ; core-swx                 ; true  ; core swx                         ; false          ; core swx                   ;                                                                       ;                                                  ;                ; true
+                      ; strobes                  ; true  ; strobes                          ; false          ; strobes                   ;                                                                       ;                                                  ;                ; true
+                      ; 360fly                   ; true  ; 360fly                           ; false          ; 360fly                   ;                                                                       ;                                                  ;                ; true
+                      ; service                  ; true  ; service                          ; false          ; service                   ;                                                                       ;                                                  ;                ; true
 
 
 
@@ -141,26 +141,26 @@ INSERT_UPDATE CategoryCategoryRelation; $categories              ; $supercategor
                                       ; production ; rentalgear
                                       ; package ; rentalgear
                                       ; accessories               ; production
-; Support               ; production
-; wimberley               ; production
-; product               ; production
-; underwater               ; production
-; aquatech               ; production
-; sirui               ; production
-; asus               ; production
-; logitech               ; production
-; Aden               ; production
-; Photoflex               ; production
-; prograde               ; production
-; Zacuto               ; production
-; bright_tangerine               ; production
-; magewell               ; production
-; tilta               ; production
-; smallrig               ; production
-; core-swx               ; production
-; strobes               ; production
-; 360fly               ; production
-; service               ; production
+                                      ; wimberley               ; production
+                                      ; product               ; production
+                                      ; underwater               ; production
+                                      ; Support               ; production
+                                      ; aquatech               ; production
+                                      ; sirui               ; production
+                                      ; asus               ; production
+                                      ; logitech               ; production
+                                      ; Aden               ; production
+                                      ; Photoflex               ; production
+                                      ; prograde               ; production
+                                      ; Zacuto               ; production
+                                      ; bright_tangerine               ; production
+                                      ; magewell               ; production
+                                      ; tilta               ; production
+                                      ; smallrig               ; production
+                                      ; core-swx               ; production
+                                      ; strobes               ; production
+                                      ; 360fly               ; production
+                                      ; service               ; production
 
 
 ####### BL -80 Added Used Gear Category
