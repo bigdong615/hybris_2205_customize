@@ -1,12 +1,16 @@
 package com.bl.core.resolvers;
 
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderException;
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
 import org.apache.commons.lang.BooleanUtils;
+
+import java.util.Collection;
 
 /**
  * @author Manikandan
@@ -29,8 +33,19 @@ public class BlUsedGearProductValueResolver extends
       final IndexedProperty indexedProperty, final BlProductModel blProductModel,
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
-    inputDocument.addField(indexedProperty ,blProductModel.getSerialProducts().stream().anyMatch(
-        BlProductModel::getForSale) && BooleanUtils.isTrue(blProductModel.getForSale()));
+        inputDocument.addField(indexedProperty ,blProductModel.getSerialProducts().stream().anyMatch(BlProductModel::getForSale)
+              && BooleanUtils.isTrue(blProductModel.getForSale()) && getSerial(blProductModel.getSerialProducts()));
   }
+
+    /**
+     * This method will check if all serials are in sold / parts-needed status
+     * @param serials list
+     * @return true if all in solr/parts-needed status
+     */
+    private boolean getSerial(final Collection<BlSerialProductModel> serials) {
+        return serials.stream().anyMatch(serial -> serial.getSerialStatus().getCode().equals(SerialStatusEnum.ACTIVE.getCode()) ||
+                serial.getSerialStatus().getCode().equals(SerialStatusEnum.ADDED_TO_CART.getCode()) ||
+                serial.getSerialStatus().getCode().equals(SerialStatusEnum.RECEIVED_OR_RETURNED.getCode()));
+    }
 
 }
