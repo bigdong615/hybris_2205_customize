@@ -17,10 +17,10 @@
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
 	<hr>
-	  <p>
+	  <p style="display: flex;">
 			<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
 					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
+					id="summary-litepicker" style="margin: 0; padding: 0;"
 					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
 		</p>
 	<hr>
