@@ -405,6 +405,15 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_EXTRA_ITEM_EVENT_DEFINITION_KEY = "order.extra.item.event.definition.key";
 	public static final String ORDER_EXTRA_ITEM_EVENT_TEMPLATE = "order.extra.item.event.template";
 
+
+	public static final String ORDER_PULL_BACK_ADDED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.added.event.definition.key";
+
+	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_DEFINITION_KEY = "order.pull.back.item.removed.event.definition.key";
+	public static final String ORDER_PULL_BACK_REMOVED_ITEMS_EVENT_TEMPLATE = "pullBackOrderRemoveItems";
+
+	public static final String BORROW_LENSES_SUBSCRIBER_ID = "borrow.lenses.subscriber.id";
+
+
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
 	public static final String SHIPPING_LAST_NAME = "shippinglastname";
@@ -498,6 +507,17 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GC_TYPE = "GC";
 	public static final String PLUS = "+";
 	public static final String BL_PRODUCT_VALIDATE_INTERCEPTOR = "BlProductValidateInterceptor";
+	public static final String ORDER_MANUAL_ALLOCATION_EVENT_DEFINITION_KEY = "order.manual.allocation.event.definition.key";
+	public static final String UNALLOCATED_QUANTITY = "unallocatedquantity";
+	public static final String SERIAL_ALLOCATED = "serialallocated";
+	public static final String SERIAL_ALLOCATED_YES = "Yes";
+	public static final String SERIAL_ALLOCATED_NO = "No";
+
+	public static final String FEDEX = "fedex";
+	public static final String UPS = "ups";
+	public static final String USPS = "usps";
+	
+	public static final String ANONYMOUS = "anonymous";
 
 	private BlCoreConstants()
 	{

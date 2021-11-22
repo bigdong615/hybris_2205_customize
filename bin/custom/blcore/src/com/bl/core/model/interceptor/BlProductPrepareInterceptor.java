@@ -10,20 +10,22 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
+
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This class is for setting the auto generated product Id on BlProduct when it is created and has
@@ -33,19 +35,21 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProductModel> {
 
-  private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.class);
+private static final String EXCEPTION_OCCURED = "Exception occured";
+
+private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.class);
 
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
   private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
-  @Value("${excluded.product.type.enum.list}")
-  private String excludedProducts;
+  private SessionService sessionService;
+  private SearchRestrictionService searchRestrictionService;
 
   @Override
   public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
 
-    Collection<BlSerialProductModel> serialProducts = blProductModel.getSerialProducts();
+    Collection<BlSerialProductModel> serialProducts = getSerialProducts(blProductModel);
 
     if (interceptorContext.isNew(blProductModel) && StringUtils
         .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {
@@ -63,6 +67,45 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             interceptorContext);
       }
     }
+  }
+  
+  /**
+   * Gets the serial products attached to SKU.
+   *
+   * @param blProductModel the bl product model
+   * @return the serial products
+   */
+  private Collection<BlSerialProductModel> getSerialProducts(final BlProductModel blProductModel)
+  {
+	  try
+	  {
+		  return blProductModel.getSerialProducts();
+	  }
+	  catch (final Exception exception)
+	  {
+		  BlLogger.logMessage(LOG, Level.ERROR, EXCEPTION_OCCURED, exception);
+		  return getSessionService().executeInLocalView(new SessionExecutionBody()
+		  {
+			  @Override
+			  public Object execute()
+			  {
+				  try
+				  {
+					  getSearchRestrictionService().disableSearchRestrictions();
+					  return blProductModel.getSerialProducts();
+				  }
+				  catch(final Exception exception)
+				  {
+					  BlLogger.logMessage(LOG, Level.ERROR, EXCEPTION_OCCURED, exception);
+					  return CollectionUtils.emptyCollection();
+				  }
+				  finally
+				  {
+					  getSearchRestrictionService().enableSearchRestrictions();
+				  }
+			  }
+		  });
+	  }
   }
 
 
@@ -128,13 +171,12 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    */
   private void createOrUpdateRentalBlProductPrice(final BlProductModel blProductModel,
       final InterceptorContext ctx) {
-    Optional<PriceRowModel> sevenDayPrice = blProductModel.getEurope1Prices().stream().filter(
+    Optional<PriceRowModel> sevenDayPrice = getPrices(blProductModel).stream().filter(
         price -> getEnumerationService()
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    final String[] excludedProductList = excludedProducts.split(",");
-    if (retailPrice != null && retailPrice > 0.0D && !(Arrays.asList(excludedProductList).contains(blProductModel.getProductType().getCode())) ) {
+    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.PACKAGE.equals(blProductModel.getProductType()) && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
@@ -145,6 +187,39 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
       }
 
     }
+  }
+  
+  private Collection<PriceRowModel> getPrices(final BlProductModel blProductModel)
+  {
+	  try
+	  {
+		  return blProductModel.getEurope1Prices();
+	  }
+	  catch(final Exception exception)
+	  {
+		  BlLogger.logMessage(LOG, Level.ERROR, EXCEPTION_OCCURED, exception);
+		  return getSessionService().executeInLocalView(new SessionExecutionBody()
+		  {
+			  @Override
+			  public Object execute()
+			  {
+				  try
+				  {
+					  getSearchRestrictionService().disableSearchRestrictions();
+					  return blProductModel.getEurope1Prices();
+				  }
+				  catch(final Exception exception)
+				  {
+					  BlLogger.logMessage(LOG, Level.ERROR, EXCEPTION_OCCURED, exception);
+					  return CollectionUtils.emptyCollection();
+				  }
+				  finally
+				  {
+					  getSearchRestrictionService().enableSearchRestrictions();
+				  }
+			  }
+		  });
+	  }
   }
 
   public KeyGenerator getKeyGenerator() {
@@ -179,4 +254,37 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
       CatalogVersionService catalogVersionService) {
     this.catalogVersionService = catalogVersionService;
   }
+
+/**
+ * @return the sessionService
+ */
+public SessionService getSessionService()
+{
+	return sessionService;
+}
+
+/**
+ * @param sessionService the sessionService to set
+ */
+public void setSessionService(SessionService sessionService)
+{
+	this.sessionService = sessionService;
+}
+
+/**
+ * @return the searchRestrictionService
+ */
+public SearchRestrictionService getSearchRestrictionService()
+{
+	return searchRestrictionService;
+}
+
+/**
+ * @param searchRestrictionService the searchRestrictionService to set
+ */
+public void setSearchRestrictionService(SearchRestrictionService searchRestrictionService)
+{
+	this.searchRestrictionService = searchRestrictionService;
+}
+
 }

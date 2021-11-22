@@ -133,6 +133,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			triggerNewShippingInfoEvent(abstractOrderModel, interceptorContext);
 			triggerExceptionExtraItemEvent(abstractOrderModel,interceptorContext);
 			triggerVerificationCompletedEvent(abstractOrderModel,interceptorContext);
+			triggerManualAllocationEvent(abstractOrderModel,interceptorContext);
     }
     catch (final Exception e){
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
@@ -447,6 +448,26 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				getBlEspEventService().sendOrderVerificationCompletedEvent((OrderModel) abstractOrderModel);
 			} catch (final Exception exception) {
 				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger verification completed Event",
+						exception);
+			}
+		}
+	}
+
+	/**
+	 * It triggers manual allocation event.
+	 *
+	 * @param abstractOrderModel the AbstractOrderModel
+	 * @param interceptorContext the InterceptorContext
+	 */
+	private void triggerManualAllocationEvent(final AbstractOrderModel abstractOrderModel,
+			final InterceptorContext interceptorContext) {
+		if (abstractOrderModel instanceof OrderModel && interceptorContext
+				.isModified(abstractOrderModel, AbstractOrderModel.STATUS ) && OrderStatus.RECEIVED_MANUAL_REVIEW.equals(abstractOrderModel.getStatus())
+				) {
+			try {
+				getBlEspEventService().sendOrderManualAllocationEvent((OrderModel) abstractOrderModel);
+			} catch (final Exception exception) {
+				BlLogger.logMessage(LOG, Level.ERROR, "Failed to trigger manual allocation ESP Event",
 						exception);
 			}
 		}

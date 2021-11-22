@@ -61,7 +61,7 @@ public class BlSecurityContextLogoutHandler implements LogoutHandler
 		//Added condition to remove cart entries for usedGear cart
 
 		final CartData cartData = blCartFacade.getSessionCart();
-		if (BooleanUtils.isFalse(cartData.getIsRentalCart()) && BooleanUtils.isFalse(cartData.getHasGiftCart()) )
+		if (BooleanUtils.isFalse(cartData.getIsRentalCart()) && BooleanUtils.isFalse(cartData.getHasGiftCart()))
 		{
 			blCartFacade.removeCartEntries();
 		}

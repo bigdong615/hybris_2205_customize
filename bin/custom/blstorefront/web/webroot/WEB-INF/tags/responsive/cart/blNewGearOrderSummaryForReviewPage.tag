@@ -86,8 +86,7 @@
 			</tr>
 		</tbody>
 	</table>
-  <small class="gray60"><spring:theme
-			code="text.checkout.multi.order.summary.msg" /></small>
+  
 	<div class="cart-actions">
 		<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 			modelAttribute="placeOrderForm">

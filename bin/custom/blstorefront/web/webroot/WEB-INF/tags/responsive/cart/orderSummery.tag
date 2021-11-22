@@ -208,8 +208,10 @@
 			</div>
 		</form:form>
 	</c:if>
+	<c:if test="${pageType =='CART' || pageType == 'shippingPage'}">
 	<small class="gray60"><spring:theme
 			code="text.checkout.multi.order.summary.msg" /></small>
+			</c:if>
 	<c:url value="/cart/voucher/remove" var="voucherRemoveUrl" />
 
       <c:forEach items="${cartData.appliedVouchers}" var="voucher"

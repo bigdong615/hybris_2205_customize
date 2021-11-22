@@ -505,6 +505,8 @@
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
+		<property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1381,8 +1383,10 @@
 	<!-- Added for creating custom method to set custom parameter -->
 
 	<alias name="blSerialProductValidateInterceptor" alias="blSerialProductValidateInterceptor"/>
-	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor"/>
-	
+	<bean id="blSerialProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductValidateInterceptor">
+		<property name="productDao" ref="productDao"/>
+	</bean>
+
 	<bean id="blSerialProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blSerialProductValidateInterceptor"/>
 		<property name="typeCode" value="BlSerialProduct"/>
@@ -1563,7 +1567,10 @@
 		<property name="blExtraItemRequestPopulator" ref="blExtraItemRequestPopulator"/>
 		<property name="blOrderRefundRequestPopulator" ref="blOrderRefundRequestPopulator"/>
 		<property name="blOrderBillPaidRequestPopulator" ref="blOrderBillPaidRequestPopulator"/>
+		<property name="blOrderPullBackItemsAddedRequestPopulator" ref="blOrderPullBackItemsAddedRequestPopulator"/>
+		<property name="blOrderPullBackItemRemovedRequestPopulator" ref="blOrderPullBackItemRemovedRequestPopulator"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 	</bean>
 
 
@@ -1706,5 +1713,30 @@
 
 	<!--BL-803 UPS Scrape Ends-->
 
+	<!-- Order Manual Allocation populator ESP -->
+	<bean id="blOrderManualAllocationRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
+	<!-- BL-1516 Order Pull Back Items Added ESP Event populator -->
+	<bean id="blOrderPullBackItemsAddedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator">
+	</bean>
+
+	<!-- BL-1515 Order Pull Back Items Removed ESP Event populator -->
+	<bean id="blOrderPullBackItemRemovedRequestPopulator" parent="espEventCommonPopulator"
+		class="com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator">
+	</bean>
+	
+	<bean id="blSerialOnlineToStagedDataPopulator" class="com.bl.core.serial.model.populator.BlSerialOnlineToStagedDataPopulator"/>
+	
+	<bean id="blSerialProductAfterSaveListener" class="com.bl.core.after.save.listener.BlSerialProductAfterSaveListener">
+        <property name="modelService" ref="modelService"/>
+        <property name="productService" ref="productService"/>
+        <property name="catalogVersionDao" ref="catalogVersionDao"/>
+        <property name="populator" ref="blSerialOnlineToStagedDataPopulator"/>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
 
 </beans>

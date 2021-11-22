@@ -9,9 +9,12 @@ import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPickedUpRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPullBackItemRemovedRequestPopulator;
+import com.bl.core.esp.populators.BlOrderPullBackItemsAddedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderReadyForPickupRequestPopulator;
 import com.bl.core.esp.populators.BlOrderRefundRequestPopulator;
 import com.bl.core.esp.populators.BlOrderShippedRequestPopulator;
@@ -21,11 +24,13 @@ import com.bl.core.esp.populators.BlOrderVerificationCompletedRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationMoreInfoRequestPopulator;
 import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
@@ -33,6 +38,7 @@ import com.bl.esp.dto.orderdeposit.OrderDepositRequest;
 import com.bl.esp.dto.orderexceptions.OrderExceptionEventRequest;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.dto.orderextension.OrderExtensionRequest;
+import com.bl.esp.dto.orderpullback.OrderPullBackRequest;
 import com.bl.esp.dto.orderunboxed.OrderUnBoxedEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.OrderVerificationCompletedEventRequest;
@@ -50,6 +56,7 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -98,7 +105,13 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
+  private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
+
+
+  private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
+    private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
+
 
     /**
      * This method created to prepare the request and response from ESP service
@@ -547,6 +560,28 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendOrderManualAllocationEvent(final OrderModel orderModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderManualAllocationEventRequest orderManualAllocationEventRequest = new OrderManualAllocationEventRequest();
+      getBlOrderManualAllocationRequestPopulator().populate(orderModel,
+          orderManualAllocationEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try {
+        // Call send order manual allocation ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderManualAllocationEvent(
+            orderManualAllocationEventRequest);
+      } catch (final BlESPIntegrationException exception) {
+        persistESPEventDetail(null, EspEventTypeEnum.MANUAL_ALLOCATION,orderModel.getCode(), exception.getMessage(),exception.getRequestString());
+      }
+      // Save send order manual allocation ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.MANUAL_ALLOCATION,orderModel.getCode(),null,null);
+    }
+  }
+
+  /**
    * Order Cancel Entries
    * @param totalRefundAmount
    * @param refundMethod
@@ -746,7 +781,58 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
     }
 
-    public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
+
+  /**
+   * This method created to prepare the request and response from ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderPullBackItemsAdded(final OrderModel orderModel , final
+      AbstractOrderEntryModel abstractOrderEntryModel) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
+      orderPullBackRequest.setOrderEntry(abstractOrderEntryModel);
+      getBlOrderPullBackItemsAddedRequestPopulator().populate(orderModel, orderPullBackRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Pull Back Added Items  ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderPullBackItemsAdded(orderPullBackRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_ADDED,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save snd order Pull Back Added Items  ESP Event API
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_ADDED,orderModel.getCode(),null, null);
+    }
+  }
+
+
+
+  /**
+   * This method created to prepare the request and response from ESP service
+   * @param orderModel to get the values
+   */
+  @Override
+  public void sendOrderPullBackItemsRemoved(final OrderModel orderModel , final List<BlSerialProductModel> blSerialProductModels) {
+    if (Objects.nonNull(orderModel)) {
+      final OrderPullBackRequest orderPullBackRequest = new OrderPullBackRequest();
+     orderPullBackRequest.setSerialProducts(blSerialProductModels);
+      getBlOrderPullBackItemRemovedRequestPopulator().populate(orderModel, orderPullBackRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order Pull Back Added Removed  ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderPullBackItemsRemoved(orderPullBackRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_REMOVED,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save snd order Pull Back Added Removed  ESP Event API
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.ORDER_PULL_BACK_ITEMS_REMOVED,orderModel.getCode(),null, null);
+    }
+  }
+
+
+  public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
     }
 
@@ -926,5 +1012,35 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderBillPaidRequestPopulator(
       BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator) {
     this.blOrderBillPaidRequestPopulator = blOrderBillPaidRequestPopulator;
+  }
+
+  public BlOrderPullBackItemsAddedRequestPopulator getBlOrderPullBackItemsAddedRequestPopulator() {
+    return blOrderPullBackItemsAddedRequestPopulator;
+  }
+
+  public void setBlOrderPullBackItemsAddedRequestPopulator(
+      BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator) {
+    this.blOrderPullBackItemsAddedRequestPopulator = blOrderPullBackItemsAddedRequestPopulator;
+  }
+
+
+  public BlOrderPullBackItemRemovedRequestPopulator getBlOrderPullBackItemRemovedRequestPopulator() {
+    return blOrderPullBackItemRemovedRequestPopulator;
+  }
+
+  public void setBlOrderPullBackItemRemovedRequestPopulator(
+      BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator) {
+    this.blOrderPullBackItemRemovedRequestPopulator = blOrderPullBackItemRemovedRequestPopulator;
+  }
+
+
+
+  public BlOrderManualAllocationRequestPopulator getBlOrderManualAllocationRequestPopulator() {
+    return blOrderManualAllocationRequestPopulator;
+  }
+
+  public void setBlOrderManualAllocationRequestPopulator(
+      BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator) {
+    this.blOrderManualAllocationRequestPopulator = blOrderManualAllocationRequestPopulator;
   }
 }

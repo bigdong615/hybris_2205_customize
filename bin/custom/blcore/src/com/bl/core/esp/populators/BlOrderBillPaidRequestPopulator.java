@@ -144,7 +144,7 @@ public class BlOrderBillPaidRequestPopulator extends
           }
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
               BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
-              entryModel.getProduct() instanceof BlSerialProductModel ? getProductUrl(
+              entryModel.getProduct() instanceof BlSerialProductModel ? getSerialProductUrl(
                   entryModel.getProduct().getCode()) : getProductURL(entryModel));
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
               BlCoreConstants.ORDER_ITEM_QUANTITY,

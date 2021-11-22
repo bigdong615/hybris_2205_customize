@@ -1095,6 +1095,7 @@
             <list-view:column qualifier="scanUser"/>
             <list-view:column qualifier="scanTime"/>
             <list-view:column qualifier="blInventoryLocation"/>
+            <list-view:column qualifier="ocParent"/>
         </list-view:list-view>
     </context>
 
@@ -1485,6 +1486,34 @@
 						qualifier="alternativeProduct"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
 						qualifier="specifications"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.administration">
+				<ea:section name="">
+					<editorArea:attribute qualifier="weight">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="height">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="length">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="width">
+						<editorArea:editor-parameter>
+							<editorArea:name>numberFormat</editorArea:name>
+							<editorArea:value>##0.000</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
 				</ea:section>
 			</ea:tab>
 		</editorArea:editorArea>
@@ -3354,4 +3383,15 @@
 		</y:base>
 	</context>
 	<!-- End Shipping Optimization-->
+
+	<context merge-by="type" parent="AbstractOrder" type="Order" component="advanced-search">
+	<advanced-search:advanced-search xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch">
+		<advanced-search:field-list>
+			<advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="isExtendedOrder" selected="false"/>
+			<advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="extendRentalEndDate" selected="false"/>
+			<advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="extendRentalStartDate" selected="false"/>
+		</advanced-search:field-list>
+	</advanced-search:advanced-search>
+	</context>
+
 </config>
