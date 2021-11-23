@@ -564,21 +564,8 @@ public class CartPageController extends AbstractCartPageController
 			{
 				setNextAvailableDate(entryNumber, productCode, form, redirectModel, rentalDateDto);
 			}
-			else if (availableStockForProduct < form.getQuantity().longValue())
-			{
-				redirectModel.addFlashAttribute("entryNumber", entryNumber);
-				redirectModel.addFlashAttribute("entryMessage", getMessage("cart.entry.item.availability.low.stock.available",
-						Arrays.asList(String.valueOf(availableStockForProduct))));
-			}
-			else
-			{
-				getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
-			}
 		}
-		else
-		{
-			getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-		}
+		getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 	}
 
 	/**
