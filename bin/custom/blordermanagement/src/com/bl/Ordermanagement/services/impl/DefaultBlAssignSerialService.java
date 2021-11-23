@@ -115,7 +115,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Optional<AbstractOrderEntryModel> orderEntryModel = context.getOrderEntries().stream().findFirst();
       if (orderEntryModel.isPresent() && null != orderEntryModel.get().getOrder().getDeliveryMode()) {
         final DeliveryModeModel deliveryModeModel = orderEntryModel.get().getOrder().getDeliveryMode();
-        return deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && deliveryModeModel.getCode().startsWith("BL_");
+        return deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && deliveryModeModel.getCode().startsWith(BlCoreConstants.FRONT_DESK_DELIVERY_MODE_KEY_PREFIX);
       }
     }
     return Boolean.FALSE;

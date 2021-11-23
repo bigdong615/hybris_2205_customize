@@ -336,7 +336,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    */
   private boolean isFrontDeskOrder(final ConsignmentModel consignment) {
     if (consignment != null && (consignment.getDeliveryMode() != null)) {
-        return consignment.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel && consignment.getDeliveryMode().getCode().startsWith("BL_");
+        return consignment.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel && consignment.getDeliveryMode().getCode().startsWith(BlCoreConstants.FRONT_DESK_DELIVERY_MODE_KEY_PREFIX);
     }
     return Boolean.FALSE;
   }
