@@ -109,7 +109,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 							? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
 							defaultPriceInformation, rentalDays)
 							: defaultPriceInformation;
-				int quantity =	productReferenceModel.getQuantity()!=null ? productReferenceModel.getQuantity() : Integer.valueOf(BlCoreConstants.DEFAULT_PRODUCT_QUANTITY);
+				final int quantity =	productReferenceModel.getQuantity()!=null ? productReferenceModel.getQuantity() : Integer.valueOf(BlCoreConstants.DEFAULT_PRODUCT_QUANTITY);
 				double productPrice =info.getPriceValue()!=null ? info.getPriceValue().getValue() : Double.valueOf(BlCoreConstants.ZERO);
 				productPrice = productPrice*quantity;
 				final Double discount = baseStoreModel.getBundleDiscount();
