@@ -19,7 +19,6 @@ import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -460,8 +459,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 				nextAvailabilityDate);
 		if (Objects.nonNull(nextAvailabilityDate))
 		{
-			final String newAvailableDate = BlDateTimeUtils.convertDateToStringDate(
-					Date.from(BlDateTimeUtils.getFormattedDateTime(nextAvailabilityDate).minusDays(1).atZone(ZoneId.systemDefault()).toInstant()),
+			final String newAvailableDate = BlDateTimeUtils.convertDateToStringDate(nextAvailabilityDate,
 					BlCoreConstants.RENTAL_DATE_FORMAT);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "From Checkout : Until Date for product {} is {}", productCode,
 					newAvailableDate);

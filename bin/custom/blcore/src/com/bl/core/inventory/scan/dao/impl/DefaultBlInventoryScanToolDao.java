@@ -96,7 +96,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
      */
     @Override
 	public PackagingInfoModel getPackageInfoByCode(final String lastScannedItem) {
-   	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {trackingNumber} = ?lastScannedItem";
+   	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {outBoundTrackingNumber} = ?lastScannedItem";
        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
        query.addQueryParameter(BlInventoryScanLoggingConstants.LAST_SCANNED_ITEM, lastScannedItem);
        final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();

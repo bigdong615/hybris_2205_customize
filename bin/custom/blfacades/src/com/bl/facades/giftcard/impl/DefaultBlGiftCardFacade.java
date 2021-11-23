@@ -17,10 +17,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -334,6 +332,10 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 	{
 		final List<GiftCardModel> giftCards = orderModel.getTempModifiedOrderAppliedGcList();
 		final List<GiftCardModel> committedGiftCards = Lists.newArrayList();
+		if(CollectionUtils.isNotEmpty(orderModel.getModifiedOrderAppliedGcList()))
+		{
+			committedGiftCards.addAll(orderModel.getModifiedOrderAppliedGcList());
+		}
 		if (CollectionUtils.isNotEmpty(giftCards))
 		{
 			for (final GiftCardModel giftCard : giftCards)
@@ -342,17 +344,7 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 				final List<GiftCardMovementModel> movements = giftCard.getMovements();
 				for (final GiftCardMovementModel giftCardMovementModel : movements)
 				{
-					if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted()))
-					{
-						giftCardMovementModel.setCommitted(Boolean.TRUE);
-						giftCardMovementModel.setOrder(((OrderModel) orderModel));
-						giftCardMovementModel.setRedeemDate(new Date());
-						getModelService().save(giftCardMovementModel);
-						getModelService().refresh(giftCard);
-						BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, 
-								"Committing Movement : {} on Gift card : {} from modified order : {}", 
-								giftCardMovementModel.getTransactionId(), giftCard.getCode(), orderModel.getCode());
-					}
+					commitGcMovement(orderModel, giftCard, giftCardMovementModel);
 				}
 				committedGiftCards.add(giftCard);
 			}
@@ -360,6 +352,29 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 			orderModel.setTempModifiedOrderAppliedGcList(Lists.newArrayList());
 			getModelService().save(orderModel);
 			getModelService().refresh(orderModel);
+		}
+	}
+
+	/**
+	 * Commit Gift Card movement.
+	 *
+	 * @param orderModel the order model
+	 * @param giftCard the gift card
+	 * @param giftCardMovementModel the gift card movement model
+	 */
+	private void commitGcMovement(final AbstractOrderModel orderModel, final GiftCardModel giftCard,
+			final GiftCardMovementModel giftCardMovementModel)
+	{
+		if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted()))
+		{
+			giftCardMovementModel.setCommitted(Boolean.TRUE);
+			giftCardMovementModel.setOrder(((OrderModel) orderModel));
+			giftCardMovementModel.setRedeemDate(new Date());
+			getModelService().save(giftCardMovementModel);
+			getModelService().refresh(giftCard);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, 
+					"Committing Movement : {} on Gift card : {} from modified order : {}", 
+					giftCardMovementModel.getTransactionId(), giftCard.getCode(), orderModel.getCode());
 		}
 	}
 
