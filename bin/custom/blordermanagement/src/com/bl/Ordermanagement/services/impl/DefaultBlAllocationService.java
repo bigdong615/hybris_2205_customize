@@ -319,14 +319,27 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
     if (!consignment.isOrderTransferConsignment()) {
     try {
-      consignment.setThreeDayGroundAvailability(result.isThreeDayGroundAvailability());
-      getBlShippingOptimizationStrategy().getOptimizedShippingMethodForOrder(consignment);
+      if(!isFrontDeskOrder(consignment)) {
+        consignment.setThreeDayGroundAvailability(result.isThreeDayGroundAvailability());
+        getBlShippingOptimizationStrategy().getOptimizedShippingMethodForOrder(consignment);
+      }
     } catch (final Exception e) {
        throw new BlShippingOptimizationException(ERROR_WHILE_OPTIMIZING_THE_ORDER, e);
       }
     }
   }
 
+  /**
+   * This method used for checking front desk.
+   * @param consignment
+   * @return
+   */
+  private boolean isFrontDeskOrder(final ConsignmentModel consignment) {
+    if (consignment != null && (consignment.getDeliveryMode() != null)) {
+        return consignment.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel && consignment.getDeliveryMode().getCode().startsWith(BlCoreConstants.FRONT_DESK_DELIVERY_MODE_KEY_PREFIX);
+    }
+    return Boolean.FALSE;
+  }
   /**
    * method will used to get serial for date and codes
  * @param order as Order
