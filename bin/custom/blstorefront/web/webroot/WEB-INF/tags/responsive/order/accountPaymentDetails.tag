@@ -1,6 +1,7 @@
 <%@ attribute name="orderData" required="true" type="de.hybris.platform.commercefacades.order.data.OrderData" %>
 <%@ attribute name="paymentInfo" required="true" type="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData" %>
 <%@ attribute name="showPaymentInfo" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="displayOrderNote" required="false" type="java.lang.Boolean" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
@@ -41,7 +42,7 @@
 				</div>
 			</div>
 		</div>
-		<c:if test="${not empty orderData.orderNotes}">
+		<c:if test="${displayOrderNote == true and not empty orderData.orderNotes}">
 		 <div class="col-12 col-md-5">
 			<p class="gray80 body14">
 				<b class="gray100">Order Notes</b> ${orderData.orderNotes}

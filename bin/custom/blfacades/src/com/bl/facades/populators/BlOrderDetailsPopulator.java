@@ -10,6 +10,8 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -34,7 +36,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import java.math.RoundingMode;
+
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 
 /**
@@ -349,19 +351,100 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   private void populateGiftCardDetails(final OrderModel source, final OrderData target)
   {
     final List<BLGiftCardData> blGiftCardDataList = new ArrayList<>();
-    if(CollectionUtils.isNotEmpty(source.getGiftCard())) {
-      for(final GiftCardModel giftCardModel : source.getGiftCard()){
-        final BLGiftCardData blGiftCardData = new BLGiftCardData();
-        blGiftCardData.setCode(giftCardModel.getCode());
-        for(final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements()){
-          if(null != giftCardMovementModel.getOrder() && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode())) {
-            setGiftCardData(giftCardMovementModel , blGiftCardData , blGiftCardDataList , source);
-          }
-        }
-      }
-
-    }
+    final List<GiftCardModel> appliedGcList = Lists.newArrayList();
+    if(CollectionUtils.isNotEmpty(source.getGiftCard()))
+    {
+   	 appliedGcList.addAll(source.getGiftCard());
+    }    
+    filterGcList(appliedGcList, source.getModifiedOrderAppliedGcList());    
+    processGcDetails(source, blGiftCardDataList, appliedGcList);
     target.setGiftCardData(blGiftCardDataList);
+  }
+
+
+  /**
+   * Process Gift Card details.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param gcList
+   *           the gc list
+   */
+  private void processGcDetails(final OrderModel source, final List<BLGiftCardData> blGiftCardDataList,
+		  final List<GiftCardModel> gcList)
+  {
+	  if (CollectionUtils.isNotEmpty(gcList))
+	  {
+		  for (final GiftCardModel giftCardModel : gcList)
+		  {
+			  processGcMovements(source, blGiftCardDataList, giftCardModel);
+		  }
+	  }
+  }
+
+
+  /**
+   * Process Gift Card movements details.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param giftCardModel
+   *           the gift card model
+   */
+  private void processGcMovements(final OrderModel source, final List<BLGiftCardData> blGiftCardDataList,
+		  final GiftCardModel giftCardModel)
+  {
+	  for (final GiftCardMovementModel giftCardMovementModel : giftCardModel.getMovements())
+	  {
+		  if (doCheckGC(source, giftCardMovementModel))
+		  {
+			  final BLGiftCardData blGiftCardData = new BLGiftCardData();
+			  blGiftCardData.setCode(giftCardModel.getCode());
+			  setGiftCardData(giftCardMovementModel, blGiftCardData, blGiftCardDataList, source);
+		  }
+	  }
+  }
+  
+  /**
+   * Do check GC before adding data.
+   *
+   * @param source
+   *           the source
+   * @param blGiftCardDataList
+   *           the bl gift card data list
+   * @param giftCardModel
+   *           the gift card model
+   * @param giftCardMovementModel
+   *           the gift card movement model
+   * @return true, if successful
+   */
+  private boolean doCheckGC(final OrderModel source, final GiftCardMovementModel giftCardMovementModel)
+  {
+	  return null != giftCardMovementModel.getOrder()
+			  && source.getCode().equalsIgnoreCase(giftCardMovementModel.getOrder().getCode());
+  }
+  
+  /**
+   * Filter GiftCard list having same GiftCard code.
+   *
+   * @param appliedGcList the applied gc list
+   * @param gcList the gc list
+   */
+  private void filterGcList(final List<GiftCardModel> appliedGcList, final List<GiftCardModel> gcList)
+  {
+	  if(CollectionUtils.isNotEmpty(gcList))
+	  {
+		  gcList.forEach(giftCard -> {
+			  if(appliedGcList.stream().noneMatch(gc -> gc.getCode().equalsIgnoreCase(giftCard.getCode())))
+			  {
+				  appliedGcList.add(giftCard);
+			  }
+		  });
+	  }
   }
 
   /**
