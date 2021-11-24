@@ -392,6 +392,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		final AtomicBoolean isGroundAvailability = new AtomicBoolean();
 		if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
 			for (final ConsignmentModel consignmentModel : abstractOrderModel.getConsignments()) {
+				consignmentModel.getOrder().setRentalStartDate(abstractOrderModel.getRentalStartDate());
+				consignmentModel.getOrder().setRentalEndDate(abstractOrderModel.getRentalEndDate());
 				updareShippingOptimizationDate(abstractOrderModel, sourcingLocation, isGroundAvailability, consignmentModel);
 			}
 		}
