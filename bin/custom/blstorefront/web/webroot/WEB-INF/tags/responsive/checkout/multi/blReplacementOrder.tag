@@ -18,7 +18,7 @@
             	<div class="cart-actions">
             		<input type="hidden" id="shipsFromPostalCode"
             			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
-            		<button id="placeOrder" type="button"
+            		<button id="placeOrderButton" type="button"
             			class="btn btn-sm btn-primary float-end js-replacement-order">
             			<spring:theme code="checkout.summary.placeOrder"
             				text="Place Your Order" />
