@@ -13,6 +13,7 @@ import de.hybris.platform.warehousingfacades.order.impl.DefaultWarehousingConsig
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
@@ -47,6 +48,7 @@ public class BLWarehousingConsignmentFacadeImpl extends DefaultWarehousingConsig
 			final PackagingInfoModel newPackagingInfo = getModelService().create(PackagingInfoModel.class);
 			getReversePackagingInfoConverter().convert(packagingInfoData, newPackagingInfo);
 			newPackagingInfo.setConsignment(consignmentModel);
+			newPackagingInfo.setPackageId(UUID.randomUUID().toString());
 			consignmentModel.setPackagingInfo(newPackagingInfo);
 
 			getModelService().save(consignmentModel);
