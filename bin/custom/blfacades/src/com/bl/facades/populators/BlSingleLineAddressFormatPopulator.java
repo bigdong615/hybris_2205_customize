@@ -15,6 +15,11 @@ public class BlSingleLineAddressFormatPopulator extends SingleLineAddressFormatP
 
   private List<String> addressFormatList;
 
+  /**
+   * This method to check the field values are not empty
+   * @param addressModel
+   * @param addressLine
+   */
   @Override
   public void populate(final AddressModel addressModel, final StringBuilder addressLine) {
 
@@ -23,7 +28,7 @@ public class BlSingleLineAddressFormatPopulator extends SingleLineAddressFormatP
       try
       {
         final String fieldValue = (String) PropertyUtils.getProperty(addressModel, field);
-        if (fieldValue != null && StringUtils.isNotBlank(fieldValue))
+        if (StringUtils.isNotBlank(fieldValue))
         {
           addressLine.append(fieldValue);
           addressLine.append(", ");
