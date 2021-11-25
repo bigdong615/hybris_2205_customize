@@ -6,7 +6,9 @@ import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.BlackoutDateTypeEnum;
+import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
@@ -14,6 +16,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.order.BlOrderService;
+import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -23,6 +26,7 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -69,6 +73,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   private BlOrderService blOrderService;
   private BlDatePickerService blDatePickerService;
   private BlConsignmentEntryService blConsignmentEntryService;
+  private BlDeliveryModeService zoneDeliveryModeService;
 
   /**
    * Create consignment.
@@ -208,11 +213,18 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           return consignment;
         }
       } else{   // used gear cart
+      	final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) consignment.getDeliveryMode();
+   		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
 
+   		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
+   		{
+   			consignment.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                  OptimizedShippingMethodEnum.DEFAULT.getCode()));
+   		}
         //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.HARD_ASSIGNED);
         //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
         this.getModelService().save(consignment);
-
+        this.getModelService().refresh(consignment);	
         return consignment;
       }
     } catch (final Exception ex) {
@@ -538,5 +550,15 @@ public BlConsignmentEntryService getBlConsignmentEntryService()
 public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
 {
 	this.blConsignmentEntryService = blConsignmentEntryService;
+}
+
+public BlDeliveryModeService getZoneDeliveryModeService()
+{
+	return zoneDeliveryModeService;
+}
+
+public void setZoneDeliveryModeService(BlDeliveryModeService zoneDeliveryModeService)
+{
+	this.zoneDeliveryModeService = zoneDeliveryModeService;
 }
 }
