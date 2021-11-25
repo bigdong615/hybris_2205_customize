@@ -6,7 +6,7 @@ import com.hybris.backoffice.widgets.advancedsearch.impl.AdvancedSearchData;
 import com.hybris.backoffice.widgets.advancedsearch.impl.SearchConditionData;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
@@ -41,10 +41,10 @@ public class BlCustomAdvancedSearchEngineController extends com.hybris.backoffic
         if (CollectionUtils.isNotEmpty(searchConditionDataList)) {
           searchConditionDataList.stream().forEach(searchConditionData -> {
             if (Objects.isNull(searchConditionData.getValue())) {
-              searchConditionData.updateValue(new Date());
+              searchConditionData.updateValue(Calendar.getInstance().getTime());
               BlLogger
                   .logFormattedMessage(LOG, Level.INFO, "optimizedShippingStartDate for queue {} ",
-                      String.valueOf(new Date()));
+                      String.valueOf(Calendar.getInstance().getTime()));
             }
           });
         }
