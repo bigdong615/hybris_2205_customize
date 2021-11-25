@@ -124,4 +124,8 @@
 		<property name="blInventoryCycleCountService" ref="blInventoryCycleCountService"/>
 	</bean>
 	<!-- End Inventory Cycle Count Tool-->
+
+	<bean id="blCustomAdvancedSearchEngineController" class=" com.bl.backoffice.widget.controller.BlCustomAdvancedSearchEngineController">
+	</bean>
+
 </beans>
