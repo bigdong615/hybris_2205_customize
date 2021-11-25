@@ -112,6 +112,7 @@
         <property name="blOrderService" ref="blOrderService"/>
         <property name="blDatePickerService" ref="blDatePickerService"/>
         <property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
+        <property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/> 
     </bean>
 
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />

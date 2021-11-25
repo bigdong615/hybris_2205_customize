@@ -444,6 +444,39 @@ INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]
                           ; ZEISS             ; Zeiss             
                           ; ZACUTO            ; Zacuto            
                           ; ZHIYUN            ; Zhiyun            
+                          ; CALIFORNIA_PS      ; CALIFORNIA_PS      
+                          ; BOWENS             ; BOWENS             
+                          ; ELINCHROM          ; ELINCHROM          
+                          ; PROMARK            ; PROMARK            
+                          ; TECHTWO            ; TECHTWO            
+                          ; KODAK              ; KODAK              
+                          ; ZOOM_NORTH_AMERICA ; ZOOM_NORTH_AMERICA 
+                          ; LITEPANELS_INC     ; LITEPANELS_INC     
+                          ; BLACK_MAGIC        ; BLACK_MAGIC        
+                          ; THK                ; THK                
+                          ; RODE               ; RODE               
+                          ; GO_PRO             ; GO_PRO             
+                          ; WESCOTT            ; WESCOTT            
+                          ; ELITE              ; ELITE              
+                          ; TECH3              ; TECH3              
+                          ; CINEVATE           ; CINEVATE           
+                          ; FILEX              ; FILEX              
+                          ; MAC_GROUP          ; MAC_GROUP          
+                          ; GRADUS_GROUP       ; GRADUS_GROUP       
+                          ; QUANTUM            ; QUANTUM            
+                          ; SUPERVISOR         ; SUPERVISOR         
+                          ; BL_WEST            ; BL_WEST            
+                          ; TECHONE            ; TECHONE            
+                          ; TECHTHREE          ; TECHTHREE          
+                          ; HIVELIGHTING       ; HIVELIGHTING       
+                          ; QUIN               ; QUIN               
+                          ; SCHNEIDER_OPTICS   ; SCHNEIDER_OPTICS   
+                          ; UNITED_CAMERA      ; UNITED_CAMERA      
+                          ; BL_EAST            ; BL_EAST            
+                          ; SIGMA              ; SIGMA              
+                          ; LECTRONICS         ; LECTRONICS         
+                          ; LYTRO              ; LYTRO              
+                          ; BEACHTEK_INC       ; BEACHTEK_INC       
                           
 INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]  
                                         ; MISSING_CHARGE    			; MISSING CHARGE 
