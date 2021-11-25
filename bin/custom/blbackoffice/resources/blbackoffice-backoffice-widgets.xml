@@ -4,7 +4,20 @@
 -->
 <widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
-	
+
+
+
+	<widget-extension widgetId="advancedSearch">
+		<remove widgetId="advancedSearchEngine"/>
+		<widget id="advancedSearchEngine" widgetDefinitionId="blbackoffice.shipping.advancesearchengine"
+			slotId="cockpitWidgetChildrenInvisible" template="false">
+			<setting key="widgetStyleClass" type="String"/>
+			<setting key="defaultPageSize" type="Integer">20</setting>
+			<setting key="widgetStyleAttribute" type="String"/>
+			<virtual-sockets/>
+		</widget>
+	</widget-extension>
+
 	<!-- <import resource="prespective/blCustomOrder/blUpdateOrderDetails-backoffice-widgets.xml"/> -->
 
 	<!-- BL-110 Web Scan Tool Wizard -->
