@@ -116,7 +116,8 @@
                         <row style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray;white-space: nowrap'
                                     : 'white-space: nowrap'}">
                             <checkbox width="30px" class="oms-widget-reallocationconsignment-list-container__checkbox"
-                                      name="cancel_entry_${each.orderEntry.product.code}" id="cancel_entry_${each.orderEntry.product.code}"/>
+                                      name="cancel_entry_${each.orderEntry.product.code}" id="cancel_entry_${each.orderEntry.product.code}"
+                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                                       <!-- onCheck='Clients.evalJavaScript("onEntrySelect(${each.orderEntry.product.code})")' -->
                             <textbox value="${each.orderEntry.product.code}" width="200px" name="code_${each.orderEntry.product.code}"
                                      id="code_${each.orderEntry.product.code}" readonly="true"/>
@@ -130,11 +131,13 @@
                                      id="shipping_${each.orderEntry.product.code}" readonly="true"/>
                             <checkbox value="${each.tax}" class="oms-widget-cancelorder-list-container__checkbox" width="130px"
                                       name="avalaraLineTax_${each.orderEntry.product.code}" id="avalaraLineTax_${each.orderEntry.product.code}"
-                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"/>
+                                      label="${each.orderEntry.avalaraLineTax eq null ? 0.0 : each.orderEntry.avalaraLineTax}"
+                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                             <checkbox value="${each.waiver}" class="oms-widget-cancelorder-list-container__checkbox" width="153px"
                                       name="waiver_${each.orderEntry.product.code}" id="waiver_${each.orderEntry.product.code}"
                                       label="${each.orderEntry.gearGuardWaiverSelected ? each.orderEntry.gearGuardWaiverPrice :
-                                            each.orderEntry.gearGuardProFullWaiverSelected ? each.orderEntry.gearGuardProFullWaiverPrice : 0.0 }"/>
+                                            each.orderEntry.gearGuardProFullWaiverSelected ? each.orderEntry.gearGuardProFullWaiverPrice : 0.0 }"
+                                      disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                             <textbox value="${each.refundedAmount}" width="152px" class="oms-widget-cancelorder--qty-label"
                                      name="refundedAmount_${each.orderEntry.product.code}" id="refundedAmount_${each.orderEntry.product.code}" readonly="true"/>
                             <intbox value="${each.quantityAvailableToCancel}" width="152px" class="oms-widget-cancelorder--qty-label"
@@ -146,12 +149,14 @@
                                     : 'text-align:center;'}" disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"
                                     name="quantityToCancel_${each.orderEntry.product.code}" id="quantityToCancel_${each.orderEntry.product.code}"/>
                             <doublebox width="152px" style="text-align:center;" name="amount_${each.orderEntry.product.code}" id="amount_${each.orderEntry.product.code}"
-                                    value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"/>
+                                    value="${each.amount}" constraint="no empty,no negative: Quantity Must be Greater Than Zero"
+                                    disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                             <combobox   xmlns:w="client" w:onSelect="CockpitNG.sendEvent(this.uuid,'onCustomChange',this._value)" width="172px"
                                         model="${each.cancelReasonsModel}" readonly="true" sclass="oms-widget-cancelorder__template-reason"
                                         placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.reason}"
                                         style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                        name="cancelReasonsModel_${each.orderEntry.product.code}" id="cancelReasonsModel_${each.orderEntry.product.code}" >
+                                        name="cancelReasonsModel_${each.orderEntry.product.code}" id="cancelReasonsModel_${each.orderEntry.product.code}"
+                                        disabled="${each.quantityAvailableToCancel eq 0 ? true : false}">
                                 <template name="model">
                                     <comboitem label="${each}"/>
                                 </template>
@@ -159,7 +164,8 @@
                             <textbox value="${each.cancelOrderEntryComment}" maxlength="255" sclass="oms-widget-cancelorder__template-comment"
                                      placeholder="${labels.customersupportbackoffice.cancelorder.popup.placeholder.comment}" width="194px"
                                      style="${each.quantityAvailableToCancel eq 0 ? 'background-color: lightgray' : ''}"
-                                     name="cancelOrderEntryComment_${each.orderEntry.product.code}" id="cancelOrderEntryComment_${each.orderEntry.product.code}"/>
+                                     name="cancelOrderEntryComment_${each.orderEntry.product.code}" id="cancelOrderEntryComment_${each.orderEntry.product.code}"
+                                     disabled="${each.quantityAvailableToCancel eq 0 ? true : false}"/>
                         </row>
                     </template>
                 </rows>

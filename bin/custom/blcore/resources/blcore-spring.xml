@@ -729,6 +729,8 @@
 
   <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
 
+  <bean id="blProductTypeValueResolver" class="com.bl.core.resolvers.BlProductTypeValueResolver" parent="abstractValueResolver"/>
+
   <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
     <property name="modelService" ref="modelService"/>
   </bean>

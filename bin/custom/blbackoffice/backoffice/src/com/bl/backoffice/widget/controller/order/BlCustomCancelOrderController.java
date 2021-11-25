@@ -1648,8 +1648,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.cancelReasons.add(this.getEnumerationService().getEnumerationName(reason, this.getLocale())));
         this.globalCancelReasons.setModel(new ListModelArray<>(this.cancelReasons));
         this.orderEntriesToCancel = new HashSet<>();
-        this.orderCancellableEntries = this.getOrderCancelService().getAllCancelableEntries(this.getOrderModel(),
-                this.getUserService().getCurrentUser());
+        /*this.orderCancellableEntries = this.getOrderCancelService().getAllCancelableEntries(this.getOrderModel(),
+                this.getUserService().getCurrentUser());*/
+        if (CollectionUtils.isNotEmpty(this.orderModel.getEntries())) {
+            this.orderCancellableEntries = this.orderModel.getEntries().stream().collect(Collectors.toMap(
+                    entryModel -> entryModel, entryModel -> ((OrderEntryModel) entryModel).getQuantityPending(), (a, b) -> b));
+        }
         if (!this.orderCancellableEntries.isEmpty()) {
             this.orderCancellableEntries.forEach((entry, cancellableQty) ->
                 this.orderEntriesToCancel.add(new BlOrderEntryToCancelDto(entry, this.cancelReasons, cancellableQty,
