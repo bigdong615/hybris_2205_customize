@@ -31,7 +31,7 @@ public class BlCustomAdvancedSearchEngineController extends com.hybris.backoffic
    */
   @Override
   @SocketEvent(socketId = "searchData")
-  public void onSearchDataInput(AdvancedSearchData searchData) {
+  public void onSearchDataInput(final AdvancedSearchData searchData) {
     try {
       if (Objects.nonNull(searchData) && Objects
           .nonNull(searchData.getConditions(BlCoreConstants.OPTIMIZEDSHIPPINGSTARTDATE))
