@@ -178,8 +178,17 @@
                                								</c:otherwise>
                                						</c:choose>
                                						</c:if>
-                               							<spring:theme code="text.review.page.your.rental.total"/>
-                               							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
+                               							
+                               							<c:choose>
+                               								<c:when test="${cartEntry.quantity <= 0 and cartEntry.totalPrice.value <= 0}">
+                               									<p class="refund-msg"><spring:theme code="order.details.refunded.msg"/></p>
+                               								</c:when>
+                               								<c:otherwise>
+                               									<spring:theme code="text.review.page.your.rental.total"/>
+                               									<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
+                               								</c:otherwise>
+                               							</c:choose>
+                               							
                                							<c:if test="${not empty cartEntry.product.bundleProductReference}">
                                              	<ul class="checklist mt-4">
                                                   <c:forEach items="${cartEntry.product.bundleProductReference}" var="bundleItems">
