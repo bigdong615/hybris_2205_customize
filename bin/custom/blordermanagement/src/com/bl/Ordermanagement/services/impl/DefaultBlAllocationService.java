@@ -219,7 +219,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
    		{
    			consignment.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                  OptimizedShippingMethodEnum.DEFAULT.getCode()));
+                  OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode()));
    		}
         //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.HARD_ASSIGNED);
         //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
