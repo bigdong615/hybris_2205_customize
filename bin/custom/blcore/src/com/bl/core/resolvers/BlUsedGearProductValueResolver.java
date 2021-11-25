@@ -33,8 +33,8 @@ public class BlUsedGearProductValueResolver extends
       final IndexedProperty indexedProperty, final BlProductModel blProductModel,
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
-        inputDocument.addField(indexedProperty ,blProductModel.getSerialProducts().stream().anyMatch(BlProductModel::getForSale)
-              && BooleanUtils.isTrue(blProductModel.getForSale()) && getSerial(blProductModel.getSerialProducts()));
+        inputDocument.addField(indexedProperty , BooleanUtils.isTrue(blProductModel.getForSale()) &&
+                getSerial(blProductModel.getSerialProducts()));
   }
 
     /**
@@ -43,9 +43,10 @@ public class BlUsedGearProductValueResolver extends
      * @return true if all in solr/parts-needed status
      */
     private boolean getSerial(final Collection<BlSerialProductModel> serials) {
-        return serials.stream().anyMatch(serial -> serial.getSerialStatus().getCode().equals(SerialStatusEnum.ACTIVE.getCode()) ||
+        return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale()) &&
+                (serial.getSerialStatus().getCode().equals(SerialStatusEnum.ACTIVE.getCode()) ||
                 serial.getSerialStatus().getCode().equals(SerialStatusEnum.ADDED_TO_CART.getCode()) ||
-                serial.getSerialStatus().getCode().equals(SerialStatusEnum.RECEIVED_OR_RETURNED.getCode()));
+                serial.getSerialStatus().getCode().equals(SerialStatusEnum.RECEIVED_OR_RETURNED.getCode())));
     }
 
 }

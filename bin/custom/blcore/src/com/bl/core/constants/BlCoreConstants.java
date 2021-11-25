@@ -43,6 +43,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String DEFAULT_SORT_NEWEST_CODE = "default.sort.newest";
 	public static final String USED_VIDEO = "Used-Video";
 	public static final String FOR_RENT = "forRent";
+	public static final String IS_GIFT_CARD = "giftCard";
+	public static final String GIFTCARD = "GIFTCARD";
 	public static final String FOR_SALE = "forSale";
 	public static final String ITEM_TYPE = "itemtype";
 	public static final String BLPRODUCT = "BlProduct";
@@ -518,6 +520,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USPS = "usps";
 	
 	public static final String ANONYMOUS = "anonymous";
+	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = " BL_";
 
 	private BlCoreConstants()
 	{
