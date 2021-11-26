@@ -25,6 +25,8 @@ public class BlSingleLineAddressFormatPopulator extends SingleLineAddressFormatP
    * This method to check the field values are not empty
    * @param addressModel
    * @param addressLine
+   *
+   * @author Sahana SB
    */
   @Override
   public void populate(final AddressModel addressModel, final StringBuilder addressLine) {
