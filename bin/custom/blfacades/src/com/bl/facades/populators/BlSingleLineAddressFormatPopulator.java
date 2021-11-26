@@ -1,14 +1,20 @@
 package com.bl.facades.populators;
 
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.address.converters.populator.SingleLineAddressFormatPopulator;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.util.List;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * This populator is used to validate the field values
+ */
 public class BlSingleLineAddressFormatPopulator extends SingleLineAddressFormatPopulator {
 
   private static final Logger LOG = Logger.getLogger(BlSingleLineAddressFormatPopulator.class);
@@ -31,19 +37,19 @@ public class BlSingleLineAddressFormatPopulator extends SingleLineAddressFormatP
         if (StringUtils.isNotBlank(fieldValue))
         {
           addressLine.append(fieldValue);
-          addressLine.append(", ");
+          addressLine.append(BlFacadesConstants.COMMA);
         }
       }
       catch (final NestedNullException e)
       {
         if (LOG.isDebugEnabled())
         {
-          LOG.debug(e.getLocalizedMessage(), e);
+          BlLogger.logMessage(LOG, Level.ERROR,"Error found during validating the fields", e);
         }
       }
       catch (final Exception e)
       {
-        throw new ConversionException(e.getLocalizedMessage(), e);
+        BlLogger.logMessage(LOG, Level.ERROR,"Exception occured during Conversion", e);
       }
     }
 
