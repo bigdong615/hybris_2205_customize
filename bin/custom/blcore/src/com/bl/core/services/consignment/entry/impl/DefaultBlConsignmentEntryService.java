@@ -1,29 +1,5 @@
 package com.bl.core.services.consignment.entry.impl;
 
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.session.SessionExecutionBody;
-import de.hybris.platform.servicelayer.session.SessionService;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.enums.ItemStatusEnum;
@@ -37,6 +13,29 @@ import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -188,10 +187,10 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				public List<BlProductModel> execute()
 				{
 					getSearchRestrictionService().disableSearchRestrictions();
-					if (null != serial.getBlProduct() && CollectionUtils.isNotEmpty(serial.getBlProduct().getSubParts()))
+					if (null != serial.getBlProduct() && MapUtils.isNotEmpty(serial.getBlProduct().getSubpartsQty()))
 					{
 
-						return (List<BlProductModel>) serial.getBlProduct().getSubParts();
+						return new ArrayList(serial.getBlProduct().getSubpartsQty().entrySet());
 					}
 					return new ArrayList<>();
 				}
@@ -239,16 +238,18 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			final Map<String, ItemStatusEnum> itemsMap, final List<BlProductModel> allSerialSubPartProducts)
 	{
 		final Map<BlProductModel, Integer> allSerialSubPartProductMap = new HashMap<>();
-		for (final BlProductModel productModel : allSerialSubPartProducts)
+		final Map<BlProductModel, Integer> subPartsMap = new HashMap<>(allSerialSubPartProducts.stream().collect(
+				Collectors.toMap(x -> x, x -> x.getSubpartsQty().get(x))));
+		for (final Map.Entry<BlProductModel, Integer> productModel : subPartsMap.entrySet())
 		{
-			if (null != allSerialSubPartProductMap.get(productModel))
+			if (null != allSerialSubPartProductMap.get(productModel.getKey()))
 			{
-				allSerialSubPartProductMap.put(productModel,
-						allSerialSubPartProductMap.get(productModel) + productModel.getSubpartQuantity());
+				allSerialSubPartProductMap.put(productModel.getKey(),
+						allSerialSubPartProductMap.get(productModel.getValue()));
 			}
 			else
 			{
-				allSerialSubPartProductMap.put(productModel, productModel.getSubpartQuantity());
+				allSerialSubPartProductMap.put(productModel.getKey(), productModel.getValue());
 			}
 		}
 		allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
