@@ -90,7 +90,7 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 	 */
 	private List<String> getCustomExceptionObjectsList()
 	{
-		List<String> customExceptionObjectsList = Lists.newArrayList();
+		final List<String> customExceptionObjectsList = Lists.newArrayList();
 		customExceptionObjectsList.add(BlCoreConstants.BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_BLACKOUT_DATE_MODEL);
 		customExceptionObjectsList.add(BlCoreConstants.BL_PRODUCT_VALIDATE_INTERCEPTOR);
