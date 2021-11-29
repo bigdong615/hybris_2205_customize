@@ -219,11 +219,15 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 	  {
 	    source.getPaymentTransactions().forEach(paymentTransaction -> {
 	      final PaymentInfoModel paymentInfoModel = paymentTransaction.getInfo();
-	      final CCPaymentInfoData paymentInfoData = getPaymentInfoData(paymentInfoModel);
-	      if(Objects.nonNull(paymentInfoData))
+	      if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
 	      {
-	        modifiedOrderPaymentInfos.add(paymentInfoData);
-	      }
+	        final BrainTreePaymentInfoModel paymentInfo = ((BrainTreePaymentInfoModel) paymentInfoModel);
+	        final CCPaymentInfoData paymentInfoData = BooleanUtils.isTrue(paymentInfo.isModifyPayment()) ? getPaymentInfoData(paymentInfoModel) : null;
+	        if(Objects.nonNull(paymentInfoData))
+	        {
+	          modifiedOrderPaymentInfos.add(paymentInfoData);
+	        }
+	      }	      
 	    });
 	  }
 	  target.setModifiedOrderPaymentInfos(modifiedOrderPaymentInfos);
@@ -246,8 +250,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
     }
     else if (paymentInfo instanceof BrainTreePaymentInfoModel)
     {
-      return getBrainTreePaymentInfoConverter()
-          .convert((BrainTreePaymentInfoModel) paymentInfo);
+      return getBrainTreePaymentInfoConverter().convert((BrainTreePaymentInfoModel) paymentInfo);
     }
 	  return null;
 	}
