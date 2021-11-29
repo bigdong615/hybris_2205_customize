@@ -3,11 +3,13 @@ package com.bl.blbackoffice.services.handlers;
 import de.hybris.platform.platformbackoffice.services.handlers.ModelExceptionTranslationHandler;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.google.common.collect.Lists;
 import com.hybris.cockpitng.dataaccess.facades.object.exceptions.ObjectSavingException;
 
 
@@ -70,11 +72,30 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 		if (Objects.nonNull(exception.getCause()) && StringUtils.isNotBlank(exception.getCause().getMessage()))
 		{
 			final String message = exception.getCause().getMessage();
-			return message.contains(BlCoreConstants.BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR)
-					|| message.contains(BlCoreConstants.BL_BLACKOUT_DATE_MODEL)
-					|| message.contains(BlCoreConstants.BL_PRODUCT_VALIDATE_INTERCEPTOR);
+			for(final String objectName : getCustomExceptionObjectsList())
+			{
+				if(message.contains(objectName))
+				{
+					return true;
+				}
+			}
 		}
 		return Boolean.FALSE;
+	}
+	
+	/**
+	 * Gets the custom exception objects list.
+	 *
+	 * @return the custom exception objects list
+	 */
+	private List<String> getCustomExceptionObjectsList()
+	{
+		final List<String> customExceptionObjectsList = Lists.newArrayList();
+		customExceptionObjectsList.add(BlCoreConstants.BL_SERIAL_PRODUCT_VALIDATE_INTERCEPTOR);
+		customExceptionObjectsList.add(BlCoreConstants.BL_BLACKOUT_DATE_MODEL);
+		customExceptionObjectsList.add(BlCoreConstants.BL_PRODUCT_VALIDATE_INTERCEPTOR);
+		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_VALIDATE_INTERCEPTOR);
+		return customExceptionObjectsList;
 	}
 
 	/**
