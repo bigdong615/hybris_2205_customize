@@ -88,6 +88,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ PackagingInfoModel._TYPECODE + "}" + "WHERE  {" + PackagingInfoModel.RETURNINGDATE + "} BETWEEN ?startDate AND ?endDate OR {"
 			+ PackagingInfoModel.DELAYEDDATE +"} BETWEEN ?startDate AND ?endDate";
 
+	private static final String GET_ORDERS_TO_OPTIMIZE_SHIP_FROM_WH_QUERY = "SELECT o.PK FROM ({{SELECT{" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} GROUP BY {"
+	    + ItemModel.PK + "} HAVING COUNT(*) > 1}} INTERSECT {{SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE ({con:"
+			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
+			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})}}) o";
 
 	/**
  	* {@inheritDoc}
@@ -297,6 +303,22 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			return Collections.emptyList();
 		}
 		return packagingInfoModels;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<AbstractOrderModel> getOrdersToOptimizeShipFromWH(final Date currentDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_TO_OPTIMIZE_SHIP_FROM_WH_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(currentDate).getTime());
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(currentDate).getTime());
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		if (CollectionUtils.isEmpty(result.getResult()))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+					"There are no orders to be processed via reshuffler job to optimize ship from warehouse for the day {} ", currentDate);
+		}
+		return result.getResult();
 	}
 
 	/**
