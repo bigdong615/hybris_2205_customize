@@ -19,6 +19,8 @@ import com.bl.logging.BlLogger;
 /**
  * @author Ravikumar
  *
+ *         Validator Interceptor for OrderModel to verify the values set on attribute before saving the model
+ *
  */
 public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderModel>
 {
@@ -33,6 +35,15 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 		validateRentalDateChange(orderModel);
 	}
 
+	/**
+	 * Validate rental date change. Preventing rental start date after the rental end date or a rental end date before
+	 * the rental start date
+	 *
+	 * @param orderModel
+	 *           the order model
+	 * @throws InterceptorException
+	 *            the interceptor exception
+	 */
 	private void validateRentalDateChange(final OrderModel orderModel) throws InterceptorException
 	{
 		if (getUserService().isCsUser() && ObjectUtils.allNotNull(orderModel.getRentalStartDate(), orderModel.getRentalEndDate()))
