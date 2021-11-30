@@ -6,6 +6,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.text.ParseException;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -22,6 +23,7 @@ import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
+import com.fedex.ship.stub.ProcessShipmentReply;
 
 
 /**
@@ -55,7 +57,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
+	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap)
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.UPS_SHIPMENT_MSG);
 
@@ -73,7 +76,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo);
+			createFedExShipment(packagingInfo, packageCount, sequenceMap);
 		}
 	}
 
@@ -103,7 +106,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo);
+			createFedExShipment(packagingInfo, 0, null);
 		}
 	}
 
@@ -111,11 +114,20 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * method will be used to create fedExShipment
 	 *
 	 * @param packagingInfo
+	 * @param sequenceMap
 	 */
-	private void createFedExShipment(final PackagingInfoModel packagingInfo)
+	private void createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap)
 	{
-		getBlShipmentCreationService()
-				.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
+		ProcessShipmentReply createFedExShipment = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount, sequenceMap);
+		if(createFedExShipment.getCompletedShipmentDetail() !=null)
+		{
+			String trackingNumber = createFedExShipment.getCompletedShipmentDetail().getMasterTrackingId().getTrackingNumber();
+			packagingInfo.setOutBoundTrackingNumber(trackingNumber);
+			modelService.save(packagingInfo);
+			modelService.refresh(packagingInfo);
+		}
+
 	}
 
 	/**
@@ -130,7 +142,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setInBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}", packagingInfo.getInBoundTrackingNumber());
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inbound Shipment generated for Package with tracking number : {}",
+				packagingInfo.getInBoundTrackingNumber());
 	}
 
 	/**
@@ -145,7 +158,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setOutBoundTrackingNumber(shipmentPackage.getTrackingNumber());
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}", packagingInfo.getOutBoundTrackingNumber());		
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Outbound Shipment generated for Package with tracking number : {}",
+				packagingInfo.getOutBoundTrackingNumber());
 	}
 
 	/**

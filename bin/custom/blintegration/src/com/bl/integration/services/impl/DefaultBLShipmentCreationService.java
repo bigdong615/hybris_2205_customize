@@ -1,6 +1,7 @@
 package com.bl.integration.services.impl;
 
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -9,7 +10,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -26,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.core.model.BlProductModel;
-import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.Soap.logging.handler.SOAPLoggingHandler;
 import com.bl.integration.constants.BlintegrationConstants;
@@ -38,6 +40,16 @@ import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateR
 import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateResponsePopulator;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
+import com.fedex.ship.stub.CompletedPackageDetail;
+import com.fedex.ship.stub.CompletedShipmentDetail;
+import com.fedex.ship.stub.Notification;
+import com.fedex.ship.stub.NotificationSeverityType;
+import com.fedex.ship.stub.PackageRateDetail;
+import com.fedex.ship.stub.ProcessShipmentReply;
+import com.fedex.ship.stub.ProcessShipmentRequest;
+import com.fedex.ship.stub.ShipServiceLocator;
+import com.fedex.ship.stub.ShipmentOperationalDetail;
+import com.fedex.ship.stub.Surcharge;
 import com.google.gson.Gson;
 import com.sun.xml.ws.client.ClientTransportException;//NOSONAR
 import com.ups.wsdl.xoltws.ship.v1.ShipPortType;
@@ -146,17 +158,204 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public String createFedExShipment(final FedExShippingRequestData fedExShipmentReqData)
+
+	public ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap)
 	{
-		final FedExShipmentRequest fedExShipemtnReq = getBlFedExShipmentCreateRequestPopulator()
-				.convertToFedExShipmentRequest(fedExShipmentReqData);
-		final HttpResponse createFedExShipmentResponse = createFedExShipmentResponse(fedExShipemtnReq);
-		if (createFedExShipmentResponse != null)
+		final Map results = new HashMap();
+		final ProcessShipmentRequest masterRequest = getBlFedExShipmentCreateRequestPopulator()
+				.createFedExShipmentRequest(packagingInfo, packageCount, sequenceMap.get(packagingInfo.getPackageId()).toString());
+		try
 		{
-			BlLogger.logMessage(LOG, Level.INFO, createFedExShipmentResponse.toString());
+			// Initialize the service
+			ShipServiceLocator service;
+			com.fedex.ship.stub.ShipPortType port;
+			//
+			service = new ShipServiceLocator();
+			updateEndPoint(service);
+			port = service.getShipServicePort();
+			//
+			return port.processShipment(masterRequest); // This is the call to the ship web service passing in a request object and returning a reply object
+
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
 		}
 		return null;
+
+	}
+
+	private Map processResponse(final ProcessShipmentReply reply, final AbstractOrderModel order) throws Exception
+	{
+		final Map results = new HashMap();
+		final CompletedShipmentDetail csd = reply.getCompletedShipmentDetail();
+		final CompletedPackageDetail cpd[] = csd.getCompletedPackageDetails();
+		final StringBuffer logMessage = new StringBuffer("");
+		logMessage.append("Package details ");
+		for (int i = 0; i < cpd.length; i++)
+		{ // Package details / Rating
+		  // information for each
+		  // package
+			final String trackingNumber = cpd[i].getTrackingIds(0).getTrackingNumber();
+			results.put("TrackingNumber", trackingNumber);
+
+			if (cpd[i].getPackageRating() != null)
+			{
+				final PackageRateDetail[] prd = cpd[i].getPackageRating().getPackageRateDetails();
+				for (int j = 0; j < prd.length; j++)
+				{
+					if (null != prd[j].getBillingWeight())
+					{
+						logMessage.append(
+								"Billing weight: " + prd[j].getBillingWeight().getValue() + " " + prd[j].getBillingWeight().getUnits());
+					}
+					results.put("BillingWeight", prd[j].getBillingWeight().getValue());
+					if (null != prd[j].getBaseCharge())
+					{
+						logMessage.append("Base charge: " + prd[j].getBaseCharge().getAmount() + " ");
+					}
+					if (null != prd[j].getNetCharge())
+					{
+						logMessage.append("Net charge: " + prd[j].getNetCharge().getAmount() + " ");
+					}
+					results.put("NetCharge", prd[j].getNetCharge().getAmount());
+					if (null != prd[j].getSurcharges())
+					{
+						final Surcharge[] s = prd[j].getSurcharges();
+						for (int k = 0; k < s.length; k++)
+						{
+							if (null != s[k].getSurchargeType())
+							{
+								logMessage.append(s[k].getSurchargeType() + " surcharge " + s[k].getAmount().getAmount() + " ");
+							}
+						}
+					}
+					if (null != prd[j].getTotalSurcharges())
+					{
+						logMessage.append("Total surcharge: " + prd[j].getTotalSurcharges().getAmount() + " ");
+					}
+					logMessage.append(" Routing details ");
+
+				}
+			}
+		}
+
+		return results;
+	}
+
+
+	private static void updateEndPoint(final ShipServiceLocator serviceLocator)
+	{
+		final String endPoint = System.getProperty("endPoint");
+		if (endPoint != null)
+		{
+			serviceLocator.setShipServicePortEndpointAddress(endPoint);
+		}
+	}
+
+	private static boolean isResponseOk(final NotificationSeverityType notificationSeverityType)
+	{
+		if (notificationSeverityType == null)
+		{
+			return false;
+		}
+		if (notificationSeverityType.equals(NotificationSeverityType.WARNING)
+				|| notificationSeverityType.equals(NotificationSeverityType.NOTE)
+				|| notificationSeverityType.equals(NotificationSeverityType.SUCCESS))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private static void writeServiceOutput(final ProcessShipmentReply reply) throws Exception
+	{
+		try
+		{
+			System.out.println(reply.getTransactionDetail().getCustomerTransactionId());
+			final CompletedShipmentDetail csd = reply.getCompletedShipmentDetail();
+			final String masterTrackingNumber = printMasterTrackingNumber(csd);
+			printShipmentOperationalDetails(csd.getOperationalDetail());
+		}
+		catch (final Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			//
+		}
+	}
+
+	private static String printMasterTrackingNumber(final CompletedShipmentDetail csd)
+	{
+		String trackingNumber = "";
+		if (null != csd.getMasterTrackingId())
+		{
+			trackingNumber = csd.getMasterTrackingId().getTrackingNumber();
+			System.out.println("Master Tracking Number");
+			System.out.println("  Type: " + csd.getMasterTrackingId().getTrackingIdType());
+			System.out.println("  Tracking Number: " + trackingNumber);
+		}
+		return trackingNumber;
+	}
+
+	//Shipment level reply information
+	private static void printShipmentOperationalDetails(final ShipmentOperationalDetail shipmentOperationalDetail)
+	{
+		if (shipmentOperationalDetail != null)
+		{
+			System.out.println("Routing Details");
+			printString(shipmentOperationalDetail.getUrsaPrefixCode(), "URSA Prefix", "  ");
+			if (shipmentOperationalDetail.getCommitDay() != null)
+			{
+				printString(shipmentOperationalDetail.getCommitDay().getValue(), "Service Commitment", "  ");
+			}
+			printString(shipmentOperationalDetail.getAirportId(), "Airport Id", "  ");
+			if (shipmentOperationalDetail.getDeliveryDay() != null)
+			{
+				printString(shipmentOperationalDetail.getDeliveryDay().getValue(), "Delivery Day", "  ");
+			}
+			System.out.println();
+		}
+	}
+
+	private static void printString(final String value, final String description, final String space)
+	{
+		if (value != null)
+		{
+			System.out.println(space + description + ": " + value);
+		}
+	}
+
+	private static void printNotifications(final Notification[] notifications)
+	{
+		System.out.println("Notifications:");
+		if (notifications == null || notifications.length == 0)
+		{
+			System.out.println("  No notifications returned");
+		}
+		for (int i = 0; i < notifications.length; i++)
+		{
+			final Notification n = notifications[i];
+			System.out.print("  Notification no. " + i + ": ");
+			if (n == null)
+			{
+				System.out.println("null");
+				continue;
+			}
+			else
+			{
+				System.out.println("");
+			}
+			final NotificationSeverityType nst = n.getSeverity();
+
+			System.out.println("    Severity: " + (nst == null ? "null" : nst.getValue()));
+			System.out.println("    Code: " + n.getCode());
+			System.out.println("    Message: " + n.getMessage());
+			System.out.println("    Source: " + n.getSource());
+		}
 	}
 
 	/**

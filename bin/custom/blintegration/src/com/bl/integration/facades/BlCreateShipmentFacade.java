@@ -7,6 +7,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.text.ParseException;
+import java.util.Map;
 
 
 /**
@@ -22,9 +23,10 @@ public interface BlCreateShipmentFacade
 	 *
 	 * @param packagingInfo
 	 *           as Package Info
+	 * @param sequenceMap 
 	 * @throws ParseException
 	 */
-	void createBlShipmentPackages(PackagingInfoModel packagingInfo) throws ParseException;
+	void createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, Map<String, Integer> sequenceMap) throws ParseException;
 
 	/**
 	 * method will generate return label for shipment

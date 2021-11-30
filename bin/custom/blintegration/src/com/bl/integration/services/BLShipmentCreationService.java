@@ -6,9 +6,12 @@ package com.bl.integration.services;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.util.Map;
+
 import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
+import com.fedex.ship.stub.ProcessShipmentReply;
 
 
 /**
@@ -27,10 +30,12 @@ public interface BLShipmentCreationService
 
 	/**
 	 * method will used to create shipment for FedEx
+	 * @param sequenceMap 
+	 * @param packageCount 
 	 * @param upsShipmentRequest for fedEx shipment
 	 * @return String
 	 */
-	String createFedExShipment(final FedExShippingRequestData upsShipmentRequest);
+	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, int packageCount, Map<String, Integer> sequenceMap);
 
 	/**
 	 * method will used to check the order status for shipment

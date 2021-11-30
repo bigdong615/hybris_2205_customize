@@ -6,9 +6,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -70,15 +72,22 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
+		final Map<String, Integer> sequenceMap = new HashedMap();
 		final ConsignmentModel consignment = actionContext.getData();
 		modelService.refresh(consignment);
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
+		final int packageCount = packages.size();
+		for (int i = 0; i < packageCount; i++)
+		{
+			sequenceMap.put(packages.get(i).getPackageId(), i + 1);
+		}
 
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
+
 			try
 			{
-				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel);
+				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceMap);
 			}
 			catch (final ParseException exception)
 			{

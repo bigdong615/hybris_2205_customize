@@ -155,6 +155,17 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String COUNTRY_CODE = "CountryCode";
 	public static final String DESTINATION_ADDRESS = "DestinationAddress";
 
+	public static final String FEDEX_SERVICE_ID = "ship";
+	public static final int FEDEX_MAJOR = 28;
+	public static final int FEDEX_INTERMEDIATE = 0;
+	public static final int FEDEX_MINOR = 0;
+	public static final String ONE = "1";
+	public static final String TWO = "1";
+	public static final String FEDEX_MASTER = "Master";
+	public static final String FEDEX_CHILD = "Child";
+	public static final String FEDEX_PACKAGING_TYPE = "YOUR_PACKAGING";
+	public static final String FEDEX_COUNTRY_CODE = "US";
+
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class
