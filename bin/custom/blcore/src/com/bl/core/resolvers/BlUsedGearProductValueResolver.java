@@ -43,10 +43,30 @@ public class BlUsedGearProductValueResolver extends
      * @return true if all in solr/parts-needed status
      */
     private boolean getSerial(final Collection<BlSerialProductModel> serials) {
-        return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale()) &&
-                (serial.getSerialStatus().getCode().equals(SerialStatusEnum.ACTIVE.getCode()) ||
-                serial.getSerialStatus().getCode().equals(SerialStatusEnum.ADDED_TO_CART.getCode()) ||
-                serial.getSerialStatus().getCode().equals(SerialStatusEnum.RECEIVED_OR_RETURNED.getCode())));
+        return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale()) && (BooleanUtils.isFalse(serial.getSoftAssigned())
+            && BooleanUtils.isFalse(serial.getHardAssigned())) &&
+                (isActiveStatus(serial.getSerialStatus()))) ;
     }
+
+  /**
+   * This method created to check Serial status is active or not
+   * @param currentStatus serial status
+   * @return boolean based on status
+   */
+  private boolean isActiveStatus(final SerialStatusEnum currentStatus) {
+    switch (currentStatus.getCode()) {
+      case "ACTIVE":
+      case "PARTIALLY_UNBOXED":
+      case "UNBOXED":
+      case "RECEIVED_OR_RETURNED":
+      case "BOXED":
+      case "SHIPPED":
+      case "IN_HOUSE":
+      case "ADDED_TO_CART":
+        return Boolean.TRUE;
+      default :
+    }
+    return Boolean.FALSE;
+  }
 
 }
