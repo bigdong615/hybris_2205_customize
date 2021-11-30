@@ -79,4 +79,11 @@ public interface BlOrderDao extends OrderDao
 	 * @return List<PackagingInfoModel> list of packages to be send to UPS scrape
 	 */
 	List<PackagingInfoModel> getDelayedOrUpdatedPackagesForUPSScrape();
+
+	/**
+	 * It gets the orders to fulfill from one warehouse
+	 * @param currentDate the current date
+	 * @return list of orders
+	 */
+	public List<AbstractOrderModel> getOrdersToOptimizeShipFromWH(final Date currentDate);
 }
