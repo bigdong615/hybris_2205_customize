@@ -27,6 +27,7 @@ public class BlCustomDateEditor<T> extends DefaultDateEditor
 	protected void initViewComponent(final InputElement editorView, final EditorContext<Date> context,
 			final EditorListener<Date> listener)
 	{
+		super.initViewComponent(editorView, context, listener);
 		if (this.shouldInputBeDisabled(context))
 		{
 			editorView.setReadonly(true);

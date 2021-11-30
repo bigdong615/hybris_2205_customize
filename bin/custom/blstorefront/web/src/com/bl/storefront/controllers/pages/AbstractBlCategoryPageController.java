@@ -151,11 +151,6 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         populateRequiredDataForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
 
         checkNumberOfFacetSelected(searchPageData , model);
-        if(category.getCode().equalsIgnoreCase(BlCoreConstants.RENTAL_GEAR) || category.getCode().equalsIgnoreCase(BlCoreConstants.USED_GEAR_CODE)) {
-            final long totalNumberOfResults =
-                searchPageData.getPagination().getTotalNumberOfResults() - 1;
-            searchPageData.getPagination().setTotalNumberOfResults(totalNumberOfResults);
-        }
         return getViewPage(categorySearch.getCategoryPage());
 
     }
