@@ -208,6 +208,8 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; Orde.code                  ; +    ; -      ; -      ; -
+          ;                   ;                ; Orde.rentalStartDate       ; +    ; -      ; -      ; -
+          ;                   ;                ; Orde.rentalEndDate         ; +    ; -      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
@@ -223,7 +225,9 @@ Usergroup ; frontdeskuserrole ;                ;                ;      ;        
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
           ;                   ;                ; Order          ; +    ; +      ; -      ; -
           ;                   ;                ; Order.code     ; +    ; -      ; -      ; -
-          ;                   ;                ; User           ; +    ; -      ; -      ; -
+          ;                   ;                ; Orde.rentalStartDate ; +    ; -      ; -      ; -
+          ;                   ;                ; Orde.rentalEndDate ; +    ; -      ; -      ; -
+	      ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
@@ -236,6 +240,8 @@ Usergroup ; shippingteamuserrole ;                ;                            ;
 ;                   ;                ; Consignment    ; +    ; +      ; -      ; -
 ;                   ;                ; Order          ; +    ; +      ; -      ; -
 ;                   ;                ; Order.code     ; +    ; -      ; -      ; -
+;                   ;                ; Order.rentalStartDate     ; +    ; -      ; -      ; -
+;                   ;                ; Order.rentalEndDate     ; +    ; -      ; -      ; -
 ;                   ;                ; User           ; +    ; -      ; -      ; -
 ;                   ;                ; Address        ; +    ; -      ; -      ; -
 ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
@@ -321,6 +327,8 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Consignment;+;+;-;-
 ;;;Order;+;+;-;-
 ;;;Order.code;+;-;-;-
+;;;Order.rentalStartDate;+;-;-;-
+;;;Order.rentalEndDate;+;-;-;-
 ;;;StockLevel;+;-;-;-
 ;;;BlTestingGearNeeded;+;+;+;+;
 ;;;Product;+;-;-;-;
@@ -374,6 +382,8 @@ Usergroup              ; techEngusergroup        ;                    ;         
 # Access Rights for Tech eng group;                         ;                    ;                               ;                         ;          ;        ;        ;             
                        ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingItemsQueue           ; +                       ; +        ; -      ; -      ;             
@@ -426,6 +436,8 @@ Usergroup              ; repairmemberusergroup   ;                    ;         
 # Access Rights for Repair member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
                        ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
@@ -469,6 +481,8 @@ Usergroup              ; unboxingmemberusergroup ;                    ;         
 # Access Rights for Unboxing member group;                         ;                    ;                               ;                         ;          ;        ;        ;             
                        ;                         ;                    ; Order                         ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             

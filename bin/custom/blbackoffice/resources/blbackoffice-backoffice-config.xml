@@ -3394,4 +3394,22 @@
 	</advanced-search:advanced-search>
 	</context>
 
+	<context type="Order" component="editorAreaDynamicForms" merge-by="module" module="blbackoffice">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+			<df:attribute id="disableRentalStartDate" qualifier="rentalStartDate" disabledIf="@userService.getAdminUser()" triggeredOn="*"/>
+			<df:attribute id="disableRentalEndDate" qualifier="rentalEndDate" disabledIf="@userService.getAdminUser()" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context merge-by="type" parent="AbstractOrder" type="Order" component="editor-area" module="blbackoffice">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.administration">
+				<editorArea:section name="unbound">
+						<editorArea:attribute qualifier="rentalStartDate" readonly="true"/>
+						<editorArea:attribute qualifier="rentalEndDate" readonly="true"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
 </config>
