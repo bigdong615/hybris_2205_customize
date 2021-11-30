@@ -30,7 +30,7 @@ public class BlProductTypeValueResolver extends AbstractValueResolver<BlProductM
     protected void addFieldValues(final InputDocument inputDocument, final IndexerBatchContext indexerBatchContext,
                                   final IndexedProperty indexedProperty, final BlProductModel blProductModel,
                                   final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException {
-        inputDocument.addField(indexedProperty, BooleanUtils.isFalse(blProductModel.getProductType().getCode().equals(BlCoreConstants.GIFTCARD)));
+        inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getProductType().getCode().equals(BlCoreConstants.GIFTCARD)));
     }
 
 }
