@@ -318,7 +318,7 @@
       <enumtype generate="true" code="RepairTechClaimEnum" autocreate="true" dynamic="true">
       	<value code="TECH_ONE" />
       	<value code="TECH_TWO" />
-      	<value code="TECH_THEREE" />
+      	<value code="TECH_THREE" />
       	<value code="SUPERVISOR" />
     </enumtype>
 	  

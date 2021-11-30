@@ -748,4 +748,7 @@
 	<alias name="defaultBlReturnOrderFacade" alias="blReturnOrderFacade" />
     <bean id="defaultBlReturnOrderFacade" class="com.bl.facades.order.DefaultBlReturnOrderFacade" />
 
+	<alias name="defaultBlSingleLineAddressFormatPopulator" alias="usSingleLineAddressFormatPopulator"/>
+	<bean id="defaultBlSingleLineAddressFormatPopulator" class="com.bl.facades.populators.BlSingleLineAddressFormatPopulator" parent="defaultUsSingleLineAddressFormatPopulator"/>
+
 </beans>

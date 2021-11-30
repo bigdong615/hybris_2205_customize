@@ -254,13 +254,17 @@
 
                             <c:if test="${orderData.isReplacementOrder ne true}">
                             <div class="reviewCart">
+                            <h5 class="mb-4"><spring:theme code="text.myaccount.order.payment.title"/></h5>
                             <c:choose>
                              <c:when test="${not empty orderData.paymentInfo}">
-                                <h5 class="mb-4"><spring:theme code="text.myaccount.order.payment.title"/></h5>
+                                
                                 <div class="row mb-4">
                                <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}" displayOrderNote="true"/>
-                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 1 }">
-	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}" begin="1">
+                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 or not empty orderData.modifiedOrderPoNumber}">
+                               			<h5 class="mb-4"><spring:theme code="order.details.modified.order.payment.msg"/></h5>
+                               		</c:if>
+                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 }">
+	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}">
 	                               		<order:accountPaymentDetails orderData="${orderData}" paymentInfo="${modifiedPaymentInfo}" displayOrderNote="false"/>
 	                               </c:forEach>
                                </c:if>
@@ -272,6 +276,9 @@
                                <c:otherwise>
                                <div class="row">
                                		<order:accountOrderPoPayment orderData="${orderData}" displayOrderNote="true" poNote="${orderData.poNotes}"/>
+                               		<c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 or not empty orderData.modifiedOrderPoNumber}">
+                               			<h5 class="mb-4"><spring:theme code="order.details.modified.order.payment.msg"/></h5>
+                               		</c:if>
                                		<c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 }">
 	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}">
 	                               		<order:accountPaymentDetails orderData="${orderData}" paymentInfo="${modifiedPaymentInfo}" displayOrderNote="false"/>

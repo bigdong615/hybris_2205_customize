@@ -1741,4 +1741,23 @@
         <property name="sessionService" ref="sessionService"/>
     </bean>
 
+	<alias name="blItemsBillingChargePrepareInterceptor" alias="itemsBillingChargePrepareInterceptor"/>
+	<bean id="blItemsBillingChargePrepareInterceptor"	class="com.bl.core.model.interceptor.BlItemsBillingChargePrepareInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="blItemsBillingChargePrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="itemsBillingChargePrepareInterceptor"/>
+		<property name="typeCode" value="BlItemsBillingCharge"/>
+	</bean>
+	
+	<alias name="blOrderValidateInterceptor" alias="orderValidateInterceptor"/>
+	<bean id="blOrderValidateInterceptor"	class="com.bl.core.model.interceptor.BlOrderValidateInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="blAddressValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="orderValidateInterceptor"/>
+		<property name="typeCode" value="Order"/>
+	</bean>
 </beans>
