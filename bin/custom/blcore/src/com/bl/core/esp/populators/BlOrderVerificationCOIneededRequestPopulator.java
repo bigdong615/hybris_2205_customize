@@ -10,6 +10,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -89,7 +90,8 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
     data.setRentalduration((int) getRentalDuration(orderModel));
     data.setVerificationlevel(Integer.valueOf(orderModel.getVerificationLevel()));
     data.setVerificationtext("Dummy verification text"); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
-
+    data.setTotalvalue(BigDecimal.valueOf(orderModel.getSubtotal()));
+    data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
     orderVerificationCOIneededEventRequest.setData(data);
   }
 
