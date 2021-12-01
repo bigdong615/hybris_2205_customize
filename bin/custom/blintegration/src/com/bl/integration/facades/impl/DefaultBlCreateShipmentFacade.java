@@ -1,8 +1,10 @@
 package com.bl.integration.facades.impl;
 
+import de.hybris.platform.core.Registry;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.io.File;
@@ -57,8 +59,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlCreateShipmentFacade.class);
 
-	@Resource(name = "modelService")
-	private static ModelService modelService;
+	private ModelService modelService;
 
 	@Resource(name = "blUpsShippingDataPopulator")
 	private BLUpsShippingDataPopulator blUpsShippingDataPopulator;
@@ -180,30 +181,24 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param packagingInfo
 	 * @throws Exception
 	 */
-	private static void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo) throws Exception
+	private void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo) throws Exception
 	{
-		try
-		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment created for Transaction Id {} : ", reply.getTransactionDetail().getCustomerTransactionId());
 			CompletedShipmentDetail completedShipmentDetails = reply.getCompletedShipmentDetail(); 
 			packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}", completedShipmentDetails.getMasterTrackingId().getTrackingNumber(),packagingInfo.getPackageId());
 			setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(),packagingInfo);
-			modelService.save(packagingInfo);
-			modelService.save(packagingInfo);
-			
-		} catch (Exception ex) {
-			BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage());
-		}
+			getModelService().save(packagingInfo);
+			getModelService().refresh(packagingInfo);
 	}
 	
-	private static void setTotalChargesOnPackage(final ShipmentRating shipmentRating,final PackagingInfoModel packagingInfo){
+	private void setTotalChargesOnPackage(final ShipmentRating shipmentRating,final PackagingInfoModel packagingInfo){
 		if(shipmentRating!=null){
 			System.out.println("Shipment Rate Details");
 			ShipmentRateDetail[] srd = shipmentRating.getShipmentRateDetails();
 			for(int j=0; j < srd.length; j++)
 			{
-				packagingInfo.setTotalShippingPrice(Double.valueOf(srd[j].getTotalBillingWeight().toString()));
+				packagingInfo.setTotalShippingPrice(Double.valueOf(srd[j].getTotalBaseCharge().getAmount().toString()));
 			}
 		}
 	}
@@ -281,23 +276,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	}
 
 	/**
-	 * @return the modelService
-	 */
-	public ModelService getModelService()
-	{
-		return modelService;
-	}
-
-	/**
-	 * @param modelService
-	 *           the modelService to set
-	 */
-	public void setModelService(final ModelService modelService)
-	{
-		this.modelService = modelService;
-	}
-
-	/**
 	 * @return the blShipmentCreationService
 	 */
 	public DefaultBLShipmentCreationService getBlShipmentCreationService()
@@ -329,6 +307,16 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	public void setBlFedExShippingDataPopulator(final BLFedExShippingDataPopulator blFedExShippingDataPopulator)
 	{
 		this.blFedExShippingDataPopulator = blFedExShippingDataPopulator;
+	}
+
+	public ModelService getModelService()
+	{
+		return modelService;
+	}
+
+	public void setModelService(ModelService modelService)
+	{
+		this.modelService = modelService;
 	}
 
 }
