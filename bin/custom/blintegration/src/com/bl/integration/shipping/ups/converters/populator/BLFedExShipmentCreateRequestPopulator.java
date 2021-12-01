@@ -66,7 +66,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	@Value("${blintegration.fedex.shipment.password}")
 	private static String fedExapiPassword;
 
-	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final String sequenceNumber)
+	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, int packageCount, final String sequenceNumber)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -90,7 +90,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	}
 
 	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo,
-			final String sequenceNumber, final WarehouseModel warehouseModel)
+			int packageCount, final String sequenceNumber, final WarehouseModel warehouseModel)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object

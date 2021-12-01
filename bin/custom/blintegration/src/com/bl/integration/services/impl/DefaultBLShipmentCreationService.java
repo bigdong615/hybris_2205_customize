@@ -154,14 +154,15 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	public ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
 			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
+		ProcessShipmentRequest masterRequest = new ProcessShipmentRequest();
 		if (warehouseModel == null)
 		{
-			ProcessShipmentRequest masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExShipmentRequest(packagingInfo, packageCount,
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExShipmentRequest(packagingInfo, packageCount,
 					sequenceMap.get(packagingInfo.getPackageId()).toString());
 		}
 		else
 		{
-			ProcessShipmentRequest masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
 					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel);
 		}
 		try
