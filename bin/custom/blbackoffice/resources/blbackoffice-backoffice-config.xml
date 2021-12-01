@@ -2486,7 +2486,7 @@
 				<editorArea:section name="hmc.section.blSerial.attributes">
 					<editorArea:attribute qualifier="repairReasons"/>
 					<editorArea:attribute qualifier="otherRepairReasons"/>
-					<editorArea:attribute qualifier="notesOnIssue"/>
+					<editorArea:attribute qualifier="notesForIssue"/>
 					<editorArea:attribute qualifier="conditionRating"/>
 					<editorArea:attribute qualifier="lastUserChangedConditionRating" readonly="true"/>
 					<editorArea:attribute qualifier="frequency"/>

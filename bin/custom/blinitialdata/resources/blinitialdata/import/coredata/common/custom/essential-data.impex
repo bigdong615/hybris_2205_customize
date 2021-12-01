@@ -476,7 +476,13 @@ INSERT_UPDATE VendorsEnum ; code[unique=true] ; name[lang=en]
                           ; SIGMA              ; SIGMA              
                           ; LECTRONICS         ; LECTRONICS         
                           ; LYTRO              ; LYTRO              
-                          ; BEACHTEK_INC       ; BEACHTEK_INC       
+                          ; BEACHTEK_INC       ; BEACHTEK_INC 
+                          ; SOUNDDEVICES               ; SOUNDDEVICES               
+                          ; CALIFORNIA_MEDIA_SOLUTIONS ; CALIFORNIA_MEDIA_SOLUTIONS 
+                          ; LETUS_CORPORATION          ; LETUS_CORPORATION          
+                          ; DIGITALSPUTNIK             ; DIGITALSPUTNIK             
+                          ; INSTA360                   ; INSTA360                   
+                                
                           
 INSERT_UPDATE ItemBillingChargeTypeEnum ; code[unique=true] 			; name[lang=en]  
                                         ; MISSING_CHARGE    			; MISSING CHARGE 
