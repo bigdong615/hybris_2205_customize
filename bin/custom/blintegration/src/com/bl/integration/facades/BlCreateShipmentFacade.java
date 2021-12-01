@@ -18,21 +18,23 @@ import java.util.Map;
  */
 public interface BlCreateShipmentFacade
 {
+
 	/**
 	 * method will generate label for shipment
-	 *
-	 * @param packagingInfo
-	 *           as Package Info
-	 * @param sequenceMap 
-	 * @throws ParseException
+	 * @param packagingInfo as PackageInfo
+	 * @param packageCount as PackageCount
+	 * @param sequenceMap as SequenceMap
+	 * @throws ParseException as Exception
 	 */
 	void createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, Map<String, Integer> sequenceMap) throws ParseException;
 
+
 	/**
 	 * method will generate return label for shipment
-	 *
-	 * @param packagingInfo
-	 *           as Package Info
+	 * @param packagingInfo as PackageInfo
+	 * @param warehouseModel as WarehouseModel
+	 * @param packageCount as PackageCount
+	 * @param sequenceMap as SequenceMap
 	 */
 	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
 			final Map<String, Integer> sequenceMap);

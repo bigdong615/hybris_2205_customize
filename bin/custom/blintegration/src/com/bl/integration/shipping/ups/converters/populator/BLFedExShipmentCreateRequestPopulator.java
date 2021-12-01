@@ -66,8 +66,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	@Value("${blintegration.fedex.shipment.password}")
 	private static String fedExapiPassword;
 
-	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final int pkgCount,
-			final String sequenceNumber)
+	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final String sequenceNumber)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -90,7 +89,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		return processShipmentRequest;
 	}
 
-	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo, final int pkgCount,
+	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo,
 			final String sequenceNumber, final WarehouseModel warehouseModel)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
@@ -230,14 +229,18 @@ public class BLFedExShipmentCreateRequestPopulator
 	private void setDropoffTypeOnRequestedShipment(final RequestedShipment requestedShipment)
 	{
 		final Calendar now = Calendar.getInstance();
-		if (now.get(Calendar.HOUR_OF_DAY) > 16
-				&& (now.get(Calendar.HOUR_OF_DAY) < 18 || (now.get(Calendar.HOUR_OF_DAY) == 18 && now.get(Calendar.MINUTE) < 31)))
+		if (now.get(Calendar.HOUR_OF_DAY) > BlintegrationConstants.SIXTEEN
+				&& (now.get(Calendar.HOUR_OF_DAY) < BlintegrationConstants.EIGHTEEN
+						|| (now.get(Calendar.HOUR_OF_DAY) == BlintegrationConstants.EIGHTEEN
+								&& now.get(Calendar.MINUTE) < BlintegrationConstants.THIRTY_ONE)))
 		{
 			// Between 4:00 and 6:30 pm, business service center
 			requestedShipment.setDropoffType(DropoffType.BUSINESS_SERVICE_CENTER);
 		}
-		else if (now.get(Calendar.HOUR_OF_DAY) > 16
-				&& (now.get(Calendar.HOUR_OF_DAY) < 20 || (now.get(Calendar.HOUR_OF_DAY) == 20 && now.get(Calendar.MINUTE) < 31)))
+		else if (now.get(Calendar.HOUR_OF_DAY) > BlintegrationConstants.SIXTEEN
+				&& (now.get(Calendar.HOUR_OF_DAY) < BlintegrationConstants.TWENTY
+						|| (now.get(Calendar.HOUR_OF_DAY) == BlintegrationConstants.TWENTY
+								&& now.get(Calendar.MINUTE) < BlintegrationConstants.THIRTY_ONE)))
 		{
 			// Between 6:30 and 8:30 pm, station
 			requestedShipment.setDropoffType(DropoffType.STATION);
@@ -257,7 +260,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	private Calendar getShipTimeStamp()
 	{
 		final Calendar sevenhoursearlier = Calendar.getInstance();
-		sevenhoursearlier.add(Calendar.HOUR_OF_DAY, -7);
+		sevenhoursearlier.add(Calendar.HOUR_OF_DAY, BlintegrationConstants.MINUS_SEVEN);
 		return sevenhoursearlier;
 	}
 

@@ -168,6 +168,12 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String FEDEX_SERVICE_TYPE = "PRIORITY_OVERNIGHT";
 	public static final String OUT_BOUND_LABEL = "outbound";
 	public static final String IN_BOUND_LABEL = "inbound";
+	public static final int SIXTEEN = 16;
+	public static final int EIGHTEEN = 18;
+	public static final int THIRTY_ONE = 31;
+	public static final int TWENTY = 20;
+	public static final int MINUS_SEVEN = -7;
+
 
 	private BlintegrationConstants()
 	{

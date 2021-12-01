@@ -1,14 +1,10 @@
 package com.bl.integration.facades.impl;
 
-import de.hybris.platform.core.Registry;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -27,27 +23,11 @@ import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
-import com.fedex.ship.stub.AssociatedShipmentDetail;
-import com.fedex.ship.stub.CodReturnPackageDetail;
-import com.fedex.ship.stub.CompletedPackageDetail;
 import com.fedex.ship.stub.CompletedShipmentDetail;
-import com.fedex.ship.stub.FreightBaseCharge;
-import com.fedex.ship.stub.FreightRateDetail;
-import com.fedex.ship.stub.FreightRateNotation;
-import com.fedex.ship.stub.Money;
 import com.fedex.ship.stub.NotificationSeverityType;
-import com.fedex.ship.stub.PackageOperationalDetail;
-import com.fedex.ship.stub.PackageRateDetail;
-import com.fedex.ship.stub.PackageRating;
 import com.fedex.ship.stub.ProcessShipmentReply;
-import com.fedex.ship.stub.ShipmentOperationalDetail;
 import com.fedex.ship.stub.ShipmentRateDetail;
 import com.fedex.ship.stub.ShipmentRating;
-import com.fedex.ship.stub.ShippingDocument;
-import com.fedex.ship.stub.ShippingDocumentPart;
-import com.fedex.ship.stub.Surcharge;
-import com.fedex.ship.stub.TrackingId;
-import com.fedex.ship.stub.Weight;
 
 
 /**
@@ -186,7 +166,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * This method will process the response returned from FedEx shipment service and update it on packagingInfoModel
 	 * @param reply
 	 * @param packagingInfo
-	 * @throws Exception
 	 */
 	private void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo,final WarehouseModel warehouseModel) throws Exception
 	{
@@ -209,7 +188,6 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	
 	private void setTotalChargesOnPackage(final ShipmentRating shipmentRating,final PackagingInfoModel packagingInfo){
 		if(shipmentRating!=null){
-			System.out.println("Shipment Rate Details");
 			ShipmentRateDetail[] srd = shipmentRating.getShipmentRateDetails();
 			for(int j=0; j < srd.length; j++)
 			{
