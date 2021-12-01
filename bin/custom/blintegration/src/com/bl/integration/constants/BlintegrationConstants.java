@@ -165,6 +165,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String FEDEX_CHILD = "Child";
 	public static final String FEDEX_PACKAGING_TYPE = "YOUR_PACKAGING";
 	public static final String FEDEX_COUNTRY_CODE = "US";
+	public static final String FEDEX_SERVICE_TYPE = "PRIORITY_OVERNIGHT";
 
 	private BlintegrationConstants()
 	{

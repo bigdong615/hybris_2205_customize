@@ -120,8 +120,8 @@ public class BLFedExShipmentCreateRequestPopulator
 
 		requestedShipment.setShipTimestamp(getShipTimeStamp());
 		setDropoffTypeOnRequestedShipment(requestedShipment);
-		//requestedShipment.setServiceType("PRIORITY_OVERNIGHT");
-		setServiceTypeOnRequestedShipment(consignment, requestedShipment);
+		requestedShipment.setServiceType(BlintegrationConstants.FEDEX_SERVICE_TYPE);
+		//setServiceTypeOnRequestedShipment(consignment, requestedShipment);
 
 		requestedShipment.setPackagingType(BlintegrationConstants.FEDEX_PACKAGING_TYPE);
 		requestedShipment.setShipper(addShipper(consignment));
@@ -225,7 +225,6 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to get value for ship timestamp
-	 *
 	 * @return Calendar
 	 */
 	private Calendar getShipTimeStamp()
@@ -235,100 +234,11 @@ public class BLFedExShipmentCreateRequestPopulator
 		return sevenhoursearlier;
 	}
 
-	private static void writeServiceOutput(final ProcessShipmentReply reply) throws Exception
-	{
-		try
-		{
-			System.out.println(reply.getTransactionDetail().getCustomerTransactionId());
-			final CompletedShipmentDetail csd = reply.getCompletedShipmentDetail();
-			final String masterTrackingNumber = printMasterTrackingNumber(csd);
-			printShipmentOperationalDetails(csd.getOperationalDetail());
-			printShipmentRating(csd.getShipmentRating());
-			final CompletedPackageDetail cpd[] = csd.getCompletedPackageDetails();
-			printPackageDetails(cpd);
-			saveShipmentDocumentsToFile(csd.getShipmentDocuments(), masterTrackingNumber);
-			//  If Express COD shipment is requested, the COD return label is returned as an Associated Shipment.
-			getAssociatedShipmentLabels(csd.getAssociatedShipments());
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			//
-		}
-	}
-
-	private static boolean isResponseOk(final NotificationSeverityType notificationSeverityType)
-	{
-		if (notificationSeverityType == null)
-		{
-			return false;
-		}
-		if (notificationSeverityType.equals(NotificationSeverityType.WARNING)
-				|| notificationSeverityType.equals(NotificationSeverityType.NOTE)
-				|| notificationSeverityType.equals(NotificationSeverityType.SUCCESS))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private static void printNotifications(final Notification[] notifications)
-	{
-		System.out.println("Notifications:");
-		if (notifications == null || notifications.length == 0)
-		{
-			System.out.println("  No notifications returned");
-		}
-		for (int i = 0; i < notifications.length; i++)
-		{
-			final Notification n = notifications[i];
-			System.out.print("  Notification no. " + i + ": ");
-			if (n == null)
-			{
-				System.out.println("null");
-				continue;
-			}
-			else
-			{
-				System.out.println("");
-			}
-			final NotificationSeverityType nst = n.getSeverity();
-
-			System.out.println("    Severity: " + (nst == null ? "null" : nst.getValue()));
-			System.out.println("    Code: " + n.getCode());
-			System.out.println("    Message: " + n.getMessage());
-			System.out.println("    Source: " + n.getSource());
-		}
-	}
-
-	private static void printMoney(final Money money, final String description, final String space)
-	{
-		if (money != null)
-		{
-			System.out.println(space + description + ": " + money.getAmount() + " " + money.getCurrency());
-		}
-	}
-
-	private static void printWeight(final Weight weight, final String description, final String space)
-	{
-		if (weight != null)
-		{
-			System.out.println(space + description + ": " + weight.getValue() + " " + weight.getUnits());
-		}
-	}
-
-	private static void printString(final String value, final String description, final String space)
-	{
-		if (value != null)
-		{
-			System.out.println(space + description + ": " + value);
-		}
-	}
-
-
+	/**
+	 * This method is used to set package weight on FedEx Shipment Request
+	 * @param packagingInfo
+	 * @return
+	 */
 	private static Weight addPackageWeight(final PackagingInfoModel packagingInfo)
 	{
 		final Weight weight = new Weight();
@@ -337,6 +247,11 @@ public class BLFedExShipmentCreateRequestPopulator
 		return weight;
 	}
 
+	/**
+	 * This method is used to set package dimensions on FedEx Shipment Request
+	 * @param packagingInfo
+	 * @return
+	 */
 	private static Dimensions addPackageDimensions(final PackagingInfoModel packagingInfo)
 	{
 		final Dimensions dimensions = new Dimensions();
@@ -347,147 +262,8 @@ public class BLFedExShipmentCreateRequestPopulator
 		return dimensions;
 	}
 
-	//Shipment level reply information
-	private static void printShipmentOperationalDetails(final ShipmentOperationalDetail shipmentOperationalDetail)
-	{
-		if (shipmentOperationalDetail != null)
-		{
-			System.out.println("Routing Details");
-			printString(shipmentOperationalDetail.getUrsaPrefixCode(), "URSA Prefix", "  ");
-			if (shipmentOperationalDetail.getCommitDay() != null)
-			{
-				printString(shipmentOperationalDetail.getCommitDay().getValue(), "Service Commitment", "  ");
-			}
-			printString(shipmentOperationalDetail.getAirportId(), "Airport Id", "  ");
-			if (shipmentOperationalDetail.getDeliveryDay() != null)
-			{
-				printString(shipmentOperationalDetail.getDeliveryDay().getValue(), "Delivery Day", "  ");
-			}
-			System.out.println();
-		}
-	}
-
-	private static void printShipmentRating(final ShipmentRating shipmentRating)
-	{
-		if (shipmentRating != null)
-		{
-			System.out.println("Shipment Rate Details");
-			final ShipmentRateDetail[] srd = shipmentRating.getShipmentRateDetails();
-			for (int j = 0; j < srd.length; j++)
-			{
-				System.out.println("  Rate Type: " + srd[j].getRateType().getValue());
-				printWeight(srd[j].getTotalBillingWeight(), "Shipment Billing Weight", "    ");
-				printMoney(srd[j].getTotalBaseCharge(), "Shipment Base Charge", "    ");
-				printMoney(srd[j].getTotalNetCharge(), "Shipment Net Charge", "    ");
-				printMoney(srd[j].getTotalSurcharges(), "Shipment Total Surcharge", "    ");
-				if (null != srd[j].getSurcharges())
-				{
-					System.out.println("    Surcharge Details");
-					final Surcharge[] s = srd[j].getSurcharges();
-					for (int k = 0; k < s.length; k++)
-					{
-						printMoney(s[k].getAmount(), s[k].getSurchargeType().getValue(), "      ");
-					}
-				}
-				printFreightDetail(srd[j].getFreightRateDetail());
-				System.out.println();
-			}
-		}
-	}
-
-	//Package level reply information
-	private static void printPackageOperationalDetails(final PackageOperationalDetail packageOperationalDetail)
-	{
-		if (packageOperationalDetail != null)
-		{
-			System.out.println("  Routing Details");
-			printString(packageOperationalDetail.getAstraHandlingText(), "Astra", "    ");
-			printString(packageOperationalDetail.getGroundServiceCode(), "Ground Service Code", "    ");
-			System.out.println();
-		}
-	}
-
-	private static void printPackageDetails(final CompletedPackageDetail[] cpd) throws Exception
-	{
-		if (cpd != null)
-		{
-			System.out.println("Package Details");
-			for (int i = 0; i < cpd.length; i++)
-			{ // Package details / Rating information for each package
-				final String trackingNumber = cpd[i].getTrackingIds()[0].getTrackingNumber();
-				printTrackingNumbers(cpd[i]);
-				System.out.println();
-				//
-				printPackageRating(cpd[i].getPackageRating());
-				//	Write label buffer to file
-				final ShippingDocument sd = cpd[i].getLabel();
-				saveLabelToFile(sd, trackingNumber);
-				printPackageOperationalDetails(cpd[i].getOperationalDetail());
-				// If Ground COD shipment is requested, the COD return label is returned as in CodReturnPackageDetail.
-				printGroundCodLabel(cpd[i], trackingNumber);
-				System.out.println();
-			}
-		}
-	}
-
-	private static void printPackageRating(final PackageRating packageRating)
-	{
-		if (packageRating != null)
-		{
-			System.out.println("Package Rate Details");
-			final PackageRateDetail[] prd = packageRating.getPackageRateDetails();
-			for (int j = 0; j < prd.length; j++)
-			{
-				System.out.println("  Rate Type: " + prd[j].getRateType().getValue());
-				printWeight(prd[j].getBillingWeight(), "Billing Weight", "    ");
-				printMoney(prd[j].getBaseCharge(), "Base Charge", "    ");
-				printMoney(prd[j].getNetCharge(), "Net Charge", "    ");
-				printMoney(prd[j].getTotalSurcharges(), "Total Surcharge", "    ");
-				if (null != prd[j].getSurcharges())
-				{
-					System.out.println("    Surcharge Details");
-					final Surcharge[] s = prd[j].getSurcharges();
-					for (int k = 0; k < s.length; k++)
-					{
-						printMoney(s[k].getAmount(), s[k].getSurchargeType().getValue(), "      ");
-					}
-				}
-				System.out.println();
-			}
-		}
-	}
-
-	private static void printTrackingNumbers(final CompletedPackageDetail completedPackageDetail)
-	{
-		if (completedPackageDetail.getTrackingIds() != null)
-		{
-			final TrackingId[] trackingId = completedPackageDetail.getTrackingIds();
-			for (int i = 0; i < trackingId.length; i++)
-			{
-				final String trackNumber = trackingId[i].getTrackingNumber();
-				final String trackType = trackingId[i].getTrackingIdType().getValue();
-				final String formId = trackingId[i].getFormId();
-				printString(trackNumber, trackType + " tracking number", "  ");
-				printString(formId, "Form Id", "  ");
-			}
-		}
-	}
-
-	private static String getPayorAccountNumber()
-	{
-		// See if payor account number is set as system property,
-		// if not default it to "XXX"
-		String payorAccountNumber = System.getProperty("Payor.AccountNumber");
-		if (payorAccountNumber == null)
-		{
-			payorAccountNumber = "510087780"; // Replace "XXX" with the payor account number
-		}
-		return payorAccountNumber;
-	}
-
 	/**
 	 * This method is used to add shipper for FedEx Shipment Request
-	 *
 	 * @param consignment
 	 * @return Party
 	 */
@@ -514,7 +290,6 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to add recipient for FedEx Shipment Request
-	 *
 	 * @param consignment
 	 * @return
 	 */
@@ -550,13 +325,17 @@ public class BLFedExShipmentCreateRequestPopulator
 		return warehouse.getPointsOfService().iterator().next().getAddress();
 	}
 
+	/**
+	 * This method is used to set shipping charges payment on FedEx Shipment Request
+	 * @return
+	 */
 	private static Payment addShippingChargesPayment()
 	{
 		final Payment payment = new Payment(); // Payment information
 		payment.setPaymentType(PaymentType.SENDER);
 		final Payor payor = new Payor();
 		final Party responsibleParty = new Party();
-		responsibleParty.setAccountNumber(getPayorAccountNumber());
+		responsibleParty.setAccountNumber(fedExAccountNumber);
 		final Address responsiblePartyAddress = new Address();
 		responsiblePartyAddress.setCountryCode(BlintegrationConstants.FEDEX_COUNTRY_CODE);
 		responsibleParty.setAddress(responsiblePartyAddress);
@@ -566,22 +345,11 @@ public class BLFedExShipmentCreateRequestPopulator
 		return payment;
 	}
 
-	private static ShipmentSpecialServicesRequested addShipmentSpecialServicesRequested()
-	{
-		final ShipmentSpecialServicesRequested shipmentSpecialServicesRequested = new ShipmentSpecialServicesRequested();
-		shipmentSpecialServicesRequested.setSpecialServiceTypes(new String[]
-		{ "COD" });
-		//shipmentSpecialServicesRequested.setSpecialServiceTypes(shipmentSpecialServiceType);
-		final CodDetail codDetail = new CodDetail();
-		codDetail.setCollectionType(CodCollectionType.ANY);
-		final Money codMoney = new Money();
-		codMoney.setCurrency("USD");
-		codMoney.setAmount(new BigDecimal(150.0));
-		codDetail.setCodCollectionAmount(codMoney);
-		shipmentSpecialServicesRequested.setCodDetail(codDetail);
-		return shipmentSpecialServicesRequested;
-	}
-
+	/**
+	 * This method is used to set package details on FedEx Shipment Request
+	 * @param packagingInfo
+	 * @return
+	 */
 	private static RequestedPackageLineItem addRequestedPackageLineItem(final PackagingInfoModel packagingInfo)
 	{
 		final RequestedPackageLineItem requestedPackageLineItem = new RequestedPackageLineItem();
@@ -595,6 +363,12 @@ public class BLFedExShipmentCreateRequestPopulator
 		return requestedPackageLineItem;
 	}
 
+	/**
+	 * This method is used to set customer reference on FedEx Shipment Request
+	 * @param customerReferenceType
+	 * @param customerReferenceValue
+	 * @return
+	 */
 	private static CustomerReference addCustomerReference(final String customerReferenceType, final String customerReferenceValue)
 	{
 		final CustomerReference customerReference = new CustomerReference();
@@ -603,190 +377,19 @@ public class BLFedExShipmentCreateRequestPopulator
 		return customerReference;
 	}
 
-	// Need to check with Mani
+	/**
+	 * This method is used to set label on FedEx Shipment Request
+	 * @return
+	 */
 	private static LabelSpecification addLabelSpecification()
 	{
 
 		final LabelSpecification labelSpecification = new LabelSpecification(); // Label specification
-		labelSpecification.setImageType(ShippingDocumentImageType.PDF);// Image types PDF, PNG, DPL, ...
+		labelSpecification.setImageType(ShippingDocumentImageType.PNG);// Image types PDF, PNG, DPL, ...
 		labelSpecification.setLabelFormatType(LabelFormatType.COMMON2D); //LABEL_DATA_ONLY, COMMON2D
 
 
 		return labelSpecification;
-	}
-
-	private static void printFreightDetail(final FreightRateDetail freightRateDetail)
-	{
-		if (freightRateDetail != null)
-		{
-			System.out.println("  Freight Details");
-			printFreightNotations(freightRateDetail);
-			printFreightBaseCharges(freightRateDetail);
-
-		}
-	}
-
-	private static void printFreightNotations(final FreightRateDetail frd)
-	{
-		if (null != frd.getNotations())
-		{
-			System.out.println("    Notations");
-			final FreightRateNotation notations[] = frd.getNotations();
-			for (int n = 0; n < notations.length; n++)
-			{
-				printString(notations[n].getCode(), "Code", "      ");
-				printString(notations[n].getDescription(), "Notification", "      ");
-			}
-		}
-	}
-
-	private static void printFreightBaseCharges(final FreightRateDetail frd)
-	{
-		if (null != frd.getBaseCharges())
-		{
-			final FreightBaseCharge baseCharges[] = frd.getBaseCharges();
-			for (int i = 0; i < baseCharges.length; i++)
-			{
-				System.out.println("    Freight Rate Details");
-				printString(baseCharges[i].getDescription(), "Description", "      ");
-				printString(baseCharges[i].getFreightClass().getValue(), "Freight Class", "      ");
-				printString(baseCharges[i].getRatedAsClass().getValue(), "Rated Class", "      ");
-				printWeight(baseCharges[i].getWeight(), "Weight", "      ");
-				printString(baseCharges[i].getChargeBasis().getValue(), "Charge Basis", "      ");
-				printMoney(baseCharges[i].getChargeRate(), "Charge Rate", "      ");
-				printMoney(baseCharges[i].getExtendedAmount(), "Extended Amount", "      ");
-				printString(baseCharges[i].getNmfcCode(), "NMFC Code", "      ");
-			}
-		}
-	}
-
-	private static String printMasterTrackingNumber(final CompletedShipmentDetail csd)
-	{
-		String trackingNumber = "";
-		if (null != csd.getMasterTrackingId())
-		{
-			trackingNumber = csd.getMasterTrackingId().getTrackingNumber();
-			System.out.println("Master Tracking Number");
-			System.out.println("  Type: " + csd.getMasterTrackingId().getTrackingIdType());
-			System.out.println("  Tracking Number: " + trackingNumber);
-		}
-		return trackingNumber;
-	}
-
-	//Saving and displaying shipping documents (labels)
-	private static void saveLabelToFile(final ShippingDocument shippingDocument, final String trackingNumber) throws Exception
-	{
-		final ShippingDocumentPart[] sdparts = shippingDocument.getParts();
-		for (int a = 0; a < sdparts.length; a++)
-		{
-			final ShippingDocumentPart sdpart = sdparts[a];
-			String labelLocation = System.getProperty("file.label.location");
-			if (labelLocation == null)
-			{
-				labelLocation = "D:\\Advance\\ShipService_v28_java\\ShipService_v28_java\\Ship_ProcessShipment_Express_DomesticMPS\\";
-			}
-			final String shippingDocumentType = shippingDocument.getType().getValue();
-			final String labelFileName = new String(labelLocation + shippingDocumentType + "." + trackingNumber + "_" + a + ".pdf");
-			final File labelFile = new File(labelFileName);
-			final FileOutputStream fos = new FileOutputStream(labelFile);
-			fos.write(sdpart.getImage());
-			fos.close();
-			System.out.println("\nlabel file name " + labelFile.getAbsolutePath());
-			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + labelFile.getAbsolutePath());
-		}
-	}
-
-	private static void printGroundCodLabel(final CompletedPackageDetail completedPackageDetail, final String trackingNumber)
-			throws Exception
-	{
-		final CodReturnPackageDetail codReturnPackageDetail = completedPackageDetail.getCodReturnDetail();
-		if (codReturnPackageDetail != null && codReturnPackageDetail.getLabel() != null)
-		{
-			codReturnPackageDetail.getLabel();
-			final String labelLocation = System.getProperty("file.label.location");
-			final String labelName = codReturnPackageDetail.getLabel().getType().getValue();
-			final ShippingDocumentPart[] parts = codReturnPackageDetail.getLabel().getParts();
-			for (int i = 0; i < parts.length; i++)
-			{
-				final String codLabelFileName = new String(labelLocation + labelName + "." + trackingNumber + "_" + i + ".pdf");
-				final File codLabelFile = new File(codLabelFileName);
-				final FileOutputStream fos = new FileOutputStream(codLabelFile);
-				fos.write(parts[i].getImage());
-				fos.close();
-				System.out.println("\nCod return label file name " + codLabelFile.getAbsolutePath());
-				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + codLabelFile.getAbsolutePath());
-			}
-		}
-	}
-
-	private static void saveShipmentDocumentsToFile(final ShippingDocument[] shippingDocument, final String trackingNumber)
-			throws Exception
-	{
-		if (shippingDocument != null)
-		{
-			for (int i = 0; i < shippingDocument.length; i++)
-			{
-				final ShippingDocumentPart[] sdparts = shippingDocument[i].getParts();
-				for (int a = 0; a < sdparts.length; a++)
-				{
-					final ShippingDocumentPart sdpart = sdparts[a];
-					String labelLocation = System.getProperty("file.label.location");
-					if (labelLocation == null)
-					{
-						labelLocation = "D:\\Advance\\ShipService_v28_java\\ShipService_v28_java\\Ship_ProcessShipment_Express_DomesticMPS\\";
-					}
-					final String labelName = shippingDocument[i].getType().getValue();
-					final String shippingDocumentLabelFileName = new String(
-							labelLocation + labelName + "." + trackingNumber + "_" + a + ".pdf");
-					final File shippingDocumentLabelFile = new File(shippingDocumentLabelFileName);
-					final FileOutputStream fos = new FileOutputStream(shippingDocumentLabelFile);
-					fos.write(sdpart.getImage());
-					fos.close();
-					System.out.println("\nAssociated shipment label file name " + shippingDocumentLabelFile.getAbsolutePath());
-					Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + shippingDocumentLabelFile.getAbsolutePath());
-				}
-			}
-		}
-	}
-
-	private static void getAssociatedShipmentLabels(final AssociatedShipmentDetail[] associatedShipmentDetail) throws Exception
-	{
-		if (associatedShipmentDetail != null)
-		{
-			for (int j = 0; j < associatedShipmentDetail.length; j++)
-			{
-				if (associatedShipmentDetail[j].getLabel() != null && associatedShipmentDetail[j].getType() != null)
-				{
-					final String trackingNumber = associatedShipmentDetail[j].getTrackingId().getTrackingNumber();
-					final String associatedShipmentType = associatedShipmentDetail[j].getType().getValue();
-					final ShippingDocument associatedShipmentLabel = associatedShipmentDetail[j].getLabel();
-					saveAssociatedShipmentLabelToFile(associatedShipmentLabel, trackingNumber, associatedShipmentType);
-				}
-			}
-		}
-	}
-
-	private static void saveAssociatedShipmentLabelToFile(final ShippingDocument shippingDocument, final String trackingNumber,
-			final String labelName) throws Exception
-	{
-		final ShippingDocumentPart[] sdparts = shippingDocument.getParts();
-		for (int a = 0; a < sdparts.length; a++)
-		{
-			final ShippingDocumentPart sdpart = sdparts[a];
-			String labelLocation = System.getProperty("file.label.location");
-			if (labelLocation == null)
-			{
-				labelLocation = "D:\\Advance\\ShipService_v28_java\\ShipService_v28_java\\Ship_ProcessShipment_Express_DomesticMPS\\";
-			}
-			final String associatedShipmentLabelFileName = new String(
-					labelLocation + labelName + "." + trackingNumber + "_" + a + ".pdf");
-			final File associatedShipmentLabelFile = new File(associatedShipmentLabelFileName);
-			final FileOutputStream fos = new FileOutputStream(associatedShipmentLabelFile);
-			fos.write(sdpart.getImage());
-			fos.close();
-			System.out.println("\nAssociated shipment label file name " + associatedShipmentLabelFile.getAbsolutePath());
-			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + associatedShipmentLabelFile.getAbsolutePath());
-		}
 	}
 
 	/**
@@ -797,8 +400,8 @@ public class BLFedExShipmentCreateRequestPopulator
 	private static ClientDetail createClientDetail()
 	{
 		final ClientDetail clientDetail = new ClientDetail();
-		clientDetail.setAccountNumber("510087780");
-		clientDetail.setMeterNumber("119182802");
+		clientDetail.setAccountNumber(fedExAccountNumber);
+		clientDetail.setMeterNumber(fedExMeterNumber);
 		return clientDetail;
 	}
 
@@ -807,28 +410,12 @@ public class BLFedExShipmentCreateRequestPopulator
 	 *
 	 * @return WebAuthenticationDetail
 	 */
-	private static WebAuthenticationDetail createWebAuthenticationDetail()
-	{
-		final WebAuthenticationCredential userCredential = new WebAuthenticationCredential();
-		final String key = "N4jviY6D0v5uY6iU";
-		final String password = "kv7rLvEgVZrovN0I5OI87r07f";
+	private WebAuthenticationDetail createWebAuthenticationDetail() {
+		WebAuthenticationCredential wac = new WebAuthenticationCredential();
 
-		userCredential.setKey(key);
-		userCredential.setPassword(password);
-
-		WebAuthenticationCredential parentCredential = null;
-		final Boolean useParentCredential = true;
-		if (useParentCredential)
-		{
-			final String parentKey = "N4jviY6D0v5uY6iU";
-			final String parentPassword = "kv7rLvEgVZrovN0I5OI87r07f";
-
-			parentCredential = new WebAuthenticationCredential();
-			parentCredential.setKey(parentKey);
-			parentCredential.setPassword(parentPassword);
-		}
-		return new WebAuthenticationDetail(parentCredential, userCredential);
-
+		wac.setKey(fedExApiKey);
+		wac.setPassword(fedExapiPassword);
+		return new WebAuthenticationDetail(wac, wac);
 	}
 
 	private static void updateEndPoint(final ShipServiceLocator serviceLocator)

@@ -81,10 +81,8 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		{
 			sequenceMap.put(packages.get(i).getPackageId(), i + 1);
 		}
-
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
-
 			try
 			{
 				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceMap);
