@@ -7,6 +7,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
@@ -82,6 +83,8 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     }
     orderVerificationRequiredEventData.setVerificationLevel(orderModel.getVerificationLevel());
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
+    orderVerificationRequiredEventData.setTotalvalue(BigDecimal.valueOf(orderModel.getSubtotal()));
+    orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }
