@@ -4,8 +4,10 @@
 package com.bl.integration.services;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
+import java.util.List;
 import java.util.Map;
 
 import com.bl.facades.shipment.data.FedExShippingRequestData;
@@ -35,7 +37,7 @@ public interface BLShipmentCreationService
 	 * @param upsShipmentRequest for fedEx shipment
 	 * @return String
 	 */
-	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, int packageCount, Map<String, Integer> sequenceMap);
+	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, int packageCount, Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel);
 
 	/**
 	 * method will used to check the order status for shipment
@@ -54,4 +56,14 @@ public interface BLShipmentCreationService
 	 * @return the package for serial
 	 */
 	PackagingInfoModel getPackageForSerial(final ConsignmentModel consignment, final String serialCode);
+	
+	/**
+	 * This method is used to get the sequence number for shipment
+	 * @param sequenceMap
+	 * @param packages
+	 * @param packageCount
+	 * @return
+	 */
+	Map<String, Integer> getSequenceNumber(final Map<String, Integer> sequenceMap, final List<PackagingInfoModel> packages,
+			final int packageCount);
 }

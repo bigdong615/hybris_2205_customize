@@ -34,5 +34,6 @@ public interface BlCreateShipmentFacade
 	 * @param packagingInfo
 	 *           as Package Info
 	 */
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel);
+	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
+			final Map<String, Integer> sequenceMap);
 }

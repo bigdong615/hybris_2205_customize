@@ -3,6 +3,7 @@ package com.bl.integration.services.impl;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -160,11 +161,19 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 */
 
 	public ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap)
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
-		final Map results = new HashMap();
-		final ProcessShipmentRequest masterRequest = getBlFedExShipmentCreateRequestPopulator()
-				.createFedExShipmentRequest(packagingInfo, packageCount, sequenceMap.get(packagingInfo.getPackageId()).toString());
+		ProcessShipmentRequest masterRequest = new ProcessShipmentRequest();
+		if (warehouseModel == null)
+		{
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExShipmentRequest(packagingInfo, packageCount,
+					sequenceMap.get(packagingInfo.getPackageId()).toString());
+		}
+		else
+		{
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
+					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel);
+		}
 		try
 		{
 			// Initialize the service
@@ -174,7 +183,8 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			service = new ShipServiceLocator();
 			updateEndPoint(service);
 			port = service.getShipServicePort();
-			//
+			
+			BlLogger.logMessage(LOG, Level.DEBUG, "Sending Request to FedEx for Shipment Generation");			
 			return port.processShipment(masterRequest); // This is the call to the ship web service passing in a request object and returning a reply object
 
 		}
@@ -376,6 +386,20 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Integer> getSequenceNumber(final Map<String, Integer> sequenceMap, final List<PackagingInfoModel> packages,
+			final int packageCount)
+	{
+		for (int i = 0; i < packageCount; i++)
+		{
+			sequenceMap.put(packages.get(i).getPackageId(), i + 1);
+		}
+		return sequenceMap;
+	}
+	
 	/**
 	 * method will be used to create fedEx shipment response
 	 *

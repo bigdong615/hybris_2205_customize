@@ -77,15 +77,14 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		modelService.refresh(consignment);
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
 		final int packageCount = packages.size();
-		for (int i = 0; i < packageCount; i++)
-		{
-			sequenceMap.put(packages.get(i).getPackageId(), i + 1);
-		}
+
+		Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
+
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			try
 			{
-				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceMap);
+				getBlCreateShipmentFacade().createBlShipmentPackages(packagingInfoModel, packageCount, sequenceNumber);
 			}
 			catch (final ParseException exception)
 			{

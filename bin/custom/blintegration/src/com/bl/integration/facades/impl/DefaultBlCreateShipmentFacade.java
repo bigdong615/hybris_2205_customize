@@ -72,6 +72,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 
 	@Value("${blintegration.ups.shipment.label.url}")
 	private String upsShipmentURL;
+	
+	@Value("${blintegration.fedex.shipment.label.url}")
+	private String fedExShipmentURL;
 
 	/**
 	 * This method is used to create shipment package
@@ -100,7 +103,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap);
+			createFedExShipment(packagingInfo, packageCount, sequenceMap,null);
 		}
 	}
 
@@ -112,7 +115,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel)
+	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
+			final Map<String, Integer> sequenceMap)
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
 
@@ -130,7 +134,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, 0, null);
+			createFedExShipment(packagingInfo, packageCount, sequenceMap,warehouseModel);
 		}
 	}
 
@@ -141,15 +145,16 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param sequenceMap
 	 */
 	private void createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap)
+			final Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel)
 	{
-		ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount, sequenceMap);
+
+		ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount, sequenceMap,warehouseModel);
 		
 		if (isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
 		{
 			try
 			{
-				processResponse(masterReply,packagingInfo);
+				processResponse(masterReply,packagingInfo,warehouseModel);
 			}
 			catch (Exception exception)
 			{
@@ -170,8 +175,10 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		if (notificationSeverityType.equals(NotificationSeverityType.WARNING) ||
 			notificationSeverityType.equals(NotificationSeverityType.NOTE)    ||
 			notificationSeverityType.equals(NotificationSeverityType.SUCCESS)) {
+			BlLogger.logMessage(LOG, Level.DEBUG, "Success Response Received from FedEx");
 			return true;
 		}
+		BlLogger.logMessage(LOG, Level.DEBUG, "Something went wrong");
  		return false;
 	}
 	
@@ -181,11 +188,19 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param packagingInfo
 	 * @throws Exception
 	 */
-	private void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo) throws Exception
+	private void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo,final WarehouseModel warehouseModel) throws Exception
 	{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment created for Transaction Id {} : ", reply.getTransactionDetail().getCustomerTransactionId());
 			CompletedShipmentDetail completedShipmentDetails = reply.getCompletedShipmentDetail(); 
-			packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+			if(warehouseModel ==null)
+			{
+				packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+			}
+			else
+			{
+				packagingInfo.setInBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+			}
+			packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}", completedShipmentDetails.getMasterTrackingId().getTrackingNumber(),packagingInfo.getPackageId());
 			setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(),packagingInfo);
 			getModelService().save(packagingInfo);

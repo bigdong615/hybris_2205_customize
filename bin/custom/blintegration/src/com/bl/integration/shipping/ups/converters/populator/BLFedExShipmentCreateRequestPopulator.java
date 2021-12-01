@@ -8,10 +8,9 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Objects;
 
 import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.PositiveInteger;
@@ -21,48 +20,24 @@ import org.springframework.beans.factory.annotation.Value;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.fedex.ship.stub.Address;
-import com.fedex.ship.stub.AssociatedShipmentDetail;
 import com.fedex.ship.stub.ClientDetail;
-import com.fedex.ship.stub.CodCollectionType;
-import com.fedex.ship.stub.CodDetail;
-import com.fedex.ship.stub.CodReturnPackageDetail;
-import com.fedex.ship.stub.CompletedPackageDetail;
-import com.fedex.ship.stub.CompletedShipmentDetail;
 import com.fedex.ship.stub.Contact;
 import com.fedex.ship.stub.CustomerReference;
 import com.fedex.ship.stub.CustomerReferenceType;
 import com.fedex.ship.stub.Dimensions;
 import com.fedex.ship.stub.DropoffType;
-import com.fedex.ship.stub.FreightBaseCharge;
-import com.fedex.ship.stub.FreightRateDetail;
-import com.fedex.ship.stub.FreightRateNotation;
 import com.fedex.ship.stub.LabelFormatType;
 import com.fedex.ship.stub.LabelSpecification;
 import com.fedex.ship.stub.LinearUnits;
-import com.fedex.ship.stub.Money;
-import com.fedex.ship.stub.Notification;
-import com.fedex.ship.stub.NotificationSeverityType;
-import com.fedex.ship.stub.PackageOperationalDetail;
-import com.fedex.ship.stub.PackageRateDetail;
-import com.fedex.ship.stub.PackageRating;
 import com.fedex.ship.stub.Party;
 import com.fedex.ship.stub.Payment;
 import com.fedex.ship.stub.PaymentType;
 import com.fedex.ship.stub.Payor;
-import com.fedex.ship.stub.ProcessShipmentReply;
 import com.fedex.ship.stub.ProcessShipmentRequest;
 import com.fedex.ship.stub.RequestedPackageLineItem;
 import com.fedex.ship.stub.RequestedShipment;
 import com.fedex.ship.stub.ShipServiceLocator;
-import com.fedex.ship.stub.ShipmentOperationalDetail;
-import com.fedex.ship.stub.ShipmentRateDetail;
-import com.fedex.ship.stub.ShipmentRating;
-import com.fedex.ship.stub.ShipmentSpecialServicesRequested;
-import com.fedex.ship.stub.ShippingDocument;
 import com.fedex.ship.stub.ShippingDocumentImageType;
-import com.fedex.ship.stub.ShippingDocumentPart;
-import com.fedex.ship.stub.Surcharge;
-import com.fedex.ship.stub.TrackingId;
 import com.fedex.ship.stub.TransactionDetail;
 import com.fedex.ship.stub.VersionId;
 import com.fedex.ship.stub.WebAuthenticationCredential;
@@ -97,35 +72,90 @@ public class BLFedExShipmentCreateRequestPopulator
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
 
+		createClientDetails(processShipmentRequest);
+
+		// Create TransactionDetail for FedEx Shipment
+		final TransactionDetail transactionDetail = new TransactionDetail();
+		transactionDetail.setCustomerTransactionId(consignment.getOrder().getCode() + BlintegrationConstants.HYPHEN
+				+ BlintegrationConstants.OUT_BOUND_LABEL + BlintegrationConstants.HYPHEN + System.currentTimeMillis()); //
+		processShipmentRequest.setTransactionDetail(transactionDetail);
+
+		//Create RequestedShipment for FedEx Shipment
+		final RequestedShipment requestedShipment = new RequestedShipment();
+
+		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, null);
+		//
+		processShipmentRequest.setRequestedShipment(requestedShipment);
+		//
+		return processShipmentRequest;
+	}
+
+	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo, final int pkgCount,
+			final String sequenceNumber, final WarehouseModel warehouseModel)
+	{
+		final ConsignmentModel consignment = packagingInfo.getConsignment();
+		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
+
+		createClientDetails(processShipmentRequest);
+
+		// Create TransactionDetail for FedEx Shipment
+		final TransactionDetail transactionDetail = new TransactionDetail();
+
+		transactionDetail.setCustomerTransactionId(consignment.getOrder().getCode() + BlintegrationConstants.HYPHEN
+				+ BlintegrationConstants.IN_BOUND_LABEL + BlintegrationConstants.HYPHEN + System.currentTimeMillis());
+		processShipmentRequest.setTransactionDetail(transactionDetail);
+
+		//Create RequestedShipment for FedEx Shipment
+		final RequestedShipment requestedShipment = new RequestedShipment();
+
+		createRequestedShipmentData(packagingInfo, sequenceNumber, consignment, requestedShipment, warehouseModel);
+		//
+		processShipmentRequest.setRequestedShipment(requestedShipment);
+		//
+		return processShipmentRequest;
+	}
+
+	/**
+	 * @param processShipmentRequest
+	 */
+	private void createClientDetails(final ProcessShipmentRequest processShipmentRequest)
+	{
 		// Create Client Detail for FedEx Shipment
 		processShipmentRequest.setClientDetail(createClientDetail());
 
 		// Create WebAuthentication Detail for FedEx Shipment
 		processShipmentRequest.setWebAuthenticationDetail(createWebAuthenticationDetail());
 
-		// Create TransactionDetail for FedEx Shipment
-		final TransactionDetail transactionDetail = new TransactionDetail();
-		final String masterOrChild = (sequenceNumber.equals(BlintegrationConstants.ONE) ? BlintegrationConstants.FEDEX_MASTER
-				: BlintegrationConstants.FEDEX_CHILD);
-		transactionDetail.setCustomerTransactionId(consignment.getOrder().getCode() + BlintegrationConstants.HYPHEN
-				+ BlintegrationConstants.IN_BOUND_OR_OUT_BOUND + BlintegrationConstants.HYPHEN + System.currentTimeMillis()); //
-		processShipmentRequest.setTransactionDetail(transactionDetail);
-
 		// Create VersionId for FedEx Shipment
 		final VersionId versionId = new VersionId(BlintegrationConstants.FEDEX_SERVICE_ID, 28, 0, 0);
 		processShipmentRequest.setVersion(versionId);
+	}
 
-		//Create RequestedShipment for FedEx Shipment
-		final RequestedShipment requestedShipment = new RequestedShipment();
-
+	/**
+	 * @param packagingInfo
+	 * @param sequenceNumber
+	 * @param consignment
+	 * @param requestedShipment
+	 */
+	private void createRequestedShipmentData(final PackagingInfoModel packagingInfo, final String sequenceNumber,
+			final ConsignmentModel consignment, final RequestedShipment requestedShipment, final WarehouseModel stateWarehouse)
+	{
 		requestedShipment.setShipTimestamp(getShipTimeStamp());
 		setDropoffTypeOnRequestedShipment(requestedShipment);
 		requestedShipment.setServiceType(BlintegrationConstants.FEDEX_SERVICE_TYPE);
 		//setServiceTypeOnRequestedShipment(consignment, requestedShipment);
 
 		requestedShipment.setPackagingType(BlintegrationConstants.FEDEX_PACKAGING_TYPE);
-		requestedShipment.setShipper(addShipper(consignment));
-		requestedShipment.setRecipient(addRecipient(consignment));
+		if (stateWarehouse == null)
+		{
+			requestedShipment.setShipper(addShipper(consignment, null));
+			requestedShipment.setRecipient(addRecipient(consignment));
+		}
+		else
+		{
+			requestedShipment.setShipper(addRecipient(consignment));
+			requestedShipment.setRecipient(addShipper(consignment, stateWarehouse));
+		}
 		requestedShipment.setShippingChargesPayment(addShippingChargesPayment());
 
 		if (sequenceNumber.equals(BlintegrationConstants.ONE))
@@ -143,10 +173,6 @@ public class BLFedExShipmentCreateRequestPopulator
 			{ childPackageLineItem });
 		}
 		requestedShipment.setLabelSpecification(addLabelSpecification());
-		//
-		processShipmentRequest.setRequestedShipment(requestedShipment);
-		//
-		return processShipmentRequest;
 	}
 
 	/**
@@ -225,6 +251,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to get value for ship timestamp
+	 *
 	 * @return Calendar
 	 */
 	private Calendar getShipTimeStamp()
@@ -236,6 +263,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set package weight on FedEx Shipment Request
+	 *
 	 * @param packagingInfo
 	 * @return
 	 */
@@ -249,6 +277,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set package dimensions on FedEx Shipment Request
+	 *
 	 * @param packagingInfo
 	 * @return
 	 */
@@ -264,12 +293,23 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to add shipper for FedEx Shipment Request
+	 *
 	 * @param consignment
 	 * @return Party
 	 */
-	private static Party addShipper(final ConsignmentModel consignment)
+	private static Party addShipper(final ConsignmentModel consignment, final WarehouseModel stateWarehouse)
 	{
-		final AddressModel warehouseAddress = getWarehouseAddress(consignment.getWarehouse());
+		AddressModel warehouseAddress = new AddressModel();
+		if (Objects.isNull(stateWarehouse) && Objects.nonNull(consignment.getWarehouse())
+				&& Objects.nonNull(consignment.getWarehouse().getPointsOfService()))
+		{
+			warehouseAddress = getWarehouseAddress(consignment.getWarehouse());
+		}
+		else if (Objects.nonNull(stateWarehouse) && Objects.nonNull(stateWarehouse.getPointsOfService()))
+		{
+			warehouseAddress = getWarehouseAddress(stateWarehouse);
+		}
+
 		final Party shipperParty = new Party(); // Sender information
 		final Contact shipperContact = new Contact();
 		shipperContact.setPersonName(warehouseAddress.getFirstname());
@@ -290,6 +330,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to add recipient for FedEx Shipment Request
+	 *
 	 * @param consignment
 	 * @return
 	 */
@@ -327,6 +368,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set shipping charges payment on FedEx Shipment Request
+	 *
 	 * @return
 	 */
 	private static Payment addShippingChargesPayment()
@@ -347,6 +389,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set package details on FedEx Shipment Request
+	 *
 	 * @param packagingInfo
 	 * @return
 	 */
@@ -365,6 +408,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set customer reference on FedEx Shipment Request
+	 *
 	 * @param customerReferenceType
 	 * @param customerReferenceValue
 	 * @return
@@ -379,6 +423,7 @@ public class BLFedExShipmentCreateRequestPopulator
 
 	/**
 	 * This method is used to set label on FedEx Shipment Request
+	 *
 	 * @return
 	 */
 	private static LabelSpecification addLabelSpecification()
@@ -410,8 +455,9 @@ public class BLFedExShipmentCreateRequestPopulator
 	 *
 	 * @return WebAuthenticationDetail
 	 */
-	private WebAuthenticationDetail createWebAuthenticationDetail() {
-		WebAuthenticationCredential wac = new WebAuthenticationCredential();
+	private WebAuthenticationDetail createWebAuthenticationDetail()
+	{
+		final WebAuthenticationCredential wac = new WebAuthenticationCredential();
 
 		wac.setKey(fedExApiKey);
 		wac.setPassword(fedExapiPassword);
