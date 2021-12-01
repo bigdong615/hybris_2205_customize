@@ -1,5 +1,6 @@
 package com.bl.core.resolvers;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -8,6 +9,7 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
+import java.util.Objects;
 import org.apache.commons.lang.BooleanUtils;
 
 import java.util.Collection;
@@ -43,8 +45,9 @@ public class BlUsedGearProductValueResolver extends
      * @return true if all in solr/parts-needed status
      */
     private boolean getSerial(final Collection<BlSerialProductModel> serials) {
-        return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale()) && (BooleanUtils.isFalse(serial.getSoftAssigned())
-            && BooleanUtils.isFalse(serial.getHardAssigned())) &&
+        return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale())
+            && (Objects.isNull(serial.getSoftAssigned()) || BooleanUtils.isFalse(serial.getSoftAssigned()))
+            && (Objects.isNull(serial.getHardAssigned()) || BooleanUtils.isFalse(serial.getHardAssigned())) &&
                 (isActiveStatus(serial.getSerialStatus()))) ;
     }
 
@@ -55,14 +58,14 @@ public class BlUsedGearProductValueResolver extends
    */
   private boolean isActiveStatus(final SerialStatusEnum currentStatus) {
     switch (currentStatus.getCode()) {
-      case "ACTIVE":
-      case "PARTIALLY_UNBOXED":
-      case "UNBOXED":
-      case "RECEIVED_OR_RETURNED":
-      case "BOXED":
-      case "SHIPPED":
-      case "IN_HOUSE":
-      case "ADDED_TO_CART":
+      case BlCoreConstants.ACTIVE_STATUS:
+      case BlCoreConstants.PARTIALLY_UNBOXED:
+      case BlCoreConstants.UN_BOXED:
+      case BlCoreConstants.RECEIVED_OR_RETURNED:
+      case BlCoreConstants.BOXED:
+      case BlCoreConstants.SHIPPED:
+      case BlCoreConstants.IN_HOUSE:
+      case BlCoreConstants.ADDED_TO_CART:
         return Boolean.TRUE;
       default :
     }
