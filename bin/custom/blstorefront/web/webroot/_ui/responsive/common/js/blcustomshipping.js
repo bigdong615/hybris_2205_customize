@@ -250,7 +250,7 @@ function reverseTraverseOnShipping() {
               if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Ship")) {
                   if(validateFirstNameAndLastName(firstName, lastName))
               {
-              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combining the length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
               	$('#showErrorForInputValidation').append(errorMsg);
     			$('#showErrorForInputValidation').show();
               }
@@ -265,7 +265,7 @@ function reverseTraverseOnShipping() {
                   showErrorForInputValidation('Ship');
                   if(validateFirstNameAndLastName(firstName, lastName))
               {
-              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combining the length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
               	
               	$('#showErrorForInputValidation').append(errorMsg);
     			$('#showErrorForInputValidation').show();
@@ -1060,7 +1060,7 @@ function reverseTraverseOnShipping() {
             if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone, "Rush")) {
             if(validateFirstNameAndLastName(firstName, lastName))
               {
-              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combining the length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
               	$('#showErrorForInputValidation').append(errorMsg);
     			$('#showErrorForInputValidation').show();
               }
@@ -1098,7 +1098,7 @@ function reverseTraverseOnShipping() {
                 showErrorForInputValidation('Rush');
                 if(validateFirstNameAndLastName(firstName, lastName))
               {
-              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combining the length of First Name and Last Name should not be more than 48 characters </div> <br>';
+              	var errorMsg = '<div class="notification notification-error" style="margin-top: 0px;"> Combined length of First Name and Last Name should not be more than 48 characters </div> <br>';
               	
               	$('#showErrorForInputValidation').append(errorMsg);
     			$('#showErrorForInputValidation').show();

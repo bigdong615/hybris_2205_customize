@@ -375,7 +375,7 @@ ACC.address = {
            	}
            	if(validateFirstNameAndLastName(firstName, lastName))
            	{
-           		var errorMsg = 'Combining the length of First Name and Last Name should not be more than 48 characters';
+           		var errorMsg = 'Combined length of First Name and Last Name should not be more than 48 characters';
            		$('#js-add-address-length-Validation').addClass('notification notification-error');
               	$('#js-add-address-length-Validation').html(errorMsg);
     			$('#js-add-address-length-Validation').show();
