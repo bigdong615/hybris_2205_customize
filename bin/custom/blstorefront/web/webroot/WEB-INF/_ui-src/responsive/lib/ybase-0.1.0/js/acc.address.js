@@ -320,6 +320,9 @@ ACC.address = {
 	bindSettingDefaultAddress :function(){
     	$(document).on("click", ".js-set-default-address", function (e)
                 {
+                $("#js-add-address-length-Validation").empty();
+                $("#js-add-address-Validation").empty();
+                $("#js-default-address-Validation").empty();
                   var url = $(this).val();
                      $.ajax({
                     	url: url,
@@ -336,6 +339,10 @@ ACC.address = {
            	count = 0;
            	$('#js-add-address-Validation').html("");
            	$('#js-add-address-Validation').removeClass('notification notification-error');
+           	$("#js-add-address-length-Validation").empty();
+           	$("#js-add-address-length-Validation").removeClass('notification notification-error');
+                $("#js-add-address-Validation").empty();
+                $("#js-default-address-Validation").empty();
 
            	// Fetching input form object.
            	var firstName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.firstName"]');
@@ -366,6 +373,14 @@ ACC.address = {
            		$('#js-default-address-Validation').addClass('notification notification-error');
            		$('#js-default-address-Validation').html("Whoops, be sure to select if this is a billing or shipping address.");
            	}
+           	if(validateFirstNameAndLastName(firstName, lastName))
+           	{
+           		var errorMsg = 'Combining the length of First Name and Last Name should not be more than 48 characters';
+           		$('#js-add-address-length-Validation').addClass('notification notification-error');
+              	$('#js-add-address-length-Validation').html(errorMsg);
+    			$('#js-add-address-length-Validation').show();
+    			checkedStatus = false;
+           	}
            	if (count > 0) {
            		$('#js-add-address-Validation').addClass('notification notification-error');
            		$('#js-add-address-Validation').html("You are missing " + count + " required fields.");
@@ -373,6 +388,31 @@ ACC.address = {
            		$('#editAddress').submit();
            	}
            });
+           
+           function validateFirstNameAndLastName(firstName, lastName)
+		  {
+		  	var isValid = false;
+		  	var flen = firstName.val().length;
+		  	var llen = lastName.val().length;
+		  	
+		  	var totalLength = flen + llen;
+		  	
+		  	if(totalLength > 48)
+		  	{
+		  		firstName.addClass('error');
+		  		lastName.addClass('error');
+		  		firstName.addClass('lengthError');
+		  		lastName.addClass('lengthError');
+		  		isValid = true;
+		  	}
+		  	else
+		  	{
+		  		firstName.removeClass('lengthError');
+		  		lastName.removeClass('lengthError');
+		  		isValid = false;
+		  	}
+		  	return isValid;
+		  }
 
         /*Validating address field */
     	function validateField(attribute, fieldName) {
