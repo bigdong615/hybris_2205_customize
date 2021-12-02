@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -175,24 +174,24 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	public void setItemsMap(final ConsignmentEntryModel entry, final Set<BlSerialProductModel> serialProductModels)
 	{
 		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
-		final List<BlProductModel> allSerialSubPartProducts = new ArrayList<>();
+		final Map<BlProductModel, Integer> allSerialSubPartProducts = new HashMap<>();
 		serialProductModels.forEach(serial -> {
 			itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Serial product with code {} added to the products list on consignment entry with consignment code {}",
 					serial.getCode(), entry.getConsignment().getCode());
-			allSerialSubPartProducts.addAll(getSessionService().executeInLocalView(new SessionExecutionBody()
+			allSerialSubPartProducts.putAll(getSessionService().executeInLocalView(new SessionExecutionBody()
 			{
 				@Override
-				public List<BlProductModel> execute()
+				public Map<BlProductModel, Integer> execute()
 				{
 					getSearchRestrictionService().disableSearchRestrictions();
 					if (null != serial.getBlProduct() && MapUtils.isNotEmpty(serial.getBlProduct().getSubpartsQty()))
 					{
 
-						return new ArrayList(serial.getBlProduct().getSubpartsQty().entrySet());
+						return serial.getBlProduct().getSubpartsQty();
 					}
-					return new ArrayList<>();
+					return Maps.newHashMap();
 				}
 			}));
 		});
@@ -235,21 +234,20 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param allSerialSubPartProducts
 	 */
 	private void putSubPartProductsInToItemsMap(final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> itemsMap, final List<BlProductModel> allSerialSubPartProducts)
+			final Map<String, ItemStatusEnum> itemsMap, final Map<BlProductModel, Integer> allSerialSubPartProducts)
 	{
 		final Map<BlProductModel, Integer> allSerialSubPartProductMap = new HashMap<>();
-		final Map<BlProductModel, Integer> subPartsMap = new HashMap<>(allSerialSubPartProducts.stream().collect(
-				Collectors.toMap(x -> x, x -> x.getSubpartsQty().get(x))));
-		for (final Map.Entry<BlProductModel, Integer> productModel : subPartsMap.entrySet())
+		final Map<BlProductModel, Integer> subPartsMap = new HashMap<>(allSerialSubPartProducts);
+		for (final Map.Entry<BlProductModel, Integer> subPartEntry : subPartsMap.entrySet())
 		{
-			if (null != allSerialSubPartProductMap.get(productModel.getKey()))
+			if (null != allSerialSubPartProductMap.get(subPartEntry.getKey()))
 			{
-				allSerialSubPartProductMap.put(productModel.getKey(),
-						allSerialSubPartProductMap.get(productModel.getValue()));
+				allSerialSubPartProductMap.put(subPartEntry.getKey(),
+						allSerialSubPartProductMap.get(subPartEntry.getValue()));
 			}
 			else
 			{
-				allSerialSubPartProductMap.put(productModel.getKey(), productModel.getValue());
+				allSerialSubPartProductMap.put(subPartEntry.getKey(), subPartEntry.getValue());
 			}
 		}
 		allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
@@ -271,6 +269,19 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				}
 			}
 		});
+	}
+
+	/**
+	 *
+	 * @param allSerialSubPartProducts
+	 * @return
+	 */
+	private Map<BlProductModel, Integer> convertListToHashMap(final List<BlProductModel> allSerialSubPartProducts) {
+		HashMap<BlProductModel, Integer> subPartsMap = new HashMap<>();
+		for (BlProductModel bl : allSerialSubPartProducts) {
+			subPartsMap.put(bl, bl.getSubpartsQty().get(bl).intValue());
+		}
+		return subPartsMap;
 	}
 
 	/**
