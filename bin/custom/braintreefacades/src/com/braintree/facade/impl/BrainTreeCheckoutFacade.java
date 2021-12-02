@@ -53,6 +53,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -126,7 +127,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	@Override
 	public boolean authorizePayment(final String securityCode)
 	{
-		return authorizePayment(securityCode, getCustomFields());
+		return authorizePayment(securityCode, Collections.emptyMap());
 	}
 
 	/**
