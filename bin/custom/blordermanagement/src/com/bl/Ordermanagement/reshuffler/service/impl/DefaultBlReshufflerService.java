@@ -153,7 +153,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
                 "Order fulfillment is successful for the order {} ", entry.getKey().getCode());
           }else{
             tx.rollback();
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
                 "Order fulfillment is not successful for the order {} ", entry.getKey().getCode());
           }
         }
@@ -389,10 +389,8 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    * @return
    */
   private boolean allUnallocatedProductsFulfilled(final AbstractOrderModel order ) {
-    final boolean allQuantityFulfilled = order.getEntries().stream().allMatch(entry -> {
-      return entry.getQuantity() == entry.getSerialProducts().size();
-    });
-    return false;
+     return order.getEntries().stream().allMatch(entry ->
+         entry.getQuantity() == entry.getSerialProducts().size());
   }
 
 	/**
