@@ -68,6 +68,7 @@ import de.hybris.platform.util.TaxValue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
 import java.util.List;
@@ -76,6 +77,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -124,7 +126,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	{
 		final CartModel cart = cartService.getSessionCart();
 		try {
-			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, getCustomFields(cart),
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, getCustomFields(cart), 
 				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE, null);
 			return handleAuthorizationResult(result, cart);
 		} catch(final Exception ex) {
@@ -145,10 +147,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BrainTreeAuthorizationResult result = null;
 			//Added condition for modifyPayment with zero order total (full Gift Card Order)
 			if(amountToAuthorize != null && amountToAuthorize.compareTo(BigDecimal.ZERO) == ZERO){
-				result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
+				result = brainTreeAuthorize(orderModel, Collections.emptyMap(),
 						getBrainTreeConfigService().getAuthAMountToVerifyCard(), submitForSettlement, paymentInfo);
 			}else {
-				 result = brainTreeAuthorize(orderModel, getCustomFields(orderModel),
+				 result = brainTreeAuthorize(orderModel, Collections.emptyMap(),
 						amountToAuthorize, submitForSettlement, paymentInfo);
 			}
 			if(submitForSettlement) {
