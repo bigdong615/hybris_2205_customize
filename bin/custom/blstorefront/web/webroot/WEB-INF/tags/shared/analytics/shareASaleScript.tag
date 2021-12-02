@@ -11,9 +11,6 @@
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.version.value')"	var="version" scope="page" />
 <spring:eval expression="T(de.hybris.platform.util.Config).getParameter('shareasale.pixel.value')"	var="pixel" scope="page" />
 
-<c:if test = "${pageType != 'ORDERCONFIRMATION'}">
-  <script src='https://www.dwin1.com/19038.js' type='text/javascript' defer='defer'></script>
-</c:if>
 
 <c:if test = "${pageType == 'ORDERCONFIRMATION'}">
 <img id='_SHRSL_img_1'
