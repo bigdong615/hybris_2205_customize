@@ -154,6 +154,8 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String POSTAL_CODE = "PostalCode";
 	public static final String COUNTRY_CODE = "CountryCode";
 	public static final String DESTINATION_ADDRESS = "DestinationAddress";
+	public static final String NAME_MAX_CHARACTER = "name.max.character";
+
 
 	public static final String FEDEX_SERVICE_ID = "ship";
 	public static final int FEDEX_MAJOR = 28;
