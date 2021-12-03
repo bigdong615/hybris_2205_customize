@@ -9,12 +9,15 @@ import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -316,19 +319,35 @@ public class BLUpsShippingDataPopulator
 		shipToPhone.setNumber(shipToAddress.getPhone());
 
 		final ShipToData shipToData = new ShipToData();
-		if (Objects.nonNull(shipToAddressData.getCompanyName()))
+		if (StringUtils.isNotBlank(shipToAddressData.getCompanyName()))
 		{
-			shipToData.setName(shipToAddressData.getCompanyName());
+			shipToData.setName(trimNameOnRequest(new AtomicReference<>(shipToAddressData.getCompanyName())));
 		}
 		else
 		{
-			shipToData.setName(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()));
+			shipToData.setName(trimNameOnRequest(new AtomicReference<>(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()))));
 		}
 		shipToData
-				.setAttentionName(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()));
+				.setAttentionName(trimNameOnRequest(new AtomicReference<>(shipToAddressData.getFirstName().concat(StringUtils.SPACE).concat(shipToAddressData.getLastName()))));
 		shipToData.setPhone(shipToPhone);
 		shipToData.setAddress(shipToAddressData);
 		return shipToData;
+	}
+
+
+	/**
+	 * This method created to trim the name if its greater than 35
+	 * @param  name<String> name
+	 */
+	private String trimNameOnRequest(final AtomicReference<String> name) {
+		final AtomicInteger maxCharacter = new AtomicInteger(0);
+		if(Objects.nonNull(Config.getInt(BlintegrationConstants.NAME_MAX_CHARACTER, 35))) {
+			maxCharacter.set(Config.getInt((BlintegrationConstants.NAME_MAX_CHARACTER), 35));
+		}
+		if(StringUtils.isNotBlank(name.get()) && name.get().length() > maxCharacter.get()){
+			name.set(name.get().substring(0 , maxCharacter.get()));
+		}
+		return name.get();
 	}
 
 	/**
