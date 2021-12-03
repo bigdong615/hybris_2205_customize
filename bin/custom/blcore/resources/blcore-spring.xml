@@ -1750,4 +1750,22 @@
 		<property name="interceptor" ref="itemsBillingChargePrepareInterceptor"/>
 		<property name="typeCode" value="BlItemsBillingCharge"/>
 	</bean>
+	
+	<alias name="blOrderValidateInterceptor" alias="orderValidateInterceptor"/>
+	<bean id="blOrderValidateInterceptor"	class="com.bl.core.model.interceptor.BlOrderValidateInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+
+	<bean id="blOrderValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="orderValidateInterceptor"/>
+		<property name="typeCode" value="Order"/>
+	</bean>
+	
+	<alias name="blAddressValidateInterceptor" alias="addressValidateInterceptor"/>
+	<bean id="blAddressValidateInterceptor"	class="com.bl.core.model.interceptor.BlAddressValidateInterceptor"/>
+
+	<bean id="blAddressValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="addressValidateInterceptor"/>
+		<property name="typeCode" value="Address"/>
+	</bean>
 </beans>

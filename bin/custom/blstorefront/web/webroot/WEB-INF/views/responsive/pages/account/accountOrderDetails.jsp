@@ -263,8 +263,8 @@
                                <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 or not empty orderData.modifiedOrderPoNumber}">
                                			<h5 class="mb-4"><spring:theme code="order.details.modified.order.payment.msg"/></h5>
                                		</c:if>
-                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 1 }">
-	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}" begin="1">
+                               <c:if test="${orderData.modifiedOrderPaymentInfos.size() > 0 }">
+	                               <c:forEach var="modifiedPaymentInfo" items="${orderData.modifiedOrderPaymentInfos}">
 	                               		<order:accountPaymentDetails orderData="${orderData}" paymentInfo="${modifiedPaymentInfo}" displayOrderNote="false"/>
 	                               </c:forEach>
                                </c:if>
