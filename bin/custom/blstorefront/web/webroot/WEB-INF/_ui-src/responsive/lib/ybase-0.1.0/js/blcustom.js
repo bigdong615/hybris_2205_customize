@@ -1197,12 +1197,13 @@ function hideShorting(){
 
 /* Validate email data*/
      function validateGiftEmail(email) {
-     	if (email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
-       	{
-         return true;
-       	}
-         return false;
-       }
+        var regex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (regex.test(email))
+        	{
+              return true;
+         	}
+              return false;
+        }
   //BL-917: Replacement order
   $('.return-button-cls').on("click",function(e) {
     e.preventDefault();
