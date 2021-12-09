@@ -167,11 +167,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		try
 		{
-			// Initialize the service
-			ShipServiceLocator service;
 			com.fedex.ship.stub.ShipPortType port;
 			//
-			service = new ShipServiceLocator();
+			final ShipServiceLocator service = new ShipServiceLocator();
 			updateEndPoint(service);
 			port = service.getShipServicePort();
 
@@ -179,17 +177,21 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			return port.processShipment(masterRequest); // This is the call to the ship web service passing in a request object and returning a reply object
 
 		}
-		catch (final Exception e)
+		catch (final Exception exception)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, e.getMessage());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception {} occour while creating fedEx shipment", exception.getMessage());
 		}
 		return null;
 
 	}
 
+	/**
+	 * This method is used to update the end point url for fedEx shipment
+	 * @param serviceLocator
+	 */
 	private static void updateEndPoint(final ShipServiceLocator serviceLocator)
 	{
-		final String endPoint = System.getProperty("endPoint");
+		final String endPoint = System.getProperty(BlintegrationConstants.END_POINT);
 		if (endPoint != null)
 		{
 			serviceLocator.setShipServicePortEndpointAddress(endPoint);

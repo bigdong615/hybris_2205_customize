@@ -165,7 +165,7 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	{
 		final Map<String, Integer> sequenceMap = new HashedMap();
 		final int packageCount = packages.size();
-		Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
+		final Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
 		
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{

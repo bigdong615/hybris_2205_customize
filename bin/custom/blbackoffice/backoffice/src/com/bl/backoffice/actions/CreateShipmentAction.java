@@ -78,7 +78,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
 		final int packageCount = packages.size();
 
-		Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
+		final Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
 
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{

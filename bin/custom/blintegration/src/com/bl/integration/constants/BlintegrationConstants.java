@@ -175,6 +175,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final int THIRTY_ONE = 31;
 	public static final int TWENTY = 20;
 	public static final int MINUS_SEVEN = -7;
+	public static final String END_POINT = "endPoint";
 
 
 	private BlintegrationConstants()

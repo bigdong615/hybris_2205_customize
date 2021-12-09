@@ -26,7 +26,7 @@ public interface BlCreateShipmentFacade
 	 * @param sequenceMap as SequenceMap
 	 * @throws ParseException as Exception
 	 */
-	void createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, Map<String, Integer> sequenceMap) throws ParseException;
+	void createBlShipmentPackages(PackagingInfoModel packagingInfo,final int packageCount, final Map<String, Integer> sequenceMap) throws ParseException;
 
 
 	/**

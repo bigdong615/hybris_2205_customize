@@ -66,7 +66,14 @@ public class BLFedExShipmentCreateRequestPopulator
 	@Value("${blintegration.fedex.shipment.password}")
 	private static String fedExapiPassword;
 
-	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, int packageCount, final String sequenceNumber)
+	/**
+	 * This method is used to create fedEx shipment
+	 * @param packagingInfo
+	 * @param packageCount
+	 * @param sequenceNumber
+	 * @return
+	 */
+	public ProcessShipmentRequest createFedExShipmentRequest(final PackagingInfoModel packagingInfo, final int packageCount, final String sequenceNumber)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -75,8 +82,14 @@ public class BLFedExShipmentCreateRequestPopulator
 
 		// Create TransactionDetail for FedEx Shipment
 		final TransactionDetail transactionDetail = new TransactionDetail();
-		transactionDetail.setCustomerTransactionId(consignment.getOrder().getCode() + BlintegrationConstants.HYPHEN
-				+ BlintegrationConstants.OUT_BOUND_LABEL + BlintegrationConstants.HYPHEN + System.currentTimeMillis()); //
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(consignment.getOrder().getCode());
+		stringBuilder.append(BlintegrationConstants.HYPHEN);
+		stringBuilder.append(BlintegrationConstants.OUT_BOUND_LABEL);
+		stringBuilder.append(BlintegrationConstants.HYPHEN);
+		stringBuilder.append(System.currentTimeMillis());
+		
+		transactionDetail.setCustomerTransactionId(stringBuilder.toString()); //
 		processShipmentRequest.setTransactionDetail(transactionDetail);
 
 		//Create RequestedShipment for FedEx Shipment
@@ -89,8 +102,16 @@ public class BLFedExShipmentCreateRequestPopulator
 		return processShipmentRequest;
 	}
 
+	/**
+	 * This method is used to create return shipment for FedEx
+	 * @param packagingInfo
+	 * @param packageCount
+	 * @param sequenceNumber
+	 * @param warehouseModel
+	 * @return
+	 */
 	public ProcessShipmentRequest createFedExReturnShipmentRequest(final PackagingInfoModel packagingInfo,
-			int packageCount, final String sequenceNumber, final WarehouseModel warehouseModel)
+			final int packageCount, final String sequenceNumber, final WarehouseModel warehouseModel)
 	{
 		final ConsignmentModel consignment = packagingInfo.getConsignment();
 		final ProcessShipmentRequest processShipmentRequest = new ProcessShipmentRequest(); // Build a request object
@@ -99,9 +120,13 @@ public class BLFedExShipmentCreateRequestPopulator
 
 		// Create TransactionDetail for FedEx Shipment
 		final TransactionDetail transactionDetail = new TransactionDetail();
-
-		transactionDetail.setCustomerTransactionId(consignment.getOrder().getCode() + BlintegrationConstants.HYPHEN
-				+ BlintegrationConstants.IN_BOUND_LABEL + BlintegrationConstants.HYPHEN + System.currentTimeMillis());
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(consignment.getOrder().getCode());
+		stringBuilder.append(BlintegrationConstants.HYPHEN);
+		stringBuilder.append(BlintegrationConstants.IN_BOUND_LABEL);
+		stringBuilder.append(BlintegrationConstants.HYPHEN);
+		stringBuilder.append(System.currentTimeMillis());
+		transactionDetail.setCustomerTransactionId(stringBuilder.toString());
 		processShipmentRequest.setTransactionDetail(transactionDetail);
 
 		//Create RequestedShipment for FedEx Shipment
@@ -115,6 +140,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * This method is used to create client details for FedEx Shipment
 	 * @param processShipmentRequest
 	 */
 	private void createClientDetails(final ProcessShipmentRequest processShipmentRequest)
@@ -131,6 +157,7 @@ public class BLFedExShipmentCreateRequestPopulator
 	}
 
 	/**
+	 * This method is used to create requested shipment data for FedEx
 	 * @param packagingInfo
 	 * @param sequenceNumber
 	 * @param consignment

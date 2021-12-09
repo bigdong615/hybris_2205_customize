@@ -52,7 +52,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 
 	@Value("${blintegration.ups.shipment.label.url}")
 	private String upsShipmentURL;
-	
+
 	@Value("${blintegration.fedex.shipment.label.url}")
 	private String fedExShipmentURL;
 
@@ -83,7 +83,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap,null);
+			createFedExShipment(packagingInfo, packageCount, sequenceMap, null);
 		}
 	}
 
@@ -95,8 +95,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @throws ParseException
 	 */
 	@Override
-	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,final int packageCount,
-			final Map<String, Integer> sequenceMap)
+	public void createBlReturnShipmentPackages(final PackagingInfoModel packagingInfo, final WarehouseModel warehouseModel,
+			final int packageCount, final Map<String, Integer> sequenceMap)
 	{
 		BlLogger.logMessage(LOG, Level.INFO, BlintegrationConstants.RETURN_SHIPMENT_MSG);
 
@@ -114,7 +114,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			createFedExShipment(packagingInfo, packageCount, sequenceMap,warehouseModel);
+			createFedExShipment(packagingInfo, packageCount, sequenceMap, warehouseModel);
 		}
 	}
 
@@ -125,73 +125,98 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	 * @param sequenceMap
 	 */
 	private void createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
-			final Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel)
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
 
-		ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount, sequenceMap,warehouseModel);
-		
+		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
+				sequenceMap, warehouseModel);
+
 		if (isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
 		{
 			try
 			{
-				processResponse(masterReply,packagingInfo,warehouseModel);
+				processResponse(masterReply, packagingInfo, warehouseModel);
 			}
-			catch (Exception exception)
+			catch (final Exception exception)
 			{
-				BlLogger.logMessage(LOG, Level.ERROR, exception.getMessage());
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception {} occour while creating fedEx shipment",
+						exception.getMessage());
 			}
 		}
 	}
-	
+
 	/**
 	 * This method will check is response returned from FedEx has error or not
+	 *
 	 * @param notificationSeverityType
 	 * @return
 	 */
-	private static boolean isResponseOk(NotificationSeverityType notificationSeverityType) {
-		if (notificationSeverityType == null) {
+	private static boolean isResponseOk(final NotificationSeverityType notificationSeverityType)
+	{
+		if (notificationSeverityType == null)
+		{
 			return false;
 		}
-		if (notificationSeverityType.equals(NotificationSeverityType.WARNING) ||
-			notificationSeverityType.equals(NotificationSeverityType.NOTE)    ||
-			notificationSeverityType.equals(NotificationSeverityType.SUCCESS)) {
+		else if (notificationSeverityType.equals(NotificationSeverityType.WARNING))
+		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "Warning Received from FedEx");
+			return true;
+		}
+		else if (notificationSeverityType.equals(NotificationSeverityType.NOTE))
+		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "Note Received from FedEx");
+			return true;
+		}
+		else
+		{
 			BlLogger.logMessage(LOG, Level.DEBUG, "Success Response Received from FedEx");
 			return true;
 		}
-		BlLogger.logMessage(LOG, Level.DEBUG, "Something went wrong");
- 		return false;
 	}
-	
+
 	/**
 	 * This method will process the response returned from FedEx shipment service and update it on packagingInfoModel
+	 *
 	 * @param reply
 	 * @param packagingInfo
 	 */
-	private void processResponse(final ProcessShipmentReply reply,final PackagingInfoModel packagingInfo,final WarehouseModel warehouseModel) throws Exception
+	private void processResponse(final ProcessShipmentReply reply, final PackagingInfoModel packagingInfo,
+			final WarehouseModel warehouseModel) throws Exception
 	{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment created for Transaction Id {} : ", reply.getTransactionDetail().getCustomerTransactionId());
-			CompletedShipmentDetail completedShipmentDetails = reply.getCompletedShipmentDetail(); 
-			if(warehouseModel ==null)
-			{
-				packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
-			}
-			else
-			{
-				packagingInfo.setInBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
-			}
-			packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}", completedShipmentDetails.getMasterTrackingId().getTrackingNumber(),packagingInfo.getPackageId());
-			setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(),packagingInfo);
-			getModelService().save(packagingInfo);
-			getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipment created for Transaction Id {} : ",
+				reply.getTransactionDetail().getCustomerTransactionId());
+		final CompletedShipmentDetail completedShipmentDetails = reply.getCompletedShipmentDetail();
+		if (warehouseModel == null)
+		{
+			packagingInfo.setOutBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+		}
+		else
+		{
+			packagingInfo.setInBoundTrackingNumber(completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+		}
+		packagingInfo.setLabelURL(fedExShipmentURL + completedShipmentDetails.getMasterTrackingId().getTrackingNumber());
+		setTotalChargesOnPackage(completedShipmentDetails.getShipmentRating(), packagingInfo);
+		getModelService().save(packagingInfo);
+		getModelService().refresh(packagingInfo);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Tracking Id {} generated for package {}",
+				completedShipmentDetails.getMasterTrackingId().getTrackingNumber(), packagingInfo.getPackageId());
 	}
-	
-	private void setTotalChargesOnPackage(final ShipmentRating shipmentRating,final PackagingInfoModel packagingInfo){
-		if(shipmentRating!=null){
-			ShipmentRateDetail[] srd = shipmentRating.getShipmentRateDetails();
-			for(int j=0; j < srd.length; j++)
+
+	/**
+	 * This method will be used to set total charges on package
+	 *
+	 * @param shipmentRating
+	 * @param packagingInfo
+	 */
+	private void setTotalChargesOnPackage(final ShipmentRating shipmentRating, final PackagingInfoModel packagingInfo)
+	{
+		if (shipmentRating != null)
+		{
+			final ShipmentRateDetail[] shipmentRateDetail = shipmentRating.getShipmentRateDetails();
+			for (int j = 0; j < shipmentRateDetail.length; j++)
 			{
-				packagingInfo.setTotalShippingPrice(Double.valueOf(srd[j].getTotalBaseCharge().getAmount().toString()));
+				packagingInfo
+						.setTotalShippingPrice(Double.valueOf(shipmentRateDetail[j].getTotalBaseCharge().getAmount().toString()));
 			}
 		}
 	}
@@ -307,7 +332,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		return modelService;
 	}
 
-	public void setModelService(ModelService modelService)
+	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
 	}
