@@ -81,6 +81,7 @@
             <value code="IN_HOUSE" />
             <value code="SHIPPED" />
             <value code="LATE" />
+          <value code="INACTIVE"/>
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
