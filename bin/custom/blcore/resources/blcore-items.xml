@@ -4081,7 +4081,7 @@
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="itemBarcode" type="java.lang.String">
-				<modifiers read="true" write="true" optional="false" />
+				<modifiers read="true" write="true" optional="true" />
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">

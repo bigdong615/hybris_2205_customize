@@ -42,8 +42,6 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 			throws InterceptorException
 	{
 		validateParameterNotNull(blRepairLogModel, "ERROR : BlRepairLogPrepareInterceptor : Parameter BlRepairLogModel is NULL");
-		Validate.notBlank(blRepairLogModel.getItemBarcode(),
-				"ERROR : BlRepairLogPrepareInterceptor : No Barcode found on Repair Log");
 		addNecessaryDataToRepairLog(blRepairLogModel, interceptorContext);
 	}
 
@@ -63,10 +61,19 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 		try
 		{
 			final String itemBarcode = blRepairLogModel.getItemBarcode();
+			final String serialCode = blRepairLogModel.getSerialCode();			
+			validateSerialCodeAndItemBarcode(serialCode, itemBarcode);
 			if (interceptorContext.isNew(blRepairLogModel))
 			{
-				final BlSerialProductModel blSerialProductModel = getBlProductDao()
-						.getSerialByBarcode(blRepairLogModel.getItemBarcode());
+				BlSerialProductModel blSerialProductModel = null;
+				if(StringUtils.isNotBlank(itemBarcode))
+				{
+					blSerialProductModel = getBlProductDao().getSerialByBarcode(itemBarcode);
+				}
+				else if(StringUtils.isNotBlank(serialCode))
+				{
+					blSerialProductModel = getBlProductDao().getSerialBySerialCode(serialCode);
+				}
 				if (Objects.isNull(blSerialProductModel))
 				{
 					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Serial found for barcode : {}", itemBarcode);
@@ -119,6 +126,21 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 			{
 				BlLogger.logMessage(LOG, Level.ERROR, "Unable to fetch current user from session");
 			}
+		}
+	}
+	
+	/**
+	 * Validate serial code and item barcode.
+	 *
+	 * @param serialCode the serial code
+	 * @param itemBarcode the item barcode
+	 * @throws InterceptorException the interceptor exception
+	 */
+	private void validateSerialCodeAndItemBarcode(final String serialCode, final String itemBarcode) throws InterceptorException
+	{
+		if(StringUtils.isBlank(serialCode) && StringUtils.isBlank(itemBarcode))
+		{
+			throw new IllegalStateException("Either Itembarcode or Serial code is required to create Repair log");
 		}
 	}
 
