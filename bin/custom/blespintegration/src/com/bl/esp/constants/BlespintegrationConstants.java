@@ -20,6 +20,14 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ESP_EVENT_GRANT_TYPE = "esp.event.grant.type";//   client_credentials
 	public static final String ESP_EVENT_ACCESS_SCOPE = "esp.event.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
 
+
+	public static final String SFTPHOST = "host:IP";
+	public static final int SFTPPORT = 22;
+	public static final String SFTPUSER = "ftp.user.name";
+	public static final String SFTPPASS = "ftp.user.password";
+	public static final String SFTPWORKINGDIR = "ftp.file.path";
+
+
 	private BlespintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class

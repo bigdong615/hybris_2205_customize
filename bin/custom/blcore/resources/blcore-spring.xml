@@ -1768,4 +1768,10 @@
 		<property name="interceptor" ref="addressValidateInterceptor"/>
 		<property name="typeCode" value="Address"/>
 	</bean>
+
+
+	<!--BL-1311 -->
+	<bean id="defaultBlESPFTPService" class="com.bl.esp.service.impl.DefaultBlESPFTPService">
+	</bean>
+
 </beans>
