@@ -80,12 +80,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		// Create TransactionDetail for FedEx Shipment
 		final TransactionDetail transactionDetail = new TransactionDetail();
 		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(consignment.getOrder().getCode());
-		stringBuilder.append(BlintegrationConstants.HYPHEN);
-		stringBuilder.append(BlintegrationConstants.OUT_BOUND_LABEL);
-		stringBuilder.append(BlintegrationConstants.HYPHEN);
-		stringBuilder.append(System.currentTimeMillis());
-		
+		stringBuilder.append(consignment.getOrder().getCode()).append(BlintegrationConstants.HYPHEN).append(BlintegrationConstants.OUT_BOUND_LABEL).append(BlintegrationConstants.HYPHEN).append(System.currentTimeMillis());		
 		transactionDetail.setCustomerTransactionId(stringBuilder.toString()); //
 		processShipmentRequest.setTransactionDetail(transactionDetail);
 
@@ -118,11 +113,7 @@ public class BLFedExShipmentCreateRequestPopulator
 		// Create TransactionDetail for FedEx Shipment
 		final TransactionDetail transactionDetail = new TransactionDetail();
 		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(consignment.getOrder().getCode());
-		stringBuilder.append(BlintegrationConstants.HYPHEN);
-		stringBuilder.append(BlintegrationConstants.IN_BOUND_LABEL);
-		stringBuilder.append(BlintegrationConstants.HYPHEN);
-		stringBuilder.append(System.currentTimeMillis());
+		stringBuilder.append(consignment.getOrder().getCode()).append(BlintegrationConstants.HYPHEN).append(BlintegrationConstants.IN_BOUND_LABEL).append(BlintegrationConstants.HYPHEN).append(System.currentTimeMillis());
 		transactionDetail.setCustomerTransactionId(stringBuilder.toString());
 		processShipmentRequest.setTransactionDetail(transactionDetail);
 
