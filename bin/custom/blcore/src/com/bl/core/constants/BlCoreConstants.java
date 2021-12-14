@@ -528,6 +528,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String COMPLTED_ORDER_QUEUE = "ShippingCompleteOrderQueue";
 	
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
+	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
 
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";

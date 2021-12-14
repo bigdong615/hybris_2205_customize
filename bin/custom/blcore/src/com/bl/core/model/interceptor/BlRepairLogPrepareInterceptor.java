@@ -76,8 +76,8 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				}
 				if (Objects.isNull(blSerialProductModel))
 				{
-					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Serial found for barcode : {}", itemBarcode);
-					throw new IllegalStateException("No Serial found for barcode : " + itemBarcode);
+					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Serial found for barcode : {} or Serial Code : {}", itemBarcode,serialCode);
+					throw new InterceptorException("No Serial found");
 				}
 				blRepairLogModel.setSerialProduct(blSerialProductModel);
 				blRepairLogModel.setSerialCode(blSerialProductModel.getCode());
@@ -101,7 +101,7 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
 					"Error while adding necessary data to repair log : {}", blRepairLogModel.getItemtype());
-			throw new InterceptorException("Error while adding necessary data to repair log");
+			throw exception;
 		}
 	}
 
@@ -140,7 +140,7 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 	{
 		if(StringUtils.isBlank(serialCode) && StringUtils.isBlank(itemBarcode))
 		{
-			throw new IllegalStateException("Either Itembarcode or Serial code is required to create Repair log");
+			throw new InterceptorException("Either Itembarcode or Serial code is required to create Repair log");
 		}
 	}
 
