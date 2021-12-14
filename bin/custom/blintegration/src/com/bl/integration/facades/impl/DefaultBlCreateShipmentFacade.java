@@ -139,8 +139,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 			}
 			catch (final Exception exception)
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception {} occour while creating fedEx shipment",
-						exception.getMessage());
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception occurred while creating fedEx shipment {}",
+						exception);
 			}
 		}
 	}

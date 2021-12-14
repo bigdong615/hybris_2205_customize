@@ -179,7 +179,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		catch (final Exception exception)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception {} occour while creating fedEx shipment", exception.getMessage());
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occurred while creating fedEx shipment", exception);
 		}
 		return null;
 

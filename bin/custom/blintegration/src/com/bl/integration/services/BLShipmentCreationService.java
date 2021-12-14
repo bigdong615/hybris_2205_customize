@@ -38,7 +38,7 @@ public interface BLShipmentCreationService
 	 * @param warehouseModel as WarehouseModel
 	 * @return ProcessShipmentReply
 	 */
-	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount, Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel);
+	ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount, final Map<String, Integer> sequenceMap,final WarehouseModel warehouseModel);
 
 	/**
 	 * method will used to check the order status for shipment

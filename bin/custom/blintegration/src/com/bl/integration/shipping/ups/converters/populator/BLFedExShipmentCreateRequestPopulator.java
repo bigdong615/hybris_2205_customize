@@ -14,10 +14,8 @@ import java.util.Objects;
 
 import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.PositiveInteger;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.fedex.ship.stub.Address;
 import com.fedex.ship.stub.ClientDetail;
@@ -36,7 +34,6 @@ import com.fedex.ship.stub.Payor;
 import com.fedex.ship.stub.ProcessShipmentRequest;
 import com.fedex.ship.stub.RequestedPackageLineItem;
 import com.fedex.ship.stub.RequestedShipment;
-import com.fedex.ship.stub.ShipServiceLocator;
 import com.fedex.ship.stub.ShippingDocumentImageType;
 import com.fedex.ship.stub.TransactionDetail;
 import com.fedex.ship.stub.VersionId;
@@ -207,46 +204,28 @@ public class BLFedExShipmentCreateRequestPopulator
 	 * @param consignment
 	 * @param requestedShipment
 	 */
-	private void setServiceTypeOnRequestedShipment(final ConsignmentModel consignment, final RequestedShipment requestedShipment)
-	{
-		final String serviceMethod = consignment.getOptimizedShippingType().getCode();
-
-		if (StringUtils.isNotEmpty(serviceMethod))
-		{
-			if (serviceMethod.equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode());
-			}
-			else if (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode()))
-			{
-				requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode());
-			}
-		}
-	}
+	/*
+	 * private void setServiceTypeOnRequestedShipment(final ConsignmentModel consignment, final RequestedShipment
+	 * requestedShipment) { final String serviceMethod = consignment.getOptimizedShippingType().getCode();
+	 * 
+	 * if (StringUtils.isNotEmpty(serviceMethod)) { if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR_AM.getCode()); } else if
+	 * (serviceMethod.equals(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode())) {
+	 * requestedShipment.setServiceType(OptimizedShippingMethodEnum.NEXT_DAY_AIR_SAT.getCode()); } } }
+	 */
 
 	/**
 	 * This method is used to set DropOff Type on FedEx Shipment Request
@@ -492,14 +471,5 @@ public class BLFedExShipmentCreateRequestPopulator
 		wac.setKey(fedExApiKey);
 		wac.setPassword(fedExapiPassword);
 		return new WebAuthenticationDetail(wac, wac);
-	}
-
-	private static void updateEndPoint(final ShipServiceLocator serviceLocator)
-	{
-		final String endPoint = System.getProperty("endPoint");
-		if (endPoint != null)
-		{
-			serviceLocator.setShipServicePortEndpointAddress(endPoint);
-		}
 	}
 }
