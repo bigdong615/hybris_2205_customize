@@ -7,9 +7,11 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -20,6 +22,7 @@ import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.facades.BlCreateShipmentFacade;
+import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
@@ -48,6 +51,9 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 
 	@Resource(name = "blDeliveryStateSourcingLocationFilter")
 	private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
+	
+	@Resource(name = "blShipmentCreationService")
+	private DefaultBLShipmentCreationService blShipmentCreationService;
 
 	private ListModelList<String> warehouseList = new ListModelList<>();
 
@@ -157,10 +163,14 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 	 */
 	private void startShipmentCreationProcess(final List<PackagingInfoModel> packages, final WarehouseModel stateWarehouse)
 	{
+		final Map<String, Integer> sequenceMap = new HashedMap();
+		final int packageCount = packages.size();
+		final Map<String, Integer> sequenceNumber = getBlShipmentCreationService().getSequenceNumber(sequenceMap, packages, packageCount);
+		
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating shipment package for {}", packagingInfoModel);
-			getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse);
+			getBlCreateShipmentFacade().createBlReturnShipmentPackages(packagingInfoModel, stateWarehouse,packageCount, sequenceNumber);
 		}
 	}
 
@@ -215,6 +225,16 @@ public class BlCreateReturnShipmentController extends DefaultWidgetController
 			final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter)
 	{
 		this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+	}
+
+	public DefaultBLShipmentCreationService getBlShipmentCreationService()
+	{
+		return blShipmentCreationService;
+	}
+
+	public void setBlShipmentCreationService(DefaultBLShipmentCreationService blShipmentCreationService)
+	{
+		this.blShipmentCreationService = blShipmentCreationService;
 	}
 
 }
