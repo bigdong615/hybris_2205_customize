@@ -3006,6 +3006,16 @@
                       <persistence type="property" />
                       <description>It indicates current status of an uploaded document</description>
                     </attribute>
+                  <attribute qualifier="orderModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order is modified or not</description>
+                  </attribute>
+                  <attribute qualifier="orderBillModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order is modified or not</description>
+                  </attribute>
                 </attributes>
             </itemtype>
 

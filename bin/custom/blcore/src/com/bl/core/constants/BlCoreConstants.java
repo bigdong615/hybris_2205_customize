@@ -540,6 +540,38 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int NAME_LENGTH_SIZE = 48;
 
 
+	public static final String ORDER_MODIFIED_DATE = "orderModifiedDate";
+	public static final String ORDER_MODIFIED_END_DATE = "orderModifiedEndDate";
+	public static final String ORDER_BILL_MODIFIED_DATE = "orderBillModifiedDate";
+	public static final String ORDER_BILL_MODIFIED_END_DATE = "orderBillModifiedEndDate";
+
+	// Order Status
+	public static final String RECEIVED_IN_VERIFICATION = "RECEIVED_IN_VERIFICATION";
+	public static final String RECEIVED_MANUAL_REVIEW = "RECEIVED_MANUAL_REVIEW";
+	public static final String RECEIVED_SHIPPING_MANUAL_REVIEW = "RECEIVED_SHIPPING_MANUAL_REVIEW";
+	public static final String RECEIVED_PAYMENT_DECLINED = "RECEIVED_PAYMENT_DECLINED";
+	public static final String UNBOXED_PARTIALLY = "UNBOXED_PARTIALLY";
+	public static final String UNBOXED_COMPLETELY = "UNBOXED_COMPLETELY";
+	public static final String RECEIVED_ROLLING = "RECEIVED_ROLLING";
+	public static final String SOLD_SHIPPED = "SOLD_SHIPPED";
+	public static final String SOLD_RMA_CREATED = "SOLD_RMA_CREATED";
+	public static final String RETURNED = "RETURNED";
+	public static final String Order_COMPLETED = "COMPLETED";
+	public static final String INCOMPLETE = "INCOMPLETE";
+	public static final String INCOMPLETE_BALANCE_DUE = "INCOMPLETE_BALANCE_DUE";
+	public static final String INCOMPLETE_STOLEN = "INCOMPLETE_STOLEN";
+	public static final String INCOMPLETE_LOST_IN_TRANSIT = "INCOMPLETE_LOST_IN_TRANSIT";
+	public static final String INCOMPLETE_ITEMS_IN_REPAIR = "INCOMPLETE_ITEMS_IN_REPAIR";
+	public static final String INCOMPLETE_MISSING_ITEMS = "INCOMPLETE_MISSING_ITEMS";
+	public static final String INCOMPLETE_MISSING_AND_BROKEN_ITEMS = "INCOMPLETE_MISSING_AND_BROKEN_ITEMS";
+	public static final String CANCELLED = "CANCELLED";
+	public static final String LATE = "LATE";
+
+	// Consignment Status
+	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";
+	public static final String RECEIVED_READY_FOR_PICKUP = "RECEIVED_READY_FOR_PICKUP";
+
+
 
 	private BlCoreConstants()
 	{

@@ -1774,4 +1774,12 @@
 	<bean id="defaultBlESPFTPService" class="com.bl.esp.service.impl.DefaultBlESPFTPService">
 	</bean>
 
+	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
+	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+	</bean>
+
 </beans>

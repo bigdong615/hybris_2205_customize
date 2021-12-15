@@ -213,6 +213,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			modelService.removeAll(consignmentEntryToRemove);
 			removeConsignment(orderModel, consignmentToRemove);
 			modelService.removeAll(consignmentToRemove);
+
 		}
 	}
 
