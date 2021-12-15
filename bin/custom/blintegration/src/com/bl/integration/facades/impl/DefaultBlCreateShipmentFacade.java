@@ -132,7 +132,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		final ProcessShipmentReply masterReply = getBlShipmentCreationService().createFedExShipment(packagingInfo, packageCount,
 				sequenceMap, warehouseModel);
 
-		if (isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
+		if (masterReply!=null && isResponseOk(masterReply.getHighestSeverity())) // check if the call was successful
 		{
 			try
 			{
