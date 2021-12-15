@@ -173,7 +173,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final AbstractOrderModel order = entry.getKey();
     final Set<String> productCodes = entry.getValue();
     final WarehouseModel anotherWH = getBlOptimizeShippingFromWHService().getAnotherWarehouse(warehouses, location);
-    boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location);
+    final boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location);
     if(!noSplitting) {
       if(!checkFulfillmentFromSingleWH(order, location, anotherWH)) {
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,

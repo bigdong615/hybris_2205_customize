@@ -173,7 +173,7 @@ public class DefaultBlOptimizeShippingFromWHService implements BlOptimizeShippin
    */
   private boolean fulfillFromWH(final WarehouseModel location, final AbstractOrderModel order, final List<WarehouseModel> warehouses) {
     final WarehouseModel anotherWH = getAnotherWarehouse(warehouses, location);
-    boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location);
+    final boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location);
     if(!noSplitting) {
       return checkFulfillmentFromSingleWH(order, location, anotherWH);
     }
