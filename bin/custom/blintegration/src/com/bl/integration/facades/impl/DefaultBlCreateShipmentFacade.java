@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,7 +73,7 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
 
-		if (CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
+		if (StringUtils.isNotEmpty(delivertCarrier.getCode()) && CarrierEnum.UPS.getCode().equalsIgnoreCase(delivertCarrier.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
