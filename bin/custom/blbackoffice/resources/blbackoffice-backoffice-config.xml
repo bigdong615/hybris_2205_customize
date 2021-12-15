@@ -2420,6 +2420,7 @@
 			<wz:step id="step0" label="hmc.essential">
 				<wz:content>
 					<wz:property-list root="newRepairLog">
+						<wz:property qualifier="serialCode"  />
 						<wz:property qualifier="itemBarcode"  />
 						<wz:property qualifier="repairLogStatus"/>
 					</wz:property-list>

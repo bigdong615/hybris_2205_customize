@@ -18,7 +18,7 @@ INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
-                                    ; shippingteamkusergroup    ; shippingteamuserrole
+                                    ; shippingteamusergroup    ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
                       ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup,customersupportagentgroup,warehouseagentgroup ; 1234
