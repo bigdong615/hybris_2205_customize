@@ -2,6 +2,7 @@ package com.bl.integration.services.impl;
 
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.util.Config;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -10,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -26,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.bl.core.model.BlProductModel;
-import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.Soap.logging.handler.SOAPLoggingHandler;
 import com.bl.integration.constants.BlintegrationConstants;
@@ -38,6 +39,9 @@ import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateR
 import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateResponsePopulator;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
+import com.fedex.ship.stub.ProcessShipmentReply;
+import com.fedex.ship.stub.ProcessShipmentRequest;
+import com.fedex.ship.stub.ShipServiceLocator;
 import com.google.gson.Gson;
 import com.sun.xml.ws.client.ClientTransportException;//NOSONAR
 import com.ups.wsdl.xoltws.ship.v1.ShipPortType;
@@ -147,16 +151,51 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String createFedExShipment(final FedExShippingRequestData fedExShipmentReqData)
+	public ProcessShipmentReply createFedExShipment(final PackagingInfoModel packagingInfo, final int packageCount,
+			final Map<String, Integer> sequenceMap, final WarehouseModel warehouseModel)
 	{
-		final FedExShipmentRequest fedExShipemtnReq = getBlFedExShipmentCreateRequestPopulator()
-				.convertToFedExShipmentRequest(fedExShipmentReqData);
-		final HttpResponse createFedExShipmentResponse = createFedExShipmentResponse(fedExShipemtnReq);
-		if (createFedExShipmentResponse != null)
+		ProcessShipmentRequest masterRequest = new ProcessShipmentRequest();
+		if (warehouseModel == null)
 		{
-			BlLogger.logMessage(LOG, Level.INFO, createFedExShipmentResponse.toString());
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExShipmentRequest(packagingInfo, packageCount,
+					sequenceMap.get(packagingInfo.getPackageId()).toString());
+		}
+		else
+		{
+			masterRequest = getBlFedExShipmentCreateRequestPopulator().createFedExReturnShipmentRequest(packagingInfo, packageCount,
+					sequenceMap.get(packagingInfo.getPackageId()).toString(), warehouseModel);
+		}
+		try
+		{
+			com.fedex.ship.stub.ShipPortType port;
+			//
+			final ShipServiceLocator service = new ShipServiceLocator();
+			updateEndPoint(service);
+			port = service.getShipServicePort();
+
+			BlLogger.logMessage(LOG, Level.DEBUG, "Sending Request to FedEx for Shipment Generation");
+			return port.processShipment(masterRequest); // This is the call to the ship web service passing in a request object and returning a reply object
+
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception occurred while creating fedEx shipment", exception);
 		}
 		return null;
+
+	}
+
+	/**
+	 * This method is used to update the end point url for fedEx shipment
+	 * @param serviceLocator
+	 */
+	private static void updateEndPoint(final ShipServiceLocator serviceLocator)
+	{
+		final String endPoint = System.getProperty(BlintegrationConstants.END_POINT);
+		if (endPoint != null)
+		{
+			serviceLocator.setShipServicePortEndpointAddress(endPoint);
+		}
 	}
 
 	/**
@@ -175,6 +214,20 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Integer> getSequenceNumber(final Map<String, Integer> sequenceMap, final List<PackagingInfoModel> packages,
+			final int packageCount)
+	{
+		for (int i = 0; i < packageCount; i++)
+		{
+			sequenceMap.put(packages.get(i).getPackageId(), i + 1);
+		}
+		return sequenceMap;
 	}
 
 	/**
@@ -272,6 +325,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public PackagingInfoModel getPackageForSerial(final ConsignmentModel consignment, final String serialCode)
 	{
 		for (final PackagingInfoModel blPackage : consignment.getPackaginginfos())
