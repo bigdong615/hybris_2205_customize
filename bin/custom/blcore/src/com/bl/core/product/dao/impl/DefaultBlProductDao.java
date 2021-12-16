@@ -61,6 +61,12 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 			+ "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
 			+ "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
 			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
+  
+  private static final String GET_BLSERIALPRODUCTS_FOR_CODE_QUERY = "SELECT {pk} from {" + BlSerialProductModel._TYPECODE
+			+ " as p} WHERE {p:" + BlSerialProductModel.CODE + "} = ?serialCode" + " AND {p:" + BlSerialProductModel.CATALOGVERSION
+			+ "} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE + " as cv} WHERE {cv:" + CatalogVersionModel.VERSION
+			+ "} = ?version AND {cv:" + CatalogVersionModel.CATALOG + "} in ({{SELECT {c:pk} FROM {" + CatalogModel._TYPECODE
+			+ " as c} WHERE {c:" + CatalogModel.ID + "} = ?catalog}})}})";
 
   /**
    * @param typecode
@@ -133,5 +139,26 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 		  return null;
 	  }
 	  return serialProducts.get(0);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public BlSerialProductModel getSerialBySerialCode(final String serialCode)
+  {
+	  final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_BLSERIALPRODUCTS_FOR_CODE_QUERY);
+	  fQuery.addQueryParameter(BlCoreConstants.SERIAL_CODE, serialCode);
+	  fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
+	  fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
+	  final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
+	  final List<BlSerialProductModel> serialProducts = result.getResult();
+	  if (CollectionUtils.isEmpty(serialProducts))
+	  {
+		  BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial product found for serialCode: {}",
+				  serialCode);
+		  return null;
+	  }
+	  return serialProducts.iterator().next();
   }
 }

@@ -177,6 +177,12 @@
 		<property name="verificationlevel" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
 	</bean>
 
 	<!-- Order verification more info Event data Request Object -->
@@ -317,6 +323,12 @@
 		</property>
 		<property name="verificationtext" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
 	</bean>
 	<!-- Order verification COI needed Event  ends -->
@@ -477,6 +489,12 @@
 		</property>
 		<property name="verificationText" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Verification Text")</annotations>
+		</property>
+		<property name="returningcustomer" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Returning Customer")</annotations>
+		</property>
+		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
 	</bean>
 	<!-- Order Verification Required Event data Object End-->

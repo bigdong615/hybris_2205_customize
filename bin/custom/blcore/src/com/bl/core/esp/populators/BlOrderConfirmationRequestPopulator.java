@@ -18,6 +18,7 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -124,9 +125,13 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
         data.setVerificationlevel(orderModel.getVerificationLevel());
+        data.setTotalvalue(BigDecimal.valueOf(orderModel.getSubtotal()));
+        data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
         orderConfirmationEventRequest.setData(data);
     }
+
+
 
   /**
    * This method created to get order status from order model

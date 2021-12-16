@@ -4129,7 +4129,7 @@
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="itemBarcode" type="java.lang.String">
-				<modifiers read="true" write="true" optional="false" />
+				<modifiers read="true" write="true" optional="true" />
 				<persistence type="property" />
 			</attribute>
 			<attribute qualifier="repairTechsForClaim" type="RepairTechClaimEnum">
@@ -4210,11 +4210,21 @@
 				<persistence type="property" />
 			</attribute>
 			<!-- Tech Eng Notes Attributes -->
-			<attribute qualifier="notesOnIssue" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify notes on the issue</description>
-			</attribute>
+			<attribute qualifier="notesForIssue" type="java.lang.String">
+              <description>Tech Eng. Team member can specify notes on the issue</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+            </attribute>
 			<attribute qualifier="conditionRating" type="java.lang.Double">
 				<modifiers read="true" write="false" optional="true" />
 				<description>Total for Parts and Labor costs</description>

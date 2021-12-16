@@ -27,6 +27,7 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -462,6 +463,16 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
                 }
         });
 
+    }
+
+    /**
+     * This method created to check whether is returning customer or not
+     * @param orderModel order model
+     * @return boolean value
+     */
+    protected boolean isReturningCustomer(final OrderModel orderModel) {
+        final Collection<OrderModel> abstractOrderEntryModel =  orderModel.getUser().getOrders();
+        return CollectionUtils.isNotEmpty(abstractOrderEntryModel) && abstractOrderEntryModel.size() > 1;
     }
 
     public ConfigurationService getConfigurationService() {

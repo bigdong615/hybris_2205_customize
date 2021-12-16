@@ -62,7 +62,7 @@
 												 --%>
 												
 							<div class="gc-pdp-form">
-								<input type="text" class="form-control" id="amount"
+								<input type="number" class="form-control" id="amount"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.amount.placeholder' />" name="amount"> <input
 									type="text" class="form-control" id="first-name"
 									placeholder="<spring:theme code='giftcard.PurchaseForm.name.placeholder' />" name="name"> <input

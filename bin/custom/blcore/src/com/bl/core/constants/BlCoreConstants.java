@@ -528,6 +528,18 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String COMPLTED_ORDER_QUEUE = "ShippingCompleteOrderQueue";
 	
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
+	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
+
+	public static final String ACTIVE_STATUS = "ACTIVE";
+	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";
+	public static final String RECEIVED_OR_RETURNED = "RECEIVED_OR_RETURNED";
+	public static final String BOXED = "BOXED";
+	public static final String SHIPPED = "SHIPPED";
+	public static final String IN_HOUSE = "IN_HOUSE";
+	public static final String ADDED_TO_CART = "ADDED_TO_CART";
+
+	public static final int NAME_LENGTH_SIZE = 48;
+
 
 
 	private BlCoreConstants()
