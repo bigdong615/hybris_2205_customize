@@ -27,6 +27,7 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -81,6 +82,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       }
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
+      originalOrder.setOrderModifiedDate(new Date());
       saveAndRefreshModel(originalOrder);
       return extendOrderModel;
   }

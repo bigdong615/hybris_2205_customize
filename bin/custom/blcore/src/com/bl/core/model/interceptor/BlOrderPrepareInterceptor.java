@@ -141,7 +141,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     }
 
     // To set Modified Order Date
-		if (interceptorContext.isNew(abstractOrderModel) || checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
+		if (interceptorContext.isNew(abstractOrderModel)  ||
+				(Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE) ||
+						Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE))||
+				checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
 			abstractOrderModel.setOrderModifiedDate(new Date());
 		}
   }
@@ -406,6 +409,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		{
 			updateActualRentalDatesForOrder(abstractOrderModel, deliveryMode);
 		}
+		abstractOrderModel.setOrderModifiedDate(new Date());
 	}
 
 	/**
@@ -609,11 +613,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 */
 	private boolean checkOrderStatusEligibleForOrderModification(final AbstractOrderModel abstractOrderModel,
 			final InterceptorContext interceptorContext) {
-		if(interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
-				&& checkStatusForOrder(abstractOrderModel.getStatus())){
-			return true;
-		}
-		return false;
+		return interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+				&& checkStatusForOrder(abstractOrderModel.getStatus());
 	}
 
 	/**

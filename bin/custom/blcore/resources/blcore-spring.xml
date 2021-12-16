@@ -1648,6 +1648,7 @@
 		class="com.bl.core.model.interceptor.BlAddressPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
 		<property name="defaultBlUserService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="blAddressPrepareInterceptorMapping"
@@ -1772,10 +1773,13 @@
 
 	<!--BL-1311 -->
 	<bean id="defaultBlESPFTPService" class="com.bl.esp.service.impl.DefaultBlESPFTPService">
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlESPFTPService" ref="defaultBlESPFTPService"/>
 	</bean>
 
 	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
