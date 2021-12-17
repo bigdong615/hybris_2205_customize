@@ -181,7 +181,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 					"Serial product with code {} added to the products list on consignment entry with consignment code {}",
 					serial.getCode(), entry.getConsignment().getCode());
 
-			final Map<BlProductModel, Integer> allSubpartsForGivenSerial =	getSessionService().executeInLocalView(new SessionExecutionBody()
+			final Map<BlProductModel, Integer> subPartsForGivenSerial =	getSessionService().executeInLocalView(new SessionExecutionBody()
 			{
 				@Override
 				public Map<BlProductModel, Integer> execute()
@@ -194,7 +194,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 					return Maps.newHashMap();
 				}
 			});
-			addingSubpartToMap(allSerialSubPartProducts,allSubpartsForGivenSerial);
+			addingSubpartToMap(allSerialSubPartProducts,subPartsForGivenSerial);
 		});
 
 		putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
@@ -276,10 +276,10 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	/**
 	 * This method used to map subpart and its total count for particular serial.
 	 * @param allSerialSubPartProducts
-	 * @param allSubpartsForGivenSerial
+	 * @param subPartsForGivenSerial
 	 */
-	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,final Map<BlProductModel, Integer> allSubpartsForGivenSerial){
-	allSubpartsForGivenSerial.forEach( (productKey,quantity) ->{
+	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,final Map<BlProductModel, Integer> subPartsForGivenSerial){
+		subPartsForGivenSerial.forEach( (productKey,quantity) ->{
 		if(allSerialSubPartProducts.containsKey(productKey)){
 			Integer existingQuantity =allSerialSubPartProducts.get(productKey);
 			allSerialSubPartProducts.put(productKey,existingQuantity+quantity);
