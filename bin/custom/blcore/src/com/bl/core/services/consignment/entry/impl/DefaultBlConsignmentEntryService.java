@@ -180,7 +180,8 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Serial product with code {} added to the products list on consignment entry with consignment code {}",
 					serial.getCode(), entry.getConsignment().getCode());
-			allSerialSubPartProducts.putAll(getSessionService().executeInLocalView(new SessionExecutionBody()
+
+			final Map<BlProductModel, Integer> allSubpartsForGivenSerial =	getSessionService().executeInLocalView(new SessionExecutionBody()
 			{
 				@Override
 				public Map<BlProductModel, Integer> execute()
@@ -188,13 +189,14 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 					getSearchRestrictionService().disableSearchRestrictions();
 					if (null != serial.getBlProduct() && MapUtils.isNotEmpty(serial.getBlProduct().getSubpartsQty()))
 					{
-
 						return serial.getBlProduct().getSubpartsQty();
 					}
 					return Maps.newHashMap();
 				}
-			}));
+			});
+			addingSubpartToMap(allSerialSubPartProducts,allSubpartsForGivenSerial);
 		});
+
 		putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
 		putProductOptionsInToItemsMap(entry, itemsMap);
 		entry.setItems(itemsMap);
@@ -272,16 +274,19 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	}
 
 	/**
-	 *
+	 * This method used to map subpart and its total count for particular serial.
 	 * @param allSerialSubPartProducts
-	 * @return
+	 * @param allSubpartsForGivenSerial
 	 */
-	private Map<BlProductModel, Integer> convertListToHashMap(final List<BlProductModel> allSerialSubPartProducts) {
-		HashMap<BlProductModel, Integer> subPartsMap = new HashMap<>();
-		for (BlProductModel bl : allSerialSubPartProducts) {
-			subPartsMap.put(bl, bl.getSubpartsQty().get(bl).intValue());
+	private void addingSubpartToMap(final Map<BlProductModel, Integer> allSerialSubPartProducts,final Map<BlProductModel, Integer> allSubpartsForGivenSerial){
+	allSubpartsForGivenSerial.forEach( (productKey,quantity) ->{
+		if(allSerialSubPartProducts.containsKey(productKey)){
+			Integer existingQuantity =allSerialSubPartProducts.get(productKey);
+			allSerialSubPartProducts.put(productKey,existingQuantity+quantity);
+		}else{
+			allSerialSubPartProducts.put(productKey,quantity);
 		}
-		return subPartsMap;
+	} );
 	}
 
 	/**
