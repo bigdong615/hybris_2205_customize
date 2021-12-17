@@ -24,6 +24,7 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
@@ -832,7 +833,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 							StringUtils.EMPTY);
 					final BrainTreeVoidResult voidResult = brainTreePaymentService
 							.voidTransaction(voidRequest);
-					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart, authEntry.get());
 				}
 			}
 		} catch (final Exception ex) {
@@ -844,13 +845,15 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	/**
 	 * @param transactionStatus
 	 * @param cart
-	 * This is used to set the isAuthorized flag of order
+	 * @param paymentTransactionEntryModel
 	 */
-	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
-			CartModel cart) {
+	private void setAuthorizedFlagInOrder(final TransactionStatus transactionStatus,
+			final CartModel cart, final PaymentTransactionEntryModel paymentTransactionEntryModel) {
 		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
 			cart.setIsAuthorizationVoided(Boolean.TRUE);
 			getModelService().save(cart);
+			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
+			getModelService().save(paymentTransactionEntryModel);
 		}
 	}
 	
