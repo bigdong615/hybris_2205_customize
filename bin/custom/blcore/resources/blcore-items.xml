@@ -114,6 +114,7 @@
             <value code="GIFTCARD"/>
             <value code="PACKAGE"/>
             <value code="NEWGEAR"/>
+            <value code="MANUAL"/>
         </enumtype>
 
         <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">
@@ -1432,12 +1433,12 @@
                      <description>The total no of days the serial was rented for all orders</description>
                    </attribute>
                    <attribute qualifier="noDaysNotInService" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
+                     <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Calculated based on the days an item spends with a shipping carrier</description>
                    </attribute>
                    <attribute qualifier="noDaysInTransit" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductTotalTransitDaysHandler"  />
+                     <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Calculated based on the days an item is neither in transit nor with a customer</description>
                    </attribute>
