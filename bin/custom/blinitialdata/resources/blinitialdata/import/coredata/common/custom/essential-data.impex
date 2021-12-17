@@ -133,9 +133,8 @@ INSERT_UPDATE BlPricingLogic ; productType(code)[unique=true];tier(code);greater
                              ;MONITORS;ONE;;1000;12
                              ;MONITORS;TWO;1000;3000;6
                              ;MONITORS;THREE;3000;;5
-                             ;MANUAL;ONE;;100;0
-                             ;MANUAL;TWO;100;1000;0
-                             ;MANUAL;THREE;1000;;0
+                             ;MANUAL;ONE;0;1000000;0
+
 
 INSERT_UPDATE BlStandardPricingRatio ;duration(code)[unique=true];pricingRatio
                                      ;3;0.69

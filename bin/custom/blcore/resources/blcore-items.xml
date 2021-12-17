@@ -46,7 +46,7 @@
             <value code="LITHIUM_METAL"/>
             <value code="NON_LITHIUM"/>
             <value code="LI_PO"/>
-            <value code="LI_POLYMER"/>
+            <value code="LITHIUM_POLYMER"/>
             <value code="NI_MH"/>
         </enumtype>
         <!--BL custom enum type-->
