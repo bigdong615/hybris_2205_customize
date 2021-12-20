@@ -86,4 +86,17 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public List<AbstractOrderModel> getOrdersToOptimizeShipFromWH(final Date currentDate);
+
+	/**
+	 * This method created to get the list of order to be feed to FTP location
+	 * @return list of orders
+	 */
+	List<AbstractOrderModel> getOrdersForOrderFeedToFTP();
+
+	/**
+	 * This method created to get the list of orderBill to be feed to FTP location
+	 * @return list of orders
+	 */
+	List<AbstractOrderModel> getOrdersForOrderBillFeedToFTP();
+
 }

@@ -34,6 +34,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -123,6 +124,9 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER))
 		{
 			isOrderModified(orderEntryModel, serialProduct, warehouse);
+			orderEntryModel.getOrder().setOrderModifiedDate(new Date());
+			modelService.save(orderEntryModel.getOrder());
+			modelService.refresh(orderEntryModel.getOrder());
 		}
 	}
 	

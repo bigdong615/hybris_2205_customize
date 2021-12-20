@@ -211,6 +211,14 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 				addModifiedChargesToNewList(newModifiedBillingCharges, orderModel);
 			}
 		}
+
+		if(interceptorContext
+				.isModified(consignmentEntryModel, ConsignmentEntryModel.BILLINGCHARGES)) {
+			final OrderModel orderModel = (OrderModel) consignmentEntryModel.getConsignment().getOrder();
+			orderModel.setOrderModifiedDate(new Date());
+			interceptorContext.getModelService().save(orderModel);
+			interceptorContext.getModelService().refresh(orderModel);
+		}
 	}
 
 	/**
@@ -250,6 +258,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 						}
 					}
 				});
+				orderModel.setOrderModifiedDate(new Date());
 				eventTriggerForLateCharge(orderModel, serialCode, lateChargeList);
 				eventTriggerForRepairAndMissingCharge(orderModel, serialCode, repairChargeList,
 						missingChargeList);
