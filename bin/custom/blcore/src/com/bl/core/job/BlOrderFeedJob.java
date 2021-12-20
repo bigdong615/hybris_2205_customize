@@ -40,6 +40,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
       }
     }
     catch (final Exception e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while executing perform method" , e);
       return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
 
     }
