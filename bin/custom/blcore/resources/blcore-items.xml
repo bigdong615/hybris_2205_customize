@@ -487,6 +487,7 @@
         <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
         <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
+        <maptype code="SubPartProductQtyMap" argumenttype="BlProduct" returntype="java.lang.Integer" />
     </maptypes>
 
 
@@ -622,6 +623,7 @@
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
+
 
       <relation code="BlProduct2OptionsRelation" generate="true" localized="false"
         autocreate="true">
@@ -1377,6 +1379,11 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Primary Category Linked to the product</description>
                    </attribute>
+                  <attribute qualifier="subpartsQty" type="SubPartProductQtyMap">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Created Map for the Subparts and related Qty</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -1648,11 +1655,52 @@
                        <description>last OC location date at the time of unbox</description>
                    </attribute>
                    <attribute qualifier="userChangedConditionRating" type="java.lang.String">
-				<modifiers read="true" write="true" optional="true" />
-				<persistence type="property" />
-			</attribute>
-
-
+                      <modifiers read="true" write="true" optional="true" />
+                      <persistence type="property" />
+                   </attribute>
+                   <attribute qualifier="displayName" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" search="true" write="true" optional="true"/>
+                       <description>Product Display Name</description>
+                     </attribute>
+                     <attribute qualifier="name" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" search="true" write="true" optional="true"/>
+                       <description>Product localized Name</description>
+                     </attribute>
+                     <attribute qualifier="mpn" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <description>Manufactuer's part number</description>
+                     </attribute>
+                     <attribute qualifier="upc" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <description>UPC code for the BL Product</description>
+                     </attribute>
+                     <attribute qualifier="procurementSource" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <description>Link or number for the item at the source we can purchase replacements</description>
+                     </attribute>
+                     <attribute qualifier="procurementCost" type="java.math.BigDecimal" redeclare="true">
+                       <persistence type="property"/>
+                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <description>Starting base price for the sku for used gear sales of all serials</description>
+                     </attribute>
+                     <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
+                       <modifiers read="true" write="true" search="true" optional="true"
+                         initial="true"/>
+                       <persistence type="property"/>
+                       <custom-properties>
+                         <property name="hmcIndexField"><value>"thefield"</value></property>
+                       </custom-properties>
+                     </attribute>
+                     <attribute qualifier="manufacturerName" type="java.lang.String" redeclare="true">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" optional="true" />
+                       <description>Manufacturer name for the BL Product</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
