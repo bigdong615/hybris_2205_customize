@@ -54,7 +54,7 @@
                          </c:choose>
                      </c:otherwise>
                   </c:choose>
-                  <c:choose>
+<%--                   <c:choose>
                      <c:when test="${address.defaultAddress}">
                         <span class="badge badge-default float-end">
                            <spring:theme code="text.default.shipping"/>
@@ -65,7 +65,7 @@
                            <spring:theme code="text.setDefault"/>
                         </button>
                      </c:when>
-                  </c:choose>
+                  </c:choose> --%>
                </div>
                <div class="scroll-over-text">
                <c:if test="${not empty fn:escapeXml(address.companyName)}">
