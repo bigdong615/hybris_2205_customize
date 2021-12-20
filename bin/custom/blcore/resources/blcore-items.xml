@@ -1367,6 +1367,16 @@
                      <defaultvalue>false</defaultvalue>
                      <description>To identify whether buffer inventory percentage changed manually or not</description>
                    </attribute>
+                   <attribute qualifier="procurementID" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <description>ProcurementID of the product</description>
+                   </attribute>
+                   <attribute qualifier="primaryCategoryID" type="category">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Primary Category Linked to the product</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"

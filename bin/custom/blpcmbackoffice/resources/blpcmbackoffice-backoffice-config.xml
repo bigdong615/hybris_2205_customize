@@ -185,6 +185,7 @@
 			<ea:tab name="hmc.tab.product.categorysystem" position="10">
 				<ea:section name="hmc.section.product.productincategory">
 					<ea:attribute qualifier="supercategories"/>
+					<ea:attribute qualifier="primaryCategoryID"/>
 					<ea:attribute qualifier="classificationClasses"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.productreferences">
@@ -312,6 +313,7 @@
 					<ea:attribute qualifier="mpn"/>
 					<ea:attribute qualifier="procurementCost"/>
 					<ea:attribute qualifier="procurementSource"/>
+					<ea:attribute qualifier="procurementID"/>
 					<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
