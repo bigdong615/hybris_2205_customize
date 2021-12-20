@@ -95,6 +95,7 @@ public class BlModelSavingExceptionTranslationHandler extends ModelExceptionTran
 		customExceptionObjectsList.add(BlCoreConstants.BL_BLACKOUT_DATE_MODEL);
 		customExceptionObjectsList.add(BlCoreConstants.BL_PRODUCT_VALIDATE_INTERCEPTOR);
 		customExceptionObjectsList.add(BlCoreConstants.BL_ORDER_VALIDATE_INTERCEPTOR);
+		customExceptionObjectsList.add(BlCoreConstants.BL_REPAIR_LOG_PREPARE_INTERCEPTOR);
 		return customExceptionObjectsList;
 	}
 

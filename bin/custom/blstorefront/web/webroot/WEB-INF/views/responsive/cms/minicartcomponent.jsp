@@ -19,7 +19,7 @@
 </c:if>
 
 	<a href="${fn:escapeXml(cartUrl)}"
-		class="${nonMobileClass } bak_mini-cart-link bak_js-mini-cart-link"
+		class="${nonMobileClass } bak_mini-cart-link bak_js-mini-cart-link nav-cart"
 		data-mini-cart-url="${fn:escapeXml(rolloverPopupUrl)}"
 		data-mini-cart-refresh-url="${fn:escapeXml(refreshMiniCartUrl)}"
 		data-mini-cart-name="<spring:theme code="text.cart"/>"
