@@ -142,6 +142,7 @@
 					<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="titleTag" label="label.pcmbackoffice.titletag"/>
 					<ea:attribute qualifier="specifications" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="subpartsQty" />
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.rentaldetails">
 					<ea:attribute qualifier="rentalVideosLink" />
