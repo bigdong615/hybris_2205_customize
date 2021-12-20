@@ -21,11 +21,11 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ESP_EVENT_ACCESS_SCOPE = "esp.event.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
 
 
-	public static final String SFTPHOST = "host:IP";
+	public static final String SFTPHOST = "ftp.s10.exacttarget.com";
 	public static final int SFTPPORT = 22;
 	public static final String SFTPUSER = "ftp.user.name";
 	public static final String SFTPPASS = "ftp.user.password";
-	public static final String SFTPWORKINGDIR = "ftp.file.path";
+	public static final String SFTPWORKINGDIR = "/newbl/bl/bin/custom/testxml/";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";

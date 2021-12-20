@@ -21,9 +21,15 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.util.Config;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -36,6 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -114,14 +121,50 @@ public class DefaultBlESPFTPService implements BlFTPService {
         createOrderItems(abstractOrderModel, orderItemsInXMLDocument, rootOrderItem);
 
       });
-      final Transformer transformer = getTransformerFactoryObject();
-      final StringWriter writer = new StringWriter();
 
-      //transform document to string
-      transformer.transform(new DOMSource(orderItemsInXMLDocument), new StreamResult(writer));
-      BlLogger.logMessage(LOG, Level.INFO, "wnc", "**********00" + writer.getBuffer().toString());
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      StreamResult result = new StreamResult(new StringWriter());
+      DOMSource source = new DOMSource(orderItemsInXMLDocument);
+      transformer.transform(source, result);
+      String xmlString = result.getWriter().toString();
+      BlLogger.logMessage(LOG, Level.INFO, "wnc", "**********00" + xmlString);
+      Path fileName = Path.of("/newbl/bl/bin/custom/testxml/XMLResults.xml");
+      Files.writeString(fileName, xmlString);
+
+
+
+        Session session = null;
+        Channel channel = null;
+        ChannelSftp channelSftp = null;
+        try {
+          JSch jsch = new JSch();
+          session = jsch.getSession(BlespintegrationConstants.SFTPUSER, BlespintegrationConstants.SFTPHOST,
+              BlespintegrationConstants.SFTPPORT);
+          session.setPassword(BlespintegrationConstants.SFTPPASS);
+          java.util.Properties config = new java.util.Properties();
+          config.put("StrictHostKeyChecking", "no");
+          session.setConfig(config);
+          session.connect();
+          channel = session.openChannel("sftp");
+          channel.connect();
+          channelSftp = (ChannelSftp) channel;
+          channelSftp.cd(BlespintegrationConstants.SFTPWORKINGDIR);
+          File f = new File("XMLResults.xml");
+          channelSftp.put(new FileInputStream(f), f.getName());
+        } catch (final Exception ex) {
+          BlLogger.logMessage(LOG , Level.ERROR , "Error while performing sendFileTOFTP:-" , ex);
+        } finally {
+          channelSftp.exit();
+          channel.disconnect();
+          session.disconnect();
+        }
+
+
+
     }
-    catch (final TransformerException e) {
+    catch (final TransformerException | IOException e) {
       BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
 
     }
@@ -248,9 +291,8 @@ public class DefaultBlESPFTPService implements BlFTPService {
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
-      if(StringUtils.isNotEmpty(abstractOrderModel.getPickUpPersonEmail())){
-        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_HOURS, getStoreOpeningHours(shippingAddress));
-      }
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_HOURS,
+          StringUtils.isNotEmpty(abstractOrderModel.getPickUpPersonEmail()) ? getStoreOpeningHours(shippingAddress) : StringUtils.EMPTY);
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_NOTES,
           StringUtils.isNotBlank(abstractOrderModel.getDeliveryNotes())  ? abstractOrderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
