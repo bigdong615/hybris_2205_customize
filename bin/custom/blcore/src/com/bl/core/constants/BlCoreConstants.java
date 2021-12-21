@@ -537,6 +537,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHIPPED = "SHIPPED";
 	public static final String IN_HOUSE = "IN_HOUSE";
 	public static final String ADDED_TO_CART = "ADDED_TO_CART";
+	
+	public static final String SYNC_ACTIVE_PROPERTY = "catalog.sync.active";
 
 	public static final int NAME_LENGTH_SIZE = 48;
 
