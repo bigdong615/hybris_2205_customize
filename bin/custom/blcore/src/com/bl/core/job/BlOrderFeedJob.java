@@ -35,7 +35,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
     try {
      final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForOrderFeedToFTP();
       BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
-      if(CollectionUtils.isNotEmpty(orderModelList)) {
+      if(CollectionUtils.isNotEmpty((orderModelList))) {
         getDefaultBlESPFTPService().convertOrderIntoXML(orderModelList);
       }
     }
