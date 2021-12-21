@@ -1663,11 +1663,6 @@
                        <modifiers read="true" search="true" write="true" optional="true"/>
                        <description>Product Display Name</description>
                      </attribute>
-                     <attribute qualifier="name" type="java.lang.String" redeclare="true">
-                       <persistence type="property" />
-                       <modifiers read="true" search="true" write="true" optional="true"/>
-                       <description>Product localized Name</description>
-                     </attribute>
                      <attribute qualifier="mpn" type="java.lang.String" redeclare="true">
                        <persistence type="property" />
                        <modifiers read="true" write="true" optional="true" initial="true"/>
