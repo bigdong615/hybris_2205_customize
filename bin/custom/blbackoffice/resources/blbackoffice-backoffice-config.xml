@@ -2486,8 +2486,6 @@
 			<editorArea:tab name="hmc.tab.blRepair.log.tech.eng.tab" position="2">
 				<editorArea:section name="hmc.section.blSerial.attributes">
 					<editorArea:attribute qualifier="repairReasons"/>
-					<editorArea:attribute qualifier="otherRepairReasons"/>
-					<editorArea:attribute qualifier="notesForIssue"/>
 					<editorArea:attribute qualifier="conditionRating"/>
 					<editorArea:attribute qualifier="lastUserChangedConditionRating" readonly="true"/>
 					<editorArea:attribute qualifier="frequency"/>
@@ -2495,10 +2493,28 @@
 					<editorArea:attribute qualifier="blame"/>
 					<editorArea:attribute qualifier="issueLocation"/>
 				</editorArea:section>
+				<editorArea:section name="hmc.section.blSerial.repair.note">
+				<editorArea:panel colspan="2" name="Repair Log" rowspan="2">
+				<editorArea:attribute qualifier="otherRepairReasons">
+						<editorArea:editor-parameter>
+		    				<editorArea:name>rows</editorArea:name>
+		     				<editorArea:value>10</editorArea:value>
+	 					</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="notesForIssue">
+						<editorArea:editor-parameter>
+		    				<editorArea:name>rows</editorArea:name>
+		     				<editorArea:value>10</editorArea:value>
+	 					</editorArea:editor-parameter>
+					</editorArea:attribute>
+					</editorArea:panel>
+				</editorArea:section>
 			</editorArea:tab>
 			<editorArea:tab name="hmc.tab.blRepair.log.assessment.notes.tab" position="3">
-				<editorArea:section name="hmc.section.blSerial.attributes">
+				<editorArea:section name="hmc.section.blSerial.assessment.note">
+				<editorArea:panel colspan="2" name="Assessment Note" rowspan="2">
 					<editorArea:attribute qualifier="assessmentNotes"/>
+				</editorArea:panel>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
