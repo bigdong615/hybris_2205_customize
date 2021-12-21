@@ -1663,29 +1663,37 @@
                        <modifiers read="true" search="true" write="true" optional="true"/>
                        <description>Product Display Name</description>
                      </attribute>
+                     <attribute autocreate="true" qualifier="name" type="localized:java.lang.String" redeclare="true">
+                     	<modifiers read="true" write="true" search="true" optional="true" />
+                     	<persistence type="property" />
+						<custom-properties>
+							<property name="hmcIndexField">
+								<value>"thefield"</value>
+							</property>
+						</custom-properties>
+					</attribute>
                      <attribute qualifier="mpn" type="java.lang.String" redeclare="true">
                        <persistence type="property" />
-                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <modifiers read="true" write="true" optional="true"/>
                        <description>Manufactuer's part number</description>
                      </attribute>
                      <attribute qualifier="upc" type="java.lang.String" redeclare="true">
                        <persistence type="property" />
-                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <modifiers read="true" write="true" optional="true"/>
                        <description>UPC code for the BL Product</description>
                      </attribute>
                      <attribute qualifier="procurementSource" type="java.lang.String" redeclare="true">
                        <persistence type="property" />
-                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <modifiers read="true" write="true" optional="true"/>
                        <description>Link or number for the item at the source we can purchase replacements</description>
                      </attribute>
                      <attribute qualifier="procurementCost" type="java.math.BigDecimal" redeclare="true">
                        <persistence type="property"/>
-                       <modifiers read="true" write="true" optional="true" initial="true"/>
+                       <modifiers read="true" write="true" optional="true"/>
                        <description>Starting base price for the sku for used gear sales of all serials</description>
                      </attribute>
                      <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
-                       <modifiers read="true" write="true" search="true" optional="true"
-                         initial="true"/>
+                       <modifiers read="true" write="true" search="true" optional="true"/>
                        <persistence type="property"/>
                        <custom-properties>
                          <property name="hmcIndexField"><value>"thefield"</value></property>
