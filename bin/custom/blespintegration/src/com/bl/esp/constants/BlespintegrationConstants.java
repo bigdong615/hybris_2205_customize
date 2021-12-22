@@ -21,11 +21,21 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ESP_EVENT_ACCESS_SCOPE = "esp.event.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
 
 
-	public static final String SFTPHOST = "host:IP";
+	public static final String SFTPHOST = "ftp.s10.exacttarget.com";
 	public static final int SFTPPORT = 22;
 	public static final String SFTPUSER = "ftp.user.name";
 	public static final String SFTPPASS = "ftp.user.password";
-	public static final String SFTPWORKINGDIR = "ftp.file.path";
+	public static final String SFTPWORKINGDIR = "/newbl/bl/bin/custom/testxml/";
+	public static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
+	public static final String XML_INDENT_SIZE = "xml.indent.size";
+	public static final String YES = "yes";
+	public static final String FILE_FORMAT = "yyyyMMddHHmm";
+	public static final String FILE_SUFFIX = ".xml";
+	public static final String LOCAL_FTP_PATH = "local.ftp.file.path";
+	public static final String STICT_HOST_KEY = "StrictHostKeyChecking";
+	public static final String NO = "no";
+	public static final String SFTP = "sftp";
+	public static final String CLIENT_FTP_PATH = "client.ftp.file.path";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
@@ -75,7 +85,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String BILLING_GIFT_CARD_BALANCE = "giftcardbalance";
 	public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
 	public static final String OLD_ORDER_ID = "old order id";
-	public static final String ORDER_ITEM_ID = "Order Item Id";
+	public static final String ORDER_ITEM_ID = "OrderItemId";
 
 	public static final String PRODUCT_CATALOG = "catalog";
 	public static final String VERSION = "version";
@@ -84,39 +94,40 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String COLON = ":";
 	public static final String ONLINE = "Online";
 
-	public static final String ORDER_ID = "Order Id";
+	public static final String ORDER_ID = "OrderId";
 	public static final String TEMPLATE="Template";
-	public static final String SUBSCRIBER_ID="Subscriber Id";
-	public static final String EMAIL_ADDRESS="Email Address";
+	public static final String SUBSCRIBER_ID="SubscriberId";
+	public static final String EMAIL_ADDRESS="EmailAddress";
 	public static final String TYPE="Type";
 	public static final String REPLACEMENT="Replacement";
 	public static final String STATUS = "Status";
-	public static final String DATE_PLACED="Date Placed";
-	public static final String SHIPPING_METHOD_TYPE="Shipping Method Type";
-	public static final String SHIPPING_METHOD="Shipping Method";
-	public static final String SHIPPING_METHOD_TEXT="Shipping Method Text";
-	public static final String TRACKING_INFO="Tracking Info";
-	public static final String ITEM_COST="Item Cost";
-	public static final String DAMAGE_WAIVER_COST="Damage Waiver Cost";
+	public static final String DATE_PLACED="DatePlaced";
+	public static final String SHIPPING_METHOD_TYPE="ShippingMethodType";
+	public static final String SHIPPING_METHOD="ShippingMethod";
+	public static final String SHIPPING_METHOD_TEXT="ShippingMethodText";
+	public static final String TRACKING_INFO="TrackingInfo";
+	public static final String ITEM_COST="ItemCost";
+	public static final String DAMAGE_WAIVER_COST="DamageWaiverCost";
 	public static final String SUB_TOTAL="Subtotal";
-	public static final String SHIPPING_AMOUNT="Shipping Amount";
-	public static final String TAX_AMOUNT="Tax Amount";
-	public static final String DISCOUNT_AMOUNT="Discount Amount";
-	public static final String TOTAL_COST="Total Cost";
-	public static final String DISCOUNT_TEXT="Discount Text";
-	public static final String EXPECTED_SHIPPING_DATE="Expected Shipping Date";
-	public static final String ARRIVAL_DATE="Arrival Date";
-	public static final String RETURN_DATE="Return Date";
-	public static final String ACTUAL_RETURN_DATE="Actual Return Date";
-	public static final String RENTAL_DURATION="Rental Duration";
-	public static final String CUSTOMER_NAME="Customer Name";
-	public static final String VERIFICATION_LEVEL="Verification Level";
-	public static final String COI_AMOUNT="COI Amount";
-	public static final String COI_EXPIRATION_DATE="COI Expiration Date";
-	public static final String TOTAL_VALUE="Total Value";
-	public static final String PAYMENT_TYPE="Payment Type";
-	public static final String PAYMENT_TEXT="Payment Text";
-	public static final String EXTENSION_AMOUNT="Extension Amount";
+	public static final String SHIPPING_AMOUNT="ShippingAmount";
+	public static final String TAX_AMOUNT="TaxAmount";
+	public static final String DISCOUNT_AMOUNT="DiscountAmount";
+	public static final String TOTAL_COST="TotalCost";
+	public static final String DISCOUNT_TEXT="DiscountText";
+	public static final String EXPECTED_SHIPPING_DATE="ExpectedShippingDate";
+	public static final String ARRIVAL_DATE="ArrivalDate";
+	public static final String RETURN_DATE="ReturnDate";
+	public static final String ACTUAL_RETURN_DATE="ActualReturnDate";
+	public static final String RENTAL_DURATION="RentalDuration";
+	public static final String CUSTOMER_NAME="CustomerName";
+	public static final String VERIFICATION_LEVEL="VerificationLevel";
+	public static final String COI_AMOUNT="COIAmount";
+	public static final String COI_EXPIRATION_DATE="COIExpirationDate";
+	public static final String TOTAL_VALUE="TotalValue";
+	public static final String PAYMENT_TYPE="PaymentType";
+	public static final String PAYMENT_TEXT="PaymentText";
+	public static final String EXTENSION_AMOUNT="ExtensionAmount";
+	public static final String OLD_ORDER = "oldorderid";
 
 	public static final String GIFT_CARD_ORDER = "GC";
 	public static final String NEW_GEAR_ORDER = "New Gear";
@@ -127,6 +138,11 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 
 	public static final String PAY_PAL_PROVIDER  = "BrainTreePayPalExpress";
 	public static final String PAY_PAL = "Paypal";
+
+	public static final String ORDER_ITEM_ROOT = "orderitem";
+	public static final String ORDERS = "Orders";
+	public static final String ORDER = "Order";
+
 
 
 

@@ -95,10 +95,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
 			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})}}) o";
 
-	private static final String ORDERS_TO_FEED_FTP  = "SELECT {" + ItemModel.PK + "} FROM {"
+	private static final String ORDERS_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE + "} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate ";
 
-	private static final String ORDERS_BILL_TO_FEED_FTP  = "SELECT {" + ItemModel.PK + "} FROM {"
+	private static final String ORDERS_BILL_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE + "} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate";
 
 

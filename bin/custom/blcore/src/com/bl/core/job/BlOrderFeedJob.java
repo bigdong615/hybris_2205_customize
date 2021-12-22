@@ -35,11 +35,12 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
     try {
      final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForOrderFeedToFTP();
       BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
-      if(CollectionUtils.isNotEmpty(orderModelList)) {
+      if(CollectionUtils.isNotEmpty((orderModelList))) {
         getDefaultBlESPFTPService().convertOrderIntoXML(orderModelList);
       }
     }
     catch (final Exception e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while executing perform method" , e);
       return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
 
     }
