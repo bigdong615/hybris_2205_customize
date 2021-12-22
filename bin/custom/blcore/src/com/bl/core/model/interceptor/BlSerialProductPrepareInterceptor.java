@@ -26,11 +26,13 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +56,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private BlConsignmentEntryService blConsignmentEntryService;
 	private BlOrderService blOrderService;
 	private BlProductService blProductService;
+	private SessionService sessionService;
 
 	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
@@ -164,8 +167,10 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			final InterceptorContext ctx)
 	{
 		try {
+			final boolean isSyncActive = BooleanUtils
+					.toBoolean((Boolean) getSessionService().getCurrentSession().getAttribute(BlCoreConstants.SYNC_ACTIVE_PROPERTY));
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.WAREHOUSELOCATION);
-			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
+			if (!isSyncActive && null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
 					blSerialProduct.getWarehouseLocation() != null) {
 					getBlStockService().findAndUpdateWarehouseInStockRecords(blSerialProduct);
 			}
@@ -735,5 +740,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void setBlProductService(BlProductService blProductService)
 	{
 		this.blProductService = blProductService;
+	}
+
+	/**
+	 * @return the sessionService
+	 */
+	public SessionService getSessionService()
+	{
+		return sessionService;
+	}
+
+	/**
+	 * @param sessionService the sessionService to set
+	 */
+	public void setSessionService(SessionService sessionService)
+	{
+		this.sessionService = sessionService;
 	}
 }

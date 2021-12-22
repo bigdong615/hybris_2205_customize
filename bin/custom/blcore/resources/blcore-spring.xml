@@ -660,6 +660,7 @@
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="blOrderService" ref="blOrderService"/>
 		<property name="blProductService" ref="productService"/>
+		<property name="sessionService" ref="sessionService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
