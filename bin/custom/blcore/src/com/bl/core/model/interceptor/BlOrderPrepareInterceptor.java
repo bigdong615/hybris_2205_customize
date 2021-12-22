@@ -142,8 +142,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
     // To set Modified Order Date
 		if (interceptorContext.isNew(abstractOrderModel)  ||
-				(Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE) ||
-						Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE))||
+				(Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE)) ||
+						(getDefaultBlUserService().isCsUser() && Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE)))||
 				checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
 			abstractOrderModel.setOrderModifiedDate(new Date());
 		}

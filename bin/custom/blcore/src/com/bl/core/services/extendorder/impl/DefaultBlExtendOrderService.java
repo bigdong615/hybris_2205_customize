@@ -82,7 +82,6 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       }
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
-      originalOrder.setOrderModifiedDate(new Date());
       saveAndRefreshModel(originalOrder);
       return extendOrderModel;
   }
@@ -144,6 +143,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
           .equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
+      extendOrderModel.setOrderModifiedDate(new Date());
       saveAndRefreshModel(extendOrderModel);
       setExtendedOrderCopyListToOrder(originalOrder , extendOrderModel);
       originalOrder.setExtendedOrderCopy(null);
