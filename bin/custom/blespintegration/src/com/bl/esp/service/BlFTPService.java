@@ -9,5 +9,4 @@ public interface BlFTPService {
   /**
    * This method created to send file to FTP
    */
-  void sendFileTOFTP();
 }
