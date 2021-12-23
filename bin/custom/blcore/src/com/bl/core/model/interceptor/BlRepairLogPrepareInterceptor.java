@@ -66,13 +66,13 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 			if (interceptorContext.isNew(blRepairLogModel))
 			{
 				BlSerialProductModel blSerialProductModel = null;
-				if(StringUtils.isNotBlank(itemBarcode))
-				{
-					blSerialProductModel = getBlProductDao().getSerialByBarcode(itemBarcode);
-				}
-				else if(StringUtils.isNotBlank(serialCode))
+				if(StringUtils.isNotBlank(serialCode))
 				{
 					blSerialProductModel = getBlProductDao().getSerialBySerialCode(serialCode);
+				}
+				else if(StringUtils.isNotBlank(itemBarcode))
+				{
+					blSerialProductModel = getBlProductDao().getSerialByBarcode(itemBarcode);
 				}
 				if (Objects.isNull(blSerialProductModel))
 				{
