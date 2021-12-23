@@ -50,4 +50,11 @@ public interface BlConsignmentEntryService
 	 *           the serial product models
 	 */
 	void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry, final AbstractOrderEntryModel orderEntry);
+	
+	/**
+	 * Assign serial and order code on billing charges.
+	 *
+	 * @param consignmentEntryModel the consignment entry model
+	 */
+	void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel);
 }

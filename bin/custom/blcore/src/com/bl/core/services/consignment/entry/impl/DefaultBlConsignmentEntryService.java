@@ -20,6 +20,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -33,6 +34,7 @@ import java.util.Set;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -351,6 +353,58 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 				"Product option with name {} added to the options list on consignment entry with consignment code {}",
 				optionsModel.getName(), consignmentEntry.getConsignment().getCode());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		if (Objects.nonNull(consignmentEntryModel) && MapUtils.isNotEmpty(consignmentEntryModel.getBillingCharges()))
+		{
+			final String orderCode = getOrderCodeFromConsignmentEntry(consignmentEntryModel);
+			doSetSerialAndOrderCodeOnCharges(consignmentEntryModel, orderCode);
+		}
+	}
+
+	/**
+	 * Do set serial and order code on charges.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 * @param orderCode
+	 *           the order code
+	 */
+	private void doSetSerialAndOrderCodeOnCharges(final ConsignmentEntryModel consignmentEntryModel, final String orderCode)
+	{
+		consignmentEntryModel.getBillingCharges().forEach((serialCode, listOfCharges) -> {
+			if (CollectionUtils.isNotEmpty(listOfCharges))
+			{
+				listOfCharges.forEach(charge -> {
+					charge.setOrderCode(orderCode);
+					charge.setSerialCode(serialCode);
+					getModelService().save(charge);
+				});
+			}
+		});
+	}
+
+	/**
+	 * Gets the order code from consignment entry.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @return the order code from consignment entry
+	 */
+	private String getOrderCodeFromConsignmentEntry(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		return Objects.nonNull(consignmentEntryModel) && Objects.nonNull(consignmentEntryModel.getConsignment())
+				&& Objects.nonNull(consignmentEntryModel.getConsignment().getOrder())
+						? consignmentEntryModel.getConsignment().getOrder().getCode()
+						: StringUtils.EMPTY;
 	}
 
 	/**
