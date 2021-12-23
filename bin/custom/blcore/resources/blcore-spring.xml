@@ -660,6 +660,7 @@
 		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 		<property name="blOrderService" ref="blOrderService"/>
 		<property name="blProductService" ref="productService"/>
+		<property name="sessionService" ref="sessionService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1280,6 +1281,7 @@
 	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
 	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 	
 	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->
