@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -72,44 +73,12 @@ public class DefaultBlESPFTPService implements BlFTPService {
   private CatalogVersionService catalogVersionService;
 
   /**
-   *  {@inheritDoc}  
-   */
-  @Override
-  public void sendFileTOFTP() {
-    Session session = null;
-    Channel channel = null;
-    ChannelSftp channelSftp = null;
-    try {
-      JSch jsch = new JSch();
-      session = jsch.getSession(BlespintegrationConstants.SFTPUSER, BlespintegrationConstants.SFTPHOST,
-          BlespintegrationConstants.SFTPPORT);
-      session.setPassword(BlespintegrationConstants.SFTPPASS);
-      java.util.Properties config = new java.util.Properties();
-      config.put("StrictHostKeyChecking", "no");
-      session.setConfig(config);
-      session.connect();
-      channel = session.openChannel("sftp");
-      channel.connect();
-      channelSftp = (ChannelSftp) channel;
-      channelSftp.cd(BlespintegrationConstants.SFTPWORKINGDIR);
-      File f = new File("");
-      channelSftp.put(new FileInputStream(f), f.getName());
-    } catch (final Exception ex) {
-      BlLogger.logMessage(LOG , Level.ERROR , "Error while performing sendFileTOFTP:-" , ex);
-    } finally {
-      channelSftp.exit();
-      channel.disconnect();
-      session.disconnect();
-    }
-  }
-
-  /**
    * This method created to convert order into XML
    * @param abstractOrderModels list of orders
    * @throws ParserConfigurationException ParserConfigurationException
    */
   public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels)
-      throws ParserConfigurationException {
+      throws ParserConfigurationException, JAXBException {
     final Document orderItemsInXMLDocument = createNewXMLDocument();
     final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlespintegrationConstants.ORDERS);
 
@@ -155,13 +124,10 @@ public class DefaultBlESPFTPService implements BlFTPService {
         channelSftp.cd(Config.getParameter(BlespintegrationConstants.CLIENT_FTP_PATH));
         File f = new File(completefileName.toAbsolutePath().toString());
         channelSftp.put(new FileInputStream(f), f.getName());
-      } catch (JSchException ex) {
+      } catch (JSchException | SftpException |FileNotFoundException ex) {
         BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
-      } catch (SftpException ex) {
-        BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
-      } catch (FileNotFoundException ex) {
-        BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
-      } finally {
+      }
+      finally {
         if (null != channelSftp) {
           channelSftp.disconnect();
           channelSftp.exit();
@@ -173,8 +139,6 @@ public class DefaultBlESPFTPService implements BlFTPService {
           session.disconnect();
         }
       }
-
-
 
     }
     catch (final TransformerException | IOException e) {
@@ -220,7 +184,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
           BlespintegrationConstants.SHIPPING_METHOD_TEXT, getRequestValue(delivery.getName()));
     }
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.TRACKING_INFO, StringUtils.EMPTY);
+        BlespintegrationConstants.TRACKING_INFO, getTrackingInfoFromOrder(abstractOrderModel));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.ITEM_COST, String.valueOf(getDoubleValueForRequest(abstractOrderModel.getTotalPrice())));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
@@ -256,7 +220,8 @@ public class DefaultBlESPFTPService implements BlFTPService {
         BlespintegrationConstants.COI_AMOUNT, String.valueOf(0.0));
     final CustomerModel user = (CustomerModel) abstractOrderModel.getUser();
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.COI_EXPIRATION_DATE,String.valueOf(user.getCoiExpirationDate()));
+        BlespintegrationConstants.COI_EXPIRATION_DATE, Objects.nonNull(user.getCoiExpirationDate()) ?
+            String.valueOf(user.getCoiExpirationDate()) : StringUtils.EMPTY);
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.TOTAL_VALUE,String.valueOf(abstractOrderModel.getSubtotal()));
 
@@ -264,7 +229,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
       final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) abstractOrderModel.getPaymentInfo();
       createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
           BlespintegrationConstants.TOTAL_VALUE,StringUtils.equalsIgnoreCase(BlespintegrationConstants.PAY_PAL_PROVIDER,brainTreePaymentInfoModel.getPaymentProvider())
-              ? BlespintegrationConstants.PAY_PAL :checkIsGiftCardUsed(abstractOrderModel,getRequestValue(brainTreePaymentInfoModel.getPaymentProvider())));
+              ? BlespintegrationConstants.PAY_PAL :getRequestValue(brainTreePaymentInfoModel.getPaymentProvider()));
     }
     else if(StringUtils.isNotBlank(abstractOrderModel.getPoNumber())){
       createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
@@ -285,6 +250,8 @@ public class DefaultBlESPFTPService implements BlFTPService {
    */
   private void createOrderShippingInfo(final AbstractOrderModel abstractOrderModel, final Document orderItemsInXMLDocument, final Element rootOrderItems) {
     final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlespintegrationConstants.SHIPPING_ROOT_ELEMENT);
+    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+        BlespintegrationConstants.ORDER_ID, getRequestValue(abstractOrderModel.getCode()));
     if (Objects.nonNull(abstractOrderModel.getDeliveryAddress())) {
       final AddressModel shippingAddress = abstractOrderModel.getDeliveryAddress();
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
@@ -322,7 +289,6 @@ public class DefaultBlESPFTPService implements BlFTPService {
     final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlespintegrationConstants.BILLING_ROOT_ELEMENT);
     if(Objects.nonNull(orderModel.getPaymentInfo()) && Objects.nonNull(orderModel.getPaymentInfo().getBillingAddress())){
     final AddressModel billingAddress = orderModel.getPaymentInfo().getBillingAddress();
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.ORDER_ITEM_PRODUCT_CODE, "");
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_FIRST_NAME,
         getRequestValue(billingAddress.getFirstname()));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_LAST_NAME,
@@ -360,7 +326,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
   private void createOrderItems(final AbstractOrderModel abstractOrderModel, final Document orderItemsInXMLDocument,
       final Element rootOrderItems) {
     final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument, rootOrderItems, BlespintegrationConstants.ORDER_ITEM_ROOT_ELEMENT);
-      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.OLD_ORDER, StringUtils.EMPTY);
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.ORDER_ID, getRequestValue(abstractOrderModel.getCode()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.ORDER_ITEM_ID, getRequestValue(abstractOrderModel.getCode()));
     if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
       for (final AbstractOrderEntryModel entryModel : abstractOrderModel.getEntries()) {
@@ -398,10 +364,9 @@ public class DefaultBlESPFTPService implements BlFTPService {
 
   /**
    * This method check Gift card payment type
-   * @param orderModel
    * @return string
    */
-  protected String checkIsGiftCardUsed(final AbstractOrderModel orderModel , final String creditCart){
+  protected String checkIsGiftCardUsed(final String creditCart){
     final StringBuilder paymentType= new StringBuilder();
     return paymentType.append(creditCart).toString();
   }
@@ -672,6 +637,27 @@ public class DefaultBlESPFTPService implements BlFTPService {
     final LocalDate localStartDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     final LocalDate localEndDate = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     return ChronoUnit.DAYS.between(localStartDate, localEndDate);
+  }
+
+  /**
+   * This method created to get tracking numbers from order model
+   * @param abstractOrderModel order model
+   * @return tracking numbers
+   */
+  private String getTrackingInfoFromOrder(final AbstractOrderModel abstractOrderModel) {
+    final StringBuilder stringBuilder = new StringBuilder();
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
+      abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+        if(CollectionUtils.isNotEmpty(consignmentModel.getPackaginginfos())){
+          consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
+            if(StringUtils.isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber())) {
+              stringBuilder.append(packagingInfoModel.getOutBoundTrackingNumber()).append(BlespintegrationConstants.COMMA);
+            }
+          });
+        }
+      });
+    }
+    return stringBuilder.toString();
   }
 
   public ProductService getProductService() {

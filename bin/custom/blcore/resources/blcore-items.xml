@@ -2458,6 +2458,11 @@
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity allocated in both warehouses through reshuffler job</description>
             </attribute>
+            <attribute qualifier="updatedTime" type="java.util.Date">
+              <persistence type="property" />
+              <modifiers read="true" write="true" optional="true" />
+              <description>To identify whether the order/Order Bill is modified or not</description>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>
@@ -3076,8 +3081,13 @@
                   <attribute qualifier="orderBillModifiedDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
-                    <description>To identify whether the order is modified or not</description>
+                    <description>To identify whether the order Bill is modified or not</description>
                   </attribute>
+              <attribute qualifier="updatedTime" type="java.util.Date">
+                <persistence type="property" />
+                <modifiers read="true" write="true" optional="true" />
+                <description>To identify whether the order/Order Bill is modified or not</description>
+              </attribute>
                 </attributes>
             </itemtype>
 

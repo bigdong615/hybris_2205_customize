@@ -75,6 +75,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       // clone consignment and consignment entries for extend order
       cloneConsignmentForExtendOrder(originalOrder , clonedList);
       extendOrderModel.setConsignments(clonedList);
+    extendOrderModel.setOrderModifiedDate(null);
       saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
       if(CollectionUtils.isNotEmpty(originalOrder.getOrderNotes())) {
@@ -143,7 +144,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
           .equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
-      extendOrderModel.setOrderModifiedDate(new Date());
+      originalOrder.setOrderModifiedDate(new Date());
       saveAndRefreshModel(extendOrderModel);
       setExtendedOrderCopyListToOrder(originalOrder , extendOrderModel);
       originalOrder.setExtendedOrderCopy(null);

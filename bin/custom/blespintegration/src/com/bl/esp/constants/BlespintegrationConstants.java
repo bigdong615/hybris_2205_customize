@@ -142,7 +142,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ORDER_ITEM_ROOT = "orderitem";
 	public static final String ORDERS = "Orders";
 	public static final String ORDER = "Order";
-
+	public static final String COMMA = ",";
 
 
 
