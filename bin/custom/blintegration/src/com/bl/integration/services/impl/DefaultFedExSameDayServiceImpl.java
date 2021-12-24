@@ -78,8 +78,8 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			// This condtion will get remove once proxy server issue get resolved
 			if (BooleanUtils.isTrue(mockEnable))
 			{
-				if (sameDayCityReqData.getDeliveryAddressZipCode().equals("95054")
-						|| sameDayCityReqData.getDeliveryAddressZipCode().equals("10109"))
+				if (sameDayCityReqData.getDeliveryAddressZipCode().equals(BlintegrationConstants.DELIVERY_ZIP_CODE_SF)
+						|| sameDayCityReqData.getDeliveryAddressZipCode().equals(BlintegrationConstants.DELIVERY_ZIP_CODE_NYC))
 				{
 					sameDayCityResData.setServiceApplicable(true);
 					return sameDayCityResData;
@@ -87,7 +87,8 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			}
 			else
 			{
-				if (response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 201)
+				if (response.getStatusLine().getStatusCode() == BlintegrationConstants.STATUS_CODE_200
+						|| response.getStatusLine().getStatusCode() == BlintegrationConstants.STATUS_CODE_201)
 				{
 					final JSONObject jsonObj = new JSONObject(result);
 					sameDayCityResData.setServiceApplicable(jsonObj.getBoolean("available"));
@@ -109,7 +110,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 		}
 		catch (final IOException | URISyntaxException | JSONException ex)
 		{
-			sameDayCityResData.setErrorCode(400);
+			sameDayCityResData.setErrorCode(BlintegrationConstants.STATUS_CODE_400);
 			sameDayCityResData.setErrorResponse(ex.getMessage());
 			sameDayCityResData.setServiceApplicable(null);
 			BlLogger.logMessage(LOG, Level.ERROR, "************* IO Exception occure at : " + ex);
