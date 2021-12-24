@@ -9,8 +9,12 @@ import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import de.hybris.platform.util.Config;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -24,6 +28,8 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
 
   private BlOrderDao orderDao;
   private DefaultBlESPFTPService defaultBlESPFTPService;
+  String string = "${HYBRIS_TEMP_DIR}/blorderfeed/";
+
 
   /**
    * This method created to perform the ESP order feed
@@ -35,6 +41,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
     try {
      final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForOrderFeedToFTP();
       BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
+
       if(CollectionUtils.isNotEmpty((orderModelList))) {
         getDefaultBlESPFTPService().convertOrderIntoXML(orderModelList);
       }

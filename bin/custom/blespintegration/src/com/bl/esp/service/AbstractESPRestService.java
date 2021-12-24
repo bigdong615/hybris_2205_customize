@@ -166,7 +166,6 @@ public abstract class AbstractESPRestService<T extends ESPEventCommonRequest> {
 
       requestString = getMapper().writerWithDefaultPrettyPrinter()
           .writeValueAsString(orderConfirmationEventRequest);
-      System.out.println(requestString);
 
       final String sendOrderConfirmationUrl = getEventApiURL();
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Triggering Event API request URL : {} ", sendOrderConfirmationUrl);

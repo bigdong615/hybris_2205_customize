@@ -25,13 +25,12 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final int SFTPPORT = 22;
 	public static final String SFTPUSER = "ftp.user.name";
 	public static final String SFTPPASS = "ftp.user.password";
-	public static final String SFTPWORKINGDIR = "/newbl/bl/bin/custom/testxml/";
 	public static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
 	public static final String XML_INDENT_SIZE = "xml.indent.size";
 	public static final String YES = "yes";
 	public static final String FILE_FORMAT = "yyyyMMddHHmm";
 	public static final String FILE_SUFFIX = ".xml";
-	public static final String LOCAL_FTP_PATH = "local.ftp.file.path";
+	public static final String LOCAL_FTP_PATH = "local.sftp.file.path";
 	public static final String STICT_HOST_KEY = "StrictHostKeyChecking";
 	public static final String NO = "no";
 	public static final String SFTP = "sftp";
@@ -146,6 +145,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ORDERS = "Orders";
 	public static final String ORDER = "Order";
 	public static final String COMMA = ",";
+	public static final String SLASH = "/";
 
 
 
