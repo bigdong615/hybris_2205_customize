@@ -28,8 +28,6 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
 
   private BlOrderDao orderDao;
   private DefaultBlESPFTPService defaultBlESPFTPService;
-  String string = "${HYBRIS_TEMP_DIR}/blorderfeed/";
-
 
   /**
    * This method created to perform the ESP order feed

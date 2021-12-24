@@ -47,10 +47,10 @@ public class BlAddressValidateInterceptor implements ValidateInterceptor<Address
 		final String lastName = ObjectUtils.defaultIfNull(addressModel.getLastname(), StringUtils.EMPTY);
 		final int nameLength = firstName.length() + lastName.length();
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Length of first name and last name is : {}", nameLength);
-		/*if (nameLength > BlCoreConstants.NAME_LENGTH_SIZE)
+		if (nameLength > BlCoreConstants.NAME_LENGTH_SIZE)
 		{
 			throw new InterceptorException("Combined length of First Name and Last Name should not be more than 48 characters");
-		}*/
+		}
 	}
 
 }
