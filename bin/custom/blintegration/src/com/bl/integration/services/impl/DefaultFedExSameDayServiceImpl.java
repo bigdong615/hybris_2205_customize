@@ -39,7 +39,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 	@Value("${blintegration.fedex.request.uri}")
 	private String requestURI;
 
-	@Value("${blintegration.fedex.api.key}")
+	@Value("${blintegration.fedex.same.day.api.key}")
 	private String apiKey;
 
 	@Value("${blintegration.fedex.samedaycity.mock.enable}")
