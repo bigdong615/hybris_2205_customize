@@ -3,7 +3,6 @@ package com.bl.core.esp.populators;
 import com.bl.core.enums.DocumentType;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.enums.VerificationStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.constants.BlespintegrationConstants;

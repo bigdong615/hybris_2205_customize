@@ -19,8 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -66,78 +64,66 @@ public class DefaultBlESPFTPService implements BlFTPService {
     orderFeedData.setElement(rootOrderItems);
     try {
       abstractOrderModels.forEach(abstractOrderModel -> getBlOrderFeedPopulator().populate(abstractOrderModel ,orderFeedData));
-      final Transformer transformer = TransformerFactory.newInstance().newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, BlespintegrationConstants.YES);
-      transformer.setOutputProperty(BlespintegrationConstants.XML_INDENT, Config.getParameter(BlespintegrationConstants.XML_INDENT_SIZE));
-      final StreamResult result = new StreamResult(new StringWriter());
-      final  DOMSource source = new DOMSource(orderFeedData.getData());
-      transformer.transform(source, result);
-      final String xmlString = result.getWriter().toString();
-
-
+      final String xmlString = covertXMLIntoString(orderFeedData);
       final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
       final String fileName = BlespintegrationConstants.FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.FILE_SUFFIX;
-
       final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
-      final File directory = new File(path);
-      if (!directory.exists()){
-        directory.mkdirs();
-      }
+      createDirectoryForFTPFeed(path);
       final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
-      try{
-        final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-        final BufferedWriter bw = new BufferedWriter(fw);
-         bw.write(xmlString);
-        bw.close();
-        fw.close();
-      }
-      catch (final IOException e){
-        BlLogger.logMessage(LOG , Level.ERROR , "Error while excuting convertOrderIntoXML" , e);
-      }
-
-      Session session = null;
-        Channel channel = null;
-        ChannelSftp channelSftp = null;
-      try {
-        final JSch jsch = new JSch();
-        session = jsch.getSession(Config.getParameter(BlespintegrationConstants.SFTPUSER),
-            BlespintegrationConstants.SFTPHOST,
-            BlespintegrationConstants.SFTPPORT);
-        session.setPassword(Config.getParameter(BlespintegrationConstants.SFTPPASS));
-        final Properties config = new Properties();
-        config.put(BlespintegrationConstants.STICT_HOST_KEY, BlespintegrationConstants.NO);
-        session.setConfig(config);
-        session.connect();
-        channel = session.openChannel(BlespintegrationConstants.SFTP);
-        channel.connect();
-        channelSftp = (ChannelSftp) channel;
-        channelSftp.cd(Config.getParameter(BlespintegrationConstants.CLIENT_FTP_PATH));
-        final File f = new File(file.getAbsolutePath());
-        FileInputStream fileInputStream = new FileInputStream(f);
-        channelSftp.put(fileInputStream, f.getName());
-      } catch (JSchException | SftpException | IOException ex) {
-        BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
-      }
-      finally {
-
-        if (null != channelSftp) {
-          channelSftp.disconnect();
-          channelSftp.exit();
-        }
-        if (null != channel) {
-          channel.disconnect();
-        }
-        if (null != session) {
-          session.disconnect();
-        }
-      }
-
+      writeFeedRequestToFile(file , xmlString);
+      sendFileToFTPLocation(file);
     }
     catch (final TransformerException e) {
       BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
 
     }
 
+  }
+
+
+  /**
+   * This method created to convert XML into string
+   * @param orderFeedData order feed data
+   * @return string
+   * @throws TransformerException TransformerException
+   */
+  private String covertXMLIntoString(final OrderFeedData orderFeedData) throws TransformerException {
+    final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    transformer.setOutputProperty(OutputKeys.INDENT, BlespintegrationConstants.YES);
+    transformer.setOutputProperty(BlespintegrationConstants.XML_INDENT, Config.getParameter(BlespintegrationConstants.XML_INDENT_SIZE));
+    final StreamResult result = new StreamResult(new StringWriter());
+    final  DOMSource source = new DOMSource(orderFeedData.getData());
+    transformer.transform(source, result);
+    return result.getWriter().toString();
+  }
+
+  /**
+   * This method created to write xml into local file
+   * @param file local file to send to FTP feed
+   * @param xmlString xml
+   */
+  private void writeFeedRequestToFile(final File file, final String xmlString) {
+    try{
+      final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+      try (BufferedWriter bw = new BufferedWriter(fw)) {
+        bw.write(xmlString);
+      }
+      fw.close();
+    }
+    catch (final IOException e){
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while excuting convertOrderIntoXML" , e);
+    }
+  }
+
+  /**
+   * This method created to create specific directory
+   * @param path path to be craete
+   */
+  private void createDirectoryForFTPFeed(final String path) {
+    final File directory = new File(path);
+    if (!directory.exists()){
+      directory.mkdirs();
+    }
   }
 
 
@@ -173,5 +159,45 @@ public class DefaultBlESPFTPService implements BlFTPService {
     this.blOrderFeedPopulator = blOrderFeedPopulator;
   }
 
+
+  private void sendFileToFTPLocation(File file){
+    Session session = null;
+    Channel channel = null;
+    ChannelSftp channelSftp = null;
+    try {
+      final JSch jsch = new JSch();
+      session = jsch.getSession(Config.getParameter(BlespintegrationConstants.SFTPUSER),
+          BlespintegrationConstants.SFTPHOST,
+          BlespintegrationConstants.SFTPPORT);
+      session.setPassword(Config.getParameter(BlespintegrationConstants.SFTPPASS));
+      final Properties config = new Properties();
+      config.put(BlespintegrationConstants.STICT_HOST_KEY, BlespintegrationConstants.NO);
+      session.setConfig(config);
+      session.connect();
+      channel = session.openChannel(BlespintegrationConstants.SFTP);
+      channel.connect();
+      channelSftp = (ChannelSftp) channel;
+      channelSftp.cd(Config.getParameter(BlespintegrationConstants.CLIENT_FTP_PATH));
+      final File f = new File(file.getAbsolutePath());
+      try (FileInputStream fileInputStream = new FileInputStream(f)) {
+        channelSftp.put(fileInputStream, f.getName());
+      }
+    } catch (JSchException | SftpException | IOException ex) {
+      BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
+    }
+    finally {
+
+      if (null != channelSftp) {
+        channelSftp.disconnect();
+        channelSftp.exit();
+      }
+      if (null != channel) {
+        channel.disconnect();
+      }
+      if (null != session) {
+        session.disconnect();
+      }
+    }
+  }
 
 }
