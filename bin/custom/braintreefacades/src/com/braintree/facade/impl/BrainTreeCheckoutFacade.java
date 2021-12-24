@@ -560,6 +560,9 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public Map<String,List<String>> setPayBillFlagTrue(final AbstractOrderModel order) {
 		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
 		final Map<String,List<String>> productCodeWiseItemCharge = new HashMap<>();
+		order.setOrderBillModifiedDate(new Date());
+		getModelService().save(order);
+		getModelService().refresh(order);
 		order.getConsignments()
 				.forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 						.getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
