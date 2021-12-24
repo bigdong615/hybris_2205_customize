@@ -125,9 +125,11 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		{
 			isOrderModified(orderEntryModel, serialProduct, warehouse);
 			orderEntryModel.setUpdatedTime(new Date());
-			orderEntryModel.getOrder().setOrderModifiedDate(new Date());
-			modelService.save(orderEntryModel.getOrder());
-			modelService.refresh(orderEntryModel.getOrder());
+			final AbstractOrderModel abstractOrderModel = orderEntryModel.getOrder();
+			abstractOrderModel.setOrderModifiedDate(new Date());
+			abstractOrderModel.setUpdatedTime(new Date());
+			modelService.save(abstractOrderModel);
+			modelService.refresh(abstractOrderModel);
 		}
 	}
 	

@@ -141,10 +141,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
     }
 
     // To set Modified Order Date
-		if (interceptorContext.isNew(abstractOrderModel)  ||
-				(Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE)) ||
+		if ((Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE)) ||
 						(getDefaultBlUserService().isCsUser() && Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE)))||
 				checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
+			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^666");
 			abstractOrderModel.setOrderModifiedDate(new Date());
 		}
   }
@@ -613,7 +613,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 */
 	private boolean checkOrderStatusEligibleForOrderModification(final AbstractOrderModel abstractOrderModel,
 			final InterceptorContext interceptorContext) {
-		return interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+		return Objects.nonNull(abstractOrderModel.getStatus()) && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
 				&& checkStatusForOrder(abstractOrderModel.getStatus());
 	}
 
@@ -623,6 +623,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @return boolean value
 	 */
 	private boolean checkStatusForOrder(final OrderStatus orderStatus) {
+		System.out.println("---------------------------------------------------------------$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + orderStatus.getCode());
 		switch (orderStatus.getCode()) {
 			case BlCoreConstants.RECEIVED_IN_VERIFICATION :
 			case BlCoreConstants.RECEIVED_MANUAL_REVIEW :
@@ -644,6 +645,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			case BlCoreConstants.INCOMPLETE_MISSING_AND_BROKEN_ITEMS:
 			case BlCoreConstants.CANCELLED :
 			case BlCoreConstants.LATE :
+			case BlCoreConstants.SHIPPED:
 				return Boolean.TRUE;
 			default :
 		}
