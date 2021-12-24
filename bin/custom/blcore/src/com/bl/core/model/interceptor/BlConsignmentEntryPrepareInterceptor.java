@@ -10,6 +10,7 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.logging.BlLogger;
@@ -56,6 +57,8 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 
 	@Resource(name = "defaultBlUserService")
 	private DefaultBlUserService defaultBlUserService;
+	
+	private BlConsignmentEntryService blConsignmentEntryService;
 
 	@Override
 	public void onPrepare(final ConsignmentEntryModel consignmentEntryModel, final InterceptorContext interceptorContext)
@@ -67,6 +70,7 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 		validateBillingCharges(consignmentEntryModel, interceptorContext);
 		triggerExceptionBrokenOrMissingEvent(consignmentEntryModel, interceptorContext);
 		doChangePriorityStatus(consignmentEntryModel, interceptorContext); //BL-822 AC.2
+		addSerialAndOrderCodeOnItemBillingCharge(consignmentEntryModel, interceptorContext);
 	}
 
 	/**
@@ -529,6 +533,31 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 			}
 		}
 	}
+	
+	/**
+	 * Adds the serial and order code on item billing charge.
+	 *
+	 * @param consignmentEntryModel
+	 *           the consignment entry model
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void addSerialAndOrderCodeOnItemBillingCharge(final ConsignmentEntryModel consignmentEntryModel,
+			final InterceptorContext interceptorContext)
+	{
+		try
+		{
+			if (interceptorContext.isModified(consignmentEntryModel, ConsignmentEntryModel.BILLINGCHARGES))
+			{
+				getBlConsignmentEntryService().assignSerialAndOrderCodeOnBillingCharges(consignmentEntryModel);
+			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, StringUtils.EMPTY,
+					"Exception Occured while setting order code and serial code on Item billing charges", exception);
+		}
+	}
 
 	public DefaultBlESPEventService getBlEspEventService() {
 		return blEspEventService;
@@ -536,5 +565,21 @@ public class BlConsignmentEntryPrepareInterceptor implements PrepareInterceptor<
 
 	public void setBlEspEventService(DefaultBlESPEventService blEspEventService) {
 		this.blEspEventService = blEspEventService;
+	}
+
+	/**
+	 * @return the blConsignmentEntryService
+	 */
+	public BlConsignmentEntryService getBlConsignmentEntryService()
+	{
+		return blConsignmentEntryService;
+	}
+
+	/**
+	 * @param blConsignmentEntryService the blConsignmentEntryService to set
+	 */
+	public void setBlConsignmentEntryService(BlConsignmentEntryService blConsignmentEntryService)
+	{
+		this.blConsignmentEntryService = blConsignmentEntryService;
 	}
 }
