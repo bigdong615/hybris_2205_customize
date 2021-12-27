@@ -1618,7 +1618,6 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
           {
             refundToMake = BigDecimal.ZERO;
           }
-          orderModel.setOrderModifiedDate(new Date());
         }
         else
         {
@@ -1629,7 +1628,6 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
           if (Objects.nonNull(result) && result.isSuccess())
           {
             refundToMake = refundToMake.subtract(remainingAmountRefund);
-						orderModel.setOrderModifiedDate(new Date());
           }
         }
       }

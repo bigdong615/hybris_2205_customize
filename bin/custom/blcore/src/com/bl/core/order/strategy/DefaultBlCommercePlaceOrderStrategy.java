@@ -81,10 +81,6 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         {
           orderModel.setIsOrderSubmit(Boolean.TRUE);
           orderModel.setOrderModifiedDate(new Date());
-          System.out.println("==========================================================================================================");
-          System.out.println("==========================================================================================================");
-          System.out.println("==========================================================================================================");
-          System.out.println("==========================================================================================================");
           getCalculationService().calculateTotals(orderModel, false);
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }
