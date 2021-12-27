@@ -53,12 +53,12 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
       }
     }
 
-    if (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(addressModel)) {
+    /*if (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel) {
       final OrderModel orderModel = (OrderModel) addressModel.getOwner();
       orderModel.setOrderModifiedDate(new Date());
       getModelService().save(orderModel);
       getModelService().refresh(orderModel);
-    }
+    }*/
   }
 
 

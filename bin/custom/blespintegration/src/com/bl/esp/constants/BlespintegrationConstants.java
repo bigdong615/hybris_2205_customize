@@ -36,6 +36,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String SFTP = "sftp";
 	public static final String CLIENT_FTP_PATH = "client.ftp.file.path";
 	public static final String FILE_NAME_PREFIX = "bl_order_master_feed_";
+	public static final String BILL_FILE_NAME_PREFIX = "bl_order_bill_feed_";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "Shipping_First_Name";

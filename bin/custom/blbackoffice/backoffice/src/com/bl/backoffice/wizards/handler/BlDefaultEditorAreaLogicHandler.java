@@ -21,6 +21,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -208,6 +209,15 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			billingChargeModel.setUpdatedBillTime(new Date());
 			billingChargeModel.setBillingStatus(BillingInfoStatus.NEW_BILL);
 		}
+    if (currentObject instanceof AddressModel) {
+      final AddressModel addressModel = (AddressModel)currentObject;
+if (addressModel.getOwner() instanceof OrderModel) {
+      final OrderModel orderModel = (OrderModel) addressModel.getOwner();
+      orderModel.setOrderModifiedDate(new Date());
+  modelService.save(orderModel);
+  modelService.refresh(orderModel);
+    }
+    }
     return super.performSave(widgetInstanceManager , currentObject);
   }
 
