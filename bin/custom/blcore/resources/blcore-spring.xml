@@ -1786,6 +1786,7 @@
 
 	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlESPFTPService" ref="defaultBlESPFTPService"/>
 	</bean>
 
 	<bean id="blOrderFeedPopulator"
@@ -1795,8 +1796,8 @@
 	</bean>
 	<bean id="blChargeBillFeedPopulator"
 		class="com.bl.core.esp.populators.BlChargeBillFeedPopulator" >
-		<!--<property name="productService" ref="productService"/>
-		<property name="catalogVersionService" ref="catalogVersionService"/>-->
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 </beans>

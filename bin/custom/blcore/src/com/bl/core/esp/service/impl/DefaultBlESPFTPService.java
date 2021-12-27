@@ -13,8 +13,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -215,7 +212,11 @@ public class DefaultBlESPFTPService implements BlFTPService {
     this.blOrderFeedPopulator = blOrderFeedPopulator;
   }
 
-
+  /**
+   * This method created to convert order bill related data into XML
+   * @param abstractOrderModels list of orders
+   * @throws ParserConfigurationException ParserConfigurationException
+   */
   public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
       throws ParserConfigurationException, JAXBException {
     final Document billItemsInXMLDocument = createNewXMLDocument();
