@@ -1601,10 +1601,20 @@
                          <defaultvalue>em().getEnumerationValue("RepairReasonsEnum", "NONE")</defaultvalue>
                          <description>Determines what type of repair is required</description>
                      </attribute>
-                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     <attribute qualifier="otherRepairsReason" type="java.lang.String">
+                        <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+         			     <modifiers read="true" write="true" optional="true"/>
+			              <persistence type="property">
+			                <columntype database="oracle">
+			                  <value>CLOB</value>
+			                </columntype>
+			                <columntype database="sap">
+			                  <value>NCLOB</value>
+			                </columntype>
+			                <columntype>
+			                  <value>HYBRIS.LONG_STRING</value>
+			                </columntype>
+			              </persistence>
                      </attribute>
                      <attribute qualifier="dirtyPriorityStatus" type="boolean">
                          <persistence type="property" />
@@ -4249,10 +4259,20 @@
 				<modifiers read="true" write="true" optional="true" />
 				<description>Determines what type of repair is required</description>
 			</attribute>
-			<attribute qualifier="otherRepairReasons" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+			<attribute qualifier="otherRepairsReason" type="java.lang.String">
+			<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
 			</attribute>
 			<attribute qualifier="frequency" type="IssueFrequencyEnum">
 				<persistence type="property" />
