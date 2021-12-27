@@ -3,7 +3,7 @@ package com.bl.core.esp.service.impl;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
-import com.bl.esp.service.BlOrderFeedFTPService;
+import com.bl.core.esp.service.BlOrderFeedFTPService;
 import com.bl.logging.BlLogger;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -57,7 +57,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
    * @throws ParserConfigurationException ParserConfigurationException
    */
   @Override
-  public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels)
+  public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels , final List<AbstractOrderModel> unExportedOrderList)
       throws ParserConfigurationException {
     final Document orderItemsInXMLDocument = createNewXMLDocument();
     final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlespintegrationConstants.ORDERS);
@@ -65,7 +65,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     orderFeedData.setData(orderItemsInXMLDocument);
     orderFeedData.setElement(rootOrderItems);
     final List<AbstractOrderModel> exportedOrderList = new ArrayList<>();
-    final List<AbstractOrderModel> unExportedOrderList = new ArrayList<>();
+
     abstractOrderModels.forEach(abstractOrderModel -> {
       try {
         getBlOrderFeedPopulator().populate(abstractOrderModel , orderFeedData);
