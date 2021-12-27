@@ -1281,6 +1281,7 @@
 	<alias name="blConsignmentEntryPrepareInterceptor" alias="blConsignmentEntryPrepareInterceptor"/>
 	<bean id="blConsignmentEntryPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentEntryPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 	
 	<!-- Adding ConsignmentEntryModel interceptor to Interceptor mapping list -->

@@ -17,34 +17,14 @@
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
         <div class="dropdown">
             <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start" onChange="onSavedAddressChange()">
-                <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
-					<c:choose>
-						<c:when test="${deliveryAddress.defaultAddress}">
-							<option value="${deliveryAddress.id}" selected="selected">
-								<c:choose>
-									<c:when test="${not empty deliveryAddress.line2}">
-                            		${deliveryAddress.line1}, ${deliveryAddress.line2}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
-                               	</c:when>
-									<c:otherwise>                          
-                            	${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
-                            </c:otherwise>
-								</c:choose>
-							</option>
-						</c:when>
-						<c:otherwise>
-							<option value="${deliveryAddress.id}">
-								<c:choose>
-									<c:when test="${not empty deliveryAddress.line2}">
-                            		${deliveryAddress.line1}, ${deliveryAddress.line2}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
-                               	</c:when>
-									<c:otherwise>                           
-                            	${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
-                            </c:otherwise>
-								</c:choose>
-							</option>
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
+                <option value="selectedValue" selected="selected" disabled="disabled">
+                               <spring:theme code="text.enter.select.shipping.address"/>
+                            </option>
+                <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">              
+                            <option value="${deliveryAddress.id}">
+                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
+                            </option>
+                </c:forEach>
                 <option value="newAddress" id="#newAddress" style=" display: none;">
                     <spring:theme code="text.enter.new.shipping.address"/>
                 </option>
