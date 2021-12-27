@@ -73,6 +73,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
       final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
       writeFeedRequestToFile(file , xmlString);
       sendFileToFTPLocation(file);
+
     }
     catch (final TransformerException e) {
       BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
@@ -198,6 +199,9 @@ public class DefaultBlESPFTPService implements BlFTPService {
       if (null != session) {
         session.disconnect();
       }
+    }
+    if(file.exists()) {
+      file.delete();
     }
   }
 

@@ -126,21 +126,28 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
         BlespintegrationConstants.TOTAL_COST, String.valueOf(getDoubleValueForRequest(abstractOrderModel.getTotalPrice())));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.DISCOUNT_TEXT, StringUtils.EMPTY);
-    createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.EXPECTED_SHIPPING_DATE, formatter.format(abstractOrderModel.getRentalStartDate()));
-    createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.ARRIVAL_DATE, formatter.format(abstractOrderModel.getRentalStartDate()));
-    createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.RETURN_DATE, formatter.format(abstractOrderModel.getRentalEndDate()));
-    createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.ACTUAL_RETURN_DATE, formatter.format(abstractOrderModel.getRentalEndDate()));
-    createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.RENTAL_DURATION, String.valueOf(getRentalDuration(abstractOrderModel)));
+    if(BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart())) {
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
+          BlespintegrationConstants.EXPECTED_SHIPPING_DATE,
+          formatter.format(abstractOrderModel.getRentalStartDate()));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
+          BlespintegrationConstants.ARRIVAL_DATE,
+          formatter.format(abstractOrderModel.getRentalStartDate()));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
+          BlespintegrationConstants.RETURN_DATE,
+          formatter.format(abstractOrderModel.getRentalEndDate()));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
+          BlespintegrationConstants.ACTUAL_RETURN_DATE,
+          formatter.format(abstractOrderModel.getRentalEndDate()));
+      createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
+          BlespintegrationConstants.RENTAL_DURATION,
+          String.valueOf(getRentalDuration(abstractOrderModel)));
+    }
     final UserModel userModel = abstractOrderModel.getUser();
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.CUSTOMER_NAME, getRequestValue(userModel.getName()));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.VERIFICATION_LEVEL, abstractOrderModel.getVerificationLevel());
+        BlespintegrationConstants.VERIFICATION_LEVEL, getRequestValue(abstractOrderModel.getVerificationLevel()));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.COI_AMOUNT, null != abstractOrderModel.getCoiAmount() ? String.valueOf(abstractOrderModel.getCoiAmount()) :
             String.valueOf(0.0));
@@ -577,7 +584,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
    * This method created to get differnce between twodats
    * @param startDate startdate
    * @param endDate end date
-   * @return number of days
+   * @return numbtrer of days
    */
   public static long getDaysBetweenDates(final Date startDate, final Date endDate)
   {
