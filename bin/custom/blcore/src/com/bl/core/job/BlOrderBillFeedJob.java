@@ -31,7 +31,6 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
   public PerformResult perform(final CronJobModel cronJobModel) {
     try {
         List<AbstractOrderModel> orderModelList =  getOrderDao().getOrdersForOrderBillFeedToFTP();
-      BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
     }
     catch (final Exception e) {
       return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);

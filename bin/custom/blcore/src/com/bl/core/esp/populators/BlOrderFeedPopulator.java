@@ -653,6 +653,11 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     return CollectionUtils.isNotEmpty(abstractOrderEntryModel) && abstractOrderEntryModel.size() > 1;
   }
 
+  /**
+   * This method created to get COI expiration time from verification document
+   * @param user user
+   * @return string
+   */
   private String getCOIExpirationDateFromCustomer(final CustomerModel user) {
    final List<Date> dateList = new ArrayList<>();
     if(CollectionUtils.isNotEmpty(user.getVerificationDocuments())) {

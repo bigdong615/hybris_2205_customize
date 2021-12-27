@@ -199,7 +199,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
         channelSftp.put(fileInputStream, f.getName());
       }
     } catch (JSchException | SftpException | IOException ex) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
+      BlLogger.logMessage(LOG, Level.ERROR, "Error while sending file to FTP location.:-", ex);
     }
     finally {
       if (null != channelSftp) {
