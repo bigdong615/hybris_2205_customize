@@ -1996,6 +1996,7 @@
             <list-view:column qualifier="productCode"/>
             <list-view:column qualifier="productName"/>
             <list-view:column qualifier="serialNumber"/>
+            <list-view:column qualifier="barcode"/>
             <list-view:column qualifier="warehouseCode"/>
             <list-view:column qualifier="ocParentLocationCode"/>
             <list-view:column qualifier="ocLocationCode"/>
