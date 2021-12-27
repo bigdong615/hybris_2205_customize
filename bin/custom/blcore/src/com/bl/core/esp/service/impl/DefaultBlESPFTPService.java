@@ -211,7 +211,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
   public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
       throws ParserConfigurationException, JAXBException {
     final Document billItemsInXMLDocument = createNewXMLDocument();
-    final Element rootBillItems = createRootElementForDocument(billItemsInXMLDocument, "OrderBills");
+    final Element rootBillItems = createRootElementForDocument(billItemsInXMLDocument, BlespintegrationConstants.ORDERS);
     final OrderFeedData  orderFeedData = new OrderFeedData();
     orderFeedData.setData(billItemsInXMLDocument);
     orderFeedData.setElement(rootBillItems);
