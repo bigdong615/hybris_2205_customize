@@ -559,7 +559,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SOLD_SHIPPED = "SOLD_SHIPPED";
 	public static final String SOLD_RMA_CREATED = "SOLD_RMA_CREATED";
 	public static final String RETURNED = "RETURNED";
-	public static final String Order_COMPLETED = "COMPLETED";
+	public static final String ORDER_COMPLETED = "COMPLETED";
 	public static final String INCOMPLETE = "INCOMPLETE";
 	public static final String INCOMPLETE_BALANCE_DUE = "INCOMPLETE_BALANCE_DUE";
 	public static final String INCOMPLETE_STOLEN = "INCOMPLETE_STOLEN";
@@ -569,6 +569,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String INCOMPLETE_MISSING_AND_BROKEN_ITEMS = "INCOMPLETE_MISSING_AND_BROKEN_ITEMS";
 	public static final String CANCELLED = "CANCELLED";
 	public static final String LATE = "LATE";
+	public static final String RECEIVED_STATUS = "RECEIVED";
+	public static final String SOLD = "SOLD";
 
 	// Consignment Status
 	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";

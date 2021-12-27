@@ -633,7 +633,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			case BlCoreConstants.SOLD_SHIPPED :
 			case BlCoreConstants.SOLD_RMA_CREATED:
 			case BlCoreConstants.RETURNED:
-			case BlCoreConstants.Order_COMPLETED :
+			case BlCoreConstants.ORDER_COMPLETED:
 			case BlCoreConstants.INCOMPLETE:
 			case BlCoreConstants.INCOMPLETE_BALANCE_DUE :
 			case BlCoreConstants.INCOMPLETE_STOLEN:
@@ -644,6 +644,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			case BlCoreConstants.CANCELLED :
 			case BlCoreConstants.LATE :
 			case BlCoreConstants.SHIPPED:
+			case BlCoreConstants.RECEIVED_STATUS:
+			case BlCoreConstants.SOLD:
 				return Boolean.TRUE;
 			default :
 		}

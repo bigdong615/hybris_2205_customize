@@ -1,6 +1,6 @@
 package com.bl.core.job;
 
-import com.bl.core.esp.service.impl.DefaultBlESPFTPService;
+import com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -9,12 +9,8 @@ import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
-import de.hybris.platform.util.Config;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -27,7 +23,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
   private static final Logger LOG = Logger.getLogger(BlOrderFeedJob.class);
 
   private BlOrderDao orderDao;
-  private DefaultBlESPFTPService defaultBlESPFTPService;
+  private DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService;
 
   /**
    * This method created to perform the ESP order feed
@@ -38,10 +34,8 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
   public PerformResult perform(final CronJobModel cronJobModel) {
     try {
      final List<AbstractOrderModel> orderModelList = getOrderDao().getOrdersForOrderFeedToFTP();
-      BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
-
       if(CollectionUtils.isNotEmpty((orderModelList))) {
-        getDefaultBlESPFTPService().convertOrderIntoXML(orderModelList);
+        getDefaultBlOrderFeedFTPService().convertOrderIntoXML(orderModelList);
       }
     }
     catch (final Exception e) {
@@ -61,13 +55,12 @@ public class BlOrderFeedJob extends AbstractJobPerformable<CronJobModel> {
   }
 
 
-  public DefaultBlESPFTPService getDefaultBlESPFTPService() {
-    return defaultBlESPFTPService;
+  public DefaultBlOrderFeedFTPService getDefaultBlOrderFeedFTPService() {
+    return defaultBlOrderFeedFTPService;
   }
 
-  public void setDefaultBlESPFTPService(
-      DefaultBlESPFTPService defaultBlESPFTPService) {
-    this.defaultBlESPFTPService = defaultBlESPFTPService;
+  public void setDefaultBlOrderFeedFTPService(
+      DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService) {
+    this.defaultBlOrderFeedFTPService = defaultBlOrderFeedFTPService;
   }
-
 }

@@ -338,9 +338,9 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		List<AbstractOrderModel> orders = result.getResult();
+		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for Order Feed which orderModifiedDate has ",
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}
@@ -357,9 +357,9 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		List<AbstractOrderModel> orders = result.getResult();
+		final List<AbstractOrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {
-			BlLogger.logMessage(LOG , Level.INFO , "No Results found for Order Feed which orderBillModifiedDate has ",
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {} ",
 					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
 			return Collections.emptyList();
 		}

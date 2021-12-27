@@ -1,5 +1,6 @@
 package com.bl.core.esp.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.DocumentType;
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.GearGaurdEnum;
@@ -21,6 +22,8 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -126,7 +129,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
         BlespintegrationConstants.TOTAL_COST, String.valueOf(getDoubleValueForRequest(abstractOrderModel.getTotalPrice())));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.DISCOUNT_TEXT, StringUtils.EMPTY);
-    if(BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart())) {
+    if(BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
           BlespintegrationConstants.EXPECTED_SHIPPING_DATE,
           formatter.format(abstractOrderModel.getRentalStartDate()));
@@ -149,7 +152,9 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.VERIFICATION_LEVEL, getRequestValue(abstractOrderModel.getVerificationLevel()));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.COI_AMOUNT, null != abstractOrderModel.getCoiAmount() ? String.valueOf(abstractOrderModel.getCoiAmount()) :
+        BlespintegrationConstants.COI_AMOUNT, null != abstractOrderModel.getCoiAmount() && abstractOrderModel.getCoiAmount().compareTo(
+            BigDecimal.valueOf(0.0)) > 0 ? String.valueOf(abstractOrderModel.getCoiAmount().setScale(
+            BlCoreConstants.DECIMAL_PRECISION , RoundingMode.DOWN)) :
             String.valueOf(0.0));
     final CustomerModel user = (CustomerModel) abstractOrderModel.getUser();
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
@@ -208,7 +213,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_HOURS,
-          StringUtils.isNotEmpty(abstractOrderModel.getPickUpPersonEmail()) ? getStoreOpeningHours(shippingAddress) : StringUtils.EMPTY);
+          StringUtils.isEmpty(abstractOrderModel.getPickUpPersonEmail()) ?  StringUtils.EMPTY : getStoreOpeningHours(shippingAddress));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_NOTES,
           StringUtils.isNotBlank(abstractOrderModel.getDeliveryNotes())  ? abstractOrderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
@@ -240,7 +245,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_CITY,
           getRequestValue(billingAddress.getTown()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_STATE,
-          Objects.nonNull(billingAddress.getRegion()) ? billingAddress.getRegion().getName() : StringUtils.EMPTY);
+          Objects.isNull(billingAddress.getRegion()) ? StringUtils.EMPTY : billingAddress.getRegion().getName());
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_ZIP_CODE,
           getRequestValue(billingAddress.getPostalcode()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILLING_PHONE,
@@ -303,7 +308,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     createElementForRootElement(orderItemsInXMLDocument, rootOrderEntry, BlespintegrationConstants.ORDER_ITEM_TOTAL_PRICE,
         String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderEntry, BlespintegrationConstants.LAST_UPDATED,
-        Objects.nonNull(entryModel.getUpdatedTime()) ? formatter.format(entryModel.getUpdatedTime()) : StringUtils.EMPTY);
+        Objects.isNull(entryModel.getUpdatedTime()) ? StringUtils.EMPTY : formatter.format(entryModel.getUpdatedTime()));
   }
 
 
@@ -451,6 +456,11 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
   }
 
 
+  /**
+   * This method created to get the shipping hours
+   * @param shippingAddress addressmodel
+   * @return string
+   */
   private String getStoreOpeningHours(final AddressModel shippingAddress) {
     final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
     final StringBuilder stringBuilder = new StringBuilder();
@@ -489,7 +499,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     final AtomicReference<String> giftCardBalance = new AtomicReference<>(String.valueOf(0.0));
     if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
       orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
-        if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() != null ? giftCardMovementModel.getOrder().getCode() :StringUtils.EMPTY))) {
+        if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() == null ? StringUtils.EMPTY : giftCardMovementModel.getOrder().getCode()))) {
           giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
         }
       }));
@@ -498,7 +508,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
   }
 
   /**
-   * This method craeted to get the product title
+   * This method created to get the product title
    * @param serialProductCode serial code
    * @return string
    */
@@ -581,7 +591,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
   }
 
   /**
-   * This method created to get differnce between twodats
+   * This method created to get difference between the dates
    * @param startDate startdate
    * @param endDate end date
    * @return numbtrer of days
