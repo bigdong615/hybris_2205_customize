@@ -79,6 +79,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
       final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
       writeFeedRequestToFile(file , xmlString);
       sendFileToFTPLocation(file);
+
     }
     catch (final TransformerException e) {
       BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
@@ -158,16 +159,11 @@ public class DefaultBlESPFTPService implements BlFTPService {
   }
 
 
-  public BlOrderFeedPopulator getBlOrderFeedPopulator() {
-    return blOrderFeedPopulator;
-  }
-
-  public void setBlOrderFeedPopulator(BlOrderFeedPopulator blOrderFeedPopulator) {
-    this.blOrderFeedPopulator = blOrderFeedPopulator;
-  }
-
-
-  private void sendFileToFTPLocation(File file){
+  /**
+   * This method created to send file to FTP location
+   * @param file file which needs to drop at FTP location
+   */
+  private void sendFileToFTPLocation(final File file){
     Session session = null;
     Channel channel = null;
     ChannelSftp channelSftp = null;
@@ -205,6 +201,18 @@ public class DefaultBlESPFTPService implements BlFTPService {
         session.disconnect();
       }
     }
+    if(file.exists()) {
+      file.delete();
+    }
+  }
+
+
+  public BlOrderFeedPopulator getBlOrderFeedPopulator() {
+    return blOrderFeedPopulator;
+  }
+
+  public void setBlOrderFeedPopulator(BlOrderFeedPopulator blOrderFeedPopulator) {
+    this.blOrderFeedPopulator = blOrderFeedPopulator;
   }
 
 
