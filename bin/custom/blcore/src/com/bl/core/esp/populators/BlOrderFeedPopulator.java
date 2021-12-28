@@ -208,14 +208,14 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
           BlespintegrationConstants.SHIPPING_CITY, getRequestValue(shippingAddress.getTown()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_STATE,
-          Objects.nonNull(shippingAddress.getRegion()) ? shippingAddress.getRegion().getName() : StringUtils.EMPTY);
+          Objects.isNull(shippingAddress.getRegion()) ?  StringUtils.EMPTY : shippingAddress.getRegion().getName() );
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_HOURS,
           StringUtils.isEmpty(abstractOrderModel.getPickUpPersonEmail()) ?  StringUtils.EMPTY : getStoreOpeningHours(shippingAddress));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.SHIPPING_NOTES,
-          StringUtils.isNotBlank(abstractOrderModel.getDeliveryNotes())  ? abstractOrderModel.getDeliveryNotes() : StringUtils.EMPTY);
+          StringUtils.isEmpty(abstractOrderModel.getDeliveryNotes())  ?  StringUtils.EMPTY: abstractOrderModel.getDeliveryNotes());
 
     }
   }
