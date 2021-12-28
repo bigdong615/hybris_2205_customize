@@ -52,7 +52,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   private static final Logger LOG = Logger.getLogger(DefaultBlOrderFeedFTPService.class);
 
   private BlOrderFeedPopulator blOrderFeedPopulator;
-  private BlOrderBillFeedPopulator blChargeBillFeedPopulator;
+  private BlOrderBillFeedPopulator blOrderBillFeedPopulator;
   private ModelService modelService;
 
   /**
@@ -256,7 +256,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     final OrderFeedData  orderFeedData = getOrderFeedData();
    abstractOrderModels.forEach(abstractOrderModel -> {
      try {
-       getBlChargeBillFeedPopulator()
+       getBlOrderBillFeedPopulator()
            .populate(abstractOrderModel, orderFeedData);
      }catch (final Exception e){
        BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while converting order {} bill to xml"  , abstractOrderModel.getCode());
@@ -293,13 +293,14 @@ private File getFile(){
   createDirectoryForFTPFeed(path);
   return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
 }
-  public BlOrderBillFeedPopulator getBlChargeBillFeedPopulator() {
-    return blChargeBillFeedPopulator;
+
+  public BlOrderBillFeedPopulator getBlOrderBillFeedPopulator() {
+    return blOrderBillFeedPopulator;
   }
 
-  public void setBlChargeBillFeedPopulator(
-      BlOrderBillFeedPopulator blChargeBillFeedPopulator) {
-    this.blChargeBillFeedPopulator = blChargeBillFeedPopulator;
+  public void setBlOrderBillFeedPopulator(
+      BlOrderBillFeedPopulator blOrderBillFeedPopulator) {
+    this.blOrderBillFeedPopulator = blOrderBillFeedPopulator;
   }
   public ModelService getModelService() {
     return modelService;

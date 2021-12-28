@@ -1774,8 +1774,13 @@
 
 
 	<!--BL-1311 start-->
+	<bean id="blOrderBillFeedPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillFeedPopulator" parent="abstractBlFeedPopulater">
+	</bean>
+
 	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
 		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
+		<property name="blOrderBillFeedPopulator" ref="blOrderBillFeedPopulator"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
@@ -1798,9 +1803,6 @@
 		class="com.bl.core.esp.populators.BlOrderFeedPopulator" >
 		<property name="productService" ref="productService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
-	</bean>
-	<bean id="blChargeBillFeedPopulator"
-		class="com.bl.core.esp.populators.BlOrderBillFeedPopulator" parent="abstractBlFeedPopulater">
 	</bean>
 	<!--BL-1311 End-->
 </beans>
