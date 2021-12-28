@@ -216,6 +216,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
    * This method created to convert order bill related data into XML
    * @param abstractOrderModels list of orders
    * @throws ParserConfigurationException ParserConfigurationException
+   * @throws JAXBException JAXBException
    */
   public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
       throws ParserConfigurationException, JAXBException {
