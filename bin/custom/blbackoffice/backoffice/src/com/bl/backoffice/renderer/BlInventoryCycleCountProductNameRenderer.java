@@ -5,6 +5,7 @@ import com.hybris.cockpitng.core.config.impl.jaxb.listview.ListColumn;
 import com.hybris.cockpitng.dataaccess.facades.type.DataType;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.widgets.common.WidgetComponentRenderer;
+import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zhtml.Text;
 import org.zkoss.zul.Listcell;
@@ -26,9 +27,11 @@ public class BlInventoryCycleCountProductNameRenderer implements WidgetComponent
       String localizedName = StringUtils.EMPTY;
       if (data instanceof BlInventoryCycleCountProductDetailsModel) {
         final BlInventoryCycleCountProductDetailsModel productDetailsModel = (BlInventoryCycleCountProductDetailsModel) data;
-        localizedName = productDetailsModel.getInventoryCycleCountProduct().getName();
-        if(StringUtils.isBlank(localizedName)){
-          localizedName = productDetailsModel.getInventoryCycleCountProduct().getDisplayName();
+        if (Objects.nonNull(productDetailsModel.getInventoryCycleCountProduct())) {
+          localizedName = productDetailsModel.getInventoryCycleCountProduct().getName();
+          if (StringUtils.isBlank(localizedName)) {
+            localizedName = productDetailsModel.getInventoryCycleCountProduct().getDisplayName();
+          }
         }
       }
       final Text nameText = new Text();
