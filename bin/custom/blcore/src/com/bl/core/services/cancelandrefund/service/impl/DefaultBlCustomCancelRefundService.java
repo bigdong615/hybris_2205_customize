@@ -158,6 +158,7 @@ public class DefaultBlCustomCancelRefundService implements BlCustomCancelRefundS
             final Collection<PaymentTransactionEntryModel> entries = new ArrayList<>(orderModel.getPaymentTransactions().get(
                     BlInventoryScanLoggingConstants.ZERO).getEntries());
             entries.add(entry);
+            orderModel.setOrderModifiedDate(new Date());
             modelService.save(orderModel);
             modelService.refresh(orderModel);
         }
