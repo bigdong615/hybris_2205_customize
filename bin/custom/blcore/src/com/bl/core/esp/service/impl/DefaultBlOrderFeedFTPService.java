@@ -258,7 +258,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
      try {
        getBlChargeBillFeedPopulator()
            .populate(abstractOrderModel, orderFeedData);
-     }catch (Exception e){
+     }catch (final Exception e){
        BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while converting order {} bill to xml"  , abstractOrderModel.getCode());
      }
    });
@@ -288,10 +288,10 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
    */
 private File getFile(){
   final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-  final String fileName = BlespintegrationConstants.BILL_FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.FILE_SUFFIX;
+  final String fileName =new StringBuilder(BlespintegrationConstants.BILL_FILE_NAME_PREFIX).append(logFileName).append(BlespintegrationConstants.FILE_SUFFIX).toString() ;
   final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
   createDirectoryForFTPFeed(path);
-  return new File(path + BlespintegrationConstants.SLASH + fileName);
+  return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
 }
   public BlOrderBillFeedPopulator getBlChargeBillFeedPopulator() {
     return blChargeBillFeedPopulator;
