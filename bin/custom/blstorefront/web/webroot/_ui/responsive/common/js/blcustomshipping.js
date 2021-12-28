@@ -234,8 +234,15 @@ function reverseTraverseOnShipping() {
       else if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
+			if($('select[id="ship-it-savedAddresses"]').val() == null)
+			{
+				showErrorForShipToHomeError();	
+			}
+			else
+			{
               saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
-          } else {
+	         } 
+	} else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
               var companyName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
@@ -1244,6 +1251,13 @@ function reverseTraverseOnShipping() {
     function showErrorForUPSOrPickAddressError() {
          let notification = '';
          notification += '<div class="notification notification-error"> You need to select a Pickup location';
+         notification += '</div>' + '<br>';
+         $('#showErrorForUPSOrPickAddressError').html(notification);
+         $('#showErrorForUPSOrPickAddressError').show();
+     }
+    function showErrorForShipToHomeError() {
+         let notification = '';
+         notification += '<div class="notification notification-error"> You need to select a Shipping Address';
          notification += '</div>' + '<br>';
          $('#showErrorForUPSOrPickAddressError').html(notification);
          $('#showErrorForUPSOrPickAddressError').show();
