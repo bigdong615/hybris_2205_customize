@@ -9,7 +9,6 @@ import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
-import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,6 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
 
   private BlOrderDao orderDao;
   private DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService;
-  private ModelService modelService;
 
   /**
    * This method created to perform the ESP order feed
@@ -69,8 +67,8 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
    */
   private void resetOrderFeedDate(final BlOrderFeedCronJobModel blOrderFeedCronJobModel) {
     blOrderFeedCronJobModel.setOrderFeedDate(null);
-    getModelService().save(blOrderFeedCronJobModel);
-    getModelService().refresh(blOrderFeedCronJobModel);
+    this.modelService.save(blOrderFeedCronJobModel);
+    this.modelService.refresh(blOrderFeedCronJobModel);
   }
 
   public BlOrderDao getOrderDao() {
@@ -89,15 +87,6 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
   public void setDefaultBlOrderFeedFTPService(
       DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService) {
     this.defaultBlOrderFeedFTPService = defaultBlOrderFeedFTPService;
-  }
-
-  public ModelService getModelService() {
-    return modelService;
-  }
-
-  @Override
-  public void setModelService(ModelService modelService) {
-    this.modelService = modelService;
   }
 
 }
