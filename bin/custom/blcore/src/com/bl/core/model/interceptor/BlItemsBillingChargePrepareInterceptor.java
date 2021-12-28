@@ -1,6 +1,6 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.enums.BillingInfoStatus;
+import com.bl.core.enums.BillInfoStatus;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
@@ -38,7 +38,7 @@ public class BlItemsBillingChargePrepareInterceptor implements PrepareIntercepto
 			final String randomId = UUID.randomUUID().toString();
 			blItemsBillingChargeModel.setCode(randomId);
 			blItemsBillingChargeModel.setUpdatedBillTime(new Date());
-			blItemsBillingChargeModel.setBillingStatus(BillingInfoStatus.NEW_BILL);
+			blItemsBillingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlItemsBillingChargePrepareInterceptor : UUID : {}", UUID.randomUUID());
 		}
 	}

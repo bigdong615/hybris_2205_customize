@@ -52,13 +52,6 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
             "New Shipping Info Event failed.", e);
       }
     }
-
-    /*if (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel) {
-      final OrderModel orderModel = (OrderModel) addressModel.getOwner();
-      orderModel.setOrderModifiedDate(new Date());
-      getModelService().save(orderModel);
-      getModelService().refresh(orderModel);
-    }*/
   }
 
 

@@ -159,7 +159,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String BILL_TYPE = "Bill_Type";
 	public static final String NOTES = "Notes";
 	public static final String BILL_CREATED_DATE = "Bill_Created_Date";
-
+	public static final String UPDATED_TIME = "UpdatedTime";
 
 
 

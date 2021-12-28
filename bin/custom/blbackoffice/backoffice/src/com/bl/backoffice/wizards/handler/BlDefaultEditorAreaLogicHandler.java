@@ -2,7 +2,7 @@ package com.bl.backoffice.wizards.handler;
 
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.BillingInfoStatus;
+import com.bl.core.enums.BillInfoStatus;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
@@ -214,7 +214,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				}
 			}
 			billingChargeModel.setUpdatedBillTime(new Date());
-			billingChargeModel.setBillingStatus(BillingInfoStatus.NEW_BILL);
+			billingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
 		}
 		if (currentObject instanceof AddressModel) {
 			final AddressModel addressModel = (AddressModel) currentObject;

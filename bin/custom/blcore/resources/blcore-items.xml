@@ -480,7 +480,7 @@
         <value code="NON_BARCODED_SUBPART" />
       </enumtype>
       <!-- BL-1311: This enum is created to track billing status.-->
-      <enumtype code="BillingInfoStatus" autocreate="true" generate="true">
+      <enumtype code="BillInfoStatus" autocreate="true" generate="true">
         <value code="NEW_BILL" />
         <value code="UPDATED_BILL" />
       </enumtype>
@@ -4171,7 +4171,7 @@
           <modifiers read="true" write="true" optional="true" />
           <description>To identify whether the bill is modified or not.</description>
         </attribute>
-        <attribute qualifier="billingStatus" type="BillingInfoStatus">
+        <attribute qualifier="billStatus" type="BillInfoStatus">
           <persistence type="property" />
           <modifiers read="true" write="true" optional="true" />
           <description>To identify bill status.</description>
