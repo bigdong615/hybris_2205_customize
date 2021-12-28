@@ -3081,6 +3081,7 @@
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountDayCode"/>
 			<list-view:column qualifier="inventoryCycleCountProductId"/>
+			<list-view:column qualifier="inventoryCycleCountProduct"  spring-bean="blInventoryCycleCountProductNameRenderer" label="blbackoffice.inventory.cycle.count.product.name"/>
 		</list-view:list-view>
 	</context>
 
