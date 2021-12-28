@@ -28,7 +28,8 @@ import org.w3c.dom.Element;
  * This populator created to convert Order bills to XML
  * @author Vijay Vishwakarma
  */
-public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderFeedData>  extends AbstractBlFeedPopulater implements
+public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET extends OrderFeedData>  extends
+    AbstractBlOrderFeedPopulater implements
     Populator<SOURCE, TARGET> {
 
   @Override

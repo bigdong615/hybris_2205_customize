@@ -1,6 +1,6 @@
 package com.bl.core.esp.service.impl;
 
-import com.bl.core.esp.populators.BlChargeBillFeedPopulator;
+import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
@@ -52,7 +52,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   private static final Logger LOG = Logger.getLogger(DefaultBlOrderFeedFTPService.class);
 
   private BlOrderFeedPopulator blOrderFeedPopulator;
-  private BlChargeBillFeedPopulator blChargeBillFeedPopulator;
+  private BlOrderBillFeedPopulator blChargeBillFeedPopulator;
   private ModelService modelService;
 
   /**
@@ -293,12 +293,12 @@ private File getFile(){
   createDirectoryForFTPFeed(path);
   return new File(path + BlespintegrationConstants.SLASH + fileName);
 }
-  public BlChargeBillFeedPopulator getBlChargeBillFeedPopulator() {
+  public BlOrderBillFeedPopulator getBlChargeBillFeedPopulator() {
     return blChargeBillFeedPopulator;
   }
 
   public void setBlChargeBillFeedPopulator(
-      BlChargeBillFeedPopulator blChargeBillFeedPopulator) {
+      BlOrderBillFeedPopulator blChargeBillFeedPopulator) {
     this.blChargeBillFeedPopulator = blChargeBillFeedPopulator;
   }
   public ModelService getModelService() {

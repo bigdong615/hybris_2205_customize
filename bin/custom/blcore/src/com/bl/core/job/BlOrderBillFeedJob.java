@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
 
   private BlOrderDao orderDao;
-  private DefaultBlOrderFeedFTPService defaultBlESPFTPService;
+  private DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService;
 
   /**
    * This method created to perform the ESP order feed
@@ -31,7 +31,7 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
     try {
         List<AbstractOrderModel> orderModelList =  getOrderDao().getOrdersForOrderBillFeedToFTP();
       if(CollectionUtils.isNotEmpty((orderModelList))) {
-        getDefaultBlESPFTPService().convertOrderBillIntoXML(orderModelList);
+        getDefaultBlOrderFeedFTPService().convertOrderBillIntoXML(orderModelList);
       }
     }
     catch (final Exception e) {
@@ -48,12 +48,12 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
   public void setOrderDao(BlOrderDao orderDao) {
     this.orderDao = orderDao;
   }
-  public DefaultBlOrderFeedFTPService getDefaultBlESPFTPService() {
-    return defaultBlESPFTPService;
+  public DefaultBlOrderFeedFTPService getDefaultBlOrderFeedFTPService() {
+    return defaultBlOrderFeedFTPService;
   }
 
-  public void setDefaultBlESPFTPService(
-      DefaultBlOrderFeedFTPService defaultBlESPFTPService) {
-    this.defaultBlESPFTPService = defaultBlESPFTPService;
+  public void setDefaultBlOrderFeedFTPService(
+      DefaultBlOrderFeedFTPService defaultBlOrderFeedFTPService) {
+    this.defaultBlOrderFeedFTPService = defaultBlOrderFeedFTPService;
   }
 }

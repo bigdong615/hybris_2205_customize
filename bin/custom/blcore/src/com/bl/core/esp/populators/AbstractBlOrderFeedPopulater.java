@@ -17,10 +17,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This populator created to provide usefull resource for conversion of order feed related data to xml.
+ * This populator is created to provide the common API to convert data to XML.
  * @author Vijay Vishwakarma
  */
-public class AbstractBlFeedPopulater {
+public class AbstractBlOrderFeedPopulater {
 
   private ProductService productService;
   private CatalogVersionService catalogVersionService;
