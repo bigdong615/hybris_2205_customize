@@ -1774,19 +1774,19 @@
 
 
 	<!--BL-1311 start-->
-	<bean id="defaultBlESPFTPService" class="com.bl.core.esp.service.impl.DefaultBlESPFTPService">
+	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
 		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
-		<property name="blChargeBillFeedPopulator" ref="blChargeBillFeedPopulator"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
-		<property name="defaultBlESPFTPService" ref="defaultBlESPFTPService"/>
+		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
 	</bean>
 
 	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
 		<property name="orderDao" ref="orderDao"/>
-		<property name="defaultBlESPFTPService" ref="defaultBlESPFTPService"/>
+		<property name="defaultBlESPFTPService" ref="defaultBlOrderFeedFTPService"/>
 	</bean>
 
 	<bean id="abstractBlFeedPopulater"

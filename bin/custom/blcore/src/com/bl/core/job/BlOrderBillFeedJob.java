@@ -1,8 +1,7 @@
 package com.bl.core.job;
 
-import com.bl.core.esp.service.impl.DefaultBlESPFTPService;
+import com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService;
 import com.bl.core.order.dao.BlOrderDao;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
@@ -11,7 +10,6 @@ import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,10 +18,8 @@ import org.apache.log4j.Logger;
  */
 public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
 
-  private static final Logger LOG = Logger.getLogger(BlOrderBillFeedJob.class);
-
   private BlOrderDao orderDao;
-  private DefaultBlESPFTPService defaultBlESPFTPService;
+  private DefaultBlOrderFeedFTPService defaultBlESPFTPService;
 
   /**
    * This method created to perform the ESP order feed
@@ -34,8 +30,6 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
   public PerformResult perform(final CronJobModel cronJobModel) {
     try {
         List<AbstractOrderModel> orderModelList =  getOrderDao().getOrdersForOrderBillFeedToFTP();
-      BlLogger.logMessage(LOG , Level.INFO , "****"  , String.valueOf(orderModelList.size()));
-
       if(CollectionUtils.isNotEmpty((orderModelList))) {
         getDefaultBlESPFTPService().convertOrderBillIntoXML(orderModelList);
       }
@@ -54,12 +48,12 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
   public void setOrderDao(BlOrderDao orderDao) {
     this.orderDao = orderDao;
   }
-  public DefaultBlESPFTPService getDefaultBlESPFTPService() {
+  public DefaultBlOrderFeedFTPService getDefaultBlESPFTPService() {
     return defaultBlESPFTPService;
   }
 
   public void setDefaultBlESPFTPService(
-      DefaultBlESPFTPService defaultBlESPFTPService) {
+      DefaultBlOrderFeedFTPService defaultBlESPFTPService) {
     this.defaultBlESPFTPService = defaultBlESPFTPService;
   }
 }

@@ -177,7 +177,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
           orderModel.setCoiAmount(BigDecimal.valueOf(amount));
           getModelService().save(orderModel);
           getModelService().refresh(orderModel);
-            final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
+          BlLogger.logFormattedMessage(LOG , Level.DEBUG , "COI amount {} deposited for orderCode {}" , String.valueOf(amount) , orderModel.getCode());
+          final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
             getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
                 orderVerificationCOIneededEventRequest);
           orderVerificationCOIneededEventRequest.getData().setCoiamount((double) amount);

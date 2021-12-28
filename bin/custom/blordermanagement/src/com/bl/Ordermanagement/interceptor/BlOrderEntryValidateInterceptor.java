@@ -130,6 +130,8 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			abstractOrderModel.setUpdatedTime(new Date());
 			modelService.save(abstractOrderModel);
 			modelService.refresh(abstractOrderModel);
+			BlLogger.logFormattedMessage(LOG , Level.DEBUG , "order{} is modified and updated with OrderModifiedDate {} and UpdatedTime {} " ,
+					orderEntryModel.getOrder().getCode() , abstractOrderModel.getOrderModifiedDate() , abstractOrderModel.getUpdatedTime());
 		}
 	}
 	

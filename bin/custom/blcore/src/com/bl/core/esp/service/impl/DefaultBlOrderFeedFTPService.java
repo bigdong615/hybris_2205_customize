@@ -4,7 +4,7 @@ import com.bl.core.esp.populators.BlChargeBillFeedPopulator;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
-import com.bl.esp.service.BlFTPService;
+import com.bl.core.esp.service.BlOrderFeedFTPService;
 import com.bl.logging.BlLogger;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -12,7 +12,9 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import de.hybris.platform.core.enums.ExportStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -34,6 +37,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -43,13 +47,13 @@ import org.w3c.dom.Element;
  * This class created to send file to FTP
  * @author Manikandan
  */
-public class DefaultBlESPFTPService implements BlFTPService {
+public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
 
-  private static final Logger LOG = Logger.getLogger(DefaultBlESPFTPService.class);
+  private static final Logger LOG = Logger.getLogger(DefaultBlOrderFeedFTPService.class);
 
   private BlOrderFeedPopulator blOrderFeedPopulator;
   private BlChargeBillFeedPopulator blChargeBillFeedPopulator;
-
+  private ModelService modelService;
 
   /**
    * This method created to convert order into XML
@@ -57,48 +61,57 @@ public class DefaultBlESPFTPService implements BlFTPService {
    * @throws ParserConfigurationException ParserConfigurationException
    */
   @Override
-  public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels)
-      throws ParserConfigurationException, JAXBException {
+  public void convertOrderIntoXML(final List<AbstractOrderModel> abstractOrderModels , final List<AbstractOrderModel> unExportedOrderList)
+      throws ParserConfigurationException {
     final Document orderItemsInXMLDocument = createNewXMLDocument();
-
     final Element rootOrderItems = createRootElementForDocument(orderItemsInXMLDocument, BlespintegrationConstants.ORDERS);
-
     final OrderFeedData  orderFeedData = new OrderFeedData();
     orderFeedData.setData(orderItemsInXMLDocument);
     orderFeedData.setElement(rootOrderItems);
-    try {
-      abstractOrderModels.forEach(abstractOrderModel -> getBlOrderFeedPopulator().populate(abstractOrderModel ,orderFeedData));
-      final String xmlString = covertXMLIntoString(orderFeedData);
-      final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
-      final String fileName = BlespintegrationConstants.FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.FILE_SUFFIX;
-      final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
-      createDirectoryForFTPFeed(path);
-      final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
-      writeFeedRequestToFile(file , xmlString);
-      sendFileToFTPLocation(file);
+    final List<AbstractOrderModel> exportedOrderList = new ArrayList<>();
 
-    }
-    catch (final TransformerException e) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
-
-    }
-
+    abstractOrderModels.forEach(abstractOrderModel -> {
+      try {
+        getBlOrderFeedPopulator().populate(abstractOrderModel , orderFeedData);
+        exportedOrderList.add(abstractOrderModel);
+      }
+      catch (final Exception e) {
+        BlLogger.logFormattedMessage(LOG , Level.ERROR , "DefaultBlESPFTPService :- Error while converting order code {}"  , abstractOrderModel.getCode());
+        unExportedOrderList.add(abstractOrderModel);
+      }
+    });
+    final String xmlString = covertXMLIntoString(orderFeedData);
+    final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
+    final String fileName = BlespintegrationConstants.FILE_NAME_PREFIX + logFileName + BlespintegrationConstants.FILE_SUFFIX;
+    final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
+    createDirectoryForFTPFeed(path);
+    final File file = new File(path + BlespintegrationConstants.SLASH + fileName);
+    writeFeedRequestToFile(file , xmlString);
+    sendFileToFTPLocation(file);
+    updatedExportedOrderStatusForOrders(exportedOrderList);
   }
+
+
 
 
   /**
    * This method created to convert XML into string
    * @param orderFeedData order feed data
    * @return string
-   * @throws TransformerException TransformerException
    */
-  private String covertXMLIntoString(final OrderFeedData orderFeedData) throws TransformerException {
-    final Transformer transformer = TransformerFactory.newInstance().newTransformer();
-    transformer.setOutputProperty(OutputKeys.INDENT, BlespintegrationConstants.YES);
-    transformer.setOutputProperty(BlespintegrationConstants.XML_INDENT, Config.getParameter(BlespintegrationConstants.XML_INDENT_SIZE));
+  private String covertXMLIntoString(final OrderFeedData orderFeedData) {
     final StreamResult result = new StreamResult(new StringWriter());
-    final  DOMSource source = new DOMSource(orderFeedData.getData());
-    transformer.transform(source, result);
+    try {
+      final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, BlespintegrationConstants.YES);
+      transformer.setOutputProperty(BlespintegrationConstants.XML_INDENT,
+          Config.getParameter(BlespintegrationConstants.XML_INDENT_SIZE));
+      final DOMSource source = new DOMSource(orderFeedData.getData());
+      transformer.transform(source, result);
+    }
+    catch (final TransformerException e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "DefaultBlESPFTPService :- Error while executing covertXMLIntoString method " , e);
+    }
     return result.getWriter().toString();
   }
 
@@ -116,7 +129,7 @@ public class DefaultBlESPFTPService implements BlFTPService {
       fw.close();
     }
     catch (final IOException e){
-      BlLogger.logMessage(LOG , Level.ERROR , "Error while excuting convertOrderIntoXML" , e);
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while writingFeedRequestToFile method" , e);
     }
   }
 
@@ -125,10 +138,17 @@ public class DefaultBlESPFTPService implements BlFTPService {
    * @param path path to be craete
    */
   private void createDirectoryForFTPFeed(final String path) {
-    final File directory = new File(path);
-    if (!directory.exists()){
-      directory.mkdirs();
+    try {
+      final File directory = new File(path);
+      if (!directory.exists()){
+        directory.mkdirs();
+      }
     }
+    catch (final Exception e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while creating Directory" , e);
+    }
+
+
   }
 
 
@@ -167,8 +187,8 @@ public class DefaultBlESPFTPService implements BlFTPService {
     try {
       final JSch jsch = new JSch();
       session = jsch.getSession(Config.getParameter(BlespintegrationConstants.SFTPUSER),
-          BlespintegrationConstants.SFTPHOST,
-          BlespintegrationConstants.SFTPPORT);
+          Config.getParameter(BlespintegrationConstants.SFTPHOST),
+          Config.getInt(BlespintegrationConstants.SFTPPORT, 22));
       session.setPassword(Config.getParameter(BlespintegrationConstants.SFTPPASS));
       final Properties config = new Properties();
       config.put(BlespintegrationConstants.STICT_HOST_KEY, BlespintegrationConstants.NO);
@@ -183,10 +203,9 @@ public class DefaultBlESPFTPService implements BlFTPService {
         channelSftp.put(fileInputStream, f.getName());
       }
     } catch (JSchException | SftpException | IOException ex) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Error while performing sendFileTOFTP:-", ex);
+      BlLogger.logMessage(LOG, Level.ERROR, "Error while sending file to FTP location.:-", ex);
     }
     finally {
-
       if (null != channelSftp) {
         channelSftp.disconnect();
         channelSftp.exit();
@@ -200,6 +219,20 @@ public class DefaultBlESPFTPService implements BlFTPService {
     }
     if(file.exists()) {
       file.delete();
+    }
+  }
+
+  /**
+   * This method created to update the sentOrderFeedToSalesforce
+   * @param exportedOrderList list  of orders
+   */
+  private void updatedExportedOrderStatusForOrders(final List<AbstractOrderModel> exportedOrderList) {
+    if(CollectionUtils.isNotEmpty(exportedOrderList)){
+      exportedOrderList.forEach(abstractOrderModel -> {
+        abstractOrderModel.setSentOrderFeedToSalesforce(ExportStatus.EXPORTED);
+        getModelService().save(abstractOrderModel);
+        getModelService().refresh(abstractOrderModel);
+      });
     }
   }
 
@@ -221,16 +254,18 @@ public class DefaultBlESPFTPService implements BlFTPService {
   public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
       throws ParserConfigurationException, JAXBException {
     final OrderFeedData  orderFeedData = getOrderFeedData();
-    try {
-      abstractOrderModels.forEach(abstractOrderModel -> getBlChargeBillFeedPopulator().populate(abstractOrderModel ,orderFeedData));
-      final String xmlString = covertXMLIntoString(orderFeedData);
-      final File file = getFile();
-      writeFeedRequestToFile(file , xmlString);
-      sendFileToFTPLocation(file);
-    }
-    catch (final TransformerException e) {
-      BlLogger.logMessage(LOG, Level.ERROR, "Error while performing convertOrderIntoXML" , e );
-    }
+   abstractOrderModels.forEach(abstractOrderModel -> {
+     try {
+       getBlChargeBillFeedPopulator()
+           .populate(abstractOrderModel, orderFeedData);
+     }catch (Exception e){
+       BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while converting order {} bill to xml"  , abstractOrderModel.getCode());
+     }
+   });
+    final String xmlString = covertXMLIntoString(orderFeedData);
+    final File file = getFile();
+    writeFeedRequestToFile(file, xmlString);
+    sendFileToFTPLocation(file);
 
   }
 
@@ -265,6 +300,13 @@ private File getFile(){
   public void setBlChargeBillFeedPopulator(
       BlChargeBillFeedPopulator blChargeBillFeedPopulator) {
     this.blChargeBillFeedPopulator = blChargeBillFeedPopulator;
+  }
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(ModelService modelService) {
+    this.modelService = modelService;
   }
 
 }

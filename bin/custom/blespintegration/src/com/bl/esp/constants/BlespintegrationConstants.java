@@ -21,8 +21,8 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ESP_EVENT_ACCESS_SCOPE = "esp.event.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
 
 
-	public static final String SFTPHOST = "ftp.s10.exacttarget.com";
-	public static final int SFTPPORT = 22;
+	public static final String SFTPHOST = "ftp.host.name";
+	public static final String SFTPPORT = "ftp.port.number";
 	public static final String SFTPUSER = "ftp.user.name";
 	public static final String SFTPPASS = "ftp.user.password";
 	public static final String XML_INDENT = "{http://xml.apache.org/xslt}indent-amount";
@@ -126,7 +126,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String COI_EXPIRATION_DATE="COIExpirationDate";
 	public static final String TOTAL_VALUE="Total_Value";
 	public static final String PAYMENT_TYPE="Payment_Type";
-	public static final String PAYMENT_TEXT="Payment_Type";
+	public static final String PAYMENT_TEXT="Payment_Text";
 	public static final String EXTENSION_AMOUNT="Extension_Total";
 	public static final String OLD_ORDER = "Old_Order_ID";
 	public static final String RETURNING_CUSTOMER = "Returning_Customer";

@@ -3092,18 +3092,19 @@
                 <modifiers read="true" write="true" optional="true" />
                 <description>To identify whether the order/Order Bill is modified or not</description>
               </attribute>
-                  <attribute qualifier="orderExtendedDate" type="java.util.Date">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>To identify whether the when the order is extended</description>
-                  </attribute>
                   <attribute autocreate="true" qualifier="coiAmount" type="java.math.BigDecimal">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
                     <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                     <description>COI amount</description>
                   </attribute>
-                </attributes>
+              <attribute autocreate="true" qualifier="sentOrderFeedToSalesforce" type="ExportStatus">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
+                <description>To identify whether the order is exported to FTP or Not. </description>
+              </attribute>
+            </attributes>
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
