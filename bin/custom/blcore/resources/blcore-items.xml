@@ -3126,6 +3126,18 @@
           
           <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
+
+          <itemtype code="BlOrderFeedCronJob" extends="CronJob">
+            <description>This type represents a cron job for order which failed for export to FTP location.</description>
+          <attributes>
+          <attribute qualifier="orderFeedDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>To perform the Order FTP feed for specified date.</description>
+          </attribute>
+          </attributes>
+          </itemtype>
+
         </typegroup>
 
         <typegroup>

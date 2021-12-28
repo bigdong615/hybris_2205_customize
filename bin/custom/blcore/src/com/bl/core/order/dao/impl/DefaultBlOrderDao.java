@@ -8,6 +8,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
+import de.hybris.platform.core.enums.ExportStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -100,6 +101,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 
 	private static final String ORDERS_BILL_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE + "} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate";
+
+	private static final String ORDERS_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE +
+			"} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
+
 
 
 	/**
@@ -365,6 +372,28 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		}
 		return orders;
 	}
+
+
+  /**
+   * This method created to get list of orders based on specified date
+   * @param orderFeedDate date to get orders
+   * @return list of order models
+   */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderFeedToFTPBasedOnSpecificDate(final Date orderFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
 
 	/**
 	 * This method created to convert date into specific format
