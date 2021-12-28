@@ -479,7 +479,11 @@
         <value code="BARCODED_SUBPART" />
         <value code="NON_BARCODED_SUBPART" />
       </enumtype>
-      
+      <!-- BL-1311: This enum is created to track billing status.-->
+      <enumtype code="BillInfoStatus" autocreate="true" generate="true">
+        <value code="NEW_BILL" />
+        <value code="UPDATED_BILL" />
+      </enumtype>
 	  </enumtypes>
 
     <maptypes>
@@ -4173,6 +4177,18 @@
           <modifiers read="true" write="true" optional="true" />
           <description>To identify the customer on billing charges.</description>
         </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes start.-->
+        <attribute qualifier="updatedBillTime" type="java.util.Date">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify whether the bill is modified or not.</description>
+        </attribute>
+        <attribute qualifier="billStatus" type="BillInfoStatus">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify bill status.</description>
+        </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes End.-->
 			</attributes>
 		</itemtype>
       </typegroup>

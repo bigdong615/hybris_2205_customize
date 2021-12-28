@@ -36,6 +36,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String SFTP = "sftp";
 	public static final String CLIENT_FTP_PATH = "client.ftp.file.path";
 	public static final String FILE_NAME_PREFIX = "bl_order_master_feed_";
+	public static final String BILL_FILE_NAME_PREFIX = "bl_order_bill_feed_";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "Shipping_First_Name";
@@ -130,6 +131,7 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String OLD_ORDER = "Old_Order_ID";
 	public static final String RETURNING_CUSTOMER = "Returning_Customer";
 	public static final String LAST_UPDATED = "Last_Updated";
+	public static final String TOTAL_BILL_AMOUNT ="Total_Bill_Amount";
 
 	public static final String GIFT_CARD_ORDER = "GC";
 	public static final String NEW_GEAR_ORDER = "New Gear";
@@ -146,6 +148,18 @@ public class BlespintegrationConstants extends GeneratedBlespintegrationConstant
 	public static final String ORDER = "Order";
 	public static final String COMMA = ",";
 	public static final String SLASH = "/";
+	public static final String Order_Bill = "OrderBill";
+	public static final String ORDER_BILL_ITEMS = "orderBillItems";
+	public static final String PRODUCT_IMAGE_THUMBNAIL = "Product_Image_Thumbnail";
+	public static final String GEAR_GUARD = "GearGuard";
+	public static final String ORDER_BILL_ITEM = "orderBillItem";
+	public static final String TOTAL = "Total";
+	public static final String PAID = "Paid";
+	public static final String NOT_PAID = "Not Paid";
+	public static final String BILL_TYPE = "Bill_Type";
+	public static final String NOTES = "Notes";
+	public static final String BILL_CREATED_DATE = "Bill_Created_Date";
+	public static final String UPDATED_TIME = "UpdatedTime";
 
 
 
