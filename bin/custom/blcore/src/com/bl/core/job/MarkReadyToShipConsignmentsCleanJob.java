@@ -1,5 +1,6 @@
 package com.bl.core.job;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -23,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 
 
 /**
@@ -129,7 +131,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
       }
       consignment.setCleanCompleteConsignment(
           allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get));
-
+      updateConsignmentStatusForShippingCart(consignment);
       if (allCleanConsignmentEntryList.stream().allMatch(AtomicBoolean::get)) {
 
         BlLogger
@@ -196,6 +198,31 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
     return cleanCartLocationCategoryList;
   }
 
+	/**
+	 * This method is used to update the consignment status for clean shipping cart
+	 * @param consignment
+	 */
+	private void updateConsignmentStatusForShippingCart(ConsignmentModel consignment)
+	{
+		for (final ConsignmentEntryModel entryModel : consignment.getConsignmentEntries())
+		{
+			for (final BlProductModel productModel : entryModel.getSerialProducts())
+			{
+				final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+						&& null != ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
+								? ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode()
+								: "";
+				if (consignment.isCleanCompleteConsignment()
+						&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(locationCode))
+				{
+					consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
+					modelService.save(consignment);
+					modelService.refresh(consignment);
+				}
+
+			}
+		}
+	}
 
   /**
    * @return the blConsignmentDao
