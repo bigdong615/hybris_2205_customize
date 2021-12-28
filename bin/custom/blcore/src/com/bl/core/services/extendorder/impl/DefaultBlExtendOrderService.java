@@ -27,6 +27,7 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -74,6 +75,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       // clone consignment and consignment entries for extend order
       cloneConsignmentForExtendOrder(originalOrder , clonedList);
       extendOrderModel.setConsignments(clonedList);
+    extendOrderModel.setOrderModifiedDate(null);
       saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
       if(CollectionUtils.isNotEmpty(originalOrder.getOrderNotes())) {
@@ -142,6 +144,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
           .equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
+      originalOrder.setOrderModifiedDate(new Date());
       saveAndRefreshModel(extendOrderModel);
       setExtendedOrderCopyListToOrder(originalOrder , extendOrderModel);
       originalOrder.setExtendedOrderCopy(null);
