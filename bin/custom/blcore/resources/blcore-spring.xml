@@ -1650,6 +1650,7 @@
 		class="com.bl.core.model.interceptor.BlAddressPrepareInterceptor">
 		<property name="blEspEventService" ref="blEspEventService"/>
 		<property name="defaultBlUserService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="blAddressPrepareInterceptorMapping"
@@ -1770,4 +1771,38 @@
 		<property name="interceptor" ref="addressValidateInterceptor"/>
 		<property name="typeCode" value="Address"/>
 	</bean>
+
+
+	<!--BL-1311 start-->
+	<bean id="blOrderBillFeedPopulator"
+		class="com.bl.core.esp.populators.BlOrderBillFeedPopulator" parent="abstractBlFeedPopulater">
+	</bean>
+
+	<bean id="defaultBlOrderFeedFTPService" class="com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService">
+		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
+		<property name="blOrderBillFeedPopulator" ref="blOrderBillFeedPopulator"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<bean id="defaultBlOrderFeedJob" class="com.bl.core.job.BlOrderFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
+	</bean>
+
+	<bean id="defaultBlOrderBillFeedJob" class="com.bl.core.job.BlOrderBillFeedJob" parent="abstractJobPerformable">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="defaultBlOrderFeedFTPService" ref="defaultBlOrderFeedFTPService"/>
+	</bean>
+
+	<bean id="abstractBlFeedPopulater"
+		class="com.bl.core.esp.populators.AbstractBlOrderFeedPopulater" >
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
+	<bean id="blOrderFeedPopulator"
+		class="com.bl.core.esp.populators.BlOrderFeedPopulator" >
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
+	<!--BL-1311 End-->
 </beans>

@@ -10,6 +10,8 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.model.ModelService;
+import java.util.Date;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -25,6 +27,7 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
   private DefaultBlESPEventService blEspEventService;
 
   private DefaultBlUserService defaultBlUserService;
+  private ModelService modelService;
 
   @Override
   public void onPrepare(final AddressModel addressModel,final InterceptorContext interceptorContext)
@@ -44,13 +47,11 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
     if (getDefaultBlUserService().isCsUser()  && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
       try {
         getBlEspEventService().sendOrderNewShippingEvent((OrderModel) addressModel.getOwner());
-
       } catch (final Exception e) {
         BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
             "New Shipping Info Event failed.", e);
       }
     }
-
   }
 
 
@@ -69,5 +70,13 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
 
   public void setBlEspEventService(final DefaultBlESPEventService blEspEventService) {
     this.blEspEventService = blEspEventService;
+  }
+
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(ModelService modelService) {
+    this.modelService = modelService;
   }
 }

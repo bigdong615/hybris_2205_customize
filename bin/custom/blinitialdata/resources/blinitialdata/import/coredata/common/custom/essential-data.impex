@@ -161,6 +161,8 @@ INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;defaultBlAutomatedUPSScrapeJob;defaultBlAutomatedUPSScrapeJob
 ;blHighDemandConstrainedProductJob;blHighDemandConstrainedProductJob
 ;blReshufflerJob;blReshufflerJob
+;defaultBlOrderFeedJob;defaultBlOrderFeedJob
+;defaultBlOrderBillFeedJob;defaultBlOrderBillFeedJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
@@ -172,6 +174,8 @@ INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[
 ;blHighDemandConstrainedProductCronJob ;blHighDemandConstrainedProductJob ; ;true;;
 ;blReshufflerCronJob ;blReshufflerJob ; ;true;;
  ;blUPSScrapeCronJob ;defaultBlAutomatedUPSScrapeJob ; ;true;;
+ ;blOrderFeedJob ;defaultBlOrderFeedJob ; ;true;;
+ ;blOrderBillFeedJob ;defaultBlOrderBillFeedJob ; ;true;;
 
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
@@ -180,6 +184,8 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blBufferInventoryCronJob; 0 0 0/6 1/1 * ?
 ;blUPSScrapeCronJob; 0 0 0 * * ?
 ;blHighDemandConstrainedProductCronJob; 0 0 0 ? * 4/7 *
+;blOrderFeedJob; 0 0 0 * * ?
+;blOrderBillFeedJob; 0 0 0 * * ?
 
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               

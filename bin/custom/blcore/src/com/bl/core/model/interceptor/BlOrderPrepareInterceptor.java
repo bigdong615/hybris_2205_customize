@@ -139,6 +139,13 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ESP_EVENT_API_FAILED_ERROR.getCode(),
           "Event API call failed", e);
     }
+
+    // To set Modified Order Date
+		if ((Objects.nonNull(abstractOrderModel.getExtendRentalStartDate()) && (getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALSTARTDATE)) ||
+						(getDefaultBlUserService().isCsUser() && Objects.nonNull(abstractOrderModel.getExtendRentalEndDate()) && interceptorContext.isModified(abstractOrderModel , AbstractOrderModel.EXTENDRENTALENDDATE)))||
+				checkOrderStatusEligibleForOrderModification(abstractOrderModel , interceptorContext)) {
+			abstractOrderModel.setOrderModifiedDate(new Date());
+		}
   }
 
 	/**
@@ -401,6 +408,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		{
 			updateActualRentalDatesForOrder(abstractOrderModel, deliveryMode);
 		}
+		abstractOrderModel.setOrderModifiedDate(new Date());
 	}
 
 	/**
@@ -594,6 +602,54 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 		sourcingLocation.setGroundAvailability(Boolean.FALSE);
 		sourcingLocation.setGroundAvailabilityCode(OptimizedShippingMethodEnum.DEFAULT.getCode());
 		return sourcingLocation;
+	}
+
+	/**
+	 * This method created to check , if order is Eligible for modification
+	 * @param abstractOrderModel order model
+	 * @param interceptorContext interceptorContext
+	 * @return boolean value
+	 */
+	private boolean checkOrderStatusEligibleForOrderModification(final AbstractOrderModel abstractOrderModel,
+			final InterceptorContext interceptorContext) {
+		return Objects.nonNull(abstractOrderModel.getStatus()) && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.STATUS)  && abstractOrderModel instanceof OrderModel
+				&& checkStatusForOrder(abstractOrderModel.getStatus());
+	}
+
+	/**
+	 * This method created to check for matching order status to update order modification date
+	 * @param orderStatus order status to check
+	 * @return boolean value
+	 */
+	private boolean checkStatusForOrder(final OrderStatus orderStatus) {
+		switch (orderStatus.getCode()) {
+			case BlCoreConstants.RECEIVED_IN_VERIFICATION :
+			case BlCoreConstants.RECEIVED_MANUAL_REVIEW :
+			case BlCoreConstants.RECEIVED_SHIPPING_MANUAL_REVIEW:
+			case BlCoreConstants.RECEIVED_PAYMENT_DECLINED:
+			case BlCoreConstants.UNBOXED_PARTIALLY :
+			case BlCoreConstants.UNBOXED_COMPLETELY :
+			case BlCoreConstants.RECEIVED_ROLLING:
+			case BlCoreConstants.SOLD_SHIPPED :
+			case BlCoreConstants.SOLD_RMA_CREATED:
+			case BlCoreConstants.RETURNED:
+			case BlCoreConstants.ORDER_COMPLETED:
+			case BlCoreConstants.INCOMPLETE:
+			case BlCoreConstants.INCOMPLETE_BALANCE_DUE :
+			case BlCoreConstants.INCOMPLETE_STOLEN:
+			case BlCoreConstants.INCOMPLETE_LOST_IN_TRANSIT:
+			case BlCoreConstants.INCOMPLETE_ITEMS_IN_REPAIR:
+			case BlCoreConstants.INCOMPLETE_MISSING_ITEMS:
+			case BlCoreConstants.INCOMPLETE_MISSING_AND_BROKEN_ITEMS:
+			case BlCoreConstants.CANCELLED :
+			case BlCoreConstants.LATE :
+			case BlCoreConstants.SHIPPED:
+			case BlCoreConstants.RECEIVED_STATUS:
+			case BlCoreConstants.SOLD:
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
 	}
 	
   public BlOrderNoteService getBlOrderNoteService() {

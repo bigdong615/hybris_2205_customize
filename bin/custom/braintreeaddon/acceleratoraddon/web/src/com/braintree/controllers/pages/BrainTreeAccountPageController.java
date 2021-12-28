@@ -1077,6 +1077,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
         }
         if (isSuccess)
         {
+        	order.setOrderModifiedDate(new Date());
+        	modelService.save(order);
+        	modelService.refresh(order);
+          BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+              "Updating order {} for modify payment via CC at updated time {}",
+              order.getCode(), order.getOrderModifiedDate());
           blGiftCardFacade.commitAppliedGiftCard(order);
           tempModifiedOrderAppliedGcList.forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
           model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
@@ -1126,6 +1132,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
       isSuccess = brainTreeTransactionService.doModifiedOrderPoPayment(order, poNumber, poNote, BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN));
       if(isSuccess)
       {
+      	order.setOrderModifiedDate(new Date());
+      	modelService.save(order);
+      	modelService.refresh(order);
+        BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+            "Updating order {} for modify payment via PO at updated time {}",
+            order.getCode(), order.getOrderModifiedDate());
         final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
         final PriceData amount  = convertDoubleToPriceData(newAmount, order);
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
@@ -1193,6 +1205,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
       isSuccess = brainTreeTransactionService.initiateRefundProcess(order, BigDecimal.valueOf(newAmount).setScale(DECIMAL_PRECISION, RoundingMode.HALF_EVEN));
       if(isSuccess)
       {
+      	order.setOrderModifiedDate(new Date());
+      	modelService.save(order);
+      	modelService.refresh(order);
+        BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+            "Updating order {} for refund at updated time {}",
+            order.getCode(), order.getOrderModifiedDate());
         final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
         final PriceData amount  = convertDoubleToPriceData(newAmount, order);
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);

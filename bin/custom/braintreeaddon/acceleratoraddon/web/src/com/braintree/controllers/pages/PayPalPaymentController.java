@@ -50,6 +50,7 @@ import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -403,6 +404,12 @@ public class PayPalPaymentController extends AbstractCheckoutController
 								ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 						return getViewForPage(model);
 					} else if (isModifyOrderPaymentPage) {
+						order.setOrderModifiedDate(new Date());
+						modelService.save(order);
+						modelService.refresh(order);
+						BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+								"Updating order {} for modify payment via PayPal at updated time {}",
+								order.getCode(), order.getOrderModifiedDate());
 						model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
 						model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, billPayTotal);
 						model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD,

@@ -70,7 +70,7 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				{
 					blSerialProductModel = getBlProductDao().getSerialBySerialCode(serialCode);
 				}
-				else if(StringUtils.isNotBlank(itemBarcode))
+				if(Objects.isNull(blSerialProductModel) && StringUtils.isNotBlank(itemBarcode))
 				{
 					blSerialProductModel = getBlProductDao().getSerialByBarcode(itemBarcode);
 				}
@@ -81,6 +81,7 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				}
 				blRepairLogModel.setSerialProduct(blSerialProductModel);
 				blRepairLogModel.setSerialCode(blSerialProductModel.getCode());
+				blRepairLogModel.setItemBarcode(StringUtils.stripToEmpty(blSerialProductModel.getBarcode()));
 				if(Objects.nonNull(blSerialProductModel.getAssociatedOrder()))
 				{
 					blRepairLogModel.setOrder(blSerialProductModel.getAssociatedOrder());
