@@ -1080,6 +1080,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
         	order.setOrderModifiedDate(new Date());
         	modelService.save(order);
         	modelService.refresh(order);
+          BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+              "Updating order {} for modify payment via CC at updated time {}",
+              order.getCode(), order.getOrderModifiedDate());
           blGiftCardFacade.commitAppliedGiftCard(order);
           tempModifiedOrderAppliedGcList.forEach(giftCard -> addGCDetails(order, blGiftCardDataList, giftCard));
           model.addAttribute(BraintreeaddonControllerConstants.APPLIED_GC_LIST, blGiftCardDataList);
@@ -1132,6 +1135,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
       	order.setOrderModifiedDate(new Date());
       	modelService.save(order);
       	modelService.refresh(order);
+        BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+            "Updating order {} for modify payment via PO at updated time {}",
+            order.getCode(), order.getOrderModifiedDate());
         final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
         final PriceData amount  = convertDoubleToPriceData(newAmount, order);
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
@@ -1202,6 +1208,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
       	order.setOrderModifiedDate(new Date());
       	modelService.save(order);
       	modelService.refresh(order);
+        BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+            "Updating order {} for refund at updated time {}",
+            order.getCode(), order.getOrderModifiedDate());
         final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
         final PriceData amount  = convertDoubleToPriceData(newAmount, order);
         model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);

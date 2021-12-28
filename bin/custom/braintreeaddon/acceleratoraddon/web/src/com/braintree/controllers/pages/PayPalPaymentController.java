@@ -407,6 +407,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 						order.setOrderModifiedDate(new Date());
 						modelService.save(order);
 						modelService.refresh(order);
+						BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+								"Updating order {} for modify payment via PayPal at updated time {}",
+								order.getCode(), order.getOrderModifiedDate());
 						model.addAttribute(BraintreeaddonControllerConstants.ORDER_DATA, orderDetails);
 						model.addAttribute(BraintreeaddonControllerConstants.AMOUNT, billPayTotal);
 						model.addAttribute(BraintreeaddonControllerConstants.MODIFIED_ORDER_PAYMENT_METHOD,

@@ -252,7 +252,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
    * @throws JAXBException JAXBException
    */
   public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
-      throws ParserConfigurationException, JAXBException {
+      throws ParserConfigurationException {
     final OrderFeedData  orderFeedData = getOrderFeedData();
    abstractOrderModels.forEach(abstractOrderModel -> {
      try {

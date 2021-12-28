@@ -204,7 +204,6 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				final AbstractOrderModel order = orderDao.getOrderByCode(billingChargeModel.getOrderCode());
 				if (order != null) {
 					order.setOrderBillModifiedDate(new Date());
-					order.setUpdatedTime(new Date());
 					modelService.save(order);
 					modelService.refresh(order);
 					BlLogger.logFormattedMessage(LOG, Level.DEBUG,
@@ -214,7 +213,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				}
 			}
 			billingChargeModel.setUpdatedBillTime(new Date());
-			billingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
+			billingChargeModel.setBillStatus(BillInfoStatus.UPDATED_BILL);
 		}
 		if (currentObject instanceof AddressModel) {
 			final AddressModel addressModel = (AddressModel) currentObject;
