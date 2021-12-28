@@ -218,6 +218,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 					consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
 					modelService.save(consignment);
 					modelService.refresh(consignment);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status for consignment {} is marked as {} for location {}", consignment.getCode(),consignment.getStatus(),locationCode);
 				}
 
 			}
