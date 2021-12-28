@@ -1,5 +1,6 @@
 package com.bl.core.esp.service.impl;
 
+import com.bl.core.esp.populators.BlOrderBillFeedPopulator;
 import com.bl.core.esp.populators.BlOrderFeedPopulator;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +52,9 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   private static final Logger LOG = Logger.getLogger(DefaultBlOrderFeedFTPService.class);
 
   private BlOrderFeedPopulator blOrderFeedPopulator;
+  private BlOrderBillFeedPopulator blOrderBillFeedPopulator;
   private ModelService modelService;
+
   /**
    * This method created to convert order into XML
    * @param abstractOrderModels list of orders
@@ -241,6 +245,63 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     this.blOrderFeedPopulator = blOrderFeedPopulator;
   }
 
+  /**
+   * This method created to convert order bill related data into XML
+   * @param abstractOrderModels list of orders
+   * @throws ParserConfigurationException ParserConfigurationException
+   * @throws JAXBException JAXBException
+   */
+  public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
+      throws ParserConfigurationException {
+    final OrderFeedData  orderFeedData = getOrderFeedData();
+   abstractOrderModels.forEach(abstractOrderModel -> {
+     try {
+       getBlOrderBillFeedPopulator()
+           .populate(abstractOrderModel, orderFeedData);
+     }catch (final Exception e){
+       BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while converting order {} bill to xml"  , abstractOrderModel.getCode());
+     }
+   });
+    final String xmlString = covertXMLIntoString(orderFeedData);
+    final File file = getFile();
+    writeFeedRequestToFile(file, xmlString);
+    sendFileToFTPLocation(file);
+
+  }
+
+  /**
+   *  this method use to create document and feed data DTO.
+   * @return
+   * @throws ParserConfigurationException
+   */
+  private OrderFeedData getOrderFeedData() throws ParserConfigurationException {
+    final Document billItemsInXMLDocument = createNewXMLDocument();
+    final Element rootBillItems = createRootElementForDocument(billItemsInXMLDocument, BlespintegrationConstants.ORDERS);
+    final OrderFeedData  orderFeedData = new OrderFeedData();
+    orderFeedData.setData(billItemsInXMLDocument);
+    orderFeedData.setElement(rootBillItems);
+    return orderFeedData;
+  }
+
+  /**
+   * This method used to create file.
+   */
+private File getFile(){
+  final String logFileName = new SimpleDateFormat(BlespintegrationConstants.FILE_FORMAT).format(new Date());
+  final String fileName =new StringBuilder(BlespintegrationConstants.BILL_FILE_NAME_PREFIX).append(logFileName).append(BlespintegrationConstants.FILE_SUFFIX).toString() ;
+  final String path = Config.getParameter(BlespintegrationConstants.LOCAL_FTP_PATH);
+  createDirectoryForFTPFeed(path);
+  return new File(new StringBuilder(path).append(BlespintegrationConstants.SLASH).append(fileName).toString());
+}
+
+  public BlOrderBillFeedPopulator getBlOrderBillFeedPopulator() {
+    return blOrderBillFeedPopulator;
+  }
+
+  public void setBlOrderBillFeedPopulator(
+      BlOrderBillFeedPopulator blOrderBillFeedPopulator) {
+    this.blOrderBillFeedPopulator = blOrderBillFeedPopulator;
+  }
   public ModelService getModelService() {
     return modelService;
   }
