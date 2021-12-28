@@ -66,6 +66,13 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     changePriorityStatusOnSerial(consignmentModel, interceptorContext); //BL-822 AC.4
     triggerEspReadyForPickupEvent(consignmentModel, interceptorContext);
     triggerEspPickedUpEvent(consignmentModel, interceptorContext);
+
+    if(interceptorContext.isModified(consignmentModel, ConsignmentModel.STATUS) && (ConsignmentStatus.RECEIVED_READY_TO_SHIP.equals(consignmentModel.getStatus()) ||
+        ConsignmentStatus.RECEIVED_READY_FOR_PICKUP.equals(consignmentModel.getStatus())) && Objects.nonNull(abstractOrderModel)) {
+      abstractOrderModel.setOrderModifiedDate(new Date());
+      interceptorContext.getModelService().save(abstractOrderModel);
+      interceptorContext.getModelService().refresh(abstractOrderModel);
+    }
   }
 
   /**

@@ -479,7 +479,11 @@
         <value code="BARCODED_SUBPART" />
         <value code="NON_BARCODED_SUBPART" />
       </enumtype>
-      
+      <!-- BL-1311: This enum is created to track billing status.-->
+      <enumtype code="BillInfoStatus" autocreate="true" generate="true">
+        <value code="NEW_BILL" />
+        <value code="UPDATED_BILL" />
+      </enumtype>
 	  </enumtypes>
 
     <maptypes>
@@ -2458,6 +2462,11 @@
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity allocated in both warehouses through reshuffler job</description>
             </attribute>
+            <attribute qualifier="updatedTime" type="java.util.Date">
+              <persistence type="property" />
+              <modifiers read="true" write="true" optional="true" />
+              <description>To identify whether the order/Order Bill is modified or not</description>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>
@@ -3068,7 +3077,34 @@
                       <persistence type="property" />
                       <description>It indicates current status of an uploaded document</description>
                     </attribute>
-                </attributes>
+                  <attribute qualifier="orderModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order is modified or not</description>
+                  </attribute>
+                  <attribute qualifier="orderBillModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order Bill is modified or not</description>
+                  </attribute>
+              <attribute qualifier="updatedTime" type="java.util.Date">
+                <persistence type="property" />
+                <modifiers read="true" write="true" optional="true" />
+                <description>To identify whether the order/Order Bill is modified or not</description>
+              </attribute>
+                  <attribute autocreate="true" qualifier="coiAmount" type="java.math.BigDecimal">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                    <description>COI amount</description>
+                  </attribute>
+              <attribute autocreate="true" qualifier="sentOrderFeedToSalesforce" type="ExportStatus">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
+                <description>To identify whether the order is exported to FTP or Not. </description>
+              </attribute>
+            </attributes>
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
@@ -4129,6 +4165,18 @@
           <modifiers read="true" write="true" optional="true" />
           <description>To identify the customer on billing charges.</description>
         </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes start.-->
+        <attribute qualifier="updatedBillTime" type="java.util.Date">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify whether the bill is modified or not.</description>
+        </attribute>
+        <attribute qualifier="billStatus" type="BillInfoStatus">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify bill status.</description>
+        </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes End.-->
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -5136,11 +5184,27 @@
 	<custom-properties>
 		<property name="query">
 			<value>
-"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
+"select {order:code} as orderNumber, {ot:code} as orderTypeFlag, case when({order:isVipOrder} = 1) then 'Yes' else 'No' end as isVipOrder, case when({order:isRentalCart} = 1) then 'No' else 'Yes' end as isUsedGearOrder,  {order.consolidatedOrderNote} as orderNotes, {b:code} as productCode, {b:name} as productName, {serial:code} as serialNumber,{serial:barcode} as barcode, {ware:code} as warehouseCode, {serial:lastLocationScanParent} as ocParentLocationCode, {serial:ocLocation} as ocLocationCode, case when({serial:dirtyPriorityStatus} = 1) then 'Yes' else 'No' end as serialDirtyPriorityFlag from {BlProduct as b}, {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, {AbstractOrder as order}, {OrderTypeEnum as ot}, {Warehouse as ware} where {serial.dirtyPriorityStatus} = 1 and {b.pk} = {serial:blProduct} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {c:pk} = {ce:consignment} and CONVERT(VARCHAR,{c:optimizedShippingStartDate},110) = CONVERT(VARCHAR,?currentDate,110) and {c:warehouse} = {ware:pk} and {ware:pk} = ?warehouse and {order:pk} = {c:order} and {ot:pk} = {order:orderType}"
 			</value>
 		</property>
 	</custom-properties>
 	<attributes>
+		<attribute generate="false" autocreate="true" qualifier="barcode" type="java.lang.String" metatype="ViewAttributeDescriptor">
+			<persistence type="jalo" qualifier=""/>
+			<modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+			<custom-properties>
+				<property name="param">
+					<value>
+Boolean.FALSE
+					</value>
+				</property>
+				<property name="position">
+					<value>
+new Integer(12)
+					</value>
+				</property>
+			</custom-properties>
+		</attribute>
 		<attribute generate="false" autocreate="true" qualifier="currentDate" type="java.util.Date" metatype="ViewAttributeDescriptor">
 			<persistence type="jalo" qualifier=""/>
 			<modifiers read="true" write="false" search="true" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
@@ -5367,7 +5431,6 @@ new Integer(8)
 		</attribute>
 	</attributes>
 </itemtype>
-
   <!--  BL-827, BL-828, BL-829 invnetory user clean complete / in-complete order queue -->
   <itemtype code="InventoryPulledOrdersView" extends="Item" jaloclass="de.hybris.platform.util.ViewResultItem" generate="false" singleton="false" jaloonly="true" metatype="ViewType" autocreate="true">
     <custom-properties>
