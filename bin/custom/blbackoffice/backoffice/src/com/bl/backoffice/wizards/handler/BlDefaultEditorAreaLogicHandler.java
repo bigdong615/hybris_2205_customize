@@ -162,7 +162,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
       return object;
      }
 
-    //  BL-1311: changes related to tracking new bill creation.
+		//  BL-1311: changes related to tracking new bill creation.
 		if (currentObject instanceof ConsignmentEntryModel) {
 			final ConsignmentEntryModel consignmentEntryModel = (ConsignmentEntryModel) currentObject;
 			final Map<String, List<BlItemsBillingChargeModel>> previousChangedBillingCharges = getPreviousChangedBillingCharges(
@@ -170,54 +170,64 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			final Map<String, List<BlItemsBillingChargeModel>> newBillingCharges = consignmentEntryModel
 					.getBillingCharges();
 			final AtomicBoolean isNewBillAdded = new AtomicBoolean(Boolean.FALSE);
-			final AbstractOrderModel orderModel =consignmentEntryModel.getOrderEntry().getOrder();
-      if(newBillingCharges.size()>previousChangedBillingCharges.size()){
+			final AbstractOrderModel orderModel = consignmentEntryModel.getOrderEntry().getOrder();
+			if (newBillingCharges.size() > previousChangedBillingCharges.size()) {
 				isNewBillAdded.set(Boolean.TRUE);
-			}
-      else {
-				newBillingCharges.forEach((serialCode, billingChargeModels) ->{
+			} else {
+				newBillingCharges.forEach((serialCode, billingChargeModels) -> {
 					final List<BlItemsBillingChargeModel> blItemsBillingChargeModels = previousChangedBillingCharges
 							.get(serialCode);
 					final List cloneOfNewBillingChargesList = new ArrayList<BlItemsBillingChargeModel>();
 					cloneOfNewBillingChargesList.addAll(billingChargeModels);
-					cloneOfNewBillingChargesList.removeIf(blItemsBillingChargeModels :: contains);
-					if(CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList) ){
+					cloneOfNewBillingChargesList.removeIf(blItemsBillingChargeModels::contains);
+					if (CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList)) {
 						isNewBillAdded.set(Boolean.TRUE);
 					}
-				} );
+				});
 			}
-      if(isNewBillAdded.get()){
+			if (isNewBillAdded.get()) {
 				orderModel.setOrderBillModifiedDate(new Date());
 				orderModel.setUpdatedTime(new Date());
 				modelService.save(orderModel);
 				modelService.refresh(orderModel);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+						"Bill created for order {} at updated time {} and also order got modified at {}",
+						orderModel.getCode(), orderModel.getUpdatedTime(),
+						orderModel.getOrderBillModifiedDate());
 			}
 		}
 
 		//  BL-1311: changes related to tracking updation on bill.
 		if (currentObject instanceof BlItemsBillingChargeModel) {
 			final BlItemsBillingChargeModel billingChargeModel = (BlItemsBillingChargeModel) currentObject;
-			if(billingChargeModel.getOrderCode() != null) {
-				final AbstractOrderModel order  = orderDao.getOrderByCode(billingChargeModel.getOrderCode());
+			if (billingChargeModel.getOrderCode() != null) {
+				final AbstractOrderModel order = orderDao.getOrderByCode(billingChargeModel.getOrderCode());
 				if (order != null) {
 					order.setOrderBillModifiedDate(new Date());
 					order.setUpdatedTime(new Date());
 					modelService.save(order);
 					modelService.refresh(order);
+					BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+							"Bill updated for order {} at updated time {} and also order got modified at {}",
+							order.getCode(), order.getUpdatedTime(),
+							order.getOrderBillModifiedDate());
 				}
 			}
 			billingChargeModel.setUpdatedBillTime(new Date());
 			billingChargeModel.setBillingStatus(BillingInfoStatus.NEW_BILL);
 		}
-    if (currentObject instanceof AddressModel) {
-      final AddressModel addressModel = (AddressModel)currentObject;
-if (addressModel.getOwner() instanceof OrderModel) {
-      final OrderModel orderModel = (OrderModel) addressModel.getOwner();
-      orderModel.setOrderModifiedDate(new Date());
-  modelService.save(orderModel);
-  modelService.refresh(orderModel);
-    }
-    }
+		if (currentObject instanceof AddressModel) {
+			final AddressModel addressModel = (AddressModel) currentObject;
+			if (addressModel.getOwner() instanceof OrderModel) {
+				final OrderModel orderModel = (OrderModel) addressModel.getOwner();
+				orderModel.setOrderModifiedDate(new Date());
+				modelService.save(orderModel);
+				modelService.refresh(orderModel);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+						"Address got updated for order {} at updated time {}",
+						orderModel.getCode(), orderModel.getOrderModifiedDate());
+			}
+		}
     return super.performSave(widgetInstanceManager , currentObject);
   }
 
@@ -281,7 +291,6 @@ if (addressModel.getOwner() instanceof OrderModel) {
 			modelService.removeAll(consignmentToRemove);
 			orderModel.setOrderModifiedDate(new Date());
 			orderModel.setUpdatedTime(new Date());
-
 		}
 	}
 
@@ -390,7 +399,8 @@ if (addressModel.getOwner() instanceof OrderModel) {
 	 */
 	private Map<String, List<BlItemsBillingChargeModel>> getPreviousChangedBillingCharges(final ConsignmentEntryModel consignmentEntryModel)
 	{
-		final Object previousValue = consignmentEntryModel.getItemModelContext().getOriginalValue("billingCharges");
+		final Object previousValue = consignmentEntryModel.getItemModelContext().getOriginalValue(
+				BlloggingConstants.BILLING_CHARGES);
 		if (previousValue instanceof Map)
 		{
 			return (Map<String, List<BlItemsBillingChargeModel>>)  previousValue;
