@@ -1773,7 +1773,7 @@
 	</bean>
 
 
-	<!--BL-1311 -->
+	<!--BL-1311 start-->
 	<bean id="defaultBlESPFTPService" class="com.bl.core.esp.service.impl.DefaultBlESPFTPService">
 		<property name="blOrderFeedPopulator" ref="blOrderFeedPopulator"/>
 		<property name="blChargeBillFeedPopulator" ref="blChargeBillFeedPopulator"/>
@@ -1789,15 +1789,18 @@
 		<property name="defaultBlESPFTPService" ref="defaultBlESPFTPService"/>
 	</bean>
 
+	<bean id="abstractBlFeedPopulater"
+		class="com.bl.core.esp.populators.AbstractBlFeedPopulater" >
+		<property name="productService" ref="productService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
+	</bean>
 	<bean id="blOrderFeedPopulator"
 		class="com.bl.core.esp.populators.BlOrderFeedPopulator" >
 		<property name="productService" ref="productService"/>
 		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 	<bean id="blChargeBillFeedPopulator"
-		class="com.bl.core.esp.populators.BlChargeBillFeedPopulator" >
-		<property name="productService" ref="productService"/>
-		<property name="catalogVersionService" ref="catalogVersionService"/>
+		class="com.bl.core.esp.populators.BlChargeBillFeedPopulator" parent="abstractBlFeedPopulater">
 	</bean>
-
+	<!--BL-1311 End-->
 </beans>

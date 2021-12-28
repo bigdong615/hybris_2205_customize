@@ -498,7 +498,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
   }
 
   /**
-   * This method craeted to get the product title
+   * This method created to get the product title
    * @param serialProductCode serial code
    * @return string
    */

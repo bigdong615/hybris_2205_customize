@@ -1,13 +1,11 @@
 package com.bl.core.esp.populators;
 
-import com.bl.core.enums.GearGaurdEnum;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
 import com.google.common.util.concurrent.AtomicDouble;
-import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -15,7 +13,6 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.product.ProductService;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +24,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderFeedData>  implements
+/**
+ * This populator created to convert Order bills to XML
+ * @author Vijay Vishwakarma
+ */
+public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderFeedData>  extends AbstractBlFeedPopulater implements
     Populator<SOURCE, TARGET> {
-
-  private ProductService productService;
-  private CatalogVersionService catalogVersionService;
 
   @Override
   public void populate(final AbstractOrderModel abstractOrderModel, final OrderFeedData target) {
@@ -44,12 +42,6 @@ public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGE
     createOrderBillItemInfo(abstractOrderModel, orderItemsInXMLDocument, rootOrderItem, formatter);
   }
 
-
-  protected Element createRootElementForRootElement(final Document document, final Element rootElement, final String rootElementName) {
-    final Element childElement = document.createElement(rootElementName);
-    rootElement.appendChild(childElement);
-    return childElement;
-  }
 
   /**
    *  changes related to convert order bill related information into xml.
@@ -139,48 +131,6 @@ public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGE
     });
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.TOTAL,
         getRequestValue(String.valueOf(orderModel.getTotalPrice())));
-  }
-
-  protected Element createElementForRootElement(final Document document, final Element rootElement, final String element, final String value) {
-    final Element childElement = document.createElement(element);
-    childElement.appendChild(document.createTextNode(value));
-    rootElement.appendChild(childElement);
-    return childElement;
-  }
-
-  /**
-   * To get the request value based
-   * @param value value get from order
-   * @return value to set on request
-   */
-  protected String getRequestValue(final String value){
-    return StringUtils.isBlank(value) ? StringUtils.EMPTY :value;
-  }
-  protected String getOrderType(final AbstractOrderModel orderModel){
-    final AtomicReference<String> orderType = new AtomicReference<>(StringUtils.EMPTY);
-    if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
-      orderType.set(BlespintegrationConstants.GIFT_CARD_ORDER);
-    }
-    else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
-      orderType.set(BlespintegrationConstants.NEW_GEAR_ORDER);
-    }
-    else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
-      orderType.set(BlespintegrationConstants.RENTAL);
-    }
-    else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
-      orderType.set(BlespintegrationConstants.USED_GEAR);
-    }
-
-    return orderType.get();
-  }
-
-  /**
-   * This method created to get order status from order model
-   * @param orderModel orderModel
-   * @return String
-   */
-  private String getOrderStatus(final AbstractOrderModel orderModel) {
-    return Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY : orderModel.getStatus().getCode();
   }
 
   /**
@@ -274,41 +224,6 @@ public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGE
 }
 
   /**
-   * This method created to get the product title
-   * @param serialProductCode serial code
-   * @return string
-   */
-  protected String getProductTitle(final String serialProductCode) {
-    final AtomicReference<String> productTitle = new AtomicReference<>(StringUtils.EMPTY);
-    final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlespintegrationConstants.CATALOG_VALUE,BlespintegrationConstants.ONLINE);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-      final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)){
-        productTitle.set(blProductModel.getName());
-      }
-    }
-    return productTitle.get();
-  }
-
-  public ProductService getProductService() {
-    return productService;
-  }
-
-  public void setProductService(ProductService productService) {
-    this.productService = productService;
-  }
-
-  public CatalogVersionService getCatalogVersionService() {
-    return catalogVersionService;
-  }
-
-  public void setCatalogVersionService(
-      CatalogVersionService catalogVersionService) {
-    this.catalogVersionService = catalogVersionService;
-  }
-
-  /**
    * This method created to get the serial product url for request
    * @param serialProductCode serial product code
    * @return string
@@ -337,21 +252,5 @@ public class BlChargeBillFeedPopulator <SOURCE extends AbstractOrderModel, TARGE
         StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getThumbnail().getURL()) ?
         abstractOrderEntryModel.getProduct().getThumbnail().getURL() : StringUtils.EMPTY;
   }
-  /* This method is to get the damage waiver text  from order  entry model
-   * @param abstractOrderEntryModel AbstractOrderEntryModel
-   * @return values to set on request
-   */
-  protected String getDamageWaiverName(final AbstractOrderEntryModel abstractOrderEntryModel) {
-    final AtomicReference<String> damageWaiverText = new AtomicReference<>(StringUtils.EMPTY);
-    if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardWaiverSelected())) {
-      damageWaiverText.set(GearGaurdEnum.GEAR_GAURD.getCode());
-    }
-    else if(BooleanUtils.isTrue(abstractOrderEntryModel.getGearGuardProFullWaiverSelected())){
-      damageWaiverText.set(GearGaurdEnum.GEAR_GAURD_PRO.getCode());
-    }
-    else if(BooleanUtils.isTrue(abstractOrderEntryModel.getNoDamageWaiverSelected())){
-      damageWaiverText.set(GearGaurdEnum.NONE.getCode());
-    }
-    return damageWaiverText.get();
-  }
+
 }
