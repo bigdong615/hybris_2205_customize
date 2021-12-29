@@ -211,7 +211,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 				final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
 						&& null != ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
 								? ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode()
-								: "";
+								: BlInventoryScanLoggingConstants.EMPTY_STRING;
 				if (consignment.isCleanCompleteConsignment()
 						&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(locationCode))
 				{
