@@ -39,7 +39,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 	@Value("${blintegration.fedex.request.uri}")
 	private String requestURI;
 
-	@Value("${blintegration.fedex.api.key}")
+	@Value("${blintegration.fedex.same.day.api.key}")
 	private String apiKey;
 
 	@Value("${blintegration.fedex.samedaycity.mock.enable}")
@@ -78,8 +78,8 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			// This condtion will get remove once proxy server issue get resolved
 			if (BooleanUtils.isTrue(mockEnable))
 			{
-				if (sameDayCityReqData.getDeliveryAddressZipCode().equals("95054")
-						|| sameDayCityReqData.getDeliveryAddressZipCode().equals("10109"))
+				if (BlintegrationConstants.DELIVERY_ZIP_CODE_SF.equals(sameDayCityReqData.getDeliveryAddressZipCode())
+						|| BlintegrationConstants.DELIVERY_ZIP_CODE_NYC.equals(sameDayCityReqData.getDeliveryAddressZipCode()))
 				{
 					sameDayCityResData.setServiceApplicable(true);
 					return sameDayCityResData;
@@ -87,7 +87,8 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			}
 			else
 			{
-				if (response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 201)
+				if (BlintegrationConstants.STATUS_CODE_200 == response.getStatusLine().getStatusCode()
+						|| BlintegrationConstants.STATUS_CODE_201 == response.getStatusLine().getStatusCode())
 				{
 					final JSONObject jsonObj = new JSONObject(result);
 					sameDayCityResData.setServiceApplicable(jsonObj.getBoolean("available"));
@@ -109,7 +110,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 		}
 		catch (final IOException | URISyntaxException | JSONException ex)
 		{
-			sameDayCityResData.setErrorCode(400);
+			sameDayCityResData.setErrorCode(BlintegrationConstants.STATUS_CODE_400);
 			sameDayCityResData.setErrorResponse(ex.getMessage());
 			sameDayCityResData.setServiceApplicable(null);
 			BlLogger.logMessage(LOG, Level.ERROR, "************* IO Exception occure at : " + ex);

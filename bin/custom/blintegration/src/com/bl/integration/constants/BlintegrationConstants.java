@@ -176,6 +176,11 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final int TWENTY = 20;
 	public static final int MINUS_SEVEN = -7;
 	public static final String END_POINT = "endPoint";
+	public static final String DELIVERY_ZIP_CODE_SF = "95054";
+	public static final String DELIVERY_ZIP_CODE_NYC = "10109";
+	public static final int STATUS_CODE_200 = 200;
+	public static final int STATUS_CODE_201 = 201;
+	public static final int STATUS_CODE_400 = 400;
 
 
 	private BlintegrationConstants()
