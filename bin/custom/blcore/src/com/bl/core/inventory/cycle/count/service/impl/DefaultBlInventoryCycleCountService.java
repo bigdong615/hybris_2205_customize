@@ -245,7 +245,7 @@ public class DefaultBlInventoryCycleCountService implements BlInventoryCycleCoun
         if(MapUtils.isNotEmpty(scannedSKUsAndSerials)) {
             final Collection<List<BlSerialProductModel>> allSerials = scannedSKUsAndSerials.values();
             for(final List<BlSerialProductModel> serials : allSerials) {
-                successStatus = this.generateAndLogICCScanHistory(serials, InventoryCycleCountSerialStatus.REGULAR);
+                successStatus = this.generateAndLogICCScanHistory(serials, InventoryCycleCountSerialStatus.FOUND);
             }
         }
 
