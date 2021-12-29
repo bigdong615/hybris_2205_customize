@@ -427,7 +427,7 @@
       </enumtype>
 
         <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
-            <value code="REGULAR"/>
+            <value code="FOUND"/>
             <value code="MISSING"/>
             <value code="UNEXPECTED"/>
         </enumtype>
@@ -1605,10 +1605,20 @@
                          <defaultvalue>em().getEnumerationValue("RepairReasonsEnum", "NONE")</defaultvalue>
                          <description>Determines what type of repair is required</description>
                      </attribute>
-                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     <attribute qualifier="otherRepairsReason" type="java.lang.String">
+                        <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+         			     <modifiers read="true" write="true" optional="true"/>
+			              <persistence type="property">
+			                <columntype database="oracle">
+			                  <value>CLOB</value>
+			                </columntype>
+			                <columntype database="sap">
+			                  <value>NCLOB</value>
+			                </columntype>
+			                <columntype>
+			                  <value>HYBRIS.LONG_STRING</value>
+			                </columntype>
+			              </persistence>
                      </attribute>
                      <attribute qualifier="dirtyPriorityStatus" type="boolean">
                          <persistence type="property" />
@@ -3130,6 +3140,18 @@
           
           <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
+
+          <itemtype code="BlOrderFeedCronJob" extends="CronJob">
+            <description>This type represents a cron job for order which failed for export to FTP location.</description>
+          <attributes>
+          <attribute qualifier="orderFeedDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>To perform the Order FTP feed for specified date.</description>
+          </attribute>
+          </attributes>
+          </itemtype>
+
         </typegroup>
 
         <typegroup>
@@ -4297,10 +4319,20 @@
 				<modifiers read="true" write="true" optional="true" />
 				<description>Determines what type of repair is required</description>
 			</attribute>
-			<attribute qualifier="otherRepairReasons" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+			<attribute qualifier="otherRepairsReason" type="java.lang.String">
+			<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
 			</attribute>
 			<attribute qualifier="frequency" type="IssueFrequencyEnum">
 				<persistence type="property" />
@@ -7239,7 +7271,7 @@ new Integer(0)
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
                         <description>cycle count serial status </description>
-                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "FOUND")</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
