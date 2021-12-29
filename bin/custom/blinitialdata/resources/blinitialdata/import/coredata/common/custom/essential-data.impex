@@ -169,8 +169,6 @@ INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLan
 
 INSERT_UPDATE BlOrderFeedCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blOrderFeedJob ;defaultBlOrderFeedJob ; ;true;;
-
-INSERT_UPDATE BlOrderBillFeedCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blOrderBillFeedJob ;defaultBlOrderBillFeedJob ; ;true;;
 
 INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;

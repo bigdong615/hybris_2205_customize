@@ -1,7 +1,7 @@
 package com.bl.core.job;
 
 import com.bl.core.esp.service.impl.DefaultBlOrderFeedFTPService;
-import com.bl.core.model.BlOrderBillFeedCronJobModel;
+import com.bl.core.model.BlOrderFeedCronJobModel;
 import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  * This class created to feed the Newly Created Bill or Modified Bill to ESP Feed
  * @author Manikandan
  */
-public class BlOrderBillFeedJob  extends AbstractJobPerformable<BlOrderBillFeedCronJobModel> {
+public class BlOrderBillFeedJob  extends AbstractJobPerformable<BlOrderFeedCronJobModel> {
 
   private static final Logger LOG = Logger.getLogger(BlOrderBillFeedJob.class);
   private BlOrderDao orderDao;
@@ -30,46 +30,46 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<BlOrderBillFeedC
 
   /**
    * This method created to perform the ESP order feed
-   * @param blOrderBillFeedCronJobModel cronjob instance
+   * @param blOrderFeedCronJobModel cronjob instance
    * @return result
    */
   @Override
-  public PerformResult perform(final BlOrderBillFeedCronJobModel blOrderBillFeedCronJobModel) {
+  public PerformResult perform(final BlOrderFeedCronJobModel blOrderFeedCronJobModel) {
     try {
         List<AbstractOrderModel> orderModelList = null;
-      if(Objects.isNull(blOrderBillFeedCronJobModel.getOrderBillFeedDate())) {
+      if(Objects.isNull(blOrderFeedCronJobModel.getOrderFeedDate())) {
         orderModelList = getOrderDao().getOrdersForOrderBillFeedToFTP();
       }
       else{
-        orderModelList = getOrderDao().getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(blOrderBillFeedCronJobModel.getOrderBillFeedDate());
+        orderModelList = getOrderDao().getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(blOrderFeedCronJobModel.getOrderFeedDate());
       }
       if(CollectionUtils.isNotEmpty((orderModelList))) {
         final List<AbstractOrderModel> unExportedOrderList = new ArrayList<>();
         getDefaultBlOrderFeedFTPService().convertOrderBillIntoXML(orderModelList,unExportedOrderList);
         if(CollectionUtils.isNotEmpty(unExportedOrderList)) {
-          printLoggerForFailedOrders(unExportedOrderList , blOrderBillFeedCronJobModel.getOrderBillFeedDate());
-          resetOrderFeedDate(blOrderBillFeedCronJobModel);
+          printLoggerForFailedOrders(unExportedOrderList , blOrderFeedCronJobModel.getOrderFeedDate());
+          resetOrderFeedDate(blOrderFeedCronJobModel);
           return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
         }
       }
     }
     catch (final Exception e) {
-      resetOrderFeedDate(blOrderBillFeedCronJobModel);
+      resetOrderFeedDate(blOrderFeedCronJobModel);
       return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
 
     }
-    resetOrderFeedDate(blOrderBillFeedCronJobModel);
+    resetOrderFeedDate(blOrderFeedCronJobModel);
     return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
   }
 
   /**
    * This method created to reset the OrderBillFeedDate as null after performing cron job
-   * @param blOrderBillFeedCronJobModel cronjob
+   * @param blOrderFeedCronJobModel cronjob
    */
-  private void resetOrderFeedDate(final BlOrderBillFeedCronJobModel blOrderBillFeedCronJobModel) {
-    blOrderBillFeedCronJobModel.setOrderBillFeedDate(null);
-    this.modelService.save(blOrderBillFeedCronJobModel);
-    this.modelService.refresh(blOrderBillFeedCronJobModel);
+  private void resetOrderFeedDate(final BlOrderFeedCronJobModel blOrderFeedCronJobModel) {
+    blOrderFeedCronJobModel.setOrderFeedDate(null);
+    this.modelService.save(blOrderFeedCronJobModel);
+    this.modelService.refresh(blOrderFeedCronJobModel);
   }
 
   /**
