@@ -8,6 +8,7 @@ import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +32,11 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<CronJobModel> {
     try {
         List<AbstractOrderModel> orderModelList =  getOrderDao().getOrdersForOrderBillFeedToFTP();
       if(CollectionUtils.isNotEmpty((orderModelList))) {
-        getDefaultBlOrderFeedFTPService().convertOrderBillIntoXML(orderModelList);
+        final List<AbstractOrderModel> unExportedOrderList = new ArrayList<>();
+        getDefaultBlOrderFeedFTPService().convertOrderBillIntoXML(orderModelList,unExportedOrderList);
+        if(CollectionUtils.isNotEmpty(unExportedOrderList)) {
+          return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
+        }
       }
     }
     catch (final Exception e) {

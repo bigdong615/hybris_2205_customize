@@ -169,23 +169,33 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 					consignmentEntryModel);
 			final Map<String, List<BlItemsBillingChargeModel>> newBillingCharges = consignmentEntryModel
 					.getBillingCharges();
-			final AtomicBoolean isNewBillAdded = new AtomicBoolean(Boolean.FALSE);
+			final AtomicBoolean isAnyBillAddedORRemoved = new AtomicBoolean(Boolean.FALSE);
 			final AbstractOrderModel orderModel = consignmentEntryModel.getOrderEntry().getOrder();
-			if (newBillingCharges.size() > previousChangedBillingCharges.size()) {
-				isNewBillAdded.set(Boolean.TRUE);
+			if (newBillingCharges.size() != previousChangedBillingCharges.size()) {
+				isAnyBillAddedORRemoved.set(Boolean.TRUE);
 			} else {
 				newBillingCharges.forEach((serialCode, billingChargeModels) -> {
 					final List<BlItemsBillingChargeModel> blItemsBillingChargeModels = previousChangedBillingCharges
 							.get(serialCode);
 					final List cloneOfNewBillingChargesList = new ArrayList<BlItemsBillingChargeModel>();
+					// This is for tracking new bill creation.
 					cloneOfNewBillingChargesList.addAll(billingChargeModels);
 					cloneOfNewBillingChargesList.removeIf(blItemsBillingChargeModels::contains);
 					if (CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList)) {
-						isNewBillAdded.set(Boolean.TRUE);
+						isAnyBillAddedORRemoved.set(Boolean.TRUE);
+					}
+					// This is for tracking in case of any bill remove.
+					if(!isAnyBillAddedORRemoved.get()) {
+						cloneOfNewBillingChargesList.clear();
+						cloneOfNewBillingChargesList.addAll(blItemsBillingChargeModels);
+						cloneOfNewBillingChargesList.removeIf(billingChargeModels::contains);
+						if (CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList)) {
+							isAnyBillAddedORRemoved.set(Boolean.TRUE);
+						}
 					}
 				});
 			}
-			if (isNewBillAdded.get()) {
+			if (isAnyBillAddedORRemoved.get()) {
 				orderModel.setOrderBillModifiedDate(new Date());
 				orderModel.setUpdatedTime(new Date());
 				modelService.save(orderModel);
