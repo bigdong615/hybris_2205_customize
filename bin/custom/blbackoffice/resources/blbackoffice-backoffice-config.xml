@@ -1795,7 +1795,7 @@
 				<editorArea:section name="hmc.section.blSerial.attributes">
 					<editorArea:attribute qualifier="serialStatus"/>
 					<editorArea:attribute qualifier="repairReasons"/>
-					<editorArea:attribute qualifier="otherRepairReasons"/>
+					<editorArea:attribute qualifier="otherRepairsReason"/>
 					<editorArea:attribute qualifier="repairLogType"/>
 					<editorArea:attribute qualifier="firmwareVersion"/>
 					<editorArea:attribute qualifier="skuFirmwareVersion"/>
@@ -2496,7 +2496,7 @@
 				</editorArea:section>
 				<editorArea:section name="hmc.section.blSerial.repair.note">
 				<editorArea:panel colspan="2" name="Repair Log" rowspan="2">
-				<editorArea:attribute qualifier="otherRepairReasons">
+				<editorArea:attribute qualifier="otherRepairsReason">
 						<editorArea:editor-parameter>
 		    				<editorArea:name>rows</editorArea:name>
 		     				<editorArea:value>10</editorArea:value>

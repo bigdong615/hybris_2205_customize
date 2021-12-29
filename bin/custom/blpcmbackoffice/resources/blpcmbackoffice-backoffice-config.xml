@@ -586,7 +586,7 @@
 					<ea:attribute qualifier="hardAssigned"/>
 					<ea:attribute qualifier="gearRated"/>
 					<ea:attribute qualifier="repairReasons"/>
-					<ea:attribute qualifier="otherRepairReasons"/>
+					<ea:attribute qualifier="otherRepairsReason"/>
 					<ea:attribute qualifier="dirtyPriorityStatus"/>
 					<ea:attribute qualifier="testingStatus"/>
 					<ea:attribute qualifier="repairLogType"/>
