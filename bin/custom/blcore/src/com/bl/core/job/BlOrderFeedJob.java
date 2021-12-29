@@ -10,6 +10,7 @@ import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
@@ -45,6 +46,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
         final List<AbstractOrderModel> unExportedOrderList = new ArrayList<>();
         getDefaultBlOrderFeedFTPService().convertOrderIntoXML(orderModelList , unExportedOrderList);
         if(CollectionUtils.isNotEmpty(unExportedOrderList)) {
+          printLoggerForFailedOrders(unExportedOrderList , blOrderFeedCronJobModel.getOrderFeedDate());
           resetOrderFeedDate(blOrderFeedCronJobModel);
           return new PerformResult(CronJobResult.FAILURE , CronJobStatus.FINISHED);
         }
@@ -61,6 +63,7 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
   }
 
 
+
   /**
    * This method created to reset the OrderFeedDate as null after performing cron job
    * @param blOrderFeedCronJobModel cronjob
@@ -70,6 +73,19 @@ public class BlOrderFeedJob extends AbstractJobPerformable<BlOrderFeedCronJobMod
     this.modelService.save(blOrderFeedCronJobModel);
     this.modelService.refresh(blOrderFeedCronJobModel);
   }
+
+
+  /**
+   * This method created to print the orders which is failed for export to FTP
+   * @param unExportedOrderList list of unexported orders
+   * @param orderFeedDate order feed date
+   */
+  private void printLoggerForFailedOrders(final List<AbstractOrderModel> unExportedOrderList,
+     final Date orderFeedDate) {
+    unExportedOrderList.forEach(abstractOrderModel -> BlLogger.logFormattedMessage(LOG , Level.ERROR ,
+        "Error While exporting order {} to FTP for Date {} " , abstractOrderModel.getCode() , Objects.isNull(orderFeedDate) ? new Date() : orderFeedDate));
+  }
+
 
   public BlOrderDao getOrderDao() {
     return orderDao;
