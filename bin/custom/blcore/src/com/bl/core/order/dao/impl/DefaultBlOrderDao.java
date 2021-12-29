@@ -106,6 +106,10 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			"} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
+	private static final String ORDERS_BILL_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE +
+			"} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
 
 	/**
@@ -393,6 +397,25 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		return orders;
 	}
 
+	/**
+	 * This method created to get list of orders based on specified date
+	 * @param orderBillFeedDate date to get orders
+	 * @return list of order models
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(final Date orderBillFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_BILL_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderBillFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
 
 	/**
 	 * This method created to convert date into specific format

@@ -105,4 +105,10 @@ public interface BlOrderDao extends OrderDao
 	 */
 	List<AbstractOrderModel> getOrdersForOrderFeedToFTPBasedOnSpecificDate(final Date orderFeedDate);
 
+	/**
+	 * This method created to get the list of order to be feed to FTP location for bill based on specific date
+	 * @return list of orders
+	 */
+	List<AbstractOrderModel> getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(final Date orderFeedDate);
+
 }

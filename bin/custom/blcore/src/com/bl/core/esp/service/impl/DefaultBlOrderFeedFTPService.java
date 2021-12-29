@@ -248,6 +248,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
   /**
    * This method created to convert order bill related data into XML
    * @param abstractOrderModels list of orders
+   * @param unExportedOrderList list of unExportedOrderList
    * @throws ParserConfigurationException ParserConfigurationException
    * @throws JAXBException JAXBException
    */
