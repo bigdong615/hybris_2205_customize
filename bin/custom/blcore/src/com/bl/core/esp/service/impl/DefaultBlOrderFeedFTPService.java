@@ -218,7 +218,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
       }
     }
     if(file.exists()) {
-      file.delete();
+     file.delete();
     }
   }
 
@@ -251,14 +251,17 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
    * @throws ParserConfigurationException ParserConfigurationException
    * @throws JAXBException JAXBException
    */
-  public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels)
+  public void convertOrderBillIntoXML(final List<AbstractOrderModel> abstractOrderModels,final List<AbstractOrderModel> unExportedOrderList)
       throws ParserConfigurationException {
     final OrderFeedData  orderFeedData = getOrderFeedData();
+    final List<AbstractOrderModel> exportedOrderList = new ArrayList<>();
    abstractOrderModels.forEach(abstractOrderModel -> {
      try {
        getBlOrderBillFeedPopulator()
            .populate(abstractOrderModel, orderFeedData);
+       exportedOrderList.add(abstractOrderModel);
      }catch (final Exception e){
+       unExportedOrderList.add(abstractOrderModel);
        BlLogger.logFormattedMessage(LOG , Level.ERROR , "Error while converting order {} bill to xml"  , abstractOrderModel.getCode());
      }
    });
@@ -266,7 +269,7 @@ public class DefaultBlOrderFeedFTPService implements BlOrderFeedFTPService {
     final File file = getFile();
     writeFeedRequestToFile(file, xmlString);
     sendFileToFTPLocation(file);
-
+    updatedExportedOrderStatusForOrders(exportedOrderList);
   }
 
   /**
