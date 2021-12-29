@@ -427,7 +427,7 @@
       </enumtype>
 
         <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
-            <value code="REGULAR"/>
+            <value code="FOUND"/>
             <value code="MISSING"/>
             <value code="UNEXPECTED"/>
         </enumtype>
@@ -7271,7 +7271,7 @@ new Integer(0)
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
                         <description>cycle count serial status </description>
-                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "FOUND")</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
