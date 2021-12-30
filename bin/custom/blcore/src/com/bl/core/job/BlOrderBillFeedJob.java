@@ -80,7 +80,7 @@ public class BlOrderBillFeedJob  extends AbstractJobPerformable<BlOrderFeedCronJ
   private void printLoggerForFailedOrders(final List<AbstractOrderModel> unExportedOrderList,
       final Date orderFeedDate) {
     unExportedOrderList.forEach(abstractOrderModel -> BlLogger.logFormattedMessage(LOG , Level.ERROR ,
-        "Error While exporting order {} to FTP for Date {} " , abstractOrderModel.getCode() , Objects.isNull(orderFeedDate) ? new Date() : orderFeedDate));
+        "Error While exporting order bill feed with order code {} to FTP for Date {} " , abstractOrderModel.getCode() , Objects.isNull(orderFeedDate) ? new Date() : orderFeedDate));
   }
 
 
