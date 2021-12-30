@@ -21,6 +21,7 @@ import de.hybris.platform.util.Config;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -425,6 +426,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		modelService.save(addressModel);
 		modelService.refresh(addressModel);
+		orderModel.setOrderModifiedDate(new Date());
 		modelService.save(orderModel);
 		modelService.refresh(orderModel);
 		if (BooleanUtils.isTrue(isDeliveryModeChange))

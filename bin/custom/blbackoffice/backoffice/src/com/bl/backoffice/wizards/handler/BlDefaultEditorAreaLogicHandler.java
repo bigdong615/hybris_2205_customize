@@ -21,6 +21,7 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
@@ -81,6 +82,14 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
     if (currentObject instanceof OrderModel) {
 			OrderModel orderModel = (OrderModel) currentObject;
 			orderModel.setCalculated(false);
+			// tracking time if delivery mode updating
+			final DeliveryModeModel previousDeliveryMode = getPreviousChangedDeliveryModeCharges(
+					orderModel);
+			final DeliveryModeModel newDeliveryMode = orderModel.getDeliveryMode();
+			if(previousDeliveryMode!= null && !previousDeliveryMode.getCode().equals(newDeliveryMode.getCode())){
+				orderModel.setOrderModifiedDate(new Date());
+			}
+
 			final List<AbstractOrderEntryModel> previousChangedOrderEntriesList = getPreviousChangedOrderEntrysList(
 					orderModel);
 			final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>();
@@ -227,8 +236,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 		}
 		if (currentObject instanceof AddressModel) {
 			final AddressModel addressModel = (AddressModel) currentObject;
-			if (addressModel.getOwner() instanceof OrderModel) {
-				final OrderModel orderModel = (OrderModel) addressModel.getOwner();
+			if (addressModel.getOwner() instanceof OrderModel || addressModel.getOwner() instanceof AbstractOrderModel) {
+				final AbstractOrderModel orderModel = (AbstractOrderModel) addressModel.getOwner();
 				orderModel.setOrderModifiedDate(new Date());
 				modelService.save(orderModel);
 				modelService.refresh(orderModel);
@@ -415,6 +424,22 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			return (Map<String, List<BlItemsBillingChargeModel>>)  previousValue;
 		}
 		return (Map<String, List<BlItemsBillingChargeModel>>) Collections.emptyList();
+	}
+
+	/**
+	 * method is used to get the original value for delivery mode.
+	 * @param orderModel
+	 * @return
+	 */
+	private DeliveryModeModel getPreviousChangedDeliveryModeCharges(final AbstractOrderModel orderModel)
+	{
+		final Object previousValue = orderModel.getItemModelContext().getOriginalValue(
+				BlloggingConstants.DELIVERY_MODE);
+		if (previousValue instanceof DeliveryModeModel)
+		{
+			return (DeliveryModeModel)  previousValue;
+		}
+		return new DeliveryModeModel();
 	}
 
 	/**
