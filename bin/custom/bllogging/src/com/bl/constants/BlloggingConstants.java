@@ -24,6 +24,7 @@ public final class BlloggingConstants extends GeneratedBlloggingConstants
 	public static final String MSG_CONST = "JustMessage";
 	public static final String ORIGINAL_VALUE = "entries";
 	public static final String BILLING_CHARGES = "billingCharges";
+	public static final String DELIVERY_MODE = "deliveryMode";
 
 	private BlloggingConstants()
 	{
