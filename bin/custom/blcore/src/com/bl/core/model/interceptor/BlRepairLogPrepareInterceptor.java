@@ -46,7 +46,21 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 			throws InterceptorException
 	{
 		validateParameterNotNull(blRepairLogModel, "ERROR : BlRepairLogPrepareInterceptor : Parameter BlRepairLogModel is NULL");
+		addUniqueRepairLogId(blRepairLogModel);
 		addNecessaryDataToRepairLog(blRepairLogModel, interceptorContext);
+	}
+	
+	/**
+	 * Adds the unique repair log id.
+	 *
+	 * @param blRepairLogModel the bl repair log model
+	 */
+	private void addUniqueRepairLogId(final BlRepairLogModel blRepairLogModel)
+	{
+		if(StringUtils.isBlank(blRepairLogModel.getRepairLogId()))
+		{
+			blRepairLogModel.setRepairLogId(UUID.randomUUID().toString());
+		}
 	}
 
 	/**
@@ -82,10 +96,6 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				{
 					BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Serial found for barcode : {} or Serial Code : {}", itemBarcode,serialCode);
 					throw new InterceptorException("No Serial found");
-				}
-				if(StringUtils.isBlank(blRepairLogModel.getRepairLogId()))
-				{
-					blRepairLogModel.setRepairLogId(UUID.randomUUID().toString());
 				}
 				blRepairLogModel.setSerialProduct(blSerialProductModel);
 				blRepairLogModel.setSerialCode(blSerialProductModel.getCode());
