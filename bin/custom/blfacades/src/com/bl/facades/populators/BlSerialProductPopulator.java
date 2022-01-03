@@ -163,11 +163,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	private boolean isSerialActive(final SerialStatusEnum serialStatusEnum) {
 		switch (serialStatusEnum.getCode()) {
 			case BlCoreConstants.ACTIVE_STATUS:
-			case BlCoreConstants.PARTIALLY_UNBOXED:
-			case BlCoreConstants.UN_BOXED:
 			case BlCoreConstants.RECEIVED_OR_RETURNED:
-			case BlCoreConstants.BOXED:
-			case BlCoreConstants.SHIPPED:
 			case BlCoreConstants.IN_HOUSE:
 			case BlCoreConstants.ADDED_TO_CART:
 				return Boolean.TRUE;
