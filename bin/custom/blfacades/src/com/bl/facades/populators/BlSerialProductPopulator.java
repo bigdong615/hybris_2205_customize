@@ -68,7 +68,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
-					if(BooleanUtils.isTrue(serialProductModel.getForSale()) && serialHasActiveStatus(serialProductModel.getSerialStatus())) {
+					if(BooleanUtils.isTrue(serialProductModel.getForSale()) && isSerialActive(serialProductModel.getSerialStatus())) {
 						final SerialProductData serialProductData = new SerialProductData();
 						if (getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel)) {
 							serialProductData.setCosmeticRating(
@@ -157,10 +157,10 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 
 	/**
 	 * Check if serial has active status
-	 * @param serialStatusEnum
-	 * @return boolean
+	 * @param serialStatusEnum serialStatusEnum
+	 * @return boolean boolean
 	 */
-	private boolean serialHasActiveStatus(final SerialStatusEnum serialStatusEnum) {
+	private boolean isSerialActive(final SerialStatusEnum serialStatusEnum) {
 		switch (serialStatusEnum.getCode()) {
 			case BlCoreConstants.ACTIVE_STATUS:
 			case BlCoreConstants.PARTIALLY_UNBOXED:
