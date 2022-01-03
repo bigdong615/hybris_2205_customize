@@ -2399,12 +2399,14 @@
 				<advanced-search:field mandatory="false" name="itemBarcode" selected="true"/>
                 <advanced-search:field mandatory="false" name="repairLogStatus" selected="false"/>
               	<advanced-search:field mandatory="false" name="serialCode" selected="false"/>
+              	<advanced-search:field mandatory="false" name="repairLogId" selected="false"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
 
 	<context type="BlRepairLog" component="listview" merge-by="replace">
 		<list-view:list-view>
+			<list-view:column qualifier="repairLogId"/>
 			<list-view:column qualifier="itemtype"/>
             <list-view:column qualifier="repairLogStatus"/>
             <list-view:column qualifier="serialCode"/>
@@ -2459,6 +2461,7 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
 				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="repairLogId" readonly="true"/>
 					<editorArea:attribute qualifier="creationtime" readonly="true"/>
 					<editorArea:attribute qualifier="serialCode" readonly="true"/>
 					<editorArea:attribute qualifier="itemBarcode" readonly="true"/>
