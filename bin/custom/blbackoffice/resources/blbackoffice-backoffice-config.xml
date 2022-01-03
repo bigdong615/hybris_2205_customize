@@ -1803,8 +1803,8 @@
 					<editorArea:attribute qualifier="cosmeticRating"/>
 					<editorArea:attribute qualifier="functionalRating"/>
 					<editorArea:attribute qualifier="conditionRatingOverallScore"/>
-					<editorArea:attribute qualifier="associatedConsignment"/>
-					<editorArea:attribute qualifier="consignmentEntry"/>
+					<editorArea:attribute qualifier="associatedConsignment" readonly="true"/>
+					<editorArea:attribute qualifier="consignmentEntry" readonly="true"/>
 					<editorArea:attribute qualifier="testingStatus"/>
 				</editorArea:section>
 			</editorArea:tab>
