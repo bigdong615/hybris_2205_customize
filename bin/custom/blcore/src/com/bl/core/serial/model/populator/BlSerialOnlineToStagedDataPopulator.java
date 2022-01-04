@@ -30,7 +30,7 @@ public class BlSerialOnlineToStagedDataPopulator implements Populator<BlSerialPr
 			stagedSerial.setSerialStatus(onlineSerial.getSerialStatus());
 			stagedSerial.setGearRated(onlineSerial.isGearRated());
 			stagedSerial.setRepairReasons(onlineSerial.getRepairReasons());
-			stagedSerial.setOtherRepairReasons(onlineSerial.getOtherRepairReasons());
+			stagedSerial.setOtherRepairsReason(onlineSerial.getOtherRepairsReason());
 			stagedSerial.setFirmwareVersion(onlineSerial.getFirmwareVersion());
 			stagedSerial.setCosmeticRating(onlineSerial.getCosmeticRating());
 			stagedSerial.setFunctionalRating(onlineSerial.getFunctionalRating());

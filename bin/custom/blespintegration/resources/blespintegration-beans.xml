@@ -1128,4 +1128,10 @@
 		</property>
 	</bean>
 
+
+	<bean class="com.bl.esp.dto.OrderFeedData">
+		<property name="data" type="org.w3c.dom.Document" />
+		<property name="element" type="org.w3c.dom.Element" />
+	</bean>
+
 </beans>

@@ -34,6 +34,7 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -123,6 +124,14 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER))
 		{
 			isOrderModified(orderEntryModel, serialProduct, warehouse);
+			orderEntryModel.setUpdatedTime(new Date());
+			final AbstractOrderModel abstractOrderModel = orderEntryModel.getOrder();
+			abstractOrderModel.setOrderModifiedDate(new Date());
+			abstractOrderModel.setUpdatedTime(new Date());
+			modelService.save(abstractOrderModel);
+			modelService.refresh(abstractOrderModel);
+			BlLogger.logFormattedMessage(LOG , Level.DEBUG , "order{} is modified and updated with OrderModifiedDate {} and UpdatedTime {} " ,
+					orderEntryModel.getOrder().getCode() , abstractOrderModel.getOrderModifiedDate() , abstractOrderModel.getUpdatedTime());
 		}
 	}
 	

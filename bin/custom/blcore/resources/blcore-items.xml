@@ -427,7 +427,7 @@
       </enumtype>
 
         <enumtype generate="true" code="InventoryCycleCountSerialStatus" autocreate="true" dynamic="true">
-            <value code="REGULAR"/>
+            <value code="FOUND"/>
             <value code="MISSING"/>
             <value code="UNEXPECTED"/>
         </enumtype>
@@ -479,7 +479,11 @@
         <value code="BARCODED_SUBPART" />
         <value code="NON_BARCODED_SUBPART" />
       </enumtype>
-      
+      <!-- BL-1311: This enum is created to track billing status.-->
+      <enumtype code="BillInfoStatus" autocreate="true" generate="true">
+        <value code="NEW_BILL" />
+        <value code="UPDATED_BILL" />
+      </enumtype>
 	  </enumtypes>
 
     <maptypes>
@@ -1607,10 +1611,20 @@
                          <defaultvalue>em().getEnumerationValue("RepairReasonsEnum", "NONE")</defaultvalue>
                          <description>Determines what type of repair is required</description>
                      </attribute>
-                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" />
-                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     <attribute qualifier="otherRepairsReason" type="java.lang.String">
+                        <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+         			     <modifiers read="true" write="true" optional="true"/>
+			              <persistence type="property">
+			                <columntype database="oracle">
+			                  <value>CLOB</value>
+			                </columntype>
+			                <columntype database="sap">
+			                  <value>NCLOB</value>
+			                </columntype>
+			                <columntype>
+			                  <value>HYBRIS.LONG_STRING</value>
+			                </columntype>
+			              </persistence>
                      </attribute>
                      <attribute qualifier="dirtyPriorityStatus" type="boolean">
                          <persistence type="property" />
@@ -2464,6 +2478,11 @@
               <defaultvalue>0L</defaultvalue>
               <description>The number of quantity allocated in both warehouses through reshuffler job</description>
             </attribute>
+            <attribute qualifier="updatedTime" type="java.util.Date">
+              <persistence type="property" />
+              <modifiers read="true" write="true" optional="true" />
+              <description>To identify whether the order/Order Bill is modified or not</description>
+            </attribute>
           </attributes>
         </itemtype>
       </typegroup>
@@ -3074,7 +3093,34 @@
                       <persistence type="property" />
                       <description>It indicates current status of an uploaded document</description>
                     </attribute>
-                </attributes>
+                  <attribute qualifier="orderModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order is modified or not</description>
+                  </attribute>
+                  <attribute qualifier="orderBillModifiedDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To identify whether the order Bill is modified or not</description>
+                  </attribute>
+              <attribute qualifier="updatedTime" type="java.util.Date">
+                <persistence type="property" />
+                <modifiers read="true" write="true" optional="true" />
+                <description>To identify whether the order/Order Bill is modified or not</description>
+              </attribute>
+                  <attribute autocreate="true" qualifier="coiAmount" type="java.math.BigDecimal">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                    <description>COI amount</description>
+                  </attribute>
+              <attribute autocreate="true" qualifier="sentOrderFeedToSalesforce" type="ExportStatus">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
+                <description>To identify whether the order is exported to FTP or Not. </description>
+              </attribute>
+            </attributes>
             </itemtype>
 
           <!--Added New attribute to identify the order for replacement in Return Request . -->
@@ -3100,6 +3146,17 @@
           
           <itemtype code="BlReturnEntry" extends="ReturnEntry" jaloclass="com.bl.core.jalo.BlReturnEntry" autocreate="true" generate="true" />
 
+
+          <itemtype code="BlOrderFeedCronJob" extends="CronJob">
+            <description>This type represents a cron job for order which failed for export to FTP location.</description>
+          <attributes>
+          <attribute qualifier="orderFeedDate" type="java.util.Date">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>To perform the Order FTP feed for specified date.</description>
+          </attribute>
+          </attributes>
+          </itemtype>
         </typegroup>
 
         <typegroup>
@@ -4135,6 +4192,18 @@
           <modifiers read="true" write="true" optional="true" />
           <description>To identify the customer on billing charges.</description>
         </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes start.-->
+        <attribute qualifier="updatedBillTime" type="java.util.Date">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify whether the bill is modified or not.</description>
+        </attribute>
+        <attribute qualifier="billStatus" type="BillInfoStatus">
+          <persistence type="property" />
+          <modifiers read="true" write="true" optional="true" />
+          <description>To identify bill status.</description>
+        </attribute>
+        <!--BL-1311 : Changes related to tracking bill related changes End.-->
 			</attributes>
 		</itemtype>
       </typegroup>
@@ -4255,10 +4324,20 @@
 				<modifiers read="true" write="true" optional="true" />
 				<description>Determines what type of repair is required</description>
 			</attribute>
-			<attribute qualifier="otherRepairReasons" type="java.lang.String">
-				<persistence type="property" />
-				<modifiers read="true" write="true" optional="true" />
-				<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+			<attribute qualifier="otherRepairsReason" type="java.lang.String">
+			<description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+              <modifiers read="true" write="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
 			</attribute>
 			<attribute qualifier="frequency" type="IssueFrequencyEnum">
 				<persistence type="property" />
@@ -4307,6 +4386,10 @@
 				<description>Damage Waiver taken by Customer for the item</description>
 				<persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
 			</attribute>
+			<attribute qualifier="repairLogId" type="java.lang.String">
+          		<persistence type="property"/>
+          		<modifiers read="true" write="true" optional="true" unique="true"/>
+        	</attribute>
 		</attributes>
 	</itemtype>
 
@@ -7197,7 +7280,7 @@ new Integer(0)
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
                         <description>cycle count serial status </description>
-                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "REGULAR")</defaultvalue>
+                        <defaultvalue>em().getEnumerationValue("InventoryCycleCountSerialStatus", "FOUND")</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>

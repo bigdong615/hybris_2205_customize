@@ -95,6 +95,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate OR {o:" + OrderModel.ACTUALRENTALSTARTDATE
 			+ "} BETWEEN ?startDate AND ?endDate) AND {" + OrderModel.STATUS + "} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})}}) o";
 
+	private static final String ORDERS_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE + "} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate ";
+
+	private static final String ORDERS_BILL_TO_FEED_FTP  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE + "} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate";
+
+	private static final String ORDERS_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERMODIFIEDDATE +
+			"} BETWEEN ?orderModifiedDate AND ?orderModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
+
+	private static final String ORDERS_BILL_TO_FEED_FTP_BY_DATE  = "SELECT DISTINCT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ORDERBILLMODIFIEDDATE +
+			"} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
+			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
+
+
 	/**
  	* {@inheritDoc}
  	*/
@@ -319,6 +336,85 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 					"There are no orders to be processed via reshuffler job to optimize ship from warehouse for the day {} ", currentDate);
 		}
 		return result.getResult();
+	}
+
+	/**
+	 * This method created to get Order to Feed FTP
+	 * @return list of orders
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderFeedToFTP() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_FEED_FTP);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
+	 * This method created to get OrderBill to Feed FTP
+	 * @return list of orders
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderBillFeedToFTP() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_BILL_TO_FEED_FTP);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(new Date()).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {} ",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(new Date()).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+
+  /**
+   * This method created to get list of orders based on specified date
+   * @param orderFeedDate date to get orders
+   * @return list of order models
+   */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderFeedToFTPBasedOnSpecificDate(final Date orderFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
+	}
+
+	/**
+	 * This method created to get list of orders based on specified date
+	 * @param orderBillFeedDate date to get orders
+	 * @return list of order models
+	 */
+	@Override
+	public List<AbstractOrderModel> getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(final Date orderBillFeedDate) {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(ORDERS_BILL_TO_FEED_FTP_BY_DATE);
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+		fQuery.addQueryParameter(BlCoreConstants.ORDER_BILL_MODIFIED_END_DATE, convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedEndDay(orderBillFeedDate).getTime()));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<AbstractOrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logFormattedMessage(LOG , Level.INFO , "No orders found for Order bill feed with date {}",
+					convertDateIntoSpecificFormat(BlDateTimeUtils.getFormattedStartDay(orderBillFeedDate).getTime()));
+			return Collections.emptyList();
+		}
+		return orders;
 	}
 
 	/**

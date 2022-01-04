@@ -127,5 +127,7 @@
 
 	<bean id="blCustomAdvancedSearchEngineController" class=" com.bl.backoffice.widget.controller.BlCustomAdvancedSearchEngineController">
 	</bean>
+	<bean id="blInventoryCycleCountProductNameRenderer" class="com.bl.backoffice.renderer.BlInventoryCycleCountProductNameRenderer" />
+
 
 </beans>

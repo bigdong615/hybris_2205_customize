@@ -14,6 +14,7 @@ import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.util.Collections;
+import java.util.Date;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -79,6 +80,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         try
         {
           orderModel.setIsOrderSubmit(Boolean.TRUE);
+          orderModel.setOrderModifiedDate(new Date());
           getCalculationService().calculateTotals(orderModel, false);
           getExternalTaxesService().calculateExternalTaxes(orderModel);
         }
@@ -93,6 +95,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
         result.setOrder(orderModel);
 
         this.beforeSubmitOrder(parameter, result);
+
 
         getOrderService().submitOrder(orderModel);
       }

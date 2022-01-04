@@ -75,7 +75,7 @@ public class DefaultBlRepairLogService implements BlRepairLogService
 		{
 			repairLog.setRepairReasons(blSerialProduct.getRepairReasons());
 		}
-		repairLog.setOtherRepairReasons(StringUtils.stripToEmpty(blSerialProduct.getOtherRepairReasons()));
+		repairLog.setOtherRepairsReason(StringUtils.stripToEmpty(blSerialProduct.getOtherRepairsReason()));
 	}
 
 	/**
