@@ -1296,6 +1296,7 @@
 		<property name="blProductDao" ref="productDao"/>
 		<property name="userService" ref="userService"/>
 		<property name="blRepairLogService" ref="blRepairLogService"/>
+		<property name="blConsignmentEntryService" ref="blConsignmentEntryService"/>
 	</bean>
 	
 	<!-- Adding BlRepairLogModel interceptor to Interceptor mapping list -->

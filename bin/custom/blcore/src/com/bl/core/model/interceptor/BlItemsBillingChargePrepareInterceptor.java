@@ -39,7 +39,7 @@ public class BlItemsBillingChargePrepareInterceptor implements PrepareIntercepto
 			blItemsBillingChargeModel.setCode(randomId);
 			blItemsBillingChargeModel.setUpdatedBillTime(new Date());
 			blItemsBillingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlItemsBillingChargePrepareInterceptor : UUID : {}", UUID.randomUUID());
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlItemsBillingChargePrepareInterceptor : UUID : {}", randomId);
 		}
 	}
 
