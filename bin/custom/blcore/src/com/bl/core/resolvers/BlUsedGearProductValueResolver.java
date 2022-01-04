@@ -26,22 +26,20 @@ public class BlUsedGearProductValueResolver extends
 
   /**
    * this method created for creating values for solr property
-   *
-   * @param inputDocument        inputDocument
-   * @param indexerBatchContext  indexerBatchContext
-   * @param indexedProperty      indexedProperty for solr
-   * @param blProductModel       blProductModel
+   * @param inputDocument inputDocument
+   * @param indexerBatchContext indexerBatchContext
+   * @param indexedProperty indexedProperty for solr
+   * @param blProductModel blProductModel
    * @param valueResolverContext valueResolverContext
    * @throws FieldValueProviderException throws exception
    */
   @Override
-  protected void addFieldValues(final InputDocument inputDocument,
-      final IndexerBatchContext indexerBatchContext,
+  protected void addFieldValues(final InputDocument inputDocument, final IndexerBatchContext indexerBatchContext,
       final IndexedProperty indexedProperty, final BlProductModel blProductModel,
-      final ValueResolverContext<Object, Object> valueResolverContext)
-      throws FieldValueProviderException {
-    inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getForSale()) &&
-        getSerial(blProductModel.getSerialProducts()));
+      final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
+  {
+        inputDocument.addField(indexedProperty , BooleanUtils.isTrue(blProductModel.getForSale()) &&
+                getSerial(blProductModel.getSerialProducts()));
   }
 
   /**
@@ -57,7 +55,6 @@ public class BlUsedGearProductValueResolver extends
 
   /**
    * This method created to check Serial status is active or not
-   *
    * @param currentStatus serial status
    * @return boolean based on status
    */
