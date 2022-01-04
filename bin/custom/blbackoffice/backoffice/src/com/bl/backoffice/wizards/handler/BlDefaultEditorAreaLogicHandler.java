@@ -231,6 +231,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 							order.getOrderBillModifiedDate());
 				}
 			}
+			billingChargeModel.setChargedAmount(billingChargeModel.getChargedAmount().setScale(BlCoreConstants.DECIMAL_PRECISION,BlCoreConstants.ROUNDING_MODE));
 			billingChargeModel.setUpdatedBillTime(new Date());
 			billingChargeModel.setBillStatus(BillInfoStatus.UPDATED_BILL);
 		}
