@@ -102,7 +102,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 						if (BooleanUtils.isTrue(source.getForRent())) {
 							final boolean isUsedGearSerialNotAssignedToRentalOrder = blCommerceStockService
 									.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getProductId(),
-											source.getCode());
+											serialProductModel.getCode());
 							serialProductData
 									.setIsSerialNotAssignedToRentalOrder(isUsedGearSerialNotAssignedToRentalOrder);
 						}
