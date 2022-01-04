@@ -10,6 +10,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
@@ -94,9 +95,9 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
     final UserModel userModel = abstractOrderModel.getUser();
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.CUSTOMER_NAME, getRequestValue(userModel.getName()));
-    final double totalPendingBill = getTotalPendingBill(abstractOrderModel);
+    final String totalPendingBill = getTotalPendingBill(abstractOrderModel);
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.TOTAL_BILL_AMOUNT, String.valueOf(totalPendingBill));
+        BlespintegrationConstants.TOTAL_BILL_AMOUNT, totalPendingBill);
   }
 
   /**
@@ -128,7 +129,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
                 // converting product related data into xml tag
                 convertProductData(orderItemsInXMLDocument, rootOrderItem, product);
                 createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.TOTAL,
-                    getRequestValue(String.valueOf(billCharge.getChargedAmount())));
+                    getRequestValue(String.valueOf(billCharge.getChargedAmount().doubleValue())));
                 createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
                     BlespintegrationConstants.GEAR_GUARD, getDamageWaiverName(
                         orderEntry));
@@ -148,7 +149,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
    * @param abstractOrderModel
    * @return
    */
- private double getTotalPendingBill(AbstractOrderModel abstractOrderModel){
+ private String getTotalPendingBill(AbstractOrderModel abstractOrderModel){
     final AtomicDouble pendingBill= new AtomicDouble(0.0);
     abstractOrderModel.getConsignments().forEach(consignmentModel -> {
       consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
@@ -159,7 +160,8 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
         });
       });
     });
-    return pendingBill.get();
+   DecimalFormat f = new DecimalFormat("##0.00");
+    return f.format(pendingBill.get());
  }
 
   /**
