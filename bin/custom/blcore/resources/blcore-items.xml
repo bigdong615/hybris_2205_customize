@@ -4380,6 +4380,10 @@
 				<description>Damage Waiver taken by Customer for the item</description>
 				<persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
 			</attribute>
+			<attribute qualifier="repairLogId" type="java.lang.String">
+          		<persistence type="property"/>
+          		<modifiers read="true" write="true" optional="true" unique="true"/>
+        	</attribute>
 		</attributes>
 	</itemtype>
 
