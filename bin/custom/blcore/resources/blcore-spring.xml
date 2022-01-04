@@ -728,7 +728,9 @@
 
  <!--BL-331 Solr Field Value Resolver -->
 
-  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver">
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+	</bean>
 
   <bean id="blProductTypeValueResolver" class="com.bl.core.resolvers.BlProductTypeValueResolver" parent="abstractValueResolver"/>
 
