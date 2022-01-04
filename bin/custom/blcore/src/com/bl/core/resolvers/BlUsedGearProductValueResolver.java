@@ -52,7 +52,7 @@ public class BlUsedGearProductValueResolver extends
    */
   private boolean getSerial(final Collection<BlSerialProductModel> serials) {
     return serials.stream().anyMatch(serial -> Boolean.TRUE.equals(serial.getForSale())
-        && (isUsedGearSerialNotAssignedToRentalOrder(serial)) && (isActiveStatus(serial.getSerialStatus())));
+        && (isActiveStatus(serial.getSerialStatus()) && (isUsedGearSerialNotAssignedToRentalOrder(serial))));
   }
 
   /**
