@@ -1,24 +1,23 @@
 package com.bl.core.esp.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlItemsBillingChargeModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
 import com.google.common.util.concurrent.AtomicDouble;
-import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -98,9 +97,9 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
     final UserModel userModel = abstractOrderModel.getUser();
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.CUSTOMER_NAME, getRequestValue(userModel.getName()));
-    final double totalPendingBill = getTotalPendingBill(abstractOrderModel);
+    final String totalPendingBill = getTotalPendingBill(abstractOrderModel);
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.TOTAL_BILL_AMOUNT, String.valueOf(totalPendingBill));
+        BlespintegrationConstants.TOTAL_BILL_AMOUNT, totalPendingBill);
   }
 
   /**
@@ -113,25 +112,38 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
   private void createOrderBillItemInfo(final AbstractOrderModel orderModel,
       final Document orderItemsInXMLDocument, final Element rootOrderItems,
       final SimpleDateFormat formatter) {
-    final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument,
-        rootOrderItems,
-        BlespintegrationConstants.ORDER_BILL_ITEMS);
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.ORDER_ID, getRequestValue(orderModel.getCode()));
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.ORDER_ITEM_ID,
-        getRequestValue(orderModel.getCode()));
     orderModel.getConsignments().forEach(consignmentModel -> {
       consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
-        final Element rootOrderEntryItem = createRootElementForRootElement(orderItemsInXMLDocument,
-            rootOrderItem, BlespintegrationConstants.ORDER_BILL_ITEM);
-        convertProductData(orderItemsInXMLDocument, rootOrderEntryItem, consignmentEntryModel);
-        convertBillsData(orderItemsInXMLDocument, rootOrderEntryItem, consignmentEntryModel,
-            formatter);
+        final AbstractOrderEntryModel orderEntry = consignmentEntryModel.getOrderEntry();
+        final ProductModel product = orderEntry.getProduct();
+        final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel
+            .getBillingCharges();
+        if (MapUtils.isNotEmpty(billingCharges)) {
+          billingCharges.forEach((serialCode, serialBills) -> {
+            if (CollectionUtils.isNotEmpty(serialBills)) {
+              serialBills.forEach(billCharge -> {
+                final Element rootOrderItem = createRootElementForRootElement(orderItemsInXMLDocument,
+                    rootOrderItems,BlespintegrationConstants.ORDER_BILL_ITEM);
+                createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+                    BlespintegrationConstants.ORDER_ID, getRequestValue(orderModel.getCode()));
+                createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,BlespintegrationConstants.ORDER_ITEM_ID,
+                    billCharge.getPk().toString());
+                // converting product related data into xml tag
+                convertProductData(orderItemsInXMLDocument, rootOrderItem, product);
+                createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.TOTAL,
+                    getRequestValue(String.valueOf(billCharge.getChargedAmount().doubleValue())));
+                createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+                    BlespintegrationConstants.GEAR_GUARD, getDamageWaiverName(
+                        orderEntry));
+                // Converting bill related data into xml tag
+                convertBillDataToXml(orderItemsInXMLDocument, rootOrderItem, billCharge, formatter);
+                  }
+              );
+            }
+          });
+        }
       });
     });
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.TOTAL,
-        getRequestValue(String.valueOf(orderModel.getTotalPrice())));
   }
 
   /**
@@ -139,7 +151,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
    * @param abstractOrderModel
    * @return
    */
- private double getTotalPendingBill(AbstractOrderModel abstractOrderModel){
+ private String getTotalPendingBill(AbstractOrderModel abstractOrderModel){
     final AtomicDouble pendingBill= new AtomicDouble(0.0);
     abstractOrderModel.getConsignments().forEach(consignmentModel -> {
       consignmentModel.getConsignmentEntries().forEach(consignmentEntryModel -> {
@@ -150,59 +162,26 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
         });
       });
     });
-    return pendingBill.get();
+   DecimalFormat f = new DecimalFormat(BlCoreConstants.FORMAT_STRING);
+    return f.format(pendingBill.get());
  }
 
   /**
    * Convert product related data into xml
    * @param orderItemsInXMLDocument
    * @param rootOrderItem
-   * @param consignmentEntryModel
+   * @param productModel
    */
   private void convertProductData(final Document orderItemsInXMLDocument,
-      final Element rootOrderItem, ConsignmentEntryModel consignmentEntryModel) {
-    final AbstractOrderEntryModel orderEntry = consignmentEntryModel.getOrderEntry();
-    if (Objects.nonNull(orderEntry.getProduct())) {
-      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-          BlespintegrationConstants.ORDER_ITEM_PRODUCT_TITLE,
-          orderEntry.getProduct() instanceof BlSerialProductModel ? getProductTitle(
-              orderEntry.getProduct().getCode()) : orderEntry.getProduct().getName());
-      createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-          BlespintegrationConstants.PRODUCT_IMAGE_THUMBNAIL,
-          orderEntry.getProduct() instanceof BlSerialProductModel ? getSerialProductThumbnailUrl(
-              orderEntry.getProduct().getCode()) : getProductThumbnailURL(orderEntry));
-    }
+      final Element rootOrderItem, ProductModel productModel) {
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.ORDER_ITEM_QUANTITY,
-        getRequestValue(String.valueOf(orderEntry.getQuantity())));
+        BlespintegrationConstants.ORDER_ITEM_PRODUCT_CODE,getRequestValue(productModel.getCode()));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-        BlespintegrationConstants.GEAR_GUARD, getDamageWaiverName(orderEntry));
-  }
-
-  /**
-   * This method used to convert bill entry related data into xml.
-   * @param orderItemsInXMLDocument
-   * @param rootOrderItem
-   * @param consignmentEntryModel
-   * @param formatter
-   */
-  private void convertBillsData(final Document orderItemsInXMLDocument,
-      final Element rootOrderItem, ConsignmentEntryModel consignmentEntryModel,
-      final SimpleDateFormat formatter) {
-    final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel
-        .getBillingCharges();
-    if (Objects.nonNull(billingCharges) && !billingCharges.isEmpty()) {
-      billingCharges.forEach((serialCode, serialBills) -> {
-        if (CollectionUtils.isNotEmpty(serialBills)) {
-          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
-              BlespintegrationConstants.ORDER_ITEM_PRODUCT_CODE,
-              getRequestValue(serialCode));
-          serialBills.forEach(billCharge ->
-              convertBillDataToXml(orderItemsInXMLDocument, rootOrderItem, billCharge, formatter)
-          );
-        }
-      });
-    }
+        BlespintegrationConstants.ORDER_ITEM_PRODUCT_TITLE,getRequestValue(productModel.getName()));
+    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+        BlespintegrationConstants.PRODUCT_IMAGE_THUMBNAIL, getProductThumbnailURL(productModel));
+    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
+        BlespintegrationConstants.ORDER_ITEM_QUANTITY,BlespintegrationConstants.BILL_QUANTITY);
   }
 
   /**
@@ -220,40 +199,21 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
       getRequestValue(billCharge.getUnPaidBillNotes()));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILL_CREATED_DATE,
       getRequestValue(formatter.format(billCharge.getCreationtime())));
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.UPDATED_TIME,
+    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.LAST_UPDATED,
         getRequestValue(formatter.format(billCharge.getUpdatedBillTime())));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.STATUS, getRequestValue(billCharge.isBillPaid() ? BlespintegrationConstants.PAID : BlespintegrationConstants.NOT_PAID));
 }
 
   /**
-   * This method created to get the serial product url for request
-   * @param serialProductCode serial product code
-   * @return string
-   */
-  protected String getSerialProductThumbnailUrl(final String serialProductCode) {
-    final AtomicReference<String> productUrl = new AtomicReference<>(StringUtils.EMPTY);
-    final CatalogVersionModel catalogVersion = getCatalogVersionService().getCatalogVersion(BlespintegrationConstants.CATALOG_VALUE,BlespintegrationConstants.ONLINE);
-    final BlSerialProductModel blSerialProduct = (BlSerialProductModel) getProductService().getProductForCode(catalogVersion, serialProductCode);
-    if(Objects.nonNull(blSerialProduct)) {
-      final BlProductModel blProductModel = blSerialProduct.getBlProduct();
-      if(Objects.nonNull(blProductModel)  && Objects.nonNull(blProductModel.getThumbnail()) &&
-          StringUtils.isNotBlank(blProductModel.getThumbnail().getURL())){
-        productUrl.set(blProductModel.getThumbnail().getURL());
-      }
-    }
-    return productUrl.get();
-  }
-
-  /**
    * To check whether media is empty of not
-   * @param abstractOrderEntryModel abstractOrderEntryModel
+   * @param productModel
    * @return string
    */
-  protected String getProductThumbnailURL(final AbstractOrderEntryModel abstractOrderEntryModel){
-    return Objects.nonNull(abstractOrderEntryModel.getProduct().getThumbnail()) &&
-        StringUtils.isNotBlank(abstractOrderEntryModel.getProduct().getThumbnail().getURL()) ?
-        abstractOrderEntryModel.getProduct().getThumbnail().getURL() : StringUtils.EMPTY;
+  protected String getProductThumbnailURL(final ProductModel productModel){
+    return Objects.nonNull(productModel.getThumbnail()) &&
+        StringUtils.isNotBlank(productModel.getThumbnail().getURL()) ?
+        productModel.getThumbnail().getURL() : StringUtils.EMPTY;
   }
 
 }
