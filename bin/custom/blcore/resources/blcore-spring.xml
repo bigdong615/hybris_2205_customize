@@ -507,6 +507,7 @@
 		<property name="catalogVersionService" ref="catalogVersionService"/>
 		<property name="sessionService" ref="sessionService"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
