@@ -757,6 +757,12 @@
           <persistence type="property"/>
           <modifiers read="true" write="false" search="true" optional="true" unique="true"  initial="true"/>
         </attribute>
+        <attribute qualifier="nonRefundableDeposit" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>Boolean.FALSE</defaultvalue>
+          <description>Defines Flag for Non-Refundable Deposit Amount</description>
+        </attribute>
       </attributes>
       </itemtype>
 
