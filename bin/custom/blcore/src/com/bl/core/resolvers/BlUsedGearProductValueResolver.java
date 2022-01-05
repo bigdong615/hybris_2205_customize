@@ -76,7 +76,7 @@ public class BlUsedGearProductValueResolver extends
    * @return boolean
    */
   private boolean isUsedGearSerialNotAssignedToRentalOrder(final BlSerialProductModel blSerialProductModel) {
-  return getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(blSerialProductModel.getProductId() , blSerialProductModel.getCode());
+  return getBlCommerceStockService().isUsedGearSerialNotAssignedToRentalOrder(blSerialProductModel.getCode());
 }
 
   public BlCommerceStockService getBlCommerceStockService() {

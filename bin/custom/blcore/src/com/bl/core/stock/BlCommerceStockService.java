@@ -92,7 +92,7 @@ public interface BlCommerceStockService
 	 * @param productCode           the sku product code
 	 * @return boolean
 	 */
-	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
+	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String productCode);
 
 	/**
 	 * Gets the next availability date for the product against the quantity to check.
