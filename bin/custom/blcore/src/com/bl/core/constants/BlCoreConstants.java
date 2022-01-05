@@ -571,6 +571,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LATE = "LATE";
 	public static final String RECEIVED_STATUS = "RECEIVED";
 	public static final String SOLD = "SOLD";
+	public static final String TAX = "Tax";
+	public static final String QUANTITY = "Quantity";
 
 	// Consignment Status
 	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";

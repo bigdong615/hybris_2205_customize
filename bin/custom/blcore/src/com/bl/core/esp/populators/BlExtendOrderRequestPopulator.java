@@ -137,6 +137,8 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
           createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
               String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY, String.valueOf(entryModel.getQuantity()));
+          createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX, String.valueOf(getDoubleValueForRequest(entryModel.getAvalaraLineTax())));
         }
       }
 
