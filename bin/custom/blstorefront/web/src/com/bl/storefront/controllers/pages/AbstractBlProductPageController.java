@@ -429,6 +429,9 @@ public class AbstractBlProductPageController extends AbstractPageController
 			final CategoryModel category =	commerceCategoryService.getCategoryForCode(BlControllerConstants.USED_CATEGORY_CODE);
 				breadList.get(0).setUrl(BlControllerConstants.USED_CATEGORY_PREFIX_URL+category.getCode());
 				breadList.get(0).setName(category.getName());
+				if(breadList.size()>2){
+					breadList.remove(1);
+				}
 				model.addAttribute(WebConstants.BREADCRUMBS_KEY, breadList);
 			}
 		}else {
