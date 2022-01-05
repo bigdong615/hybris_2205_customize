@@ -1,5 +1,6 @@
 package com.bl.core.esp.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.esp.constants.BlespintegrationConstants;
 import com.bl.esp.dto.OrderFeedData;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -116,7 +118,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
         final ProductModel product = orderEntry.getProduct();
         final Map<String, List<BlItemsBillingChargeModel>> billingCharges = consignmentEntryModel
             .getBillingCharges();
-        if (Objects.nonNull(billingCharges) && !billingCharges.isEmpty()) {
+        if (MapUtils.isNotEmpty(billingCharges)) {
           billingCharges.forEach((serialCode, serialBills) -> {
             if (CollectionUtils.isNotEmpty(serialBills)) {
               serialBills.forEach(billCharge -> {
@@ -160,7 +162,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
         });
       });
     });
-   DecimalFormat f = new DecimalFormat("##0.00");
+   DecimalFormat f = new DecimalFormat(BlCoreConstants.FORMAT_STRING);
     return f.format(pendingBill.get());
  }
 
