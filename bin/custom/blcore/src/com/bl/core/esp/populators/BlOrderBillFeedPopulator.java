@@ -197,7 +197,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
       getRequestValue(billCharge.getUnPaidBillNotes()));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.BILL_CREATED_DATE,
       getRequestValue(formatter.format(billCharge.getCreationtime())));
-    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.UPDATED_TIME,
+    createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlespintegrationConstants.LAST_UPDATED,
         getRequestValue(formatter.format(billCharge.getUpdatedBillTime())));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.STATUS, getRequestValue(billCharge.isBillPaid() ? BlespintegrationConstants.PAID : BlespintegrationConstants.NOT_PAID));
