@@ -507,6 +507,7 @@
 		<property name="catalogVersionService" ref="catalogVersionService"/>
 		<property name="sessionService" ref="sessionService"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="blProductService" ref="productService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -728,7 +729,9 @@
 
  <!--BL-331 Solr Field Value Resolver -->
 
-  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver">
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+	</bean>
 
   <bean id="blProductTypeValueResolver" class="com.bl.core.resolvers.BlProductTypeValueResolver" parent="abstractValueResolver"/>
 
