@@ -3814,7 +3814,7 @@
                 <persistence type="property" />
                 <description>Number of orders in Completed status to date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="incompletedOrderCount" type="int">
+              <attribute autocreate="true" qualifier="inprocessOrderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Number of orders in Inompleted status to date</description>
@@ -3842,13 +3842,13 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Sum of all outstanding bills</description>
               </attribute>
-               <attribute autocreate="true" qualifier="averageOrderValue" type="double">
+               <attribute autocreate="true" qualifier="averageGearOrderValue" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <description>Average of all order value</description>
               </attribute>
-              <attribute autocreate="true" qualifier="orderValuePriorToShippedStatus" type="double">
+              <attribute autocreate="true" qualifier="gearValueOrdersInProgress" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>

@@ -86,10 +86,10 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
    */
   private void setOrderValuePriorToShippedStatus(final OrderModel order, final CustomerModel customerModel) {
     final Double priceOfProducts = order.getEntries().stream().mapToDouble(AbstractOrderEntryModel::getTotalPrice).sum();
-    customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() + priceOfProducts);
+    customerModel.setGearValueOrdersInProgress(customerModel.getGearValueOrdersInProgress() + priceOfProducts);
     getModelService().save(customerModel);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
-        customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
+        customerModel.getGearValueOrdersInProgress(), customerModel.getUid());
   }
 
   /**
@@ -99,10 +99,10 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
   private void setAverageOrderValue(final CustomerModel customerModel) {
     final Collection<OrderModel> orders = customerModel.getOrders();
     final Double averageOrderValue = orders.stream().mapToDouble(OrderModel::getTotalPrice).sum();
-    customerModel.setAverageOrderValue(averageOrderValue/orders.size());
+    customerModel.setAverageGearOrderValue(averageOrderValue/orders.size());
     getModelService().save(customerModel);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Average order value : {} updated for the customer {} ",
-        customerModel.getAverageOrderValue(), customerModel.getUid());
+        customerModel.getAverageGearOrderValue(), customerModel.getUid());
   }
 
   /**
