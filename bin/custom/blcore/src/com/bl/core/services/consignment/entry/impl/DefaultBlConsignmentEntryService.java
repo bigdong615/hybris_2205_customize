@@ -17,6 +17,7 @@ import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -404,6 +406,32 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 				&& Objects.nonNull(consignmentEntryModel.getConsignment().getOrder())
 						? consignmentEntryModel.getConsignment().getOrder().getCode()
 						: StringUtils.EMPTY;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode)
+	{
+		ConsignmentEntryModel consignmentEntryModel = null;
+		if (StringUtils.isNotBlank(serialCode) && Objects.nonNull(order) && CollectionUtils.isNotEmpty(order.getConsignments()))
+		{
+			final Set<ConsignmentModel> consignments = order.getConsignments();
+			for (final ConsignmentModel consignment : consignments)
+			{
+				final Set<ConsignmentEntryModel> consignmentEntries = consignment.getConsignmentEntries();
+				if (CollectionUtils.isNotEmpty(consignmentEntries) && Objects.isNull(consignmentEntryModel))
+				{
+					final Optional<ConsignmentEntryModel> consignmentEntryFromConsignment = consignmentEntries.stream()
+							.filter(consignmentEntry -> consignmentEntry.getSerialProducts().stream()
+									.anyMatch(product -> serialCode.equalsIgnoreCase(product.getCode())))
+							.findFirst();
+					consignmentEntryModel = consignmentEntryFromConsignment.isPresent() ? consignmentEntryFromConsignment.get() : null;
+				}
+			}
+		}
+		return consignmentEntryModel;
 	}
 
 	/**

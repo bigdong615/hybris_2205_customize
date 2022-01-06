@@ -757,6 +757,12 @@
           <persistence type="property"/>
           <modifiers read="true" write="false" search="true" optional="true" unique="true"  initial="true"/>
         </attribute>
+        <attribute qualifier="nonRefundableDeposit" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>Boolean.FALSE</defaultvalue>
+          <description>Defines Flag for Non-Refundable Deposit Amount</description>
+        </attribute>
       </attributes>
       </itemtype>
 
@@ -4380,6 +4386,10 @@
 				<description>Damage Waiver taken by Customer for the item</description>
 				<persistence type="dynamic" attributeHandler="blDamageWaiverForRepairLogHandler" />
 			</attribute>
+			<attribute qualifier="repairLogId" type="java.lang.String">
+          		<persistence type="property"/>
+          		<modifiers read="true" write="true" optional="true" unique="true"/>
+        	</attribute>
 		</attributes>
 	</itemtype>
 
