@@ -67,6 +67,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                     ;                         ; MobileHeaderBottomInfo-AccountPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                      ;                         ; MobileHeaderLinkForShipOrPickupSlot-AccountPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                      ;                         ; MobileMiniCartSlot-AccountPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
+                                     ;                          ; SearchBox-AccountPage                 ; SearchBoxBl                   ;                                                                                  ; SearchBoxBl                                ; true
 
 
 # Functional Content Pages

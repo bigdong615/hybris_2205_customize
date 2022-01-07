@@ -15,6 +15,12 @@
 <spring:url value="/my-account/bookmarks" var="bookmarksUrl"/>
 
 <template:page pageTitle="${pageTitle}">
+
+<cms:pageSlot position="SearchBoxBl" var="component">
+				<cms:component component="${component}"/>
+</cms:pageSlot>
+
+
 <c:url var = "baseUrl" value="/my-account"/>
  <section id="myAccount">
     <div class="container">
