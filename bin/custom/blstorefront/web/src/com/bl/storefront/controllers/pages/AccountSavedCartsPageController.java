@@ -3,8 +3,10 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlSaveCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
@@ -46,6 +48,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,6 +97,16 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 
 	@Resource(name = "restoreSaveCartFormValidator")
 	private RestoreSaveCartFormValidator restoreSaveCartFormValidator;
+
+	@ModelAttribute(name = "isRentalPage")
+	private boolean getRentalDuration() {
+		return Boolean.TRUE;
+	}
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() {
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
   @GetMapping
 	@RequireHardLogIn
