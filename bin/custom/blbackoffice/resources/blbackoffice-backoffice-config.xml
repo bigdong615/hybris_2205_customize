@@ -1486,6 +1486,8 @@
 						qualifier="alternativeProduct"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
 						qualifier="specifications"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
+						qualifier="usedDescription"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
