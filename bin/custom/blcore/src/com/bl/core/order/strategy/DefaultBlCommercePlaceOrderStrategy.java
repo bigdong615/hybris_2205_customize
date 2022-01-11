@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOrderStrategy {
 
-	@Autowired
 	private DefaultBlProductService defaultBlProductService;
 
   private static final Logger LOG = Logger.getLogger(DefaultBlCommercePlaceOrderStrategy.class);
