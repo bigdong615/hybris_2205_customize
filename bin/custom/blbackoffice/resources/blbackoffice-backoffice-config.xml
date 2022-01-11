@@ -1488,6 +1488,7 @@
 						qualifier="specifications"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
 						qualifier="usedDescription"/>
+					<ea:attribute qualifier="summary" merge-mode="REMOVE"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">

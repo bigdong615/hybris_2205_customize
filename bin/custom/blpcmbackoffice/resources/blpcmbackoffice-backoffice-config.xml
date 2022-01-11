@@ -151,7 +151,7 @@
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.useddetails">
 					<ea:attribute qualifier="forSale"/>
-					<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.useddescription"/>
 					<ea:attribute qualifier="usedGearVideosLink" />
 					<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="onSale"/>
@@ -168,7 +168,6 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="summary"/>
 						<ea:attribute qualifier="data_sheet"/>
 					</ea:panel>
 				</ea:section>
