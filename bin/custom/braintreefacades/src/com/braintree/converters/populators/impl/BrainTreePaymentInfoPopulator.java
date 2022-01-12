@@ -10,6 +10,9 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.bl.core.constants.BlCoreConstants;
 import com.braintree.model.BrainTreePaymentInfoModel;
 
 
@@ -21,7 +24,7 @@ public class BrainTreePaymentInfoPopulator implements Populator<BrainTreePayment
 	public void populate(final BrainTreePaymentInfoModel source, final CCPaymentInfoData target) throws ConversionException
 	{
 		target.setId(source.getPk().toString());
-		target.setCardNumber(source.getCardNumber());
+		target.setCardNumber(getMaskedLastFourDigit(source.getCardNumber()));
 		target.setExpiryYear(source.getExpirationYear());
 		target.setExpiryMonth(source.getExpirationMonth());
 		target.setAccountHolderName(source.getImageSource());
@@ -41,6 +44,25 @@ public class BrainTreePaymentInfoPopulator implements Populator<BrainTreePayment
 		{
 			target.setBillingAddress(getAddressConverter().convert(source.getBillingAddress()));
 		}
+	}
+	
+	/**
+	 * Gets the masked last four digit.
+	 *
+	 * @param cardNumber the card number
+	 * @return the masked last four digit
+	 */
+	private String getMaskedLastFourDigit(final String cardNumber)
+	{
+		if(StringUtils.isNotBlank(cardNumber) && cardNumber.contains(BlCoreConstants.CARD_MASK))
+		{
+			final String[] cardNumberSplit = cardNumber.split(BlCoreConstants.MASKED_CARD_SEPARATOR);
+			if(cardNumberSplit.length == BlCoreConstants.INT_TWO)
+			{
+				return String.format(BlCoreConstants.MASKED_CARD_FORMAT, cardNumberSplit[BlCoreConstants.INT_ONE]);
+			}
+		}
+		return cardNumber;
 	}
 
 	/**
