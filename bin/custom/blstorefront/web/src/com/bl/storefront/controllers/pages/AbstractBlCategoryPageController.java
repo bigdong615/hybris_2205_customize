@@ -25,6 +25,7 @@ import de.hybris.platform.commercefacades.search.data.SearchStateData;
 import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 import de.hybris.platform.commerceservices.search.facetdata.ProductCategorySearchPageData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SortData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -280,6 +282,17 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             }
             //Encode SearchPageData
             searchPageData = (ProductCategorySearchPageData) encodeSearchPageData(searchPageData);
+            // removing newest shorting for used gear PLP
+            if(categoryCode.toLowerCase().contains(BlControllerConstants.USED_SUBSTRING)) {
+               final List<SortData> newest = searchPageData.getSorts().stream()
+                   .filter(sortData -> sortData.getCode().equals(BlControllerConstants.NEWEST_STRING))
+                   .collect(Collectors.toList());
+               if (CollectionUtils.isNotEmpty(newest)) {
+                   searchPageData.getSorts().remove(newest.get(0));
+               }
+           }
+
+
         }
 
         public int getPage()
