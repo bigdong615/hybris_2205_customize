@@ -73,7 +73,8 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final int TWO = 2;
 
   public static final String COMMA = ",";
-  
+  public static final String HASH = "#";
+
   private BlFacadesConstants() {
     //empty
   }

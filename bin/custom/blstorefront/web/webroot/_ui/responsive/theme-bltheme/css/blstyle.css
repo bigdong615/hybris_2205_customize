@@ -821,3 +821,13 @@ input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!im
 .blackout-error-div{
 	margin-bottom: 40px !important;
 }
+
+ {
+}
+
+.tracking-info:link {
+            text-decoration: none;
+ }
+.tracking-info:hover {
+  text-decoration: none;
+}

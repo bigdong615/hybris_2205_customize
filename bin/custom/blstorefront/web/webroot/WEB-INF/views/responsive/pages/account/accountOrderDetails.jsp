@@ -105,7 +105,19 @@
                                             <c:if test="${orderData.isReplacementOrder eq true}">
                                             <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
                                             </c:if>
-                                            N/A
+                                            <c:choose>
+                                            <c:when test="${not empty orderData.trackingNumber}">
+                                           <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
+                                                           <c:if test="${trackingInfo.key ne null}">
+                                                            <c:url value="${trackingInfo.value}" var="trackingUrl" />
+                                                           <a class="tracking-info" href="${trackingUrl}" target="_new"> ${trackingInfo.key}</a></br>
+                                                           	</c:if>
+                                                         </c:forEach>
+                                           </c:when>
+                                           <c:otherwise>
+                                           <spring:theme code="text.myaccount.order"/>
+                                           </c:otherwise>
+                                           </c:choose>
                                         </p>
                                     </div>
                                 </div>
