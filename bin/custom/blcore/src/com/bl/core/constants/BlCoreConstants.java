@@ -520,7 +520,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USPS = "usps";
 	
 	public static final String ANONYMOUS = "anonymous";
-	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = " BL_";
+	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = "BL_";
 
 	public static final String OPTIMIZEDSHIPPINGSTARTDATE = "optimizedShippingStartDate";
 	public static final String PULLED_ORDERS_QUEUE = "PulledOrdersQueue";
