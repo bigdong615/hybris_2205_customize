@@ -208,21 +208,33 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 		{
 			for (final BlProductModel productModel : entryModel.getSerialProducts())
 			{
-				final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
-						&& null != ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
-								? ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode()
-								: BlInventoryScanLoggingConstants.EMPTY_STRING;
-				if (consignment.isCleanCompleteConsignment()
-						&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(locationCode))
+				if(productModel instanceof BlSerialProductModel)
 				{
-					consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
-					modelService.save(consignment);
-					modelService.refresh(consignment);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status for consignment {} is marked as {} for location {}", consignment.getCode(),consignment.getStatus(),locationCode);
+				markConsignmentToReadyToShip(consignment, productModel);
 				}
-
 			}
 		}
+	}
+
+	/**
+	 * This method will be used to mark consignment status as Ready To Ship
+	 * @param consignment
+	 * @param productModel
+	 */
+	private void markConsignmentToReadyToShip(ConsignmentModel consignment, final BlProductModel productModel)
+	{
+		final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+				&& null != ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
+						? ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode()
+						: BlInventoryScanLoggingConstants.EMPTY_STRING;
+		if (consignment.isCleanCompleteConsignment()
+				&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(locationCode))
+			{
+			consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
+			modelService.save(consignment);
+			modelService.refresh(consignment);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status for consignment {} is marked as {} for location {}", consignment.getCode(),consignment.getStatus(),locationCode);
+			}
 	}
 
   /**
