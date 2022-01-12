@@ -186,7 +186,7 @@
 														<button class="dropdown-item" data-id="${paymentInfo.id}"
 															data-nonce="${paymentInfo.paymentMethodNonce}">
 															<img src="${paymentInfo.accountHolderName}"
-																style="max-width: 33px; height: auto;"> &nbsp
+																style="max-width: 33px; height: auto;"> ${paymentInfo.cardType} &nbsp
 															${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp
 															${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
 														</button>
