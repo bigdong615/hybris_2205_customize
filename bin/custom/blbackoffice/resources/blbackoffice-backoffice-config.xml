@@ -2226,6 +2226,7 @@
 					<ea:attribute qualifier="expiryDate" />
 					<ea:attribute qualifier="creationTime" />
 					<ea:attribute qualifier="code" />
+					<ea:attribute qualifier="verificationStatus"/>
 					<ea:attribute qualifier="URL" />
 				</ea:section>
 			</ea:tab>
