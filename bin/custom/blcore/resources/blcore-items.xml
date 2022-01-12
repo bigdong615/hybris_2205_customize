@@ -3120,6 +3120,12 @@
                 <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
                 <description>To identify whether the order is exported to FTP or Not. </description>
               </attribute>
+              <attribute qualifier="isVideoOrder" type="java.lang.Boolean">
+              	<persistence type="property" />
+                <modifiers read="true" write="true" search="true" optional="false" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <description>Order will be marked as video order</description>
+              </attribute>
             </attributes>
             </itemtype>
 
