@@ -103,7 +103,7 @@
                                             <input type="hidden" id="extPaymentNonce" name="paymentNonce" value=""/>
                                             <input type="hidden" id="extendOrderPoNumber" name="extendPoNumber" value=""/>
                                             <input type="hidden" id="extendOrderPoNotes" name="extendPoNotes" value=""/>
-                                            <button class="btn btn-block btn-primary mt-4 js-enable-extend-order js-po-extend-order" type="submit" disabled>
+                                            <button class="btn btn-block btn-primary mt-4 js-enable-extend-order js-po-extend-order" type="submit">
                                             <spring:theme code="text.myaccount.order.extend.rent"/></button>
                                        </form>
 
@@ -184,6 +184,13 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
 
     	$('.js-po-extend-order').on('click',function(e){
                     e.preventDefault();
+                    var ccEnable = $('#paymentMethodBT').is(':checked');
+                    	var payPalEnable = $('#paymentMethodPayPal').is(':checked');
+                    	var poEnable = $('#paymentMethodPo').is(':checked');
+                    	var paymentInfoId =  $('#paymentId').val();
+	                 if((ccEnable == true && paymentInfoId !='') || payPalEnable == true || poEnable == true ){
+	                                	$("#js-extendOrderPaymentError-update").addClass("d-none");
+
         						var extendPoNumber1 = $("#extendPoNumberInput").val();
                     var extendPoNotes1 = $("#extendPoNotesInput").val();
                     if(extendPoNumber1 !== '' && extendPoNotes1 !== '') {
@@ -195,6 +202,15 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
                       $("#extendOrderPoNotes").val(extendPoNotes1);
         						}
         						$("#payExtendOrderForm").submit();
-        				 });
+        						}
+        						else {
+                       	$("#js-extendOrderPaymentError-update").removeClass("d-none");
+        						}
+
+      });
+
+function clearExtendOrderErrorMessages(){
+                       	$("#js-extendOrderPaymentError-update").addClass("d-none");
+      }
 
 </script>
