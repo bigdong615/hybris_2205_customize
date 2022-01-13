@@ -282,7 +282,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             }
             //Encode SearchPageData
             searchPageData = (ProductCategorySearchPageData) encodeSearchPageData(searchPageData);
-            // removing newest shorting for used gear PLP
+            // removing newest sorting for used gear PLP
             if(categoryCode.toLowerCase().contains(BlControllerConstants.USED_SUBSTRING)) {
                final List<SortData> newest = searchPageData.getSorts().stream()
                    .filter(sortData -> sortData.getCode().equals(BlControllerConstants.NEWEST_STRING))

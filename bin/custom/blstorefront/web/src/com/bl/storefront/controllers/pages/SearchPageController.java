@@ -109,7 +109,7 @@ public class SearchPageController extends AbstractSearchPageController
 			try
 			{
 				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
-				// removing newest shorting for used gear SLP
+				// removing newest sorting for used gear SLP
 				if(searchPageData !=null && blPageType.toLowerCase().equals(BlControllerConstants.USED_CATEGORY_CODE)) {
 					final List<SortData> newest = searchPageData.getSorts().stream()
 							.filter(sortData -> {
