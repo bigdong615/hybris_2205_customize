@@ -28,9 +28,11 @@ import de.hybris.platform.commerceservices.search.facetdata.FacetData;
 import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SortData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
@@ -107,6 +109,17 @@ public class SearchPageController extends AbstractSearchPageController
 			try
 			{
 				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
+				// removing newest sorting for used gear SLP
+				if(searchPageData !=null && blPageType.toLowerCase().equals(BlControllerConstants.USED_CATEGORY_CODE)) {
+					final List<SortData> newest = searchPageData.getSorts().stream()
+							.filter(sortData -> {
+								return sortData.getCode().equals(BlControllerConstants.NEWEST_STRING);
+							})
+							.collect(Collectors.toList());
+					if (CollectionUtils.isNotEmpty(newest)) {
+						searchPageData.getSorts().remove(newest.get(0));
+					}
+				}
 			}
 			catch (final ConversionException e)
 			{
