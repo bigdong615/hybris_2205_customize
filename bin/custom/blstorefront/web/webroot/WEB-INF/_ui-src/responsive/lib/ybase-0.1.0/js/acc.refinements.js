@@ -13,7 +13,7 @@ ACC.refinements = {
 
 
 	init:function(){
-		navigator.geolocation.getCurrentPosition(
+		/*navigator.geolocation.getCurrentPosition(
 			function (position){
 				ACC.refinements.coords = position.coords;
 			},
@@ -21,7 +21,7 @@ ACC.refinements = {
 			{
 				console.log("An error occurred... The error code and message are: " + error.code + "/" + error.message);    // NOSONAR
 			}
-		);
+		);*/
 
 	},
 
