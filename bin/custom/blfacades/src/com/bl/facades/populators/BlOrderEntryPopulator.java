@@ -49,6 +49,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			super.populate(source, target);
 			populateDamageWaiverValues(source, target);
 			populateOptionsValues(source, target);
+			populateSelectedOptions(source, target);
 			populateGiftCartPurcahseValues(source, target);
 			target.setAqautechProduct(BooleanUtils.isTrue(source.getAqautechProduct()));
 		}
@@ -195,6 +196,18 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		}
 	}
 
-
+	/**
+	 * This method is used to populate selected option
+	 *
+	 * @param source
+	 * @param target
+	 */
+	private void populateSelectedOptions(final AbstractOrderEntryModel source, final OrderEntryData target)
+	{
+		if (CollectionUtils.isNotEmpty(source.getOptions()))
+		{
+			target.setSelectedOptions(source.getOptions().get(0).getName());
+		}
+	}
 
 }
