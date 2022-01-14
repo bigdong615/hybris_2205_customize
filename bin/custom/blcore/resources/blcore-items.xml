@@ -4723,11 +4723,27 @@
         <custom-properties>
             <property name="query">
                 <value>
-                    "SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse"
+                    "SELECT {c.code} as consignmentCode, {order:code} as orderNumber,{order:rentalEndDate} as rentalEndDate, {serial.ocLocation} as ocLocation, {serial.code} as serialProductCode,{cs.code} as consignmentStatus, {order.consolidatedOrderNote} as orderNote, {cu.name} as customerName FROM {Consignment as c} ,{AbstractOrder as order},{OrderTypeEnum as ot},{ConsignmentStatus as cs},{BlSerialProduct as serial},{ConsignmentEntry as ce}, {Customer as cu} where {ce:consignment} = {c:pk} AND {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) AND {c.order} = {order.pk} AND {order.orderType} = {ot.pk} AND {ot.code} = 'FD' AND {c.status} = {cs.pk} AND {c:optimizedShippingStartDate} >= ?optimizedShippingStartDate AND {c.warehouse} =?warehouse AND {order.user}={cu.pk}"
                 </value>
             </property>
         </custom-properties>
         <attributes>
+        	<attribute generate="false" autocreate="true" qualifier="customerName" type="java.lang.String" metatype="ViewAttributeDescriptor">
+                <persistence type="jalo" qualifier=""/>
+                <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
+                <custom-properties>
+                    <property name="param">
+                        <value>
+                            Boolean.TRUE
+                        </value>
+                    </property>
+                    <property name="position">
+                        <value>
+                            new Integer(0)
+                        </value>
+                    </property>
+                </custom-properties>
+            </attribute>
             <attribute generate="false" autocreate="true" qualifier="consignmentCode" type="java.lang.String" metatype="ViewAttributeDescriptor">
                 <persistence type="jalo" qualifier=""/>
                 <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
