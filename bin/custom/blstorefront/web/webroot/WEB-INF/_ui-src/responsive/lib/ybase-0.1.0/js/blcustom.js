@@ -372,12 +372,28 @@ $('#applyGcCode').click(function (e) {
 //BL-927 Gift Card Purchase Amount
 $('#add-to-gc').click(function(e) {
     $('.page-loader-new-layout').hide();
+	$('.gc-error-div').empty();
+	var hasValidationError  = false;
     var form = $('#giftCardPurchaseForm');
     var amount = form.find('input[name=amount]').val();
+ 	var email = form.find('input[name=email]').val();
     if (amount < 25 || amount > 500) {
-        $('.notification').show();
-        return false;
+	var validationDiv = $('<div class="notification notification-warning mb-2" />').text(ACC.giftCardError.amount);
+	 $('.gc-error-div').append(validationDiv);
+       /* $('.notification').show();*/
+        hasValidationError = true;
     }
+	 if( (email != undefined) && (!validateGiftEmail(email))){
+			var validationDiv = $('<div class="notification notification-warning mb-2" />').text(ACC.giftCardError.emailValidation);
+			 $('.gc-error-div').append(validationDiv);
+         /*  $('.gc-error-message').append(ACC.giftCardError.emailValidation);
+          $('.notification').show();*/
+ 			 hasValidationError = true;
+		  }
+	if( hasValidationError)
+	{
+		return false;
+	}
     else{
     	$('.notification').hide();
     	$('#signIn').modal('show');
