@@ -124,15 +124,17 @@ ACC.order = {
           }
         });
 
-
-   	$('#saved-payment-action-ExtendBill').on('change',function(e){
-   	    					 var optionSelected = $("option:selected", this);
-    					 var paymentId = optionSelected.data("id");
-    						var paymentnonce = optionSelected.data("nonce");
-    						if($('#js-isAllProductExtendabe').val() === '' && paymentId !== '' && paymentId !== 'undefined' && paymentnonce !== '' && paymentnonce !=='undefined' ) {
-                          $('.js-enable-extend-order').attr('disabled',false);
-                }
-    				 });
+   	$('ul#saved-payment-action-ExtendBill').on('click','li',function(e){
+   		e.preventDefault();
+   		var paymentId = $(this).find("button").data("id");		
+		var paymentnonce = $(this).find("button").data("nonce");
+		$("#paymentId").val(paymentId);
+		$("#paymentNonce").val(paymentnonce);
+		if($('#js-isAllProductExtendabe').val() === '' && paymentId !== '' && paymentId !== 'undefined' && paymentnonce !== '' && paymentnonce !=='undefined' ) 
+		{
+			$('.js-enable-extend-order').attr('disabled',false);
+		}
+	});
 
 $(".add-cc-extendOrderform").on("click",function(e){
 	e.preventDefault();
