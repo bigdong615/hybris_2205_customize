@@ -168,7 +168,6 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="summary"/>
 						<ea:attribute qualifier="data_sheet"/>
 					</ea:panel>
 				</ea:section>

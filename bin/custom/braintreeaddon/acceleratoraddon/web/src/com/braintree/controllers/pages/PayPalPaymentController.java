@@ -8,6 +8,8 @@ import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.order.BlOrderFacade;
@@ -63,6 +65,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -146,6 +149,17 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource(name = "blEspEventService")
 	private DefaultBlESPEventService blEspEventService;
+
+	@ModelAttribute(name = "isRentalPage")
+	private boolean getRentalDuration() {
+		return Boolean.TRUE;
+	}
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() {
+		return BlRentalDateUtils.getRentalsDuration();
+	}
+
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,

@@ -302,6 +302,11 @@ public class AccountPageController extends AbstractSearchPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@ModelAttribute(name = "isRentalPage")
+	private boolean getRentalDuration() {
+		return Boolean.TRUE;
+	}
+
 	protected PasswordValidator getPasswordValidator()
 	{
 		return passwordValidator;

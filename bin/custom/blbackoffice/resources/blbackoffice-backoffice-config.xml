@@ -74,7 +74,7 @@
 	<context merge-by="module" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="StockLevel" id="StockLevel"/>
 		</n:explorer-tree>
 	</context>
@@ -1486,6 +1486,9 @@
 						qualifier="alternativeProduct"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
 						qualifier="specifications"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
+						qualifier="usedDescription"/>
+					<ea:attribute qualifier="summary" merge-mode="REMOVE"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1694,14 +1697,14 @@
 	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
 	<context component="explorer-tree" principal="frontdeskuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="FrontDeskQueue" id="FrontDeskQueue"/>
 		</n:explorer-tree>
 	</context>
 
 	<context component="explorer-tree" principal="shippingteamuserrole">
 			<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
-				<n:type-node code="Consignment" id="Consignment"/>
+				<n:type-node code="Consignment" id="Shipment"/>
 				<n:type-node code="PulledOrdersQueue" id="CleanCompleteOrderQueue"/>
 				<n:type-node code="OrdersAwaitingQueue" id="IncompleteOrdersQueue"/>
 				<n:type-node code="ShippingCompleteOrderQueue" id="ShippingCompleteOrderQueue"/>
@@ -2223,6 +2226,7 @@
 					<ea:attribute qualifier="expiryDate" />
 					<ea:attribute qualifier="creationTime" />
 					<ea:attribute qualifier="code" />
+					<ea:attribute qualifier="verificationStatus"/>
 					<ea:attribute qualifier="URL" />
 				</ea:section>
 			</ea:tab>
@@ -2322,7 +2326,7 @@
 				<n:navigation-node id="BinOcLocationTool"/>
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:navigation-node id="StockLevel">
 				<n:type-node code="StockLevel" id="StockLevel"/>
 				<n:type-node code="Warehouse" id="Warehouse"/>

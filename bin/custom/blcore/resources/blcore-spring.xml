@@ -1357,6 +1357,7 @@
 	<alias alias="commercePlaceOrderStrategy" name="defaultBlCommercePlaceOrderStrategy"/>
 	<bean id="defaultBlCommercePlaceOrderStrategy"
 		class="com.bl.core.order.strategy.DefaultBlCommercePlaceOrderStrategy" parent="defaultCommercePlaceOrderStrategy">
+	<property name="defaultBlProductService" ref="defaultBlProductService"/>
 	</bean>
 
 	<!-- [BL-983] New gear Related changes-->

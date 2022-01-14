@@ -210,6 +210,8 @@ public class BlControllerConstants
 	public static final String RENTAL_TO_DATE_ARGUMENT = "rentalErrorToDate";
 	public static final String RENTAL_START_MESSAGE_KEY = "blackout.rental.start.date.error";
 	public static final String RENTAL_END_MESSAGE_KEY = "blackout.rental.end.date.error";
+	public static final String NEWEST_STRING = "newest";
+	public static final String USED_SUBSTRING = "used";
 
 	private BlControllerConstants()
 	{
