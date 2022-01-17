@@ -211,6 +211,7 @@
         <property name="modifiedOrderPaymentInfos" type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.CCPaymentInfoData>"/>
         <property name="modifiedOrderPoNumber" type="java.lang.String"/>
 		<property name="modifiedOrderPoNotes" type="java.lang.String"/>
+    <property name="trackingNumber" type="java.util.Map&lt;String, String>"/>
   </bean>
 
 	<!-- ExtendOrderData -->

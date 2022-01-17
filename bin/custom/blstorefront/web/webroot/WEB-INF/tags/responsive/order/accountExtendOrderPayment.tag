@@ -15,7 +15,7 @@
                   <button class="btn-checkbox" type="button"
                      data-bs-toggle="collapse"
                      data-bs-target="#credit-card-expand"
-                     aria-controls="credit-card-expand" aria-expanded="false">
+                     aria-controls="credit-card-expand" aria-expanded="false"  onClick="clearExtendOrderErrorMessages();">
                   <input type="radio" class="paypalselection" id="paymentMethodBT" name="paymentMethodSelection" value="bt">
                   <label for="paymentMethodBT"></label>
                   </button>
@@ -75,7 +75,7 @@
                   data-bs-toggle="collapse"
                   data-bs-target="#paypal-expand"
                   aria-controls="paypal-expand" aria-expanded="false">
-               <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
+               <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt" onClick="clearExtendOrderErrorMessages();">
                <label for="paymentMethodPayPal"></label>
                </button>
             </c:otherwise>
@@ -115,7 +115,7 @@
                 				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
                 					    data-bs-target="#po-expand" aria-controls="po-expand"
                 					    aria-expanded="false">
-                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
+                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt" onClick="clearExtendOrderErrorMessages();"><label
                 						  for="paymentMethodPo"></label>
                 				    </button>
                 				  </c:otherwise>
