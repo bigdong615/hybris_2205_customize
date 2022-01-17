@@ -5,6 +5,7 @@ import com.bl.core.enums.DurationEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
@@ -17,7 +18,6 @@ import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +43,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
 
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
+  private BlProductService blProductService;
   private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
   private SessionService sessionService;
@@ -180,6 +181,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
     final String[] excludedProductList = excludedProducts.split(BlCoreConstants.SHARE_A_SALE_COMMA);
+    createZeroPriceRowForManualProducts(sevenDayPrice, blProductModel);
     if (retailPrice != null && retailPrice > 0.0D && !(Arrays.asList(excludedProductList).contains(blProductModel.getProductType().getCode())) ) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
@@ -192,7 +194,19 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
 
     }
   }
-  
+
+  /**
+   * Create Zero price row for manual type Aquatch products
+   * @param sevenDayPrice
+   * @param blProductModel
+   */
+  private void createZeroPriceRowForManualProducts(final Optional<PriceRowModel> sevenDayPrice, final BlProductModel blProductModel) {
+    if (ProductTypeEnum.MANUAL.equals(blProductModel.getProductType()) && getBlProductService().isAquatechProduct(blProductModel) && sevenDayPrice.isEmpty()) {
+       blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
+            .createOrUpdateSevenDayPrice(blProductModel, 0.0, true)));
+      }
+  }
+
   private Collection<PriceRowModel> getPrices(final BlProductModel blProductModel)
   {
 	  try
@@ -291,4 +305,11 @@ public void setSearchRestrictionService(SearchRestrictionService searchRestricti
 	this.searchRestrictionService = searchRestrictionService;
 }
 
+  public BlProductService getBlProductService() {
+    return blProductService;
+  }
+
+  public void setBlProductService(BlProductService blProductService) {
+    this.blProductService = blProductService;
+  }
 }

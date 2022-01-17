@@ -39,5 +39,13 @@ public interface BlProductDao extends ProductDao {
    * @return the serial by barcode
    */
   public BlSerialProductModel getSerialByBarcode(final String serialBarcode);
+  
+  /**
+   * Gets the serial by serial code.
+   *
+   * @param serialCode the serial code
+   * @return the serial by serial code
+   */
+  public BlSerialProductModel getSerialBySerialCode(final String serialCode);
 
 }

@@ -1646,7 +1646,7 @@
     <context type="Consignment" component="base" merge-by="type" parent="GenericItem">
         <y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris">
             <y:labels>
-                <y:label>'Consignment#: ' +code</y:label>
+                <y:label>'Shipment#: ' +code</y:label>
             </y:labels>
         </y:base>
     </context>

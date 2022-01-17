@@ -1,6 +1,7 @@
 package com.bl.core.services.consignment.entry;
 
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 
 import java.util.Set;
@@ -50,4 +51,20 @@ public interface BlConsignmentEntryService
 	 *           the serial product models
 	 */
 	void setItemsMapForInternalTransferOrders(final ConsignmentEntryModel entry, final AbstractOrderEntryModel orderEntry);
+	
+	/**
+	 * Assign serial and order code on billing charges.
+	 *
+	 * @param consignmentEntryModel the consignment entry model
+	 */
+	void assignSerialAndOrderCodeOnBillingCharges(final ConsignmentEntryModel consignmentEntryModel);
+	
+	/**
+	 * Gets the consignment entry from order for serial code.
+	 *
+	 * @param order the order
+	 * @param serialCode the serial code
+	 * @return the consignment entry from order for serial
+	 */
+	ConsignmentEntryModel getConsignmentEntryFromOrderForSerial(final OrderModel order, final String serialCode);
 }

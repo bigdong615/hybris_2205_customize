@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -67,7 +68,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
-					if(BooleanUtils.isTrue(serialProductModel.getForSale()) && serialHasActiveStatus(serialProductModel)) {
+					if(BooleanUtils.isTrue(serialProductModel.getForSale()) && isSerialActive(serialProductModel.getSerialStatus())) {
 						final SerialProductData serialProductData = new SerialProductData();
 						if (getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel)) {
 							serialProductData.setCosmeticRating(
@@ -100,8 +101,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 						//Added Check for serial product
 						if (BooleanUtils.isTrue(source.getForRent())) {
 							final boolean isUsedGearSerialNotAssignedToRentalOrder = blCommerceStockService
-									.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getProductId(),
-											source.getCode());
+									.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getCode());
 							serialProductData
 									.setIsSerialNotAssignedToRentalOrder(isUsedGearSerialNotAssignedToRentalOrder);
 						}
@@ -156,13 +156,19 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 
 	/**
 	 * Check if serial has active status
-	 * @param blSerialProduct
-	 * @return
+	 * @param serialStatusEnum serialStatusEnum
+	 * @return boolean boolean
 	 */
-	private boolean serialHasActiveStatus(final BlSerialProductModel blSerialProduct) {
-
-		return SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) || SerialStatusEnum.ADDED_TO_CART.equals(blSerialProduct.getSerialStatus()) ||
-				SerialStatusEnum.RECEIVED_OR_RETURNED.equals(blSerialProduct.getSerialStatus());
+	private boolean isSerialActive(final SerialStatusEnum serialStatusEnum) {
+		switch (serialStatusEnum.getCode()) {
+			case BlCoreConstants.ACTIVE_STATUS:
+			case BlCoreConstants.RECEIVED_OR_RETURNED:
+			case BlCoreConstants.IN_HOUSE:
+			case BlCoreConstants.ADDED_TO_CART:
+				return Boolean.TRUE;
+			default :
+		}
+		return Boolean.FALSE;
 	}
 
 

@@ -24,6 +24,7 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
@@ -559,11 +560,18 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public Map<String,List<String>> setPayBillFlagTrue(final AbstractOrderModel order) {
 		AtomicBoolean isOrderComplete = new AtomicBoolean(true);
 		final Map<String,List<String>> productCodeWiseItemCharge = new HashMap<>();
+		order.setOrderBillModifiedDate(new Date());
+		getModelService().save(order);
+		getModelService().refresh(order);
+		BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+				"Updating order {} for payment of pending bill at updated time {}",
+				order.getCode(), order.getOrderBillModifiedDate());
 		order.getConsignments()
 				.forEach(consignment -> consignment.getConsignmentEntries().forEach(consignmentEntry -> consignmentEntry
 						.getBillingCharges().forEach((serialCode, listOfCharges) -> listOfCharges.forEach(billing -> {
 							if(BooleanUtils.isFalse(billing.isBillPaid())) {
 								billing.setBillPaid(true);
+								billing.setUpdatedBillTime(new Date());
 								getModelService().save(billing);
 								setTotalAmountPastDue(consignment.getOrder().getUser(), billing);
 								setOutstandingBill(consignment.getOrder().getUser(), billing);
@@ -832,7 +840,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 							StringUtils.EMPTY);
 					final BrainTreeVoidResult voidResult = brainTreePaymentService
 							.voidTransaction(voidRequest);
-					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart, authEntry.get());
 				}
 			}
 		} catch (final Exception ex) {
@@ -844,13 +852,15 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	/**
 	 * @param transactionStatus
 	 * @param cart
-	 * This is used to set the isAuthorized flag of order
+	 * @param paymentTransactionEntryModel
 	 */
-	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
-			CartModel cart) {
+	private void setAuthorizedFlagInOrder(final TransactionStatus transactionStatus,
+			final CartModel cart, final PaymentTransactionEntryModel paymentTransactionEntryModel) {
 		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
 			cart.setIsAuthorizationVoided(Boolean.TRUE);
 			getModelService().save(cart);
+			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
+			getModelService().save(paymentTransactionEntryModel);
 		}
 	}
 	

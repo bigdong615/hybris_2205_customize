@@ -157,13 +157,13 @@
 
 
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>
-                            <div class="order-actions my-4">
+<%--                             <div class="order-actions my-4">
                             <c:if test="${cartData.isNewGearOrder eq false}">
                                  <a href="#" alt="Print Order"><i class="icon-print"></i></a>
                             </c:if>
                                  <a href="#"><i class="icon-save" alt="Save Order"></i></a>
-                                 <%--<a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>--%>
-                            </div>
+                                 <a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>
+                            </div> --%>
                         </div>
                     </div>
                 </div>

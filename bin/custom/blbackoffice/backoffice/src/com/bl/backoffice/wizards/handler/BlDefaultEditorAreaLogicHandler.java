@@ -2,9 +2,12 @@ package com.bl.backoffice.wizards.handler;
 
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.BillInfoStatus;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlItemsBillingChargeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.dao.BlOrderDao;
 import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
@@ -18,6 +21,8 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -27,8 +32,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -55,6 +63,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 
 	@Resource(name = "blOrderService")
 	BlOrderService blOrderService;
+	@Resource(name = "orderDao")
+	private BlOrderDao orderDao;
 
 
 
@@ -72,6 +82,14 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
     if (currentObject instanceof OrderModel) {
 			OrderModel orderModel = (OrderModel) currentObject;
 			orderModel.setCalculated(false);
+			// tracking time if delivery mode updating
+			final DeliveryModeModel previousDeliveryMode = getPreviousChangedDeliveryModeCharges(
+					orderModel);
+			final DeliveryModeModel newDeliveryMode = orderModel.getDeliveryMode();
+			if(previousDeliveryMode!= null && !previousDeliveryMode.getCode().equals(newDeliveryMode.getCode())){
+				orderModel.setOrderModifiedDate(new Date());
+			}
+
 			final List<AbstractOrderEntryModel> previousChangedOrderEntriesList = getPreviousChangedOrderEntrysList(
 					orderModel);
 			final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>();
@@ -152,6 +170,83 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 
       return object;
      }
+
+		//  BL-1311: changes related to tracking new bill creation.
+		if (currentObject instanceof ConsignmentEntryModel) {
+			final ConsignmentEntryModel consignmentEntryModel = (ConsignmentEntryModel) currentObject;
+			final Map<String, List<BlItemsBillingChargeModel>> previousChangedBillingCharges = getPreviousChangedBillingCharges(
+					consignmentEntryModel);
+			final Map<String, List<BlItemsBillingChargeModel>> newBillingCharges = consignmentEntryModel
+					.getBillingCharges();
+			final AtomicBoolean isAnyBillAddedORRemoved = new AtomicBoolean(Boolean.FALSE);
+			final AbstractOrderModel orderModel = consignmentEntryModel.getOrderEntry().getOrder();
+			if (newBillingCharges.size() != previousChangedBillingCharges.size()) {
+				isAnyBillAddedORRemoved.set(Boolean.TRUE);
+			} else {
+				newBillingCharges.forEach((serialCode, billingChargeModels) -> {
+					final List<BlItemsBillingChargeModel> blItemsBillingChargeModels = previousChangedBillingCharges
+							.get(serialCode);
+					final List cloneOfNewBillingChargesList = new ArrayList<BlItemsBillingChargeModel>();
+					// This is for tracking new bill creation.
+					cloneOfNewBillingChargesList.addAll(billingChargeModels);
+					cloneOfNewBillingChargesList.removeIf(blItemsBillingChargeModels::contains);
+					if (CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList)) {
+						isAnyBillAddedORRemoved.set(Boolean.TRUE);
+					}
+					// This is for tracking in case of any bill remove.
+					if(!isAnyBillAddedORRemoved.get()) {
+						cloneOfNewBillingChargesList.clear();
+						cloneOfNewBillingChargesList.addAll(blItemsBillingChargeModels);
+						cloneOfNewBillingChargesList.removeIf(billingChargeModels::contains);
+						if (CollectionUtils.isNotEmpty(cloneOfNewBillingChargesList)) {
+							isAnyBillAddedORRemoved.set(Boolean.TRUE);
+						}
+					}
+				});
+			}
+			if (isAnyBillAddedORRemoved.get()) {
+				orderModel.setOrderBillModifiedDate(new Date());
+				orderModel.setUpdatedTime(new Date());
+				modelService.save(orderModel);
+				modelService.refresh(orderModel);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+						"Bill created for order {} at updated time {} and also order got modified at {}",
+						orderModel.getCode(), orderModel.getUpdatedTime(),
+						orderModel.getOrderBillModifiedDate());
+			}
+		}
+
+		//  BL-1311: changes related to tracking updation on bill.
+		if (currentObject instanceof BlItemsBillingChargeModel) {
+			final BlItemsBillingChargeModel billingChargeModel = (BlItemsBillingChargeModel) currentObject;
+			if (billingChargeModel.getOrderCode() != null) {
+				final AbstractOrderModel order = orderDao.getOrderByCode(billingChargeModel.getOrderCode());
+				if (order != null) {
+					order.setOrderBillModifiedDate(new Date());
+					modelService.save(order);
+					modelService.refresh(order);
+					BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+							"Bill updated for order {} at updated time {} and also order got modified at {}",
+							order.getCode(), order.getUpdatedTime(),
+							order.getOrderBillModifiedDate());
+				}
+			}
+			billingChargeModel.setChargedAmount(billingChargeModel.getChargedAmount().setScale(BlCoreConstants.DECIMAL_PRECISION,BlCoreConstants.ROUNDING_MODE));
+			billingChargeModel.setUpdatedBillTime(new Date());
+			billingChargeModel.setBillStatus(BillInfoStatus.UPDATED_BILL);
+		}
+		if (currentObject instanceof AddressModel) {
+			final AddressModel addressModel = (AddressModel) currentObject;
+			if (addressModel.getOwner() instanceof OrderModel || addressModel.getOwner() instanceof AbstractOrderModel) {
+				final AbstractOrderModel orderModel = (AbstractOrderModel) addressModel.getOwner();
+				orderModel.setOrderModifiedDate(new Date());
+				modelService.save(orderModel);
+				modelService.refresh(orderModel);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG,
+						"Address got updated for order {} at updated time {}",
+						orderModel.getCode(), orderModel.getOrderModifiedDate());
+			}
+		}
     return super.performSave(widgetInstanceManager , currentObject);
   }
 
@@ -213,6 +308,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			modelService.removeAll(consignmentEntryToRemove);
 			removeConsignment(orderModel, consignmentToRemove);
 			modelService.removeAll(consignmentToRemove);
+			orderModel.setOrderModifiedDate(new Date());
+			orderModel.setUpdatedTime(new Date());
 		}
 	}
 
@@ -312,6 +409,38 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 			return Lists.newArrayList((List) previousValue);
 		}
 		return Collections.emptyList();
+	}
+
+	/**
+	 * method is used to get the original value for billing list Map.
+	 * @param consignmentEntryModel
+	 * @return
+	 */
+	private Map<String, List<BlItemsBillingChargeModel>> getPreviousChangedBillingCharges(final ConsignmentEntryModel consignmentEntryModel)
+	{
+		final Object previousValue = consignmentEntryModel.getItemModelContext().getOriginalValue(
+				BlloggingConstants.BILLING_CHARGES);
+		if (previousValue instanceof Map)
+		{
+			return (Map<String, List<BlItemsBillingChargeModel>>)  previousValue;
+		}
+		return (Map<String, List<BlItemsBillingChargeModel>>) Collections.emptyList();
+	}
+
+	/**
+	 * method is used to get the original value for delivery mode.
+	 * @param orderModel
+	 * @return
+	 */
+	private DeliveryModeModel getPreviousChangedDeliveryModeCharges(final AbstractOrderModel orderModel)
+	{
+		final Object previousValue = orderModel.getItemModelContext().getOriginalValue(
+				BlloggingConstants.DELIVERY_MODE);
+		if (previousValue instanceof DeliveryModeModel)
+		{
+			return (DeliveryModeModel)  previousValue;
+		}
+		return new DeliveryModeModel();
 	}
 
 	/**

@@ -24,15 +24,8 @@
 		<formElement:formInputBox idKey="address.postcode" labelKey="" placeholder="address.zipcode1" path="billTo_postalCode" inputCSS="form-control float-start shortInput" mandatory="true" />
 		<%--<formElement:formSelectBox idKey="address.countryIso" labelKey="" path="billTo_country" mandatory="true" skipBlank="false"
                                       skipBlankMessageKey="address.selectCountry2" items="${regions}" itemValue="isocodeShort" tabindex="${tabindex + 7}" selectCSSClass="form-control"/>--%>
-		<formElement:formSelectBox idKey="address.region" labelKey="" path="billTo_state" mandatory="true" skipBlank="false" skipBlankMessageKey="billing.address.selectState" items="${regions}" itemValue="isocode" tabindex="${tabindex + 7}" selectCSSClass="form-control selectBoxSize forcolor" divCSS="select-wrapper float-end selectBoxDivWidth"/>
+		<formElement:formSelectBox idKey="address.region" labelKey="" path="billTo_state" mandatory="true" skipBlank="false" skipBlankMessageKey="billing.address.selectState" items="${regions}" itemValue="isocode" tabindex="${tabindex + 7}" selectCSSClass="form-control selectBoxSize" divCSS="select-wrapper float-end selectBoxDivWidth"/>
 		<%-- <formElement:formSelectBox idKey="address.region" labelKey="address.state" path="billTo_state" mandatory="true" skipBlank="false"  skipBlankMessageKey="address.selectState" items="${regions}" itemValue="isocodeShort"  selectCSSClass="form-control"/>--%>
 		<formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="billTo_email" inputCSS="form-control" mandatory="false" />
 		<formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="billTo_phoneNumber" inputCSS="form-control mb-3" mandatory="false" />
-		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>
-	
-
-<script>
-$('.forcolor').click(function(){
-$( ".forcolor" ).addClass( 'hide-error');
-  });
-</script>
+		<input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>	

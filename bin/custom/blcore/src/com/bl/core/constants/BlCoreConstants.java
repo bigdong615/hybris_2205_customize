@@ -520,7 +520,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USPS = "usps";
 	
 	public static final String ANONYMOUS = "anonymous";
-	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = " BL_";
+	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = "BL_";
 
 	public static final String OPTIMIZEDSHIPPINGSTARTDATE = "optimizedShippingStartDate";
 	public static final String PULLED_ORDERS_QUEUE = "PulledOrdersQueue";
@@ -528,6 +528,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String COMPLTED_ORDER_QUEUE = "ShippingCompleteOrderQueue";
 	
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
+	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
 
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";
@@ -536,8 +537,51 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHIPPED = "SHIPPED";
 	public static final String IN_HOUSE = "IN_HOUSE";
 	public static final String ADDED_TO_CART = "ADDED_TO_CART";
+	
+	public static final String SYNC_ACTIVE_PROPERTY = "catalog.sync.active";
 
 	public static final int NAME_LENGTH_SIZE = 48;
+
+
+	public static final String ORDER_MODIFIED_DATE = "orderModifiedDate";
+	public static final String ORDER_MODIFIED_END_DATE = "orderModifiedEndDate";
+	public static final String ORDER_BILL_MODIFIED_DATE = "orderBillModifiedDate";
+	public static final String ORDER_BILL_MODIFIED_END_DATE = "orderBillModifiedEndDate";
+
+	// Order Status
+	public static final String RECEIVED_IN_VERIFICATION = "RECEIVED_IN_VERIFICATION";
+	public static final String RECEIVED_MANUAL_REVIEW = "RECEIVED_MANUAL_REVIEW";
+	public static final String RECEIVED_SHIPPING_MANUAL_REVIEW = "RECEIVED_SHIPPING_MANUAL_REVIEW";
+	public static final String RECEIVED_PAYMENT_DECLINED = "RECEIVED_PAYMENT_DECLINED";
+	public static final String UNBOXED_PARTIALLY = "UNBOXED_PARTIALLY";
+	public static final String UNBOXED_COMPLETELY = "UNBOXED_COMPLETELY";
+	public static final String RECEIVED_ROLLING = "RECEIVED_ROLLING";
+	public static final String SOLD_SHIPPED = "SOLD_SHIPPED";
+	public static final String SOLD_RMA_CREATED = "SOLD_RMA_CREATED";
+	public static final String RETURNED = "RETURNED";
+	public static final String ORDER_COMPLETED = "COMPLETED";
+	public static final String INCOMPLETE = "INCOMPLETE";
+	public static final String INCOMPLETE_BALANCE_DUE = "INCOMPLETE_BALANCE_DUE";
+	public static final String INCOMPLETE_STOLEN = "INCOMPLETE_STOLEN";
+	public static final String INCOMPLETE_LOST_IN_TRANSIT = "INCOMPLETE_LOST_IN_TRANSIT";
+	public static final String INCOMPLETE_ITEMS_IN_REPAIR = "INCOMPLETE_ITEMS_IN_REPAIR";
+	public static final String INCOMPLETE_MISSING_ITEMS = "INCOMPLETE_MISSING_ITEMS";
+	public static final String INCOMPLETE_MISSING_AND_BROKEN_ITEMS = "INCOMPLETE_MISSING_AND_BROKEN_ITEMS";
+	public static final String CANCELLED = "CANCELLED";
+	public static final String LATE = "LATE";
+	public static final String RECEIVED_STATUS = "RECEIVED";
+	public static final String SOLD = "SOLD";
+	public static final String FORMAT_STRING= "##0.00";
+
+	// Consignment Status
+	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";
+	public static final String RECEIVED_READY_FOR_PICKUP = "RECEIVED_READY_FOR_PICKUP";
+	
+	public static final int INT_ONE = 1;
+   public static final int INT_TWO = 2;
+   public static final String CARD_MASK = "******";
+   public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
+   public static final String MASKED_CARD_FORMAT = "****%s";
 
 
 

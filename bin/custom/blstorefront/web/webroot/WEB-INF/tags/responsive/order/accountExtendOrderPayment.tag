@@ -15,7 +15,7 @@
                   <button class="btn-checkbox" type="button"
                      data-bs-toggle="collapse"
                      data-bs-target="#credit-card-expand"
-                     aria-controls="credit-card-expand" aria-expanded="false">
+                     aria-controls="credit-card-expand" aria-expanded="false"  onClick="clearExtendOrderErrorMessages();">
                   <input type="radio" class="paypalselection" id="paymentMethodBT" name="paymentMethodSelection" value="bt">
                   <label for="paymentMethodBT"></label>
                   </button>
@@ -28,35 +28,31 @@
          <div class="col-11">
             <b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
             <div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
-               <select class="btn btn-block btn-outline dropdown-toggle text-start js-enable-extend-button" id="saved-payment-action-ExtendBill">
-                  <ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" >
-                     <c:choose>
+            <div class="dropdown my-2">
+            <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
+            	<c:choose>
                         <c:when test="false">
                         </c:when>
                         <c:otherwise>
-                           <li>
-                              <%-- <button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}"> --%>
-                              <option>
-                                 Select Card
-                              </option>
-                              <!-- </button> -->
-                           </li>
+                        	Select Card
                         </c:otherwise>
                      </c:choose>
+                    </button>
+                     <ul class="js-enable-extend-button dropdown-menu savedPaymentList" aria-labelledby="savedCards" id="saved-payment-action-ExtendBill">
                      <c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status">
                         <c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'CreditCard')}">
-                           <li >
-                              <%-- <button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}"> --%>
-                              <option data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
+                           <li>
+                              <button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
+                             
                                  <img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;">
-                                 &nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
-                              </option>
-                              <!-- </button> -->
+                                 ${paymentInfo.cardType} &nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
+                              
+                              </button>
                            </li>
                         </c:if>
                      </c:forEach>
                   </ul>
-               </select>
+            	</div>
                </br>
                <a href="#" data-bs-toggle="modal" data-bs-target="#addCrediCard" class="gray80"><spring:theme code="text.myaccount.extend.order.new.card"/></a>
             </div>
@@ -79,7 +75,7 @@
                   data-bs-toggle="collapse"
                   data-bs-target="#paypal-expand"
                   aria-controls="paypal-expand" aria-expanded="false">
-               <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
+               <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt" onClick="clearExtendOrderErrorMessages();">
                <label for="paymentMethodPayPal"></label>
                </button>
             </c:otherwise>
@@ -119,7 +115,7 @@
                 				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
                 					    data-bs-target="#po-expand" aria-controls="po-expand"
                 					    aria-expanded="false">
-                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
+                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt" onClick="clearExtendOrderErrorMessages();"><label
                 						  for="paymentMethodPo"></label>
                 				    </button>
                 				  </c:otherwise>

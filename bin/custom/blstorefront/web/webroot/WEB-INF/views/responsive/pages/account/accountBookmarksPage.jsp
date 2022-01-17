@@ -61,9 +61,19 @@
                                    <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                                 
                                </form>
- <button type="submit" class="btn btn-primary bookmark-addToCart" data-id="addToCartAndRemoveForm_${loopindex.index}">
+                               <c:choose>
+                               	<c:when test="${wishlistDatas.product.stock.stockLevelStatus eq 'outOfStock'}">
+                              	<button type="submit" class="btn btn-outline btn-disabled btnwidthplp js-add-to-cart js-disable-btn" disabled="disabled">
                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                  </button>
+                               	</c:when>
+                               	<c:otherwise>
+                               	 <button type="submit" class="btn btn-primary bookmark-addToCart" data-id="addToCartAndRemoveForm_${loopindex.index}">
+                                      <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
+                                 </button>
+                               	</c:otherwise>
+                               </c:choose>
+
                             </div>
                         </div>
                     </div>

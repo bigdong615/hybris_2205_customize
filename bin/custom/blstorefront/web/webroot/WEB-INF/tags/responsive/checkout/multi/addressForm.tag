@@ -17,19 +17,13 @@
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
         <div class="dropdown">
             <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start" onChange="onSavedAddressChange()">
-                <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
-                    <c:choose>
-                        <c:when test="${deliveryAddress.defaultAddress}">
-                            <option value="${deliveryAddress.id}" selected="selected">
-                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
+                <option value="selectedValue" selected="selected" disabled="disabled">
+                               <spring:theme code="text.enter.select.shipping.address"/>
                             </option>
-                        </c:when>
-                        <c:otherwise>
+                <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">              
                             <option value="${deliveryAddress.id}">
                                 ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
                             </option>
-                        </c:otherwise>
-                    </c:choose>
                 </c:forEach>
                 <option value="newAddress" id="#newAddress" style=" display: none;">
                     <spring:theme code="text.enter.new.shipping.address"/>

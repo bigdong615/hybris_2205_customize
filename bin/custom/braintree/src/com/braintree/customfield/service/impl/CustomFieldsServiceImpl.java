@@ -84,7 +84,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			case "field_2":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
-						String.valueOf(customer.getIncompletedOrderCount()));
+						String.valueOf(customer.getInprocessOrderCount()));
 				break;
 			case "field_3":
 				StringBuilder outstandingBill = new StringBuilder();
@@ -97,13 +97,13 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 			case "field_4":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
-						String.valueOf(BigDecimal.valueOf(customer.getAverageOrderValue()).setScale(
+						String.valueOf(BigDecimal.valueOf(customer.getAverageGearOrderValue()).setScale(
 								BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "field_5":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
-						String.valueOf(BigDecimal.valueOf(customer.getOrderValuePriorToShippedStatus())
+						String.valueOf(BigDecimal.valueOf(customer.getGearValueOrdersInProgress())
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "field_6":

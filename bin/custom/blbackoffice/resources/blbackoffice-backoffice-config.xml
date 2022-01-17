@@ -74,7 +74,7 @@
 	<context merge-by="module" principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole" component="cs-explorer-tree" module="customersupportbackoffice">
 		<n:explorer-tree>
 			<n:type-node code="GiftCard" id="GiftCard"/>
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="StockLevel" id="StockLevel"/>
 		</n:explorer-tree>
 	</context>
@@ -1486,6 +1486,9 @@
 						qualifier="alternativeProduct"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
 						qualifier="specifications"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.wysiwyg"
+						qualifier="usedDescription"/>
+					<ea:attribute qualifier="summary" merge-mode="REMOVE"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.administration">
@@ -1694,14 +1697,14 @@
 	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
 	<context component="explorer-tree" principal="frontdeskuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="FrontDeskQueue" id="FrontDeskQueue"/>
 		</n:explorer-tree>
 	</context>
 
 	<context component="explorer-tree" principal="shippingteamuserrole">
 			<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
-				<n:type-node code="Consignment" id="Consignment"/>
+				<n:type-node code="Consignment" id="Shipment"/>
 				<n:type-node code="PulledOrdersQueue" id="CleanCompleteOrderQueue"/>
 				<n:type-node code="OrdersAwaitingQueue" id="IncompleteOrdersQueue"/>
 				<n:type-node code="ShippingCompleteOrderQueue" id="ShippingCompleteOrderQueue"/>
@@ -1795,7 +1798,7 @@
 				<editorArea:section name="hmc.section.blSerial.attributes">
 					<editorArea:attribute qualifier="serialStatus"/>
 					<editorArea:attribute qualifier="repairReasons"/>
-					<editorArea:attribute qualifier="otherRepairReasons"/>
+					<editorArea:attribute qualifier="otherRepairsReason"/>
 					<editorArea:attribute qualifier="repairLogType"/>
 					<editorArea:attribute qualifier="firmwareVersion"/>
 					<editorArea:attribute qualifier="skuFirmwareVersion"/>
@@ -1803,8 +1806,8 @@
 					<editorArea:attribute qualifier="cosmeticRating"/>
 					<editorArea:attribute qualifier="functionalRating"/>
 					<editorArea:attribute qualifier="conditionRatingOverallScore"/>
-					<editorArea:attribute qualifier="associatedConsignment"/>
-					<editorArea:attribute qualifier="consignmentEntry"/>
+					<editorArea:attribute qualifier="associatedConsignment" readonly="true"/>
+					<editorArea:attribute qualifier="consignmentEntry" readonly="true"/>
 					<editorArea:attribute qualifier="testingStatus"/>
 				</editorArea:section>
 			</editorArea:tab>
@@ -1996,6 +1999,7 @@
             <list-view:column qualifier="productCode"/>
             <list-view:column qualifier="productName"/>
             <list-view:column qualifier="serialNumber"/>
+            <list-view:column qualifier="barcode"/>
             <list-view:column qualifier="warehouseCode"/>
             <list-view:column qualifier="ocParentLocationCode"/>
             <list-view:column qualifier="ocLocationCode"/>
@@ -2222,6 +2226,7 @@
 					<ea:attribute qualifier="expiryDate" />
 					<ea:attribute qualifier="creationTime" />
 					<ea:attribute qualifier="code" />
+					<ea:attribute qualifier="verificationStatus"/>
 					<ea:attribute qualifier="URL" />
 				</ea:section>
 			</ea:tab>
@@ -2321,7 +2326,7 @@
 				<n:navigation-node id="BinOcLocationTool"/>
 			</n:navigation-node>
 			<n:type-node code="Order" id="Order"/>
-			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="Consignment" id="Shipment"/>
 			<n:navigation-node id="StockLevel">
 				<n:type-node code="StockLevel" id="StockLevel"/>
 				<n:type-node code="Warehouse" id="Warehouse"/>
@@ -2398,12 +2403,14 @@
 				<advanced-search:field mandatory="false" name="itemBarcode" selected="true"/>
                 <advanced-search:field mandatory="false" name="repairLogStatus" selected="false"/>
               	<advanced-search:field mandatory="false" name="serialCode" selected="false"/>
+              	<advanced-search:field mandatory="false" name="repairLogId" selected="false"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
 
 	<context type="BlRepairLog" component="listview" merge-by="replace">
 		<list-view:list-view>
+			<list-view:column qualifier="repairLogId"/>
 			<list-view:column qualifier="itemtype"/>
             <list-view:column qualifier="repairLogStatus"/>
             <list-view:column qualifier="serialCode"/>
@@ -2420,6 +2427,7 @@
 			<wz:step id="step0" label="hmc.essential">
 				<wz:content>
 					<wz:property-list root="newRepairLog">
+						<wz:property qualifier="serialCode"  />
 						<wz:property qualifier="itemBarcode"  />
 						<wz:property qualifier="repairLogStatus"/>
 					</wz:property-list>
@@ -2457,6 +2465,7 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="hmc.tab.blRepair.log.tab" position="1">
 				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="repairLogId" readonly="true"/>
 					<editorArea:attribute qualifier="creationtime" readonly="true"/>
 					<editorArea:attribute qualifier="serialCode" readonly="true"/>
 					<editorArea:attribute qualifier="itemBarcode" readonly="true"/>
@@ -2485,8 +2494,6 @@
 			<editorArea:tab name="hmc.tab.blRepair.log.tech.eng.tab" position="2">
 				<editorArea:section name="hmc.section.blSerial.attributes">
 					<editorArea:attribute qualifier="repairReasons"/>
-					<editorArea:attribute qualifier="otherRepairReasons"/>
-					<editorArea:attribute qualifier="notesForIssue"/>
 					<editorArea:attribute qualifier="conditionRating"/>
 					<editorArea:attribute qualifier="lastUserChangedConditionRating" readonly="true"/>
 					<editorArea:attribute qualifier="frequency"/>
@@ -2494,10 +2501,28 @@
 					<editorArea:attribute qualifier="blame"/>
 					<editorArea:attribute qualifier="issueLocation"/>
 				</editorArea:section>
+				<editorArea:section name="hmc.section.blSerial.repair.note">
+				<editorArea:panel colspan="2" name="Repair Log" rowspan="2">
+				<editorArea:attribute qualifier="otherRepairsReason">
+						<editorArea:editor-parameter>
+		    				<editorArea:name>rows</editorArea:name>
+		     				<editorArea:value>10</editorArea:value>
+	 					</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="notesForIssue">
+						<editorArea:editor-parameter>
+		    				<editorArea:name>rows</editorArea:name>
+		     				<editorArea:value>10</editorArea:value>
+	 					</editorArea:editor-parameter>
+					</editorArea:attribute>
+					</editorArea:panel>
+				</editorArea:section>
 			</editorArea:tab>
 			<editorArea:tab name="hmc.tab.blRepair.log.assessment.notes.tab" position="3">
-				<editorArea:section name="hmc.section.blSerial.attributes">
+				<editorArea:section name="hmc.section.blSerial.assessment.note">
+				<editorArea:panel colspan="2" name="Assessment Note" rowspan="2">
 					<editorArea:attribute qualifier="assessmentNotes"/>
+				</editorArea:panel>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -3063,6 +3088,7 @@
 		<list-view:list-view>
 			<list-view:column qualifier="inventoryCycleCountDayCode"/>
 			<list-view:column qualifier="inventoryCycleCountProductId"/>
+			<list-view:column qualifier="inventoryCycleCountProduct"  spring-bean="blInventoryCycleCountProductNameRenderer" label="blbackoffice.inventory.cycle.count.product.name"/>
 		</list-view:list-view>
 	</context>
 

@@ -18,7 +18,7 @@ INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
 
 INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
                                     ; frondeskusergroup         ; frontdeskuserrole
-                                    ; shippingteamkusergroup    ; shippingteamuserrole
+                                    ; shippingteamusergroup    ; shippingteamuserrole
 
 INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
                       ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup,customersupportagentgroup,warehouseagentgroup ; 1234
@@ -125,6 +125,7 @@ UserGroup ; customersupportagentgroup ;                ;          ;             
 
           ;                           ;                ;          ; Order                          ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Order.code                     ; +    ; -      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.nonRefundableDeposit                     ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Order.orderNotes               ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes                          ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Notes.note                     ; +    ; +      ; -      ; -      ; -
@@ -163,6 +164,7 @@ UserGroup ; customersupportagentrole  ;                ;          ;             
 
           ;                           ;                ;          ; Order            ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Order.code       ; +    ; -      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.nonRefundableDeposit       ; +    ; -      ; -      ; -      ; -
           ;                           ;                ;          ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
           ;                           ;                ;          ; Notes            ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
@@ -207,9 +209,10 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; OrdersAwaitingQueue        ; +    ; +      ; -      ; -
           ;                   ;                ; PulledOrdersQueue          ; +    ; +      ; -      ; -
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
-          ;                   ;                ; Orde.code                  ; +    ; -      ; -      ; -
-          ;                   ;                ; Orde.rentalStartDate       ; +    ; -      ; -      ; -
-          ;                   ;                ; Orde.rentalEndDate         ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.code                  ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.rentalStartDate       ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.rentalEndDate         ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.nonRefundableDeposit  ; +    ; -      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
@@ -225,8 +228,9 @@ Usergroup ; frontdeskuserrole ;                ;                ;      ;        
           ;                   ;                ; FrontDeskQueue ; +    ; +      ; -      ; -
           ;                   ;                ; Order          ; +    ; +      ; -      ; -
           ;                   ;                ; Order.code     ; +    ; -      ; -      ; -
-          ;                   ;                ; Orde.rentalStartDate ; +    ; -      ; -      ; -
-          ;                   ;                ; Orde.rentalEndDate ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.rentalStartDate ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.rentalEndDate ; +    ; -      ; -      ; -
+          ;                   ;                ; Order.nonRefundableDeposit ; +    ; -      ; -      ; -
 	      ;                   ;                ; User           ; +    ; -      ; -      ; -
           ;                   ;                ; Warehouse      ; +    ; -      ; -      ; -
           ;                   ;                ; Address        ; +    ; -      ; -      ; -
@@ -242,6 +246,7 @@ Usergroup ; shippingteamuserrole ;                ;                            ;
 ;                   ;                ; Order.code     ; +    ; -      ; -      ; -
 ;                   ;                ; Order.rentalStartDate     ; +    ; -      ; -      ; -
 ;                   ;                ; Order.rentalEndDate     ; +    ; -      ; -      ; -
+;                   ;                ; Order.nonRefundableDeposit     ; +    ; -      ; -      ; -
 ;                   ;                ; User           ; +    ; -      ; -      ; -
 ;                   ;                ; Address        ; +    ; -      ; -      ; -
 ;                   ;                ; DeliveryMode   ; +    ; -      ; -      ; -
@@ -329,6 +334,7 @@ Usergroup;blinventoryusergroup;;;;;;;
 ;;;Order.code;+;-;-;-
 ;;;Order.rentalStartDate;+;-;-;-
 ;;;Order.rentalEndDate;+;-;-;-
+;;;Order.nonRefundableDeposit;+;-;-;-
 ;;;StockLevel;+;-;-;-
 ;;;BlTestingGearNeeded;+;+;+;+;
 ;;;Product;+;-;-;-;
@@ -384,6 +390,7 @@ Usergroup              ; techEngusergroup        ;                    ;         
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.nonRefundableDeposit    ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; RemainingItemsQueue           ; +                       ; +        ; -      ; -      ;             
@@ -438,6 +445,7 @@ Usergroup              ; repairmemberusergroup   ;                    ;         
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.nonRefundableDeposit           ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             
@@ -483,6 +491,7 @@ Usergroup              ; unboxingmemberusergroup ;                    ;         
                        ;                         ;                    ; Order.code                    ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalStartDate         ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Order.rentalEndDate           ; +                       ; -        ; -      ; -      ;
+                       ;                         ;                    ; Order.nonRefundableDeposit    ; +                       ; -        ; -      ; -      ;
                        ;                         ;                    ; Consignment                   ; +                       ; +        ; -      ; -      ;
                        ;                         ;                    ; ConsignmentEntry              ; +                       ; +        ; -      ; -      ;             
                        ;                         ;                    ; BlRepairLog                   ; +                       ; +        ; +      ; +      ;             

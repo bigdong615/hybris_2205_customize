@@ -162,12 +162,12 @@
                 <td colspan="6"><div class="pick-slip-border"></div></td>
             </tr>
 
-            #foreach( $consignmentEntry in ${ctx.consignmentEntries} )
+			#foreach( $serialCode in ${ctx.consignment.packagingInfo.serialProducts} )
                 <tr>
                     <td>$foreach.count</td>
-                    <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.code)}</td>
-                    <td>$!{ctx.escapeHtml($consignmentEntry.orderEntry.product.name)}</td>
-                    <td>$!{consignmentEntry.quantityPending}</td>
+                    <td>$!{ctx.escapeHtml($serialCode.blProduct.code)}</td>
+                    <td>$!{ctx.escapeHtml($serialCode.blProduct.name)}</td>
+                     <td>1</td>
                 </tr>
             #end
             <tr>

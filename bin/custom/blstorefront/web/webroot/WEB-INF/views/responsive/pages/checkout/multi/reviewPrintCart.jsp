@@ -26,7 +26,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>Borrow Lenses - Checkout - Step 1</title>
+    <title>BorrowLenses - Checkout - Step 1</title>
     
 	<!-- Required CSS -->
     <link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/bootstrap.min.css"/>

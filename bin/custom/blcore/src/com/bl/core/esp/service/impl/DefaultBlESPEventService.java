@@ -61,6 +61,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -173,7 +174,11 @@ public class DefaultBlESPEventService implements BlESPEventService {
     @Override
     public void sendOrderVerificationCOIRequiredEvent(final OrderModel orderModel, final Double amount) {
         if (Objects.nonNull(orderModel)) {
-            final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
+          orderModel.setCoiAmount(BigDecimal.valueOf(amount));
+          getModelService().save(orderModel);
+          getModelService().refresh(orderModel);
+          BlLogger.logFormattedMessage(LOG , Level.DEBUG , "COI amount {} deposited for orderCode {}" , String.valueOf(amount) , orderModel.getCode());
+          final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
             getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
                 orderVerificationCOIneededEventRequest);
           orderVerificationCOIneededEventRequest.getData().setCoiamount((double) amount);
