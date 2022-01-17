@@ -115,7 +115,7 @@
                                             </c:forEach>
                                           </c:when>
                                           <c:otherwise>
-                                           <spring:theme code="text.myaccount.order"/>
+                                           <spring:theme code="text.myaccount.order.na"/>
                                           </c:otherwise>
                                        </c:choose>
                                         </p>
