@@ -189,8 +189,10 @@
                                										 <spring:theme code="text.myaccount.order.damage.waiver.gear.no"/><br>
                                								</c:otherwise>
                                						</c:choose>
+                               						<c:if test="${not empty cartEntry.selectedOptions}">
+														+ ${cartEntry.selectedOptions} <br>
+													</c:if>
                                						</c:if>
-                               							
                                							<c:choose>
                                								<c:when test="${cartEntry.quantity <= 0 and cartEntry.totalPrice.value <= 0}">
                                									<p class="refund-msg"><spring:theme code="order.details.refunded.msg"/></p>
