@@ -123,7 +123,7 @@
 																	<b class="mt-4">Saved Credit Cards</b>
 																	<div class="dropdown my-2">
 																		<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
-																			<img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																			<img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> ${userSelectedPaymentInfo.cardType} &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																		</button>
 																	</div>
 																		<a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a>
@@ -135,7 +135,7 @@
 																	<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
 																		<c:choose>
 																			<c:when test="${not empty userSelectedPaymentInfo}">
-																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> ${userSelectedPaymentInfo.cardType} &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
 																			</c:when>
 																			<c:otherwise>
 																				Select or Enter new card
@@ -148,6 +148,7 @@
 																			<li>
 																				<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
 																					<img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;">
+																					${paymentInfo.cardType}
 																					&nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
 																				</button>
 																			</li>

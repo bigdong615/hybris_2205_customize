@@ -1,10 +1,12 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.BillInfoStatus;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,6 +41,7 @@ public class BlItemsBillingChargePrepareInterceptor implements PrepareIntercepto
 			blItemsBillingChargeModel.setCode(randomId);
 			blItemsBillingChargeModel.setUpdatedBillTime(new Date());
 			blItemsBillingChargeModel.setBillStatus(BillInfoStatus.NEW_BILL);
+			blItemsBillingChargeModel.setChargedAmount(blItemsBillingChargeModel.getChargedAmount().setScale(BlCoreConstants.DECIMAL_PRECISION,BlCoreConstants.ROUNDING_MODE));
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlItemsBillingChargePrepareInterceptor : UUID : {}", randomId);
 		}
 	}

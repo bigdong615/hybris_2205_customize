@@ -166,11 +166,11 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final Long availability = stockResult.getAvailableCount();
 		StockLevelStatus resultStatus;
 		if (totalUnits >= BlCoreConstants.MIN_TOTAL && totalUnits < BlCoreConstants.MAX_TOTAL
-				&& availability <= BlCoreConstants.LOW_AVAILABILITY)
+				&& (availability > 0 && availability <= BlCoreConstants.LOW_AVAILABILITY))
 		{
 			resultStatus = StockLevelStatus.LOWSTOCK;
 		}
-		else if (totalUnits >= BlCoreConstants.MAX_TOTAL && availability <= BlCoreConstants.MIN_TOTAL)
+		else if (totalUnits >= BlCoreConstants.MAX_TOTAL && (availability > 0 && availability <= BlCoreConstants.MIN_TOTAL))
 		{
 			resultStatus = StockLevelStatus.LOWSTOCK;
 		}

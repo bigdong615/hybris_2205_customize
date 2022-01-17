@@ -520,7 +520,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USPS = "usps";
 	
 	public static final String ANONYMOUS = "anonymous";
-	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = " BL_";
+	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = "BL_";
 
 	public static final String OPTIMIZEDSHIPPINGSTARTDATE = "optimizedShippingStartDate";
 	public static final String PULLED_ORDERS_QUEUE = "PulledOrdersQueue";
@@ -573,10 +573,17 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SOLD = "SOLD";
 	public static final String TAX = "Tax";
 	public static final String QUANTITY = "Quantity";
+	public static final String FORMAT_STRING= "##0.00";
 
 	// Consignment Status
 	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";
 	public static final String RECEIVED_READY_FOR_PICKUP = "RECEIVED_READY_FOR_PICKUP";
+	
+	public static final int INT_ONE = 1;
+   public static final int INT_TWO = 2;
+   public static final String CARD_MASK = "******";
+   public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
+   public static final String MASKED_CARD_FORMAT = "****%s";
 
 
 

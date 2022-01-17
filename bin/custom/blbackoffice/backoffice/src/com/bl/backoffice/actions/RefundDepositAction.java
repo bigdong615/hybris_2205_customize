@@ -59,7 +59,7 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 	{
 		final OrderModel order = actionContext.getData();
 
-		return (order != null && CollectionUtils.isNotEmpty(order.getDepositPaymentTransactions()));
+		return (order != null && CollectionUtils.isNotEmpty(order.getDepositPaymentTransactions()) && !order.isNonRefundableDeposit());
 	}
 
 	/**

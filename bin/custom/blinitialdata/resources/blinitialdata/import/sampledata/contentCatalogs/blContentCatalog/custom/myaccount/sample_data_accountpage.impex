@@ -49,8 +49,9 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
 						 ;;BodyContentSlot-bill-pay-success;Body Content Slot for Bill Payment Success;true;PayBillSuccessComponent;;;
 						 ;;BodyContentSlot-modify-payment;Body Content Slot for Modify Payment;true;ModifyPaymentComponent;;; 
                           ;                         ; BodyContentSlot-deposit-payment           ; Body Content Slot for Deposit Payment           ; true   ; DepositPaymentComponent                         ;  ;  ;  
-                          ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;  
-						                         
+                          ;                         ; BodyContentSlot-deposit-payment-success   ; Body Content Slot for Deposit Payment Success   ; true   ; DepositPaymentSuccessComponent                  ;  ;  ;
+                          ;;SearchBoxBl;BlSearchBox
+
 # ContentSlotForPage
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
                                 ;;BodyContent-address-book   ;BodyContent;address-book;BodyContent-address-book;;;
@@ -84,5 +85,7 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
 # ContentSlotForPage      
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                        ; position[unique=true] ; page(uid,$contentCV)[unique=true] ; contentSlot(uid,$contentCV)[unique=true] ;  ;  ;  
                                  ;                         ; BodyContentSlot-deposit-payment         ; BodyContent           ; deposit-payment                   ; BodyContentSlot-deposit-payment          ;  ;  ;  
-                                 ;                         ; BodyContentSlot-deposit-payment-success ; BodyContent           ; deposit-payment-success           ; BodyContentSlot-deposit-payment-success  ;  ;  ;  
-                                
+                                 ;                         ; BodyContentSlot-deposit-payment-success ; BodyContent           ; deposit-payment-success           ; BodyContentSlot-deposit-payment-success  ;  ;  ;
+
+INSERT_UPDATE SearchBoxComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
+                                ;;BlSearchBox;Search Box;BlSearchBox

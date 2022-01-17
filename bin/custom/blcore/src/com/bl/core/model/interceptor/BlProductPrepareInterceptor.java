@@ -5,6 +5,7 @@ import com.bl.core.enums.DurationEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.CatalogVersionService;
@@ -42,6 +43,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
 
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
+  private BlProductService blProductService;
   private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
   private SessionService sessionService;
@@ -199,7 +201,7 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
    * @param blProductModel
    */
   private void createZeroPriceRowForManualProducts(final Optional<PriceRowModel> sevenDayPrice, final BlProductModel blProductModel) {
-    if (ProductTypeEnum.MANUAL.equals(blProductModel.getProductType()) && sevenDayPrice.isEmpty()) {
+    if (ProductTypeEnum.MANUAL.equals(blProductModel.getProductType()) && getBlProductService().isAquatechProduct(blProductModel) && sevenDayPrice.isEmpty()) {
        blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, 0.0, true)));
       }
@@ -303,4 +305,11 @@ public void setSearchRestrictionService(SearchRestrictionService searchRestricti
 	this.searchRestrictionService = searchRestrictionService;
 }
 
+  public BlProductService getBlProductService() {
+    return blProductService;
+  }
+
+  public void setBlProductService(BlProductService blProductService) {
+    this.blProductService = blProductService;
+  }
 }

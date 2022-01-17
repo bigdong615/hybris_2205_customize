@@ -757,6 +757,12 @@
           <persistence type="property"/>
           <modifiers read="true" write="false" search="true" optional="true" unique="true"  initial="true"/>
         </attribute>
+        <attribute qualifier="nonRefundableDeposit" type="boolean">
+          <persistence type="property" />
+          <modifiers read="true" write="true" search="true" optional="false" />
+          <defaultvalue>Boolean.FALSE</defaultvalue>
+          <description>Defines Flag for Non-Refundable Deposit Amount</description>
+        </attribute>
       </attributes>
       </itemtype>
 
@@ -3114,6 +3120,12 @@
                 <defaultvalue>em().getEnumerationValue("ExportStatus", "NOTEXPORTED")</defaultvalue>
                 <description>To identify whether the order is exported to FTP or Not. </description>
               </attribute>
+              <attribute qualifier="isVideoOrder" type="java.lang.Boolean">
+              	<persistence type="property" />
+                <modifiers read="true" write="true" search="true" optional="false" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <description>Order will be marked as video order</description>
+              </attribute>
             </attributes>
             </itemtype>
 
@@ -3808,7 +3820,7 @@
                 <persistence type="property" />
                 <description>Number of orders in Completed status to date</description>
               </attribute>
-              <attribute autocreate="true" qualifier="incompletedOrderCount" type="int">
+              <attribute autocreate="true" qualifier="inprocessOrderCount" type="int">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>Number of orders in Inompleted status to date</description>
@@ -3836,13 +3848,13 @@
                 <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
                 <description>Sum of all outstanding bills</description>
               </attribute>
-               <attribute autocreate="true" qualifier="averageOrderValue" type="double">
+               <attribute autocreate="true" qualifier="averageGearOrderValue" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <description>Average of all order value</description>
               </attribute>
-              <attribute autocreate="true" qualifier="orderValuePriorToShippedStatus" type="double">
+              <attribute autocreate="true" qualifier="gearValueOrdersInProgress" type="double">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>

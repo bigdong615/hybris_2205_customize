@@ -155,10 +155,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	private void setInCompletedOrderCount(final AbstractOrderModel abstractOrderModel) {
 		if(OrderStatus.INCOMPLETE.getCode().contains(abstractOrderModel.getStatus().getCode())) {
 			final CustomerModel customerModel = (CustomerModel) abstractOrderModel.getUser();
-			customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() + 1);
+			customerModel.setInprocessOrderCount(customerModel.getInprocessOrderCount() + 1);
 			modelService.save(customerModel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "InCompleted order count : {} updated for the customer {} ",
-					customerModel.getIncompletedOrderCount(), customerModel.getUid());
+					customerModel.getInprocessOrderCount(), customerModel.getUid());
 		}
 	}
 
@@ -175,7 +175,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 			final Object previousStatus = abstractOrderModel.getItemModelContext()
 					.getOriginalValue(AbstractOrderModel.STATUS);
 			if(Objects.nonNull(previousStatus) && OrderStatus.INCOMPLETE.getCode().contains(previousStatus.toString())) {
-				customerModel.setIncompletedOrderCount(customerModel.getIncompletedOrderCount() - 1);
+				customerModel.setInprocessOrderCount(customerModel.getInprocessOrderCount() - 1);
 			}
 			modelService.save(customerModel);
 		}
@@ -193,10 +193,10 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 				final CustomerModel customerModel = (CustomerModel) order.getUser();
 				final Double priceOfProducts = order.getEntries().stream().mapToDouble(
 						AbstractOrderEntryModel::getTotalPrice).sum();
-				customerModel.setOrderValuePriorToShippedStatus(customerModel.getOrderValuePriorToShippedStatus() - priceOfProducts);
+				customerModel.setGearValueOrdersInProgress(customerModel.getGearValueOrdersInProgress() - priceOfProducts);
 				modelService.save(customerModel);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order value prior to shipped status : {} updated for the customer {} ",
-						customerModel.getOrderValuePriorToShippedStatus(), customerModel.getUid());
+						customerModel.getGearValueOrdersInProgress(), customerModel.getUid());
 			}
 		}
 	}
