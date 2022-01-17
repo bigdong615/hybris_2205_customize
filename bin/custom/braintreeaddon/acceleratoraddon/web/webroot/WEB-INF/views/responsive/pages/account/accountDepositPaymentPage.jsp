@@ -109,6 +109,9 @@
 											<br>
 										</c:otherwise>
 									</c:choose>
+									<c:if test="${not empty cartEntry.selectedOptions}">
+										+ ${cartEntry.selectedOptions} <br>
+									</c:if>
 								</c:if>
 								Total
 								<format:price priceData="${cartEntry.totalPrice}"
