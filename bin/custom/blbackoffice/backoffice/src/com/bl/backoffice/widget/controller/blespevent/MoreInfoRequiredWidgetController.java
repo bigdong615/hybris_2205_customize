@@ -1,7 +1,6 @@
 /**
  *
- *//*
-
+ */
 package com.bl.backoffice.widget.controller.blespevent;
 
 import de.hybris.platform.core.model.order.OrderModel;
@@ -23,14 +22,12 @@ import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
 
-*/
 /**
  * ############## BL-1361 : Trigger More Info Required ESP event ##############
  *
  * @author Avani Patel
  *
- *//*
-
+ */
 public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 {
 	private static final Logger LOG = Logger.getLogger(MoreInfoRequiredWidgetController.class);
@@ -48,13 +45,11 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 
 	private DefaultBlESPEventService blEspEventService;
 
-	*/
-/**
+	/**
 	 * This method is used to show the default values of shipping and address
 	 *
 	 * @param inputObject
-	 *//*
-
+	 */
 	@SocketEvent(socketId = "inputObject")
 	public void initMoreInfoRequiredForm(final OrderModel inputObject)
 	{
@@ -65,22 +60,18 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 						.concat(BlInventoryScanLoggingConstants.EMPTY_SPACE).concat(this.getOrderModel().getCode()));
 	}
 
-	*/
-/**
+	/**
 	 * This method will be used to reset the popup values
-	 *//*
-
+	 */
 	@ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void reset()
 	{
 		this.verificationText.setValue("");
 	}
 
-	*/
-/**
+	/**
 	 * This method will be used to confirm/ Save the modified values to trigger ESP event
-	 *//*
-
+	 */
 	@ViewEvent(componentID = "confirmTriggerEmail", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void triggerESPEvent()
 	{
@@ -102,11 +93,9 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
-	*/
-/**
+	/**
 	 * This method will be used to trigger More Info required ESP event
-	 *//*
-
+	 */
 	private void triggerInfoRequiredESPEvent(final OrderModel orderModel, final String verificationText)
 	{
 
@@ -123,11 +112,9 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 	}
 
 
-	*/
-/**
+	/**
 	 * This method will be used to validate modified data for shipping
-	 *//*
-
+	 */
 	protected void validateRequest()
 	{
 
@@ -138,14 +125,12 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 		}
 	}
 
-	*/
-/**
+	/**
 	 * This method will be used to show success message
 	 *
 	 * @param isErrorMesg
 	 *           the is error mesg
-	 *//*
-
+	 */
 	protected void showMessageBox(final boolean isErrorMesg)
 	{
 
@@ -163,47 +148,38 @@ public class MoreInfoRequiredWidgetController extends DefaultWidgetController
 		}
 	}
 
-	*/
-/**
+	/**
 	 * @return the orderModel
-	 *//*
-
+	 */
 	public OrderModel getOrderModel()
 	{
 		return orderModel;
 	}
 
-	*/
-/**
+	/**
 	 * @param orderModel
 	 *           the orderModel to set
-	 *//*
-
+	 */
 	public void setOrderModel(final OrderModel orderModel)
 	{
 		this.orderModel = orderModel;
 	}
 
-	*/
-/**
+	/**
 	 * @return the blEspEventService
-	 *//*
-
+	 */
 	public DefaultBlESPEventService getBlEspEventService()
 	{
 		return blEspEventService;
 	}
 
-	*/
-/**
+	/**
 	 * @param blEspEventService
 	 *           the blEspEventService to set
-	 *//*
-
+	 */
 	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService)
 	{
 		this.blEspEventService = blEspEventService;
 	}
 
 }
-*/
