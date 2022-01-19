@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
-    <name>depositrequired.action</name>
+    <name>orderdepositrequired.action</name>
     <description>Deposit Required Action</description>
     <author>hybris</author>
     <version>0.1</version>

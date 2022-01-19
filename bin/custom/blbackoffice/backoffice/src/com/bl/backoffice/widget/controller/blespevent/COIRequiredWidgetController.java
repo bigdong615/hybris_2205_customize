@@ -1,3 +1,4 @@
+/*
 package com.bl.backoffice.widget.controller.blespevent;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
@@ -17,11 +18,13 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 
+*/
 /**
  * ############## BL-1363 : Trigger COI Required ESP event ##############
  *
  * @author Sunil Sahu
- */
+ *//*
+
 public class COIRequiredWidgetController extends DefaultWidgetController
 {
 	private static final Logger LOG = Logger.getLogger(COIRequiredWidgetController.class);
@@ -41,11 +44,13 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 
 	private DefaultBlESPEventService blEspEventService;
 
-	/**
+	*/
+/**
 	 * This method is used to show the default values of shipping and address
 	 *
 	 * @param inputObject
-	 */
+	 *//*
+
 	@SocketEvent(socketId = "inputObject")
 	public void initCOIRequiredForm(final OrderModel inputObject) {
 		this.setOrderModel(inputObject);
@@ -57,17 +62,21 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 						.concat(this.getOrderModel().getCode()));
 	}
 
-	/**
+	*/
+/**
 	 * This method will be used to reset the popup values
-	 */
+	 *//*
+
 	@ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void reset() {
 		this.amount.setValue("");
 	}
 
-	/**
+	*/
+/**
 	 * This method will be used to confirm/ Save the modified values to trigger ESP event
-	 */
+	 *//*
+
 	@ViewEvent(componentID = "confirmTriggerEmail", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void triggerESPEvent() {
 
@@ -85,9 +94,11 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
-	/**
+	*/
+/**
 	 * This method will be used to trigger COI required ESP event
-	 */
+	 *//*
+
 	private void triggerCOIRequiredESPEvent(final OrderModel orderModel, final Double amount) {
 
 		try {
@@ -100,9 +111,11 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 	}
 
 
-	/**
+	*/
+/**
 	 * This method will be used to validate modified data for shipping
-	 */
+	 *//*
+
 	protected void validateRequest() {
 
 		if (StringUtils.isEmpty(this.amount.getValue())) {
@@ -127,10 +140,12 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 		return doubleValue;
 	}
 
-	/**
+	*/
+/**
 	 * This method will be used to show success message
 	 *  @param isErrorMesg the is error mesg
-	 */
+	 *//*
+
 	protected void showMessageBox(final boolean isErrorMesg) {
 
 		if (isErrorMesg) {
@@ -148,37 +163,46 @@ public class COIRequiredWidgetController extends DefaultWidgetController
 		}
 	}
 
-	/**
+	*/
+/**
 	 * @return the orderModel
-	 */
+	 *//*
+
 	public OrderModel getOrderModel()
 	{
 		return orderModel;
 	}
 
-	/**
+	*/
+/**
 	 * @param orderModel
 	 *           the orderModel to set
-	 */
+	 *//*
+
 	public void setOrderModel(final OrderModel orderModel)
 	{
 		this.orderModel = orderModel;
 	}
 
-	/**
+	*/
+/**
 	 * @return the blEspEventService
-	 */
+	 *//*
+
 	public DefaultBlESPEventService getBlEspEventService(){
 		return blEspEventService;
 	}
 
-	/**
+	*/
+/**
 	 * @param blEspEventService
 	 *           the blEspEventService to set
-	 */
+	 *//*
+
 	public void setBlEspEventService(final DefaultBlESPEventService blEspEventService){
 		this.blEspEventService = blEspEventService;
 	}
 
 }
 
+*/

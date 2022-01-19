@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+&lt;!&ndash;
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved
--->
+&ndash;&gt;
 <widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
 	id="custom.bl.widgets.blMoreInfoRequired">
@@ -24,3 +25,4 @@
 	<controller class="com.bl.backoffice.widget.controller.blespevent.MoreInfoRequiredWidgetController" />
 	 
 </widget-definition>
+-->
