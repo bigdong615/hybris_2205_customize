@@ -159,4 +159,11 @@ public interface BlESPEventService {
      * @param orderModel OrderModel
      */
     void sendOrderManualAllocationEvent(final OrderModel orderModel) ;
+
+    /**
+     * This method created for Order Deposit required ESP Event
+     * @param orderModel order model to get the values
+     *
+     */
+     void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
 }

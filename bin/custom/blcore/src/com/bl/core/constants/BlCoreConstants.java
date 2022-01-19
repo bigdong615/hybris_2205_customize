@@ -415,6 +415,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String BORROW_LENSES_SUBSCRIBER_ID = "borrow.lenses.subscriber.id";
 
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_DEFINITION_KEY = "order.deposit.required.event.definition.key";
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_TEMPLATE = "order.deposit.required.event.template";
+
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";

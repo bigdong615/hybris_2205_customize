@@ -3127,6 +3127,12 @@
                 <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                 <description>Order will be marked as video order</description>
               </attribute>
+                  <attribute qualifier="depositAmount" type="java.lang.Double">
+                    <modifiers optional="true" read="true" write="true" search="false"/>
+                    <description>Deposit Amount to be add be CS Agent.</description>
+                    <persistence type="property"/>
+                    <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                  </attribute>
             </attributes>
             </itemtype>
 
