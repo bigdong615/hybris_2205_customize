@@ -105,7 +105,19 @@
                                             <c:if test="${orderData.isReplacementOrder eq true}">
                                             <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
                                             </c:if>
-                                            N/A
+                                       <c:choose>
+                                         <c:when test="${not empty orderData.trackingNumber}">
+                                           <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
+                                             <c:if test="${trackingInfo.key ne null}">
+                                               <c:url value="${trackingInfo.value}" var="trackingUrl" />
+                                                <a class="tracking-info" href="${trackingUrl}" target="_new"> ${trackingInfo.key}</a></br>
+                                             </c:if>
+                                            </c:forEach>
+                                          </c:when>
+                                          <c:otherwise>
+                                           <spring:theme code="text.myaccount.order.na"/>
+                                          </c:otherwise>
+                                       </c:choose>
                                         </p>
                                     </div>
                                 </div>
@@ -177,8 +189,10 @@
                                										 <spring:theme code="text.myaccount.order.damage.waiver.gear.no"/><br>
                                								</c:otherwise>
                                						</c:choose>
+                               						<c:if test="${not empty cartEntry.selectedOptions}">
+														+ ${cartEntry.selectedOptions} <br>
+													</c:if>
                                						</c:if>
-                               							
                                							<c:choose>
                                								<c:when test="${cartEntry.quantity <= 0 and cartEntry.totalPrice.value <= 0}">
                                									<p class="refund-msg"><spring:theme code="order.details.refunded.msg"/></p>

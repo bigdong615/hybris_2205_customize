@@ -27,7 +27,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,6 +113,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
     target.setTotalDiscounts(createPrice(source , totalDiscount));
+    populateTrackingNumberAndUrl(source , target);
   }
 
 
@@ -516,6 +519,30 @@ private PriceData createPrice(final AbstractOrderModel source, final Double val)
   private String getValue(final String value){
   return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;
   }
+
+  /**
+   * This method created to get tracking number and tracking URL from package
+   * @param orderModel orderModel
+   * @param orderData orderDate
+   */
+  private void populateTrackingNumberAndUrl(final OrderModel orderModel, final OrderData orderData) {
+    final Map<String, String> trackingNumberInfo = new HashMap<>();
+    if(CollectionUtils.isNotEmpty(orderModel.getConsignments())){
+      orderModel.getConsignments().forEach(consignmentModel -> {
+        if(CollectionUtils.isNotEmpty(consignmentModel.getPackaginginfos())){
+          consignmentModel.getPackaginginfos().forEach(packagingInfoModel -> {
+            if(StringUtils.isNotEmpty(packagingInfoModel.getOutBoundTrackingNumber())){
+              trackingNumberInfo.put(packagingInfoModel.getOutBoundTrackingNumber() ,
+                  StringUtils.isBlank(packagingInfoModel.getLabelURL()) ? BlFacadesConstants.HASH :packagingInfoModel.getLabelURL());
+            }
+          });
+        }
+      });
+    }
+
+    orderData.setTrackingNumber(trackingNumberInfo);
+  }
+
 
   public PriceDataFactory getPriceDataFactory() {
     return priceDataFactory;
