@@ -186,7 +186,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
           final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
             getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
                 orderVerificationCOIneededEventRequest);
-          orderVerificationCOIneededEventRequest.getData().setCoiamount((double) amount);
+          orderVerificationCOIneededEventRequest.getData().setCoiamount(amount);
 
             ESPEventResponseWrapper espEventResponseWrapper = null;
             try

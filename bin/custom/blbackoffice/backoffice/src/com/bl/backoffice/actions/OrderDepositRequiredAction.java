@@ -41,7 +41,7 @@ public class OrderDepositRequiredAction extends AbstractComponentWidgetAdapterAw
   public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext)
   {
     this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
-    return new ActionResult("success");
+    return new ActionResult<>("success");
   }
 
 }

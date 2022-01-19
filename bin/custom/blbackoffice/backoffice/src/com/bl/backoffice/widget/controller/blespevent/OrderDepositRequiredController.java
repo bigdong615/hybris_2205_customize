@@ -20,7 +20,7 @@ import org.zkoss.zul.Textbox;
  * This method created for Order Deposit Required ESP Event
  * @author Manikandan
  */
-public class OrderDepositRequiredController extends DefaultWidgetController {
+public class OrderDepositRequiredController extends DefaultWidgetController {  // NOSONAR
 
   private static final Logger LOG = Logger.getLogger(OrderDepositRequiredController.class);
 
@@ -32,8 +32,6 @@ public class OrderDepositRequiredController extends DefaultWidgetController {
 
   @Wire
   private Textbox amount;
-
-  private static final int DURATION = 2000;
 
   private OrderModel orderModel;
 

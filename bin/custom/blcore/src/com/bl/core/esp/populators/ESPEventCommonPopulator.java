@@ -5,7 +5,6 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
