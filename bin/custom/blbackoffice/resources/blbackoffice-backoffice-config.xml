@@ -1276,11 +1276,11 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.blCalculateAvalaraTaxAction"
 					property="currentObject"/>
-				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.coirequiredaction"
+				<!--<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.coirequiredaction"
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.moreinforequiredaction"
-					property="currentObject"/>
-				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.orderdepositrequired"
+					property="currentObject"/>-->
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction"
 					property="currentObject"/>
 			</y:group>
 		</y:actions>
