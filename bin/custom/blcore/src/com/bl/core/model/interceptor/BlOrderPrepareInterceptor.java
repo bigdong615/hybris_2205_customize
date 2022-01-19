@@ -362,7 +362,8 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	 * @param interceptorContext the interceptor context
 	 */
 	private void triggerNewShippingInfoEvent(final AbstractOrderModel abstractOrderModel, final InterceptorContext interceptorContext) {
-		if(getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS) && abstractOrderModel instanceof OrderModel){
+		if(getDefaultBlUserService().isCsUser() && interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.DELIVERYADDRESS)
+				&& abstractOrderModel instanceof OrderModel && (StringUtils.isBlank(((OrderModel) abstractOrderModel).getVersionID()))){
 			getBlEspEventService().sendOrderNewShippingEvent((OrderModel) abstractOrderModel);
 		}
 	}
