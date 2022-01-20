@@ -494,10 +494,10 @@
           <div class="modal-body">
           		<input type="hidden" id="enablePopup" value="${enablePopup}">
           		<c:if test="${not empty fileFormatError }">
-          			<p class="body14"><spring:theme code="${fileFormatError }" /></p>
+          			<p class="body14 verification-error-message"><spring:theme code="${fileFormatError }" /></p>
           		</c:if>
               	<c:if test="${not empty fileSizeError }">
-          			<p class="body14"><spring:theme code="${fileSizeError }" /></p>
+          			<p class="body14 verification-error-message"><spring:theme code="${fileSizeError }" /></p>
           		</c:if>
               <p class="body14"><spring:theme code="${code }" /></p>
               <p class="text-center mb-0"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">

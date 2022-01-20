@@ -788,3 +788,4 @@ color:#fff !important;
 .refund-msg{
 	color: #e64b4f;
 }
+.verification-error-message { color: red; }
