@@ -65,15 +65,28 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	 */
 	private void populateDamageWaiverValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
+		final Long quantity = source.getQuantity();
 		final Double gearGuardWaiverPrice = source.getGearGuardWaiverPrice();
 		target.setGearGuardWaiverPrice(
-				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? gearGuardWaiverPrice : Double.valueOf(0.0d)));
+				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? getDamageWaiverPrice(gearGuardWaiverPrice, quantity) : Double.valueOf(0.0d)));
 		final Double gearGuardProFullWaiverPrice = source.getGearGuardProFullWaiverPrice();
 		target.setGearGuardProFullWaiverPrice(createPrice(source,
-				Objects.nonNull(gearGuardProFullWaiverPrice) ? gearGuardProFullWaiverPrice : Double.valueOf(0.0d)));
+				Objects.nonNull(gearGuardProFullWaiverPrice) ? getDamageWaiverPrice(gearGuardProFullWaiverPrice, quantity) : Double.valueOf(0.0d)));
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
+	}
+	
+	/**
+	 * Gets the damage waiver price.
+	 *
+	 * @param gearGuardWaiverPrice the gear guard waiver price
+	 * @param quantity the quantity
+	 * @return the damage waiver price
+	 */
+	private Double getDamageWaiverPrice(final Double gearGuardWaiverPrice, final Long quantity)
+	{
+		return gearGuardWaiverPrice * quantity;
 	}
 	
 	/**
