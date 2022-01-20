@@ -33,7 +33,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
     }
 
     if (document != null && !isFileSizeMatch(document)) {
-      GlobalMessages.addErrorMessage(model, "bl.verification.document.size.large");
+      model.addAttribute("fileSizeError", "bl.verification.document.size.large");
+      model.addAttribute("enablePopup", "true");
       errors.rejectValue("file", "bl.verification.document.size.large");
     }
   }
@@ -71,7 +72,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
       }
     }
     if (Boolean.FALSE.equals(isFileFormatMatch)) {
-      GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
+      model.addAttribute("fileFormatError", "bl.verification.document.format.not.support");
+      model.addAttribute("enablePopup", "true");
       errors.rejectValue("file", "bl.verification.document.format.not.support");
     }
   }

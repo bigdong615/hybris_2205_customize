@@ -12,6 +12,10 @@ jQuery(document).ready(function () {
                 $('.return-minus-btn'+index).attr('disabled', true);
             }
         }) ;
+        if($('#enablePopup').val() == 'true')
+            {
+            	$('#editWarning').modal("show");
+            }
 });
 
 //BL-467 clear cart functionality from cart page.
