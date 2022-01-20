@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * class is used to validate VerificationDocumentForm
@@ -21,20 +22,20 @@ public class BlVerificationDocumentValidator implements BlValidator {
 
 
   @Override
-  public void validate(final Object object, final Errors errors,final Model model ) {
+  public void validate(final Object object, final Errors errors,final Model model,final RedirectAttributes redirectModel ) {
     final VerificationDocumentForm verificationDocumentForm = (VerificationDocumentForm) object;
     final MultipartFile document = verificationDocumentForm.getDocument();
 
     if (document != null && !document.isEmpty()) {
-      validateFileType(errors, document, model);
+      validateFileType(errors, document, model,redirectModel);
     } else {
       GlobalMessages.addErrorMessage(model, "bl.verification.document");
       errors.rejectValue("file", "bl.verification.document");
     }
 
     if (document != null && !isFileSizeMatch(document)) {
-      model.addAttribute("fileSizeError", "bl.verification.document.size.large");
-      model.addAttribute("enablePopup", "true");
+      redirectModel.addFlashAttribute("fileSizeError", "bl.verification.document.size.large");
+      redirectModel.addFlashAttribute("enablePopup", "true");
       errors.rejectValue("file", "bl.verification.document.size.large");
     }
   }
@@ -61,7 +62,7 @@ public class BlVerificationDocumentValidator implements BlValidator {
    * @param errors   the errors
    * @param document the document
    */
-  private void validateFileType(final Errors errors, final MultipartFile document, final Model model ) {
+  private void validateFileType(final Errors errors, final MultipartFile document, final Model model,final RedirectAttributes redirectModel ) {
     boolean isFileFormatMatch = false;
     final String[] documentFormat = Config.getParameter(DOCUMENT_FORMAT).split(",");
 
@@ -72,8 +73,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
       }
     }
     if (Boolean.FALSE.equals(isFileFormatMatch)) {
-      model.addAttribute("fileFormatError", "bl.verification.document.format.not.support");
-      model.addAttribute("enablePopup", "true");
+      redirectModel.addFlashAttribute("fileFormatError", "bl.verification.document.format.not.support");
+      redirectModel.addFlashAttribute("enablePopup", "true");
       errors.rejectValue("file", "bl.verification.document.format.not.support");
     }
   }

@@ -488,7 +488,7 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Wait!</h5>
+            <h5 class="modal-title"><spring:theme code="bl.verification.documents.popup.wait" /></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -500,7 +500,8 @@
           			<p class="body14"><spring:theme code="${fileSizeError }" /></p>
           		</c:if>
               <p class="body14"><spring:theme code="${code }" /></p>
-              <p class="text-center mb-0"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">Close</a></p>
+              <p class="text-center mb-0"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">
+              <spring:theme code="bl.verification.documents.popup.cancel"/></a></p>
           </div>
         </div>
       </div>
