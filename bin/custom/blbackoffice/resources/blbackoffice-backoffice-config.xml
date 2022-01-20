@@ -18,22 +18,22 @@
     <!--Bl Specific custom nodes to be added here -->
     <context component="explorer-tree">
         <n:explorer-tree>
-			<n:navigation-node id="BLProductInventoryCycleCount">
+			<n:navigation-node id="BL Product Inventory Cycle Count">
 				<n:navigation-node id="InventoryCycleCountScan"/>
 				<n:type-node id="BLInventoryCycleCount" code="BlInventoryCycleCount"/>
 				<n:type-node id="BLInventoryCycleCountDetails" code="BlInventoryCycleCountDetails"/>
 				<n:type-node id="BlInventoryCycleCountProductDetails" code="BlInventoryCycleCountProductDetails"/>
 				<n:type-node id="BLInventoryCycleCountScanHistory" code="BlInventoryCycleCountScanHistory"/>
 			</n:navigation-node>
-            <n:navigation-node id="BLBackoffice">
+            <n:navigation-node id="BL Backoffice">
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-				<n:navigation-node id="BlPricingRatio">
+				<n:navigation-node id="BL Pricing Ratio">
 					<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
 					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
 					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
 				</n:navigation-node>
-                <n:navigation-node id="BLProduct Inventory">
+                <n:navigation-node id="BL Product Inventory">
                     <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
                     <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
                     <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
@@ -41,7 +41,7 @@
             </n:navigation-node>
 					<n:type-node id="BlOptions" code="BlOptions"/>
 					<n:type-node id="BlDamageWaiverPricing" code="BlDamageWaiverPricing"/>
-             <n:navigation-node id="BLShipping">
+             <n:navigation-node id="BL Shipping">
                 <n:type-node id="ShippingGroup" code="ShippingGroup"/>
                 <n:type-node id="ShippingCost" code="ShippingCost"/>
                 <n:type-node id="ZoneDeliveryMode" code="ZoneDeliveryMode"/>
@@ -51,7 +51,7 @@
 				</n:navigation-node>
              </n:navigation-node>
              
-              <n:navigation-node id="BlReportDefinition">
+              <n:navigation-node id="BL Report Definition">
                 <n:type-node id="CleanCompleteOrderQueue" code="CleanCompleteOrderQueue"/>
                 <n:type-node id="IncompleteOrdersQueue" code="IncompleteOrdersQueue"/>
              </n:navigation-node>
@@ -65,7 +65,7 @@
 
 	<context component="explorer-tree">
 			<n:explorer-tree>
-					<n:navigation-node id="BLGiftCard">
+					<n:navigation-node id="BL Gift Card">
 							<n:type-node code="GiftCard" id="GiftCard" />
 					</n:navigation-node>
 			</n:explorer-tree>
@@ -717,7 +717,7 @@
     <!-- BL-110 Inventory Web Scan Tool -->
     <context component="explorer-tree" merge-by="module">
         <n:explorer-tree>
-            <n:navigation-node id="BLInventoryScan">
+            <n:navigation-node id="BL Inventory Scan">
                 <n:navigation-node id="WebScanTool"/>
             </n:navigation-node>
         </n:explorer-tree>
