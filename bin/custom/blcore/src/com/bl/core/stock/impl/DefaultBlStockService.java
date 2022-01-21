@@ -164,6 +164,9 @@ public class DefaultBlStockService implements BlStockService
 					blSerialProduct);
 			stockLevels.forEach(stockLevel -> {
 				stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
+				if(reservedStatus && Objects.nonNull(stockLevel.getOrder())) {
+					stockLevel.setOrder(null);
+				}
 				saveStockRecord(stockLevel, reservedStatus);
 			});
 		}
