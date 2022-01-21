@@ -2,6 +2,7 @@ package com.bl.esp.service.impl;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -209,6 +210,17 @@ public class DefaultBlESPEventRestService extends AbstractESPRestService<ESPEven
       final OrderPullBackRequest orderPullBackRequest) {
 
     return super.getTokenAndTriggerEvent(orderPullBackRequest);
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ESPEventResponseWrapper sendOrderDepositRequired(
+      final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest) {
+
+    return super.getTokenAndTriggerEvent(orderDepositRequiredEventRequest);
   }
 
 }

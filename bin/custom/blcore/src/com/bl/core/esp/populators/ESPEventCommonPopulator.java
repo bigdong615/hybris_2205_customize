@@ -5,7 +5,6 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -26,9 +25,12 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
@@ -202,7 +204,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         if (CollectionUtils.isNotEmpty(orderModel.getGiftCard())) {
             orderModel.getGiftCard().forEach(giftCardModel -> giftCardModel.getMovements().forEach(giftCardMovementModel -> {
                 if(StringUtils.equals(orderModel.getCode() , (giftCardMovementModel.getOrder() != null ? giftCardMovementModel.getOrder().getCode() :StringUtils.EMPTY))) {
-                    giftCardBalance.set(String.valueOf(giftCardMovementModel.getBalanceAmount()));
+                    giftCardBalance.set(formatAmount(giftCardMovementModel.getBalanceAmount()));
                 }
             }));
         }
@@ -474,6 +476,18 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         final Collection<OrderModel> abstractOrderEntryModel =  orderModel.getUser().getOrders();
         return CollectionUtils.isNotEmpty(abstractOrderEntryModel) && abstractOrderEntryModel.size() > 1;
     }
+
+    /**
+     * Format amount string.
+     * @param amount the amount
+     * @return the string
+     */
+    protected String formatAmount(final Double amount) {
+        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
+        decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
+        return decimalFormat.format(amount);
+    }
+
 
     public ConfigurationService getConfigurationService() {
         return configurationService;

@@ -1280,6 +1280,8 @@
 					property="currentObject"/>
 				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.moreinforequiredaction"
 					property="currentObject"/>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.orderdepositrequiredaction"
+					property="currentObject"/>
 			</y:group>
 		</y:actions>
 	</context>
