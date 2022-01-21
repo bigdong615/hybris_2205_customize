@@ -586,6 +586,20 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
    public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
    public static final String MASKED_CARD_FORMAT = "****%s";
 
+	public static final String OUT_CONFIRM = "orderdepositrequired";
+	public static final String COMPLETE = "completed";
+	public static final String MESSAGE_BOX_TITLE = "success.message.depositRequired.title";
+	public static final String MESSAGE_BOX_TEXT = "success.message.depositRequired.emailsent";
+	public static final String MESSAGE_BOX_ERROR_TEXT = "error.message.depositRequired.emailsent";
+	public static final String INPUT_OBJECT = "inputObject";
+	public static final String DEPOSIT_REQUIRED_TITLE = "blbackoffice.depositrequired.confirm.title";
+	public static final String DEPOSIT_REQUIRED_MISSING_AMOUNT = "blbackoffice.depositrequired.missing.amount";
+	public static final String DEPOSIT_REQUIRED_NOT_AN_AMOUNT = "blbackoffice.depositrequired.amount.notanumber";
+	public static final String UNDO_CHANGES = "undochanges";
+	public static final String CONFIRM_TRIGGER = "confirmTriggerEmail";
+
+
+
 
 
 	private BlCoreConstants()

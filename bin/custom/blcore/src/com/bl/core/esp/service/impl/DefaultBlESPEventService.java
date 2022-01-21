@@ -852,6 +852,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
       orderModel.setDepositAmount(amount);
       getModelService().save(orderModel);
       getModelService().refresh(orderModel);
+      BlLogger.logFormattedMessage(LOG , Level.DEBUG , "Deposit Required Amount {} deposited for orderCode {}" , String.valueOf(amount) , orderModel.getCode());
       final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest = new OrderDepositRequiredEventRequest();
       getBlOrderDepositRequiredRequestPopulator().populate(orderModel,
           orderDepositRequiredEventRequest);

@@ -1,6 +1,7 @@
 package com.bl.backoffice.widget.controller.blespevent;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.SocketEvent;
@@ -24,12 +25,6 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
 
   private static final Logger LOG = Logger.getLogger(OrderDepositRequiredController.class);
 
-  protected static final String OUT_CONFIRM = "orderdepositrequired";
-  protected static final String COMPLETE = "completed";
-  private static final String MESSAGE_BOX_TITLE = "success.message.depositRequired.title";
-  private static final String MESSAGE_BOX_TEXT = "success.message.depositRequired.emailsent";
-  private static final String MESSAGE_BOX_ERROR_TEXT = "error.message.depositRequired.emailsent";
-
   @Wire
   private Textbox amount;
 
@@ -42,13 +37,13 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
    * This method is used to show the default values of deposit required
    * @param inputObject inputObject
    */
-  @SocketEvent(socketId = "inputObject")
+  @SocketEvent(socketId = BlCoreConstants.INPUT_OBJECT)
   public void initDepositRequiredForm(final OrderModel inputObject) {
     this.setOrderModel(inputObject);
-    this.amount.setValue("");
+    this.amount.setValue(StringUtils.EMPTY);
     this.getWidgetInstanceManager()
         .setTitle(String.valueOf(
-            this.getWidgetInstanceManager().getLabel("blbackoffice.depositrequired.confirm.title"))
+            this.getWidgetInstanceManager().getLabel(BlCoreConstants.DEPOSIT_REQUIRED_TITLE))
             .concat(BlInventoryScanLoggingConstants.EMPTY_SPACE)
             .concat(this.getOrderModel().getCode()));
   }
@@ -56,15 +51,15 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
   /**
    * This method will be used to reset the popup values
    */
-  @ViewEvent(componentID = "undochanges", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+  @ViewEvent(componentID = BlCoreConstants.UNDO_CHANGES, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
   public void reset() {
-    this.amount.setValue("");
+    this.amount.setValue(StringUtils.EMPTY);
   }
 
   /**
    * This method will be used to confirm/ Save the modified values to trigger ESP event
    */
-  @ViewEvent(componentID = "confirmTriggerEmail", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+  @ViewEvent(componentID = BlCoreConstants.CONFIRM_TRIGGER, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
   public void triggerESPEvent() {
 
     this.validateRequest();
@@ -78,7 +73,7 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
       this.showMessageBox(true);
     }
 
-    this.sendOutput(OUT_CONFIRM, COMPLETE);
+    this.sendOutput(BlCoreConstants.OUT_CONFIRM, BlCoreConstants.COMPLETE);
   }
 
   /**
@@ -103,7 +98,7 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
 
     if (StringUtils.isEmpty(this.amount.getValue())) {
       throw new WrongValueException(this.amount,
-          this.getLabel("blbackoffice.depositrequired.missing.amount"));
+          this.getLabel(BlCoreConstants.DEPOSIT_REQUIRED_MISSING_AMOUNT));
     } else {
       getDoubleValue(this.amount.getValue());
     }
@@ -122,7 +117,7 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
       doubleValue = Double.parseDouble(amount);
     } catch (final NumberFormatException e) {
       throw new WrongValueException(this.amount,
-          this.getLabel("blbackoffice.depositrequired.amount.notanumber"));
+          this.getLabel(BlCoreConstants.DEPOSIT_REQUIRED_NOT_AN_AMOUNT));
     }
 
     return doubleValue;
@@ -137,14 +132,14 @@ public class OrderDepositRequiredController extends DefaultWidgetController {  /
     if (isErrorMessage) {
 
       Messagebox
-          .show(Localization.getLocalizedString(MESSAGE_BOX_ERROR_TEXT),
-              Localization.getLocalizedString(MESSAGE_BOX_TITLE), Messagebox.OK,
+          .show(Localization.getLocalizedString(BlCoreConstants.MESSAGE_BOX_ERROR_TEXT),
+              Localization.getLocalizedString(BlCoreConstants.MESSAGE_BOX_TITLE), Messagebox.OK,
               Messagebox.ERROR);
 
     } else {
       Messagebox
-          .show(Localization.getLocalizedString(MESSAGE_BOX_TEXT),
-              Localization.getLocalizedString(MESSAGE_BOX_TITLE), Messagebox.OK,
+          .show(Localization.getLocalizedString(BlCoreConstants.MESSAGE_BOX_TEXT),
+              Localization.getLocalizedString(BlCoreConstants.MESSAGE_BOX_TITLE), Messagebox.OK,
               Messagebox.INFORMATION);
     }
   }
