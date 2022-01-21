@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd" 
+    sclass="oms-widget-updateorder-configuration"
+	id="coirequiredwidgetview" height="50%" width="50%">
+
+	<grid style="margin-left:50px;margin-top:10px">
+            <rows>
+                <row>
+                  <label value="${labels.blbackoffice.depositrequired.label.amount}" width="140px"/>
+                    <hlayout>
+                        <textbox sclass="oms-widget-updateorder-input-text-box" id="amount" width="140px" />
+                    </hlayout>
+
+                </row>
+            	</rows>
+            	</grid>
+		
+    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
+        <button id="undochanges"
+				label="${labels.blbackoffice.depositrequired.button.undo}"
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+	    <button id="confirmTriggerEmail"
+				label="${labels.blbackoffice.depositrequired.button.confirm}"
+				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+    </div>
+	
+</widget>
