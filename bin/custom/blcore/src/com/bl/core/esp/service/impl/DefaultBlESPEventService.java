@@ -8,6 +8,7 @@ import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
+import com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
 import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
@@ -29,6 +30,7 @@ import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -109,6 +111,9 @@ public class DefaultBlESPEventService implements BlESPEventService {
   private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
 
 
+
+  private BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator;
+
   private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
@@ -181,7 +186,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
           final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
             getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
                 orderVerificationCOIneededEventRequest);
-          orderVerificationCOIneededEventRequest.getData().setCoiamount((double) amount);
+          orderVerificationCOIneededEventRequest.getData().setCoiamount(amount);
 
             ESPEventResponseWrapper espEventResponseWrapper = null;
             try
@@ -837,6 +842,36 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
 
+  /**
+   * This method created to prepare the request and response from Order Deposit Required ESP service
+   * @param orderModel ordermodel
+   */
+  @Override
+  public void sendOrderDepositRequired(final OrderModel orderModel , final Double amount) {
+    if (Objects.nonNull(orderModel)) {
+      orderModel.setDepositAmount(amount);
+      getModelService().save(orderModel);
+      getModelService().refresh(orderModel);
+      BlLogger.logFormattedMessage(LOG , Level.DEBUG , "Deposit Required Amount {} deposited for orderCode {}" , String.valueOf(amount) , orderModel.getCode());
+      final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest = new OrderDepositRequiredEventRequest();
+      getBlOrderDepositRequiredRequestPopulator().populate(orderModel,
+          orderDepositRequiredEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order deposit required ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendOrderDepositRequired(
+            orderDepositRequiredEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.DEPOSIT_REQUIRED,orderModel.getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order confirmation ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.DEPOSIT_REQUIRED,orderModel.getCode(),null, null);
+    }
+  }
+
+
+
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
     }
@@ -1047,5 +1082,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderManualAllocationRequestPopulator(
       BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator) {
     this.blOrderManualAllocationRequestPopulator = blOrderManualAllocationRequestPopulator;
+  }
+
+  public BlOrderDepositRequiredRequestPopulator getBlOrderDepositRequiredRequestPopulator() {
+    return blOrderDepositRequiredRequestPopulator;
+  }
+
+  public void setBlOrderDepositRequiredRequestPopulator(
+      BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
+    this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
   }
 }
