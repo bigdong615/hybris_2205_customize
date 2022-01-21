@@ -1,5 +1,6 @@
 package com.bl.backoffice.wizards.handler;
 
+import com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.BillInfoStatus;
@@ -66,7 +67,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 	@Resource(name = "orderDao")
 	private BlOrderDao orderDao;
 
-
+	@Resource(name="blOrderModificationService")
+	private DefaultBlOrderModificationService blOrderModificationService;
 
 	private DefaultBlESPEventService defaultBlESPEventService;
 
@@ -90,9 +92,8 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				orderModel.setOrderModifiedDate(new Date());
 			}
 
-			final List<AbstractOrderEntryModel> previousChangedOrderEntriesList = getPreviousChangedOrderEntrysList(
-					orderModel);
-			final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>();
+		final List<AbstractOrderEntryModel> previousChangedOrderEntriesList = getBlOrderModificationService().getPreviousChangedOrderEntrysList(orderModel);
+		final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>();
 			// checking is any bundle entry present or not either previous or after add.
 			if (CollectionUtils.isNotEmpty(getBundleEntryList(orderModel.getEntries(),previousChangedOrderEntriesList))) {
 
@@ -123,18 +124,15 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 
 							checkRemovedEntriesSerials(removeEntryList , orderModel , blSerialProductModels);
 							// removing consignment from removed entry list
-							removeEntryFromConsignment(orderModel,
-									removeEntryList.stream().filter(entryModel -> !entryModel.isBundleMainEntry())
-											.collect(
-													Collectors.toList()));
-
+							getBlOrderModificationService().removeEntryFromConsignment(orderModel, removeEntryList.stream()
+									.filter(entryModel -> !entryModel.isBundleMainEntry()).collect(Collectors.toList()));
 							// getting Remaining entry list.
 							previousChangedOrderEntriesList.removeIf(removeEntryList::contains);
 							//update and save remaining entry.
 							((OrderModel) currentObject).setEntries(previousChangedOrderEntriesList);
 						} else {
 							checkRemovedEntriesSerials(cloneOfOriginalList , orderModel , blSerialProductModels);
-							removeEntryFromConsignment(orderModel, cloneOfOriginalList);
+							getBlOrderModificationService().removeEntryFromConsignment(orderModel, cloneOfOriginalList);
 						}
 					}
 				}
@@ -145,8 +143,7 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 					previousChangedOrderEntriesList.removeIf(updatedOrderEntry::contains);
 				}
 				checkRemovedEntriesSerials(previousChangedOrderEntriesList , orderModel , blSerialProductModels);
-				removeEntryFromConsignment(orderModel, previousChangedOrderEntriesList);
-
+				getBlOrderModificationService().removeEntryFromConsignment(orderModel, previousChangedOrderEntriesList);
 			}
         orderModel.getEntries().forEach(abstractOrderEntryModel -> {
         	abstractOrderEntryModel.setCalculated(Boolean.FALSE);
@@ -285,132 +282,6 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 				} });
 	}
 
-
-	/**
-	 * method is used to remove entry from consignment
-	 *
-	 * @param orderModel
-	 * @param previousChangedOrderEntrysList
-	 */
-	private void removeEntryFromConsignment(final OrderModel orderModel, final List<AbstractOrderEntryModel> previousChangedOrderEntrysList)
-	{
-		if (CollectionUtils.isNotEmpty(previousChangedOrderEntrysList))
-		{
-			final AbstractOrderEntryModel previousChangedOrderEntry = previousChangedOrderEntrysList
-					.iterator().next();
-			final String orderEntrySkuPk = previousChangedOrderEntry.getProduct().getPk().toString();
-			final List<ConsignmentEntryModel> consignmentEntryToRemove = new ArrayList<>();
-			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
-			for (final ConsignmentModel consignment : orderModel.getConsignments())
-			{
-				removeConsignmentEntry(orderEntrySkuPk, consignmentEntryToRemove, consignment);
-			}
-			modelService.removeAll(consignmentEntryToRemove);
-			removeConsignment(orderModel, consignmentToRemove);
-			modelService.removeAll(consignmentToRemove);
-			orderModel.setOrderModifiedDate(new Date());
-			orderModel.setUpdatedTime(new Date());
-		}
-	}
-
-	/**
-	 * method is used remove consignment entry if no serial is available in it
-	 *
-	 * @param orderEntrySkuPk
-	 * @param consignmentEntryToRemove
-	 * @param consignment
-	 */
-	private void removeConsignmentEntry(final String orderEntrySkuPk, final List<ConsignmentEntryModel> consignmentEntryToRemove,
-			final ConsignmentModel consignment)
-	{
-		for (final ConsignmentEntryModel consignmentEntry : consignment.getConsignmentEntries())
-		{
-			final List<BlProductModel> updatedSerialList = new ArrayList<>();
-			consignmentEntry.getSerialProducts().forEach(serial -> {
-				if (serial instanceof BlSerialProductModel
-						&& !orderEntrySkuPk.equals(((BlSerialProductModel) serial).getBlProduct().getPk().toString())) // NOSONAR
-				{
-					updatedSerialList.add(serial);
-				}
-				else
-				{
-					updateStockForSerial(consignment, serial);
-				}
-			});
-			if (CollectionUtils.isEmpty(updatedSerialList))
-			{
-				consignmentEntryToRemove.add(consignmentEntry);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry {} removed", consignmentEntry);
-			}
-			else
-			{
-				consignmentEntry.setSerialProducts(updatedSerialList);
-				modelService.save(consignmentEntry);
-				modelService.refresh(consignmentEntry);
-			}
-		}
-	}
-
-	/**
-	 * method is used to update stock from removed entry
-	 * @param consignment
-	 * @param serial
-	 */
-	private void updateStockForSerial(final ConsignmentModel consignment, final BlProductModel serial)
-	{
-		if (serial instanceof BlSerialProductModel)
-		{
-			final Collection<StockLevelModel> findSerialStockLevelForDate = blStockLevelDao.findSerialStockLevelForDate(
-					serial.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
-			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
-			{
-				findSerialStockLevelForDate.forEach(stockLevel -> {
-					stockLevel.setHardAssigned(false);
-					stockLevel.setReservedStatus(false);
-					stockLevel.setOrder(null);
-					((BlSerialProductModel) serial).setHardAssigned(false); // NOSONAR
-					modelService.save(stockLevel);
-					modelService.save(serial);
-				});
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock level updated for serial {}",serial );
-			}
-		}
-	}
-
-	/**
-	 * method is used to remove consignment if all the consignment entries has been removed
-	 *
-	 * @param orderModel
-	 * @param consignmentToRemove
-	 */
-	private void removeConsignment(final OrderModel orderModel, final List<ConsignmentModel> consignmentToRemove)
-	{
-		for (final ConsignmentModel consignment : orderModel.getConsignments())
-		{
-			modelService.refresh(consignment);
-			if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
-			{
-				consignmentToRemove.add(consignment);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed", consignment.getCode());
-			}
-		}
-	}
-
-	/**
-	 * method is used to get the original value for order entry
-	 * @param orderModel
-	 * @return
-	 */
-	private List<AbstractOrderEntryModel> getPreviousChangedOrderEntrysList(final AbstractOrderModel orderModel)
-	{
-		final Object previousValue = orderModel.getItemModelContext().getOriginalValue(BlloggingConstants.ORIGINAL_VALUE);
-		if (previousValue instanceof List)
-		{
-			return Lists.newArrayList((List) previousValue);
-		}
-		return Collections.emptyList();
-	}
-
 	/**
 	 * method is used to get the original value for billing list Map.
 	 * @param consignmentEntryModel
@@ -530,4 +401,12 @@ public class BlDefaultEditorAreaLogicHandler extends DefaultEditorAreaLogicHandl
 		this.defaultBlESPEventService = defaultBlESPEventService;
 	}
 
+
+	public DefaultBlOrderModificationService getBlOrderModificationService() {
+		return blOrderModificationService;
+	}
+
+	public void setBlOrderModificationService(DefaultBlOrderModificationService blOrderModificationService) {
+		this.blOrderModificationService = blOrderModificationService;
+	}
 }

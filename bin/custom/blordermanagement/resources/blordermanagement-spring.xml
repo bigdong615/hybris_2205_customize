@@ -115,6 +115,17 @@
         <property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/> 
     </bean>
 
+    <alias name="defaultBlOrderModificationService" alias="blOrderModificationService" />
+    <bean id="defaultBlOrderModificationService" class="com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService">
+        <property name="blSourcingService" ref="blSourcingService"/>
+        <property name="blSourceOrderAction" ref="blSourceOrderAction"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+        <property name="allocationService" ref="allocationService"/>
+        <property name="calculationService" ref="calculationService"/>
+
+    </bean>
+    
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
     <bean id="defaultBlSourcingLocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingLocationService">
        <property name="sourcingLocationPopulators">
@@ -185,6 +196,17 @@
 
 	<bean id="blOrderEntryValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blOrderEntryValidateInterceptor"/>
+		<property name="typeCode" value="OrderEntry"/>
+	</bean>
+	
+	<alias name="blOrderEntryPrepareInterceptor" alias="blOrderEntryPrepareInterceptor"/>
+	<bean id="blOrderEntryPrepareInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryPrepareInterceptor">
+    	<property name="defaultBlUserService" ref="defaultBlUserService"/>
+    	<property name="blOrderModificationService" ref="blOrderModificationService"/>
+  	</bean>
+
+	<bean id="blOrderEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blOrderEntryPrepareInterceptor"/>
 		<property name="typeCode" value="OrderEntry"/>
 	</bean>
 	

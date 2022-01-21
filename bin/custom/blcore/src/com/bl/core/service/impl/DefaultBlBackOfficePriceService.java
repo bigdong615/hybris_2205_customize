@@ -1,6 +1,7 @@
 package com.bl.core.service.impl;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.service.BlBackOfficePriceService;
 import com.bl.core.strategies.BlProductDynamicPriceStrategy;
@@ -43,6 +44,11 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
   public BigDecimal getProductPrice(final ProductModel productModel, final Date arrivalDate,
       final Date returnDate , final boolean isExtendOrder) throws ParseException {
     Preconditions.checkNotNull(productModel);
+    if(productModel instanceof BlSerialProductModel)
+    {
+   	 BlSerialProductModel blSerialProductModel =  ((BlSerialProductModel) productModel);
+   	 return blSerialProductModel.getIncentivizedPrice() !=null ? blSerialProductModel.getIncentivizedPrice() : blSerialProductModel.getFinalSalePrice();
+     }
     // Prepare map for BL described Price info
     final Map<Integer, BigDecimal> priceList = getBlProductPriceRatioUtil()
         .getPriceRatios(productModel);

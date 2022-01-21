@@ -23,6 +23,7 @@ public final class BlloggingConstants extends GeneratedBlloggingConstants
   	public static final int THIRTEEN = 13;
 	public static final String MSG_CONST = "JustMessage";
 	public static final String ORIGINAL_VALUE = "entries";
+	public  static  final String PRODUCT_VALUE = "product";
 	public static final String BILLING_CHARGES = "billingCharges";
 	public static final String DELIVERY_MODE = "deliveryMode";
 

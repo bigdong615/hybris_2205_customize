@@ -213,7 +213,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param order - the order.
    * @return SourcingResults      - the results
    */
-  private SourcingResults getResultsForUsedGearOrder(final OrderModel order) {
+  public SourcingResults getResultsForUsedGearOrder(final OrderModel order) {
 
     final SourcingResults results = new SourcingResults();
     final Set<SourcingResult> resultSet = new HashSet<>();
@@ -255,7 +255,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param warehouseModel - warehouseModel
    * @param sourcingResult - sourcingResult
    */
-  private void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
+  public void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
       final AbstractOrderEntryModel entry, final WarehouseModel warehouseModel,
       final SourcingResult sourcingResult) {
 
