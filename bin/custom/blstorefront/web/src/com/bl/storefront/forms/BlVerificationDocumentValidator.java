@@ -1,5 +1,6 @@
 package com.bl.storefront.forms;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.file.validate.BlValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.util.Config;
@@ -27,15 +28,15 @@ public class BlVerificationDocumentValidator implements BlValidator {
     final MultipartFile document = verificationDocumentForm.getDocument();
 
     if (document != null && !document.isEmpty()) {
-      validateFileType(errors, document, model,redirectModel);
+      validateFileType(errors, document,redirectModel);
     } else {
       GlobalMessages.addErrorMessage(model, "bl.verification.document");
       errors.rejectValue("file", "bl.verification.document");
     }
 
     if (document != null && !isFileSizeMatch(document)) {
-      redirectModel.addFlashAttribute("fileSizeError", "bl.verification.document.size.large");
-      redirectModel.addFlashAttribute("enablePopup", "true");
+      redirectModel.addFlashAttribute(BlControllerConstants.FILE_SIZE_ERROR, "bl.verification.document.size.large");
+      redirectModel.addFlashAttribute(BlControllerConstants.ENABLE_POPUP, "true");
       errors.rejectValue("file", "bl.verification.document.size.large");
     }
   }
@@ -62,7 +63,7 @@ public class BlVerificationDocumentValidator implements BlValidator {
    * @param errors   the errors
    * @param document the document
    */
-  private void validateFileType(final Errors errors, final MultipartFile document, final Model model,final RedirectAttributes redirectModel ) {
+  private void validateFileType(final Errors errors, final MultipartFile document,final RedirectAttributes redirectModel ) {
     boolean isFileFormatMatch = false;
     final String[] documentFormat = Config.getParameter(DOCUMENT_FORMAT).split(",");
 
@@ -73,8 +74,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
       }
     }
     if (Boolean.FALSE.equals(isFileFormatMatch)) {
-      redirectModel.addFlashAttribute("fileFormatError", "bl.verification.document.format.not.support");
-      redirectModel.addFlashAttribute("enablePopup", "true");
+      redirectModel.addFlashAttribute(BlControllerConstants.FILE_FORMAT_ERROR, "bl.verification.document.format.not.support");
+      redirectModel.addFlashAttribute(BlControllerConstants.ENABLE_POPUP, "true");
       errors.rejectValue("file", "bl.verification.document.format.not.support");
     }
   }
