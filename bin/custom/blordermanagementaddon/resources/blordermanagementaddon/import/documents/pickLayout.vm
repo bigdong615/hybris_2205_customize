@@ -122,19 +122,20 @@
                 </td>
             </tr>
             <tr>
-                <td >
-                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line1)} <br/>
-                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line2)} <br/>
-                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.town)} <br/>
-                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.postalcode)} <br/>
-                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.phone1)} <br/>
-                </td>
+
                 <td>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.line1)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.line2)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.town)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.postalcode)} <br/>
                     $!{ctx.escapeHtml($ctx.consignment.shippingAddress.phone1)} <br/>
+                </td>
+				<td >
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line1)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.line2)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.town)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.postalcode)} <br/>
+                    $!{ctx.escapeHtml($ctx.consignment.order.paymentAddress.phone1)} <br/>
                 </td>
             </tr>
             <tr>
