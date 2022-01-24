@@ -106,7 +106,7 @@ public class VerifyOrderCompletionAction extends AbstractAction<OrderProcessMode
 			BlLogger.logFormatMessageInfo(LOG,Level.DEBUG,"Process: {} found subprocess {} complete ...",process.getCode(), subProcess.getCode());
 		}
 
-		order.setStatus(OrderStatus.RECEIVED);
+		order.setStatus(OrderStatus.PENDING);
 		save(order);
 		return Transition.OK.toString();
 	}
