@@ -2018,6 +2018,7 @@
             <list-view:column qualifier="consignmentStatus"/>
             <list-view:column qualifier="orderNote"/>
             <list-view:column qualifier="rentalEndDate"/> 
+            <list-view:column qualifier="customerName"/>
 		</list-view:list-view>
 	</context>
 	
