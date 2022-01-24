@@ -394,7 +394,7 @@
                                             </c:if>
                                             </td>
                                             <c:choose>
-                                            <c:when test="${orderData.isReplacementOrder eq true}">
+                                            <c:when test="${orderData.isReplacementOrder eq true || orderData.taxAvalaraCalculated.value == '0.0'}">
                                             <td class="text-end"> $0.00 </td>
                                             </c:when>
                                             <c:otherwise>
