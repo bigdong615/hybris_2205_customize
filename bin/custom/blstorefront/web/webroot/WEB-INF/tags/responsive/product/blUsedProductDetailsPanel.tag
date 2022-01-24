@@ -95,7 +95,7 @@
 																<c:set value=" hidebutton" var="hidebutton" />
 															</sec:authorize> 
 															<c:choose>
-																<c:when test="${serialProduct.serialStatus eq 'ACTIVE'  || serialProduct.serialStatus eq 'RECEIVED_OR_RETURNED'}">
+																<c:when test="${serialProduct.serialStatus eq 'ACTIVE'  || serialProduct.serialStatus eq 'RECEIVED_OR_RETURNED' || serialProduct.serialStatus eq 'IN_HOUSE'}">
 																	<button type="button"
 																		data-link="<c:url value='/login/loginpopup'/>"
 																		class="btn btn-primary  js-login-popup hide-after-login"
