@@ -18,7 +18,6 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Objects;

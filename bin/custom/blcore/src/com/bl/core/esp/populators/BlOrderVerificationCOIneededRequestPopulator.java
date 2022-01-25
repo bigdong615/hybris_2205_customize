@@ -10,7 +10,6 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
