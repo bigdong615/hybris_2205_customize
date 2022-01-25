@@ -106,7 +106,7 @@
                                             <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
                                             </c:if>
                                        <c:choose>
-                                         <c:when test="${not empty orderData.trackingNumber}">
+                                         <c:when test="${not empty orderData.trackingNumber && fn:containsIgnoreCase(orderData.status.code ,'Completed') == 'false'}">
                                            <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
                                              <c:if test="${trackingInfo.key ne null}">
                                                <c:url value="${trackingInfo.value}" var="trackingUrl" />
