@@ -106,7 +106,7 @@
                                             <b>	${fn:escapeXml(orderData.replacementFor)} </b> <br>
                                             </c:if>
                                        <c:choose>
-                                         <c:when test="${not empty orderData.trackingNumber}">
+                                         <c:when test="${not empty orderData.trackingNumber && fn:containsIgnoreCase(orderData.status.code ,'Completed') == 'false'}">
                                            <c:forEach items="${orderData.trackingNumber}" var="trackingInfo">
                                              <c:if test="${trackingInfo.key ne null}">
                                                <c:url value="${trackingInfo.value}" var="trackingUrl" />
@@ -394,7 +394,7 @@
                                             </c:if>
                                             </td>
                                             <c:choose>
-                                            <c:when test="${orderData.isReplacementOrder eq true}">
+                                            <c:when test="${orderData.isReplacementOrder eq true || orderData.taxAvalaraCalculated.value == '0.0'}">
                                             <td class="text-end"> $0.00 </td>
                                             </c:when>
                                             <c:otherwise>

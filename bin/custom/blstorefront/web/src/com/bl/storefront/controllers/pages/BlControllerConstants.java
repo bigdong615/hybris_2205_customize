@@ -212,6 +212,9 @@ public class BlControllerConstants
 	public static final String RENTAL_END_MESSAGE_KEY = "blackout.rental.end.date.error";
 	public static final String NEWEST_STRING = "newest";
 	public static final String USED_SUBSTRING = "used";
+	public static final String FILE_SIZE_ERROR = "fileSizeError";
+	public static final String FILE_FORMAT_ERROR = "fileFormatError";
+	public static final String ENABLE_POPUP = "enablePopup";
 
 	private BlControllerConstants()
 	{

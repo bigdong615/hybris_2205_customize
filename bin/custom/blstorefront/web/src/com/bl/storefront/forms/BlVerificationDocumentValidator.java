@@ -1,5 +1,6 @@
 package com.bl.storefront.forms;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.file.validate.BlValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.util.Config;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * class is used to validate VerificationDocumentForm
@@ -21,19 +23,20 @@ public class BlVerificationDocumentValidator implements BlValidator {
 
 
   @Override
-  public void validate(final Object object, final Errors errors,final Model model ) {
+  public void validate(final Object object, final Errors errors,final Model model,final RedirectAttributes redirectModel ) {
     final VerificationDocumentForm verificationDocumentForm = (VerificationDocumentForm) object;
     final MultipartFile document = verificationDocumentForm.getDocument();
 
     if (document != null && !document.isEmpty()) {
-      validateFileType(errors, document, model);
+      validateFileType(errors, document,redirectModel);
     } else {
       GlobalMessages.addErrorMessage(model, "bl.verification.document");
       errors.rejectValue("file", "bl.verification.document");
     }
 
     if (document != null && !isFileSizeMatch(document)) {
-      GlobalMessages.addErrorMessage(model, "bl.verification.document.size.large");
+      redirectModel.addFlashAttribute(BlControllerConstants.FILE_SIZE_ERROR, "bl.verification.document.size.large");
+      redirectModel.addFlashAttribute(BlControllerConstants.ENABLE_POPUP, "true");
       errors.rejectValue("file", "bl.verification.document.size.large");
     }
   }
@@ -60,7 +63,7 @@ public class BlVerificationDocumentValidator implements BlValidator {
    * @param errors   the errors
    * @param document the document
    */
-  private void validateFileType(final Errors errors, final MultipartFile document, final Model model ) {
+  private void validateFileType(final Errors errors, final MultipartFile document,final RedirectAttributes redirectModel ) {
     boolean isFileFormatMatch = false;
     final String[] documentFormat = Config.getParameter(DOCUMENT_FORMAT).split(",");
 
@@ -71,7 +74,8 @@ public class BlVerificationDocumentValidator implements BlValidator {
       }
     }
     if (Boolean.FALSE.equals(isFileFormatMatch)) {
-      GlobalMessages.addErrorMessage(model, "bl.verification.document.format.not.support");
+      redirectModel.addFlashAttribute(BlControllerConstants.FILE_FORMAT_ERROR, "bl.verification.document.format.not.support");
+      redirectModel.addFlashAttribute(BlControllerConstants.ENABLE_POPUP, "true");
       errors.rejectValue("file", "bl.verification.document.format.not.support");
     }
   }
