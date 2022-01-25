@@ -2015,8 +2015,9 @@
             <list-view:column qualifier="ocLocation"/>
             <list-view:column qualifier="consignmentStatus"/>
             <list-view:column qualifier="orderNote"/>
-            <list-view:column qualifier="rentalEndDate"/> 
-            <list-view:column qualifier="customerName"/>
+            <list-view:column qualifier="rentalEndDate"/>
+            <list-view:column qualifier="pickUpPersonFiName"/> 
+            <list-view:column qualifier="pickUpPersonLName"/>
 		</list-view:list-view>
 	</context>
 	
