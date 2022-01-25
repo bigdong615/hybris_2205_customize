@@ -12,5 +12,5 @@ $lang=en
  
 # Create Content Catalog
 UPDATE ContentCatalog ; id[unique=true]  ; name[lang=$lang]     
-                      ; blContentCatalog ; "Bl Content Catalog" 
+                      ; blContentCatalog ; "BL Content Catalog" 
                       

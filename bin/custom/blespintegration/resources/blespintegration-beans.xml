@@ -1134,4 +1134,61 @@
 		<property name="element" type="org.w3c.dom.Element" />
 	</bean>
 
+	<!-- Order Deposit Required Event Request Object-->
+	<bean class="com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.depositrequired.data.OrderDepositRequired" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<!--Order Deposit Required ESP-->
+	<bean class="com.bl.esp.dto.depositrequired.data.OrderDepositRequired" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="oldOrderId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Old Order ID")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Status")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date Placed")</annotations>
+		</property>
+		<property name="shippingMethodType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method Type")</annotations>
+		</property>
+		<property name="shippingMethod" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Shipping Method")</annotations>
+		</property>
+		<property name="expectedShipping" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Expected Shipping")</annotations>
+		</property>
+		<property name="arrivalDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Arrival Date")</annotations>
+		</property>
+		<property name="returnDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Return Date")</annotations>
+		</property>
+		<property name="rentalduration" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("rental duration")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customer name")</annotations>
+		</property>
+		<property name="verificationlevel" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification level")</annotations>
+		</property>
+		<property name="depositamount" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("deposit amount")</annotations>
+		</property>
+		<property name="verificationtext" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("verification text")</annotations>
+		</property>
+	</bean>
+
 </beans>

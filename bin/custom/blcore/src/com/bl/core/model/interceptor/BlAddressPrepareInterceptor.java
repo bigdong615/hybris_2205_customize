@@ -11,8 +11,8 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ModelService;
-import java.util.Date;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -44,7 +44,9 @@ public class BlAddressPrepareInterceptor implements PrepareInterceptor<AddressMo
    */
   private void triggerNewShippingInfoEvent(final AddressModel addressModel,
       final InterceptorContext interceptorContext) {
-    if (getDefaultBlUserService().isCsUser()  && interceptorContext.isModified(addressModel) && addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress())) {
+    if (getDefaultBlUserService().isCsUser()  && interceptorContext.isModified(addressModel) &&
+        addressModel.getOwner() instanceof OrderModel && BooleanUtils.toBoolean(addressModel.getShippingAddress()) &&
+        (StringUtils.isBlank(((OrderModel) addressModel.getOwner()).getVersionID()))) {
       try {
         getBlEspEventService().sendOrderNewShippingEvent((OrderModel) addressModel.getOwner());
       } catch (final Exception e) {

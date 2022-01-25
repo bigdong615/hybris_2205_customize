@@ -1218,7 +1218,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String uploadVerificationImages(
 			@ModelAttribute("verificationDocumentForm") final VerificationDocumentForm verificationDocumentForm,
 			final BindingResult bindingResult, final Model model, final RedirectAttributes redirectModel, final HttpServletRequest request) throws CMSItemNotFoundException {
-	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model);
+	   blVerificationDocumentValidator.validate(verificationDocumentForm, bindingResult, model,redirectModel);
 		final ContentPageModel verificationImagesPage = getContentPageForLabelOrId(
 				VERIFICATION_IMAGES_CMS_PAGE);
 		VerificationDocumentForm verificationDocument = new VerificationDocumentForm();
@@ -1228,7 +1228,7 @@ public class AccountPageController extends AbstractSearchPageController
 		setUpMetaDataForContentPage(model, verificationImagesPage);
 
 		if (bindingResult.hasErrors()) {
-			return setErrorMessagesForVerification(model);
+			return REDIRECT_TO_VERIFICATION_IMAGES_PAGE;
 		}
 		final VerificationDocumentData documentData = getVerificationDocumentData(
 				verificationDocumentForm);
