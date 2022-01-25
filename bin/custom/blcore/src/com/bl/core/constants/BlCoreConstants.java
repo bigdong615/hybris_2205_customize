@@ -492,7 +492,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
 
-	//public static final String UID = "uid";
 	public static final String BILLING_CHARGES = "billingCharges";
 	public static final String UNBOXED = "UNBOXED";
 
