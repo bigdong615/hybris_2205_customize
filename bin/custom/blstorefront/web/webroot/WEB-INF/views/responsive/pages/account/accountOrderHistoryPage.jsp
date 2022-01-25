@@ -67,14 +67,14 @@
                 								</li>
                 								<li>
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                  <a href="${modifyPaymentAction}">
                                                         <spring:theme code="order.myaccount.modify.payment"/> </a>
                 							  </c:if>
                 								</li>
                 								<li>
-                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Received' }">
+                									<c:if test="${not empty agent.uid && order.orderStatus eq 'Pending' }">
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                  <a href="${depositPaymentAction}">
                                                         <spring:theme code="order.myaccount.deposit.payment"/> </a>
@@ -194,7 +194,7 @@
                 								
                 								
                 						
-                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') && (order.isCaptured eq false) }">
+                								<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') && (order.isCaptured eq false) }">
 													<li></li>
                 								 <c:url value="/my-account/modifyPayment/${order.code}" var="modifyPaymentAction" />
                                                       <a href="${modifyPaymentAction}">
@@ -203,7 +203,7 @@
                 							  </c:if>
                 								
                 								
-                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Received') }">
+                									<c:if test="${not empty agent.uid && (order.orderStatus eq 'Pending') }">
 														<li>
                 								 <c:url value="/my-account/${order.code}/depositPayment" var="depositPaymentAction" />
                                               <a href="${depositPaymentAction}">

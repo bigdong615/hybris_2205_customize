@@ -26,10 +26,10 @@
                      }
                   </c:set>
                   <input type="text" id="js-site-search-input"  class="d-none d-md-inline-block form-control js-site-search-input" placeholder="<spring:theme code="text.rental.desktop.search.placeholder"/>"
-                     name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
+                     name="text" value="${searchedWord}" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                     <input type = "hidden" value="rentalGear" name="blPageType" id="js-page-type"/>
                   <input type="text" id="js-site-search-input-mob" class="d-inline-block d-md-none form-control js-site-search-input-mobile" placeholder="<spring:theme code="text.rental.search.placeholder"/>"
-                  	 name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
+                  	 name="text" value="${searchedWord}" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                   <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> <spring:theme code="text.rental.dates.placeholder"/></span>
                   <input type="text" id="litepicker" class="form-control d-none d-md-inline-block" placeholder="<spring:theme code="text.rental.select.dates.placeholder"/>">
                   <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="<spring:theme code="text.rental.date.placeholder"/>">

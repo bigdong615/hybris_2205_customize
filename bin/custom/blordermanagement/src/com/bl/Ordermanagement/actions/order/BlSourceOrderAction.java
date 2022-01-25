@@ -98,7 +98,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "Number of consignments created during allocation: {}", consignments.size());
         startConsignmentSubProcess(consignments, process);
-        order.setStatus(OrderStatus.RECEIVED);
+        order.setStatus(OrderStatus.PENDING);
 
         if (order.getEntries().stream()
             .anyMatch(orderEntry -> orderEntry.getUnAllocatedQuantity().longValue() > 0)) {
