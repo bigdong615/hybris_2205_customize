@@ -3,6 +3,7 @@ package com.bl.esp.service;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -202,4 +203,12 @@ public interface BlESPEventRestService {
    */
   ESPEventResponseWrapper sendOrderManualAllocationEvent(
       final OrderManualAllocationEventRequest orderManualAllocationEventRequest);
+
+  /**
+   * Send Order Deposit Required by calling Order Deposit Required ESP Event API
+   * @param orderDepositRequiredEventRequest order deposit request
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendOrderDepositRequired(
+      final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest);
 }

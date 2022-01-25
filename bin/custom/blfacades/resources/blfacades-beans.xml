@@ -134,8 +134,9 @@
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
 	<property name="option" type="com.bl.facades.product.data.BlOptionData"/>
-		<property name="aqautechProduct" type="boolean"/>
-		<property name="bundleEntry" type="boolean" />
+	<property name="aqautechProduct" type="boolean"/>
+	<property name="bundleEntry" type="boolean" />
+	<property name="selectedOptions" type="java.lang.String"/>
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -210,6 +211,7 @@
         <property name="modifiedOrderPaymentInfos" type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.CCPaymentInfoData>"/>
         <property name="modifiedOrderPoNumber" type="java.lang.String"/>
 		<property name="modifiedOrderPoNotes" type="java.lang.String"/>
+    <property name="trackingNumber" type="java.util.Map&lt;String, String>"/>
   </bean>
 
 	<!-- ExtendOrderData -->

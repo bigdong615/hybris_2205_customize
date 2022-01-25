@@ -484,3 +484,25 @@
 		</div>
 
 		<!-- modal for remove -->
+<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="bl.verification.documents.popup.wait" /></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          		<input type="hidden" id="enablePopup" value="${enablePopup}">
+          		<c:if test="${not empty fileFormatError }">
+          			<p class="body14 verification-error-message"><spring:theme code="${fileFormatError }" /></p>
+          		</c:if>
+              	<c:if test="${not empty fileSizeError }">
+          			<p class="body14 verification-error-message"><spring:theme code="${fileSizeError }" /></p>
+          		</c:if>
+              <p class="body14"><spring:theme code="${code }" /></p>
+              <p class="text-center mb-0"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">
+              <spring:theme code="bl.verification.documents.popup.cancel"/></a></p>
+          </div>
+        </div>
+      </div>
+    </div>

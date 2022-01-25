@@ -1872,6 +1872,7 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
+                            	                                      $('.js-extend-button-enable').attr('disabled',false);
                             	                    var dayOrDays = "";
                             	                    if(($('#js-totalExtendDays').val() == 1)) {
                             	                    dayOrDays = $('#js-totalExtendDays').val() + ' ' + 'Day';

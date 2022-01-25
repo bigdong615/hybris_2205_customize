@@ -141,7 +141,9 @@
 				</div>
 				<hr class="mt-4">
 
-
+	<div class="notification notification-error d-none"id="js-extendOrderPaymentError-update">
+	<spring:theme code="text.order.extend.payment.error"/>
+	</div>
 
      <div class="cart-actions">
       <c:url value="/my-account/extendOrder/${fn:escapeXml(orderData.code)}" var="payExtendOrderUrl"/>
@@ -151,7 +153,8 @@
                                                  <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
                                                  <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
                                                  <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
-                                                 <button class="btn btn-sm btn-primary float-end js-enable-extend-order js-po-extend-order" type="submit" disabled>
+                                                 </br>
+                                                 <button class="btn btn-sm btn-primary float-end js-enable-extend-order js-po-extend-order js-extend-button-enable" type="submit" disabled>
                                                  <spring:theme code="text.myaccount.order.extend.rent"/></button>
                                             </form>
 

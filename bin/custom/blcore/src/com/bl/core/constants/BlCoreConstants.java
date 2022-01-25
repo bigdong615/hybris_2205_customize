@@ -415,6 +415,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String BORROW_LENSES_SUBSCRIBER_ID = "borrow.lenses.subscriber.id";
 
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_DEFINITION_KEY = "order.deposit.required.event.definition.key";
+	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_TEMPLATE = "order.deposit.required.event.template";
+
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
@@ -584,6 +587,20 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
    public static final String CARD_MASK = "******";
    public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
    public static final String MASKED_CARD_FORMAT = "****%s";
+
+	public static final String OUT_CONFIRM = "orderdepositrequired";
+	public static final String COMPLETE = "completed";
+	public static final String MESSAGE_BOX_TITLE = "success.message.depositRequired.title";
+	public static final String MESSAGE_BOX_TEXT = "success.message.depositRequired.emailsent";
+	public static final String MESSAGE_BOX_ERROR_TEXT = "error.message.depositRequired.emailsent";
+	public static final String INPUT_OBJECT = "inputObject";
+	public static final String DEPOSIT_REQUIRED_TITLE = "blbackoffice.depositrequired.confirm.title";
+	public static final String DEPOSIT_REQUIRED_MISSING_AMOUNT = "blbackoffice.depositrequired.missing.amount";
+	public static final String DEPOSIT_REQUIRED_NOT_AN_AMOUNT = "blbackoffice.depositrequired.amount.notanumber";
+	public static final String UNDO_CHANGES = "undochanges";
+	public static final String CONFIRM_TRIGGER = "confirmTriggerEmail";
+
+
 
 
 

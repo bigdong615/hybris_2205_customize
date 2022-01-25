@@ -86,6 +86,9 @@
 																+ <spring:theme code="text.review.page.damage.waiver.gear.no"/><br>
 															</c:otherwise>
 														</c:choose>
+														<c:if test="${not empty cartEntry.selectedOptions}">
+															+ ${cartEntry.selectedOptions} <br>
+														</c:if>
 													<spring:theme code="text.review.page.your.rental.total"/>  <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
 											    <c:if test="${not empty cartEntry.product.bundleProductReference}">
                       			 <ul class="checklist mt-4">
