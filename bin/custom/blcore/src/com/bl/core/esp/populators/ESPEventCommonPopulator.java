@@ -49,6 +49,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -496,18 +497,30 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param abstractOrderModel abstractOrderModel
      * @return double
      */
-    protected double getTotalValueFromOrder(final AbstractOrderModel abstractOrderModel){
+    protected String getTotalValueFromOrder(final AbstractOrderModel abstractOrderModel){
     final AtomicDouble totalValue = new AtomicDouble(0.0);
      if(CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())){
          abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
              if(abstractOrderEntryModel.getProduct() instanceof BlProductModel){
-                 totalValue.addAndGet(((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() * abstractOrderEntryModel.getQuantity());
+                 final BlProductModel blProductModel = ((BlProductModel) abstractOrderEntryModel.getProduct());
+                 totalValue.addAndGet(Objects.isNull(blProductModel.getRetailPrice()) ?
+                     0.0 :blProductModel.getRetailPrice() * abstractOrderEntryModel.getQuantity());
              }
          });
      }
-    return totalValue.get();
+    return formatAmount(totalValue.get());
     }
 
+    protected boolean isOrderAllowToGetTotalValueFromOrder(final AbstractOrderModel abstractOrderModel) {
+        if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalCart()) || BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder())
+        || BooleanUtils.isTrue(abstractOrderModel.getIsNewGearOrder())){
+            System.out.println("!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Entered");
+            return false;
+        }
+        System.out.println("!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~NOT Entered");
+
+        return true;
+    }
 
     public ConfigurationService getConfigurationService() {
         return configurationService;

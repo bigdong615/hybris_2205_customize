@@ -98,13 +98,13 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setShippingmethodtext(getRequestValue(delivery.getName()));
         }
         data.setTrackinginfo(StringUtils.EMPTY);
-        data.setItemcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
-        data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
-        data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
-        data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
-        data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
-        data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
-        data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+        data.setItemcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
+        data.setDamagewaivercost(formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
+        data.setSubtotal(formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
+        data.setShippingamount(formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
+        data.setTaxamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
+        data.setDiscountamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
+        data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
         data.setDiscounttext(StringUtils.EMPTY);
         if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
@@ -123,9 +123,9 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setPaymenttype(BlCoreConstants.PO);
         }
         data.setPaymenttext(StringUtils.EMPTY);
-        data.setExtensiontotal(0.0);
+        data.setExtensiontotal(formatAmount(0.0));
         data.setVerificationlevel(orderModel.getVerificationLevel());
-        data.setTotalvalue(BigDecimal.valueOf(getTotalValueFromOrder(orderModel)));
+        data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
         orderConfirmationEventRequest.setData(data);
