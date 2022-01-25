@@ -556,3 +556,8 @@ REMOVE AttributeConstraint;id[unique=true];annotation[allownull=true];descriptor
                           ;CustomerName;de.hybris.platform.validation.annotations.NotBlank;Customer:name;name;ERROR:Severity;de.hybris.platform.core.model.user.CustomerModel;Customer
 
 $de.hybris.platform.core.Registry.getApplicationContext().getBean(de.hybris.platform.validation.services.ValidationService.class).reloadValidationEngine()
+
+
+UPDATE AttributeDescriptor ; qualifier[unique=true] ; enclosingType(code)[unique=true] ; description[lang=en]
+;billPaid;BlItemsBillingCharge;"Value = TRUE means Bill is COMPLETE
+Value = FALSE means Bill is INCOMPLETE"
