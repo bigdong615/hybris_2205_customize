@@ -267,6 +267,7 @@
       		<value code="RECEIVED_READY_FOR_PICKUP" />
           <value code="RECEIVED" />
           <value code="RECEIVED_PICKED_UP" />
+          <value code="PENDING" />
         </enumtype>
       
       
