@@ -5,6 +5,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
+import com.bl.core.jalo.BlProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -18,6 +19,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.ClassLoaderUtils;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -25,6 +27,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -486,6 +489,23 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
         decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
         return decimalFormat.format(amount);
+    }
+
+    /**
+     * This method created to get the total value from order model
+     * @param abstractOrderModel abstractOrderModel
+     * @return double
+     */
+    protected double getTotalValueFromOrder(final AbstractOrderModel abstractOrderModel){
+    final AtomicDouble totalValue = new AtomicDouble(0.0);
+     if(CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())){
+         abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+             if(abstractOrderEntryModel.getProduct() instanceof BlProductModel){
+                 totalValue.addAndGet(((BlProductModel) abstractOrderEntryModel.getProduct()).getRetailPrice() * abstractOrderEntryModel.getQuantity());
+             }
+         });
+     }
+    return totalValue.get();
     }
 
 

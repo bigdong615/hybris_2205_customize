@@ -125,7 +125,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(0.0);
         data.setVerificationlevel(orderModel.getVerificationLevel());
-        data.setTotalvalue(BigDecimal.valueOf(orderModel.getSubtotal()));
+        data.setTotalvalue(BigDecimal.valueOf(getTotalValueFromOrder(orderModel)));
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
         orderConfirmationEventRequest.setData(data);
