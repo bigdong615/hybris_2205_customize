@@ -5,7 +5,6 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.GearGaurdEnum;
-import com.bl.core.jalo.BlProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -19,7 +18,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.ClassLoaderUtils;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -27,7 +25,6 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,7 +47,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -350,15 +347,10 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
 
     /**
      * This method check Gift card payment type
-     * @param orderModel
      * @return string
      */
-    protected String checkIsGiftCardUsed(final OrderModel orderModel , final String creditCart){
+    protected String checkIsGiftCardUsed(final String creditCart){
        final StringBuilder paymentType= new StringBuilder();
-        /*if(CollectionUtils.isNotEmpty (orderModel.getGiftCard())){
-            return orderModel.getTotalPrice() == 0 ? paymentType.append(BlCoreConstants.GIFT_CARD_TYPE).toString() :
-                paymentType.append(creditCart).append(StringUtils.SPACE).append(BlCoreConstants.PLUS).append(StringUtils.SPACE ).append(BlCoreConstants.GC_TYPE).toString();
-        }*/
         return paymentType.append(creditCart).toString();
     }
 
@@ -389,7 +381,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         data.setExpectedshippingdate(formatter.format(order.getRentalStartDate()));
         data.setArrivaldate(formatter.format(order.getRentalStartDate()));
         data.setReturndate(formatter.format(order.getRentalEndDate()));
-        populateOrderItemsInXML(order , data , templateName , blSerialProductModels , orderEntry);
+        populateOrderItemsInXML(data , templateName , blSerialProductModels , orderEntry);
     }
 
     /**
@@ -400,7 +392,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @param blSerialProductModels
      * @param orderEntry
      */
-    private void populateOrderItemsInXML(final OrderModel orderModel, final OrderPullBackItems data,
+    private void populateOrderItemsInXML(final OrderPullBackItems data,
         final String templateName, final List<BlSerialProductModel> blSerialProductModels,
         final AbstractOrderEntryModel orderEntry) {
         try {
@@ -482,7 +474,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     }
 
     /**
-     * Format amount string.
+     * This method created to format the amount for double
      * @param amount the amount
      * @return the string
      */
@@ -511,15 +503,18 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     return formatAmount(totalValue.get());
     }
 
+    /**
+     * This method created to check whether to get total price from product
+     * @param abstractOrderModel ordermodel
+     * @return boolean
+     */
     protected boolean isOrderAllowToGetTotalValueFromOrder(final AbstractOrderModel abstractOrderModel) {
+        final AtomicBoolean atomicBoolean = new AtomicBoolean(true);
         if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalCart()) || BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder())
         || BooleanUtils.isTrue(abstractOrderModel.getIsNewGearOrder())){
-            System.out.println("!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Entered");
-            return false;
+            atomicBoolean.set(false);
         }
-        System.out.println("!!!!!!!!!!!!!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~NOT Entered");
-
-        return true;
+        return atomicBoolean.get();
     }
 
     public ConfigurationService getConfigurationService() {
