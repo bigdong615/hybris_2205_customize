@@ -62,6 +62,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
 
   public static final String INCOMPLETE = "Incomplete";
   public static final String RECEIVED = "Received";
+  public static final String PENDING = "Pending";
   public static final String SHIPPED = "Shipped";
   public static final String RETURNED = "Returned";
   public static final String COMPLETED = "Completed";

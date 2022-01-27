@@ -76,7 +76,7 @@ public class BlInternalTransferSourceOrderAction extends AbstractProceduralActio
 
 			startConsignmentSubProcess(consignments, process);
 
-			order.setStatus(OrderStatus.RECEIVED);
+			order.setStatus(OrderStatus.PENDING);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Internal Transfer Order with code : {} was successfully sourced", order.getCode());
