@@ -199,17 +199,6 @@
 		<property name="typeCode" value="OrderEntry"/>
 	</bean>
 	
-	<alias name="blOrderEntryPrepareInterceptor" alias="blOrderEntryPrepareInterceptor"/>
-	<bean id="blOrderEntryPrepareInterceptor" class="com.bl.Ordermanagement.interceptor.BlOrderEntryPrepareInterceptor">
-    	<property name="defaultBlUserService" ref="defaultBlUserService"/>
-    	<property name="blOrderModificationService" ref="blOrderModificationService"/>
-  	</bean>
-
-	<bean id="blOrderEntryPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
-		<property name="interceptor" ref="blOrderEntryPrepareInterceptor"/>
-		<property name="typeCode" value="OrderEntry"/>
-	</bean>
-	
 	<bean id="blReshufflerJob" class="com.bl.Ordermanagement.job.BlReshufflerJob" parent="abstractJobPerformable">
 		<property name="blReshufflerService" ref="blReshufflerService"/>
 	</bean>

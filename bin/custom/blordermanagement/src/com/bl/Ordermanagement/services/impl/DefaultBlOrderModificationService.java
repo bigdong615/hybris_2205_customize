@@ -85,12 +85,12 @@ public class DefaultBlOrderModificationService
 														   SourcingResults resultsForUsedGearOrder)
 	{
 		SourcingResult sourcingResult = new SourcingResult();
-		resultsForUsedGearOrder.getResults().forEach(sourceResult-> {
-			if(sourceResult.getAllocation().get(orderEntryModel) !=null)
+		resultsForUsedGearOrder.getResults().forEach(usedGearSourceResult-> {
+			if(usedGearSourceResult.getAllocation().get(orderEntryModel) !=null)
 			{
-				sourcingResult.setAllocation(sourceResult.getAllocation());
-				sourcingResult.setWarehouse(sourceResult.getWarehouse());
-				sourcingResult.setSerialProductMap(sourceResult.getSerialProductMap());
+				sourcingResult.setAllocation(usedGearSourceResult.getAllocation());
+				sourcingResult.setWarehouse(usedGearSourceResult.getWarehouse());
+				sourcingResult.setSerialProductMap(usedGearSourceResult.getSerialProductMap());
 			}
 		});
 		return sourcingResult;
@@ -116,6 +116,13 @@ public class DefaultBlOrderModificationService
 			getConsignmentToRemove(orderModel,orderEntrySkuPk,consignmentEntryToRemove,consignmentToRemove);
 		}
 	}
+	/**
+	 * This method will be used to get the consignment entry which is removed by CS Agent
+	 * @param orderModel
+	 * @param orderEntrySkuPk
+	 * @param consignmentEntryToRemove
+	 * @param consignmentToRemove
+	 */
 	public void getConsignmentToRemove(final OrderModel orderModel, final String orderEntrySkuPk,final List<ConsignmentEntryModel> consignmentEntryToRemove,final List<ConsignmentModel> consignmentToRemove)
 	{
 		for (final ConsignmentModel consignment : orderModel.getConsignments())
@@ -127,8 +134,6 @@ public class DefaultBlOrderModificationService
 		getModelService().removeAll(consignmentToRemove);
 		orderModel.setOrderModifiedDate(new Date());
 		orderModel.setUpdatedTime(new Date());
-		getModelService().save(orderModel);
-		getModelService().refresh(orderModel);
 	}
 	/**
 	 * method is used remove consignment entry if no serial is available in it
@@ -237,9 +242,8 @@ public class DefaultBlOrderModificationService
 	 */
 	public Optional<ConsignmentModel> checkifConsignmentIsPresent(final OrderEntryModel orderEntryModel,final SourcingResult sourceResult)
 	{
-		final Optional<ConsignmentModel> consignmentModel = orderEntryModel.getOrder().getConsignments().stream()
+		return orderEntryModel.getOrder().getConsignments().stream()
 				.filter(consignment -> consignment.getWarehouse().getCode().equals(sourceResult.getWarehouse().getCode())).findFirst();
-		return consignmentModel;
 	}
 
 	/**
@@ -277,10 +281,14 @@ public class DefaultBlOrderModificationService
 			}
 
 		});
-		//recalculateOrder(orderEntryModel.getOrder());
+		recalculateOrder(orderEntryModel.getOrder());
 	}
 
 
+	/**
+	 * This method will be used to recalculate order
+	 * @param order
+	 */
 	public void recalculateOrder(final AbstractOrderModel order)
 	{
 		order.setCalculated(false);

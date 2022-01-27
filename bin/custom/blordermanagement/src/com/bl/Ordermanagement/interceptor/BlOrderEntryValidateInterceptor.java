@@ -125,10 +125,10 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		if (!interceptorContext.isNew(orderEntryModel) && orderEntryModel.isIsModifiedOrder()
 				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER)) {
 			final SourcingResults resultsForUsedGearOrder = getBlOrderModificationService().getResultsForUsedGearOrder(orderEntryModel);
-			final SourcingResult sourceResult = getBlOrderModificationService().createSourcingResultForUsedGear(orderEntryModel, resultsForUsedGearOrder);
-			final Optional<ConsignmentModel> consignmentModel = getBlOrderModificationService().checkifConsignmentIsPresent(orderEntryModel,sourceResult);
+			final SourcingResult sourcingResult = getBlOrderModificationService().createSourcingResultForUsedGear(orderEntryModel, resultsForUsedGearOrder);
+			final Optional<ConsignmentModel> consignmentModel = getBlOrderModificationService().checkifConsignmentIsPresent(orderEntryModel,sourcingResult);
 			if (consignmentModel.isPresent()) {
-				createNewConsignmentEntry(orderEntryModel, sourceResult, consignmentModel);
+				createNewConsignmentEntry(orderEntryModel, sourcingResult, consignmentModel);
 			} else {
 				getBlOrderModificationService().createConsignmentForModifiedOrder(orderEntryModel, resultsForUsedGearOrder);
 			}
