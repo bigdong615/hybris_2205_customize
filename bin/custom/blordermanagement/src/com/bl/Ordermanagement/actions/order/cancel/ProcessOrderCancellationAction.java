@@ -136,7 +136,7 @@ public class ProcessOrderCancellationAction extends AbstractAction<OrderProcessM
 		}
 		else if (!OrderStatus.ON_HOLD.equals(order.getStatus()))
 		{
-			order.setStatus(OrderStatus.RECEIVED);
+			order.setStatus(OrderStatus.PENDING);
 		}
 		getModelService().save(order);
 		return transition;

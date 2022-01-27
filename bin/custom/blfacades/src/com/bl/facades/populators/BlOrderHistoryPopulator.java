@@ -201,11 +201,11 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
   private String setRentalOrderStatus(final AbstractOrderModel abstractOrderModel) {
 
     final AtomicReference<String> orderStatus = new AtomicReference<>();
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) ||
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PENDING.getCode()) ||
         abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
             paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
-      orderStatus.set(BlFacadesConstants.RECEIVED);
+      orderStatus.set(BlFacadesConstants.PENDING);
     }
 
     if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED.getCode()) || isOrderCaptured(abstractOrderModel)) {
@@ -273,7 +273,7 @@ private boolean isOrderCaptured(final AbstractOrderModel abstractOrderModel)
    */
   private String setUsedOrderStatus(final  AbstractOrderModel abstractOrderModel){
     String orderStatus = StringUtils.EMPTY;
-    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.RECEIVED.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
+    if(abstractOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PENDING.getCode()) || abstractOrderModel.getPaymentTransactions().stream().noneMatch(paymentTransactionModel ->
         paymentTransactionModel.getEntries().stream().noneMatch(paymentTransactionEntryModel -> paymentTransactionEntryModel.getType().getCode().equalsIgnoreCase(
             PaymentTransactionType.CAPTURE)))) {
       orderStatus =  BlFacadesConstants.SOLD;
