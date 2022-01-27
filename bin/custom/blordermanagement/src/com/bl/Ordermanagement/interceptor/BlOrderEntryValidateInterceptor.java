@@ -123,17 +123,17 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	private void modifyUsedGearOrder(final OrderEntryModel orderEntryModel,InterceptorContext interceptorContext)
 	{
 		if (!interceptorContext.isNew(orderEntryModel) && orderEntryModel.isIsModifiedOrder()
-				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER)) {
+				&& interceptorContext.isModified(orderEntryModel, AbstractOrderEntryModel.ISMODIFIEDORDER)) {
 			final SourcingResults resultsForUsedGearOrder = getBlOrderModificationService().getResultsForUsedGearOrder(orderEntryModel);
 			final SourcingResult sourcingResult = getBlOrderModificationService().createSourcingResultForUsedGear(orderEntryModel, resultsForUsedGearOrder);
 			final Optional<ConsignmentModel> consignmentModel = getBlOrderModificationService().checkifConsignmentIsPresent(orderEntryModel,sourcingResult);
 			if (consignmentModel.isPresent()) {
-				createNewConsignmentEntry(orderEntryModel, sourcingResult, consignmentModel);
+				createNewConsignmentEntry(orderEntryModel, sourcingResult, consignmentModel.get());
 			} else {
 				getBlOrderModificationService().createConsignmentForModifiedOrder(orderEntryModel, resultsForUsedGearOrder);
 			}
 			final BlSerialProductModel updatedSerialProduct =  (BlSerialProductModel) orderEntryModel.getProduct();
-			updatedSerialProduct.setSerialStatus(	SerialStatusEnum.SOLD);
+			updatedSerialProduct.setSerialStatus(SerialStatusEnum.SOLD);
 			updatedSerialProduct.setHardAssigned(Boolean.TRUE);
 			interceptorContext.getModelService().save(updatedSerialProduct);
 		}
@@ -150,7 +150,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 										   final List<BlSerialProductModel> serialProduct, final WarehouseModel warehouse)
 	{
 		if (!interceptorContext.isNew(orderEntryModel) && orderEntryModel.isIsModifiedOrder()
-				&& interceptorContext.isModified(orderEntryModel, OrderEntryModel.ISMODIFIEDORDER))
+				&& interceptorContext.isModified(orderEntryModel, AbstractOrderEntryModel.ISMODIFIEDORDER))
 		{
 			isOrderModified(orderEntryModel, serialProduct, warehouse);
 			orderEntryModel.setUpdatedTime(new Date());
@@ -179,7 +179,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 				.filter(consignment -> consignment.getWarehouse().getCode().equals(warehouse.getCode())).findFirst();
 		if (consignmentModel.isPresent())
 		{
-			createNewConsignmentEntry(orderEntryModel, sourceResult, consignmentModel);
+			createNewConsignmentEntry(orderEntryModel, sourceResult, consignmentModel.get());
 		}
 		else
 		{
@@ -204,12 +204,11 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 	 * method will be called when any order entry is created for order having the same warehouse whose consignment is already present.
 	 * @param orderEntryModel
 	 * @param sourceResult
-	 * @param consignmentModel
+	 * @param consignment
 	 */
 	private void createNewConsignmentEntry(final OrderEntryModel orderEntryModel, SourcingResult sourceResult,
-										   final Optional<ConsignmentModel> consignmentModel)
+										   final ConsignmentModel consignment)
 	{
-		final ConsignmentModel consignment = consignmentModel.get();
 		final Set<ConsignmentEntryModel> consignmentEntries = consignment.getConsignmentEntries();
 		final Set<String> serialCodes = new HashSet<>();
 		if(CollectionUtils.isNotEmpty(orderEntryModel.getModifiedSerialProductList()))

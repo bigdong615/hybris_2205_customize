@@ -2,17 +2,17 @@ package com.bl.Ordermanagement.services.impl;
 
 import java.util.*;
 
-import javax.annotation.Resource;
-
 import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.BlSourcingService;
 
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -34,6 +34,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * This service used for any modification on order
+ *
+ * @author Aditi Sharma
+ */
 public class DefaultBlOrderModificationService
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderModificationService.class);
@@ -46,8 +51,8 @@ public class DefaultBlOrderModificationService
 	
 	/**
 	 * This method will be used to get sourcing result for used gear orders
-	 * @param entry
-	 * @return
+	 * @param entry as orderEntry
+	 * @return SourcingResults as sourcingResult
 	 */
 	public SourcingResults getResultsForUsedGearOrder(final OrderEntryModel entry) {
 
@@ -77,9 +82,9 @@ public class DefaultBlOrderModificationService
 
 	/**
 	 * This method is used to create sourcing result for used gear order
-	 * @param orderEntryModel
-	 * @param resultsForUsedGearOrder
-	 * @return
+	 * @param orderEntryModel as orderEntryModel
+	 * @param resultsForUsedGearOrder as resultsForUsedGearOrder
+	 * @return SourcingResult as sourcingResult
 	 */
 	public SourcingResult createSourcingResultForUsedGear(final OrderEntryModel orderEntryModel,
 														   SourcingResults resultsForUsedGearOrder)
@@ -100,8 +105,8 @@ public class DefaultBlOrderModificationService
 	/**
 	 * method is used to remove entry from consignment
 	 *
-	 * @param orderModel
-	 * @param previousChangedOrderEntrysList
+	 * @param orderModel as orderModel
+	 * @param previousChangedOrderEntrysList as previousChangedOrderEntrysList
 	 */
 	public void removeEntryFromConsignment(final OrderModel orderModel,
 											final List<AbstractOrderEntryModel> previousChangedOrderEntrysList)
@@ -118,10 +123,10 @@ public class DefaultBlOrderModificationService
 	}
 	/**
 	 * This method will be used to get the consignment entry which is removed by CS Agent
-	 * @param orderModel
-	 * @param orderEntrySkuPk
-	 * @param consignmentEntryToRemove
-	 * @param consignmentToRemove
+	 * @param orderModel as orderModel
+	 * @param orderEntrySkuPk as orderEntrySkuPk
+	 * @param consignmentEntryToRemove as consignmentEntryToRemove
+	 * @param consignmentToRemove as consignmentToRemove
 	 */
 	public void getConsignmentToRemove(final OrderModel orderModel, final String orderEntrySkuPk,final List<ConsignmentEntryModel> consignmentEntryToRemove,final List<ConsignmentModel> consignmentToRemove)
 	{
@@ -150,13 +155,15 @@ public class DefaultBlOrderModificationService
 			final List<BlProductModel> updatedSerialList = new ArrayList<>();
 			consignmentEntry.getSerialProducts().forEach(serial -> {
 				if (serial instanceof BlSerialProductModel
-						&& !orderEntrySkuPk.equals(getPkFromProduct(consignmentEntry, (BlSerialProductModel) serial))) // NOSONAR
+						&& !orderEntrySkuPk.equals(getPkFromProduct(consignmentEntry, (BlSerialProductModel) serial)))
 				{
 					updatedSerialList.add(serial);
 				}
-				else if(BooleanUtils.isTrue(consignment.getOrder().getIsRentalCart()))
+				else 
 				{
-					updateStockForSerial(consignment, serial);
+					boolean isUsedGearOrder = consignment.getOrder().getIsRentalCart();
+					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
+							isUsedGearOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial,isUsedGearOrder);
 				}
 			});
 			if (CollectionUtils.isEmpty(updatedSerialList))
@@ -200,7 +207,7 @@ public class DefaultBlOrderModificationService
 	 */
 	private String getPkFromProduct(final ConsignmentEntryModel consignmentEntryModel,final BlSerialProductModel serial)
 	{
-		if (consignmentEntryModel.getConsignment().getOrder().getIsRentalCart())
+		if (BooleanUtils.isTrue(consignmentEntryModel.getConsignment().getOrder().getIsRentalCart()))
 		{
 			return serial.getBlProduct().getPk().toString();
 		}
@@ -216,19 +223,24 @@ public class DefaultBlOrderModificationService
 	 * @param consignment
 	 * @param serial
 	 */
-	private void updateStockForSerial(final ConsignmentModel consignment, final BlProductModel serial)
+	private void updateStockForSerial(final Date optimizedShippingStartDate, final Date optimizedShippingEndDate, final BlProductModel serial,final boolean isUsedGearOrder)
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
 			final Collection<StockLevelModel> findSerialStockLevelForDate = getBlStockLevelDao().findSerialStockLevelForDate(
-					serial.getCode(), consignment.getOptimizedShippingStartDate(), consignment.getOptimizedShippingEndDate());
+					serial.getCode(), optimizedShippingStartDate, optimizedShippingEndDate);
 			if (CollectionUtils.isNotEmpty(findSerialStockLevelForDate))
 			{
 				findSerialStockLevelForDate.forEach(stockLevel -> {
+					final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
 					stockLevel.setHardAssigned(false);
 					stockLevel.setReservedStatus(false);
 					stockLevel.setOrder(null);
-					((BlSerialProductModel) serial).setHardAssigned(false); // NOSONAR
+					serialProductModel.setHardAssigned(false);
+					if(isUsedGearOrder)
+					{
+						serialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+					}
 					getModelService().save(stockLevel);
 					getModelService().save(serial);
 				});
@@ -237,8 +249,9 @@ public class DefaultBlOrderModificationService
 		}
 	}
 	/** This method is used to check of consignment is present or not
-	 * @param orderEntryModel
-	 * @return
+	 * @param orderEntryModel as orderEntryModel
+	 * @param sourceResult as sourceResult
+	 * @return Optional<ConsignmentModel> as consignmentModel
 	 */
 	public Optional<ConsignmentModel> checkifConsignmentIsPresent(final OrderEntryModel orderEntryModel,final SourcingResult sourceResult)
 	{
@@ -249,8 +262,8 @@ public class DefaultBlOrderModificationService
 	/**
 	 * method is used to get the original value for order entry
 	 *
-	 * @param orderModel
-	 * @return
+	 * @param orderModel as orderModel
+	 * @return List<AbstractOrderEntryModel> as orderEntryModelList
 	 */
 	public List<AbstractOrderEntryModel> getPreviousChangedOrderEntrysList(final AbstractOrderModel orderModel)
 	{
@@ -264,8 +277,8 @@ public class DefaultBlOrderModificationService
 
 	/**
 	 * This method is used to create consignment for modified order
-	 * @param orderEntryModel
-	 * @param  sourcingResults
+	 * @param orderEntryModel as orderEntryModel
+	 * @param  sourcingResults as sourcingResults
 	 */
 	public void createConsignmentForModifiedOrder(final OrderEntryModel orderEntryModel,final SourcingResults sourcingResults )
 	{
@@ -287,7 +300,7 @@ public class DefaultBlOrderModificationService
 
 	/**
 	 * This method will be used to recalculate order
-	 * @param order
+	 * @param order as order
 	 */
 	public void recalculateOrder(final AbstractOrderModel order)
 	{
