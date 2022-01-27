@@ -82,7 +82,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     }
     orderVerificationRequiredEventData.setVerificationLevel(orderModel.getVerificationLevel());
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
-    orderVerificationRequiredEventData.setTotalvalue(getTotalValueFromOrder(orderModel));
+    orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
