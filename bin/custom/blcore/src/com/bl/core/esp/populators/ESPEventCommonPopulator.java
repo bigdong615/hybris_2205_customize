@@ -509,12 +509,8 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @return boolean
      */
     protected boolean isOrderAllowToGetTotalValueFromOrder(final AbstractOrderModel abstractOrderModel) {
-        final AtomicBoolean atomicBoolean = new AtomicBoolean(true);
-        if(BooleanUtils.isFalse(abstractOrderModel.getIsRentalCart()) || BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder())
-        || BooleanUtils.isTrue(abstractOrderModel.getIsNewGearOrder())){
-            atomicBoolean.set(false);
-        }
-        return atomicBoolean.get();
+       return BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder()) &&
+            BooleanUtils.isFalse(abstractOrderModel.getIsNewGearOrder());
     }
 
     public ConfigurationService getConfigurationService() {
