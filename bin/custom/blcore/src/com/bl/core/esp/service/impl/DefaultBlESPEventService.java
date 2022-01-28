@@ -4,6 +4,7 @@ package com.bl.core.esp.service.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
+import com.bl.core.esp.populators.BlForgotPasswordRequestPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
@@ -32,6 +33,7 @@ import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.forgotPassword.ForgotPasswordRequiredEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -58,6 +60,7 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.commerceservices.model.process.ForgottenPasswordProcessModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
@@ -109,6 +112,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
   private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
+
+  private BlForgotPasswordRequestPopulator blForgotPasswordRequestPopulator;
 
 
 
@@ -870,6 +875,26 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
+  @Override
+  public void sendForgotPasswordRequest(final ForgottenPasswordProcessModel forgottenPasswordProcessModel) {
+
+    final ForgotPasswordRequiredEventRequest forgotPasswordRequiredEventRequest = new ForgotPasswordRequiredEventRequest();
+    getBlForgotPasswordRequestPopulator().populate(forgottenPasswordProcessModel,
+        forgotPasswordRequiredEventRequest);
+
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send order deposit required ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendForgotPasswordRequired(forgotPasswordRequiredEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.DEPOSIT_REQUIRED,forgottenPasswordProcessModel.getCustomer().getUid(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send order confirmation ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.DEPOSIT_REQUIRED,forgottenPasswordProcessModel.getCustomer().getUid(),null, null);
+
+  }
+
 
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
@@ -1091,5 +1116,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderDepositRequiredRequestPopulator(
       BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
+  }
+
+  public BlForgotPasswordRequestPopulator getBlForgotPasswordRequestPopulator() {
+    return blForgotPasswordRequestPopulator;
+  }
+
+  public void setBlForgotPasswordRequestPopulator(
+      BlForgotPasswordRequestPopulator blForgotPasswordRequestPopulator) {
+    this.blForgotPasswordRequestPopulator = blForgotPasswordRequestPopulator;
   }
 }

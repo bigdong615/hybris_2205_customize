@@ -3,6 +3,7 @@ package com.bl.core.esp.service;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
+import de.hybris.platform.commerceservices.model.process.ForgottenPasswordProcessModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
@@ -166,4 +167,6 @@ public interface BlESPEventService {
      *
      */
      void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
+
+     void sendForgotPasswordRequest(final ForgottenPasswordProcessModel forgottenPasswordProcessModel);
 }

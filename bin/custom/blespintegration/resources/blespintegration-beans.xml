@@ -1191,4 +1191,39 @@
 		</property>
 	</bean>
 
+
+	<!-- Order Deposit Required Event Request Object-->
+	<bean class="com.bl.esp.dto.forgotPassword.ForgotPasswordRequiredEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" >
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="emailAddress" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Email_Address")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
+		<property name="passwordLink" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Password_Link")</annotations>
+		</property>
+		<property name="requestedDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Requested_Date")</annotations>
+		</property>
+		<property name="timeout" type="int" equals="true">
+			<annotations>@JsonProperty("Timeout")</annotations>
+		</property>
+	</bean>
+
 </beans>
