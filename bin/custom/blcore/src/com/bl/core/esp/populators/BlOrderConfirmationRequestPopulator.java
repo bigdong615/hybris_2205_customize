@@ -123,7 +123,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         }
         data.setPaymenttext(StringUtils.EMPTY);
         data.setExtensiontotal(formatAmount(0.0));
-        data.setVerificationlevel(orderModel.getVerificationLevel());
+        data.setVerificationlevel(Objects.isNull(orderModel.getVerificationLevel()) ? BlCoreConstants.VERIFICATION_LEVEL_ZERO : orderModel.getVerificationLevel());
         data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
@@ -308,7 +308,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY,
           String.valueOf(entryModel.getQuantity()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX,
-          String.valueOf(getDoubleValueForRequest(entryModel.getAvalaraLineTax())));
+          String.valueOf(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0 :entryModel.getAvalaraLineTax())));
     }
 
 
