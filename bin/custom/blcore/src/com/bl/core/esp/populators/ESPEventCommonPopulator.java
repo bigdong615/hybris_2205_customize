@@ -21,6 +21,7 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,6 +45,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -512,6 +515,26 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
        return BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder()) &&
             BooleanUtils.isFalse(abstractOrderModel.getIsNewGearOrder());
     }
+
+
+
+    /**
+     * It returns opening hours of a store.
+     *
+     * @param shippingAddress the AddressModel
+     * @return opening hours
+     */
+    protected String getStoreOpeningHours(final AddressModel shippingAddress) {
+        final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
+        final StringBuilder stringBuilder = new StringBuilder();
+        if (MapUtils.isNotEmpty(openingDaysDetails)) {
+            openingDaysDetails.forEach(
+                (key, value) -> stringBuilder.append(key).append(BlCoreConstants.COLON).append(value)
+                    .append(StringUtils.SPACE));
+        }
+        return stringBuilder.toString();
+    }
+
 
     public ConfigurationService getConfigurationService() {
         return configurationService;

@@ -177,7 +177,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_STATE,
                     Objects.nonNull(shippingAddress.getRegion()) ? shippingAddress.getRegion().getName() : StringUtils.EMPTY);
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
-                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getCellphone()));
+                createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE, getRequestValue(shippingAddress.getPhone1()));
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL, getRequestValue(shippingAddress.getEmail()));
 
                 createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
@@ -198,23 +198,6 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             }
         }
     }
-
-  /**
-   * It returns opening hours of a store.
-   *
-   * @param shippingAddress the AddressModel
-   * @return opening hours
-   */
-  private String getStoreOpeningHours(final AddressModel shippingAddress) {
-    final Map<String, String> openingDaysDetails = shippingAddress.getOpeningDaysDetails();
-    final StringBuilder stringBuilder = new StringBuilder();
-    if (MapUtils.isNotEmpty(openingDaysDetails)) {
-      openingDaysDetails.forEach(
-          (key, value) -> stringBuilder.append(key).append(BlCoreConstants.COLON).append(value)
-              .append(StringUtils.SPACE));
-    }
-    return stringBuilder.toString();
-  }
 
 
   /**
@@ -245,7 +228,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_ZIP_CODE,
                     getRequestValue(billingAddress.getPostalcode()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_PHONE,
-                    getRequestValue(billingAddress.getCellphone()));
+                    getRequestValue(billingAddress.getPhone1()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_EMAIL,
                     getRequestValue(billingAddress.getEmail()));
                 createElementForRootElement(billingInfoInXMLDocument, root, BlCoreConstants.BILLING_NOTES,getOrderNotesFromOrderModel(orderModel));
