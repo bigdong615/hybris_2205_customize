@@ -76,13 +76,13 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     data.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXTENSION_EVENT_TEMPLATE)));
     data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
     data.setDateplaced(formatter.format(orderModel.getDate()));
-    data.setItemcost(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel)));
-    data.setDamagewaivercost(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost()));
-    data.setSubtotal(getDoubleValueForRequest(orderModel.getSubtotal()));
-    data.setShippingamount(getDoubleValueForRequest(orderModel.getDeliveryCost()));
-    data.setTaxamount(getDoubleValueForRequest(orderModel.getTotalTax()));
-    data.setDiscountamount(getDoubleValueForRequest(orderModel.getTotalDiscounts()));
-    data.setTotalcost(getDoubleValueForRequest(orderModel.getTotalPrice()));
+    data.setItemcost(formatAmount(getDoubleValueForRequest(getItemCostFromOrderEntry(orderModel))));
+    data.setDamagewaivercost(formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
+    data.setSubtotal(formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
+    data.setShippingamount(formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
+    data.setTaxamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
+    data.setDiscountamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
+    data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
     data.setArrivaldate(formatter.format(orderModel.getExtendRentalStartDate()));
     data.setReturndate(formatter.format(orderModel.getExtendRentalEndDate()));
     data.setRentalduration((int) BlDateTimeUtils
@@ -91,7 +91,7 @@ public class BlExtendOrderRequestPopulator extends ESPEventCommonPopulator<Order
     if (Objects.nonNull(userModel)) {
       data.setCustomername(getRequestValue(userModel.getName()));
     }
-    data.setExtensionamount(getDoubleValueForRequest(orderModel.getTotalPrice()));
+    data.setExtensionamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
     populateOrderItemXMLData(orderModel, data);
     orderExtensionRequest.setData(data);
   }
