@@ -34,7 +34,7 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
    */
 
   @Override
-  public void populate(GiftCardModel giftCardModel, GiftCardPurchaseEventRequest giftCardPurchaseEventRequest) throws ConversionException {
+  public void populate(final GiftCardModel giftCardModel, final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest) throws ConversionException {
 
     Assert.notNull(giftCardModel, "Parameter giftCardModel cannot be null.");
     Assert.notNull(giftCardPurchaseEventRequest,

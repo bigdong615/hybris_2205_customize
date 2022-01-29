@@ -2,7 +2,6 @@ package com.bl.core.esp.service;
 
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.GiftCardModel;
-import com.bl.core.model.GiftCardMovementModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
