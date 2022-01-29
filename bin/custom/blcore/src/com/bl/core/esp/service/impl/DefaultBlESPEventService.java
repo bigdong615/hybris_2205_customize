@@ -10,6 +10,7 @@ import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator;
 import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
@@ -27,11 +28,13 @@ import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlStoredEspEventModel;
+import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -120,6 +123,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
   private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
+  private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
+
 
 
     /**
@@ -874,6 +879,30 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   /**
+   * This method created to prepare the request and response from Gift Card Purchase ESP service
+   * @param giftCardModel giftCardMovementModel
+   */
+  @Override
+  public void sendGiftCardPurchase(final GiftCardModel giftCardModel ) {
+    if (Objects.nonNull(giftCardModel)) {
+      final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
+      getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel,
+          giftCardPurchaseEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send Gift Card Purchase ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getOrder().get(0).getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send Gift Card Purchase ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getOrder().get(0).getCode(),null, null);
+    }
+  }
+
+
+  /**
    * Format amount string.
    * @param amount the amount
    * @return the string
@@ -1106,4 +1135,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
       BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
   }
+
+  public BlOrderGiftCardPurchaseEventPopulator getBlOrderGiftCardPurchaseEventPopulator() {
+    return blOrderGiftCardPurchaseEventPopulator;
+  }
+
+  public void setBlOrderGiftCardPurchaseEventPopulator(
+      BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
+    this.blOrderGiftCardPurchaseEventPopulator = blOrderGiftCardPurchaseEventPopulator;
+  }
+
 }

@@ -1,6 +1,8 @@
 package com.bl.core.esp.service;
 
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -166,4 +168,10 @@ public interface BlESPEventService {
      *
      */
      void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
+
+    /**
+     * This method created for Gift Card Purchase
+     * @param giftCardMovementModel giftCardMovementModel
+     */
+    void sendGiftCardPurchase(final GiftCardModel giftCardMovementModel);
 }

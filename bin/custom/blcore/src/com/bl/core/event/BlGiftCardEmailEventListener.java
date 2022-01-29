@@ -1,6 +1,7 @@
 package com.bl.core.event;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.GiftCardEmailProcessModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
@@ -9,6 +10,9 @@ import de.hybris.platform.commerceservices.enums.SiteChannel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
+import java.util.Collections;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -25,6 +29,9 @@ public class BlGiftCardEmailEventListener extends
 
   private ModelService modelService;
   private BusinessProcessService businessProcessService;
+
+
+  private DefaultBlESPEventService defaultBlESPEventService;
 
   protected BusinessProcessService getBusinessProcessService() {
     return businessProcessService;
@@ -74,6 +81,25 @@ public class BlGiftCardEmailEventListener extends
     giftCardEmailProcessModel.setCustomerEmail(event.getUserEmail());
     giftCardEmailProcessModel.setGiftcard(event.getGiftcard());
     getModelService().save(giftCardEmailProcessModel);
+    try {
+      if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased())) {
+        getDefaultBlESPEventService().sendGiftCardPurchase(event.getGiftcard());
+      }
+    }
+    catch (final Exception e) {
+      BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card event.", e);
+    }
     getBusinessProcessService().startProcess(giftCardEmailProcessModel);
   }
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
+
+
 }
