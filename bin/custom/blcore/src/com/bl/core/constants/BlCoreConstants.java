@@ -492,7 +492,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_ITEM_PRODUCT_CANCEL_REASON = "reason";
 
 
-	//public static final String UID = "uid";
 	public static final String BILLING_CHARGES = "billingCharges";
 	public static final String UNBOXED = "UNBOXED";
 
@@ -573,7 +572,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CANCELLED = "CANCELLED";
 	public static final String LATE = "LATE";
 	public static final String RECEIVED_STATUS = "RECEIVED";
+	public static final String PENDING_STATUS = "PENDING";
 	public static final String SOLD = "SOLD";
+	public static final String TAX = "Tax";
+	public static final String QUANTITY = "Quantity";
 	public static final String FORMAT_STRING= "##0.00";
 
 	// Consignment Status

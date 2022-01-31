@@ -173,9 +173,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
     final AbstractOrderModel order = entry.getKey();
     final Set<String> productCodes = entry.getValue();
     final WarehouseModel anotherWH = getBlOptimizeShippingFromWHService().getAnotherWarehouse(warehouses, location);
-    final boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location);
+    final boolean noSplitting = checkFulfillmentFromSingleWH(order, anotherWH, location, productCodes);
     if(!noSplitting) {
-      if(!checkFulfillmentFromSingleWH(order, location, anotherWH)) {
+      if(!checkFulfillmentFromSingleWH(order, location, anotherWH, productCodes)) {
         BlLogger.logFormatMessageInfo(LOG, Level.INFO,
             "all the products can not be fulfilled from single warehouse for the order {}",
             order.getCode());
@@ -198,8 +198,9 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
    * @return boolean
    */
   private boolean checkFulfillmentFromSingleWH(final AbstractOrderModel order, final WarehouseModel warehouse,
-      final WarehouseModel preferredWH) {
+      final WarehouseModel preferredWH, final Set<String> productCodes) {
     final Set<String> modifiedProductCodes = getBlOptimizeShippingFromWHService().modifyProductCodes(order, warehouse);
+    modifiedProductCodes.addAll(productCodes);
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "list of products {} to fulfill from preferred warehouse {} for the order {}",
         modifiedProductCodes.toString(), preferredWH.getCode(), order.getCode());
@@ -242,7 +243,7 @@ public class DefaultBlReshufflerService implements BlReshufflerService {
        return entry.getQuantity() == entry.getSerialProducts().size();
     });
     if(allQuantityFulfilled) {
-      order.setStatus(OrderStatus.RECEIVED);
+      order.setStatus(OrderStatus.PENDING);
       getModelService().save(order);
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           "All the unallocated products are fulfilled for the order {}, hence the status is set to {} ",

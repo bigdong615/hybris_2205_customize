@@ -2017,7 +2017,9 @@
             <list-view:column qualifier="ocLocation"/>
             <list-view:column qualifier="consignmentStatus"/>
             <list-view:column qualifier="orderNote"/>
-            <list-view:column qualifier="rentalEndDate"/> 
+            <list-view:column qualifier="rentalEndDate"/>
+            <list-view:column qualifier="FirstNameOfPickUpPerson"/> 
+            <list-view:column qualifier="LastNameOfPickUpPerson"/>
 		</list-view:list-view>
 	</context>
 	

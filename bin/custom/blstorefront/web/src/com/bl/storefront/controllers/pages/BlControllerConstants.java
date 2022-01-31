@@ -215,6 +215,7 @@ public class BlControllerConstants
 	public static final String FILE_SIZE_ERROR = "fileSizeError";
 	public static final String FILE_FORMAT_ERROR = "fileFormatError";
 	public static final String ENABLE_POPUP = "enablePopup";
+	public static final String SEARCHED_WORD = "searchedWord";
 
 	private BlControllerConstants()
 	{

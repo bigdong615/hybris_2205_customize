@@ -142,6 +142,15 @@
 						$("#paymentNonce").val(paymentnonce);
 				 });
 				 
+				 var mediaQuery = window.matchMedia('(min-width: 768px)');
+				 if(mediaQuery.matches)
+				 {
+					 $("#js-site-search-input-mob").val("");	 
+				 }
+				 else
+				 {
+					 $("#js-site-search-input").val("");
+				 }
 			});
 		</script>
 		
