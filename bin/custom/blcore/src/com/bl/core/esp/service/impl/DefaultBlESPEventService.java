@@ -67,7 +67,10 @@ import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
@@ -191,7 +194,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
           final OrderVerificationCOIneededEventRequest orderVerificationCOIneededEventRequest = new OrderVerificationCOIneededEventRequest();
             getBlOrderVerificationCOIneededRequestPopulator().populate(orderModel,
                 orderVerificationCOIneededEventRequest);
-          orderVerificationCOIneededEventRequest.getData().setCoiamount(amount);
+          orderVerificationCOIneededEventRequest.getData().setCoiamount(formatAmount(amount));
 
             ESPEventResponseWrapper espEventResponseWrapper = null;
             try
@@ -605,7 +608,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
   private void orderCancelEntries(double totalRefundAmount, String refundMethod,
       List<OrderCancelEntry> orderCancelEntries,
       OrderRefundData data) {
-    data.setRefundamount(totalRefundAmount);
+    data.setRefundamount(formatAmount(totalRefundAmount));
     data.setRefundmethod(refundMethod);
     populateOrderItemXMLData(orderCancelEntries, data);
   }
@@ -897,6 +900,18 @@ public class DefaultBlESPEventService implements BlESPEventService {
           exception.getRequestString());
     }
   }
+
+  /**
+   * Format amount string.
+   * @param amount the amount
+   * @return the string
+   */
+  protected String formatAmount(final Double amount) {
+    final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
+    decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
+    return decimalFormat.format(amount);
+  }
+
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;

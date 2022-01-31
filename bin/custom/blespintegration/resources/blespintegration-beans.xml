@@ -114,25 +114,25 @@
 		<property name="trackinginfo" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tracking info")</annotations>
 		</property>
-		<property name="itemcost" type="java.lang.Double" equals="true">
+		<property name="itemcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("item cost")</annotations>
 		</property>
-		<property name="damagewaivercost" type="java.lang.Double" equals="true">
+		<property name="damagewaivercost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("damage waiver cost")</annotations>
 		</property>
-		<property name="subtotal" type="java.lang.Double" equals="true">
+		<property name="subtotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("subtotal")</annotations>
 		</property>
-		<property name="shippingamount" type="java.lang.Double" equals="true">
+		<property name="shippingamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("shipping amount")</annotations>
 		</property>
-		<property name="taxamount" type="java.lang.Double" equals="true">
+		<property name="taxamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tax amount")</annotations>
 		</property>
-		<property name="discountamount" type="java.lang.Double" equals="true">
+		<property name="discountamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("discount amount")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="discounttext" type="java.lang.String" equals="true">
@@ -162,7 +162,7 @@
 		<property name="paymenttext" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("payment text")</annotations>
 		</property>
-		<property name="extensiontotal" type="java.lang.Double" equals="true">
+		<property name="extensiontotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("extension total")</annotations>
 		</property>
 		<property name="shippinginfo" type="java.lang.String" equals="true">
@@ -180,7 +180,7 @@
 		<property name="returningcustomer" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Returning Customer")</annotations>
 		</property>
-		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
 	</bean>
@@ -260,7 +260,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="reason" type="java.lang.String" equals="true">
@@ -318,7 +318,7 @@
 		<property name="verificationlevel" type="java.lang.Integer" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
-		<property name="coiamount" type="java.lang.Double" equals="true">
+		<property name="coiamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("coi amount")</annotations>
 		</property>
 		<property name="verificationtext" type="java.lang.String" equals="true">
@@ -327,7 +327,7 @@
 		<property name="returningcustomer" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Returning Customer")</annotations>
 		</property>
-		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
 	</bean>
@@ -363,7 +363,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="paymenttype" type="java.lang.String" equals="true">
@@ -410,6 +410,12 @@
 		</property>
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
+		</property>
+		<property name="status" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("status")</annotations>
+		</property>
+		<property name="substatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Sub Status")</annotations>
 		</property>
 		<property name="actualreturndate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("actual return date")</annotations>
@@ -493,7 +499,7 @@
 		<property name="returningcustomer" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Returning Customer")</annotations>
 		</property>
-		<property name="totalvalue" type="java.math.BigDecimal" equals="true">
+		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
 	</bean>
@@ -661,7 +667,7 @@
 		<property name="verificationlevel" type="java.lang.Integer" equals="true">
 			<annotations>@JsonProperty("verification level")</annotations>
 		</property>
-		<property name="depositamount" type="java.math.BigDecimal" equals="true">
+		<property name="depositamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("deposit amount")</annotations>
 		</property>
 		<property name="verificationtext" type="java.lang.String" equals="true">
@@ -747,25 +753,25 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="itemcost" type="java.lang.Double" equals="true">
+		<property name="itemcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("item cost")</annotations>
 		</property>
-		<property name="damagewaivercost" type="java.lang.Double" equals="true">
+		<property name="damagewaivercost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("damage waiver cost")</annotations>
 		</property>
-		<property name="subtotal" type="java.lang.Double" equals="true">
+		<property name="subtotal" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("subtotal")</annotations>
 		</property>
-		<property name="shippingamount" type="java.lang.Double" equals="true">
+		<property name="shippingamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("shipping amount")</annotations>
 		</property>
-		<property name="taxamount" type="java.lang.Double" equals="true">
+		<property name="taxamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("tax amount")</annotations>
 		</property>
-		<property name="discountamount" type="java.lang.Double" equals="true">
+		<property name="discountamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("discount amount")</annotations>
 		</property>
-		<property name="totalcost" type="java.lang.Double" equals="true">
+		<property name="totalcost" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("total cost")</annotations>
 		</property>
 		<property name="arrivaldate" type="java.lang.String" equals="true">
@@ -780,7 +786,7 @@
 		<property name="customername" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("customername")</annotations>
 		</property>
-		<property name="extensionamount" type="java.lang.Double" equals="true">
+		<property name="extensionamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("extension amount")</annotations>
 		</property>
 		<property name="orderitems" type="java.lang.String" equals="true">
@@ -955,7 +961,7 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="refundamount" type="java.lang.Double" equals="true">
+		<property name="refundamount" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Refund Amount")</annotations>
 		</property>
 		<property name="refundmethod" type="java.lang.String" equals="true">

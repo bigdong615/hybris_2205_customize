@@ -46,7 +46,7 @@ gtag('config', googleAnalyticsTrackingId);
 
 	<c:when test="${pageType == 'CATEGORY' || pageType == 'PRODUCTSEARCH'}">
 		 <c:set var="listName" value="${pageType == 'CATEGORY' ? 'List' : 'Search'}"/>
-     <c:set var="variantName" value="${ blPageType == 'rentalgear' ? 'Rental gear' : 'Used gear'}"/>
+     <c:set var="variantName" value="${ blPageType == 'rentalGear' ? 'Rental gear' : 'Used gear'}"/>
 
 		<c:choose>
 			<c:when test="${searchPageData.pagination.totalNumberOfResults > 0}">
@@ -72,7 +72,7 @@ gtag('config', googleAnalyticsTrackingId);
                                "variant" :"${ycommerce:encodeJavaScript(variantName)}"
                                <c:if test="${not empty rentalDate.selectedFromDate}">
                                   ,
-                               "rentalDate" : "${rentalDate.numberOfDays}"
+                               "rentalDays" : "${rentalDate.numberOfDays}"
                                </c:if>
                        	}
                        	<c:if test='${not status.last}'>
