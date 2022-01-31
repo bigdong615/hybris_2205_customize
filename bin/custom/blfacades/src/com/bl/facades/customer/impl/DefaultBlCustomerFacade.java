@@ -130,4 +130,18 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  		}
  		return null;
  	}
+
+	/**
+	 * This method used for sending reset password link to ESP.
+	 * @param id
+	 * 		the id of the customer to send the forgotten password mail for.
+	 */
+	@Override
+	public void forgottenPassword(final String id)
+	{
+		Assert.hasText(id, "The field [id] cannot be empty");
+		getSessionService().getCurrentSession().setAttribute("currentSite", getBaseSiteService().getCurrentBaseSite());
+		final CustomerModel customerModel = getUserMatchingService().getUserByProperty(id, CustomerModel.class);
+		getCustomerAccountService().forgottenPassword(customerModel);
+	}
 }

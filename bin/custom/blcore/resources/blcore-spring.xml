@@ -527,7 +527,10 @@
 
 	<!--BL-30 : This is created to override register method and disable registration email. -->
 	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
-	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService">
+	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+	</bean>
 
 
 	<!--This is created for override OOB classes to get the media to be indexed to solr -->

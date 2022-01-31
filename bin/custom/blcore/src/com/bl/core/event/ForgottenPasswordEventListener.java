@@ -3,8 +3,6 @@
  */
 package com.bl.core.event;
 
-import com.bl.core.esp.service.BlESPEventService;
-import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
@@ -29,7 +27,6 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	private BusinessProcessService businessProcessService;
 	private CommonI18NService commonI18NService;
 	private BaseSiteService baseSiteService;
-  private BlESPEventService blESPEventService;
 
 	protected BusinessProcessService getBusinessProcessService()
 	{
@@ -74,7 +71,6 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 		forgottenPasswordProcessModel.setCurrency(event.getCurrency());
 		forgottenPasswordProcessModel.setStore(event.getBaseStore());
 		getModelService().save(forgottenPasswordProcessModel);
-    getBlESPEventService().sendForgotPasswordRequest(forgottenPasswordProcessModel);
 		getBusinessProcessService().startProcess(forgottenPasswordProcessModel);
 	}
 
@@ -100,12 +96,4 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	public void setBaseSiteService(BaseSiteService baseSiteService) {
 		this.baseSiteService = baseSiteService;
 	}
-
-  public BlESPEventService getBlESPEventService() {
-    return blESPEventService;
-  }
-
-  public void setBlESPEventService(BlESPEventService blESPEventService) {
-    this.blESPEventService = blESPEventService;
-  }
 }

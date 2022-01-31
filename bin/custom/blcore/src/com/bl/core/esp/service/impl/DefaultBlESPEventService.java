@@ -34,6 +34,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.forgotPassword.ForgotPasswordRequiredEventRequest;
+import com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -60,7 +61,6 @@ import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.commerceservices.model.process.ForgottenPasswordProcessModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
@@ -875,27 +875,28 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void sendForgotPasswordRequest(final ForgottenPasswordProcessModel forgottenPasswordProcessModel) {
-
+  public void sendForgotPasswordRequest(final ForgotPasswordRequestData forgotPasswordRequestData) {
     final ForgotPasswordRequiredEventRequest forgotPasswordRequiredEventRequest = new ForgotPasswordRequiredEventRequest();
-    getBlForgotPasswordRequestPopulator().populate(forgottenPasswordProcessModel,
-        forgotPasswordRequiredEventRequest);
-
-      ESPEventResponseWrapper espEventResponseWrapper = null;
-      try
-      {
-        // Call send order deposit required ESP Event API
-        espEventResponseWrapper = getBlESPEventRestService().sendForgotPasswordRequired(forgotPasswordRequiredEventRequest);
-      }catch (final BlESPIntegrationException exception){
-        persistESPEventDetail(null, EspEventTypeEnum.DEPOSIT_REQUIRED,forgottenPasswordProcessModel.getCustomer().getUid(), exception.getMessage(), exception.getRequestString());
-      }
-      // Save send order confirmation ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.DEPOSIT_REQUIRED,forgottenPasswordProcessModel.getCustomer().getUid(),null, null);
-
+    getBlForgotPasswordRequestPopulator()
+        .populate(forgotPasswordRequestData, forgotPasswordRequiredEventRequest);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call send forgot password required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendForgotPasswordRequired(forgotPasswordRequiredEventRequest);
+      // Save send forgot password request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FORGOT_PASSWORD_REQUEST,
+          forgotPasswordRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.FORGOT_PASSWORD_REQUEST,
+          forgotPasswordRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
   }
-
-
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
         return blOrderConfirmationRequestPopulator;
