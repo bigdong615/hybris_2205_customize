@@ -68,18 +68,6 @@ public class BlGiftCardEmailEventListener extends
   protected void onSiteEvent(final BlGiftCardEmailEvent event) {
     BlLogger.logMessage(LOGGER, Level.INFO, "GiftCard Customer event listener for user: {}",
         event.getUserEmail());
-
-    final GiftCardEmailProcessModel giftCardEmailProcessModel = (GiftCardEmailProcessModel) getBusinessProcessService()
-        .createProcess(
-            BlCoreConstants.GIFT_CARD + event.getUserEmail() + BlCoreConstants.HYPHEN + System
-                .currentTimeMillis(), BlCoreConstants.GIFT_CARD_EMAIL_PROCESS);
-    giftCardEmailProcessModel.setSite(event.getSite());
-    giftCardEmailProcessModel.setLanguage(event.getLanguage());
-    giftCardEmailProcessModel.setCurrency(event.getCurrency());
-    giftCardEmailProcessModel.setStore(event.getBaseStore());
-    giftCardEmailProcessModel.setCustomerEmail(event.getUserEmail());
-    giftCardEmailProcessModel.setGiftcard(event.getGiftcard());
-    getModelService().save(giftCardEmailProcessModel);
     try {
       if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased())) {
         getDefaultBlESPEventService().sendGiftCardPurchase(event.getGiftcard());
@@ -88,7 +76,6 @@ public class BlGiftCardEmailEventListener extends
     catch (final Exception e) {
       BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card event.", e);
     }
-    getBusinessProcessService().startProcess(giftCardEmailProcessModel);
   }
 
   public DefaultBlESPEventService getDefaultBlESPEventService() {
