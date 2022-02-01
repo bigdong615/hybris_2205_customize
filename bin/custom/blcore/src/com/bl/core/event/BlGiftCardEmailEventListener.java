@@ -1,8 +1,6 @@
 package com.bl.core.event;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
-import com.bl.core.model.GiftCardEmailProcessModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
