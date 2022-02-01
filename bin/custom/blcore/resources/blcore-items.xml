@@ -5304,7 +5304,7 @@ Boolean.TRUE
 				</property>
 				<property name="position">
 					<value>
-new Integer(0)"
+new Integer(0)
 					</value>
 				</property>
 			</custom-properties>
