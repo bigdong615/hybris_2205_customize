@@ -1,6 +1,8 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.data.GiftCardPurchaseData;
@@ -12,8 +14,12 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -59,7 +65,7 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
    */
   private void populateGiftCardDetails(final GiftCardModel giftCardModel, final GiftCardPurchaseData giftCardPurchaseData) {
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
-    final AbstractOrderModel abstractOrderModel = giftCardModel.getOrder().get(0);
+    final AbstractOrderModel abstractOrderModel = getGiftCardOrderModel(giftCardModel.getOrder());
     giftCardPurchaseData.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
     giftCardPurchaseData.setOrderid(abstractOrderModel.getCode());
@@ -71,6 +77,39 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
     giftCardPurchaseData.setDatePlaced(formatter.format(abstractOrderModel.getDate()));
   }
 
+  /**
+   * This method created to get order model from list
+   * @param abstractOrderModelList abstractOrderModel
+   * @return abstractOrderModel
+   */
+  private AbstractOrderModel getGiftCardOrderModel(final List<AbstractOrderModel> abstractOrderModelList) {
+    final AtomicReference<AbstractOrderModel> orderModel = new AtomicReference<>();
+    if(CollectionUtils.isNotEmpty(abstractOrderModelList)) {
+      abstractOrderModelList.forEach(abstractOrderModel -> {
+        if(BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder()) && CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+          checkOrderEntryHasGiftCard(abstractOrderModel , orderModel);
+        }
+      });
+    }
+    return orderModel.get();
+  }
+
+  /**
+   * This method created to check whether the entries as gift card
+   * @param abstractOrderModel  abstractOrderModel
+   * @param orderModel orderModel
+   */
+  private void checkOrderEntryHasGiftCard(final AbstractOrderModel abstractOrderModel,
+      final AtomicReference<AbstractOrderModel> orderModel){
+    abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+      if(abstractOrderEntryModel.getProduct() instanceof BlProductModel) {
+        final BlProductModel blProductModel = (BlProductModel) abstractOrderEntryModel.getProduct();
+        if(ProductTypeEnum.GIFTCARD.getCode().equalsIgnoreCase(blProductModel.getProductType().getCode())){
+          orderModel.set(abstractOrderModel);
+        }
+      }
+    });
+  }
   /**
      * To get the request value based
      * @param value value get from order

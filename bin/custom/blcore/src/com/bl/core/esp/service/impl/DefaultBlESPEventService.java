@@ -884,7 +884,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
    */
   @Override
   public void sendGiftCardPurchase(final GiftCardModel giftCardModel ) {
-    if (Objects.nonNull(giftCardModel)) {
       final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
       getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel,
           giftCardPurchaseEventRequest);
@@ -898,7 +897,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
       }
       // Save send Gift Card Purchase ESP Event Detail
       persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getOrder().get(0).getCode(),null, null);
-    }
+
   }
 
 
