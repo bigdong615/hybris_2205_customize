@@ -30,27 +30,7 @@ public class BlGiftCardEmailEventListener extends
 
   private static final Logger LOGGER = Logger.getLogger(BlGiftCardEmailEventListener.class);
 
-  private ModelService modelService;
-  private BusinessProcessService businessProcessService;
-
-
   private DefaultBlESPEventService defaultBlESPEventService;
-
-  protected BusinessProcessService getBusinessProcessService() {
-    return businessProcessService;
-  }
-
-  public void setBusinessProcessService(final BusinessProcessService businessProcessService) {
-    this.businessProcessService = businessProcessService;
-  }
-
-  protected ModelService getModelService() {
-    return modelService;
-  }
-
-  public void setModelService(final ModelService modelService) {
-    this.modelService = modelService;
-  }
 
   /**
    * It returns site channel.
@@ -84,14 +64,7 @@ public class BlGiftCardEmailEventListener extends
     }
   }
 
-  public DefaultBlESPEventService getDefaultBlESPEventService() {
-    return defaultBlESPEventService;
-  }
 
-  public void setDefaultBlESPEventService(
-      DefaultBlESPEventService defaultBlESPEventService) {
-    this.defaultBlESPEventService = defaultBlESPEventService;
-  }
 
   /**
    * This method created to get whether the order purchased through storefront
@@ -114,6 +87,15 @@ public class BlGiftCardEmailEventListener extends
       }
     });
       return Objects.nonNull(orderModel.get());
+  }
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
   }
 
 }

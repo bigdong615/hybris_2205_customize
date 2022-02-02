@@ -848,8 +848,6 @@
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
-		<property name="modelService" ref="modelService" />
-		<property name="businessProcessService" ref="businessProcessService" />
 		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
