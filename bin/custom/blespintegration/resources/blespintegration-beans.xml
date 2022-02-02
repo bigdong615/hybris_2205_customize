@@ -1199,16 +1199,7 @@
 
 
 	<!-- Reset password Required Event Request Object-->
-	<bean class="com.bl.esp.dto.forgotPassword.ForgotPasswordRequiredEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
-		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<property name="data" type="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" equals="true">
-			<annotations>@JsonProperty("data")</annotations>
-		</property>
-	</bean>
-
-	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" >
+	<bean class="com.bl.esp.dto.common.data.ESPEventCommonRequestData" >
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
@@ -1221,14 +1212,44 @@
 		<property name="template" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Template")</annotations>
 		</property>
-		<property name="passwordLink" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Password_Link")</annotations>
-		</property>
 		<property name="requestedDate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Requested_Date")</annotations>
 		</property>
+	</bean>
+
+	<bean class="com.bl.esp.dto.common.EmailRequiredESPEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.common.data.ESPEventCommonRequestData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+
+	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" extends="com.bl.esp.dto.common.data.ESPEventCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="passwordLink" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Password_Link")</annotations>
+		</property>
 		<property name="timeout" type="int" equals="true">
 			<annotations>@JsonProperty("Timeout")</annotations>
+		</property>
+	</bean>
+	<bean class="com.bl.esp.dto.notify.data.NotifyMeEmailRequestData" extends="com.bl.esp.dto.common.data.ESPEventCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="productName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Name")</annotations>
+		</property>
+		<property name="productUrl" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_URL")</annotations>
+		</property>
+		<property name="productThumbURL" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Thumb")</annotations>
 		</property>
 	</bean>
 

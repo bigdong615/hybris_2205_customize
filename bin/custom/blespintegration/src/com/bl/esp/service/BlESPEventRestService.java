@@ -3,9 +3,9 @@ package com.bl.esp.service;
 
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.common.EmailRequiredESPEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
-import com.bl.esp.dto.forgotPassword.ForgotPasswordRequiredEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -215,9 +215,9 @@ public interface BlESPEventRestService {
 
   /**
    * send forgot password request ESP Event API
-   * @param forgotPasswordRequiredEventRequest
+   * @param  emailRequiredEventRequest
    * @return
    */
-  ESPEventResponseWrapper sendForgotPasswordRequired(
-      final ForgotPasswordRequiredEventRequest forgotPasswordRequiredEventRequest);
+  ESPEventResponseWrapper sendESPEmailEventRequest(
+      EmailRequiredESPEventRequest emailRequiredEventRequest);
 }

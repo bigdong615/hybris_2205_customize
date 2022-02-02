@@ -1584,7 +1584,7 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
-		<property name="blForgotPasswordRequestPopulator" ref="blForgotPasswordRequestPopulator"/>
+		<property name="blESPEmailRequestPopulator" ref="blESPEmailRequestPopulator"/>
 	</bean>
 
 
@@ -1821,8 +1821,14 @@
 		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
 	</bean>
 
-	<bean id="blForgotPasswordRequestPopulator"
-		class="com.bl.core.esp.populators.BlForgotPasswordRequestPopulator">
+	<bean id="blESPEmailRequestPopulator"
+		class="com.bl.core.esp.populators.BlESPEmailRequestPopulator">
+	</bean>
+
+	<bean id="blURLServicesUtils"
+		class="com.bl.core.utils.BlURLServicesUtils">
+	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
 	</bean>
 
 </beans>

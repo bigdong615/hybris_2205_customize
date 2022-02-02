@@ -518,6 +518,8 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="blURLServicesUtils" ref="blURLServicesUtils"/>
 	</bean>
 	<bean id="blBackInStockNotificationEmailContext" class="com.bl.facades.process.email.context.BlBackInStockNotificationEmailContext" parent="backInStockNotificationEmailContext" scope="prototype" >
 	</bean>

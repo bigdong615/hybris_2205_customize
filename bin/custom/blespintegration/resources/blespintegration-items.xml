@@ -37,6 +37,7 @@
 					<value code="MANUAL_ALLOCATION" />
 					<value code="DEPOSIT_REQUIRED" />
 				<value code="FORGOT_PASSWORD_REQUEST"/>
+				<value code="NOTIFY_ME_EMAIL_REQUEST"/>
 			</enumtype>
 			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">
 					<value code="SUCCESS"/>
