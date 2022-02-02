@@ -62,6 +62,7 @@ import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -73,6 +74,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -883,8 +885,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param giftCardModel giftCardMovementModel
    */
   @Override
-  public void sendGiftCardPurchase(final GiftCardModel giftCardModel ) {
+  public void sendGiftCardPurchase(final GiftCardModel giftCardModel ,
+      final AtomicReference<AbstractOrderModel> abstractOrderModel) {
       final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
+      giftCardPurchaseEventRequest.setOrderModel(abstractOrderModel.get());
       getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel,
           giftCardPurchaseEventRequest);
       ESPEventResponseWrapper espEventResponseWrapper = null;
@@ -893,10 +897,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
         // Call send Gift Card Purchase ESP Event API
         espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
       }catch (final BlESPIntegrationException exception){
-        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getOrder().get(0).getCode(), exception.getMessage(), exception.getRequestString());
+        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,abstractOrderModel.get().getCode(), exception.getMessage(), exception.getRequestString());
       }
       // Save send Gift Card Purchase ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getOrder().get(0).getCode(),null, null);
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,abstractOrderModel.get().getCode(),null, null);
 
   }
 

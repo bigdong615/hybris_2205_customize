@@ -411,11 +411,11 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="status" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("status")</annotations>
+		<property name="orderstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order status")</annotations>
 		</property>
 		<property name="substatus" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Sub Status")</annotations>
+			<annotations>@JsonProperty("sub status")</annotations>
 		</property>
 		<property name="actualreturndate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("actual return date")</annotations>
@@ -1206,6 +1206,7 @@
 		<property name="data" type="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" equals="true">
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
+		<property name="orderModel" type="de.hybris.platform.core.model.order.AbstractOrderModel" />
 	</bean>
 
 
@@ -1215,10 +1216,10 @@
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
 		<property name="giftcardamount" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Gift Card Amount")</annotations>
+			<annotations>@JsonProperty("gift card amount")</annotations>
 		</property>
 		<property name="giftcardcode" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Gift Card Code")</annotations>
+			<annotations>@JsonProperty("gift card code")</annotations>
 		</property>
 		<property name="customername" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("customer name")</annotations>
@@ -1227,7 +1228,7 @@
 			<annotations>@JsonProperty("customer email")</annotations>
 		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Date Placed")</annotations>
+			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
 
 	</bean>

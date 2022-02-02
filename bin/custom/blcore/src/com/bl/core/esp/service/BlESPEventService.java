@@ -5,10 +5,12 @@ import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public interface BlESPEventService {
 
@@ -171,6 +173,7 @@ public interface BlESPEventService {
     /**
      * This method created for Gift Card Purchase
      * @param giftCardMovementModel giftCardMovementModel
+     * @param abstractOrderModel abstractOrderModel
      */
-    void sendGiftCardPurchase(final GiftCardModel giftCardMovementModel);
+    void sendGiftCardPurchase(final GiftCardModel giftCardMovementModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
 }

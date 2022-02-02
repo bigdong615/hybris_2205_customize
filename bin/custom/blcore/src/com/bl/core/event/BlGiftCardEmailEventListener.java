@@ -1,13 +1,19 @@
 package com.bl.core.event;
 
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
@@ -66,9 +72,11 @@ public class BlGiftCardEmailEventListener extends
   protected void onSiteEvent(final BlGiftCardEmailEvent event) {
     BlLogger.logMessage(LOGGER, Level.INFO, "GiftCard Customer event listener for user: {}",
         event.getUserEmail());
+    AtomicReference<AbstractOrderModel> abstractOrderModel = new AtomicReference<>();
     try {
-      if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased())) {
-        getDefaultBlESPEventService().sendGiftCardPurchase(event.getGiftcard());
+      if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased()) &&
+          isGiftCardAllowedToSendESPRequest(event.getGiftcard().getOrder() , abstractOrderModel)) {
+        getDefaultBlESPEventService().sendGiftCardPurchase(event.getGiftcard() , abstractOrderModel);
       }
     }
     catch (final Exception e) {
@@ -85,5 +93,27 @@ public class BlGiftCardEmailEventListener extends
     this.defaultBlESPEventService = defaultBlESPEventService;
   }
 
+  /**
+   * This method created to get whether the order purchased through storefront
+   * @param order order model
+   * @param orderModel orderModel
+   * @return boolean
+   */
+  private boolean isGiftCardAllowedToSendESPRequest(final List<AbstractOrderModel> order,
+      final AtomicReference<AbstractOrderModel> orderModel) {
+    order.forEach(abstractOrderModel -> {
+      if(BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder()) && CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+        abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+          if(abstractOrderEntryModel.getProduct() instanceof BlProductModel) {
+            final BlProductModel blProductModel = (BlProductModel) abstractOrderEntryModel.getProduct();
+            if(ProductTypeEnum.GIFTCARD.getCode().equalsIgnoreCase(blProductModel.getProductType().getCode())){
+              orderModel.set(abstractOrderModel);
+            }
+          }
+        });
+      }
+    });
+      return Objects.nonNull(orderModel.get());
+  }
 
 }
