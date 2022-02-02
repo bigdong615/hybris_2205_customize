@@ -134,7 +134,7 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     @Override
     public void forgottenPassword(final CustomerModel customerModel)
     {
-        validateParameterNotNullStandardMessage("customerModel", customerModel);
+        validateParameterNotNullStandardMessage(BlCoreConstants.CUSTOMER_MODEL_STRING, customerModel);
         final long timeStamp = getTokenValiditySeconds() > 0L ? new Date().getTime() : 0L;
         final SecureToken data = new SecureToken(customerModel.getUid(), timeStamp);
         final String token = getSecureTokenService().encryptData(data);
@@ -145,8 +145,8 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
             forgotPasswordRequestData.setPasswordLink( getSiteBaseUrlResolutionService()
                 .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
                     StringUtils.EMPTY, Boolean.TRUE, BlCoreConstants.UPDATE_PASSWORD_URL,
-                    "token=" + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING_STRING)));
-        }catch(Exception e){
+                    BlCoreConstants.TOKEN_PREFIX_STRING + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING_STRING)));
+        }catch(final Exception e){
             BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs whiling generating reset password link for user {0}:",customerModel.getUid(),e);
         }
         forgotPasswordRequestData.setEmailAddress(customerModel.getUid());
@@ -158,8 +158,8 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     {
         final String passwordExpireTime = Config.getParameter("forgotPassword.link.expiry.time");
         try {
-            expiresInMinutes = StringUtils.isNotEmpty(passwordExpireTime) ? Integer.parseInt(passwordExpireTime) : expiresInMinutes;
-        }catch (NumberFormatException e){
+            expiresInMinutes = StringUtils.isEmpty(passwordExpireTime) ? expiresInMinutes : Integer.parseInt(passwordExpireTime) ;
+        }catch (final NumberFormatException e){
             BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs due to invalid password expiry time {0} :",passwordExpireTime,e);
         }
         return expiresInMinutes;

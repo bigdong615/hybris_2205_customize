@@ -37,9 +37,9 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     private CommonI18NService commonI18NService;
     private BusinessProcessService businessProcessService;
     private BlURLServicesUtils  blURLServicesUtils;
-  private BlESPEventService blESPEventService;
-  @Resource(name = "productFacade")
-  private ProductFacade productFacade;
+    private BlESPEventService blESPEventService;
+    @Resource(name = "productFacade")
+    private ProductFacade productFacade;
 
     @Override
     public void saveProductInterest(final ProductInterestData productInterest)
@@ -47,12 +47,12 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
         super.saveProductInterest(productInterest);
         final ProductData productData = productFacade.getProductForCodeAndOptions(productInterest.getProduct().getCode(),
           Arrays.asList(ProductOption.BASIC, ProductOption.IMAGES));
-       createESPEVENTForSendingEmailRequest(productData);
+        createESPEventForSendingEmailRequest(productData);
     }
    /**
     * This method is responsible for create and send ESP event request for product notification email.
     */
-  protected void createESPEVENTForSendingEmailRequest(final ProductData productData){
+  protected void createESPEventForSendingEmailRequest(final ProductData productData){
     final CustomerModel customer = (CustomerModel) getUserService().getCurrentUser();
     final List<ImageData> thumbnail = productData.getImages().stream()
         .filter(imageData -> {

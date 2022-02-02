@@ -140,7 +140,6 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
 	public void forgottenPassword(final String id)
 	{
 		Assert.hasText(id, "The field [id] cannot be empty");
-		getSessionService().getCurrentSession().setAttribute("currentSite", getBaseSiteService().getCurrentBaseSite());
 		final CustomerModel customerModel = getUserMatchingService().getUserByProperty(id, CustomerModel.class);
 		getCustomerAccountService().forgottenPassword(customerModel);
 	}

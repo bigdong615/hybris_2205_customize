@@ -600,7 +600,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String UNDO_CHANGES = "undochanges";
 	public static final String CONFIRM_TRIGGER = "confirmTriggerEmail";
 	public static final String UPDATE_PASSWORD_URL = "/login/pw/change";
-
+	public static final String CUSTOMER_MODEL_STRING = "customerModel";
+	public static final String TOKEN_PREFIX_STRING = "token=";
 
 
 

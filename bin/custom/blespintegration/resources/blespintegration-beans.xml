@@ -1198,7 +1198,7 @@
 	</bean>
 
 
-	<!-- Reset password Required Event Request Object-->
+	<!-- common email data for ESP Event Request Object start-->
 	<bean class="com.bl.esp.dto.common.data.ESPEventCommonRequestData" >
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
@@ -1225,8 +1225,9 @@
 			<annotations>@JsonProperty("data")</annotations>
 		</property>
 	</bean>
+	<!-- common email data for ESP Event Request Object END-->
 
-
+	<!--BL-1813:DTO for reset password email link ESP Event -->
 	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" extends="com.bl.esp.dto.common.data.ESPEventCommonRequestData">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
@@ -1238,6 +1239,7 @@
 			<annotations>@JsonProperty("Timeout")</annotations>
 		</property>
 	</bean>
+	<!--BL-1813:DTO for notify me email link ESP Event -->
 	<bean class="com.bl.esp.dto.notify.data.NotifyMeEmailRequestData" extends="com.bl.esp.dto.common.data.ESPEventCommonRequestData">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
