@@ -55,10 +55,10 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
   protected void createESPEventForSendingEmailRequest(final ProductData productData){
     final CustomerModel customer = (CustomerModel) getUserService().getCurrentUser();
     final List<ImageData> thumbnail = productData.getImages().stream()
-        .filter(imageData -> {
-          return (imageData.getImageType().equals( ImageDataType.PRIMARY)
-              && imageData.getFormat().toLowerCase().equals(BlFacadesConstants.THUMBNAIL_STRING));
-        }).collect(Collectors.toList());
+        .filter(imageData ->
+           (imageData.getImageType().equals( ImageDataType.PRIMARY)
+              && imageData.getFormat().equalsIgnoreCase(BlFacadesConstants.THUMBNAIL_STRING))
+        ).collect(Collectors.toList());
     final NotifyMeEmailRequestData emailRequestData = new NotifyMeEmailRequestData();
     emailRequestData.setEmailAddress(customer.getUid());
     emailRequestData.setProductName(productData.getName());

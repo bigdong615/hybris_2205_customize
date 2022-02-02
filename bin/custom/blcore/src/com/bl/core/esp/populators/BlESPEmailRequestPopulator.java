@@ -1,0 +1,53 @@
+package com.bl.core.esp.populators;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.esp.dto.common.EmailRequiredESPEventRequest;
+import com.bl.esp.dto.common.data.ESPEventCommonRequestData;
+import com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData;
+import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
+import de.hybris.platform.converters.Populator;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
+
+/**
+ * @author vijay vishwakarma
+ * This populator created to populate reset password and notify me email related common data.
+ */
+public class BlESPEmailRequestPopulator implements
+    Populator<ESPEventCommonRequestData, EmailRequiredESPEventRequest> {
+
+  @Value("${borrow.lenses.subscriber.id}")
+  private String subscriberId;
+
+  @Value("${notify.me.email.request.event.definition.key}")
+  private String notifyMeEventDefinitionKey;
+
+  @Value("${notify.me.email.request.event.template.key}")
+  private String notifyMeTemplate;
+
+  @Value("${forgot.password.request.event.definition.key}")
+  private String resetPasswordEventDefinitionKey;
+
+  @Value("${forgot.password.request.event.template.key}")
+  private String resetPasswordTemplate;
+
+  @Override
+  public void populate(final ESPEventCommonRequestData emailRequestData,
+      final EmailRequiredESPEventRequest emailRequiredESPEventRequest)
+       {
+         emailRequestData.setSubscriberid(subscriberId);
+         final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+         emailRequestData.setRequestedDate(formatTime.format(new Date()));
+         emailRequiredESPEventRequest.setData(emailRequestData);
+         emailRequiredESPEventRequest.setContactKey(emailRequestData.getEmailAddress());
+          if(emailRequestData instanceof NotifyMeEmailRequestData) {
+            emailRequestData.setTemplate(notifyMeTemplate);
+            emailRequiredESPEventRequest.setEventDefinitionKey(notifyMeEventDefinitionKey);
+          }
+          if(emailRequestData instanceof ForgotPasswordRequestData){
+            emailRequestData.setTemplate(resetPasswordTemplate);
+            emailRequiredESPEventRequest.setEventDefinitionKey(resetPasswordEventDefinitionKey);
+          }
+      }
+}

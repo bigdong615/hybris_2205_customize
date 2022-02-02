@@ -176,7 +176,7 @@ public interface BlESPEventService {
 
     /**
      * This method created for sending notify me email related esp Event.
-     * @param emailRequestData
+     * @param emailRequestData requested email required data.
      */
     void sendNotifyMeConfirmEmailRequest(final ESPEventCommonRequestData emailRequestData);
 }

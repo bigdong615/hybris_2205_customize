@@ -214,9 +214,9 @@ public interface BlESPEventRestService {
       final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest);
 
   /**
-   * send forgot password request ESP Event API
-   * @param  emailRequiredEventRequest
-   * @return
+   * send email request ESP Event API
+   * @param  emailRequiredEventRequest emailRequiredEventRequest
+   * @return espEventResponseWrapper
    */
   ESPEventResponseWrapper sendESPEmailEventRequest(
       EmailRequiredESPEventRequest emailRequiredEventRequest);
