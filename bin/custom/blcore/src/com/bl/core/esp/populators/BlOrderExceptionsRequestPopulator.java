@@ -79,7 +79,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExceptionsData.setOrderstatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
-    orderExceptionsData.setSubstatus(getSubStatusFromOrder(orderModel));
+    orderExceptionsData.setOrdersubstatus(getSubStatusFromOrder(orderModel));
     if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
         orderModel.isGiftCardOrder())) {
       orderExceptionsData

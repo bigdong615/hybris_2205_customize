@@ -414,8 +414,8 @@
 		<property name="orderstatus" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("order status")</annotations>
 		</property>
-		<property name="substatus" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("sub status")</annotations>
+		<property name="ordersubstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order sub status")</annotations>
 		</property>
 		<property name="actualreturndate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("actual return date")</annotations>
