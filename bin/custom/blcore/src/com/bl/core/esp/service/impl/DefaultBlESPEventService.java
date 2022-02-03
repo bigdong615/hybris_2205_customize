@@ -905,6 +905,29 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
 
+
+  /**
+   * This method created to prepare the request and response from Gift Card Purchase ESP service
+   * @param giftCardModel giftCardMovementModel
+   */
+  @Override
+  public void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel) {
+    final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
+    getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel, giftCardPurchaseEventRequest);
+    ESPEventResponseWrapper espEventResponseWrapper = null;
+    try
+    {
+      // Call send Gift Card Purchase ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
+    }catch (final BlESPIntegrationException exception){
+      persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,null, exception.getMessage(), exception.getRequestString());
+    }
+    // Save send Gift Card Purchase ESP Event Detail
+    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,null,null, null);
+
+  }
+
+
   /**
    * Format amount string.
    * @param amount the amount

@@ -172,8 +172,14 @@ public interface BlESPEventService {
 
     /**
      * This method created for Gift Card Purchase
-     * @param giftCardMovementModel giftCardMovementModel
+     * @param giftCardModel giftCardModel
      * @param abstractOrderModel abstractOrderModel
      */
-    void sendGiftCardPurchase(final GiftCardModel giftCardMovementModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
+    void sendGiftCardPurchase(final GiftCardModel giftCardModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
+
+    /**
+     * This method created for Free Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     */
+    void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel);
 }
