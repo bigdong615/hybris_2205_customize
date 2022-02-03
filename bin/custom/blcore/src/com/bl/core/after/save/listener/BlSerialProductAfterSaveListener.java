@@ -4,6 +4,7 @@ import de.hybris.platform.catalog.daos.CatalogVersionDao;
 import de.hybris.platform.catalog.model.CatalogVersionModel;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.PK;
+import de.hybris.platform.servicelayer.exceptions.ModelLoadingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.tx.AfterSaveEvent;
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -52,7 +54,7 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 				if (event.getType() == AfterSaveEvent.UPDATE)
 				{
 					final PK pk = event.getPk();
-					final Object object = Objects.nonNull(pk) ? getModelService().get(pk) : null;
+					final Object object = getObjectFromPK(pk);
 					if (object instanceof BlSerialProductModel)
 					{
 						performUpdateStagedSerial(object);
@@ -61,6 +63,28 @@ public class BlSerialProductAfterSaveListener implements AfterSaveListener
 			});
 		}
 
+	}
+
+	/**
+	 * Gets the object from PK.
+	 *
+	 * @param pk the pk
+	 * @return the object from PK
+	 */
+	private Object getObjectFromPK(final PK pk)
+	{
+		if(Objects.nonNull(pk))
+		{
+			try
+			{
+				return getModelService().get(pk);
+			}
+			catch(final ModelLoadingException exception)
+			{
+				BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "No item found for given pk: {}", pk);
+			}
+		}
+		return null;
 	}
 
 	/**
