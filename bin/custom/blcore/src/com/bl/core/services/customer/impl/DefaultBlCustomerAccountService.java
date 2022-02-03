@@ -134,7 +134,7 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     @Override
     public void forgottenPassword(final CustomerModel customerModel)
     {
-        validateParameterNotNullStandardMessage(BlCoreConstants.CUSTOMER_MODEL_STRING, customerModel);
+        validateParameterNotNullStandardMessage(BlCoreConstants.CUSTOMER_MODEL, customerModel);
         final long timeStamp = getTokenValiditySeconds() > 0L ? new Date().getTime() : 0L;
         final SecureToken data = new SecureToken(customerModel.getUid(), timeStamp);
         final String token = getSecureTokenService().encryptData(data);
@@ -145,16 +145,19 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
             forgotPasswordRequestData.setPasswordLink( getSiteBaseUrlResolutionService()
                 .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
                     StringUtils.EMPTY, Boolean.TRUE, BlCoreConstants.UPDATE_PASSWORD_URL,
-                    BlCoreConstants.TOKEN_PREFIX_STRING + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING_STRING)));
+                    BlCoreConstants.TOKEN + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING_STRING)));
         }catch(final Exception e){
             BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs whiling generating reset password link for user {0}:",customerModel.getUid(),e);
         }
         forgotPasswordRequestData.setEmailAddress(customerModel.getUid());
-        forgotPasswordRequestData.setTimeout(getExpiresInMinutes());
+        forgotPasswordRequestData.setTimeout(getExpirationTime());
         getBlESPEventService().sendForgotPasswordRequest(forgotPasswordRequestData);
     }
 
-    private int getExpiresInMinutes()
+    /**
+     * This method used to get reset password link expiry time in minutes.
+     */
+    private int getExpirationTime()
     {
         final String passwordExpireTime = Config.getParameter("forgotPassword.link.expiry.time");
         try {

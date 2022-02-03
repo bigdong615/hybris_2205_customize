@@ -76,7 +76,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String COMMA = ",";
   public static final String HASH = "#";
   public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
-  public static final String THUMBNAIL_STRING = "thumbnail";
+  public static final String THUMBNAIL = "thumbnail";
 
   private BlFacadesConstants() {
     //empty

@@ -2,7 +2,7 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.esp.populators.BlESPEmailRequestPopulator;
+import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
@@ -31,8 +31,8 @@ import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
-import com.bl.esp.dto.common.EmailRequiredESPEventRequest;
-import com.bl.esp.dto.common.data.ESPEventCommonRequestData;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
@@ -119,7 +119,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
-    private BlESPEmailRequestPopulator blESPEmailRequestPopulator;
+    private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
 
     /**
      * This method created to prepare the request and response from ESP service
@@ -876,9 +876,9 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * {@inheritDoc}
    */
   @Override
-  public void sendForgotPasswordRequest(final ESPEventCommonRequestData emailRequestData) {
-    final EmailRequiredESPEventRequest emailRequiredEventRequest = new EmailRequiredESPEventRequest();
-    getBlESPEmailRequestPopulator()
+  public void sendForgotPasswordRequest(final ESPEmailCommonRequestData emailRequestData) {
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
         .populate(emailRequestData, emailRequiredEventRequest);
     final ESPEventResponseWrapper espEventResponseWrapper;
     try {
@@ -886,10 +886,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
       espEventResponseWrapper = getBlESPEventRestService()
           .sendESPEmailEventRequest(emailRequiredEventRequest);
       // Save send forgot password request ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FORGOT_PASSWORD_REQUEST,
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FORGOT_PASSWORD,
           emailRequestData.getEmailAddress(), null, null);
     } catch (final BlESPIntegrationException exception) {
-      persistESPEventDetail(null, EspEventTypeEnum.FORGOT_PASSWORD_REQUEST,
+      persistESPEventDetail(null, EspEventTypeEnum.FORGOT_PASSWORD,
           emailRequestData.getEmailAddress(), exception.getMessage(),
           exception.getRequestString());
     }
@@ -899,9 +899,9 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * {@inheritDoc}
    */
   @Override
-  public void sendNotifyMeConfirmEmailRequest(final ESPEventCommonRequestData emailRequestData){
-    final EmailRequiredESPEventRequest emailRequiredEventRequest = new EmailRequiredESPEventRequest();
-    getBlESPEmailRequestPopulator()
+  public void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
         .populate(emailRequestData, emailRequiredEventRequest);
     final ESPEventResponseWrapper espEventResponseWrapper;
     try {
@@ -909,10 +909,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
       espEventResponseWrapper = getBlESPEventRestService()
           .sendESPEmailEventRequest(emailRequiredEventRequest);
       // Save notify me email request ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.NOTIFY_ME_EMAIL_REQUEST,
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.NOTIFY_ME_EMAIL,
           emailRequestData.getEmailAddress(), null, null);
     } catch (final BlESPIntegrationException exception) {
-      persistESPEventDetail(null, EspEventTypeEnum.NOTIFY_ME_EMAIL_REQUEST,
+      persistESPEventDetail(null, EspEventTypeEnum.NOTIFY_ME_EMAIL,
           emailRequestData.getEmailAddress(), exception.getMessage(),
           exception.getRequestString());
     }
@@ -1151,12 +1151,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
   }
 
-  public BlESPEmailRequestPopulator getBlESPEmailRequestPopulator() {
-    return blESPEmailRequestPopulator;
+  public BlESPEmailCommonRequestPopulator getBlESPEmailCommonRequestPopulator() {
+    return blESPEmailCommonRequestPopulator;
   }
 
-  public void setBlESPEmailRequestPopulator(
-      BlESPEmailRequestPopulator blESPEmailRequestPopulator) {
-    this.blESPEmailRequestPopulator = blESPEmailRequestPopulator;
+  public void setBlESPEmailCommonRequestPopulator(
+      BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
+    this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
 }

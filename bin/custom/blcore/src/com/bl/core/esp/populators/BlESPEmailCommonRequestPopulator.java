@@ -1,8 +1,8 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.esp.dto.common.EmailRequiredESPEventRequest;
-import com.bl.esp.dto.common.data.ESPEventCommonRequestData;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData;
 import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
 import de.hybris.platform.converters.Populator;
@@ -11,11 +11,11 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * @author vijay vishwakarma
  * This populator created to populate reset password and notify me email related common data.
+ * @author vijay vishwakarma
  */
-public class BlESPEmailRequestPopulator implements
-    Populator<ESPEventCommonRequestData, EmailRequiredESPEventRequest> {
+public class BlESPEmailCommonRequestPopulator implements
+    Populator<ESPEmailCommonRequestData, ESPEmailCommonEventRequest> {
 
   @Value("${borrow.lenses.subscriber.id}")
   private String subscriberId;
@@ -33,8 +33,8 @@ public class BlESPEmailRequestPopulator implements
   private String resetPasswordTemplate;
 
   @Override
-  public void populate(final ESPEventCommonRequestData emailRequestData,
-      final EmailRequiredESPEventRequest emailRequiredESPEventRequest)
+  public void populate(final ESPEmailCommonRequestData emailRequestData,
+      final ESPEmailCommonEventRequest emailRequiredESPEventRequest)
        {
          emailRequestData.setSubscriberid(subscriberId);
          final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);

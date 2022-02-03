@@ -1584,7 +1584,7 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
-		<property name="blESPEmailRequestPopulator" ref="blESPEmailRequestPopulator"/>
+		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
 
@@ -1822,15 +1822,8 @@
 	</bean>
 
 	<!--BL-1813,14:This populator created to populate reset password and notify me email related common data.-->
-	<bean id="blESPEmailRequestPopulator"
-		class="com.bl.core.esp.populators.BlESPEmailRequestPopulator">
-	</bean>
-
-	<!--BL-1814: This class created for generating url-->
-	<bean id="blURLServicesUtils"
-		class="com.bl.core.utils.BlURLServicesUtils">
-	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
-		<property name="baseSiteService" ref="baseSiteService"/>
+	<bean id="blESPEmailCommonRequestPopulator"
+		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>
 
 </beans>
