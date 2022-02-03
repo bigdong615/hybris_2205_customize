@@ -7,16 +7,19 @@ import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import com.bl.esp.exception.BlESPIntegrationException;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -76,6 +79,8 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
+    orderExceptionsData.setStatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
+    orderExceptionsData.setSubstatus(getSubStatusFromOrder(orderModel));
     if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
         orderModel.isGiftCardOrder())) {
       orderExceptionsData
@@ -133,6 +138,23 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
       throw new BlESPIntegrationException(exception.getMessage(),
           LogErrorCodeEnum.ESP_EVENT_POPULATOR_EXCEPTION.getCode(), exception);
     }
+  }
+
+  /**
+   * This method created to get consignment status from order
+   * @param abstractOrderModel order model
+   * @return String
+   */
+  private String getSubStatusFromOrder(final AbstractOrderModel abstractOrderModel){
+    final StringBuilder stringBuilder = new StringBuilder(StringUtils.EMPTY);
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getConsignments())) {
+      abstractOrderModel.getConsignments().forEach(consignmentModel -> {
+        if(Objects.nonNull(consignmentModel.getStatus())){
+          stringBuilder.append(consignmentModel.getStatus().getCode()).append(BlCoreConstants.SHARE_A_SALE_COMMA);
+        }
+      });
+    }
+    return StringUtils.chop(stringBuilder.toString());
   }
 
   public ProductService getProductService() {

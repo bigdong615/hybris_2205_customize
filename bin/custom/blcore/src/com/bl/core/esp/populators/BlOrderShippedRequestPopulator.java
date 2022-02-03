@@ -139,11 +139,11 @@ public class BlOrderShippedRequestPopulator extends
         createElementForRootElement(shippingInfoInXMLDocument, root,
             BlCoreConstants.SHIPPING_ZIP_CODE, getRequestValue(shippingAddress.getPostalcode()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_PHONE,
-            getRequestValue(shippingAddress.getCellphone()));
+            getRequestValue(shippingAddress.getPhone1()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_EMAIL,
             getRequestValue(shippingAddress.getEmail()));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_HOURS,
-            StringUtils.EMPTY);// TODO Setting dummy value, once we got the actual value then set actual value one
+            StringUtils.isEmpty(orderModel.getPickUpPersonEmail()) ? StringUtils.EMPTY : getStoreOpeningHours(shippingAddress));
         createElementForRootElement(shippingInfoInXMLDocument, root, BlCoreConstants.SHIPPING_NOTES,
             StringUtils.isNotBlank(orderModel.getDeliveryNotes())  ? orderModel.getDeliveryNotes() : StringUtils.EMPTY);
 
