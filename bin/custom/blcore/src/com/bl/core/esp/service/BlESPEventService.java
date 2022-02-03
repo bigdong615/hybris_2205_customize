@@ -182,4 +182,5 @@ public interface BlESPEventService {
      * @param giftCardModel giftCardModel
      */
     void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel);
+
 }
