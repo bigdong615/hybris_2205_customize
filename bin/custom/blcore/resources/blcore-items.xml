@@ -1897,7 +1897,7 @@
               </attribute>
               <attribute qualifier="videoTitle" type="java.lang.String">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="true" initial="true"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>Localized Video title</description>
               </attribute>
               <attribute qualifier="videoLink" type="java.lang.String">
@@ -1907,7 +1907,7 @@
               </attribute>
               <attribute qualifier="videoDuration" type="java.lang.Long">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="true" initial="true"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>video duration need to be put in second</description>
               </attribute>
             </attributes>
