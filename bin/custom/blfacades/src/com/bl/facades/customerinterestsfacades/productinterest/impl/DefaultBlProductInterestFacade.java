@@ -1,10 +1,10 @@
 package com.bl.facades.customerinterestsfacades.productinterest.impl;
 
 import com.bl.core.esp.service.BlESPEventService;
-import com.bl.core.utils.BlURLServicesUtils;
 import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.customerinterestsfacades.productinterest.BlProductInterestFacade;
+import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ImageData;
@@ -36,8 +36,8 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     private BaseStoreService baseStoreService;
     private CommonI18NService commonI18NService;
     private BusinessProcessService businessProcessService;
-    private BlURLServicesUtils  blURLServicesUtils;
     private BlESPEventService blESPEventService;
+    private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
     @Resource(name = "productFacade")
     private ProductFacade productFacade;
 
@@ -57,18 +57,23 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     final List<ImageData> thumbnail = productData.getImages().stream()
         .filter(imageData ->
            (imageData.getImageType().equals( ImageDataType.PRIMARY)
-              && imageData.getFormat().equalsIgnoreCase(BlFacadesConstants.THUMBNAIL_STRING))
+              && imageData.getFormat().equalsIgnoreCase(BlFacadesConstants.THUMBNAIL))
         ).collect(Collectors.toList());
     final NotifyMeEmailRequestData emailRequestData = new NotifyMeEmailRequestData();
     emailRequestData.setEmailAddress(customer.getUid());
     emailRequestData.setProductName(productData.getName());
-    emailRequestData.setProductUrl(getBlURLServicesUtils().getRequestedURl(BlFacadesConstants.RENTAL_PDP_URL_PREFIX +productData.getCode()));
-    if (CollectionUtils.isNotEmpty(thumbnail)){
-      emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());
-    }else{emailRequestData.setProductThumbURL(StringUtils.EMPTY);}
+    emailRequestData.setProductUrl(getRequestedURl(BlFacadesConstants.RENTAL_PDP_URL_PREFIX +productData.getCode()));
+    if (CollectionUtils.isEmpty(thumbnail)){
+      emailRequestData.setProductThumbURL(StringUtils.EMPTY);
+    }else{emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());}
     getBlESPEventService().sendNotifyMeConfirmEmailRequest(emailRequestData);
   }
 
+  public String getRequestedURl(String urlString){
+    return getSiteBaseUrlResolutionService()
+        .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
+            org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
+  }
 
     public ModelService getModelService() {
         return modelService;
@@ -113,18 +118,21 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     public void setCommonI18NService(CommonI18NService commonI18NService) {
         this.commonI18NService = commonI18NService;
     }
-  public BlURLServicesUtils getBlURLServicesUtils() {
-    return blURLServicesUtils;
-  }
 
-  public void setBlURLServicesUtils(BlURLServicesUtils blURLServicesUtils) {
-    this.blURLServicesUtils = blURLServicesUtils;
-  }
   public BlESPEventService getBlESPEventService() {
     return blESPEventService;
   }
 
   public void setBlESPEventService(BlESPEventService blESPEventService) {
     this.blESPEventService = blESPEventService;
+  }
+
+  public SiteBaseUrlResolutionService getSiteBaseUrlResolutionService() {
+    return siteBaseUrlResolutionService;
+  }
+
+  public void setSiteBaseUrlResolutionService(
+      SiteBaseUrlResolutionService siteBaseUrlResolutionService) {
+    this.siteBaseUrlResolutionService = siteBaseUrlResolutionService;
   }
 }

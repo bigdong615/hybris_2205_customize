@@ -2,7 +2,7 @@ package com.bl.core.esp.service;
 
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
-import com.bl.esp.dto.common.data.ESPEventCommonRequestData;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -172,11 +172,11 @@ public interface BlESPEventService {
      * This method created for reset password request ESP Event.
      * @param espEventCommonRequestData requested password required data.
      */
-     void sendForgotPasswordRequest(final ESPEventCommonRequestData espEventCommonRequestData);
+     void sendForgotPasswordRequest(final ESPEmailCommonRequestData espEventCommonRequestData);
 
     /**
      * This method created for sending notify me email related esp Event.
      * @param emailRequestData requested email required data.
      */
-    void sendNotifyMeConfirmEmailRequest(final ESPEventCommonRequestData emailRequestData);
+    void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData);
 }
