@@ -4,6 +4,7 @@ package com.bl.core.esp.service.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
+import com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
@@ -34,6 +35,7 @@ import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -126,6 +128,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
   private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
+  private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
 
 
 
@@ -907,23 +910,23 @@ public class DefaultBlESPEventService implements BlESPEventService {
 
 
   /**
-   * This method created to prepare the request and response from Gift Card Purchase ESP service
+   * This method created to prepare the request and response from Free Gift Card ESP service
    * @param giftCardModel giftCardMovementModel
    */
   @Override
   public void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel) {
-    final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
-    getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel, giftCardPurchaseEventRequest);
+    final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest = new FreeGiftCardPurchaseEventRequest();
+    getBlFreeGiftCardPurchaseEventPopulator().populate(giftCardModel, freeGiftCardPurchaseEventRequest);
     ESPEventResponseWrapper espEventResponseWrapper = null;
     try
     {
-      // Call send Gift Card Purchase ESP Event API
-      espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
+      // Call send Free Gift Card Purchase ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService().sendFreeGiftCardPurchase(freeGiftCardPurchaseEventRequest);
     }catch (final BlESPIntegrationException exception){
-      persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,null, exception.getMessage(), exception.getRequestString());
+      persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getCode(), exception.getMessage(), exception.getRequestString());
     }
-    // Save send Gift Card Purchase ESP Event Detail
-    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,null,null, null);
+    // Save send Free Gift Card Purchase ESP Event Detail
+    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getCode(),null, null);
 
   }
 
@@ -1170,5 +1173,15 @@ public class DefaultBlESPEventService implements BlESPEventService {
       BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
     this.blOrderGiftCardPurchaseEventPopulator = blOrderGiftCardPurchaseEventPopulator;
   }
+
+  public BlFreeGiftCardPurchaseEventPopulator getBlFreeGiftCardPurchaseEventPopulator() {
+    return blFreeGiftCardPurchaseEventPopulator;
+  }
+
+  public void setBlFreeGiftCardPurchaseEventPopulator(
+      BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator) {
+    this.blFreeGiftCardPurchaseEventPopulator = blFreeGiftCardPurchaseEventPopulator;
+  }
+
 
 }

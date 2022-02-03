@@ -1581,6 +1581,7 @@
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
 		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
+		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 	</bean>
 
 
@@ -1820,6 +1821,12 @@
   <!--BL-1826 Gift Card Purchase ESP-->
 	<bean id="blOrderGiftCardPurchaseEventPopulator"
 		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-1827 Free Gift Card Purchase ESP-->
+	<bean id="blFreeGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator" >
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
