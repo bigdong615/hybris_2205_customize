@@ -214,7 +214,7 @@ public interface BlESPEventRestService {
       final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest);
 
   /**
-   * send email request ESP Event API
+   * BL-1813,1814: send email request ESP Event API
    * @param  emailRequiredEventRequest emailRequiredEventRequest
    * @return espEventResponseWrapper
    */

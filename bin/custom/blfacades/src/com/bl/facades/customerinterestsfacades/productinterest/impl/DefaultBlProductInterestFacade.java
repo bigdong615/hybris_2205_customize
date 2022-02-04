@@ -69,7 +69,12 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     getBlESPEventService().sendNotifyMeConfirmEmailRequest(emailRequestData);
   }
 
-  public String getRequestedURl(String urlString){
+  /**
+   * This method used to get complete url for given suffix url.
+   * @param urlString
+   * @return
+   */
+  public String getRequestedURl(final String urlString){
     return getSiteBaseUrlResolutionService()
         .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
             org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
