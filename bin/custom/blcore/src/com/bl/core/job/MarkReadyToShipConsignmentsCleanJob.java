@@ -2,6 +2,7 @@ package com.bl.core.job;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.MarkReadyToShipConsignmentsCleanJobModel;
@@ -229,7 +230,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 						? blSerialProductModel.getOcLocationDetails().getLocationCategory().getCode()
 						: BlInventoryScanLoggingConstants.EMPTY_STRING;
 		if (consignment.isCleanCompleteConsignment()
-				&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase((blSerialProductModel.getOcLocationDetails() !=null && blSerialProductModel.getOcLocationDetails().getParentInventoryLocation() !=null) ? blSerialProductModel.getOcLocationDetails().getParentInventoryLocation().getLocationCategory().getCode() : StringUtils.EMPTY))
+				&& isShippingCartLocation(blSerialProductModel))
 			{
 			consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
 			modelService.save(consignment);
@@ -239,6 +240,31 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	}
 
   /**
+   * This method is used to check is shipping cart or not 
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private boolean isShippingCartLocation(BlSerialProductModel blSerialProductModel)
+	{
+		return BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(getLocationCategoryCodeFromSerial(blSerialProductModel));
+	}
+
+	/**
+	 * This method is used to get the location Category code for serial
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private String getLocationCategoryCodeFromSerial(BlSerialProductModel blSerialProductModel)
+	{
+		if(blSerialProductModel.getOcLocationDetails() !=null)
+		{
+		 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
+		 return parentInventoryLocation !=null ? parentInventoryLocation.getLocationCategory().getCode() : StringUtils.EMPTY;
+		}
+	return StringUtils.EMPTY;
+}
+
+/**
    * @return the blConsignmentDao
    */
   public BlConsignmentDao getBlConsignmentDao() {
