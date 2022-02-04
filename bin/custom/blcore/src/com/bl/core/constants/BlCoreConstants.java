@@ -348,7 +348,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_NEW_CUSTOMER = "&newcustomer=";
 	public static final String ONE = "1";
 	public static final String SHARE_A_SALE_URL_LINK = "&urllink=";
-	public static final String DEFAULT_ENCODING_STRING = "UTF-8";
+	public static final String DEFAULT_ENCODING = "UTF-8";
 	public static final String SHARE_A_SALE_COUPON_CODE = "&couponcode=";
 	public static final String SHARE_A_SALE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 	public static final String SHARE_A_SALE_GMT = "GMT";
@@ -602,6 +602,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String UPDATE_PASSWORD_URL = "/login/pw/change";
 	public static final String CUSTOMER_MODEL = "customerModel";
 	public static final String TOKEN = "token=";
+	public static final String THUMBNAIL = "thumbnail";
+	public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
 
 
 

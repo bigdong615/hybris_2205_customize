@@ -1821,7 +1821,7 @@
 		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
 	</bean>
 
-	<!--BL-1813,14:This populator created to populate reset password and notify me email related common data.-->
+	<!--BL-1813,BL-1814:This populator created to populate reset password and notify me email related common data.-->
 	<bean id="blESPEmailCommonRequestPopulator"
 		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>

@@ -145,7 +145,7 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
             forgotPasswordRequestData.setPasswordLink( getSiteBaseUrlResolutionService()
                 .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
                     StringUtils.EMPTY, Boolean.TRUE, BlCoreConstants.UPDATE_PASSWORD_URL,
-                    BlCoreConstants.TOKEN + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING_STRING)));
+                    BlCoreConstants.TOKEN + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING)));
         }catch(final Exception e){
             BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs whiling generating reset password link for user {0}:",customerModel.getUid(),e);
         }
