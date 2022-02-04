@@ -1211,24 +1211,33 @@
 
 
 	<!-- Gift card Purchase Confirmation ESP-->
-	<bean class="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" extends="com.bl.esp.order.ESPEventCommonOrderDataRequest">
+	<bean class="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="orderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order ID")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
 		<property name="giftcardamount" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("gift card amount")</annotations>
+			<annotations>@JsonProperty("Gift_Card_Amount")</annotations>
 		</property>
 		<property name="giftcardcode" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("gift card code")</annotations>
+			<annotations>@JsonProperty("Gift_Card_Code")</annotations>
 		</property>
 		<property name="customername" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("customer name")</annotations>
+			<annotations>@JsonProperty("Customer_Name")</annotations>
 		</property>
 		<property name="customeremail" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("customer email")</annotations>
+			<annotations>@JsonProperty("Customer_Email")</annotations>
 		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("date placed")</annotations>
+			<annotations>@JsonProperty("Date Placed")</annotations>
 		</property>
 
 	</bean>
