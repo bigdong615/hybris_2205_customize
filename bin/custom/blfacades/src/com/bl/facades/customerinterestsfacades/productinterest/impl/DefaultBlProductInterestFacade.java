@@ -1,5 +1,6 @@
 package com.bl.facades.customerinterestsfacades.productinterest.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -57,12 +58,12 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
     final List<ImageData> thumbnail = productData.getImages().stream()
         .filter(imageData ->
            (imageData.getImageType().equals( ImageDataType.PRIMARY)
-              && imageData.getFormat().equalsIgnoreCase(BlFacadesConstants.THUMBNAIL))
+              && imageData.getFormat().equalsIgnoreCase(BlCoreConstants.THUMBNAIL))
         ).collect(Collectors.toList());
     final NotifyMeEmailRequestData emailRequestData = new NotifyMeEmailRequestData();
     emailRequestData.setEmailAddress(customer.getUid());
     emailRequestData.setProductName(productData.getName());
-    emailRequestData.setProductUrl(getRequestedURl(BlFacadesConstants.RENTAL_PDP_URL_PREFIX +productData.getCode()));
+    emailRequestData.setProductUrl(getRequestedURL(BlCoreConstants.RENTAL_PDP_URL_PREFIX +productData.getCode()));
     if (CollectionUtils.isEmpty(thumbnail)){
       emailRequestData.setProductThumbURL(StringUtils.EMPTY);
     }else{emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());}
@@ -70,11 +71,11 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
   }
 
   /**
-   * This method used to get complete url for given suffix url.
+   * This method used to get complete product url for given suffix url.
    * @param urlString
    * @return
    */
-  public String getRequestedURl(final String urlString){
+  public String getRequestedURL(final String urlString){
     return getSiteBaseUrlResolutionService()
         .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
             org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
