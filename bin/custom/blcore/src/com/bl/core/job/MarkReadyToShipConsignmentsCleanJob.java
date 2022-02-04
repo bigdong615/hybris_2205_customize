@@ -229,7 +229,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 						? blSerialProductModel.getOcLocationDetails().getLocationCategory().getCode()
 						: BlInventoryScanLoggingConstants.EMPTY_STRING;
 		if (consignment.isCleanCompleteConsignment()
-				&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(blSerialProductModel.getOcLocationDetails().getParentInventoryLocation() !=null ? blSerialProductModel.getOcLocationDetails().getParentInventoryLocation().getLocationCategory().getCode() : StringUtils.EMPTY))
+				&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase((blSerialProductModel.getOcLocationDetails() !=null && blSerialProductModel.getOcLocationDetails().getParentInventoryLocation() !=null) ? blSerialProductModel.getOcLocationDetails().getParentInventoryLocation().getLocationCategory().getCode() : StringUtils.EMPTY))
 			{
 			consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
 			modelService.save(consignment);
