@@ -64,6 +64,10 @@ public class DefaultBlStockNotificationEmailProcessor extends
   }
 
   public String getRequestedURl(String urlString){
+    final String bl = getSiteBaseUrlResolutionService()
+        .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID("BL"),
+            org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
+
     return getSiteBaseUrlResolutionService()
         .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
             org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
