@@ -1826,4 +1826,13 @@
 		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>
 
+	<alias name="defaultBlStockNotificationEmailProcessor" alias="stockNotificationEmailProcessor" />
+	<bean id="defaultBlStockNotificationEmailProcessor" class="com.bl.core.services.email.processor.impl.DefaultBlStockNotificationEmailProcessor" parent="defaultStockNotificationEmailProcessor">
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
+		<property name="productFacade" ref="productFacade"/>
+	</bean>
+
+
 </beans>

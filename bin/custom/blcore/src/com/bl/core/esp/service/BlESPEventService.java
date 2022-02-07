@@ -179,4 +179,5 @@ public interface BlESPEventService {
      * @param emailRequestData requested email required data.
      */
     void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData);
+    void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData);
 }
