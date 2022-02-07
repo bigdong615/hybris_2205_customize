@@ -57,7 +57,7 @@ public class BlGiftCardEmailEventListener extends
         getDefaultBlESPEventService().sendGiftCardPurchaseEvent(event.getGiftcard() , abstractOrderModel);
       }
       else if (isGiftCardCreatedFromBackoffice(event)) {
-        getDefaultBlESPEventService().sendFreeGiftCardPurchase(event.getGiftcard());
+        getDefaultBlESPEventService().sendFreeGiftCardPurchaseEvent(event.getGiftcard());
       }
     }
     catch (final Exception e) {
@@ -72,7 +72,7 @@ public class BlGiftCardEmailEventListener extends
    */
   private boolean isGiftCardCreatedFromBackoffice(final BlGiftCardEmailEvent event) {
     return CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) ?
-        BooleanUtils.isFalse(isGiftCardAllowedToSendESPRequest(event.getGiftcard().getOrder() ,
+        BooleanUtils.isFalse(isGiftCardPurchased(event.getGiftcard().getOrder() ,
             new AtomicReference<>()))
         : Boolean.TRUE;
   }

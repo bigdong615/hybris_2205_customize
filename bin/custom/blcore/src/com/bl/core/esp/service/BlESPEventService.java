@@ -176,7 +176,7 @@ public interface BlESPEventService {
      * This method created for Free Gift Card Purchase
      * @param giftCardModel giftCardModel
      */
-    void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel);
+    void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel);
 
     /**
      * This method created for Gift Card Purchase

@@ -957,7 +957,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param giftCardModel giftCardMovementModel
    */
   @Override
-  public void sendFreeGiftCardPurchase(final GiftCardModel giftCardModel) {
+  public void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel) {
     final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest = new FreeGiftCardPurchaseEventRequest();
     getBlFreeGiftCardPurchaseEventPopulator().populate(giftCardModel, freeGiftCardPurchaseEventRequest);
     ESPEventResponseWrapper espEventResponseWrapper = null;
@@ -966,10 +966,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
       // Call send Free Gift Card Purchase ESP Event API
       espEventResponseWrapper = getBlESPEventRestService().sendFreeGiftCardPurchase(freeGiftCardPurchaseEventRequest);
     }catch (final BlESPIntegrationException exception){
-      persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getCode(), exception.getMessage(), exception.getRequestString());
+      persistESPEventDetail(null, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(), exception.getMessage(), exception.getRequestString());
     }
     // Save send Free Gift Card Purchase ESP Event Detail
-    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,giftCardModel.getCode(),null, null);
+    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(),null, null);
 
   }
 
