@@ -1197,4 +1197,62 @@
 		</property>
 	</bean>
 
+
+	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
+	<bean class="com.bl.esp.dto.common.data.ESPEmailCommonRequestData" >
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="emailAddress" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Email_Address")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
+		<property name="requestedDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Requested_Date")</annotations>
+		</property>
+	</bean>
+
+	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
+	<bean class="com.bl.esp.dto.common.ESPEmailCommonEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.common.data.ESPEmailCommonRequestData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
+
+	<!--BL-1813:DTO for reset password email link ESP Event -->
+	<bean class="com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData" extends="com.bl.esp.dto.common.data.ESPEmailCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="passwordLink" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Password_Link")</annotations>
+		</property>
+		<property name="timeout" type="int" equals="true">
+			<annotations>@JsonProperty("Timeout")</annotations>
+		</property>
+	</bean>
+	<!--BL-1814:DTO for notify me email link ESP Event -->
+	<bean class="com.bl.esp.dto.notify.data.NotifyMeEmailRequestData" extends="com.bl.esp.dto.common.data.ESPEmailCommonRequestData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="productName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Name")</annotations>
+		</property>
+		<property name="productUrl" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_URL")</annotations>
+		</property>
+		<property name="productThumbURL" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Product_Thumb")</annotations>
+		</property>
+	</bean>
+
 </beans>

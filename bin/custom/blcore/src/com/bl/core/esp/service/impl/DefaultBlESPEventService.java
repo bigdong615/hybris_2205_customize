@@ -2,6 +2,7 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
@@ -30,6 +31,8 @@ import com.bl.core.model.BlStoredEspEventModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
@@ -111,16 +114,12 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
-  private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
-
-
-
-  private BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator;
-
-  private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
+    private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
+    private BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator;
+    private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
-
+    private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
 
     /**
      * This method created to prepare the request and response from ESP service
@@ -874,6 +873,52 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendForgotPasswordRequest(final ESPEmailCommonRequestData emailRequestData) {
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call send forgot password required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save send forgot password request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FORGOT_PASSWORD,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.FORGOT_PASSWORD,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call notify me required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save notify me email request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.NOTIFY_ME_EMAIL,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.NOTIFY_ME_EMAIL,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
+
+  /**
    * Format amount string.
    * @param amount the amount
    * @return the string
@@ -883,7 +928,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
     decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
     return decimalFormat.format(amount);
   }
-
 
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
@@ -1105,5 +1149,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderDepositRequiredRequestPopulator(
       BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
+  }
+
+  public BlESPEmailCommonRequestPopulator getBlESPEmailCommonRequestPopulator() {
+    return blESPEmailCommonRequestPopulator;
+  }
+
+  public void setBlESPEmailCommonRequestPopulator(
+      BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
+    this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
 }
