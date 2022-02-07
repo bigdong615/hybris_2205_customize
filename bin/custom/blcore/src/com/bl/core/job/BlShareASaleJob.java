@@ -87,7 +87,7 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
               isNewCustomer(abstractOrderModel) ? BlCoreConstants.ONE : BlCoreConstants.ZERO);
           if (StringUtils.isNotEmpty(customerSecureURL)) {
             url.append(BlCoreConstants.SHARE_A_SALE_URL_LINK)
-                .append(URLEncoder.encode(customerSecureURL, BlCoreConstants.SHARE_A_SALE_UTF));
+                .append(URLEncoder.encode(customerSecureURL, BlCoreConstants.DEFAULT_ENCODING));
           }
           addCouponCodeToUrl(abstractOrderModel, url);
           BlLogger
@@ -136,7 +136,7 @@ public class BlShareASaleJob extends AbstractJobPerformable<CronJobModel> {
       url.append(BlCoreConstants.SHARE_A_SALE_COUPON_CODE);
       int size= appliedCouponCodes.size();
       for (final String couponCode : appliedCouponCodes) {
-        url.append(URLEncoder.encode(couponCode, BlCoreConstants.SHARE_A_SALE_UTF));
+        url.append(URLEncoder.encode(couponCode, BlCoreConstants.DEFAULT_ENCODING));
         if(size > 1){
           size--;
           url.append(BlCoreConstants.SHARE_A_SALE_COMMA);
