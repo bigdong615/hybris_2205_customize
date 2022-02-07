@@ -121,7 +121,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
-
+    @Value("${back.in.stock.email.request.event.template.key}")
+    private String backInStockTemplate;
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -919,8 +920,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
-  @Value("${back.in.stock.email.request.event.template.key}")
-  private String backInStockTemplate;
   /**
    * {@inheritDoc}
    */

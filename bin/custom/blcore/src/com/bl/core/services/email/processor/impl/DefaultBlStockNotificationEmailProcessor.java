@@ -4,8 +4,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
 import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
-import de.hybris.platform.commercefacades.product.ProductFacade;
-import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.converters.populator.ProductPrimaryImagePopulator;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ImageDataType;
@@ -13,38 +11,38 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.stocknotificationservices.constants.StocknotificationservicesConstants;
 import de.hybris.platform.stocknotificationservices.email.processor.impl.DefaultStockNotificationEmailProcessor;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * This processor is used to provide back in stock notification email related ESP event data.
+ * @author  vijay vishwakarma
+ */
 public class DefaultBlStockNotificationEmailProcessor extends
     DefaultStockNotificationEmailProcessor {
 
   private BlESPEventService blESPEventService;
   private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
   private BaseSiteService baseSiteService;
-  private ProductFacade productFacade;
-
-  @Resource(name = "productConverter")
-  private Converter<ProductModel, ProductData> productConverter;
-
-  @Resource(name = "productPrimaryImagePopulator")
   ProductPrimaryImagePopulator populator;
 
+  /**
+   * BL:1815: This method is override to send email via ESP event rather hybris business process.
+   * @param customer
+   * @param dataMap
+   */
   @Override
   public void process(final CustomerModel customer, final Map<String, ? extends ItemModel> dataMap)
   {
     final ProductModel product = (ProductModel) dataMap.get(StocknotificationservicesConstants.PRODUCT);
     final ProductData productData = new ProductData();
-    populator.populate(product,productData);
+    getPopulator().populate(product,productData);
     final List<ImageData> thumbnail = productData.getImages().stream()
         .filter(imageData ->
             (imageData.getImageType().equals( ImageDataType.PRIMARY)
@@ -60,7 +58,12 @@ public class DefaultBlStockNotificationEmailProcessor extends
     getBlESPEventService().sendBackInStockEmailRequest(emailRequestData);
   }
 
-  public String getRequestedURL(final String urlString){
+  /**
+   * This method used to get complete product url for given suffix url.
+   * @param urlString
+   * @return
+   */
+  private String getRequestedURL(final String urlString){
     return getSiteBaseUrlResolutionService()
         .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID(BlCoreConstants.BASE_STORE_ID),
             org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
@@ -90,12 +93,13 @@ public class DefaultBlStockNotificationEmailProcessor extends
   public void setBaseSiteService(BaseSiteService baseSiteService) {
     this.baseSiteService = baseSiteService;
   }
-  public ProductFacade getProductFacade() {
-    return productFacade;
+
+  public ProductPrimaryImagePopulator getPopulator() {
+    return populator;
   }
 
-  public void setProductFacade(ProductFacade productFacade) {
-    this.productFacade = productFacade;
+  public void setPopulator(
+      ProductPrimaryImagePopulator populator) {
+    this.populator = populator;
   }
-
 }

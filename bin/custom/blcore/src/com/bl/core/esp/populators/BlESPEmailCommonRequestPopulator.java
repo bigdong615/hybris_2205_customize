@@ -11,7 +11,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * BL-1813,1814:This populator created to populate reset password and notify me email related common data.
+ * BL-1813,1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.
  * @author vijay vishwakarma
  */
 public class BlESPEmailCommonRequestPopulator implements
