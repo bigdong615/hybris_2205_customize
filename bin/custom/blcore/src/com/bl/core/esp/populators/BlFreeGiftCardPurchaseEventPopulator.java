@@ -10,7 +10,6 @@ import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +56,6 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
    * @param giftCardPurchaseData giftCardPurchaseData
    */
   private void populateGiftCardDetails(final GiftCardModel giftCardModel, final GiftCardPurchaseData giftCardPurchaseData) {
-    final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
     giftCardPurchaseData.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.FREE_GIFT_CARD_EVENT_TEMPLATE));
@@ -65,7 +63,6 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
     giftCardPurchaseData.setGiftcardcode(getRequestValue(giftCardModel.getCode()));
     giftCardPurchaseData.setCustomername(getRequestValue(giftCardModel.getName()));
     giftCardPurchaseData.setCustomeremail(getRequestValue(giftCardModel.getCustomerEmail()));
-    giftCardPurchaseData.setDatePlaced(formatter.format(giftCardModel.getCreationtime()));
   }
 
   /**
