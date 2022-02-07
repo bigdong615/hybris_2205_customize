@@ -1820,14 +1820,14 @@
 	<bean id="blOrderDepositRequiredRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
 	</bean>
-	
+
   <!--BL-1826 Gift Card Purchase ESP-->
 	<bean id="blOrderGiftCardPurchaseEventPopulator"
 		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and and back in stock email related common data.-->
+	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.-->
 	<bean id="blESPEmailCommonRequestPopulator"
 		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>

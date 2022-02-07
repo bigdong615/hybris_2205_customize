@@ -33,7 +33,7 @@ public class DefaultBlStockNotificationEmailProcessor extends
   ProductPrimaryImagePopulator populator;
 
   /**
-   * BL:1815: This method is override to send email via ESP event rather hybris business process.
+   * BL:1815: This method is override to send back in stock email via ESP event rather hybris business process.
    * @param customer
    * @param dataMap
    */

@@ -961,10 +961,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
     emailRequestData.setTemplate(backInStockTemplate);
     final ESPEventResponseWrapper espEventResponseWrapper;
     try {
-      // Call notify me required ESP Event API
+      // Call back in stock required ESP Event API
       espEventResponseWrapper = getBlESPEventRestService()
           .sendESPEmailEventRequest(emailRequiredEventRequest);
-      // Save notify me email request ESP Event Detail
+      // Save back in stock email request ESP Event Detail
       persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
           emailRequestData.getEmailAddress(), null, null);
     } catch (final BlESPIntegrationException exception) {
