@@ -25,7 +25,7 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
   private ConfigurationService configurationService;
 
   /**
-   * This method created to populate request from giftCardMovementModel
+   * This method created to populate request from giftCardModel
    * @param giftCardModel giftCardModel
    * @param freeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest
    * @throws ConversionException ConversionException
