@@ -411,11 +411,11 @@
 		<property name="dateplaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("date placed")</annotations>
 		</property>
-		<property name="status" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("status")</annotations>
+		<property name="orderstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order status")</annotations>
 		</property>
-		<property name="substatus" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Sub Status")</annotations>
+		<property name="ordersubstatus" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("order sub status")</annotations>
 		</property>
 		<property name="actualreturndate" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("actual return date")</annotations>
@@ -1198,6 +1198,49 @@
 	</bean>
 
 
+	<!-- BL-1826 Gift card Purchase Confirmation Event Request Object-->
+	<bean class="com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+		<property name="orderModel" type="de.hybris.platform.core.model.order.AbstractOrderModel" />
+	</bean>
+
+
+	<!-- Gift card Purchase Confirmation ESP-->
+	<bean class="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="subscriberid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Subscriber_ID")</annotations>
+		</property>
+		<property name="orderid" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Order_ID")</annotations>
+		</property>
+		<property name="template" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Template")</annotations>
+		</property>
+		<property name="giftcardamount" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Amount")</annotations>
+		</property>
+		<property name="giftcardcode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Code")</annotations>
+		</property>
+		<property name="customername" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer_Name")</annotations>
+		</property>
+		<property name="customeremail" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Customer_Email")</annotations>
+		</property>
+		<property name="datePlaced" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Date_Placed")</annotations>
+		</property>
+	</bean>
+
 	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
 	<bean class="com.bl.esp.dto.common.data.ESPEmailCommonRequestData" >
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
@@ -1254,5 +1297,7 @@
 			<annotations>@JsonProperty("Product_Thumb")</annotations>
 		</property>
 	</bean>
+
+
 
 </beans>

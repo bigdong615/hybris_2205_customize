@@ -1,14 +1,17 @@
 package com.bl.core.esp.service;
 
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.orderexceptions.data.OrderExceptionsExtraData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public interface BlESPEventService {
 
@@ -167,6 +170,13 @@ public interface BlESPEventService {
      *
      */
      void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
+
+    /**
+     * This method created for Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     * @param abstractOrderModel abstractOrderModel
+     */
+    void sendGiftCardPurchaseEvent(final GiftCardModel giftCardModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
 
     /**
      * This method created for reset password request ESP Event.

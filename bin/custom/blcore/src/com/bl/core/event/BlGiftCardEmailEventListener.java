@@ -1,14 +1,19 @@
 package com.bl.core.event;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.GiftCardEmailProcessModel;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
-import de.hybris.platform.processengine.BusinessProcessService;
-import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -23,24 +28,7 @@ public class BlGiftCardEmailEventListener extends
 
   private static final Logger LOGGER = Logger.getLogger(BlGiftCardEmailEventListener.class);
 
-  private ModelService modelService;
-  private BusinessProcessService businessProcessService;
-
-  protected BusinessProcessService getBusinessProcessService() {
-    return businessProcessService;
-  }
-
-  public void setBusinessProcessService(final BusinessProcessService businessProcessService) {
-    this.businessProcessService = businessProcessService;
-  }
-
-  protected ModelService getModelService() {
-    return modelService;
-  }
-
-  public void setModelService(final ModelService modelService) {
-    this.modelService = modelService;
-  }
+  private DefaultBlESPEventService defaultBlESPEventService;
 
   /**
    * It returns site channel.
@@ -62,18 +50,50 @@ public class BlGiftCardEmailEventListener extends
   protected void onSiteEvent(final BlGiftCardEmailEvent event) {
     BlLogger.logMessage(LOGGER, Level.INFO, "GiftCard Customer event listener for user: {}",
         event.getUserEmail());
-
-    final GiftCardEmailProcessModel giftCardEmailProcessModel = (GiftCardEmailProcessModel) getBusinessProcessService()
-        .createProcess(
-            BlCoreConstants.GIFT_CARD + event.getUserEmail() + BlCoreConstants.HYPHEN + System
-                .currentTimeMillis(), BlCoreConstants.GIFT_CARD_EMAIL_PROCESS);
-    giftCardEmailProcessModel.setSite(event.getSite());
-    giftCardEmailProcessModel.setLanguage(event.getLanguage());
-    giftCardEmailProcessModel.setCurrency(event.getCurrency());
-    giftCardEmailProcessModel.setStore(event.getBaseStore());
-    giftCardEmailProcessModel.setCustomerEmail(event.getUserEmail());
-    giftCardEmailProcessModel.setGiftcard(event.getGiftcard());
-    getModelService().save(giftCardEmailProcessModel);
-    getBusinessProcessService().startProcess(giftCardEmailProcessModel);
+    AtomicReference<AbstractOrderModel> abstractOrderModel = new AtomicReference<>();
+    try {
+      if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased()) &&
+          isGiftCardPurchased(event.getGiftcard().getOrder() , abstractOrderModel)) {
+        getDefaultBlESPEventService().sendGiftCardPurchaseEvent(event.getGiftcard() , abstractOrderModel);
+      }
+    }
+    catch (final Exception e) {
+      BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card Purchase event.", e);
+    }
   }
+
+
+
+  /**
+   This method is used to identify whether the gift card is purchased from storefront or not.
+   * @param order order model
+   * @param orderModel orderModel
+   * @return boolean
+   */
+  private boolean isGiftCardPurchased(final List<AbstractOrderModel> order,
+      final AtomicReference<AbstractOrderModel> orderModel) {
+    order.forEach(abstractOrderModel -> {
+      if(BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder()) && CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
+        abstractOrderModel.getEntries().forEach(abstractOrderEntryModel -> {
+          if(abstractOrderEntryModel.getProduct() instanceof BlProductModel) {
+            final BlProductModel blProductModel = (BlProductModel) abstractOrderEntryModel.getProduct();
+            if(ProductTypeEnum.GIFTCARD.getCode().equalsIgnoreCase(blProductModel.getProductType().getCode())){
+              orderModel.set(abstractOrderModel);
+            }
+          }
+        });
+      }
+    });
+      return Objects.nonNull(orderModel.get());
+  }
+
+  public DefaultBlESPEventService getDefaultBlESPEventService() {
+    return defaultBlESPEventService;
+  }
+
+  public void setDefaultBlESPEventService(
+      DefaultBlESPEventService defaultBlESPEventService) {
+    this.defaultBlESPEventService = defaultBlESPEventService;
+  }
+
 }

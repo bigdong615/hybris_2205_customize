@@ -851,8 +851,7 @@
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
-		<property name="modelService" ref="modelService" />
-		<property name="businessProcessService" ref="businessProcessService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="giftCardEmailProcessDefinitionResource"
@@ -1584,6 +1583,7 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
+		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
@@ -1819,6 +1819,12 @@
 	<!-- Order Extra Item populator ESP -->
 	<bean id="blOrderDepositRequiredRequestPopulator" parent="espEventCommonPopulator"
 		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
+	</bean>
+
+  <!--BL-1826 Gift Card Purchase ESP-->
+	<bean id="blOrderGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 
 	<!--BL-1813,BL-1814:This populator created to populate reset password and notify me email related common data.-->
