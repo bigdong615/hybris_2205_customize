@@ -3,7 +3,6 @@ package com.bl.facades.customerinterestsfacades.productinterest.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.esp.dto.notify.data.NotifyMeEmailRequestData;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.customerinterestsfacades.productinterest.BlProductInterestFacade;
 import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
 import de.hybris.platform.commercefacades.product.ProductFacade;
