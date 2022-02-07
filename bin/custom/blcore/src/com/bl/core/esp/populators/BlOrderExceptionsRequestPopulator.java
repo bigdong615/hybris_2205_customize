@@ -14,7 +14,6 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -79,8 +78,8 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setOldorderid(StringUtils.EMPTY);
     orderExceptionsData.setTemplate(getRequestValue(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_EXCEPTION_EVENT_TEMPLATE)));
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
-    orderExceptionsData.setStatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
-    orderExceptionsData.setSubstatus(getSubStatusFromOrder(orderModel));
+    orderExceptionsData.setOrderstatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
+    orderExceptionsData.setOrdersubstatus(getSubStatusFromOrder(orderModel));
     if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
         orderModel.isGiftCardOrder())) {
       orderExceptionsData
