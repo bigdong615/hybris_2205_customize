@@ -2,6 +2,10 @@
 
 
 $lang=en
+
+INSERT_UPDATE RuleGroup ; code[unique=true] ;
+                        ;blnonstackablePromotionRuleGroup              ;
+
 INSERT_UPDATE RuleConditionDefinitionCategory;id[unique=true];name[lang=$lang];priority;
                                              ;product;Product;1000;
 INSERT_UPDATE RuleConditionDefinition;id[unique=true]  ;name[lang=$lang];breadcrumb[lang=$lang]                      ;priority;allowsChildren;translatorId                ;translatorParameters;categories(id)
