@@ -176,7 +176,7 @@ public interface BlESPEventService {
      * @param giftCardModel giftCardModel
      * @param abstractOrderModel abstractOrderModel
      */
-    void sendGiftCardPurchase(final GiftCardModel giftCardModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
+    void sendGiftCardPurchaseEvent(final GiftCardModel giftCardModel , final AtomicReference<AbstractOrderModel> abstractOrderModel);
 
     /**
      * This method created for reset password request ESP Event.

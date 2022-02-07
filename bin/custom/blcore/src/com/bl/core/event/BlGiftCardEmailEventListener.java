@@ -53,24 +53,24 @@ public class BlGiftCardEmailEventListener extends
     AtomicReference<AbstractOrderModel> abstractOrderModel = new AtomicReference<>();
     try {
       if(CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) && BooleanUtils.isTrue(event.getGiftcard().getIsPurchased()) &&
-          isGiftCardAllowedToSendESPRequest(event.getGiftcard().getOrder() , abstractOrderModel)) {
-        getDefaultBlESPEventService().sendGiftCardPurchase(event.getGiftcard() , abstractOrderModel);
+          isGiftCardPurchased(event.getGiftcard().getOrder() , abstractOrderModel)) {
+        getDefaultBlESPEventService().sendGiftCardPurchaseEvent(event.getGiftcard() , abstractOrderModel);
       }
     }
     catch (final Exception e) {
-      BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card event.", e);
+      BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card Purchase event.", e);
     }
   }
 
 
 
   /**
-   * This method created to get whether the order purchased through storefront
+   This method is used to identify whether the gift card is purchased from storefront or not.
    * @param order order model
    * @param orderModel orderModel
    * @return boolean
    */
-  private boolean isGiftCardAllowedToSendESPRequest(final List<AbstractOrderModel> order,
+  private boolean isGiftCardPurchased(final List<AbstractOrderModel> order,
       final AtomicReference<AbstractOrderModel> orderModel) {
     order.forEach(abstractOrderModel -> {
       if(BooleanUtils.isTrue(abstractOrderModel.isGiftCardOrder()) && CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {

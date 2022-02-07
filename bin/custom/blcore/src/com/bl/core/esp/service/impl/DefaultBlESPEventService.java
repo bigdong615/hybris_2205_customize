@@ -883,7 +883,7 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * @param giftCardModel giftCardMovementModel
    */
   @Override
-  public void sendGiftCardPurchase(final GiftCardModel giftCardModel ,
+  public void sendGiftCardPurchaseEvent(final GiftCardModel giftCardModel ,
       final AtomicReference<AbstractOrderModel> abstractOrderModel) {
       final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
       giftCardPurchaseEventRequest.setOrderModel(abstractOrderModel.get());
@@ -895,10 +895,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
         // Call send Gift Card Purchase ESP Event API
         espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
       }catch (final BlESPIntegrationException exception){
-        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_MOVEMENT,abstractOrderModel.get().getCode(), exception.getMessage(), exception.getRequestString());
+        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_PURCHASE,abstractOrderModel.get().getCode(), exception.getMessage(), exception.getRequestString());
       }
       // Save send Gift Card Purchase ESP Event Detail
-      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_MOVEMENT,abstractOrderModel.get().getCode(),null, null);
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_PURCHASE,abstractOrderModel.get().getCode(),null, null);
 
   }
 
