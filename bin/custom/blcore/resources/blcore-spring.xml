@@ -526,7 +526,10 @@
 
 	<!--BL-30 : This is created to override register method and disable registration email. -->
 	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
-	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService">
+	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+	</bean>
 
 
 	<!--This is created for override OOB classes to get the media to be indexed to solr -->
@@ -1582,6 +1585,7 @@
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
 		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
 		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
+		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
 
@@ -1828,6 +1832,11 @@
 	<bean id="blFreeGiftCardPurchaseEventPopulator"
 		class="com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator" >
 		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-1813,BL-1814:This populator created to populate reset password and notify me email related common data.-->
+	<bean id="blESPEmailCommonRequestPopulator"
+		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>
 
 </beans>

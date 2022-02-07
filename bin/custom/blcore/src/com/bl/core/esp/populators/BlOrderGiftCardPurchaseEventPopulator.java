@@ -42,10 +42,10 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
 
     final UserModel userModel = giftCardModel.getCustomer();
     if (Objects.nonNull(userModel)) {
-      giftCardPurchaseEventRequest.setContactKey(getRequestValue(userModel.getUid()));
+      giftCardPurchaseEventRequest.setContactKey(getObjectValue(userModel.getUid()));
     }
     giftCardPurchaseEventRequest
-        .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
+        .setEventDefinitionKey(getObjectValue(getConfigurationService().getConfiguration().
             getString(BlCoreConstants.ORDER_GIFT_CARD_EVENT_DEFINITION_KEY)));
      final GiftCardPurchaseData giftCardPurchaseData = new GiftCardPurchaseData();
      populateGiftCardDetails(giftCardModel , giftCardPurchaseData , giftCardPurchaseEventRequest.getOrderModel());
@@ -62,23 +62,24 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
   private void populateGiftCardDetails(final GiftCardModel giftCardModel,
       final GiftCardPurchaseData giftCardPurchaseData, final AbstractOrderModel abstractOrderModel) {
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
-    giftCardPurchaseData.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
+    giftCardPurchaseData.setSubscriberid(
+        getObjectValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
     giftCardPurchaseData.setOrderid(abstractOrderModel.getCode());
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_GIFT_CARD_EVENT_TEMPLATE));
     giftCardPurchaseData.setGiftcardamount(formatAmount(giftCardModel.getAmount()));
-    giftCardPurchaseData.setGiftcardcode(getRequestValue(giftCardModel.getCode()));
-    giftCardPurchaseData.setCustomername(getRequestValue(giftCardModel.getName()));
-    giftCardPurchaseData.setCustomeremail(getRequestValue(giftCardModel.getCustomerEmail()));
+    giftCardPurchaseData.setGiftcardcode(getObjectValue(giftCardModel.getCode()));
+    giftCardPurchaseData.setCustomername(getObjectValue(giftCardModel.getName()));
+    giftCardPurchaseData.setCustomeremail(getObjectValue(giftCardModel.getCustomerEmail()));
     giftCardPurchaseData.setDatePlaced(formatter.format(abstractOrderModel.getDate()));
   }
 
   /**
-     * To get the request value based
+     * To get value and return value empty if empty
      * @param value value get from order
      * @return value to set on request
      */
-    protected String getRequestValue(final String value){
+    protected String getObjectValue(final String value){
       return StringUtils.isBlank(value) ? StringUtils.EMPTY :value;
     }
 
