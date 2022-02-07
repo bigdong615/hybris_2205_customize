@@ -6,6 +6,7 @@ import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
 import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -214,6 +215,14 @@ public interface BlESPEventRestService {
       final OrderDepositRequiredEventRequest orderDepositRequiredEventRequest);
 
   /**
+   * Send Gift Card Purchase by calling Gift Card Purchase ESP Event API
+   * @param giftCardPurchaseEventRequest giftCardPurchaseEventRequest
+   * @return ESPEventResponseWrapper
+   */
+  ESPEventResponseWrapper sendGiftCardPurchase(
+      final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest);
+
+   /**
    * BL-1813,1814: send email request ESP Event API
    * @param  emailRequiredEventRequest emailRequiredEventRequest
    * @return espEventResponseWrapper
