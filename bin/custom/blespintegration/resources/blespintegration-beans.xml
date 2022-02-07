@@ -1219,7 +1219,7 @@
 			<annotations>@JsonProperty("Subscriber_ID")</annotations>
 		</property>
 		<property name="orderid" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Order ID")</annotations>
+			<annotations>@JsonProperty("Order_ID")</annotations>
 		</property>
 		<property name="template" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Template")</annotations>
@@ -1237,7 +1237,7 @@
 			<annotations>@JsonProperty("Customer_Email")</annotations>
 		</property>
 		<property name="datePlaced" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("Date Placed")</annotations>
+			<annotations>@JsonProperty("Date_Placed")</annotations>
 		</property>
 
 	</bean>
