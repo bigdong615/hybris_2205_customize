@@ -43,10 +43,7 @@ public class DefaultBlStockNotificationEmailProcessor extends
   public void process(final CustomerModel customer, final Map<String, ? extends ItemModel> dataMap)
   {
     final ProductModel product = (ProductModel) dataMap.get(StocknotificationservicesConstants.PRODUCT);
-
-    /*final ProductData productData = productFacade.getProductForCodeAndOptions(product.getCode(),
-        Arrays.asList(ProductOption.BASIC, ProductOption.IMAGES));*/
-    final ProductData productData = new ProductData();//productConverter.convert(product);
+    final ProductData productData = new ProductData();
     populator.populate(product,productData);
     final List<ImageData> thumbnail = productData.getImages().stream()
         .filter(imageData ->
@@ -56,20 +53,16 @@ public class DefaultBlStockNotificationEmailProcessor extends
     final NotifyMeEmailRequestData emailRequestData = new NotifyMeEmailRequestData();
     emailRequestData.setEmailAddress(customer.getUid());
     emailRequestData.setProductName(product.getName());
-    emailRequestData.setProductUrl(getRequestedURl(BlCoreConstants.RENTAL_PDP_URL_PREFIX +product.getCode()));
+    emailRequestData.setProductUrl(getRequestedURL(BlCoreConstants.RENTAL_PDP_URL_PREFIX +product.getCode()));
     if (CollectionUtils.isEmpty(thumbnail)){
       emailRequestData.setProductThumbURL(StringUtils.EMPTY);
     }else{emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());}
     getBlESPEventService().sendBackInStockEmailRequest(emailRequestData);
   }
 
-  public String getRequestedURl(String urlString){
-    final String bl = getSiteBaseUrlResolutionService()
-        .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID("BL"),
-            org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
-
+  public String getRequestedURL(final String urlString){
     return getSiteBaseUrlResolutionService()
-        .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
+        .getWebsiteUrlForSite(getBaseSiteService().getBaseSiteForUID(BlCoreConstants.BASE_STORE_ID),
             org.apache.commons.lang.StringUtils.EMPTY, Boolean.TRUE, urlString);
   }
 
