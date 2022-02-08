@@ -298,17 +298,17 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
           entryModel.getProduct() instanceof BlSerialProductModel ? getSerialProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
       if (Objects.nonNull(entryModel.getBasePrice())) {
-        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, String.valueOf(entryModel.getBasePrice().doubleValue()));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, formatAmount(entryModel.getBasePrice()));
       }
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
-          String.valueOf(getDamageWaiverPriceFromEntry(entryModel)));
+          formatAmount(getDamageWaiverPriceFromEntry(entryModel)));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
-          String.valueOf(getDoubleValueForRequest(entryModel.getTotalPrice())));
+         formatAmount(getDoubleValueForRequest(entryModel.getTotalPrice())));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY,
           String.valueOf(entryModel.getQuantity()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX,
-          String.valueOf(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0 :entryModel.getAvalaraLineTax())));
+          formatAmount(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0.0 :entryModel.getAvalaraLineTax())));
     }
 
 
