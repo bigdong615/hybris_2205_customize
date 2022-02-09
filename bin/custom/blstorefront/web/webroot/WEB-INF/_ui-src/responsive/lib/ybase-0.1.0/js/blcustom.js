@@ -1035,7 +1035,7 @@ function startUsedGearCartTimer() {
 
 	function onGiftCardCloseModal()
 	{
-		$("#closeGiftCardModal , #cancelGiftCardModal").on("click", function(event){
+		$("#closeGiftCardModal , #cancelGiftCardModal ,#closeGiftCardModelWhenMixedCartError").on("click", function(event){
 			event.preventDefault();
 			var doReload = $("#doReload").val();
 			if(doReload === 'true')
