@@ -41,6 +41,7 @@ public class BlESPEmailCommonRequestPopulator implements
          emailRequestData.setRequestedDate(formatTime.format(new Date()));
          emailRequiredESPEventRequest.setData(emailRequestData);
          emailRequiredESPEventRequest.setContactKey(emailRequestData.getEmailAddress());
+         emailRequestData.setEmailAddress(subscriberId);
           if(emailRequestData instanceof NotifyMeEmailRequestData) {
             emailRequestData.setTemplate(notifyMeTemplate);
             emailRequiredESPEventRequest.setEventDefinitionKey(notifyMeEventDefinitionKey);
