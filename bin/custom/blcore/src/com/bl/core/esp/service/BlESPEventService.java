@@ -9,6 +9,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -201,5 +202,5 @@ public interface BlESPEventService {
      * This method created for sending back in stock notification email related esp Event.
      * @param emailRequestData requested email required data.
      */
-    void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData);
+    void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
 }
