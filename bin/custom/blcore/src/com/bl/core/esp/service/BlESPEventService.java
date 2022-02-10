@@ -201,6 +201,7 @@ public interface BlESPEventService {
     /**
      * This method created for sending back in stock notification email related esp Event.
      * @param emailRequestData requested email required data.
+     * @param requestedDate requestedDate
      */
     void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
 }
