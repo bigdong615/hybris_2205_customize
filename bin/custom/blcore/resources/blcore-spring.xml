@@ -1584,6 +1584,7 @@
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
 		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
+		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
 		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
@@ -1826,6 +1827,13 @@
 		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
 		<property name="configurationService" ref="configurationService" />
 	</bean>
+
+	<!--BL-1827 Free Gift Card Purchase ESP-->
+	<bean id="blFreeGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
 
 	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.-->
 	<bean id="blESPEmailCommonRequestPopulator"

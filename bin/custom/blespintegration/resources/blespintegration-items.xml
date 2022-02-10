@@ -39,6 +39,7 @@
 					<value code="GIFT_CARD_PURCHASE" />
 				<value code="FORGOT_PASSWORD"/>
 				<value code="NOTIFY_ME_EMAIL"/>
+				<value code="FREE_GIFT_CARD_PURCHASE" />
         <value code="BACK_IN_STOCK_EMAIL"/>
 			</enumtype>
 			<enumtype generate="true" code="ESPEventStatus" autocreate="true" dynamic="true">

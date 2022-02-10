@@ -171,6 +171,13 @@ public interface BlESPEventService {
      */
      void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
 
+
+    /**
+     * This method created for Free Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     */
+    void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel);
+
     /**
      * This method created for Gift Card Purchase
      * @param giftCardModel giftCardModel

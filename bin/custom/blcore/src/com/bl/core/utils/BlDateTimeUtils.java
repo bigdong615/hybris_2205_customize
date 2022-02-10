@@ -10,6 +10,8 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -29,6 +31,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -890,4 +893,16 @@ public final class BlDateTimeUtils
 				|| localDate.getDayOfWeek() == DayOfWeek.SUNDAY
 				|| listOfBlackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck));
 	}
+
+	/**
+	 * This method created to format the amount for double
+	 * @param amount the amount
+	 * @return the string
+	 */
+	public static String formatAmount(final Double amount) {
+		final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
+		decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
+		return decimalFormat.format(amount);
+	}
+
 }

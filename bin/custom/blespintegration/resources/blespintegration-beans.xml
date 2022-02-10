@@ -1298,6 +1298,14 @@
 		</property>
 	</bean>
 
-
+	<!--BL-1827 ESP - Free Gift Card Confirmation Email-->
+	<bean class="com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest"  extends="com.bl.esp.order.ESPEventCommonRequest">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="data" type="com.bl.esp.dto.giftcard.data.GiftCardPurchaseData" equals="true">
+			<annotations>@JsonProperty("data")</annotations>
+		</property>
+	</bean>
 
 </beans>
