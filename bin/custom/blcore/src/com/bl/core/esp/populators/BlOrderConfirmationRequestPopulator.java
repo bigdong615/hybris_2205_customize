@@ -5,6 +5,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.orderconfirmation.OrderConfirmationEventRequest;
 import com.bl.esp.dto.orderconfirmation.data.OrderConfirmationData;
 import com.bl.esp.exception.BlESPIntegrationException;
@@ -95,13 +96,13 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setShippingmethodtext(getRequestValue(delivery.getName()));
         }
         data.setTrackinginfo(StringUtils.EMPTY);
-        data.setItemcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
-        data.setDamagewaivercost(formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
-        data.setSubtotal(formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
-        data.setShippingamount(formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
-        data.setTaxamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
-        data.setDiscountamount(formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
-        data.setTotalcost(formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
+        data.setItemcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
+        data.setDamagewaivercost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDamageWaiverCost())));
+        data.setSubtotal(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getSubtotal())));
+        data.setShippingamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getDeliveryCost())));
+        data.setTaxamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalTax())));
+        data.setDiscountamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
+        data.setTotalcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
         data.setDiscounttext(StringUtils.EMPTY);
         if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
@@ -120,7 +121,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
           data.setPaymenttype(BlCoreConstants.PO);
         }
         data.setPaymenttext(StringUtils.EMPTY);
-        data.setExtensiontotal(formatAmount(0.0));
+        data.setExtensiontotal(BlDateTimeUtils.formatAmount(0.0));
         data.setVerificationlevel(Objects.isNull(orderModel.getVerificationLevel()) ? BlCoreConstants.VERIFICATION_LEVEL_ZERO : orderModel.getVerificationLevel());
         data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
@@ -296,17 +297,17 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_PRODUCT_PHOTO,
           entryModel.getProduct() instanceof BlSerialProductModel ? getSerialProductUrl(entryModel.getProduct().getCode()) : getProductURL(entryModel));
       if (Objects.nonNull(entryModel.getBasePrice())) {
-        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, formatAmount(entryModel.getBasePrice()));
+        createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_RENTAL_PRICE, BlDateTimeUtils.formatAmount(entryModel.getBasePrice()));
       }
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_PRICE,
-          formatAmount(getDamageWaiverPriceFromEntry(entryModel)));
+          BlDateTimeUtils.formatAmount(getDamageWaiverPriceFromEntry(entryModel)));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_DAMAGE_WAIVER_TEXT, getDamageWaiverName(entryModel));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.ORDER_ITEM_TOTAL_PRICE,
-         formatAmount(getDoubleValueForRequest(entryModel.getTotalPrice())));
+          BlDateTimeUtils.formatAmount(getDoubleValueForRequest(entryModel.getTotalPrice())));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.QUANTITY,
           String.valueOf(entryModel.getQuantity()));
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItem, BlCoreConstants.TAX,
-          formatAmount(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0.0 :entryModel.getAvalaraLineTax())));
+          BlDateTimeUtils.formatAmount(getDoubleValueForRequest(Objects.isNull(entryModel.getAvalaraLineTax()) ? 0.0 :entryModel.getAvalaraLineTax())));
     }
 
 
