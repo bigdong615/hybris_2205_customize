@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ * BL1815: This tread class was created to provide custom implementation of run method.
+ * @author vijay vishwakarma.
+ */
 public class BlStockNotificationTask extends StockNotificationTask {
 
   private final NotificationService notificationService;
