@@ -56,12 +56,26 @@ public class BlGiftCardEmailEventListener extends
           isGiftCardPurchased(event.getGiftcard().getOrder() , abstractOrderModel)) {
         getDefaultBlESPEventService().sendGiftCardPurchaseEvent(event.getGiftcard() , abstractOrderModel);
       }
+      else if (isGiftCardCreatedFromBackoffice(event)) {
+        getDefaultBlESPEventService().sendFreeGiftCardPurchaseEvent(event.getGiftcard());
+      }
     }
     catch (final Exception e) {
       BlLogger.logMessage(LOGGER, Level.ERROR, "Failed to trigger Gift Card Purchase event.", e);
     }
   }
 
+  /**
+   * This method created to check whether the gift card created from backoffice user
+   * @param event event
+   * @return boolean
+   */
+  private boolean isGiftCardCreatedFromBackoffice(final BlGiftCardEmailEvent event) {
+    return CollectionUtils.isNotEmpty(event.getGiftcard().getOrder()) ?
+        BooleanUtils.isFalse(isGiftCardPurchased(event.getGiftcard().getOrder() ,
+            new AtomicReference<>()))
+        : Boolean.TRUE;
+  }
 
 
   /**
