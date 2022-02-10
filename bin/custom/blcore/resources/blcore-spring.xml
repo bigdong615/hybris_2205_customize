@@ -1827,9 +1827,17 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<!--BL-1813,BL-1814:This populator created to populate reset password and notify me email related common data.-->
+	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.-->
 	<bean id="blESPEmailCommonRequestPopulator"
 		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
 	</bean>
 
+	<!--BL-1815: This processor is used to provide back in stock notification email related ESP event data.-->
+	<alias name="defaultBlStockNotificationEmailProcessor" alias="stockNotificationEmailProcessor" />
+	<bean id="defaultBlStockNotificationEmailProcessor" class="com.bl.core.services.email.processor.impl.DefaultBlStockNotificationEmailProcessor" parent="defaultStockNotificationEmailProcessor">
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
+		<property name="populator" ref="productPrimaryImagePopulator"/>
+	</bean>
 </beans>
