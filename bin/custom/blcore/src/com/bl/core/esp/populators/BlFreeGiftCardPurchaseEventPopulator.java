@@ -2,6 +2,7 @@ package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.data.GiftCardPurchaseData;
 import de.hybris.platform.converters.Populator;
@@ -40,10 +41,10 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
 
     final UserModel userModel = giftCardModel.getCustomer();
     if (Objects.nonNull(userModel)) {
-      freeGiftCardPurchaseEventRequest.setContactKey(getRequestValue(userModel.getUid()));
+      freeGiftCardPurchaseEventRequest.setContactKey(getObjectValue(userModel.getUid()));
     }
     freeGiftCardPurchaseEventRequest
-        .setEventDefinitionKey(getRequestValue(getConfigurationService().getConfiguration().
+        .setEventDefinitionKey(getObjectValue(getConfigurationService().getConfiguration().
             getString(BlCoreConstants.ORDER_GIFT_CARD_EVENT_DEFINITION_KEY)));
     final GiftCardPurchaseData giftCardPurchaseData = new GiftCardPurchaseData();
     populateGiftCardDetails(giftCardModel , giftCardPurchaseData);
@@ -56,34 +57,26 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
    * @param giftCardPurchaseData giftCardPurchaseData
    */
   private void populateGiftCardDetails(final GiftCardModel giftCardModel, final GiftCardPurchaseData giftCardPurchaseData) {
-    giftCardPurchaseData.setSubscriberid(getRequestValue(getConfigurationService().getConfiguration().
+    giftCardPurchaseData.setSubscriberid(
+        getObjectValue(getConfigurationService().getConfiguration().
         getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.FREE_GIFT_CARD_EVENT_TEMPLATE));
-    giftCardPurchaseData.setGiftcardamount(formatAmount(giftCardModel.getAmount()));
-    giftCardPurchaseData.setGiftcardcode(getRequestValue(giftCardModel.getCode()));
-    giftCardPurchaseData.setCustomername(getRequestValue(giftCardModel.getName()));
-    giftCardPurchaseData.setCustomeremail(getRequestValue(giftCardModel.getCustomerEmail()));
+    giftCardPurchaseData.setGiftcardamount(BlDateTimeUtils.formatAmount(giftCardModel.getAmount()));
+    giftCardPurchaseData.setGiftcardcode(getObjectValue(giftCardModel.getCode()));
+    giftCardPurchaseData.setCustomername(getObjectValue(giftCardModel.getName()));
+    giftCardPurchaseData.setCustomeremail(getObjectValue(giftCardModel.getCustomerEmail()));
   }
 
   /**
-   * To get the request value based
+   * To get value and return value empty if empty
    * @param value value get from order
    * @return value to set on request
    */
-  protected String getRequestValue(final String value){
+  protected String getObjectValue(final String value){
     return StringUtils.isBlank(value) ? StringUtils.EMPTY :value;
   }
 
-  /**
-   * This method created to format the amount for double
-   * @param amount the amount
-   * @return the string
-   */
-  protected String formatAmount(final Double amount) {
-    final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
-    decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
-    return decimalFormat.format(amount);
-  }
+
 
   public ConfigurationService getConfigurationService() {
     return configurationService;
