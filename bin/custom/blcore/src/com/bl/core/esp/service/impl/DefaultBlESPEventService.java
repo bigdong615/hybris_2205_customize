@@ -92,6 +92,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -129,7 +130,8 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
     private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
-
+    @Value("${back.in.stock.email.request.event.template.key}")
+    private String backInStockTemplate;
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -974,6 +976,29 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    emailRequestData.setTemplate(backInStockTemplate);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call back in stock required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save back in stock email request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
   /**
    * Format amount string.
    * @param amount the amount
