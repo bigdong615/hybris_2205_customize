@@ -59,10 +59,10 @@ public class DefaultBlStockNotificationEmailProcessor extends
     }else{emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());}
     final ProductInterestModel productInterestModel = (ProductInterestModel) dataMap
         .get(StocknotificationservicesConstants.PRODUCT_INTEREST);
-    if(productInterestModel!=null){
-      getBlESPEventService().sendBackInStockEmailRequest(emailRequestData,productInterestModel.getCreationtime());
-    }else {
+    if(productInterestModel == null){
       getBlESPEventService().sendBackInStockEmailRequest(emailRequestData,new Date());
+    }else {
+      getBlESPEventService().sendBackInStockEmailRequest(emailRequestData,productInterestModel.getCreationtime());
     }
 
   }
