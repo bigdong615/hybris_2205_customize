@@ -240,7 +240,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	}
 
   /**
-   * This method is used to check is shipping cart or not 
+   * This method is used to check the shipping cart location 
 	 * @param blSerialProductModel
 	 * @return
 	 */
@@ -256,12 +256,13 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 */
 	private String getLocationCategoryCodeFromSerial(final BlSerialProductModel blSerialProductModel)
 	{
-		if(blSerialProductModel.getOcLocationDetails() !=null)
+		if(blSerialProductModel.getOcLocationDetails() ==null)
 		{
-		 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
-		 return parentInventoryLocation ==null ? StringUtils.EMPTY : parentInventoryLocation.getLocationCategory().getCode();
+			return StringUtils.EMPTY;
 		}
-	return StringUtils.EMPTY;
+	 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
+	 return parentInventoryLocation ==null ? StringUtils.EMPTY : parentInventoryLocation.getLocationCategory().getCode();
+
 }
 
 /**
