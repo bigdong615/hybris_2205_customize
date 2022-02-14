@@ -89,7 +89,28 @@
                                                                 <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
                                                           </c:when>
                                                           <c:when test="${productReference.target.isUpcoming}">
-                                                               <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
+                                                               <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                                                                                                  <a href="#" class="btn btn-primary js-login-popup"   data-link="<c:url value='/login/loginpopup'/>"
+                                                                                                     data-bs-toggle="modal"  data-bs-target="#signIn">
+                                                                                                     <spring:theme code="text.get.notified" />
+                                                                                                  </a>
+                                                                                               </sec:authorize>
+                                                                                               <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                                                                                                  <c:choose>
+                                                                                                     <c:when test="${productReference.target.isWatching}">
+                                                                                                        <a href="#" class="btn btn-primary removeInterestbtn"  data-box-title="${colorBoxTitle}"
+                                                                                                           data-box-productcode="${productReference.target.code}" data-bs-toggle="modal"
+                                                                                                           data-bs-target="#getNotified"><spring:theme code="text.remove.notified.button.text"/></a>
+                                                                                                     </c:when>
+                                                                                                     <c:otherwise>
+                                                                                                        <a href="#" class="btn btn-primary arrival-notification"  data-box-title="${colorBoxTitle}"
+                                                                                                              data-box-productcode="${productReference.target.code}" data-bs-toggle="modal"
+                                                                                                              data-bs-target="#getNotified">
+                                                                                                              <spring:theme code="text.get.notified" />
+                                                                                                           </a>
+                                                                                                        </c:otherwise>
+                                                                                                  </c:choose>
+                                                                                               </sec:authorize>
                                                           </c:when>
                                                            <c:otherwise>
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
