@@ -526,7 +526,10 @@
 
 	<!--BL-30 : This is created to override register method and disable registration email. -->
 	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
-	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService">
+	<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+	</bean>
 
 
 	<!--This is created for override OOB classes to get the media to be indexed to solr -->
@@ -848,8 +851,7 @@
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
-		<property name="modelService" ref="modelService" />
-		<property name="businessProcessService" ref="businessProcessService" />
+		<property name="defaultBlESPEventService" ref="blEspEventService" />
 	</bean>
 
 	<bean id="giftCardEmailProcessDefinitionResource"
@@ -1581,6 +1583,9 @@
 		<property name="modelService" ref="modelService"/>
 		<property name="blOrderManualAllocationRequestPopulator" ref="blOrderManualAllocationRequestPopulator"/>
 		<property name="blOrderDepositRequiredRequestPopulator" ref="blOrderDepositRequiredRequestPopulator"/>
+		<property name="blOrderGiftCardPurchaseEventPopulator" ref="blOrderGiftCardPurchaseEventPopulator"/>
+		<property name="blFreeGiftCardPurchaseEventPopulator" ref="blFreeGiftCardPurchaseEventPopulator"/>
+		<property name="blESPEmailCommonRequestPopulator" ref="blESPEmailCommonRequestPopulator"/>
 	</bean>
 
 
@@ -1817,4 +1822,30 @@
 		class="com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator">
 	</bean>
 
+  <!--BL-1826 Gift Card Purchase ESP-->
+	<bean id="blOrderGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--BL-1827 Free Gift Card Purchase ESP-->
+	<bean id="blFreeGiftCardPurchaseEventPopulator"
+		class="com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+
+	<!--BL-1813,BL-1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.-->
+	<bean id="blESPEmailCommonRequestPopulator"
+		class="com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator">
+	</bean>
+
+	<!--BL-1815: This processor is used to provide back in stock notification email related ESP event data.-->
+	<alias name="defaultBlStockNotificationEmailProcessor" alias="stockNotificationEmailProcessor" />
+	<bean id="defaultBlStockNotificationEmailProcessor" class="com.bl.core.services.email.processor.impl.DefaultBlStockNotificationEmailProcessor" parent="defaultStockNotificationEmailProcessor">
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="blESPEventService" ref="blEspEventService"/>
+		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
+		<property name="populator" ref="productPrimaryImagePopulator"/>
+	</bean>
 </beans>

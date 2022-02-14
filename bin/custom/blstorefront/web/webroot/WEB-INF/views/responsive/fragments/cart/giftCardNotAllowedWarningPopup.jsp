@@ -14,7 +14,7 @@
            <div class="modal-content">
              <div class="modal-header">
                <h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
-               <button id="closeUsedCartModal" type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+               <button id="closeGiftCardModelWhenMixedCartError" type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
              </div>
              <div class="modal-body">
                  <c:choose>
