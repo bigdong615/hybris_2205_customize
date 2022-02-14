@@ -203,7 +203,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * This method is used to update the consignment status for clean shipping cart
 	 * @param consignment
 	 */
-	private void updateConsignmentStatusForShippingCart(ConsignmentModel consignment)
+	private void updateConsignmentStatusForShippingCart(final ConsignmentModel consignment)
 	{
 		for (final ConsignmentEntryModel entryModel : consignment.getConsignmentEntries())
 		{
@@ -222,7 +222,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * @param consignment
 	 * @param productModel
 	 */
-	private void markConsignmentToReadyToShip(ConsignmentModel consignment, final BlProductModel productModel)
+	private void markConsignmentToReadyToShip(final ConsignmentModel consignment, final BlProductModel productModel)
 	{
 		final BlSerialProductModel blSerialProductModel = ((BlSerialProductModel) productModel);
 		final String locationCode = null != blSerialProductModel.getOcLocationDetails()
@@ -244,7 +244,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * @param blSerialProductModel
 	 * @return
 	 */
-	private boolean isShippingCartLocation(BlSerialProductModel blSerialProductModel)
+	private boolean isShippingCartLocation(final BlSerialProductModel blSerialProductModel)
 	{
 		return BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(getLocationCategoryCodeFromSerial(blSerialProductModel));
 	}
@@ -254,12 +254,12 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * @param blSerialProductModel
 	 * @return
 	 */
-	private String getLocationCategoryCodeFromSerial(BlSerialProductModel blSerialProductModel)
+	private String getLocationCategoryCodeFromSerial(final BlSerialProductModel blSerialProductModel)
 	{
 		if(blSerialProductModel.getOcLocationDetails() !=null)
 		{
 		 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
-		 return parentInventoryLocation !=null ? parentInventoryLocation.getLocationCategory().getCode() : StringUtils.EMPTY;
+		 return parentInventoryLocation ==null ? StringUtils.EMPTY : parentInventoryLocation.getLocationCategory().getCode();
 		}
 	return StringUtils.EMPTY;
 }
