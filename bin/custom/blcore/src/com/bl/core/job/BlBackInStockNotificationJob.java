@@ -3,13 +3,15 @@ package com.bl.core.job;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.customerinterestsservices.model.ProductInterestModel;
 import de.hybris.platform.stocknotificationservices.cronjob.StockLevelStatusJob;
+import de.hybris.platform.stocknotificationservices.cronjob.StockNotificationTask;
 import de.hybris.platform.store.BaseStoreModel;
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * @author vijay vishwakarma
@@ -44,5 +46,10 @@ public class BlBackInStockNotificationJob extends StockLevelStatusJob {
         return hasActiveSerialProduct;
     }
 
+    @Override
+    protected StockNotificationTask createTask(final Map<String, ItemModel> data)
+    {
+        return new BlStockNotificationTask(getNotificationService(), modelService, data);
+    }
 
 }
