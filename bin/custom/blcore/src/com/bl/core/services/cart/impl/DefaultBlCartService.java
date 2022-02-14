@@ -16,7 +16,6 @@ import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;

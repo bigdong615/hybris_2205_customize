@@ -33,7 +33,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -47,6 +46,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
 	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
 	private static final String TIMER = "timer";
+	private static final Integer BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS = 8;
 
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
@@ -433,7 +433,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_ABANDONED_CARTS);
 		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
-		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer()) + 8);
+		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer()) + BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<CartModel> carts = result.getResult();
 		if (CollectionUtils.isEmpty(carts)) {

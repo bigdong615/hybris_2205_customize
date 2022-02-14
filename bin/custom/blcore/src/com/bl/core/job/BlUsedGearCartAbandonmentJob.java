@@ -8,8 +8,6 @@ import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.cronjob.model.CronJobModel;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
-
-import com.bl.core.model.BlStockCreationCronJobModel;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -19,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public class BlUsedGearCartAbandonmentJob extends AbstractJobPerformable<CronJobModel> {
 
-	private static final Logger LOG = Logger.getLogger(BlAutomatedStockCreationJob.class);
+	private static final Logger LOG = Logger.getLogger(BlUsedGearCartAbandonmentJob.class);
 
 	private BlUsedGearCartCleanService blUsedGearCartCleanService;
 
