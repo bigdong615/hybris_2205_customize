@@ -57,9 +57,7 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
    * @param giftCardPurchaseData giftCardPurchaseData
    */
   private void populateGiftCardDetails(final GiftCardModel giftCardModel, final GiftCardPurchaseData giftCardPurchaseData) {
-    giftCardPurchaseData.setSubscriberid(
-        getObjectValue(getConfigurationService().getConfiguration().
-        getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
+    giftCardPurchaseData.setSubscriberid(getObjectValue(giftCardModel.getCustomerEmail()));
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.FREE_GIFT_CARD_EVENT_TEMPLATE));
     giftCardPurchaseData.setGiftcardamount(BlDateTimeUtils.formatAmount(giftCardModel.getAmount()));
     giftCardPurchaseData.setGiftcardcode(getObjectValue(giftCardModel.getCode()));
