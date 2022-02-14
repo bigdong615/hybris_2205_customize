@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * BL-1815: This Thread class was created to provide custom implementation of run method.
+ * BL-1815: This Thread class is created to Notify the customer once the product back in stock.
  * @author vijay vishwakarma.
  */
 public class BlStockNotificationTask extends StockNotificationTask {
