@@ -47,7 +47,7 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
     if(productModel instanceof BlSerialProductModel)
     {
    	 BlSerialProductModel blSerialProductModel =  ((BlSerialProductModel) productModel);
-   	 return blSerialProductModel.getIncentivizedPrice() !=null ? blSerialProductModel.getIncentivizedPrice() : blSerialProductModel.getFinalSalePrice();
+   	 return blSerialProductModel.getIncentivizedPrice() ==null ? blSerialProductModel.getFinalSalePrice() : blSerialProductModel.getIncentivizedPrice();
      }
     // Prepare map for BL described Price info
     final Map<Integer, BigDecimal> priceList = getBlProductPriceRatioUtil()

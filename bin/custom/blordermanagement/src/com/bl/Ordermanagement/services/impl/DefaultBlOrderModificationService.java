@@ -87,9 +87,9 @@ public class DefaultBlOrderModificationService
 	 * @return SourcingResult as sourcingResult
 	 */
 	public SourcingResult createSourcingResultForUsedGear(final OrderEntryModel orderEntryModel,
-														   SourcingResults resultsForUsedGearOrder)
+														   final SourcingResults resultsForUsedGearOrder)
 	{
-		SourcingResult sourcingResult = new SourcingResult();
+		final SourcingResult sourcingResult = new SourcingResult();
 		resultsForUsedGearOrder.getResults().forEach(usedGearSourceResult-> {
 			if(usedGearSourceResult.getAllocation().get(orderEntryModel) !=null)
 			{
@@ -169,7 +169,7 @@ public class DefaultBlOrderModificationService
 			if (CollectionUtils.isEmpty(updatedSerialList))
 			{
 				consignmentEntryToRemove.add(consignmentEntry);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry {} removed", consignmentEntry);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment Entry {} removed for consignment {} on order {}", consignmentEntry,consignment.getCode(),consignment.getOrder().getCode());
 			}
 			else
 			{
@@ -194,7 +194,7 @@ public class DefaultBlOrderModificationService
 			if (CollectionUtils.isEmpty(consignment.getConsignmentEntries()))
 			{
 				consignmentToRemove.add(consignment);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed", consignment.getCode());
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignment {} removed for order {}", consignment.getCode(),consignment.getOrder());
 			}
 		}
 	}
@@ -207,7 +207,7 @@ public class DefaultBlOrderModificationService
 	 */
 	private String getPkFromProduct(final ConsignmentEntryModel consignmentEntryModel,final BlSerialProductModel serial)
 	{
-		if (BooleanUtils.isTrue(consignmentEntryModel.getConsignment().getOrder().getIsRentalCart()))
+		if (consignmentEntryModel.getConsignment().getOrder().getIsRentalCart())
 		{
 			return serial.getBlProduct().getPk().toString();
 		}
@@ -310,10 +310,11 @@ public class DefaultBlOrderModificationService
 		try
 		{
 			getCalculationService().recalculate(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order {} recalculated successfully", order.getCode());
 		}
-		catch (CalculationException cx)
+		catch (final CalculationException cx)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception Occur for {} ", cx.getMessage());
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception {} occur while recalculating order {} ", cx.getMessage(),order.getCode());
 		}
 	}
 
