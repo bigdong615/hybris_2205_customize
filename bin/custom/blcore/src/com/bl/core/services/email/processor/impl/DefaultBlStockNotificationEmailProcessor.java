@@ -11,9 +11,11 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.customerinterestsservices.model.ProductInterestModel;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.stocknotificationservices.constants.StocknotificationservicesConstants;
 import de.hybris.platform.stocknotificationservices.email.processor.impl.DefaultStockNotificationEmailProcessor;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,7 +57,14 @@ public class DefaultBlStockNotificationEmailProcessor extends
     if (CollectionUtils.isEmpty(thumbnail)){
       emailRequestData.setProductThumbURL(StringUtils.EMPTY);
     }else{emailRequestData.setProductThumbURL(thumbnail.get(0).getUrl());}
-    getBlESPEventService().sendBackInStockEmailRequest(emailRequestData);
+    final ProductInterestModel productInterestModel = (ProductInterestModel) dataMap
+        .get(StocknotificationservicesConstants.PRODUCT_INTEREST);
+    if(productInterestModel == null){
+      getBlESPEventService().sendBackInStockEmailRequest(emailRequestData,new Date());
+    }else {
+      getBlESPEventService().sendBackInStockEmailRequest(emailRequestData,productInterestModel.getCreationtime());
+    }
+
   }
 
   /**

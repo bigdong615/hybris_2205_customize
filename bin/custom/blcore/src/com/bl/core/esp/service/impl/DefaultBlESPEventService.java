@@ -75,6 +75,8 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -980,11 +982,14 @@ public class DefaultBlESPEventService implements BlESPEventService {
    * {@inheritDoc}
    */
   @Override
-  public void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+  public void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,
+      final Date requestedDate){
     final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
     getBlESPEmailCommonRequestPopulator()
         .populate(emailRequestData, emailRequiredEventRequest);
     emailRequestData.setTemplate(backInStockTemplate);
+    final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+    emailRequestData.setRequestedDate(formatTime.format(requestedDate));
     final ESPEventResponseWrapper espEventResponseWrapper;
     try {
       // Call back in stock required ESP Event API
