@@ -24,7 +24,7 @@ public interface BlCartService extends CartService {
     /**
      * This method will remove all the entries from current cart.
      */
-    void clearCartEntries();
+    void clearCartEntries(final CartModel cartModel);
 
     /**
      * Resets the cart calculation flag to FALSE at the time of Rental date change.

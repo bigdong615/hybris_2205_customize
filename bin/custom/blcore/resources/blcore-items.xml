@@ -2353,7 +2353,16 @@
              </attributes>
            </itemtype>
          </typegroup>
-      <typegroup name="Cart">	
+      <typegroup name="Cart">
+      	<itemtype code="Cart" autocreate="false" generate="false">
+			<description>Extending Cart type with additional attributes for import cart functionality</description>
+			<attributes>
+				<attribute qualifier="usedGearProductAddedTime" type="java.util.Date">
+					<description>It sets the time when used gear products are added</description>
+					<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>	
         <itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
           <description>Extending the AbstractOrderEntry with additional attributes.</description>
           <attributes>

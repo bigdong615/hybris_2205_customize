@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -19,6 +20,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -30,6 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
@@ -38,9 +42,12 @@ import org.apache.log4j.Logger;
 public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
 	private UserService userService;
+	private BaseStoreService baseStoreService;
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
 	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
+	private static final String TIMER = "timer";
+
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
 			+ ConsignmentModel.OPTIMIZEDSHIPPINGSTARTDATE + "} BETWEEN ?startDate AND ?endDate AND {o:status} NOT IN "
@@ -111,6 +118,8 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			"} BETWEEN ?orderBillModifiedDate AND ?orderBillModifiedEndDate AND {o.sentOrderFeedToSalesforce} IN "
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
+	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ CartModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartModel.USEDGEARPRODUCTADDEDTIME + "},sysdate) > ?timer";
 
 	/**
  	* {@inheritDoc}
@@ -418,6 +427,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public List<CartModel> getAllUsedGearAbandonedCarts() {
+		final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_ABANDONED_CARTS);
+		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
+		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer()) + 8);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<CartModel> carts = result.getResult();
+		if (CollectionUtils.isEmpty(carts)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No abandoned carts found for for used gear products");
+			return Collections.emptyList();
+		}
+		return carts;
+	}
+
+	/**
 	 * This method created to convert date into specific format
 	 * @param dateToConvert the date which required to convert
 	 * @return String after conversion into specific format
@@ -442,7 +468,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	{
 		this.userService = userService;
 	}
-	
-	
 
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
 }
