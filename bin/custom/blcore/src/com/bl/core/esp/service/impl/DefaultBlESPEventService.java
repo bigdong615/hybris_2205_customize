@@ -2,14 +2,17 @@ package com.bl.core.esp.service.impl;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
+import com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequestPopulator;
 import com.bl.core.esp.populators.BlOrderDepositRequiredRequestPopulator;
 import com.bl.core.esp.populators.BlOrderExceptionsRequestPopulator;
+import com.bl.core.esp.populators.BlOrderGiftCardPurchaseEventPopulator;
 import com.bl.core.esp.populators.BlOrderManualAllocationRequestPopulator;
 import com.bl.core.esp.populators.BlOrderNewShippingRequestPopulator;
 import com.bl.core.esp.populators.BlOrderPaymentDeclinedRequestPopulator;
@@ -27,11 +30,16 @@ import com.bl.core.esp.populators.BlOrderVerificationRequiredRequestPopulator;
 import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.BlStoredEspEventModel;
+import com.bl.core.model.GiftCardModel;
 import com.bl.esp.dto.billpaid.OrderBillPaidEventRequest;
 import com.bl.esp.dto.billpaid.data.OrderBillPaidExtraData;
 import com.bl.esp.dto.canceledEvent.OrderCanceledEventRequest;
+import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
+import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
+import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
 import com.bl.esp.dto.orderconfirmation.ESPEventResponseWrapper;
@@ -59,6 +67,7 @@ import com.bl.esp.service.BlESPEventRestService;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -70,6 +79,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,6 +92,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -111,17 +122,16 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private BlOrderRefundRequestPopulator blOrderRefundRequestPopulator;
     private BlESPEventRestService blESPEventRestService;
     private BlOrderBillPaidRequestPopulator blOrderBillPaidRequestPopulator;
-  private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
-
-
-
-  private BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator;
-
-  private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
+    private BlOrderPullBackItemsAddedRequestPopulator blOrderPullBackItemsAddedRequestPopulator;
+    private BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator;
+    private BlOrderPullBackItemRemovedRequestPopulator blOrderPullBackItemRemovedRequestPopulator;
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
-
-
+    private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
+    private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
+    private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
+    @Value("${back.in.stock.email.request.event.template.key}")
+    private String backInStockTemplate;
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -874,6 +884,122 @@ public class DefaultBlESPEventService implements BlESPEventService {
   }
 
   /**
+   * This method created to prepare the request and response from Gift Card Purchase ESP service
+   * @param giftCardModel giftCardMovementModel
+   */
+  @Override
+  public void sendGiftCardPurchaseEvent(final GiftCardModel giftCardModel ,
+      final AtomicReference<AbstractOrderModel> abstractOrderModel) {
+      final GiftCardPurchaseEventRequest giftCardPurchaseEventRequest = new GiftCardPurchaseEventRequest();
+      giftCardPurchaseEventRequest.setOrderModel(abstractOrderModel.get());
+      getBlOrderGiftCardPurchaseEventPopulator().populate(giftCardModel,
+          giftCardPurchaseEventRequest);
+      ESPEventResponseWrapper espEventResponseWrapper = null;
+      try
+      {
+        // Call send Gift Card Purchase ESP Event API
+        espEventResponseWrapper = getBlESPEventRestService().sendGiftCardPurchase(giftCardPurchaseEventRequest);
+      }catch (final BlESPIntegrationException exception){
+        persistESPEventDetail(null, EspEventTypeEnum.GIFT_CARD_PURCHASE,abstractOrderModel.get().getCode(), exception.getMessage(), exception.getRequestString());
+      }
+      // Save send Gift Card Purchase ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.GIFT_CARD_PURCHASE,abstractOrderModel.get().getCode(),null, null);
+
+  }
+
+   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendForgotPasswordRequest(final ESPEmailCommonRequestData emailRequestData) {
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call send forgot password required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save send forgot password request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FORGOT_PASSWORD,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.FORGOT_PASSWORD,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call notify me required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save notify me email request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.NOTIFY_ME_EMAIL,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.NOTIFY_ME_EMAIL,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
+
+
+  /**
+   * This method created to prepare the request and response from Free Gift Card ESP service
+   * @param giftCardModel giftCardMovementModel
+   */
+  @Override
+  public void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel) {
+    final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest = new FreeGiftCardPurchaseEventRequest();
+    getBlFreeGiftCardPurchaseEventPopulator().populate(giftCardModel, freeGiftCardPurchaseEventRequest);
+    ESPEventResponseWrapper espEventResponseWrapper = null;
+    try
+    {
+      // Call send Free Gift Card Purchase ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService().sendFreeGiftCardPurchase(freeGiftCardPurchaseEventRequest);
+    }catch (final BlESPIntegrationException exception){
+      persistESPEventDetail(null, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(), exception.getMessage(), exception.getRequestString());
+    }
+    // Save send Free Gift Card Purchase ESP Event Detail
+    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(),null, null);
+
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    emailRequestData.setTemplate(backInStockTemplate);
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call back in stock required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save back in stock email request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
+  /**
    * Format amount string.
    * @param amount the amount
    * @return the string
@@ -883,7 +1009,6 @@ public class DefaultBlESPEventService implements BlESPEventService {
     decimalFormat.applyPattern(BlCoreConstants.FORMAT_STRING);
     return decimalFormat.format(amount);
   }
-
 
 
   public BlOrderConfirmationRequestPopulator getBlOrderConfirmationRequestPopulator() {
@@ -1105,5 +1230,34 @@ public class DefaultBlESPEventService implements BlESPEventService {
   public void setBlOrderDepositRequiredRequestPopulator(
       BlOrderDepositRequiredRequestPopulator blOrderDepositRequiredRequestPopulator) {
     this.blOrderDepositRequiredRequestPopulator = blOrderDepositRequiredRequestPopulator;
+  }
+
+  public BlOrderGiftCardPurchaseEventPopulator getBlOrderGiftCardPurchaseEventPopulator() {
+    return blOrderGiftCardPurchaseEventPopulator;
+  }
+
+  public void setBlOrderGiftCardPurchaseEventPopulator(
+      BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
+    this.blOrderGiftCardPurchaseEventPopulator = blOrderGiftCardPurchaseEventPopulator;
+  }
+
+
+  public BlFreeGiftCardPurchaseEventPopulator getBlFreeGiftCardPurchaseEventPopulator() {
+    return blFreeGiftCardPurchaseEventPopulator;
+  }
+
+  public void setBlFreeGiftCardPurchaseEventPopulator(
+      BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator) {
+    this.blFreeGiftCardPurchaseEventPopulator = blFreeGiftCardPurchaseEventPopulator;
+  }
+
+
+  public BlESPEmailCommonRequestPopulator getBlESPEmailCommonRequestPopulator() {
+    return blESPEmailCommonRequestPopulator;
+  }
+
+  public void setBlESPEmailCommonRequestPopulator(
+      BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator) {
+    this.blESPEmailCommonRequestPopulator = blESPEmailCommonRequestPopulator;
   }
 }

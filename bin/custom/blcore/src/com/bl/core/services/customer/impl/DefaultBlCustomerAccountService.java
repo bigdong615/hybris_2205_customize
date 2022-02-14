@@ -1,21 +1,33 @@
 package com.bl.core.services.customer.impl;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.BlESPEventService;
 import com.bl.core.services.customer.BlCustomerAccountService;
+import com.bl.esp.dto.forgotPassword.data.ForgotPasswordRequestData;
+import com.bl.logging.BlLogger;
 import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
+import de.hybris.platform.acceleratorservices.urlresolver.SiteBaseUrlResolutionService;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.customer.PasswordMismatchException;
 import de.hybris.platform.commerceservices.customer.impl.DefaultCustomerAccountService;
 import de.hybris.platform.commerceservices.event.ChangeUIDEvent;
+import de.hybris.platform.commerceservices.security.SecureToken;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 
+import de.hybris.platform.util.Config;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 /**
  *This is created to override register method and disable registration email.
@@ -25,8 +37,12 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 public class DefaultBlCustomerAccountService extends DefaultCustomerAccountService implements BlCustomerAccountService {
 
+    private static final Logger LOG = Logger.getLogger(DefaultBlCustomerAccountService.class);
     @Resource(name="brainTreeCustomerAccountDao")
     private BrainTreeCustomerAccountDao brainTreeCustomerAccountDao;
+    private int expiresInMinutes = 30;
+    private SiteBaseUrlResolutionService siteBaseUrlResolutionService;
+    private BlESPEventService blESPEventService;
     /**
      *This method is overridden to disable register email.
      */
@@ -110,5 +126,62 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
         adjustPassword(currentUser, newUidLower, currentPassword);
         getEventService().publishEvent(initializeEvent(event, currentUser));
     }
+
+    /**
+     * This method used to generate reset password url.
+     * @param customerModel
+     */
+    @Override
+    public void forgottenPassword(final CustomerModel customerModel)
+    {
+        validateParameterNotNullStandardMessage(BlCoreConstants.CUSTOMER_MODEL, customerModel);
+        final long timeStamp = getTokenValiditySeconds() > 0L ? new Date().getTime() : 0L;
+        final SecureToken data = new SecureToken(customerModel.getUid(), timeStamp);
+        final String token = getSecureTokenService().encryptData(data);
+        customerModel.setToken(token);
+        getModelService().save(customerModel);
+        final ForgotPasswordRequestData forgotPasswordRequestData= new ForgotPasswordRequestData();
+        try {
+            forgotPasswordRequestData.setPasswordLink( getSiteBaseUrlResolutionService()
+                .getWebsiteUrlForSite(getBaseSiteService().getCurrentBaseSite(),
+                    StringUtils.EMPTY, Boolean.TRUE, BlCoreConstants.UPDATE_PASSWORD_URL,
+                    BlCoreConstants.TOKEN + URLEncoder.encode(token, BlCoreConstants.DEFAULT_ENCODING)));
+        }catch(final Exception e){
+            BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs whiling generating reset password link for user {0}:",customerModel.getUid(),e);
+        }
+        forgotPasswordRequestData.setEmailAddress(customerModel.getUid());
+        forgotPasswordRequestData.setTimeout(getExpirationTime());
+        getBlESPEventService().sendForgotPasswordRequest(forgotPasswordRequestData);
+    }
+
+    /**
+     * This method used to get reset password link expiry time in minutes.
+     */
+    private int getExpirationTime()
+    {
+        final String passwordExpireTime = Config.getParameter("forgotPassword.link.expiry.time");
+        try {
+            expiresInMinutes = StringUtils.isEmpty(passwordExpireTime) ? expiresInMinutes : Integer.parseInt(passwordExpireTime) ;
+        }catch (final NumberFormatException e){
+            BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs due to invalid password expiry time {0} :",passwordExpireTime,e);
+        }
+        return expiresInMinutes;
+    }
+    public SiteBaseUrlResolutionService getSiteBaseUrlResolutionService() {
+        return siteBaseUrlResolutionService;
+    }
+
+    public void setSiteBaseUrlResolutionService(
+        SiteBaseUrlResolutionService siteBaseUrlResolutionService) {
+        this.siteBaseUrlResolutionService = siteBaseUrlResolutionService;
+    }
+    public BlESPEventService getBlESPEventService() {
+        return blESPEventService;
+    }
+
+    public void setBlESPEventService(BlESPEventService blESPEventService) {
+        this.blESPEventService = blESPEventService;
+    }
+
 }
 

@@ -348,7 +348,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHARE_A_SALE_NEW_CUSTOMER = "&newcustomer=";
 	public static final String ONE = "1";
 	public static final String SHARE_A_SALE_URL_LINK = "&urllink=";
-	public static final String SHARE_A_SALE_UTF = "UTF-8";
+	public static final String DEFAULT_ENCODING = "UTF-8";
 	public static final String SHARE_A_SALE_COUPON_CODE = "&couponcode=";
 	public static final String SHARE_A_SALE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 	public static final String SHARE_A_SALE_GMT = "GMT";
@@ -418,6 +418,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_DEFINITION_KEY = "order.deposit.required.event.definition.key";
 	public static final String ORDER_DEPOSIT_REQUIRED_EVENT_TEMPLATE = "order.deposit.required.event.template";
 
+	public static final String ORDER_GIFT_CARD_EVENT_DEFINITION_KEY = "order.giftcard.purchase.event.definition.key";
+	public static final String ORDER_GIFT_CARD_EVENT_TEMPLATE = "order.giftcard.purchase.event.template";
+	public static final String FREE_GIFT_CARD_EVENT_TEMPLATE = "free.giftcard.purchase.event.template";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";
@@ -599,7 +602,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String DEPOSIT_REQUIRED_NOT_AN_AMOUNT = "blbackoffice.depositrequired.amount.notanumber";
 	public static final String UNDO_CHANGES = "undochanges";
 	public static final String CONFIRM_TRIGGER = "confirmTriggerEmail";
-
+	public static final String UPDATE_PASSWORD_URL = "/login/pw/change";
+	public static final String CUSTOMER_MODEL = "customerModel";
+	public static final String TOKEN = "token=";
+	public static final String THUMBNAIL = "thumbnail";
+	public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
 
 
 
