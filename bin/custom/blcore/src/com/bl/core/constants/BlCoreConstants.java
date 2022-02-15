@@ -420,6 +420,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String ORDER_GIFT_CARD_EVENT_DEFINITION_KEY = "order.giftcard.purchase.event.definition.key";
 	public static final String ORDER_GIFT_CARD_EVENT_TEMPLATE = "order.giftcard.purchase.event.template";
+	public static final String FREE_GIFT_CARD_EVENT_TEMPLATE = "free.giftcard.purchase.event.template";
 
 	public static final String SHIPPING_ROOT_ELEMENT = "shippinginfo";
 	public static final String SHIPPING_FIRST_NAME = "shippingfirstname";

@@ -9,6 +9,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordercancel.OrderCancelEntry;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -171,6 +172,13 @@ public interface BlESPEventService {
      */
      void sendOrderDepositRequired(final OrderModel orderModel , final Double amount);
 
+
+    /**
+     * This method created for Free Gift Card Purchase
+     * @param giftCardModel giftCardModel
+     */
+    void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel);
+
     /**
      * This method created for Gift Card Purchase
      * @param giftCardModel giftCardModel
@@ -189,4 +197,11 @@ public interface BlESPEventService {
      * @param emailRequestData requested email required data.
      */
     void sendNotifyMeConfirmEmailRequest(final ESPEmailCommonRequestData emailRequestData);
+
+    /**
+     * This method created for sending back in stock notification email related esp Event.
+     * @param emailRequestData requested email required data.
+     * @param requestedDate requestedDate
+     */
+    void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,final Date requestedDate);
 }

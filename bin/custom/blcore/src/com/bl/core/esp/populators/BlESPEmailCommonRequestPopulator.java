@@ -11,15 +11,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * BL-1813,1814:This populator created to populate reset password and notify me email related common data.
+ * BL-1813,1814,BL-1815:This populator created to populate reset password, notify me and back in stock email related common data.
  * @author vijay vishwakarma
  */
 public class BlESPEmailCommonRequestPopulator implements
     Populator<ESPEmailCommonRequestData, ESPEmailCommonEventRequest> {
-
-  @Value("${borrow.lenses.subscriber.id}")
-  private String subscriberId;
-
+  
   @Value("${notify.me.email.request.event.definition.key}")
   private String notifyMeEventDefinitionKey;
 
@@ -36,7 +33,7 @@ public class BlESPEmailCommonRequestPopulator implements
   public void populate(final ESPEmailCommonRequestData emailRequestData,
       final ESPEmailCommonEventRequest emailRequiredESPEventRequest)
        {
-         emailRequestData.setSubscriberid(subscriberId);
+         emailRequestData.setSubscriberid(emailRequestData.getEmailAddress());
          final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
          emailRequestData.setRequestedDate(formatTime.format(new Date()));
          emailRequiredESPEventRequest.setData(emailRequestData);

@@ -783,10 +783,12 @@ function createHiddenParameter(name, value) {
 //BL -471 Used Gear cart timer
 
 $('.usedgear-signout').on("click", function (e) {
+   e.preventDefault();
+  var url = $('.usedgear-signout').prop('href');
 	fetchdata();
 	clearInterval(z);
 	localStorage.removeItem('saved_countdown');
-	
+	window.location.href = url;
 });
 
 function startUsedGearCartTimer() {
@@ -1035,7 +1037,7 @@ function startUsedGearCartTimer() {
 
 	function onGiftCardCloseModal()
 	{
-		$("#closeGiftCardModal , #cancelGiftCardModal").on("click", function(event){
+		$("#closeGiftCardModal , #cancelGiftCardModal ,#closeGiftCardModelWhenMixedCartError , #closeMultipleGiftCardError").on("click", function(event){
 			event.preventDefault();
 			var doReload = $("#doReload").val();
 			if(doReload === 'true')

@@ -5,6 +5,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.populators.BlESPEmailCommonRequestPopulator;
 import com.bl.core.esp.populators.BlExtendOrderRequestPopulator;
 import com.bl.core.esp.populators.BlExtraItemRequestPopulator;
+import com.bl.core.esp.populators.BlFreeGiftCardPurchaseEventPopulator;
 import com.bl.core.esp.populators.BlOrderBillPaidRequestPopulator;
 import com.bl.core.esp.populators.BlOrderCanceledRequestPopulator;
 import com.bl.core.esp.populators.BlOrderConfirmationRequestPopulator;
@@ -37,6 +38,7 @@ import com.bl.esp.dto.common.ESPEmailCommonEventRequest;
 import com.bl.esp.dto.common.data.ESPEmailCommonRequestData;
 import com.bl.esp.dto.depositrequired.OrderDepositRequiredEventRequest;
 import com.bl.esp.dto.extraItem.OrderExtraItemRequest;
+import com.bl.esp.dto.giftcard.FreeGiftCardPurchaseEventRequest;
 import com.bl.esp.dto.giftcard.GiftCardPurchaseEventRequest;
 import com.bl.esp.dto.manualallocation.OrderManualAllocationEventRequest;
 import com.bl.esp.dto.newshipping.OrderNewShippingEventRequest;
@@ -73,6 +75,8 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -90,6 +94,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -125,8 +130,10 @@ public class DefaultBlESPEventService implements BlESPEventService {
     private ModelService modelService;
     private BlOrderManualAllocationRequestPopulator blOrderManualAllocationRequestPopulator;
     private BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator;
+    private BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator;
     private BlESPEmailCommonRequestPopulator blESPEmailCommonRequestPopulator;
-
+    @Value("${back.in.stock.email.request.event.template.key}")
+    private String backInStockTemplate;
     /**
      * This method created to prepare the request and response from ESP service
      * @param orderModel ordermodel
@@ -948,6 +955,55 @@ public class DefaultBlESPEventService implements BlESPEventService {
     }
   }
 
+
+  /**
+   * This method created to prepare the request and response from Free Gift Card ESP service
+   * @param giftCardModel giftCardMovementModel
+   */
+  @Override
+  public void sendFreeGiftCardPurchaseEvent(final GiftCardModel giftCardModel) {
+    final FreeGiftCardPurchaseEventRequest freeGiftCardPurchaseEventRequest = new FreeGiftCardPurchaseEventRequest();
+    getBlFreeGiftCardPurchaseEventPopulator().populate(giftCardModel, freeGiftCardPurchaseEventRequest);
+    ESPEventResponseWrapper espEventResponseWrapper = null;
+    try
+    {
+      // Call send Free Gift Card Purchase ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService().sendFreeGiftCardPurchase(freeGiftCardPurchaseEventRequest);
+    }catch (final BlESPIntegrationException exception){
+      persistESPEventDetail(null, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(), exception.getMessage(), exception.getRequestString());
+    }
+    // Save send Free Gift Card Purchase ESP Event Detail
+    persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.FREE_GIFT_CARD_PURCHASE,giftCardModel.getCode(),null, null);
+
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendBackInStockEmailRequest(final ESPEmailCommonRequestData emailRequestData,
+      final Date requestedDate){
+    final ESPEmailCommonEventRequest emailRequiredEventRequest = new ESPEmailCommonEventRequest();
+    getBlESPEmailCommonRequestPopulator()
+        .populate(emailRequestData, emailRequiredEventRequest);
+    emailRequestData.setTemplate(backInStockTemplate);
+    final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
+    emailRequestData.setRequestedDate(formatTime.format(requestedDate));
+    final ESPEventResponseWrapper espEventResponseWrapper;
+    try {
+      // Call back in stock required ESP Event API
+      espEventResponseWrapper = getBlESPEventRestService()
+          .sendESPEmailEventRequest(emailRequiredEventRequest);
+      // Save back in stock email request ESP Event Detail
+      persistESPEventDetail(espEventResponseWrapper, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), null, null);
+    } catch (final BlESPIntegrationException exception) {
+      persistESPEventDetail(null, EspEventTypeEnum.BACK_IN_STOCK_EMAIL,
+          emailRequestData.getEmailAddress(), exception.getMessage(),
+          exception.getRequestString());
+    }
+  }
   /**
    * Format amount string.
    * @param amount the amount
@@ -1189,6 +1245,17 @@ public class DefaultBlESPEventService implements BlESPEventService {
       BlOrderGiftCardPurchaseEventPopulator blOrderGiftCardPurchaseEventPopulator) {
     this.blOrderGiftCardPurchaseEventPopulator = blOrderGiftCardPurchaseEventPopulator;
   }
+
+
+  public BlFreeGiftCardPurchaseEventPopulator getBlFreeGiftCardPurchaseEventPopulator() {
+    return blFreeGiftCardPurchaseEventPopulator;
+  }
+
+  public void setBlFreeGiftCardPurchaseEventPopulator(
+      BlFreeGiftCardPurchaseEventPopulator blFreeGiftCardPurchaseEventPopulator) {
+    this.blFreeGiftCardPurchaseEventPopulator = blFreeGiftCardPurchaseEventPopulator;
+  }
+
 
   public BlESPEmailCommonRequestPopulator getBlESPEmailCommonRequestPopulator() {
     return blESPEmailCommonRequestPopulator;

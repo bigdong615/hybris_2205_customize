@@ -2,6 +2,7 @@ package com.bl.core.job;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.dao.warehouse.BlConsignmentDao;
+import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.MarkReadyToShipConsignmentsCleanJobModel;
@@ -202,7 +203,7 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * This method is used to update the consignment status for clean shipping cart
 	 * @param consignment
 	 */
-	private void updateConsignmentStatusForShippingCart(ConsignmentModel consignment)
+	private void updateConsignmentStatusForShippingCart(final ConsignmentModel consignment)
 	{
 		for (final ConsignmentEntryModel entryModel : consignment.getConsignmentEntries())
 		{
@@ -221,14 +222,15 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	 * @param consignment
 	 * @param productModel
 	 */
-	private void markConsignmentToReadyToShip(ConsignmentModel consignment, final BlProductModel productModel)
+	private void markConsignmentToReadyToShip(final ConsignmentModel consignment, final BlProductModel productModel)
 	{
-		final String locationCode = null != ((BlSerialProductModel) productModel).getOcLocationDetails()
-				&& null != ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
-						? ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode()
+		final BlSerialProductModel blSerialProductModel = ((BlSerialProductModel) productModel);
+		final String locationCode = null != blSerialProductModel.getOcLocationDetails()
+				&& null != blSerialProductModel.getOcLocationDetails().getLocationCategory()
+						? blSerialProductModel.getOcLocationDetails().getLocationCategory().getCode()
 						: BlInventoryScanLoggingConstants.EMPTY_STRING;
 		if (consignment.isCleanCompleteConsignment()
-				&& BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(locationCode))
+				&& isShippingCartLocation(blSerialProductModel))
 			{
 			consignment.setStatus(ConsignmentStatus.RECEIVED_READY_TO_SHIP);
 			modelService.save(consignment);
@@ -238,6 +240,32 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
 	}
 
   /**
+   * This method is used to check the shipping cart location 
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private boolean isShippingCartLocation(final BlSerialProductModel blSerialProductModel)
+	{
+		return BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART.equalsIgnoreCase(getLocationCategoryCodeFromSerial(blSerialProductModel));
+	}
+
+	/**
+	 * This method is used to get the location Category code for serial
+	 * @param blSerialProductModel
+	 * @return
+	 */
+	private String getLocationCategoryCodeFromSerial(final BlSerialProductModel blSerialProductModel)
+	{
+		if(blSerialProductModel.getOcLocationDetails() ==null)
+		{
+			return StringUtils.EMPTY;
+		}
+	 final BlInventoryLocationModel parentInventoryLocation = blSerialProductModel.getOcLocationDetails().getParentInventoryLocation();
+	 return parentInventoryLocation ==null ? StringUtils.EMPTY : parentInventoryLocation.getLocationCategory().getCode();
+
+}
+
+/**
    * @return the blConsignmentDao
    */
   public BlConsignmentDao getBlConsignmentDao() {
