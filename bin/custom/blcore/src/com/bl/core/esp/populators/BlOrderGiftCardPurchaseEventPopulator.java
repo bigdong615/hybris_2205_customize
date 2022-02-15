@@ -62,9 +62,7 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
   private void populateGiftCardDetails(final GiftCardModel giftCardModel,
       final GiftCardPurchaseData giftCardPurchaseData, final AbstractOrderModel abstractOrderModel) {
     final SimpleDateFormat formatter = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
-    giftCardPurchaseData.setSubscriberid(
-        getObjectValue(getConfigurationService().getConfiguration().
-        getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
+    giftCardPurchaseData.setSubscriberid(getObjectValue(giftCardModel.getCustomerEmail()));
     giftCardPurchaseData.setOrderid(abstractOrderModel.getCode());
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_GIFT_CARD_EVENT_TEMPLATE));
     giftCardPurchaseData.setGiftcardamount(formatAmount(giftCardModel.getAmount()));
