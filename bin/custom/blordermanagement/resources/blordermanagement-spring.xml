@@ -115,6 +115,17 @@
         <property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/> 
     </bean>
 
+    <alias name="defaultBlOrderModificationService" alias="blOrderModificationService" />
+    <bean id="defaultBlOrderModificationService" class="com.bl.Ordermanagement.services.impl.DefaultBlOrderModificationService">
+        <property name="blSourcingService" ref="blSourcingService"/>
+        <property name="blSourceOrderAction" ref="blSourceOrderAction"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+        <property name="allocationService" ref="allocationService"/>
+        <property name="calculationService" ref="calculationService"/>
+
+    </bean>
+    
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
     <bean id="defaultBlSourcingLocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingLocationService">
        <property name="sourcingLocationPopulators">
