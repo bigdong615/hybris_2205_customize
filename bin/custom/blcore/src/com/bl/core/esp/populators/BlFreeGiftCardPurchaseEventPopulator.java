@@ -9,9 +9,6 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -57,9 +54,7 @@ public class BlFreeGiftCardPurchaseEventPopulator <SOURCE extends GiftCardModel,
    * @param giftCardPurchaseData giftCardPurchaseData
    */
   private void populateGiftCardDetails(final GiftCardModel giftCardModel, final GiftCardPurchaseData giftCardPurchaseData) {
-    giftCardPurchaseData.setSubscriberid(
-        getObjectValue(getConfigurationService().getConfiguration().
-        getString(BlCoreConstants.BORROW_LENSES_SUBSCRIBER_ID)));
+    giftCardPurchaseData.setSubscriberid(getObjectValue(giftCardModel.getCustomerEmail()));
     giftCardPurchaseData.setTemplate(getConfigurationService().getConfiguration().getString(BlCoreConstants.FREE_GIFT_CARD_EVENT_TEMPLATE));
     giftCardPurchaseData.setGiftcardamount(BlDateTimeUtils.formatAmount(giftCardModel.getAmount()));
     giftCardPurchaseData.setGiftcardcode(getObjectValue(giftCardModel.getCode()));
