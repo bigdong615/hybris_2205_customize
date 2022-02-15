@@ -37,6 +37,7 @@ import com.braintree.paypal.converters.impl.BillingAddressConverter;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
+import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
@@ -54,6 +55,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.PaymentService;
+import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.dto.TransactionStatusDetails;
@@ -75,9 +77,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -199,6 +201,51 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 						.submitForSettlement(orderModel, amount, requestId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void voidAuthTransaction(final OrderModel order) {
+		try {
+			final String merchantTransactionCode = order.getUser().getUid();
+			List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
+			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
+				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
+						.filter(transactionEntry ->
+								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION) && transactionEntry
+						.getAmount().intValue() == getBrainTreeConfigService().getAuthAMountToVerifyCard().intValue())
+						.findFirst();
+				if (authEntry.isPresent()) {
+					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
+							authEntry.get().getRequestId(), StringUtils.EMPTY,
+							StringUtils.EMPTY);
+					final BrainTreeVoidResult voidResult = brainTreePaymentService
+							.voidTransaction(voidRequest);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), order, authEntry.get());
+				}
+			}
+		} catch (final Exception ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
+					+ "for order {} ", order.getCode(), ex);
+		}
+	}
+
+	/**
+	 * It sets the transaction status and flags the order as 1$ authorization has been voided
+	 * @param transactionStatus
+	 * @param order
+	 * @param paymentTransactionEntryModel
+	 */
+	private void setAuthorizedFlagInOrder(final TransactionStatus transactionStatus,
+			final OrderModel order, final PaymentTransactionEntryModel paymentTransactionEntryModel) {
+		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
+			order.setIsAuthorizationVoided(Boolean.TRUE);
+			getModelService().save(order);
+			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
+			getModelService().save(paymentTransactionEntryModel);
+		}
+	}
+
 	private boolean handleAuthorizationResult(BrainTreeAuthorizationResult result, AbstractOrderModel cart)
 	{
 		PaymentTransactionEntryModel paymentTransactionEntry = null;
@@ -294,8 +341,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		String shipsFromPostalCode = null;
 		String venmoProfileId = null;
 
-		LOG.error("prepareAuthorizationRequest, order number: " + cart.getCode());
-		LOG.error(
+		LOG.info("prepareAuthorizationRequest, order number: " + cart.getCode());
+		LOG.info(
 				"cart.totalPrice: " + cart.getTotalPrice() + ", authAmount: " + authAmount + ", total tax: " + cart.getTotalTax());
 
 		if (paymentInfo instanceof BrainTreePaymentInfoModel)
@@ -468,7 +515,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		double orderDiscountAmountSum = 0d;
 		for (DiscountModel dm : cart.getDiscounts())
 		{
-			LOG.error("discountString: " + dm.getDiscountString() + ", name: " + dm.getName() + ", value: " + dm.getValue());
+			LOG.info("discountString: " + dm.getDiscountString() + ", name: " + dm.getName() + ", value: " + dm.getValue());
 			orderDiscountAmountSum = Double.sum(orderDiscountAmountSum, Math.abs(dm.getValue().doubleValue()));
 		}
 		LOG.info("orderDiscountAmountSum: " + orderDiscountAmountSum);

@@ -819,50 +819,6 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			getModelService().refresh(orderModel);
 		}
 	}
-
-	/**
-	 * It voids the auth transaction of the order
-	 */
-	public void voidAuthTransaction() {
-		final CartModel cart = cartService.getSessionCart();
-  	try {
-			final String merchantTransactionCode = cart.getUser().getUid();
-			List<PaymentTransactionModel> transactions = cart.getPaymentTransactions();
-			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
-				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
-				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
-						.filter(transactionEntry ->
-								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
-						.findFirst();
-				if (authEntry.isPresent()) {
-					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
-							authEntry.get().getRequestId(), StringUtils.EMPTY,
-							StringUtils.EMPTY);
-					final BrainTreeVoidResult voidResult = brainTreePaymentService
-							.voidTransaction(voidRequest);
-					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart, authEntry.get());
-				}
-			}
-		} catch (final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
-					+ "for order {} ", cart.getCode(), ex);
-		}
-	}
-
-	/**
-	 * @param transactionStatus
-	 * @param cart
-	 * @param paymentTransactionEntryModel
-	 */
-	private void setAuthorizedFlagInOrder(final TransactionStatus transactionStatus,
-			final CartModel cart, final PaymentTransactionEntryModel paymentTransactionEntryModel) {
-		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
-			cart.setIsAuthorizationVoided(Boolean.TRUE);
-			getModelService().save(cart);
-			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
-			getModelService().save(paymentTransactionEntryModel);
-		}
-	}
 	
 	/**
 	 * Gets the cloned payment info for code.

@@ -220,4 +220,10 @@ public interface BrainTreeTransactionService
    * @return the remaining amount to refund
    */
   public BigDecimal getRemainingAmountToRefund(final AbstractOrderModel order);
+
+	/**
+	 * It voids the auth transaction of the order
+	 * @param order the order
+	 */
+	public void voidAuthTransaction(final OrderModel order);
 }

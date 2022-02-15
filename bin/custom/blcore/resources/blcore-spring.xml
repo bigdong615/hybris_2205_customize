@@ -960,6 +960,7 @@
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 	<property name="userService" ref="userService"/>
+	<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
@@ -1848,4 +1849,10 @@
 		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService" />
 		<property name="populator" ref="productPrimaryImagePopulator"/>
 	</bean>
+	
+	<!-- BL-1854 Start-->
+	<bean id="blDelayVoidOfTransactionJob" class="com.bl.core.job.BlDelayVoidOfTransactionJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
+	<!-- BL-1854 End-->
 </beans>
