@@ -14,6 +14,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.collect.Lists;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -114,7 +115,7 @@ public class DefaultBlOrderModificationService
 		if (CollectionUtils.isNotEmpty(previousChangedOrderEntrysList))
 		{
 			final AbstractOrderEntryModel previousChangedOrderEntry = previousChangedOrderEntrysList.iterator().next();
-			String orderEntrySkuPk = previousChangedOrderEntry.getProduct().getPk().toString();
+			final String orderEntrySkuPk = previousChangedOrderEntry.getProduct().getPk().toString();
 			final List<ConsignmentEntryModel> consignmentEntryToRemove = new ArrayList<>();
 			final List<ConsignmentModel> consignmentToRemove = new ArrayList<>();
 
@@ -161,7 +162,7 @@ public class DefaultBlOrderModificationService
 				}
 				else 
 				{
-					boolean isUsedGearOrder = consignment.getOrder().getIsRentalCart();
+					final boolean isUsedGearOrder = consignment.getOrder().getIsRentalCart();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
 							isUsedGearOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial,isUsedGearOrder);
 				}
@@ -314,7 +315,8 @@ public class DefaultBlOrderModificationService
 		}
 		catch (final CalculationException cx)
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Exception {} occur while recalculating order {} ", cx.getMessage(),order.getCode());
+			 BlLogger.logMessage(LOG, Level.ERROR, "Exception occur while recalculating order {} ",
+					 order.getCode(), cx);
 		}
 	}
 
