@@ -36,12 +36,11 @@ public class BlESPEmailCommonRequestPopulator implements
   public void populate(final ESPEmailCommonRequestData emailRequestData,
       final ESPEmailCommonEventRequest emailRequiredESPEventRequest)
        {
-         emailRequestData.setSubscriberid(subscriberId);
+         emailRequestData.setSubscriberid(emailRequestData.getEmailAddress());
          final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
          emailRequestData.setRequestedDate(formatTime.format(new Date()));
          emailRequiredESPEventRequest.setData(emailRequestData);
          emailRequiredESPEventRequest.setContactKey(emailRequestData.getEmailAddress());
-         emailRequestData.setEmailAddress(subscriberId);
           if(emailRequestData instanceof NotifyMeEmailRequestData) {
             emailRequestData.setTemplate(notifyMeTemplate);
             emailRequiredESPEventRequest.setEventDefinitionKey(notifyMeEventDefinitionKey);
