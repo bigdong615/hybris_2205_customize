@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class BlESPEmailCommonRequestPopulator implements
     Populator<ESPEmailCommonRequestData, ESPEmailCommonEventRequest> {
-
-  @Value("${borrow.lenses.subscriber.id}")
-  private String subscriberId;
-
+  
   @Value("${notify.me.email.request.event.definition.key}")
   private String notifyMeEventDefinitionKey;
 
