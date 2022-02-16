@@ -4404,6 +4404,10 @@
           		<persistence type="property"/>
           		<modifiers read="true" write="true" optional="true" unique="true"/>
         	</attribute>
+        	<attribute qualifier="warehouse" type="Warehouse">
+                <modifiers read="true" write="true" optional="true" />
+                <persistence type="property" />
+            </attribute>
 		</attributes>
 	</itemtype>
 
