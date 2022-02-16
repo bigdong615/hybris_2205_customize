@@ -1720,6 +1720,8 @@
 				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
 					name="optimizedShippingStartDate" selected="true" operator="greaterOrEquals"/>
 				<as:field name="warehouse" editor="com.bl.backoffice.editor.blwarehouseeditor" selected="true"/>
+				<as:field name="pickUpPersonFirstName" selected="true" operator="startsWith"/>
+				<as:field name="pickUpPersonLastName" selected="true" operator="startsWith"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
@@ -1987,7 +1989,7 @@
 			<advanced-search:field-list>
 				<advanced-search:field name="currentDate" selected="true" mandatory="true"/>
 				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
-				<advanced-search:field name="barcode" selected="true" mandatory="true"/>
+				<advanced-search:field name="itemBarcode" selected="true" mandatory="true"/>
 			</advanced-search:field-list>
 		</advanced-search:advanced-search>
 	</context>
@@ -2002,7 +2004,7 @@
             <list-view:column qualifier="productCode"/>
             <list-view:column qualifier="productName"/>
             <list-view:column qualifier="serialNumber"/>
-            <list-view:column qualifier="itemBarcode" />
+            <list-view:column qualifier="barcode" />
             <list-view:column qualifier="warehouseCode"/>
             <list-view:column qualifier="ocParentLocationCode"/>
             <list-view:column qualifier="ocLocationCode"/>
