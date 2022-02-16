@@ -201,10 +201,6 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .addToCart(parameter);
     setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 		updateCartOptionEntry(commerceCartModification.getEntry(),cartModel);
-		if(BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-			cartModel.setUsedGearProductAddedTime(new Date());
-			getModelService().save(cartModel);
-		}
 		return getCartModificationConverter().convert(commerceCartModification);
   }
 	/**

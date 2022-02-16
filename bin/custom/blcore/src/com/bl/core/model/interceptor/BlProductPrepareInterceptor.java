@@ -19,6 +19,7 @@ import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +54,10 @@ private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.c
   @Override
   public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
 
-    Collection<BlSerialProductModel> serialProducts = getSerialProducts(blProductModel);
+    Collection<BlSerialProductModel> serialProducts = new ArrayList<>();
+    if(!(blProductModel instanceof BlProductModel && blProductModel instanceof BlSerialProductModel)) {
+      serialProducts = getSerialProducts(blProductModel);
+    }
 
     if (interceptorContext.isNew(blProductModel) && StringUtils
         .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {

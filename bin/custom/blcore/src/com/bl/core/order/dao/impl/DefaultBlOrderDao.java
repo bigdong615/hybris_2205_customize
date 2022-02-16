@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -43,12 +43,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private UserService userService;
+	private ConfigurationService configurationService;
 	private BaseStoreService baseStoreService;
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
 	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
 	private static final String TIMER = "timer";
 	private static final Integer BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS = 8;
-	private ConfigurationService configurationService;;
 	private static final String IS_EXTENDED_ORDER ="isExtendedOrder";
 	private static final String IS_REPLACEMENT_ORDER ="isReplacementOrder";
 	private static final String IS_AUTHORIZATION_VOIDED ="isAuthorizationVoided";
@@ -127,7 +127,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
 	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ CartModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartModel.USEDGEARPRODUCTADDEDTIME + "},sysdate) > ?timer";
+			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},sysdate) > ?timer";
 
 	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
@@ -445,7 +445,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<CartModel> getAllUsedGearAbandonedCarts() {
+	public List<CartEntryModel> getAllUsedGearAbandonedCarts() {
 		final BaseStoreModel baseStore = getBaseStoreService()
 				.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_ABANDONED_CARTS);
@@ -453,12 +453,12 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
 				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		final List<CartModel> carts = result.getResult();
-		if (CollectionUtils.isEmpty(carts)) {
+		final List<CartEntryModel> cartEntries = result.getResult();
+		if (CollectionUtils.isEmpty(cartEntries)) {
 			BlLogger.logMessage(LOG, Level.INFO, "No abandoned carts found for for used gear products");
 			return Collections.emptyList();
 		}
-		return carts;
+		return cartEntries;
 	}
 
 		/**
