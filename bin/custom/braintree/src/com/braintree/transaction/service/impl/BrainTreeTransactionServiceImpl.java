@@ -207,9 +207,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	public void voidAuthTransaction(final OrderModel order) {
 		try {
 			final String merchantTransactionCode = order.getUser().getUid();
-			List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
+			final List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
 			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
-				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+				final List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
 				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
 						.filter(transactionEntry ->
 								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION) && transactionEntry
@@ -225,8 +225,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				}
 			}
 		} catch (final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
-					+ "for order {} ", order.getCode(), ex);
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction for order {} ",
+					order.getCode(), ex);
 		}
 	}
 
@@ -243,6 +243,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			getModelService().save(order);
 			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
 			getModelService().save(paymentTransactionEntryModel);
+			BlLogger.logFormattedMessage(LOG, Level.INFO,
+					"The order {} is marked as {} as authorization voided with transaction status {}",
+					order.getCode(), order.getIsAuthorizationVoided(), paymentTransactionEntryModel.getTransactionStatus());
 		}
 	}
 

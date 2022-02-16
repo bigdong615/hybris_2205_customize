@@ -1851,7 +1851,7 @@
 	</bean>
 	
 	<!-- BL-1854 Start-->
-	<bean id="blDelayVoidOfTransactionJob" class="com.bl.core.job.BlDelayVoidOfTransactionJob" parent="abstractJobPerformable">
+	<bean id="blVoidAuthTransactionJob" class="com.bl.core.job.BlVoidAuthTransactionJob" parent="abstractJobPerformable">
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 	<!-- BL-1854 End-->

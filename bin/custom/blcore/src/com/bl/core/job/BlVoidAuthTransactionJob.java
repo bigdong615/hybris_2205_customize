@@ -15,9 +15,9 @@ import org.apache.log4j.Logger;
  * This is for voiding $1 auth transactions for the orders
  * @author Moumita
  */
-public class BlDelayVoidOfTransactionJob extends AbstractJobPerformable<CronJobModel>
+public class BlVoidAuthTransactionJob extends AbstractJobPerformable<CronJobModel>
 {
-  private static final Logger LOG = Logger.getLogger(BlDelayVoidOfTransactionJob.class);
+  private static final Logger LOG = Logger.getLogger(BlVoidAuthTransactionJob.class);
   private BlPaymentService blPaymentService;
 
   /**
