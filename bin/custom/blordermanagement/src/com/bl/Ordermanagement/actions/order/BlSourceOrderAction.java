@@ -255,7 +255,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * @param warehouseModel - warehouseModel
    * @param sourcingResult - sourcingResult
    */
-  private void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
+  public void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
       final AbstractOrderEntryModel entry, final WarehouseModel warehouseModel,
       final SourcingResult sourcingResult) {
 

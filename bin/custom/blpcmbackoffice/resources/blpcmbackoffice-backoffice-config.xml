@@ -139,7 +139,12 @@
 					<ea:attribute qualifier="isNew"/>
 					<ea:attribute qualifier="isVideo"/>
 					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
-					<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="shortDescription">
+					<ea:editor-parameter>
+						<ea:name>rows</ea:name>
+						<ea:value>10</ea:value>
+					</ea:editor-parameter>
+					</ea:attribute>
 					<ea:attribute qualifier="titleTag" label="label.pcmbackoffice.titletag"/>
 					<ea:attribute qualifier="specifications" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					<ea:attribute qualifier="subpartsQty" />

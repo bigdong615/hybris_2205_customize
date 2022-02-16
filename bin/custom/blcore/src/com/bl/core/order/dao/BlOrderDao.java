@@ -2,6 +2,7 @@ package com.bl.core.order.dao;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -117,5 +118,11 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of cartModel
 	 */
 	List<CartModel> getAllUsedGearAbandonedCarts();
+
+	/**
+	 * To get the orders for which 1$ authorization is not voided yet
+	 * @return list of orders
+	 */
+	public List<OrderModel> getOrdersToVoidTransactions();
 
 }

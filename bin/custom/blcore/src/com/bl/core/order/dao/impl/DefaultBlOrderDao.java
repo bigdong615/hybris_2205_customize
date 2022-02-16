@@ -17,6 +17,7 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.impl.DefaultOrderDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.user.UserService;
@@ -40,13 +41,20 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private UserService userService;
 	private BaseStoreService baseStoreService;
-	private static final Logger LOG = Logger.getLogger(DefaultBlOrderDao.class);
 	private static final String MANUAL_REVIEW_STATUS_BY_RESHUFFLER = "manualReviewStatusByReshuffler";
 	private static final String ORDER_COMPLETED_DATE = "orderCompletedDate";
 	private static final String TIMER = "timer";
 	private static final Integer BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS = 8;
+	private ConfigurationService configurationService;;
+	private static final String IS_EXTENDED_ORDER ="isExtendedOrder";
+	private static final String IS_REPLACEMENT_ORDER ="isReplacementOrder";
+	private static final String IS_AUTHORIZATION_VOIDED ="isAuthorizationVoided";
+	private static final String DELAY_VOID_TRANSACTION_BY_TIME = "delay.void.transaction.time";
+	private static final String IS_GIFT_CARD_ORDER = "isGiftCardOrder";
+	private static final String IS_NEW_GEAR_ORDER = "isNewGearOrder";
 
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o LEFT JOIN " + ConsignmentModel._TYPECODE + " AS con ON {con:order} = {o:pk}} WHERE {con:"
@@ -120,6 +128,14 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 
 	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ CartModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartModel.USEDGEARPRODUCTADDEDTIME + "},sysdate) > ?timer";
+
+	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
+			"} =?isAuthorizationVoided AND {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder AND "
+			+ "{o:" + OrderModel.ISCARTUSEDFORREPLACEMENTORDER + "} =?isReplacementOrder AND "
+			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
+			+ "{o:" + OrderModel.ISNEWGEARORDER + "} =?isNewGearOrder AND "
+			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},sysdate) > ?timer";
 
 	/**
  	* {@inheritDoc}
@@ -430,17 +446,40 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	 * {@inheritDoc}
 	 */
 	public List<CartModel> getAllUsedGearAbandonedCarts() {
-		final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+		final BaseStoreModel baseStore = getBaseStoreService()
+				.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_ABANDONED_CARTS);
 		// Added 8 seconds buffer, so that cron job will never clear the carts before it gets cleared from front end
-		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer()) + BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
+		fQuery.addQueryParameter(TIMER, Integer.valueOf(baseStore.getUsedGearCartTimer())
+				+ BUFFER_TO_CLEAR_ABANDONED_USEDGEAR_CARTS);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<CartModel> carts = result.getResult();
 		if (CollectionUtils.isEmpty(carts)) {
-			BlLogger.logMessage(LOG , Level.INFO , "No abandoned carts found for for used gear products");
+			BlLogger.logMessage(LOG, Level.INFO, "No abandoned carts found for for used gear products");
 			return Collections.emptyList();
 		}
 		return carts;
+	}
+
+		/**
+		 * {@inheritDoc}
+		 */
+	@Override
+	public List<OrderModel> getOrdersToVoidTransactions() {
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_TO_VOID_TRANSACTION);
+		fQuery.addQueryParameter(IS_AUTHORIZATION_VOIDED, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_EXTENDED_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_REPLACEMENT_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(IS_NEW_GEAR_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(TIMER, getConfigurationService().getConfiguration().getInt(DELAY_VOID_TRANSACTION_BY_TIME));
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No orders found to void $1 authorization transactions");
+			return Collections.emptyList();
+		}
+		return orders;
 	}
 
 	/**
@@ -467,6 +506,14 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	public void setUserService(UserService userService)
 	{
 		this.userService = userService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 	public BaseStoreService getBaseStoreService() {

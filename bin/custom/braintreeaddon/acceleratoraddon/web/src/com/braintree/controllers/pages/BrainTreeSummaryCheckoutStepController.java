@@ -267,11 +267,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
         // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
         LOG.error(ae.getMessage(), ae);
       }
-      if(isPaymentAuthorized) {
-				brainTreeCheckoutFacade.voidAuthTransaction();
-			}
-      else
-      {
+      if(!isPaymentAuthorized) {
         GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
         return enterStep(model, redirectModel);
       }
@@ -284,7 +280,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		final OrderData orderData;
 		try
 		{
-			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
+			LOG.info("getCheckoutFacade: " + getCheckoutFacade());
 			if(paymentInfo != null) {
 				brainTreeCheckoutFacade.storeIntentToCart();
 				brainTreeCheckoutFacade
@@ -293,7 +289,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
 			}
 			orderData = getCheckoutFacade().placeOrder();
-			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			LOG.info("Order has been placed, number/code: " + orderData.getCode());
 
 			subscribeEmailForNewsLetters(placeOrderForm, paymentInfo, orderData);
 

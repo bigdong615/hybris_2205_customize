@@ -10,7 +10,6 @@ import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
-import com.braintree.command.result.BrainTreeVoidResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.converters.utils.BlBrainTreeConvertUtils;
@@ -24,7 +23,6 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.paypal.converters.impl.PayPalAddressDataConverter;
 import com.braintree.paypal.converters.impl.PayPalCardDataConverter;
 import com.braintree.transaction.service.BrainTreeTransactionService;
-import com.braintreegateway.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
@@ -45,11 +43,8 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
-import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
-import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.math.BigDecimal;
@@ -60,7 +55,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -817,50 +811,6 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		{
 			getModelService().remove(cartModel);
 			getModelService().refresh(orderModel);
-		}
-	}
-
-	/**
-	 * It voids the auth transaction of the order
-	 */
-	public void voidAuthTransaction() {
-		final CartModel cart = cartService.getSessionCart();
-  	try {
-			final String merchantTransactionCode = cart.getUser().getUid();
-			List<PaymentTransactionModel> transactions = cart.getPaymentTransactions();
-			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
-				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
-				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
-						.filter(transactionEntry ->
-								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
-						.findFirst();
-				if (authEntry.isPresent()) {
-					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
-							authEntry.get().getRequestId(), StringUtils.EMPTY,
-							StringUtils.EMPTY);
-					final BrainTreeVoidResult voidResult = brainTreePaymentService
-							.voidTransaction(voidRequest);
-					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart, authEntry.get());
-				}
-			}
-		} catch (final Exception ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
-					+ "for order {} ", cart.getCode(), ex);
-		}
-	}
-
-	/**
-	 * @param transactionStatus
-	 * @param cart
-	 * @param paymentTransactionEntryModel
-	 */
-	private void setAuthorizedFlagInOrder(final TransactionStatus transactionStatus,
-			final CartModel cart, final PaymentTransactionEntryModel paymentTransactionEntryModel) {
-		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
-			cart.setIsAuthorizationVoided(Boolean.TRUE);
-			getModelService().save(cart);
-			paymentTransactionEntryModel.setTransactionStatus(Transaction.Status.VOIDED.name());
-			getModelService().save(paymentTransactionEntryModel);
 		}
 	}
 	

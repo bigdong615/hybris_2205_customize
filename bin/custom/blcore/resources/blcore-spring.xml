@@ -961,6 +961,7 @@
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 		<property name="userService" ref="userService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
@@ -1859,4 +1860,11 @@
 		<property name="blUsedGearCartCleanService" ref="blUsedGearCartCleanService"/>
 	</bean>
 	<!-- BL-1600 End-->
+
+	<!-- BL-1854 Start-->
+	<bean id="blVoidAuthTransactionJob" class="com.bl.core.job.BlVoidAuthTransactionJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
+	<!-- BL-1854 End-->
+
 </beans>

@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class BlESPEmailCommonRequestPopulator implements
     Populator<ESPEmailCommonRequestData, ESPEmailCommonEventRequest> {
-
-  @Value("${borrow.lenses.subscriber.id}")
-  private String subscriberId;
-
+  
   @Value("${notify.me.email.request.event.definition.key}")
   private String notifyMeEventDefinitionKey;
 
@@ -36,12 +33,11 @@ public class BlESPEmailCommonRequestPopulator implements
   public void populate(final ESPEmailCommonRequestData emailRequestData,
       final ESPEmailCommonEventRequest emailRequiredESPEventRequest)
        {
-         emailRequestData.setSubscriberid(subscriberId);
+         emailRequestData.setSubscriberid(emailRequestData.getEmailAddress());
          final SimpleDateFormat formatTime = new SimpleDateFormat(BlCoreConstants.DATE_PATTERN);
          emailRequestData.setRequestedDate(formatTime.format(new Date()));
          emailRequiredESPEventRequest.setData(emailRequestData);
          emailRequiredESPEventRequest.setContactKey(emailRequestData.getEmailAddress());
-         emailRequestData.setEmailAddress(subscriberId);
           if(emailRequestData instanceof NotifyMeEmailRequestData) {
             emailRequestData.setTemplate(notifyMeTemplate);
             emailRequiredESPEventRequest.setEventDefinitionKey(notifyMeEventDefinitionKey);
