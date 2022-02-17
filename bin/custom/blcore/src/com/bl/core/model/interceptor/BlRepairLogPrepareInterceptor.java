@@ -152,6 +152,10 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 		{
 			blRepairLogModel.setAssociatedConsignment(blSerialProductModel.getAssociatedConsignment());
 		}
+		if(Objects.nonNull(blRepairLogModel.getAssociatedConsignment()) && Objects.nonNull(blRepairLogModel.getAssociatedConsignment().getWarehouse()))
+		{
+			blRepairLogModel.setWarehouse(blRepairLogModel.getAssociatedConsignment().getWarehouse());
+		}
 	}
 
 	/**

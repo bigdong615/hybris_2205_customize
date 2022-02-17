@@ -2408,6 +2408,7 @@
 		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
 			<advanced-search:field-list>
 				<advanced-search:field mandatory="false" name="itemBarcode" selected="true"/>
+				<advanced-search:field mandatory="false" name="warehouse" selected="true"/>
                 <advanced-search:field mandatory="false" name="repairLogStatus" selected="false"/>
               	<advanced-search:field mandatory="false" name="serialCode" selected="false"/>
               	<advanced-search:field mandatory="false" name="repairLogId" selected="false"/>
@@ -2496,6 +2497,7 @@
 					<editorArea:attribute qualifier="order" readonly="true"/>
 					<editorArea:attribute qualifier="associatedConsignment" readonly="true"/>
 					<editorArea:attribute qualifier="consignmentEntry" readonly="true"/>
+					<editorArea:attribute qualifier="warehouse" readonly="true"/>
 				</editorArea:section>
 			</editorArea:tab>
 			<editorArea:tab name="hmc.tab.blRepair.log.tech.eng.tab" position="2">
