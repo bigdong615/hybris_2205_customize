@@ -4404,8 +4404,10 @@
           		<persistence type="property"/>
           		<modifiers read="true" write="true" optional="true" unique="true"/>
         	</attribute>
+        	<!-- Attribute warehouse created for requirement on BL-1862 -->
         	<attribute qualifier="warehouse" type="Warehouse">
                 <modifiers read="true" write="true" optional="true" />
+                <description>Warehouse instance picked from Consignment attached to Repair log</description>
                 <persistence type="property" />
             </attribute>
 		</attributes>
