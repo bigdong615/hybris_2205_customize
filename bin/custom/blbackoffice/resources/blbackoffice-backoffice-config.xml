@@ -2424,6 +2424,8 @@
             <list-view:column qualifier="serialCode"/>
             <list-view:column qualifier="itemBarcode"/>
             <list-view:column qualifier="creationtime"/>
+            <list-view:column qualifier="ocLocation"/>
+            <list-view:column qualifier="repairReasons"/>
 		</list-view:list-view>
 	</context>
 	

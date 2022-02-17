@@ -4410,6 +4410,12 @@
                 <description>Warehouse instance picked from Consignment attached to Repair log</description>
                 <persistence type="property" />
             </attribute>
+            <!-- Attribute ocLocation created for requirement on BL-1863 -->
+            <attribute qualifier="ocLocation" type="java.lang.String">
+                <modifiers read="true" write="true" optional="true" />
+                <description>Serial scanned OC location code</description>
+                <persistence type="property" />
+            </attribute>
 		</attributes>
 	</itemtype>
 
