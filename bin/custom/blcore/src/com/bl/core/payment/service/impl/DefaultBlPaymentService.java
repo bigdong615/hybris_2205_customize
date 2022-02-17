@@ -1,7 +1,13 @@
 package com.bl.core.payment.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
-
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.payment.service.BlPaymentService;
+import com.bl.logging.BlLogger;
+import com.braintree.exceptions.BraintreeErrorException;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -11,24 +17,14 @@ import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.order.dao.BlOrderDao;
-import com.bl.core.payment.service.BlPaymentService;
-import com.bl.logging.BlLogger;
-import com.braintree.exceptions.BraintreeErrorException;
-import com.braintree.transaction.service.BrainTreeTransactionService;
 
 
 /**
@@ -96,6 +92,16 @@ public class DefaultBlPaymentService implements BlPaymentService
 					+ "the payment for order {} ", order.getCode(), ex);
 		}
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void voidAuthTransaction() {
+		final List<OrderModel> orders = getOrderDao().getOrdersToVoidTransactions();
+		orders.stream().forEach(order ->
+				getBrainTreeTransactionService().voidAuthTransaction(order));
 	}
 
 	/**
