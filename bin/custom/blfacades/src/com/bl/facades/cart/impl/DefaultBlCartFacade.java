@@ -88,7 +88,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    */
   @Override
   public void removeCartEntries() {
-    getBlCartService().clearCartEntries();
+    getBlCartService().clearCartEntries(null);
   }
   
   /**
@@ -201,7 +201,6 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .addToCart(parameter);
     setCartType(blSerialProductModel, cartModel, commerceCartModification,parameter);
 		updateCartOptionEntry(commerceCartModification.getEntry(),cartModel);
-
 		return getCartModificationConverter().convert(commerceCartModification);
   }
 	/**

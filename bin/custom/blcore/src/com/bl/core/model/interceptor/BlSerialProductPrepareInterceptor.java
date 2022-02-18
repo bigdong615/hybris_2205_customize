@@ -146,12 +146,16 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void updateBufferInvInStockRecords(final Integer minQtyForBufferInventory,
 			final BlSerialProductModel blSerialProduct) throws InterceptorException {
-		if(getBlBufferInventoryService().minQtyEligibleForBufferInv(minQtyForBufferInventory,
-				blSerialProduct.getBlProduct())) {
-			getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
-		} else {
-			throw new InterceptorException(
-					"Can't mark this serial product as buffer inventory");
+		try {
+			if(getBlBufferInventoryService().minQtyEligibleForBufferInv(minQtyForBufferInventory,
+					blSerialProduct.getBlProduct())) {
+				getBlStockService().findAndUpdateBufferInvInStockRecords(blSerialProduct);
+			} else {
+				throw new InterceptorException(
+						"Can't mark this serial product as buffer inventory");
+			}
+		}  catch (final Exception exception) {
+			BlLogger.logMessage(LOG, Level.ERROR, "Exception occurred while checking minQtyEligibleForBufferInv method", exception);
 		}
 	}
 

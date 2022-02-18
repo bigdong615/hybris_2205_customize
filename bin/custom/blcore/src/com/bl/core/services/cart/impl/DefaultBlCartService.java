@@ -16,7 +16,6 @@ import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlUpdateStagedProductUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.daos.CatalogVersionDao;
@@ -88,14 +87,17 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void clearCartEntries() {
+    public void clearCartEntries (CartModel cartModel) {
 
-        final CartModel cartModel = getSessionCart();
-
+        if(null == cartModel) {
+            cartModel = getSessionCart();
+        }
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
             if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-                setUsedGearSerialProductStatus(cartModel, null);
+                for(AbstractOrderEntryModel cartEntry : cartModel.getEntries()) {
+                    setUsedGearSerialProductStatus(cartModel, cartEntry);
+                }
             }
             cartModel.setIsNewGearOrder(false);
             cartModel.setIsRentalCart(false);
@@ -110,9 +112,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
             commerceCartParameter.setCart(cartModel);
             getCommerceCartService().removeAllEntries(commerceCartParameter);
 
-
             BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
-                    "All entries removed from cart with code : {}", cartModel.getCode());
+                "All entries removed from cart with code : {}", cartModel.getCode());
         }
     }
 
@@ -401,7 +402,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
 		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
 		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-		      BlUpdateStagedProductUtils.changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ACTIVE);
 		      getModelService().save(blSerialProductModel);
 		  }
 	}
