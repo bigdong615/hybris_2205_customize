@@ -530,19 +530,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private Double getShippingAmount(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel,
                                      final Map<String, Double> calculatedValueMap) {
+   	 final String maxValue = String.valueOf(Math.max(
+             calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
+                     BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT)));
         if (!(order instanceof CartModel)) {
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
         }
-        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
-                calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
-                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel);
+        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(maxValue, zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
             if (BooleanUtils.isFalse(order.getIsRentalCart())) {
-                return (shippingCostModel.getAmount() / BlInventoryScanLoggingConstants.TWO);
+                return (shippingCostModel.getAmount() * Double.valueOf(maxValue) / BlInventoryScanLoggingConstants.TWO);
             }
-            return shippingCostModel.getAmount();
+            return shippingCostModel.getAmount() * Double.valueOf(maxValue);
         }
         return null;
     }
