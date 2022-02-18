@@ -1,6 +1,7 @@
 package com.bl.core.order.dao;
 
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.daos.OrderDao;
@@ -111,6 +112,12 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	List<AbstractOrderModel> getOrdersForOrderBillFeedToFTPBasedOnSpecificDate(final Date orderFeedDate);
+
+	/**
+	 * It is to fetch the abandoned used gear carts
+	 * @return list of cartEntryModel
+	 */
+	List<CartEntryModel> getAllUsedGearAbandonedCarts();
 
 	/**
 	 * To get the orders for which 1$ authorization is not voided yet
