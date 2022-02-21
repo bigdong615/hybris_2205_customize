@@ -100,6 +100,7 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 				blRepairLogModel.setSerialProduct(blSerialProductModel);
 				blRepairLogModel.setSerialCode(blSerialProductModel.getCode());
 				blRepairLogModel.setItemBarcode(StringUtils.stripToEmpty(blSerialProductModel.getBarcode()));
+				blRepairLogModel.setOcLocation(blSerialProductModel.getOcLocation());
 				setOrderRelatedInformation(blRepairLogModel, blSerialProductModel);
 				addCurrentUserToRepairLog(blRepairLogModel);
 				getBlRepairLogService().getSelectedGearGaurdFromOrder(blRepairLogModel, blSerialProductModel);
@@ -151,6 +152,10 @@ public class BlRepairLogPrepareInterceptor implements PrepareInterceptor<BlRepai
 		else
 		{
 			blRepairLogModel.setAssociatedConsignment(blSerialProductModel.getAssociatedConsignment());
+		}
+		if(Objects.nonNull(blRepairLogModel.getAssociatedConsignment()) && Objects.nonNull(blRepairLogModel.getAssociatedConsignment().getWarehouse()))
+		{
+			blRepairLogModel.setWarehouse(blRepairLogModel.getAssociatedConsignment().getWarehouse());
 		}
 	}
 
