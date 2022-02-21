@@ -21,7 +21,7 @@ public class BlCustomAdvancedSearchEngineController extends com.hybris.backoffic
 {
 
   private final List<String> stringList = Arrays
-      .asList(BlCoreConstants.PULLED_ORDERS_QUEUE, BlCoreConstants.AWAITING_ORDERS_QUEUE , BlCoreConstants.COMPLTED_ORDER_QUEUE);
+      .asList(BlCoreConstants.PULLED_ORDERS_QUEUE, BlCoreConstants.AWAITING_ORDERS_QUEUE , BlCoreConstants.COMPLTED_ORDER_QUEUE, BlCoreConstants.FRONT_DESK_QUEUE);
 
   private static final Logger LOG = Logger.getLogger(BlCustomAdvancedSearchEngineController.class);
 
