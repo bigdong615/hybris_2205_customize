@@ -127,7 +127,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "({{select {es:pk} from {ExportStatus as es} where {es:code} = 'NOTEXPORTED'}})";
 
 	private static final String USED_GEAR_ABANDONED_CARTS  = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},sysdate) > ?timer";
+			+ CartEntryModel._TYPECODE + " AS c} WHERE  datediff(ss,{c:" + CartEntryModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
 	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
@@ -135,7 +135,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "{o:" + OrderModel.ISCARTUSEDFORREPLACEMENTORDER + "} =?isReplacementOrder AND "
 			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
 			+ "{o:" + OrderModel.ISNEWGEARORDER + "} =?isNewGearOrder AND "
-			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},sysdate) > ?timer";
+			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
 	/**
  	* {@inheritDoc}
