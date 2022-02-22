@@ -8,6 +8,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 /**
@@ -25,7 +26,8 @@ public class DefaultBlUsedGearCartCleanService implements BlUsedGearCartCleanSer
   @Override
   public void cleanUsedGearAbandonedCart() {
     final List<CartEntryModel> cartEntries  = orderDao.getAllUsedGearAbandonedCarts();
-    final Set<CartModel> carts = cartEntries.stream().map(CartEntryModel::getOrder).collect(Collectors.toSet());
+    final Set<CartModel> carts = cartEntries.stream().map(CartEntryModel::getOrder).filter(cartModel ->
+        BooleanUtils.isFalse(cartModel.getIsRentalCart())).collect(Collectors.toSet());
     carts.stream().forEach(cartModel ->
       blCartService.clearCartEntries(cartModel)
     );
