@@ -70,6 +70,7 @@ public class BlOrderGiftCardPurchaseEventPopulator<SOURCE extends GiftCardModel 
     giftCardPurchaseData.setCustomername(getObjectValue(giftCardModel.getName()));
     giftCardPurchaseData.setCustomeremail(getObjectValue(giftCardModel.getCustomerEmail()));
     giftCardPurchaseData.setDatePlaced(formatter.format(abstractOrderModel.getDate()));
+    giftCardPurchaseData.setGiftcardnote(getObjectValue(giftCardModel.getMessage()));
   }
 
   /**
