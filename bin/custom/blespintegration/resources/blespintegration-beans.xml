@@ -1239,6 +1239,10 @@
 		<property name="datePlaced" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Date_Placed")</annotations>
 		</property>
+		<property name="giftcardnote" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("Gift_Card_Note")</annotations>
+		</property>
+
 	</bean>
 
 	<!--BL-1813,BL-1814,BL-1815 common email data(reset password,notify me & Back in stock notification) for ESP Event Request Object start-->
