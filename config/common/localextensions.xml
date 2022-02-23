@@ -168,5 +168,6 @@
       <extension name='braintreehac' />
       <extension name='tealiumiqaddon' />
 
+	<extension name='blhotfolder' />
   </extensions>
 </hybrisconfig>
