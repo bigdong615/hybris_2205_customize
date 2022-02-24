@@ -4500,6 +4500,12 @@
 	                    <description>Testing Gear Needed Status</description>
 	                    <persistence type="property" />
                   	</attribute>
+                  	<!-- created requestedUser attribute for BL-1872 -->
+                  	<attribute qualifier="requestedUser" type="User">                         
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>User details whom gear is requested for</description>
+                         <persistence type="property"/>
+                     </attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>
