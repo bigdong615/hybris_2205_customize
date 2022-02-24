@@ -33,5 +33,12 @@ public interface BlCouponFacade {
    * This method created to add custom logic to remove the applied voucher from extend order page
    */
   void acceptIfCartExists(final String code, final BiConsumer<String, AbstractOrderModel> orderConsumer) throws VoucherOperationException;
+  
+  /**
+   * Gets the order data for extended order.
+   *
+   * @return the order data for extended order
+   */
+  OrderData getOrderDataForExtendedOrder(final String referer);
 
 }
