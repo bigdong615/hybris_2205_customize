@@ -2,37 +2,38 @@
 <!--
  Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 --><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
-           
-    
-    <extension abstractclassprefix="Generated" classprefix="Blhotfolder" jaloLogicFree="true" managername="BlhotfolderManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="blhotfolder" usemaven="false">
-                  
-      
-        
-        <!-- for more information on maven managed libraries please consult https://wiki.hybris.com/x/Nq8sDQ -->
-                               
-      
-        
-        <!-- you should add all required extensions to this list, except platform extensions which are automatically required -->
-                         
-      
-        
-        <!-- <requires-extension name="cms"/> -->
-                         
-      
 
-      
-        
+
+    <extension abstractclassprefix="Generated" classprefix="Blhotfolder" jaloLogicFree="true" managername="BlhotfolderManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="blhotfolder" usemaven="false">
+
+
+
+        <!-- for more information on maven managed libraries please consult https://wiki.hybris.com/x/Nq8sDQ -->
+
+
+
+        <!-- you should add all required extensions to this list, except platform extensions which are automatically required -->
+
+
+
+        <!-- <requires-extension name="cms"/> -->
+
+
+
+      	<requires-extension name="acceleratorservices"/>
+      	<requires-extension name="basecommerce"/>
+
         <coremodule generated="true" manager="com.bl.jalo.BlhotfolderManager" packageroot="com.bl"/>
-                      
-        
-        <webmodule jspcompile="false" webroot="/blhotfolder"/>
-                					
-	
-        
-           
-    
+
+
+        <!-- <webmodule jspcompile="false" webroot="/blhotfolder"/> -->
+
+
+
+
+
     </extension>
-              
+
 
 
 </extensioninfo>
