@@ -36,7 +36,7 @@
     <extension name='commercewebservices'/>
 
     <!-- Extension to enable SmartEdit -->
-    <extension name='cmssmartedit'/>
+   <!--  <extension name='cmssmartedit'/>
     <extension name='cmsbackoffice'/>
     <extension name='cmssmarteditwebservices'/>
     <extension name='cmswebservices'/>
@@ -46,10 +46,10 @@
     <extension name='smarteditaddon'/>
     <extension name='smarteditwebservices'/>
     <extension name='npmancillary'/>
-    <extension name='personalizationsmartedit'/>
+    <extension name='personalizationsmartedit'/> -->
 
     <!-- Extension to enable personalization services for SmartEdit and others -->
-    <extension name='personalizationcmsbackoffice'/>
+    <!-- <extension name='personalizationcmsbackoffice'/>
     <extension name='personalizationcmsweb'/>
     <extension name='personalizationsampledataaddon'/>
     <extension name='personalizationservices'/>
@@ -66,17 +66,17 @@
     <extension name='personalizationsearchbackoffice'/>
     <extension name='personalizationsearchsamplesaddon'/>
     <extension name='personalizationsearchsmartedit'/>
-    <extension name='personalizationsearchweb'/>
+    <extension name='personalizationsearchweb'/> -->
 
     <!-- Extension to enable MediaConversions -->
-    <extension name='mediaconversion'/>
+   <!--  <extension name='mediaconversion'/>
     <extension name='mediaconversionbackoffice'/>
-
+ -->
     <!-- Extension to enable the core of the WCMS Module for SmartEdit -->
-    <extension name='cms2'/>
+  <!--   <extension name='cms2'/>
     <extension name='cms2lib'/>
     <extension name='cmscockpit'/>
-    <extension name='cmsfacades'/>
+    <extension name='cmsfacades'/> -->
 
     <!-- Extension to enable customers to receive back-in-stock notifications for their interested products -->
     <extension name='blstocknotificationaddon'/>
@@ -86,8 +86,8 @@
     <extension name='groovynature'/>
 
     <!-- Extension to enable Configurable Bundle -->
-    <extension name='configurablebundlebackoffice'/>
-
+<!--     <extension name='configurablebundlebackoffice'/>
+ -->
     <!-- Extension to enable Consignment Tracking -->
     <!-- The consignmenttrackingaddon AddOn enables customers to track the consignment logistic status of their orders in the storefront. -->
     <extension name='consignmenttrackingaddon'/>
@@ -122,7 +122,7 @@
     <extension name='warehousingwebservices'/>
 
     <!-- Extension to enable Promotions -->
-    <extension name='promotionenginebackoffice'/>
+<!--     <extension name='promotionenginebackoffice'/>
     <extension name='promotionenginesamplesaddon'/>
     <extension name='promotionengineservices'/>
     <extension name='droolsruleengineservices'/>
@@ -131,7 +131,7 @@
     <extension name='ruleenginebackoffice'/>
     <extension name='permissionsfacades'/>
     <extension name='webservicescommons'/>
-    <extension name='cockpit'/>
+    <extension name='cockpit'/> -->
 
     <!-- Extension to enable Text Field Configurator Template Module on Products using the Backoffice Administration Cockpit -->
     <extension name='textfieldconfiguratortemplateaddon'/>
