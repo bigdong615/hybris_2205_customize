@@ -606,7 +606,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 						BlControllerConstants.RENTAL_DURATION_OPERATOR)
 								? ruleConditionData.getParameters().get(BlControllerConstants.RENTAL_DURATION_OPERATOR)
 								: null;
-				if (isInValidForRentalDays(ruleParameterData, ruleConditionData, model, redirectAttributes))
+				if (isInvalidForRentalDays(ruleParameterData, ruleConditionData, model, redirectAttributes))
 				{
 					return false;
 				}
@@ -616,7 +616,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	}
 
 	/**
-	 * Checks if is in valid for rental days.
+	 * Checks if is invalid for rental days.
 	 *
 	 * @param ruleParameterData
 	 *           the rule parameter data
@@ -626,7 +626,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	 *           the redirect attributes
 	 * @return true, if is in valid for rental days
 	 */
-	private boolean isInValidForRentalDays(final RuleParameterData ruleParameterData, final RuleConditionData ruleConditionData,
+	private boolean isInvalidForRentalDays(final RuleParameterData ruleParameterData, final RuleConditionData ruleConditionData,
 			final Model model, final RedirectAttributes redirectAttributes)
 	{
 		if (Objects.nonNull(ruleParameterData) && ruleParameterData.getValue() instanceof AmountOperator)
