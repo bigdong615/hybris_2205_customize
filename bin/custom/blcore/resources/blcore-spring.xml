@@ -1219,7 +1219,9 @@
 
 	<!--Added for extend order coupon promotion-->
 
+	<alias name="defaultBlCouponManagementService" alias="couponManagementService" />
 	<bean id="defaultBlCouponManagementService" class="com.bl.core.coupon.impl.DefaultBlCouponManagementService" parent="defaultCouponManagementService">
+		<property name="couponDao" ref="couponDao"/>
 	</bean>
 	
 	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
@@ -1876,4 +1878,12 @@
         <property name="typeCode" value="BlTestingGearNeeded"/>
     </bean>
     <!-- BL-1872 End -->
+    
+    <!-- BL-1764 Starts -->
+    <alias name="defaultBlPromotionDao" alias="promotionDao"/>
+    <bean id="defaultBlPromotionDao" class="com.bl.core.dao.promotion.impl.DefaultBlPromotionDao" parent="defaultPromotionDao" />
+    
+    <alias alias="ruleFirstTimeUserConditionTranslator" name="defaultRuleFirstTimeUserConditionTranslator" />
+    <bean id="defaultRuleFirstTimeUserConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleFirstTimeUserConditionTranslator" />
+    <!-- BL-1764 Ends -->
 </beans>

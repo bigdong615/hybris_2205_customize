@@ -544,7 +544,9 @@
 	</bean>
 
 	<!--[BL-643]: Custom Promotions-->
-	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator"/>
+	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator">
+		<property name="userService" ref="userService"/>
+	</bean>
 
 	<alias name="defaultCartRaoConverter" alias="cartRaoConverter" />
 	<bean id="defaultCartRaoConverter" parent="abstractPopulatingConverter">

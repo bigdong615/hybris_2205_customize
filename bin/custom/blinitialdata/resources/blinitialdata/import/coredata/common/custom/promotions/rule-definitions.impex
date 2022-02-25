@@ -58,3 +58,14 @@ INSERT_UPDATE RuleActionDefinitionRuleTypeMapping;definition(id)[unique=true];ru
                                                  ;y_free_delivery_modes;
                                                  ;y_ug_order_entry_percentage_discount;
                                                  ;y_extended_free_rental_days;
+
+###### BL-1764 ########
+
+INSERT_UPDATE RuleConditionDefinition ; id[unique=true]             ; name[lang=$lang]              ; breadcrumb[lang=$lang]                   ; priority ; allowsChildren ; translatorId                         ; translatorParameters ; categories(id) 
+                                      ; y_first_time_user_condition ; For First Time User Condition ; Only For First Time Customer {flagValue} ;          ; false          ; ruleFirstTimeUserConditionTranslator ;                      ; cart           
+                                      
+INSERT_UPDATE RuleConditionDefinitionParameter ; definition(id)[unique = true] ; id[unique = true] ; priority ; name[lang = $lang]            ; description[lang = $lang]     ; type              ; value ; required[default = true] ; validators 
+                                               ; y_first_time_user_condition   ; flagValue         ; 1000     ; For First Time User Condition ; For First Time User Condition ; java.lang.Boolean ; true  ;                          
+                                               
+INSERT_UPDATE RuleConditionDefinitionRuleTypeMapping ; definition(id)[unique=true] ; ruleType(code)[default=PromotionSourceRule][unique=true] 
+                                                     ; y_first_time_user_condition ;                                                          
