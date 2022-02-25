@@ -218,21 +218,23 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	private boolean validateAllConditions(final String voucherCode, final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
-		final boolean isPromotionIsValid = isPromotionExist(model, redirectAttributes, promotionSourceRule);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Promotion with code {} is Valid : {}", voucherCode, isPromotionIsValid);
-		return isPromotionIsValid;
+		final boolean isValidPromotion = isPromotionPresent(model, redirectAttributes, promotionSourceRule);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Promotion with code {} is Valid : {}", voucherCode, isValidPromotion);
+		return isValidPromotion;
 	}
 
 	/**
-	 * Checks if is promo exist.
+	 * Checks if is promotion present.
 	 *
+	 * @param model
+	 *           the model
 	 * @param redirectAttributes
 	 *           the redirect attributes
 	 * @param promotionSourceRule
 	 *           the promotion source rule
-	 * @return true, if is promo exist
+	 * @return true, if is promotion present
 	 */
-	private boolean isPromotionExist(final Model model, final RedirectAttributes redirectAttributes,
+	private boolean isPromotionPresent(final Model model, final RedirectAttributes redirectAttributes,
 			final PromotionSourceRuleModel promotionSourceRule)
 	{
 		if (Objects.isNull(promotionSourceRule))
@@ -290,8 +292,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 		if (Objects.nonNull(promotionSourceRule.getStartDate()) && promotionSourceRule.getStartDate().compareTo(new Date()) > 0)
 		{
 			addAndLogMessage("promotion.validation.message.not.started", new Object[]
-			{ BlDateTimeUtils.convertDateToStringDate(promotionSourceRule.getStartDate(), BlControllerConstants.DATE_FORMAT) },
-					model, redirectAttributes);
+			{ getFormattedStringDate(promotionSourceRule.getStartDate()) }, model, redirectAttributes);
 			return false;
 		}
 		return isPromotionIsExpired(model, redirectAttributes, promotionSourceRule);
@@ -553,16 +554,14 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 				if (Objects.isNull(arrivalDate))
 				{
 					addAndLogMessage("promotion.validation.message.promo.arrival.date", new Object[]
-					{ BlDateTimeUtils.convertDateToStringDate(promoConditionArrivaldate, BlControllerConstants.DATE_FORMAT) }, model,
-							redirectAttributes);
+					{ getFormattedStringDate(promoConditionArrivaldate) }, model, redirectAttributes);
 					return false;
 				}
 				if (BooleanUtils.isFalse(DateUtils.isSameDay(arrivalDate, promoConditionArrivaldate))
 						&& arrivalDate.compareTo(promoConditionArrivaldate) > 0)
 				{
 					addAndLogMessage("promotion.validation.message.promo.arrival.date", new Object[]
-					{ BlDateTimeUtils.convertDateToStringDate(promoConditionArrivaldate, BlControllerConstants.DATE_FORMAT) }, model,
-							redirectAttributes);
+					{ getFormattedStringDate(promoConditionArrivaldate) }, model, redirectAttributes);
 					return false;
 				}
 			}
@@ -644,10 +643,10 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 				switch (operatorToExecute)
 				{
 					case "EQUAL":
-						return isRentalDaysIsExactToSpecifiedDays(rentalDurationOnPromotion, orderRentalDuration, model,
+						return isRentalDaysExactToSpecifiedDays(rentalDurationOnPromotion, orderRentalDuration, model,
 								redirectAttributes);
 					case "GREATER_THAN_OR_EQUAL":
-						return isRentalDaysIsLessThenSpecifiedDays(rentalDurationOnPromotion, orderRentalDuration, model,
+						return isRentalDaysLessThenSpecifiedDays(rentalDurationOnPromotion, orderRentalDuration, model,
 								redirectAttributes);
 					default:
 						return false;
@@ -674,15 +673,19 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	}
 
 	/**
-	 * Checks if is rental days is less then specified days.
+	 * Checks if is rental days less then specified days.
 	 *
 	 * @param promoRentalDurationDays
 	 *           the promo rental duration days
+	 * @param orderRentalDuration
+	 *           the order rental duration
+	 * @param model
+	 *           the model
 	 * @param redirectAttributes
 	 *           the redirect attributes
-	 * @return true, if is rental days is less then specified days
+	 * @return true, if is rental days less then specified days
 	 */
-	private boolean isRentalDaysIsLessThenSpecifiedDays(final int promoRentalDurationDays, final int orderRentalDuration,
+	private boolean isRentalDaysLessThenSpecifiedDays(final int promoRentalDurationDays, final int orderRentalDuration,
 			final Model model, final RedirectAttributes redirectAttributes)
 	{
 		if (orderRentalDuration < promoRentalDurationDays)
@@ -703,7 +706,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	 *           the redirect attributes
 	 * @return the boolean
 	 */
-	private Boolean isRentalDaysIsExactToSpecifiedDays(final int promoRentalDurationDays, final int orderRentalDuration,
+	private Boolean isRentalDaysExactToSpecifiedDays(final int promoRentalDurationDays, final int orderRentalDuration,
 			final Model model, final RedirectAttributes redirectAttributes)
 	{
 		if (orderRentalDuration != promoRentalDurationDays)
@@ -955,6 +958,18 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 		return CollectionUtils.isNotEmpty(lRuleConditionData)
 				? lRuleConditionData.get(lRuleConditionData.size() - BlCoreConstants.INT_ONE)
 				: null;
+	}
+
+	/**
+	 * Gets the formatted string date.
+	 *
+	 * @param date
+	 *           the date
+	 * @return the formatted string date
+	 */
+	private String getFormattedStringDate(final Date date)
+	{
+		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.DATE_FORMAT);
 	}
 
 	/**
