@@ -609,7 +609,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String THUMBNAIL = "thumbnail";
 	public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
 
-
+	public static final String RULE_STATUS = "ruleStatus";
+	public static final String PROMO_GROUP = "promoGroup";
 
 
 	private BlCoreConstants()

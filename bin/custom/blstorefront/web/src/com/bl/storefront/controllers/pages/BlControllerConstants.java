@@ -1,5 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
+import de.hybris.platform.ruledefinitions.AmountOperator;
+
 public class BlControllerConstants
 {
 
@@ -216,6 +218,26 @@ public class BlControllerConstants
 	public static final String FILE_FORMAT_ERROR = "fileFormatError";
 	public static final String ENABLE_POPUP = "enablePopup";
 	public static final String SEARCHED_WORD = "searchedWord";
+	
+	public static final String PRODUCT_CODE_SPLITTER = "::";
+	public static final String PRODUCTS = "products";
+	public static final String PRODUCTS_OPERATOR = "products_operator";
+	public static final String Y_QUALIFYING_PRODUCTS = "y_qualifying_products";
+	public static final String RENTAL_DURATION = "rentalDuration";
+	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
+	public static final String Y_RENTAL_DURATION_CONDITION = "y_rental_duration_condition";
+	public static final String DD_MMM_YYYY = "dd MMM yyyy";
+	public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
+	public static final String Y_RENTAL_ARRIVAL_DATE_CONDITION = "y_rental_arrival_date_condition";
+	public static final String CUSTOMERS = "customers";
+	public static final String Y_TARGET_CUSTOMERS = "y_target_customers";
+	public static final String Y_FIRST_TIME_USER_CONDITION = "y_first_time_user_condition";
+	public static final String GREATER_THAN_OR_EQUAL = AmountOperator.GREATER_THAN_OR_EQUAL.toString();
+	public static final String EQUAL = AmountOperator.EQUAL.toString();
+	public static final String RENTAL_CART_TRUE = "CartRAO(rentalCart == Boolean.TRUE)";
+	public static final String RENTAL_CART_FALSE = "CartRAO(rentalCart == Boolean.FALSE)";
+	public static final String CHECK_FIRST_TIME_USER = "CartRAO(firstTimeCustomer == Boolean.TRUE)";
+	public static final String Y_RENTAL_CART_CONDITION = "y_rental_cart_condition";
 
 	private BlControllerConstants()
 	{

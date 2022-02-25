@@ -386,6 +386,7 @@
 		<property name="extendedFreeRentalDays" type="java.lang.Integer" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
     <property name="usedGearDiscount" type="java.lang.Integer" />
+    <property name="firstTimeCustomer" type="java.lang.Boolean" />
   </bean>
   
     <!-- Creating Request Data for UPS Shipment -->
