@@ -20,6 +20,8 @@ import com.bl.core.dao.promotion.BlPromotionDao;
 
 
 /**
+ * This Dao class contains the logic to get promotion related queries.
+ *
  * @author Ravikumar
  *
  */

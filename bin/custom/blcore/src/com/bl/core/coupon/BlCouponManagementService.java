@@ -21,11 +21,11 @@ public interface BlCouponManagementService extends CouponManagementService {
    CouponResponse redeemForExtendOrder(final String couponCode, final OrderModel order);
    
    /**
-    * Checks if is coupon can be used.
+    * Checks if is coupon available for use.
     *
     * @param couponCode the coupon code
     * @param user the user
-    * @return true, if is coupon can be used
+    * @return true, if is coupon available for use
     */
-   boolean isCouponCanBeUsed(final String couponCode, final UserModel user);
+   boolean isCouponAvailableForUse(final String couponCode, final UserModel user);
 }

@@ -4,6 +4,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+/**
+ * This class validates the promotions.
+ *
+ * @author Ravikumar
+ *
+ */
 public interface BlPromotionValidator
 {
 

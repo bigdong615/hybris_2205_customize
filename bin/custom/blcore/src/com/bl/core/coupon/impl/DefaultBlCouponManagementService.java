@@ -39,7 +39,7 @@ public class DefaultBlCouponManagementService extends DefaultCouponManagementSer
   }
   
   @Override
-	public boolean isCouponCanBeUsed(final String couponCode, final UserModel user)
+	public boolean isCouponAvailableForUse(final String couponCode, final UserModel user)
 	{
 		final SingleCodeCouponModel singleCodeCoupon = getCouponDao().findSingleCodeCouponById(couponCode);
 		if (Objects.nonNull(singleCodeCoupon))

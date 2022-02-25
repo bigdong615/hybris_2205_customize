@@ -442,7 +442,7 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	{
 		final UserModel currentUser = getUserService().getCurrentUser();
 		if (Objects.nonNull(currentUser) && BooleanUtils.isFalse(getUserService().isAnonymousUser(currentUser))
-				&& BooleanUtils.isFalse(getBlCouponManagementService().isCouponCanBeUsed(getVoucherCode(), currentUser)))
+				&& BooleanUtils.isFalse(getBlCouponManagementService().isCouponAvailableForUse(getVoucherCode(), currentUser)))
 		{
 			addAndLogMessage("promotion.validation.message.already.used", null, model, redirectAttributes);
 			return false;
