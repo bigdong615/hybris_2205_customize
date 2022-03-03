@@ -15,6 +15,8 @@
     <context:annotation-config/>    
 
 	<import resource="classpath:/blhotfolder/integration/bl-category-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-customer-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-address-hotfolder-spring.xml"/>
 	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	

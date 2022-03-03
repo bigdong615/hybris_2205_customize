@@ -22,6 +22,8 @@
 
       	<requires-extension name="acceleratorservices"/>
       	<requires-extension name="basecommerce"/>
+      	<requires-extension name="blcore"/>
+      	
 
         <coremodule generated="true" manager="com.bl.jalo.BlhotfolderManager" packageroot="com.bl"/>
 
