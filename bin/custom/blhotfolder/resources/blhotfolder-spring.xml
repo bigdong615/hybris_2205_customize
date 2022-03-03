@@ -18,6 +18,9 @@
 	<import resource="classpath:/blhotfolder/integration/bl-customer-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-address-hotfolder-spring.xml"/>
 	
+	<import resource="classpath:/blhotfolder/integration/bl-billing-charges-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-payment-info-hotfolder-spring.xml"/>
+	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	
 	
