@@ -509,7 +509,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String VERIFICATION_LEVEL_TWO = "2";
 
 	public static final String BILLING_TYPE = "billtype";
-	
+
 	public static final String GIFT_CARD_TYPE = "GiftCard";
 	public static final String GC_TYPE = "GC";
 	public static final String PLUS = "+";
@@ -523,7 +523,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String FEDEX = "fedex";
 	public static final String UPS = "ups";
 	public static final String USPS = "usps";
-	
+
 	public static final String ANONYMOUS = "anonymous";
 	public static final String FRONT_DESK_DELIVERY_MODE_KEY_PREFIX = "BL_";
 
@@ -532,7 +532,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String AWAITING_ORDERS_QUEUE = "OrdersAwaitingQueue";
 	public static final String COMPLTED_ORDER_QUEUE = "ShippingCompleteOrderQueue";
 	public static final String FRONT_DESK_QUEUE = "FrontDeskQueue";
-	
+
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
 	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
 
@@ -543,7 +543,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHIPPED = "SHIPPED";
 	public static final String IN_HOUSE = "IN_HOUSE";
 	public static final String ADDED_TO_CART = "ADDED_TO_CART";
-	
+
 	public static final String SYNC_ACTIVE_PROPERTY = "catalog.sync.active";
 
 	public static final int NAME_LENGTH_SIZE = 48;
@@ -585,7 +585,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	// Consignment Status
 	public static final String RECEIVED_READY_TO_SHIP = "RECEIVED_READY_TO_SHIP";
 	public static final String RECEIVED_READY_FOR_PICKUP = "RECEIVED_READY_FOR_PICKUP";
-	
+
 	public static final int INT_ONE = 1;
    public static final int INT_TWO = 2;
    public static final String CARD_MASK = "******";
@@ -609,6 +609,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String THUMBNAIL = "thumbnail";
 	public static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
 
+	public static final String ADDRESS_ID = "addressId";
 
 
 
