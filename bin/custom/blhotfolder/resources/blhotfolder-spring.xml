@@ -16,6 +16,8 @@
 
 	<import resource="classpath:/blhotfolder/integration/bl-category-hotfolder-spring.xml"/>
 	
+	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
+	
 	
 	<beans profile="cloud">
 		<import
