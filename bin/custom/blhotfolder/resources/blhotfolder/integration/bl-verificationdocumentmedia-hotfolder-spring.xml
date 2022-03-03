@@ -33,7 +33,7 @@
 		<property name="header">
 			<value>#{defaultImpexProductHeader}
 				# Insert VerificationDocumentMedia
-				INSERT_UPDATE VerificationDocumentMedia;code[unique=true];documentType(code);expiryDate[dateformat=dd.MM.yyyy HH:mm];removedByCustomer;verificationStatus(code);customer(uid);URL;realFileName;mime;folder(path);$catalogVersion
+				INSERT_UPDATE VerificationDocumentMedia;code[unique=true];documentType(code);expiryDate[dateformat=dd.MM.yyyy HH:mm:ss];removedByCustomer;verificationStatus(code);customer(uid);URL;realFileName;mime;folder(path);$catalogVersion
 			</value>
 		</property>
 		<property name="impexRow">
