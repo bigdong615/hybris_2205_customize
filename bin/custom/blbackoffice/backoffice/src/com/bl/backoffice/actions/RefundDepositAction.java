@@ -83,7 +83,7 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 				if(transaction.isLegacyTransaction()) {
 					final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(transaction.getEntries().get(0), BigDecimal
 							.valueOf(paymentInfo.getDepositAmount()));
-					if (!result.isSuccess()) {brainTreeTransactionService
+					if (!result.isSuccess()) {
 						refundSuccessful.add(new AtomicBoolean(Boolean.FALSE));
 					}
 				} else {
