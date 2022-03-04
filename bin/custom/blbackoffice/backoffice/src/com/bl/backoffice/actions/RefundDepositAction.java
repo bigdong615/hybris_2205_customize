@@ -5,7 +5,7 @@ import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.result.BrainTreeRefundTransactionResult;
 import com.braintree.method.BrainTreePaymentService;
 import com.braintree.model.BrainTreePaymentInfoModel;
-import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.hybris.cockpitng.actions.ActionContext;
@@ -39,8 +39,8 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 	private ModelService modelService;
 	@Resource
 	private BrainTreePaymentService brainTreePaymentService;
-	@Resource(name = "brainTreeTransactionService")
-	private BrainTreeTransactionServiceImpl brainTreeTransactionService;
+	@Resource
+	private BrainTreeTransactionService brainTreeTransactionService;
 
 	protected static final String SOCKET_OUT_CONTEXT = "blRefundDepositContext";
 	private static final String REFUND_ALREADY_PROCESSED = "Refund has already been processed";
@@ -83,7 +83,7 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 				if(transaction.isLegacyTransaction()) {
 					final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(transaction.getEntries().get(0), BigDecimal
 							.valueOf(paymentInfo.getDepositAmount()));
-					if (!result.isSuccess()) {
+					if (!result.isSuccess()) {brainTreeTransactionService
 						refundSuccessful.add(new AtomicBoolean(Boolean.FALSE));
 					}
 				} else {
