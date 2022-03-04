@@ -758,10 +758,10 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (totalRefundAmount <= this.getOrderModel().getOriginalOrderTotalAmount()) {
             try {
                 boolean refundSuccessful = false;
-                final BigDecimal amount = BigDecimal.valueOf(this.deductGiftCartAmount(totalRefundAmount)
+                final BigDecimal amount = (BigDecimal.valueOf(this.deductGiftCartAmount(totalRefundAmount)
                     < BlCustomCancelRefundConstants.ZERO
                     ? -this.deductGiftCartAmount(totalRefundAmount)
-                    : this.deductGiftCartAmount(totalRefundAmount));
+                    : this.deductGiftCartAmount(totalRefundAmount))).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN);
                 if(captureEntry.getPaymentTransaction().isLegacyTransaction()) {
                     final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(captureEntry, amount);
                     refundSuccessful = result.isSuccess();
