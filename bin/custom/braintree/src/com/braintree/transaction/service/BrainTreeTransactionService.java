@@ -9,6 +9,8 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.dto.BraintreeInfo;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -226,4 +228,13 @@ public interface BrainTreeTransactionService
 	 * @param order the order
 	 */
 	public void voidAuthTransaction(final OrderModel order);
+
+	/**
+	 * To issue a credit
+	 * @param paymentTransactionEntry payment transaction entry
+	 * @param refundAmount refund amount
+	 * @return result object
+	 */
+	public Result<Transaction> issueBlindCredit(final PaymentTransactionEntryModel paymentTransactionEntry,
+			final BigDecimal refundAmount);
 }

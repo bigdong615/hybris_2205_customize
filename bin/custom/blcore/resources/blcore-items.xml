@@ -3128,12 +3128,12 @@
                 <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                 <description>Order will be marked as video order</description>
               </attribute>
-                  <attribute qualifier="depositAmount" type="java.lang.Double">
-                    <modifiers optional="true" read="true" write="true" search="false"/>
-                    <description>Deposit Amount to be add be CS Agent.</description>
-                    <persistence type="property"/>
-                    <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
-                  </attribute>
+              <attribute qualifier="depositAmount" type="java.lang.Double">
+                <modifiers optional="true" read="true" write="true" search="false"/>
+                <description>Deposit Amount to be add be CS Agent.</description>
+                <persistence type="property"/>
+                <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+              </attribute>
             </attributes>
             </itemtype>
 
@@ -7407,6 +7407,12 @@ new Integer(0)
                      	<modifiers read="true" write="true" optional="true"/>
                      	<description>The type of the transaction</description>
                    </attribute>
+                   <attribute qualifier="legacyTransaction" type="boolean">
+              			<persistence type="property" />
+                		<modifiers read="true" write="true" search="true" optional="true" />
+                		<defaultvalue>false</defaultvalue>
+                		<description>Payment Transaction will be marked as legacy order</description>
+              	  </attribute>
                 </attributes>
              </itemtype>
         </typegroup>

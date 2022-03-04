@@ -3,12 +3,42 @@ package com.bl.backoffice.widget.controller.order;
 import static org.apache.log4j.Level.DEBUG;
 import static org.apache.log4j.Level.ERROR;
 
+import com.bl.backoffice.consignment.service.BlConsignmentService;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.payment.service.BlPaymentService;
+import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
+import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
+import com.braintree.command.request.BrainTreeRefundTransactionRequest;
+import com.braintree.command.result.BrainTreeRefundTransactionResult;
+import com.braintree.exceptions.BraintreeErrorException;
+import com.braintree.facade.backoffice.BraintreeBackofficePartialRefundFacade;
+import com.braintree.facade.backoffice.BraintreeBackofficeVoidFacade;
+import com.braintree.hybris.data.BrainTreeResponseResultData;
+import com.braintree.method.BrainTreePaymentService;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.order.refund.BraintreeRefundService;
+import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
+import com.hybris.backoffice.i18n.BackofficeLocaleService;
+import com.hybris.cockpitng.annotations.SocketEvent;
+import com.hybris.cockpitng.annotations.ViewEvent;
+import com.hybris.cockpitng.core.events.CockpitEventQueue;
+import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
+import com.hybris.cockpitng.util.DefaultWidgetController;
+import com.hybris.cockpitng.util.notifications.NotificationService;
 import de.hybris.platform.basecommerce.enums.CancelReason;
 import de.hybris.platform.basecommerce.enums.RefundReason;
 import de.hybris.platform.basecommerce.enums.ReturnAction;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.enumeration.EnumerationService;
@@ -30,27 +60,31 @@ import de.hybris.platform.returns.model.RefundEntryModel;
 import de.hybris.platform.returns.model.ReturnRequestModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
-import com.bl.core.esp.service.impl.DefaultBlESPEventService;
-import com.bl.core.services.customer.impl.DefaultBlUserService;
-import com.bl.logging.impl.LogErrorCodeEnum;
-import com.braintree.model.BrainTreePaymentInfoModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import java.math.BigDecimal;
-import org.apache.log4j.Level;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.Locales;
@@ -75,30 +109,6 @@ import org.zkoss.zul.Messagebox.Button;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.InputElement;
-
-import com.bl.backoffice.consignment.service.BlConsignmentService;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.constants.BlloggingConstants;
-import com.bl.core.payment.service.BlPaymentService;
-import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
-import com.bl.core.stock.BlStockLevelDao;
-import com.bl.logging.BlLogger;
-import com.braintree.command.request.BrainTreeRefundTransactionRequest;
-import com.braintree.command.result.BrainTreeRefundTransactionResult;
-import com.braintree.exceptions.BraintreeErrorException;
-import com.braintree.facade.backoffice.BraintreeBackofficePartialRefundFacade;
-import com.braintree.facade.backoffice.BraintreeBackofficeVoidFacade;
-import com.braintree.hybris.data.BrainTreeResponseResultData;
-import com.braintree.method.BrainTreePaymentService;
-import com.braintree.order.refund.BraintreeRefundService;
-import com.braintree.transaction.service.BrainTreeTransactionService;
-import com.hybris.backoffice.i18n.BackofficeLocaleService;
-import com.hybris.cockpitng.annotations.SocketEvent;
-import com.hybris.cockpitng.annotations.ViewEvent;
-import com.hybris.cockpitng.core.events.CockpitEventQueue;
-import com.hybris.cockpitng.core.events.impl.DefaultCockpitEvent;
-import com.hybris.cockpitng.util.DefaultWidgetController;
-import com.hybris.cockpitng.util.notifications.NotificationService;
 
 /**
  * ##################### Bl-986, Bl-987, Bl-988 ###################
@@ -747,13 +757,26 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     private void doFullRefund(final double totalRefundAmount, final PaymentTransactionEntryModel captureEntry, final double gcAmount) {
         if (totalRefundAmount <= this.getOrderModel().getOriginalOrderTotalAmount()) {
             try {
-                final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(transactionId.getValue());
-                request.setAmount(BigDecimal.valueOf(this.deductGiftCartAmount(totalRefundAmount) < BlCustomCancelRefundConstants.ZERO
-                        ? -this.deductGiftCartAmount(totalRefundAmount) : this.deductGiftCartAmount(totalRefundAmount))
-                        .setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
-                request.setOrderId(this.getOrderModel().getCode());
-                request.setTransactionId(captureEntry.getRequestId());
-                this.refund(brainTreePaymentService.refundTransaction(request), gcAmount);
+                boolean refundSuccessful = false;
+                final BigDecimal amount = BigDecimal.valueOf(this.deductGiftCartAmount(totalRefundAmount)
+                    < BlCustomCancelRefundConstants.ZERO
+                    ? -this.deductGiftCartAmount(totalRefundAmount)
+                    : this.deductGiftCartAmount(totalRefundAmount));
+                if(captureEntry.getPaymentTransaction().isLegacyTransaction()) {
+                    final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(captureEntry, amount);
+                    refundSuccessful = result.isSuccess();
+                    this.refund(result.getTarget().getAmount(), gcAmount, refundSuccessful);
+                } else {
+                    final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(
+                        transactionId.getValue());
+                    request.setAmount(amount.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
+                    request.setOrderId(this.getOrderModel().getCode());
+                    request.setTransactionId(captureEntry.getRequestId());
+                    final BrainTreeRefundTransactionResult result = brainTreePaymentService.refundTransaction(request);
+                    createTransaction(result);
+                    refundSuccessful = result.isSuccess();
+                    this.refund(result.getAmount(), gcAmount, refundSuccessful);
+                }
             }  catch (final AdapterException e) {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND,
                         this.getOrderModel().getCode());
@@ -766,21 +789,28 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
 
     /**
-     * Method will execute refund result
-     * @param result refundResult
+     * It creates the refund transaction entry and associates it with the corresponding transaction
+     * @param result
      */
-    private void refund(final BrainTreeRefundTransactionResult result, final double gcAmount) {
-        if (result.isSuccess()) {
-            if(CollectionUtils.isNotEmpty(this.getOrderModel().getPaymentTransactions())) {
+    private void createTransaction(final BrainTreeRefundTransactionResult result) {
+        if (result.isSuccess() && CollectionUtils.isNotEmpty(this.getOrderModel().getPaymentTransactions())) {
                 this.blCustomCancelRefundService.createRefundTransaction(this.getOrderModel().getPaymentTransactions()
-                        .get(BlCustomCancelRefundConstants.ZERO), result, PaymentTransactionType.REFUND_STANDALONE, this.getOrderModel());
+                    .get(BlCustomCancelRefundConstants.ZERO), result, PaymentTransactionType.REFUND_STANDALONE, this.getOrderModel());
             }
+    }
+
+    /**
+     * Method will execute refund result
+     * @param amount
+     */
+    private void refund(final BigDecimal amount, final double gcAmount, final boolean refundSuccessful) {
+        if (refundSuccessful) {
             if(null == this.cancelOrder()) {
-                this.voidRefundedTransaction(this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()));
+                this.voidRefundedTransaction(this.getTwoDecimalDoubleValue(amount.doubleValue()));
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER, this.getOrderModel().getCode());
                 this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
             } else {
-                this.cancelRefundProcess(result, gcAmount);
+                this.cancelRefundProcess(amount, gcAmount);
             }
         } else {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND, this.getOrderModel().getCode());
@@ -793,11 +823,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param result res
      * @param gcAmount amt
      */
-    private void cancelRefundProcess(final BrainTreeRefundTransactionResult result, final double gcAmount) {
+    private void cancelRefundProcess(final BigDecimal amount, final double gcAmount) {
         this.fullOrderCancelAndLogReturnEntries();
-        this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(result.getAmount().doubleValue()));
+        this.setRefundAmountOnOrder(this.getTwoDecimalDoubleValue(amount.doubleValue()));
         this.setRefundDetailsOnOrder((this.globalShippingSelection.isChecked() ? this.getOrderModel().getDeliveryCost() :
-                BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((result.getAmount().doubleValue() + gcAmount)));
+                BlInventoryScanLoggingConstants.ZERO), this.getTwoDecimalDoubleValue((amount.doubleValue() + gcAmount)));
         double grandSubTotal = 0.0d;
         final StringBuilder paymentType= new StringBuilder();
         String gcString = StringUtils.EMPTY;
@@ -808,7 +838,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         // trigger Esp Refund event for  GC or cc/paypal
         if(this.getOrderModel().getPaymentInfo() instanceof BrainTreePaymentInfoModel && getDefaultBlUserService().isCsUser()) {
             try {
-                grandSubTotal = grandSubTotal + this.getTwoDecimalDoubleValue(result.getAmount().doubleValue());
+                grandSubTotal = grandSubTotal + this.getTwoDecimalDoubleValue(amount.doubleValue());
                 BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Refund Amount : {}",
                     grandSubTotal);
                 final BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) orderModel.getPaymentInfo();
@@ -839,7 +869,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
     /**
      * This method return Message If Gc Applied
-     * @param String
+     * @param object
      */
     String getMessageIfGcApplied(final String object){
         if(StringUtils.isNotBlank(object)){
@@ -968,12 +998,22 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void partRefundAndLogResponse(final double totalAmt, final PaymentTransactionEntryModel captureEntry, final double gcAmount) {
         try {
-            final BrainTreeResponseResultData refundResult = braintreeBackofficePartialRefundFacade.partialRefundTransaction(
-                this.getOrderModel(), captureEntry, BigDecimal.valueOf((totalAmt < BlInventoryScanLoggingConstants.ZERO) ? -totalAmt
-                : totalAmt).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
-            if (refundResult.isSuccess()) {
-                this.cancelPartialRefund(totalAmt, gcAmount);
+            boolean refundSuccessful = false;
+            final BigDecimal amount = BigDecimal.valueOf((totalAmt < BlInventoryScanLoggingConstants.ZERO) ? -totalAmt
+                : totalAmt).setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN);
+            if(captureEntry.getPaymentTransaction().isLegacyTransaction()) {
+                Result<Transaction> result =  brainTreeTransactionService.issueBlindCredit(captureEntry, amount);
+                refundSuccessful = result.isSuccess();
             } else {
+                final BrainTreeResponseResultData refundResult = braintreeBackofficePartialRefundFacade
+                    .partialRefundTransaction(
+                        this.getOrderModel(), captureEntry, amount);
+                refundSuccessful = refundResult.isSuccess();
+            }
+            if(refundSuccessful) {
+                this.cancelPartialRefund(totalAmt, gcAmount);
+            }
+            else {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND, this.getOrderModel().getCode());
                 this.failureMessageBox(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND_MSG);
             }

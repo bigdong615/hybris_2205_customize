@@ -5,7 +5,9 @@ import com.braintree.command.request.BrainTreeRefundTransactionRequest;
 import com.braintree.command.result.BrainTreeRefundTransactionResult;
 import com.braintree.method.BrainTreePaymentService;
 import com.braintree.model.BrainTreePaymentInfoModel;
-import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
+import com.braintreegateway.Result;
+import com.braintreegateway.Transaction;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -35,11 +37,10 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 
 	@Resource(name = "modelService")
 	private ModelService modelService;
-
 	@Resource
 	private BrainTreePaymentService brainTreePaymentService;
-	@Resource
-	private BrainTreeTransactionService brainTreeTransactionService;
+	@Resource(name = "brainTreeTransactionService")
+	private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
 	protected static final String SOCKET_OUT_CONTEXT = "blRefundDepositContext";
 	private static final String REFUND_ALREADY_PROCESSED = "Refund has already been processed";
@@ -79,20 +80,28 @@ public class RefundDepositAction extends AbstractComponentWidgetAdapterAware
 			paymentTransactions.forEach(transaction -> {
 				final BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) transaction
 						.getInfo();
-				final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(
-						transaction
-								.getRequestId());
-				request.setAmount(BigDecimal.valueOf(paymentInfo.getDepositAmount())
-						.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
-				request.setOrderId(order.getCode());
-				request.setTransactionId(transaction.getRequestId());
-				final BrainTreeRefundTransactionResult brainTreeRefundTransactionResult = brainTreePaymentService
-						.refundTransaction(request);
-				if (brainTreeRefundTransactionResult.isSuccess()) {
-					brainTreeTransactionService.createRefundTransaction(transaction,
-							brainTreeRefundTransactionResult);
+				if(transaction.isLegacyTransaction()) {
+					final Result<Transaction> result = brainTreeTransactionService.issueBlindCredit(transaction.getEntries().get(0), BigDecimal
+							.valueOf(paymentInfo.getDepositAmount()));
+					if (!result.isSuccess()) {
+						refundSuccessful.add(new AtomicBoolean(Boolean.FALSE));
+					}
 				} else {
-					refundSuccessful.add(new AtomicBoolean(Boolean.FALSE));
+					final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(
+							transaction
+									.getRequestId());
+					request.setAmount(BigDecimal.valueOf(paymentInfo.getDepositAmount())
+							.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN));
+					request.setOrderId(order.getCode());
+					request.setTransactionId(transaction.getRequestId());
+					final BrainTreeRefundTransactionResult brainTreeRefundTransactionResult = brainTreePaymentService
+							.refundTransaction(request);
+					if (brainTreeRefundTransactionResult.isSuccess()) {
+						brainTreeTransactionService.createRefundTransaction(transaction,
+								brainTreeRefundTransactionResult);
+					} else {
+						refundSuccessful.add(new AtomicBoolean(Boolean.FALSE));
+					}
 				}
 			});
 			if(refundSuccessful.stream()
