@@ -1886,4 +1886,13 @@
     <alias alias="ruleFirstTimeUserConditionTranslator" name="defaultRuleFirstTimeUserConditionTranslator" />
     <bean id="defaultRuleFirstTimeUserConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleFirstTimeUserConditionTranslator" />
     <!-- BL-1764 Ends -->
+    
+    <alias name="defaultBlOrderMethodHook" alias="orderMethodHook" />
+    <bean id="defaultBlOrderMethodHook" class="com.bl.core.order.hook.impl.BlOrderMethodHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+	
+	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="orderMethodHook" />
+	</bean>
 </beans>
