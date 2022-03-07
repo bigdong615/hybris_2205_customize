@@ -50,7 +50,7 @@ public class BlGiftCardPrepareInterceptor implements PrepareInterceptor<GiftCard
 	private String generateDiscountId()
 	{
 		Random secureRandom = new SecureRandom();
-	    return secureRandom.ints(7, 0, BlCoreConstants.NUMERIC_VALUES.length())
+	    return secureRandom.ints(BlCoreConstants.SEVEN, 0, BlCoreConstants.NUMERIC_VALUES.length())
 	        .mapToObj(i -> BlCoreConstants.NUMERIC_VALUES.charAt(i))
 	        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
 	}
