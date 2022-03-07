@@ -18,13 +18,13 @@
 
 	<context:annotation-config />
 
-	<bean id="batchCategoryConverterMapping"
+	<bean id="batchAddressConverterMapping"
 		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-		p:mapping="ADDRESS" p:converter-ref="batchAddressConverter" />
+		p:mapping="ADDRESS" 
+		p:converter-ref="batchAddressConverter" />
 
 	<!-- Transformer converters mappings -->
-	<bean id="batchAddressConverter"
-		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+	<bean id="batchAddressConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
 			<value>
 				# Insert Address
