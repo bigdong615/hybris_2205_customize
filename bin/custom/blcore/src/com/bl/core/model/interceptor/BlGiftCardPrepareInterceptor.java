@@ -59,6 +59,7 @@ public class BlGiftCardPrepareInterceptor implements PrepareInterceptor<GiftCard
 	}
 
 	/**
+	 * This method is used to generate randome discount id
 	 * @return randomDiscountId
 	 */
 	private String generateDiscountId()
