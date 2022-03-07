@@ -169,6 +169,8 @@
 				<editorArea:section name="essentials">
 					<editorArea:attribute qualifier="code"
 										  readonly="true" />
+					<editorArea:attribute qualifier="discountID"
+										  readonly="true" />
 				</editorArea:section>
 				<editorArea:section name="data">
 					<editorArea:attribute qualifier="amount" />
