@@ -198,7 +198,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
  	 */
  	private void setValuesForRunTAttributes(final AbstractOrderModel extendedOrder, final AbstractOrderModel order)
  	{
- 		extendedOrder.setRunTot_grandTotal(order.getRunTot_grandTotal() + extendedOrder.getGrandTotal());
+ 		extendedOrder.setRunTot_grandTotal(order.getRunTot_grandTotal() + getGrandTotalFromOrder(extendedOrder));
  		extendedOrder.setRunTot_subtotal(order.getRunTot_subtotal() + extendedOrder.getSubtotal());
  		extendedOrder.setRunTot_totalOptionsCost(order.getRunTot_totalOptionsCost() + extendedOrder.getTotalOptionsCost());
  		extendedOrder.setRunTot_totalPrice(order.getRunTot_totalPrice() + extendedOrder.getTotalPrice());
@@ -207,6 +207,22 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
  				Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(extendedOrder.getRentalStartDate(), extendedOrder.getRentalEndDate()))
  				.intValue());
  	}
+ 	
+ 	/**
+	 * Gets the grand total from order.
+	 *
+	 * @param order
+	 *           the order
+	 * @return the grand total from order
+	 */
+	private Double getGrandTotalFromOrder(final AbstractOrderModel order)
+	{
+		if (Objects.isNull(order.getGrandTotal()) || order.getGrandTotal().compareTo(Double.valueOf(0.0d)) <= 0)
+		{
+			return order.getTotalPrice();
+		}
+		return order.getGrandTotal();
+	}
 
   /**
    * This method created to update the stock for extend order
