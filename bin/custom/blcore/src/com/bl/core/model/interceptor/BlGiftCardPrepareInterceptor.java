@@ -33,15 +33,29 @@ public class BlGiftCardPrepareInterceptor implements PrepareInterceptor<GiftCard
 	public void onPrepare(final GiftCardModel giftCardModel, final InterceptorContext interceptorContext)
 			throws InterceptorException
 	{
-		if(!interceptorContext.isNew(giftCardModel) && interceptorContext.isModified(GiftCardModel.DISCOUNTID) && StringUtils.isNotBlank(giftCardModel.getItemModelContext().getOriginalValue(GiftCardModel.DISCOUNTID)))
+		if(!interceptorContext.isNew(giftCardModel) && interceptorContext.isModified(giftCardModel,GiftCardModel.DISCOUNTID) && checkForOriginalValue(giftCardModel))
 		{
 			throw new InterceptorException(
-					"Can't modifiy discount id");
+					"Modification on discount id is not allowed");
 		}
 		if (StringUtils.isBlank(giftCardModel.getDiscountID()))
 		{
 			giftCardModel.setDiscountID(generateDiscountId());
 		}
+	}
+
+	/**
+	 * This method will check if value for discount id is present or not
+	 * @param giftCardModel
+	 * @return
+	 */
+	private boolean checkForOriginalValue(final GiftCardModel giftCardModel)
+	{
+		if(giftCardModel.getItemModelContext().getOriginalValue(GiftCardModel.DISCOUNTID) instanceof String)
+		{
+			return StringUtils.isNotBlank((String)giftCardModel.getItemModelContext().getOriginalValue(GiftCardModel.DISCOUNTID));
+		}		
+		return false;
 	}
 
 	/**

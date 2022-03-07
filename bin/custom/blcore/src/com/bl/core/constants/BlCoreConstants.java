@@ -258,6 +258,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
 	public static final String NUMERIC_VALUES = "0123456789" ;
+	public static final long SEVEN = 7 ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 
