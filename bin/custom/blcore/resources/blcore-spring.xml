@@ -1236,6 +1236,15 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<alias name="blGiftCardPrepareInterceptor" alias="blGiftCardPrepareInterceptor"/>
+	<bean id="blGiftCardPrepareInterceptor" class="com.bl.core.model.interceptor.BlGiftCardPrepareInterceptor"/>
+	
+	<!-- Adding GiftCardModel interceptor to Interceptor mapping list -->
+	<bean id="blGiftCardPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blGiftCardPrepareInterceptor"/>
+		<property name="typeCode" value="GiftCard"/>
+	</bean>
+	
 	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
