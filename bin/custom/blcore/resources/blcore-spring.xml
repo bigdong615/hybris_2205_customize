@@ -1878,16 +1878,6 @@
 	</bean>
 	<!-- BL-1854 End-->
 	
-	<!-- BL-1872 Start -->
-	<alias name="defaultBlTestingGearNeededPrepareInterceptor" alias="blTestingGearNeededPrepareInterceptor"/>
-    <bean id="defaultBlTestingGearNeededPrepareInterceptor"    class="com.bl.core.model.interceptor.BlTestingGearNeededPrepareInterceptor"/>
-
-    <bean id="blTestingGearNeededPrepareInterceptorrMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
-        <property name="interceptor" ref="blTestingGearNeededPrepareInterceptor"/>
-        <property name="typeCode" value="BlTestingGearNeeded"/>
-    </bean>
-    <!-- BL-1872 End -->
-    
     <!-- BL-1764 Starts -->
     <alias name="defaultBlPromotionDao" alias="promotionDao"/>
     <bean id="defaultBlPromotionDao" class="com.bl.core.dao.promotion.impl.DefaultBlPromotionDao" parent="defaultPromotionDao" />
