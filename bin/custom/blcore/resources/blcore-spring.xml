@@ -1886,8 +1886,8 @@
     <bean id="defaultRuleFirstTimeUserConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleFirstTimeUserConditionTranslator" />
     <!-- BL-1764 Ends -->
     
-    <alias name="defaultBlOrderMethodHook" alias="orderMethodHook" />
-    <bean id="defaultBlOrderMethodHook" class="com.bl.core.order.hook.impl.BlOrderMethodHook">
+    <alias name="defaultBlPlaceOrderMethodHook" alias="orderMethodHook" />
+    <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
 		<property name="modelService" ref="modelService" />
 	</bean>
 	

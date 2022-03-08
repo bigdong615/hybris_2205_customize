@@ -20,9 +20,9 @@ import com.bl.core.utils.BlDateTimeUtils;
  * @author Ravikumar
  *
  */
-public class BlOrderMethodHook implements CommercePlaceOrderMethodHook
+public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
-	private static final Logger LOG = Logger.getLogger(BlOrderMethodHook.class);
+	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
 
 	@Override

@@ -176,12 +176,12 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         saveAndRefreshModel(lastExtendedOrderModel);
         extendOrderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(extendOrderModelList);
-        setValuesForRunTAttributes(extendOrderModel, lastExtendedOrderModel);
+        setRunningTotalsOrderExtensionAttributes(extendOrderModel, lastExtendedOrderModel);
       } else {
         final List<AbstractOrderModel> orderModelList = new ArrayList<>();
         orderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(orderModelList);
-        setValuesForRunTAttributes(extendOrderModel, originalOrder);
+        setRunningTotalsOrderExtensionAttributes(extendOrderModel, originalOrder);
       }
       saveAndRefreshModel(extendOrderModel);
       originalOrder.setIsLatestOrder(false);
@@ -189,14 +189,14 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     }
     
     /**
- 	 * Sets the values for run T attributes.
+ 	 * Sets the values for Running Totals Order Extension Attributes.
  	 *
  	 * @param extendedOrder
  	 *           the extended order
  	 * @param order
  	 *           the order
  	 */
- 	private void setValuesForRunTAttributes(final AbstractOrderModel extendedOrder, final AbstractOrderModel order)
+ 	private void setRunningTotalsOrderExtensionAttributes(final AbstractOrderModel extendedOrder, final AbstractOrderModel order)
  	{
  		extendedOrder.setRunTot_grandTotal(order.getRunTot_grandTotal() + getGrandTotalFromOrder(extendedOrder));
  		extendedOrder.setRunTot_subtotal(order.getRunTot_subtotal() + extendedOrder.getSubtotal());
