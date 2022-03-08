@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * This method created for cloning and updating extend order
@@ -203,9 +204,15 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
  		extendedOrder.setRunTot_totalOptionsCost(order.getRunTot_totalOptionsCost() + extendedOrder.getTotalOptionsCost());
  		extendedOrder.setRunTot_totalPrice(order.getRunTot_totalPrice() + extendedOrder.getTotalPrice());
  		extendedOrder.setRunTot_totalTax(order.getRunTot_totalTax() + extendedOrder.getTotalTax());
- 		extendedOrder.setRunTot_daysRented(
- 				Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(extendedOrder.getRentalStartDate(), extendedOrder.getRentalEndDate()))
- 				.intValue());
+ 		if(ObjectUtils.allNotNull(extendedOrder.getRentalStartDate(),extendedOrder.getRentalEndDate()))
+		{
+ 			extendedOrder.setRunTot_daysRented(
+					Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(extendedOrder.getRentalStartDate(), extendedOrder.getRentalEndDate())).intValue());
+		}
+		else
+		{
+			extendedOrder.setRunTot_daysRented(Integer.valueOf(0));
+		}
  	}
  	
  	/**

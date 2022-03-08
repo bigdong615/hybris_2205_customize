@@ -9,6 +9,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.utils.BlDateTimeUtils;
@@ -50,8 +51,15 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 		order.setRunTot_totalOptionsCost(order.getTotalOptionsCost());
 		order.setRunTot_totalPrice(order.getTotalPrice());
 		order.setRunTot_totalTax(order.getTotalTax());
-		order.setRunTot_daysRented(
-				Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(order.getRentalStartDate(), order.getRentalEndDate())).intValue());
+		if(ObjectUtils.allNotNull(order.getRentalStartDate(),order.getRentalEndDate()))
+		{
+			order.setRunTot_daysRented(
+					Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(order.getRentalStartDate(), order.getRentalEndDate())).intValue());
+		}
+		else
+		{
+			order.setRunTot_daysRented(Integer.valueOf(0));
+		}		
 		getModelService().save(order);
 	}
 
