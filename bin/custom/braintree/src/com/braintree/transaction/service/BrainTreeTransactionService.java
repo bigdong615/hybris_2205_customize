@@ -230,7 +230,7 @@ public interface BrainTreeTransactionService
 	public void voidAuthTransaction(final OrderModel order);
 
 	/**
-	 * To issue a credit
+	 * To issue a credit/refund for legacy orders (Bl-1740 and BL-1763)
 	 * @param paymentTransactionEntry payment transaction entry
 	 * @param refundAmount refund amount
 	 * @return result object

@@ -250,7 +250,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 				.amount(refundAmount.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN))
 				.paymentMethodToken(((BrainTreePaymentInfoModel) transaction
 						.getInfo()).getPaymentMethodToken());
-		Result<Transaction> result = getBraintreeGateway().transaction().credit(request);
+		final Result<Transaction> result = getBraintreeGateway().transaction().credit(request);
 		if(result.isSuccess() && Objects.nonNull(result.getTarget())) {
 			final PaymentTransactionType transactionType = PaymentTransactionType.REFUND_STANDALONE;
 			final String newEntryCode = paymentService.getNewPaymentTransactionEntryCode(transaction, transactionType);
@@ -264,6 +264,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			entry.setAmount(formatAmount(result.getTarget().getAmount()));
 			entry.setTransactionStatus(result.getTarget().getProcessorResponseType().toString());
 			entry.setTime(new Date());
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The status of the transaction {} of issuing credit for legacy order {} is {}",
+					newEntryCode, transaction.getOrder().getCode(), result.getTarget().getProcessorResponseText());
 			modelService.saveAll(entry, transaction);
 		}
 		return result;
@@ -276,15 +278,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private BraintreeGateway getBraintreeGateway()
 	{
 		final BraintreeGateway gateway;
-		if (StringUtils.isNotEmpty(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN)))
-		{
-			gateway = new BraintreeGateway(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN));
-
-		}
-		else
+		if (StringUtils.isEmpty(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN)))
 		{
 			gateway = new BraintreeGateway(getBrainTreeConfigService().getEnvironmentType(),
 					getParameter(BRAINTREE_MERCHANT_ID), getParameter(BRAINTREE_PUBLIC_KEY), getParameter(BRAINTREE_PRIVATE_KEY));
+		}
+		else
+		{
+			gateway = new BraintreeGateway(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN));
 		}
 		return gateway;
 	}

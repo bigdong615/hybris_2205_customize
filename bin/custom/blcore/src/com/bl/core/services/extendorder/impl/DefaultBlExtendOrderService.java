@@ -8,6 +8,8 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.extendorder.BlExtendOrderService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
+
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -36,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * This method created for cloning and updating extend order
@@ -105,6 +108,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
     extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
     extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
+    extendOrderModel.setIsLatestOrder(true);
   }
 
   /**
@@ -145,6 +149,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
       originalOrder.setOrderModifiedDate(new Date());
+      final long daysBetweenDates = BlDateTimeUtils.getDaysBetweenDates(extendOrderModel.getRentalStartDate(),
+      		extendOrderModel.getRentalEndDate());
+      extendOrderModel.setRunTot_daysRented((int)daysBetweenDates);
       saveAndRefreshModel(extendOrderModel);
       setExtendedOrderCopyListToOrder(originalOrder , extendOrderModel);
       originalOrder.setExtendedOrderCopy(null);
@@ -165,14 +172,64 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       if (CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
         final List<AbstractOrderModel> extendOrderModelList = new ArrayList<>(
             originalOrder.getExtendedOrderCopyList());
+        final AbstractOrderModel lastExtendedOrderModel = extendOrderModelList.get(extendOrderModelList.size() - 1);
+        lastExtendedOrderModel.setIsLatestOrder(false);
+        saveAndRefreshModel(lastExtendedOrderModel);
         extendOrderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(extendOrderModelList);
+        setRunningTotalsOrderExtensionAttributes(extendOrderModel, lastExtendedOrderModel);
       } else {
         final List<AbstractOrderModel> orderModelList = new ArrayList<>();
         orderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(orderModelList);
+        setRunningTotalsOrderExtensionAttributes(extendOrderModel, originalOrder);
       }
+      saveAndRefreshModel(extendOrderModel);
+      originalOrder.setIsLatestOrder(false);
+      saveAndRefreshModel(originalOrder);
     }
+    
+    /**
+ 	 * Sets the values for Running Totals Order Extension Attributes.
+ 	 *
+ 	 * @param extendedOrder
+ 	 *           the extended order
+ 	 * @param order
+ 	 *           the order
+ 	 */
+ 	private void setRunningTotalsOrderExtensionAttributes(final AbstractOrderModel extendedOrder, final AbstractOrderModel order)
+ 	{
+ 		extendedOrder.setRunTot_grandTotal(order.getRunTot_grandTotal() + getGrandTotalFromOrder(extendedOrder));
+ 		extendedOrder.setRunTot_subtotal(order.getRunTot_subtotal() + extendedOrder.getSubtotal());
+ 		extendedOrder.setRunTot_totalOptionsCost(order.getRunTot_totalOptionsCost() + extendedOrder.getTotalOptionsCost());
+ 		extendedOrder.setRunTot_totalPrice(order.getRunTot_totalPrice() + extendedOrder.getTotalPrice());
+ 		extendedOrder.setRunTot_totalTax(order.getRunTot_totalTax() + extendedOrder.getTotalTax());
+ 		if(ObjectUtils.allNotNull(extendedOrder.getRentalStartDate(),extendedOrder.getRentalEndDate()))
+		{
+ 			extendedOrder.setRunTot_daysRented(
+					Long.valueOf(BlDateTimeUtils.getDaysBetweenDates(extendedOrder.getRentalStartDate(), extendedOrder.getRentalEndDate())).intValue());
+		}
+		else
+		{
+			extendedOrder.setRunTot_daysRented(Integer.valueOf(0));
+		}
+ 	}
+ 	
+ 	/**
+	 * Gets the grand total from order.
+	 *
+	 * @param order
+	 *           the order
+	 * @return the grand total from order
+	 */
+	private Double getGrandTotalFromOrder(final AbstractOrderModel order)
+	{
+		if (Objects.isNull(order.getGrandTotal()) || order.getGrandTotal().compareTo(Double.valueOf(0.0d)) <= 0)
+		{
+			return order.getTotalPrice();
+		}
+		return order.getGrandTotal();
+	}
 
   /**
    * This method created to update the stock for extend order

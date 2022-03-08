@@ -169,6 +169,8 @@
 				<editorArea:section name="essentials">
 					<editorArea:attribute qualifier="code"
 										  readonly="true" />
+					<editorArea:attribute qualifier="discountID"
+										  readonly="true" />
 				</editorArea:section>
 				<editorArea:section name="data">
 					<editorArea:attribute qualifier="amount" />
@@ -2788,7 +2790,6 @@
 					<editorArea:attribute qualifier="nameOrDescription"/>
 					<editorArea:attribute qualifier="requestStatus"/>
 					<editorArea:attribute qualifier="serialProduct"/>
-					<editorArea:attribute qualifier="requestedUser" readonly="true"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
@@ -2808,7 +2809,6 @@
 			<list-view:column qualifier="nameOrDescription"/>
             <list-view:column qualifier="requestStatus"/>
             <list-view:column qualifier="serialProduct"/>
-            <list-view:column qualifier="requestedUser"/>
 		</list-view:list-view>
 	</context>
 
