@@ -257,6 +257,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HTML_ENABLED = "HTML Enabled";
 
 	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+	public static final String NUMERIC_VALUES = "0123456789" ;
+	public static final long SEVEN = 7 ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 
@@ -535,6 +537,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
 	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
+	public static final String BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR = "BlGiftCardPrepareInterceptor";
 
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";

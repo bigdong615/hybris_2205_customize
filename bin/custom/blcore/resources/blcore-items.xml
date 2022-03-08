@@ -2119,6 +2119,11 @@
                 <persistence type="property" />
                 <modifiers write="true" read="true" search="false" optional="true" />
               </attribute>
+              <attribute qualifier="discountID" type="java.lang.String">
+             	 <description>Discount ID</description>
+               	 <persistence type="property" />
+                	<modifiers write="true" read="true" search="true" optional="true" unique="true"/>
+	          </attribute>
             </attributes>
           </itemtype>
 
