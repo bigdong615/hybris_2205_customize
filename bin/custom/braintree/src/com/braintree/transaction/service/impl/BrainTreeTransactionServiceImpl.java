@@ -252,6 +252,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 						.getInfo()).getPaymentMethodToken());
 		final Result<Transaction> result = getBraintreeGateway().transaction().credit(request);
 		if(result.isSuccess() && Objects.nonNull(result.getTarget())) {
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The response of the transaction of issuing credit for legacy order {} is {}",
+					transaction.getOrder().getCode(), result.getTarget());
 			final PaymentTransactionType transactionType = PaymentTransactionType.REFUND_STANDALONE;
 			final String newEntryCode = paymentService.getNewPaymentTransactionEntryCode(transaction, transactionType);
 
@@ -264,8 +266,6 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			entry.setAmount(formatAmount(result.getTarget().getAmount()));
 			entry.setTransactionStatus(result.getTarget().getProcessorResponseType().toString());
 			entry.setTime(new Date());
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The status of the transaction {} of issuing credit for legacy order {} is {}",
-					newEntryCode, transaction.getOrder().getCode(), result.getTarget().getProcessorResponseText());
 			modelService.saveAll(entry, transaction);
 		}
 		return result;
