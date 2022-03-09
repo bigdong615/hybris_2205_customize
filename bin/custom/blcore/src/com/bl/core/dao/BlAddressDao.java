@@ -17,5 +17,5 @@ public interface BlAddressDao
 {
 	AddressModel getAddressById(String addressId);
 
-	List<BlItemsBillingChargeModel> getBillChargeList(String chargeList);
+	List<BlItemsBillingChargeModel> getBillChargeList(final String[] chargeCodes);
 }

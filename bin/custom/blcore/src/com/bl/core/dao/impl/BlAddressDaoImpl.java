@@ -9,6 +9,7 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +37,7 @@ public class BlAddressDaoImpl implements BlAddressDao
 	private static final String GET_BILLCHARGE_CODES = "SELECT {" + BlItemsBillingChargeModel.PK
 			+ "} FROM {"
 			+ BlItemsBillingChargeModel._TYPECODE
-			+ "} WHERE ({" + BlItemsBillingChargeModel.CODE + "} IN (?chargeCodes)";//NOSONAR
-
-	//private static final String GET_DELIVERY_METHODS_BASED_ON_ROUTES = "select {pk} from {JnjGTShippingMethod} where ({expidateRoute} IN (?routeCodes) or {route} IN (?routeCodes)) AND {isloanershippingmethod} = ?loanerShippingMethod AND {status}=?status";
+			+ "} WHERE {" + BlItemsBillingChargeModel.CODE + "} IN (?code)";//NOSONAR
 
 	@Override
 	public AddressModel getAddressById(final String addressId)
@@ -54,20 +53,19 @@ public class BlAddressDaoImpl implements BlAddressDao
 	}
 
 	@Override
-	public List<BlItemsBillingChargeModel> getBillChargeList(final String chargeCodes)
+	public List<BlItemsBillingChargeModel> getBillChargeList(final String[] chargeCodes)
 	{
-		List<BlItemsBillingChargeModel> blItemsBillingChargeList = null;
 		try
 		{
-			final StringBuilder queryBuilder = new StringBuilder();
-			final Map<String, Object> paramMapObj = new HashMap<>();
-			queryBuilder.append(GET_BILLCHARGE_CODES);
-			paramMapObj.put("chargeCodes", chargeCodes);
-			final FlexibleSearchQuery fQueryObj = new FlexibleSearchQuery(queryBuilder.toString(), paramMapObj);
-			blItemsBillingChargeList = flexibleSearchService.<BlItemsBillingChargeModel> search(fQueryObj).getResult();
-			if (CollectionUtils.isNotEmpty(blItemsBillingChargeList))
+			final StringBuilder query = new StringBuilder(GET_BILLCHARGE_CODES);
+			final Map<String, Object> queryParams = new HashMap<>();
+			queryParams.put("code", Arrays.asList(chargeCodes));
+			final SearchResult<BlItemsBillingChargeModel> search = getFlexibleSearchService()
+					.<BlItemsBillingChargeModel> search(query.toString(), queryParams);
+			if (CollectionUtils.isNotEmpty(search.getResult()))
 			{
-				return blItemsBillingChargeList;
+				final List<BlItemsBillingChargeModel> blList = search.getResult();
+				return blList;
 			}
 		}
 		catch (final ModelNotFoundException ex)
@@ -95,8 +93,4 @@ public class BlAddressDaoImpl implements BlAddressDao
 	{
 		this.flexibleSearchService = flexibleSearchService;
 	}
-
-
-
-
 }

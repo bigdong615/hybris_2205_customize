@@ -28,7 +28,7 @@
 		<property name="header">
 			<value>
 				# Insert Categories
-				INSERT_UPDATE CUSTOMER;customerID;name;uid[unique=true];password;poEnabled[translator=com.bl.batch.imports.translator.BlBooleanTranslator];coiVerified[translator=com.bl.batch.imports.translator.BlBooleanTranslator];vip[translator=com.bl.batch.imports.translator.BlBooleanTranslator];employee[translator=com.bl.batch.imports.translator.BlBooleanTranslator];coiCoverageAmount[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];coiExpirationDate[dateformat=dd.MM.yyyy HH:mm];kycScore[translator=com.bl.batch.imports.translator.BlDoubleTranslator];badBehaviorTag[translator=com.bl.batch.imports.translator.BlBehaviorEnumTranslator];vipType[translator=com.bl.batch.imports.translator.BlVipTypeEnumTranslator];verificationLinkSource[translator=com.bl.batch.imports.translator.BlLinkSourceEnumTranslator];photoOrVideo;badBehaviorNotes;verificationNotes;verificationLink;accountNotes;orderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];completedOrderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];inprocessOrderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];blRewards[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];totalAmountPastDue[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];averageGearOrderValue[translator=com.bl.batch.imports.translator.BlDoubleTranslator];gearValueOrdersInProgress[translator=com.bl.batch.imports.translator.BlDoubleTranslator];isTaxExempt[translator=com.bl.batch.imports.translator.BlBooleanTranslator];taxExemptNumber;taxExemptExpiry[dateformat=dd.MM.yyyy HH:mm];taxExemptState;outstandingBills[translator=com.bl.batch.imports.translator.BlItemChargesTranslator];
+				INSERT_UPDATE CUSTOMER;customerID;name;uid[unique=true];password;poEnabled[translator=com.bl.batch.imports.translator.BlBooleanTranslator];coiVerified[translator=com.bl.batch.imports.translator.BlBooleanTranslator];vip[translator=com.bl.batch.imports.translator.BlBooleanTranslator];employee[translator=com.bl.batch.imports.translator.BlBooleanTranslator];coiCoverageAmount[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];coiExpirationDate[dateformat=dd.MM.yyyy HH:mm];kycScore[translator=com.bl.batch.imports.translator.BlDoubleTranslator];badBehaviorTag[translator=com.bl.batch.imports.translator.BlBehaviorEnumTranslator];vipType[translator=com.bl.batch.imports.translator.BlVipTypeEnumTranslator];verificationLinkSource[translator=com.bl.batch.imports.translator.BlLinkSourceEnumTranslator];photoOrVideo;badBehaviorNotes;verificationNotes;verificationLink;accountNotes;orderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];completedOrderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];inprocessOrderCount[translator=com.bl.batch.imports.translator.BlIntTranslator];blRewards[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];totalAmountPastDue[translator=com.bl.batch.imports.translator.BlBigDecimalTranslator];averageGearOrderValue[translator=com.bl.batch.imports.translator.BlDoubleTranslator];gearValueOrdersInProgress[translator=com.bl.batch.imports.translator.BlDoubleTranslator];isTaxExempt[translator=com.bl.batch.imports.translator.BlBooleanTranslator];taxExemptNumber;taxExemptExpiry[dateformat=dd.MM.yyyy HH:mm];taxExemptState;
 			</value>
 		</property>
 		<property name="impexRow">
@@ -45,12 +45,30 @@
 		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
 			<value>
-				# Insert Categories
+				# Insert customer Address
 				UPDATE CUSTOMER;uid[unique=true];defaultShipmentAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];defaultBillingAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];
 		  </value>
 		</property>
 		<property name="impexRow">
 			<value>;{+0};{1};{2};</value>
+		</property>
+	</bean>
+	
+	<bean id="batchOutstandingBillsConverterMapping"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+		p:mapping="OUTSTANDINGBILLS" p:converter-ref="batchOutstandingBillsConverter" />
+
+	<!-- Transformer converters mappings -->
+	<bean id="batchOutstandingBillsConverter"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				# Insert customer outstanding bills
+				UPDATE CUSTOMER;uid[unique=true];outstandingBills[translator=com.bl.batch.imports.translator.BlItemChargesTranslator];
+		  </value>
+		</property>
+		<property name="impexRow">
+			<value>;{+0};{1};</value>
 		</property>
 	</bean>
 

@@ -37,7 +37,8 @@ public class BlItemChargesTranslator extends AbstractValueTranslator
 	{
 		if (StringUtils.isNotEmpty(value))
 		{
-			return blAddressDao.getBillChargeList(value);
+			final String[] chargeCodes = value.split(",");
+			return blAddressDao.getBillChargeList(chargeCodes);
 		}
 		return null;
 	}
