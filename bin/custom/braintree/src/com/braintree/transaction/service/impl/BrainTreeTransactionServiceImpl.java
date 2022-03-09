@@ -1,7 +1,11 @@
 package com.braintree.transaction.service.impl;
 
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_ECVZ_ACEESS_TOKEN;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_MERCHANT_ID;
 import static com.braintree.constants.BraintreeConstants.BRAINTREE_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PRIVATE_KEY;
 import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PUBLIC_KEY;
 import static com.braintree.constants.BraintreeConstants.FAKE_REQUEST_ID;
 import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
 import static com.braintree.constants.BraintreeConstants.PAYPAL_PAYMENT;
@@ -9,8 +13,10 @@ import static com.braintree.constants.BraintreeConstants.PAY_PAL_EXPRESS_CHECKOU
 import static com.braintree.constants.BraintreeConstants.PROPERTY_LEVEL2_LEVEL3;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import static de.hybris.platform.util.Config.getParameter;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.PaymentTransactionTypeEnum;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
@@ -36,8 +42,11 @@ import com.braintree.payment.dto.BraintreeInfo;
 import com.braintree.paypal.converters.impl.BillingAddressConverter;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.PayPalAccount;
+import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
+import com.braintreegateway.TransactionRequest;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
@@ -228,6 +237,57 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction for order {} ",
 					order.getCode(), ex);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Result<Transaction> issueBlindCredit(final PaymentTransactionEntryModel paymentTransactionEntry,
+			final BigDecimal refundAmount) {
+		final PaymentTransactionModel transaction = paymentTransactionEntry.getPaymentTransaction();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Refund initiation for legacy order {}", transaction.getOrder().getCode());
+		TransactionRequest request = new TransactionRequest()
+				.amount(refundAmount.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN))
+				.paymentMethodToken(((BrainTreePaymentInfoModel) transaction
+						.getInfo()).getPaymentMethodToken());
+		final Result<Transaction> result = getBraintreeGateway().transaction().credit(request);
+		if(result.isSuccess() && Objects.nonNull(result.getTarget())) {
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The response of the transaction of issuing credit for legacy order {} is {}",
+					transaction.getOrder().getCode(), result.getTarget());
+			final PaymentTransactionType transactionType = PaymentTransactionType.REFUND_STANDALONE;
+			final String newEntryCode = paymentService.getNewPaymentTransactionEntryCode(transaction, transactionType);
+
+			final PaymentTransactionEntryModel entry = modelService.create(PaymentTransactionEntryModel.class);
+			entry.setType(transactionType);
+			entry.setCode(newEntryCode);
+			entry.setRequestId(result.getTarget().getId());
+			entry.setPaymentTransaction(transaction);
+			entry.setCurrency(resolveCurrency(result.getTarget().getCurrencyIsoCode()));
+			entry.setAmount(formatAmount(result.getTarget().getAmount()));
+			entry.setTransactionStatus(result.getTarget().getProcessorResponseType().toString());
+			entry.setTime(new Date());
+			modelService.saveAll(entry, transaction);
+		}
+		return result;
+	}
+
+	/**
+	 * It gets the braintree gateway
+	 * @return BraintreeGateway
+	 */
+	private BraintreeGateway getBraintreeGateway()
+	{
+		final BraintreeGateway gateway;
+		if (StringUtils.isEmpty(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN)))
+		{
+			gateway = new BraintreeGateway(getBrainTreeConfigService().getEnvironmentType(),
+					getParameter(BRAINTREE_MERCHANT_ID), getParameter(BRAINTREE_PUBLIC_KEY), getParameter(BRAINTREE_PRIVATE_KEY));
+		}
+		else
+		{
+			gateway = new BraintreeGateway(getParameter(BRAINTREE_ECVZ_ACEESS_TOKEN));
+		}
+		return gateway;
 	}
 
 	/**
