@@ -197,29 +197,27 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * @param String the selectedOptionCode
      */
     private void setOptionOnCartEntry(final AbstractOrderEntryModel cartEntryModel,
-    final String selectedOptionCode){
-    ProductModel product = cartEntryModel.getProduct();
-    if(product instanceof BlProductModel){
-        BlProductModel blProductModel = (BlProductModel) product;
-        List<BlOptionsModel> options = blProductModel.getOptions();
-        if(CollectionUtils.isNotEmpty(options)){
-            BlOptionsModel option = options.iterator().next();
-            if(CollectionUtils.isNotEmpty(option.getSubOptions())){
-                final Optional<BlOptionsModel> selectedSubOption = option.getSubOptions().stream()
-                    .filter(subOption -> selectedOptionCode.equals(subOption.getCode())).findFirst();
-                if(selectedSubOption.isPresent()){
-                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
-                    List<BlOptionsModel> selectOptionList = new ArrayList<BlOptionsModel>(quantity);
-                    for(int i = 0 ; i < quantity ; i++){
-                        selectOptionList.add(selectedSubOption.get());
-                    }
-                    cartEntryModel.setOptions(selectOptionList);
-                }
-            }
+   	    final String selectedOptionCode){
+   	    ProductModel product = cartEntryModel.getProduct();
+   	    if(product instanceof BlProductModel){
+   	        BlProductModel blProductModel = (BlProductModel) product;
+   	        List<BlOptionsModel> options = blProductModel.getOptions();
+   	        if(CollectionUtils.isNotEmpty(options)){
+   	      	  Optional<BlOptionsModel> selectedOptionModel = options.stream().filter(option -> selectedOptionCode.equals(option.getCode())).findAny();
+   	          
+   	            if(selectedOptionModel.isPresent()){
+   	               	  BlOptionsModel option = 	selectedOptionModel.get();
+   	                    final Integer quantity = Integer.parseInt(cartEntryModel.getQuantity().toString());
+   	                    List<BlOptionsModel> selectOptionList = new ArrayList<>(quantity);
+   	                    for(int i = 0 ; i < quantity ; i++){
+   	                        selectOptionList.add(option);
+   	                    }
+   	                    cartEntryModel.setOptions(selectOptionList);
+   	            }
 
-        }
-    }
-}
+   	        }
+   	    }
+   	}
     /**
      * {@inheritDoc}
      */
@@ -534,7 +532,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     /**
      * This method returns true if this is Front desk order.
      *
-     * @param cartModel
+     * @param cartModel as cartModel
+     * @return boolean
      */
     public boolean isFrontDeskOrder(final CartModel cartModel) {
 
