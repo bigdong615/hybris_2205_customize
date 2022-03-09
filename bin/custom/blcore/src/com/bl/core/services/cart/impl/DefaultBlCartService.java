@@ -532,7 +532,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     /**
      * This method returns true if this is Front desk order.
      *
-     * @param cartModel
+     * @param cartModel as cartModel
+     * @return boolean
      */
     public boolean isFrontDeskOrder(final CartModel cartModel) {
 
