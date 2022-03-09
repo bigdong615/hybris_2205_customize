@@ -89,6 +89,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.Locales;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
@@ -118,6 +119,8 @@ import org.zkoss.zul.impl.InputElement;
 public class BlCustomCancelOrderController extends DefaultWidgetController {
     private static final Logger LOGGER = Logger.getLogger(BlCustomCancelOrderController.class);
     public static final String REFUND = "REFUND";
+ 	protected static final String OUT_CONFIRM = "confirmcancellation";
+ 	protected static final String COMPLETE = "completed";
 
     @Resource(name = "blOrderService")
     DefaultBlESPEventService blEspEventService;
@@ -243,6 +246,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         this.globalCancelComment.setValue(StringUtils.EMPTY);
         this.initCancellationOrderForm(this.getOrderModel());
     }
+    
+ 	/**
+ 	 * This method is used to close the cancel and refund Popup
+ 	 */
+ 	@ViewEvent(componentID = "closePopup", eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
+ 	public void cancelPopup()
+ 	{
+ 		this.sendOutput(OUT_CONFIRM, COMPLETE);
+ 	}
 
     /**
      * Confirm cancellation.
@@ -1530,7 +1542,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         double orderAmount = BlCustomCancelRefundConstants.ZERO;
         if(Double.parseDouble(this.totalRefundedAmount.getValue()) <= BlCustomCancelRefundConstants.ZERO_DOUBLE_VAL) {
             orderAmount = this.getOrderModel().getSubtotal();
-            if (this.globalShippingSelection.isChecked()) {
+            if (this.globalCancelEntriesSelection.isChecked()) {
                 orderAmount += this.getOrderModel().getDeliveryCost();
             }
             if (this.globalTaxSelection.isChecked()) {
@@ -1617,6 +1629,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * @param row the row
      */
     private void handleRow(final Row row) {
+   	 try
+   	 {
         final BlOrderEntryToCancelDto myEntry = row.getValue();
         if (!((Checkbox) row.getChildren().iterator().next()).isChecked()) {
             this.applyToRow(BlCustomCancelRefundConstants.ZERO, BlloggingConstants.TEN, row);
@@ -1634,6 +1648,11 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             myEntry.setCancelOrderEntryComment(this.globalCancelComment.getValue());
         }
         this.populateEntryLevelAmount(row);
+   	 }
+   	 catch (WrongValueException wrongValueException) {
+   		 BlLogger.logMessage(LOGGER, Level.ERROR, "Exception occurred while cancel and refund the order {}",
+   	          this.getOrderModel().getCode(), wrongValueException);
+		}
     }
 
     /**
@@ -1870,6 +1889,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      * Select all entries.
      */
     private void selectAllEntries() {
+   	 double orderAmount = BlCustomCancelRefundConstants.ZERO;
         this.applyToGrid(Boolean.TRUE, BlCustomCancelRefundConstants.ZERO);
         for (Component row : this.getOrderEntriesGridRows()) {
             final Component firstComponent = row.getChildren().iterator().next();
@@ -1885,7 +1905,14 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         if (this.globalCancelEntriesSelection.isChecked()) {
             this.orderEntriesToCancel.forEach(entry -> entry
                     .setQuantityToCancel(this.orderCancellableEntries.get(entry.getOrderEntry())));
+            orderAmount = Double.valueOf(this.globalTotalRefundAmount.getValue()) + this.getOrderModel().getDeliveryCost();
         }
+        if(!this.globalCancelEntriesSelection.isChecked())
+        {
+  			orderAmount = Double.valueOf(this.globalTotalRefundAmount.getValue()) - this.getOrderModel().getDeliveryCost();
+        }
+        this.globalTotalRefundAmount.setValue(String.valueOf(BigDecimal.valueOf(orderAmount).setScale(
+              BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN).doubleValue()));	
     }
 
     /**
