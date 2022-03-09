@@ -27,7 +27,7 @@
 					<c:when test="${IsRentalPage eq true}">
 						<c:choose>
 							<c:when test="${not empty pageTitle}">
-								Rent ${product.name} BorrowLenses
+								Rent ${product.name} | BorrowLenses
 							</c:when>
 							<c:otherwise>
 								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
@@ -37,7 +37,7 @@
 					<c:otherwise>
 						<c:choose>
 							<c:when test="${not empty pageTitle}">
-								Buy ${product.name} BorrowLenses
+								Buy ${product.name} | BorrowLenses
 							</c:when>
 							<c:otherwise>
 								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
