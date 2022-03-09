@@ -54,3 +54,4 @@ INSERT_UPDATE BlStateWarehouseMapping ;stateID[unique=true] ; name              
                                       ;58	               ;West Virginia	       ;WV	                       ;1	    ;Southeast	 ;MA
                                       ;59	               ;Wisconsin	           ;WI	                       ;1	    ;Midwest	 ;MA
                                       ;60	               ;Wyoming	               ;WY	                       ;1	    ;West	     ;CA
+                                      ;61                  ;United States Minor Outlying Islands               ;UM	                     ;1	        ;West	    ;CA                                     
