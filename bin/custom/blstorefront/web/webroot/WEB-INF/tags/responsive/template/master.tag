@@ -21,7 +21,35 @@
 <html lang="${fn:escapeXml(currentLanguage.isocode)}">
 <head>
 	<title>
-		${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+		<c:choose>
+			<c:when test="${pageType == 'PRODUCT'}">
+				<c:choose>
+					<c:when test="${IsRentalPage eq true}">
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Rent ${product.name} BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${not empty pageTitle}">
+								Buy ${product.name} BorrowLenses
+							</c:when>
+							<c:otherwise>
+								${not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+			<c:otherwise>
+				${not empty pageTitle ? pageTitle : not empty cmsPage.title ? fn:escapeXml(cmsPage.title) : 'Accelerator Title'}
+			</c:otherwise>
+		</c:choose>
 	</title>
 
 	<%-- Meta Content --%>
@@ -29,9 +57,16 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<c:if test="${pageType == 'PRODUCT'}">
+		<meta name="description" content="${product.shortDescription}">
+	</c:if>
 
 	<%-- Additional meta tags --%>
 	<htmlmeta:meta items="${metatags}"/>
+	<link id="canonicalLink" rel="canonical" />
+	<script type="text/javascript">
+		document.getElementById("canonicalLink").setAttribute("href", window.location.href);
+	</script>
 
 	<%-- Favourite Icon --%>
 	<spring:theme code="img.favIcon" text="/" var="favIconPath"/>

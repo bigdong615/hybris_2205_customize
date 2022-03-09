@@ -43,12 +43,12 @@
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
-					<h5>
+					<h2>
 						<cms:pageSlot position="HomePageRentingGearIsEasyTitleSlot"
 							var="feature">
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
-					</h5>
+					</h2>
 					<div class="row mt-5">
 						<cms:pageSlot position="HomePageRentingGearSectionSlot"
 							var="feature">
