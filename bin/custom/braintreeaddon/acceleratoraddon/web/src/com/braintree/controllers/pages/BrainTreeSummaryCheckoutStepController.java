@@ -256,7 +256,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
 
-    if (paymentInfo != null && !cartModel.isGiftCardOrder() && !cartModel.getIsNewGearOrder())
+    if (paymentInfo != null && !BooleanUtils.toBoolean(cartModel.isGiftCardOrder()) && !BooleanUtils.toBoolean(cartModel.getIsRetailGearOrder()))
     {
       try
       {

@@ -152,7 +152,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   private SourcingResults getSourcingResults(final OrderModel order) {
 
     SourcingResults results = null;
-    if (order.getIsRentalCart().booleanValue()) {
+    if (order.getIsRentalOrder().booleanValue()) {
 
       if (blOrderService.isAquatechProductOrder(order)) {
         results =  getResultsForOrderWithOnlyAquatechProducts(order);

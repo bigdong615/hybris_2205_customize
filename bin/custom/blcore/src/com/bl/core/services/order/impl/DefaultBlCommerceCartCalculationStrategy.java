@@ -36,7 +36,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
    	 setGiftCardAmount(order,parameter);
     }
     if(BooleanUtils.isTrue(parameter.getRetailGear())){
-      order.setIsNewGearOrder(Boolean.TRUE);
+      order.setIsRetailGearOrder(Boolean.TRUE);
       getModelService().save(order);
       getModelService().refresh(order);
     }

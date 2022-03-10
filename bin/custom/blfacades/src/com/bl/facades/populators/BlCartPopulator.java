@@ -51,7 +51,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
-		target.setIsRentalCart(source.getIsRentalCart());
+		target.setIsRentalCart(source.getIsRentalOrder());
 		target.setPoNumber(source.getPoNumber());
 		target.setPoNotes(source.getPoNotes());
 		if(source.getUser() instanceof CustomerModel){
@@ -113,7 +113,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
-		target.setIsNewGearOrder(BooleanUtils.isTrue(source.getIsNewGearOrder()));
+		target.setIsNewGearOrder(BooleanUtils.isTrue(source.getIsRetailGearOrder()));
 	}
 
 	/**

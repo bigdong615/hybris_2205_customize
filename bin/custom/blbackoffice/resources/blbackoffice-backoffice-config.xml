@@ -1368,7 +1368,7 @@
 					columns="3">
 					<editorArea:attribute qualifier="orderType"/>
 					<editorArea:attribute qualifier="isVipOrder" />
-					<editorArea:attribute qualifier="isRentalCart"/>
+					<editorArea:attribute qualifier="isRentalOrder"/>
 					<editorArea:attribute qualifier="status" readonly="false"/>
 					<editorArea:attribute qualifier="verificationStatus" readonly="false"/>
 				</editorArea:section>

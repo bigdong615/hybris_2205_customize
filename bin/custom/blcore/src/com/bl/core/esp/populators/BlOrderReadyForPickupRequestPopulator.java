@@ -80,7 +80,7 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 			data.setCustomername(getRequestValue(userModel.getName()));
 		}
 		data.setType(getOrderType(orderModel));
-		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
 				? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 	  data.setDateplaced(formatter.format(orderModel.getDate()));
@@ -91,7 +91,7 @@ public class BlOrderReadyForPickupRequestPopulator extends ESPEventCommonPopulat
 			data.setShippingmethod(getRequestValue(delivery.getCode()));
 			data.setShippingmethodtext(getRequestValue(delivery.getName()));
 		}
-		if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+		if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
 			data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
 			data.setReturndate(formatter.format(orderModel.getRentalEndDate()));
 			data.setRentalduration((int) getRentalDuration(orderModel));

@@ -27,7 +27,7 @@ public class DefaultBlUsedGearCartCleanService implements BlUsedGearCartCleanSer
   public void cleanUsedGearAbandonedCart() {
     final List<CartEntryModel> cartEntries  = orderDao.getAllUsedGearAbandonedCarts();
     final Set<CartModel> carts = cartEntries.stream().map(CartEntryModel::getOrder).filter(cartModel ->
-        BooleanUtils.isFalse(cartModel.getIsRentalCart())).collect(Collectors.toSet());
+        BooleanUtils.isFalse(cartModel.getIsRentalOrder())).collect(Collectors.toSet());
     carts.stream().forEach(cartModel ->
       blCartService.clearCartEntries(cartModel)
     );
