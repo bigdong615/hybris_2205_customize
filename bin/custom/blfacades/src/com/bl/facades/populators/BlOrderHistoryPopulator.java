@@ -60,7 +60,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     {
    	target.setIsGiftCard(Boolean.TRUE);
     }
-   if(BooleanUtils.isTrue(source.getIsNewGearOrder()))
+   if(BooleanUtils.isTrue(source.getIsRetailGearOrder()))
     {
    	target.setNewGearOrder(Boolean.TRUE);
     }
@@ -71,9 +71,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    if(null != source.getRentalEndDate()) {
      target.setRentalEndDate(convertDateToString(source.getRentalEndDate()));
    }
-   target.setRentalCart(source.getIsRentalCart());
+   target.setRentalCart(source.getIsRentalOrder());
    target.setOrderDate(convertDateToString(source.getDate()));
-   if(source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalCart())) {
+   if(source.isGiftCardOrder() || BooleanUtils.isFalse(source.getIsRentalOrder())) {
      final List<String> productQtyAndName = new ArrayList<>();
      for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
        final ProductModel product = abstractOrderEntryModel.getProduct();
@@ -93,7 +93,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
 
 
-    target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalCart()) ? setRentalOrderStatus(source) : setUsedOrderStatus(source));
+    target.setOrderStatus(BooleanUtils.isTrue(source.getIsRentalOrder()) ? setRentalOrderStatus(source) : setUsedOrderStatus(source));
 
     if(null != source.getRentalStartDate() && null != source.getRentalEndDate() ){
      target.setIsRentalActive(isRentalCartAcive(source));
@@ -120,7 +120,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 	  target.setPayBillingCost(convertDoubleToPriceData(totalAmt.get(), source));
 
 
-    if (null != source.getReturnRequestForOrder() && BooleanUtils.isTrue(source.getIsCartUsedForReplacementOrder())) {
+    if (null != source.getReturnRequestForOrder() && BooleanUtils.isTrue(source.getIsReplacementOrder())) {
       target.setReplacementFor(source.getReturnRequestForOrder().getOrder().getCode());
       target.setIsReplacementOrder(Boolean.TRUE);
     }

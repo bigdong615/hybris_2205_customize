@@ -96,7 +96,7 @@ public class BlOrderBillPaidRequestPopulator extends
       orderBillPaidData.setShippingMethodType(StringUtils.EMPTY);
       orderBillPaidData.setShippingMethod(StringUtils.EMPTY);
     }
-    if (BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils
+    if (BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils
         .isFalse(orderModel.isGiftCardOrder())) {
       orderBillPaidData
           .setExpectedShipping(formatter.format(orderModel.getActualRentalStartDate()));

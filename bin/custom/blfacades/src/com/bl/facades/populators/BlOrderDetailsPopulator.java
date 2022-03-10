@@ -56,7 +56,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-    target.setIsRentalCart(source.getIsRentalCart());
+    target.setIsRentalCart(source.getIsRentalOrder());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
     if(!source.isGiftCardOrder()){	 
@@ -74,7 +74,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 target.setHasGiftCart(Boolean.TRUE);
     }
 
-    if ((null != source.getReturnRequestForOrder()) && (source.getIsCartUsedForReplacementOrder().booleanValue())) {
+    if ((null != source.getReturnRequestForOrder()) && BooleanUtils.toBoolean(source.getIsReplacementOrder())) {
       target.setIsReplacementOrder(true);
     }
     if(null != source.getReturnRequestForOrder()) {
@@ -98,8 +98,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
-    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
-      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    if(BooleanUtils.isTrue(source.getIsRetailGearOrder())){
+      target.setIsNewGearOrder(source.getIsRetailGearOrder());
     }
     
  // BL-1134 to add total discount with gift cart discount to display on summary section
@@ -170,7 +170,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private void populateOrderDetailsForRentalOrder(final OrderModel source , final OrderData target) {
     target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
-    if(BooleanUtils.isTrue(source.getIsRentalCart())) {
+    if(BooleanUtils.isTrue(source.getIsRentalOrder())) {
       target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate(), BlFacadesConstants.START_DATE_PATTERN));
       target.setRentalStartDateForJs(
           convertDateToString(source.getRentalStartDate(), BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN_FOR_JS));

@@ -120,7 +120,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
     final CartModel cartModel = getBlCartService().getSessionCart();
 
-    if(null != cartModel && CollectionUtils.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+    if(null != cartModel && CollectionUtils.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isFalse(cartModel.getIsRentalOrder())) {
       return false;
     }
     final List<AbstractOrderEntryModel> entries = orderModel.getEntries().stream().filter(entry -> !entry.isBundleEntry()).collect(
@@ -180,9 +180,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
         .equals(BlFacadesConstants.SUCCESS)) {
       if (null == blSerialProductModel) {
-        cartModel.setIsRentalCart(Boolean.TRUE);
+        cartModel.setIsRentalOrder(Boolean.TRUE);
       } else {
-        cartModel.setIsRentalCart(Boolean.FALSE);
+        cartModel.setIsRentalOrder(Boolean.FALSE);
         //Added code for serial status changes
         blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
         getModelService().save(blSerialProductModel);

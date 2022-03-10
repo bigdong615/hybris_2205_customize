@@ -46,8 +46,8 @@ public class BlOrderPopulator extends OrderPopulator
         target.setGiftCardDiscount(giftDiscount);
       }
     }
-    if(BooleanUtils.isTrue(source.getIsNewGearOrder())){
-      target.setIsNewGearOrder(source.getIsNewGearOrder());
+    if(BooleanUtils.isTrue(source.getIsRetailGearOrder())){
+      target.setIsNewGearOrder(source.getIsRetailGearOrder());
     }
     target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
   }

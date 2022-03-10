@@ -47,10 +47,10 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	private void setValuesForRunTAttributes(final OrderModel order)
 	{
 		order.setRunTot_grandTotal(getGrandTotalFromOrder(order));
-		order.setRunTot_subtotal(order.getSubtotal());
-		order.setRunTot_totalOptionsCost(order.getTotalOptionsCost());
-		order.setRunTot_totalPrice(order.getTotalPrice());
-		order.setRunTot_totalTax(order.getTotalTax());
+		order.setRunTot_subtotal(getDefaultValueIfNull(order.getSubtotal()));
+		order.setRunTot_totalOptionsCost(getDefaultValueIfNull(order.getTotalOptionsCost()));
+		order.setRunTot_totalPrice(getDefaultValueIfNull(order.getTotalPrice()));
+		order.setRunTot_totalTax(getDefaultValueIfNull(order.getTotalTax()));
 		if(ObjectUtils.allNotNull(order.getRentalStartDate(),order.getRentalEndDate()))
 		{
 			order.setRunTot_daysRented(
@@ -77,6 +77,17 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 			return order.getTotalPrice();
 		}
 		return order.getGrandTotal();
+	}
+	
+	/**
+	 * Gets the default value if null.
+	 *
+	 * @param value the value
+	 * @return the default value if null
+	 */
+	private Double getDefaultValueIfNull(final Double value)
+	{
+		return ObjectUtils.defaultIfNull(value, Double.valueOf(0.0d)); 
 	}
 
 	@Override

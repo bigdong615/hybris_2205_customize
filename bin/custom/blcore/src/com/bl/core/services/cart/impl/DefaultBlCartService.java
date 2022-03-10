@@ -94,13 +94,13 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         }
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
-            if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+            if (BooleanUtils.isFalse(cartModel.getIsRentalOrder())) {
                 for(AbstractOrderEntryModel cartEntry : cartModel.getEntries()) {
                     setUsedGearSerialProductStatus(cartModel, cartEntry);
                 }
             }
-            cartModel.setIsNewGearOrder(false);
-            cartModel.setIsRentalCart(false);
+            cartModel.setIsRetailGearOrder(false);
+            cartModel.setIsRentalOrder(false);
             cartModel.setRentalStartDate(null);
             cartModel.setRentalEndDate(null);
             cartModel.setGiftCardCost(0.0);
@@ -225,7 +225,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate) {
         final CartModel cartModel = getSessionCart();
         final String cartCode = cartModel.getCode();
-        if(BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
+        if(BooleanUtils.isTrue(cartModel.getIsRentalOrder())) {
             cartModel.setRentalStartDate(rentalStartDate);
             cartModel.setRentalEndDate(rentalEndDate);
             try {
@@ -367,7 +367,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     @Override
     public void updateNewGearPurchaseStatus(final CartModel cartModel){
         if(CollectionUtils.isEmpty(cartModel.getEntries())){
-            cartModel.setIsNewGearOrder(Boolean.FALSE);
+            cartModel.setIsRetailGearOrder(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
         }
@@ -589,7 +589,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
  		final CartModel cartModel = getSessionCart();
  		if(Objects.nonNull(cartModel))
  		{
- 			return BooleanUtils.isTrue(cartModel.getIsRentalCart()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsNewGearOrder());
+ 			return BooleanUtils.isTrue(cartModel.getIsRentalOrder()) && BooleanUtils.isFalse(cartModel.isGiftCardOrder()) && BooleanUtils.isFalse(cartModel.getIsRetailGearOrder());
  		}
  		return Boolean.FALSE;
  	}

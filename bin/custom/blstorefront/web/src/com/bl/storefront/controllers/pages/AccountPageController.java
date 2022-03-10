@@ -467,7 +467,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(BlControllerConstants.PAGE_TYPE, BlControllerConstants.ORDER_DETAILS);
 		if(null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries())) {
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
-					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalOrder()));
 		}
 		else {
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
@@ -1574,7 +1574,7 @@ public class AccountPageController extends AbstractSearchPageController
 		if (null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries()))
 		{
 			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
-					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalOrder()));
 		}
 		else
 		{
