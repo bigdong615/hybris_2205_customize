@@ -63,8 +63,8 @@ public class DefaultBlCommerceAddToCartStrategy extends
       	  entryModel.setRecipientMessage(parameter.getRecipientMessage());
         }
         if(BooleanUtils.isTrue(parameter.getRetailGear())){
-          entryModel.getOrder().setIsNewGearOrder(true);
-          entryModel.getOrder().setIsRentalCart(Boolean.FALSE);
+          entryModel.getOrder().setIsRetailGearOrder(true);
+          entryModel.getOrder().setIsRentalOrder(Boolean.FALSE);
           entryModel.getOrder().setRentalStartDate(null);
           entryModel.getOrder().setRentalEndDate(null);
         }

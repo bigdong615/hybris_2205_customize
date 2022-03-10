@@ -221,7 +221,7 @@ public class CartPageController extends AbstractCartPageController
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+		if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
 			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
 					((AssistedServiceSession) getSessionService()
 							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
@@ -513,16 +513,16 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.updateGiftCardPurchaseStatus(cartModel);
 				  }
-          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder()))
           {
             blCartService.updateNewGearPurchaseStatus(cartModel);
           }
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
+					if (BooleanUtils.isFalse(cartModel.getIsRentalOrder()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
-				}else if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				}else if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())){
 					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else

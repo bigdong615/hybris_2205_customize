@@ -268,13 +268,13 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
             orderType.set(BlCoreConstants.GIFT_CARD_ORDER);
         }
-        else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
+        else if(BooleanUtils.isTrue(orderModel.getIsRetailGearOrder())){
             orderType.set(BlCoreConstants.NEW_GEAR_ORDER);
         }
-        else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
+        else if(BooleanUtils.isTrue(orderModel.getIsRentalOrder())){
             orderType.set(BlCoreConstants.RENTAL);
         }
-        else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
+        else if(BooleanUtils.isFalse(orderModel.getIsRentalOrder())){
             orderType.set(BlCoreConstants.USED_GEAR);
         }
 
@@ -512,8 +512,8 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
      * @return boolean
      */
     protected boolean isOrderAllowToGetTotalValueFromOrder(final AbstractOrderModel abstractOrderModel) {
-       return BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder()) &&
-            BooleanUtils.isFalse(abstractOrderModel.getIsNewGearOrder());
+       return BooleanUtils.isTrue(abstractOrderModel.getIsRentalOrder()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder()) &&
+            BooleanUtils.isFalse(abstractOrderModel.getIsRetailGearOrder());
     }
 
 

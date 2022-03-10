@@ -100,7 +100,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 			if(((BlProductModel)orderEntryModel.getProduct()).isBundleProduct()){
 				orderEntryModel.setBundleMainEntry(Boolean.TRUE);
 			}
-			if (orderEntryModel.getOrder().getIsRentalCart() && CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
+			if (orderEntryModel.getOrder().getIsRentalOrder() && CollectionUtils.isNotEmpty(serialProduct) && warehouse != null)
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Modifiy order {} ", orderEntryModel.getOrder().getCode());
 				checkForOrderModification(orderEntryModel, interceptorContext, serialProduct, warehouse);
@@ -215,7 +215,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 		{
 			orderEntryModel.getModifiedSerialProductList().forEach(serialProduct -> serialCodes.add(serialProduct.getCode()));
 		}
-		if(!orderEntryModel.getOrder().getIsRentalCart() && CollectionUtils.isEmpty(orderEntryModel.getModifiedSerialProductList()))
+		if(!orderEntryModel.getOrder().getIsRentalOrder() && CollectionUtils.isEmpty(orderEntryModel.getModifiedSerialProductList()))
 		{
 			serialCodes.add(orderEntryModel.getProduct().getCode());
 		}
@@ -228,7 +228,7 @@ public class BlOrderEntryValidateInterceptor implements ValidateInterceptor<Orde
 
 		consignment.setConsignmentEntries(entries);
 
-		if (consignment.getOrder().getIsRentalCart()) {
+		if (consignment.getOrder().getIsRentalOrder()) {
 
 			Collection<StockLevelModel> serialStocks = blStockLevelDao
 					.findSerialStockLevelsForDateAndCodes(serialCodes, consignment.getOptimizedShippingStartDate(),
