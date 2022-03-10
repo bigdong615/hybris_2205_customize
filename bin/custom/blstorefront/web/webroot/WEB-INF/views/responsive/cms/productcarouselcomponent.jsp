@@ -74,9 +74,9 @@
 								</div>
 								<p class="overline"><a href="#">${product.manufacturer}</a></p>
 								<c:url var="rentalPDPUrl" value="/rent/product/${product.code}"/>
-								<h6 class="product"><a href="${rentalPDPUrl}" class="js-pdplinkUrl" data-productCode="${product.code}"
+								<h3 class="product"><a href="${rentalPDPUrl}" class="js-pdplinkUrl" data-productCode="${product.code}"
                  data-brand="${product.manufacturer}" data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
-								<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
+								<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h3>
                                 <h6 class="price"><format:price priceData="${product.price}"/> <span class="period">
                                 <c:choose>
                                 	<c:when test="${not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">

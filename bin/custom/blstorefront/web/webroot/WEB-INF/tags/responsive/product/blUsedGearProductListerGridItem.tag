@@ -34,12 +34,12 @@
       <c:if test="${product.productType ne 'GIFTCARD'}">
 		<p class="overline">${product.manufacturer}</p>
 	  </c:if>
- <h6 class="product">
+ <h3 class="product">
  <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
             <a href="${usedGearUrl}" role="button"  class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
              data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
              <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
-  </h6>
+  </h3>
 		<ycommerce:testId code="product_wholeProduct">
 
 			<c:if test="${not empty product.potentialPromotions}">

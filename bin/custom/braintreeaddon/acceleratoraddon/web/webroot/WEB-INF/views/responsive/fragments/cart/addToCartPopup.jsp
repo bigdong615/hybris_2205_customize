@@ -157,7 +157,7 @@
                                                                                </div>
                                                                                <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
                                                                                <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
-                                                                               <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                                               <h3 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
                                                                                <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                                                                <h6 class="price">${productReference.target.price.formattedValue}</h6>
                                                                               
