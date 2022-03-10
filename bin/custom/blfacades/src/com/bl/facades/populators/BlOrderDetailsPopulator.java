@@ -74,7 +74,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    	 target.setHasGiftCart(Boolean.TRUE);
     }
 
-    if ((null != source.getReturnRequestForOrder()) && (source.getIsReplacementOrder().booleanValue())) {
+    if ((null != source.getReturnRequestForOrder()) && BooleanUtils.toBoolean(source.getIsReplacementOrder())) {
       target.setIsReplacementOrder(true);
     }
     if(null != source.getReturnRequestForOrder()) {
