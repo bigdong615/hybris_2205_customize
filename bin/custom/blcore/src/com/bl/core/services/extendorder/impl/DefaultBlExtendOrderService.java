@@ -201,7 +201,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
  	{
  		extendedOrder.setRunTot_grandTotal(getDefaultValueIfNull(order.getRunTot_grandTotal()) + getGrandTotalFromOrder(extendedOrder));
  		extendedOrder.setRunTot_subtotal(getDefaultValueIfNull(order.getRunTot_subtotal()) + getDefaultValueIfNull(extendedOrder.getSubtotal()));
- 		extendedOrder.setRunTot_totalOptionsCost((order.getRunTot_totalOptionsCost()) + getDefaultValueIfNull(extendedOrder.getTotalOptionsCost()));
+ 		extendedOrder.setRunTot_totalOptionsCost(getDefaultValueIfNull(order.getRunTot_totalOptionsCost()) + getDefaultValueIfNull(extendedOrder.getTotalOptionsCost()));
  		extendedOrder.setRunTot_totalPrice(getDefaultValueIfNull(order.getRunTot_totalPrice()) + getDefaultValueIfNull(extendedOrder.getTotalPrice()));
  		extendedOrder.setRunTot_totalTax(getDefaultValueIfNull(order.getRunTot_totalTax()) + getDefaultValueIfNull(extendedOrder.getTotalTax()));
  		if(ObjectUtils.allNotNull(extendedOrder.getRentalStartDate(),extendedOrder.getRentalEndDate()))
