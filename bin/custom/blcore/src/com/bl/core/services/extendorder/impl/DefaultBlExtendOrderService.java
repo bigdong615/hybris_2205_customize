@@ -199,11 +199,11 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
  	 */
  	private void setRunningTotalsOrderExtensionAttributes(final AbstractOrderModel extendedOrder, final AbstractOrderModel order)
  	{
- 		extendedOrder.setRunTot_grandTotal(order.getRunTot_grandTotal() + getGrandTotalFromOrder(extendedOrder));
- 		extendedOrder.setRunTot_subtotal(order.getRunTot_subtotal() + extendedOrder.getSubtotal());
- 		extendedOrder.setRunTot_totalOptionsCost(order.getRunTot_totalOptionsCost() + extendedOrder.getTotalOptionsCost());
- 		extendedOrder.setRunTot_totalPrice(order.getRunTot_totalPrice() + extendedOrder.getTotalPrice());
- 		extendedOrder.setRunTot_totalTax(order.getRunTot_totalTax() + extendedOrder.getTotalTax());
+ 		extendedOrder.setRunTot_grandTotal(getDefaultValueIfNull(order.getRunTot_grandTotal()) + getGrandTotalFromOrder(extendedOrder));
+ 		extendedOrder.setRunTot_subtotal(getDefaultValueIfNull(order.getRunTot_subtotal()) + getDefaultValueIfNull(extendedOrder.getSubtotal()));
+ 		extendedOrder.setRunTot_totalOptionsCost((order.getRunTot_totalOptionsCost()) + getDefaultValueIfNull(extendedOrder.getTotalOptionsCost()));
+ 		extendedOrder.setRunTot_totalPrice(getDefaultValueIfNull(order.getRunTot_totalPrice()) + getDefaultValueIfNull(extendedOrder.getTotalPrice()));
+ 		extendedOrder.setRunTot_totalTax(getDefaultValueIfNull(order.getRunTot_totalTax()) + getDefaultValueIfNull(extendedOrder.getTotalTax()));
  		if(ObjectUtils.allNotNull(extendedOrder.getRentalStartDate(),extendedOrder.getRentalEndDate()))
 		{
  			extendedOrder.setRunTot_daysRented(
@@ -214,6 +214,17 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 			extendedOrder.setRunTot_daysRented(Integer.valueOf(0));
 		}
  	}
+ 	
+ 	/**
+	 * Gets the default value if null.
+	 *
+	 * @param value the value
+	 * @return the default value if null
+	 */
+	private Double getDefaultValueIfNull(final Double value)
+	{
+		return ObjectUtils.defaultIfNull(value, Double.valueOf(0.0d));
+	}
  	
  	/**
 	 * Gets the grand total from order.
