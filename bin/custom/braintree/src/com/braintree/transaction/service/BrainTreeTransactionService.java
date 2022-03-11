@@ -9,7 +9,6 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.dto.BraintreeInfo;
-import com.braintreegateway.CreditCard;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -18,7 +17,6 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
-
 import java.math.BigDecimal;
 import java.util.Map;
 

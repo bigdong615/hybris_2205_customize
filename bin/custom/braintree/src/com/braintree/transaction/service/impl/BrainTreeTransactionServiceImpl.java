@@ -45,7 +45,6 @@ import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCard;
 import com.braintreegateway.PayPalAccount;
-import com.braintreegateway.PaymentMethod;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
