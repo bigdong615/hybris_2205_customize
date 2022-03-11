@@ -9,6 +9,7 @@ import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.dto.BraintreeInfo;
+import com.braintreegateway.CreditCard;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -237,4 +238,11 @@ public interface BrainTreeTransactionService
 	 */
 	public Result<Transaction> issueBlindCredit(final PaymentTransactionEntryModel paymentTransactionEntry,
 			final BigDecimal refundAmount);
+
+	/**
+	 * It gets the Braintree address id for legacy payment methods where braintreeAddressID is not present (BL-1744)
+	 * @param paymentMethodToken the payment method token
+	 * @return braintree address id
+	 */
+	public String getBraintreeAddressIDForLegacyPaymentMethods(final String paymentMethodToken);
 }
