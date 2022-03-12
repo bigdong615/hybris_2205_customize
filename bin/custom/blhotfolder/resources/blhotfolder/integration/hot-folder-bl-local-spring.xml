@@ -28,9 +28,10 @@
 
    <!-- 1) Scan for files -->
 	<file:inbound-channel-adapter id="batchFilesBl" directory="#{baseDirectoryBl}"
-		filename-regex="^(CATEGORY|PRODUCT|CUSTOMER|ADDRESS|CUSTOMERADDRESS|VERIFICATIONMEDIA|BILLINGCHARGES|PAYMENTINFO|OUTSTANDINGBILLS|PRODUCTRECOMMENDATIONS|BUNDLEPRODUCTMAPPING|PRICE)_[0-9]{14}.csv" comparator="fileOrderComparator">
+		filename-regex="^(CATEGORY|PRODUCT|CUSTOMER|ADDRESS|CUSTOMERADDRESS|VERIFICATIONMEDIA|BILLINGCHARGES|PAYMENTINFO|OUTSTANDINGBILLS|PRODUCTRECOMMENDATIONS|BUNDLEPRODUCTMAPPING|PRICE|PRODUCT)_[0-9]{14}.csv" comparator="fileOrderComparator">
 		<int:poller fixed-rate="1000" />
 	</file:inbound-channel-adapter>
+
 
     <!-- 2) move the file to processing and create header -->
     <file:outbound-gateway request-channel="batchFilesBl" reply-channel="batchFilesBlProc"
