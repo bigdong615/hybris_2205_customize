@@ -34,12 +34,13 @@
         <property name="arguments">
             <list>
                 <bean class="java.util.regex.Pattern" factory-method="compile">
-                    <constructor-arg value="^(CATEGORY|PRODUCT|CUSTOMER|ADDRESS|CUSTOMERADDRESS|VERIFICATIONMEDIA|BILLINGCHARGES|PAYMENTINFO|OUTSTANDINGBILLS|PRODUCTRECOMMENDATIONS|BUNDLEPRODUCTMAPPING|PRODUCT)_[0-9]{14}.csv" />
+                    <constructor-arg value="^(CATEGORY|PRODUCT|CUSTOMER|ADDRESS|CUSTOMERADDRESS|VERIFICATIONMEDIA|BILLINGCHARGES|PAYMENTINFO|OUTSTANDINGBILLS|PRODUCTRECOMMENDATIONS|BUNDLEPRODUCTMAPPING|PRICE|PRODUCT)_[0-9]{14}.csv" />
               </bean>
                 <ref bean="blHotFolderChannel"/>
             </list>
         </property>
     </bean>
+
 
 	<int:channel id="blHotFolderChannel"/>
 
