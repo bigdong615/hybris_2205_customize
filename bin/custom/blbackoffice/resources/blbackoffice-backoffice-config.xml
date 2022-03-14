@@ -27,6 +27,7 @@
 			</n:navigation-node>
             <n:navigation-node id="BL Backoffice">
                 <n:type-node id="BlProduct" code="BlProduct"/>
+                 <n:type-node id="BlSubparts" code="BlSubparts"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 				<n:navigation-node id="BL Pricing Ratio">
 					<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
@@ -2405,6 +2406,14 @@
 			</y:labels>
 		</y:base>
 	</context>
+	
+		<context type="BlSubparts" component="base">
+			<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+				<y:labels>
+					<y:label>@labelService.getObjectLabel(itemtype)+ subpartProduct.code + ' - ' +quantity</y:label>
+				</y:labels>
+			</y:base>
+		</context>
     
     <context type="BlRepairLog" component="advanced-search" merge-by="replace">
 		<advanced-search:advanced-search disable-simple-search="false" disable-auto-search="false">
