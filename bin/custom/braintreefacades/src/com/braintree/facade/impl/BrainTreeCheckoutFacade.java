@@ -291,7 +291,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
       setRegionShortCodeIfNotAvailable(addressData);
       final BrainTreeAddressRequest brainTreeAddressRequest =
           BlBrainTreeConvertUtils.convertBrainTreeAddress(currentUserForCheckout.getBraintreeCustomerId(), addressData);
-      final String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+      String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+			if(StringUtils.isBlank(brainTreeAddressId)) {
+				brainTreeAddressId = getBrainTreeTransactionService().getBraintreeAddressIDForLegacyPaymentMethods(paymentInfo.getPaymentMethodToken());
+				paymentInfo.getBillingAddress().setBrainTreeAddressId(brainTreeAddressId);
+				getModelService().save(paymentInfo);
+			}
       if (StringUtils.isNotBlank(brainTreeAddressId))
       {
         brainTreeAddressRequest.setAddressId(brainTreeAddressId);

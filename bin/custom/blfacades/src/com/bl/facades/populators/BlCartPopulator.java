@@ -113,7 +113,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
-		target.setIsNewGearOrder(BooleanUtils.isTrue(source.getIsRetailGearOrder()));
+		target.setIsRetailGearOrder(BooleanUtils.isTrue(source.getIsRetailGearOrder()));
 	}
 
 	/**

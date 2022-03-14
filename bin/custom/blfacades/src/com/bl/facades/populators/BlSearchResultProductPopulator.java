@@ -102,7 +102,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setIsDiscontinued(this.<Boolean>getValue(source, "isDiscontinued"));
     if(null != this.getValue(source , BlCoreConstants.RETAILGEAR)) {
       target.setRetailGear(this.<Boolean>getValue(source, "retailGear"));
-      target.setIsNewGearInStock(this.<Boolean>getValue(source, "newGearInStock"));
+      target.setIsRetailGearInStock(this.<Boolean>getValue(source, "newGearInStock"));
       final Double retailGearPrice = this.<Double> getValue(source, "retailGearPrice");
       if(PredicateUtils.notNullPredicate().evaluate(retailGearPrice))
       {
