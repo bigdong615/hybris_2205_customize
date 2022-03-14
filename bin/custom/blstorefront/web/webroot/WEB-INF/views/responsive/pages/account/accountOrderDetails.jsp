@@ -351,7 +351,7 @@
                                         <tr>
                                             <td class="gray80">
                                             <c:choose>
-                                             <c:when  test="${orderData.isNewGearOrder eq true}">
+                                             <c:when  test="${orderData.isRetailGearOrder eq true}">
                                                 <spring:theme code="text.checkout.multi.newgear.order.summary.cost"/>
                                              </c:when>
                                              <c:when test="${orderData.isRentalCart}">

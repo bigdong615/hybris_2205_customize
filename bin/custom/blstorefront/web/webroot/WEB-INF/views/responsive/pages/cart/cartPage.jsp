@@ -20,7 +20,7 @@
    <c:when test="${cartData.hasGiftCart}">
       <cart:blGiftCardPurchaseCartPage/>
    </c:when>
-   <c:when test="${cartData.isNewGearOrder eq true}">
+   <c:when test="${cartData.isRetailGearOrder eq true}">
       <cart:blNewGearCartPage/>
    </c:when>
    <c:when test="${cartData.isRentalCart}">
