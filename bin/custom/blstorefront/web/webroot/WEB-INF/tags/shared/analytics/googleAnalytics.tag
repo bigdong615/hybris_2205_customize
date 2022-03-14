@@ -209,7 +209,7 @@ gtag('config', googleAnalyticsTrackingId);
                       <c:when test="${orderData.hasGiftCart}">
                         <c:set var="cartType" value="Gift Cart Order"/>
                       </c:when>
-                       <c:when test="${orderData.isNewGearOrder}">
+                       <c:when test="${orderData.isRetailGearOrder}">
                          <c:set var="cartType" value="New Gear Order"/>
                        </c:when>
                        <c:when test="${orderData.isRentalCart}">

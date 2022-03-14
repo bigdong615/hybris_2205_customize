@@ -114,7 +114,7 @@
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
             <value code="PACKAGE"/>
-            <value code="NEWGEAR"/>
+            <value code="RETAILGEAR"/>
             <value code="MANUAL"/>
         </enumtype>
 
@@ -1355,13 +1355,13 @@
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="false"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>Determines the product is new gear</description>
+                     <description>Determines the product is retail gear</description>
                    </attribute>
                    <attribute qualifier="retailGearPrice" type="java.math.BigDecimal">
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
-                     <description>New Gear Price field</description>
+                     <description>Retail Gear Price field</description>
                    </attribute>
                    <attribute qualifier="onSale" type="java.lang.Boolean">
                      <persistence type="property"/>
@@ -1369,11 +1369,11 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether product is OnSale or not</description>
                    </attribute>
-                   <attribute qualifier="newGearInStock" type="boolean">
+                   <attribute qualifier="retailGearInStock" type="boolean">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>To identify whether the new gear product is in Stock or not</description>
+                     <description>To identify whether the retail gear product is in Stock or not</description>
                    </attribute>
                    <attribute qualifier="bufferInvPercChangedManually" type="boolean">
                      <persistence type="property"/>
@@ -2957,7 +2957,7 @@
                   </attribute>
                   <attribute qualifier="isRetailGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
-                    <description>Flag to identify the order type is new gear order or not. By using
+                    <description>Flag to identify the order type is retail gear order or not. By using
                       this flag we are stopping the order process.
                     </description>
                     <modifiers read="true" write="true" search="true" optional="true" />
