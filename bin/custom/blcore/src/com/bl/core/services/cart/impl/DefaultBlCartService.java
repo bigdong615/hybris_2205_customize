@@ -26,6 +26,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
@@ -830,4 +831,11 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void setPromotionsService(PromotionsService promotionsService) {
         this.promotionsService = promotionsService;
     }
+
+	@Override
+	public boolean isUsedOrderOnly(final AbstractOrderModel order)
+	{
+		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
+	}
 }

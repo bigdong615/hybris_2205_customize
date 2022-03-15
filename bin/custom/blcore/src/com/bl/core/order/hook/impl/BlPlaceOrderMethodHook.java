@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -28,6 +29,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
 	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
+	private BlCartService cartService;
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -49,7 +51,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	 */
 	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
 	{
-		if(isUsedGearOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+		if(getCartService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
 				&& Objects.nonNull(order.getCreationtime()))
 		{
 			order.getEntries().forEach(entry -> {
@@ -61,18 +63,6 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 				}
 			});
 		}
-	}
-	
-	/**
-	 * Checks if is used gear order only.
-	 *
-	 * @param order the order
-	 * @return true, if is used gear order only
-	 */
-	private boolean isUsedGearOrderOnly(final OrderModel order)
-	{
-		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
-				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
 	}
 
 	/**
@@ -157,6 +147,22 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the cartService
+	 */
+	public BlCartService getCartService()
+	{
+		return cartService;
+	}
+
+	/**
+	 * @param cartService the cartService to set
+	 */
+	public void setCartService(BlCartService cartService)
+	{
+		this.cartService = cartService;
 	}
 
 }
