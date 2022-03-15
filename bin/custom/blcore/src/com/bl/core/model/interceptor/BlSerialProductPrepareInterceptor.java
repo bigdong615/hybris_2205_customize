@@ -16,10 +16,13 @@ import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -30,11 +33,13 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -75,6 +80,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		if(Objects.nonNull(blSerialProduct))
 		{
+			addDateFirstActiveOnSerial(blSerialProduct, ctx);
 			//Intercepting the change in serialStatus and changing the consignment status accordingly if available
 			doStatusChangeOnConsignment(blSerialProduct, ctx);
 			createRepairLogIfRepairNeeded(blSerialProduct, ctx);
@@ -90,6 +96,56 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			setLastUserChangedConditionRating(blSerialProduct, ctx);
 			setFlagForBufferedInventoryOnSerial(blSerialProduct);
 		}
+	}
+	
+	/**
+	 * Adds the date first active on serial only first time.
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param interceptorContext
+	 *           the interceptor context
+	 */
+	private void addDateFirstActiveOnSerial(final BlSerialProductModel blSerialProduct,
+			final InterceptorContext interceptorContext)
+	{
+		if (isEligibleToSetDate(blSerialProduct, interceptorContext) && isStatusOfSerialIsActive(blSerialProduct))
+		{
+			final Date currentDate = BlDateTimeUtils.getFormattedStartDay(new Date()).getTime();
+			blSerialProduct.setDateFirstActive(currentDate);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Setting Date First Active On Serial for code : {} and date is : {}",
+					blSerialProduct.getCode(), currentDate);
+		}
+	}
+
+	/**
+	 * Checks if serial is eligible to set first time active date.
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param interceptorContext
+	 *           the interceptor context
+	 * @return true, if is eligible to set date
+	 */
+	private boolean isEligibleToSetDate(final BlSerialProductModel blSerialProduct, final InterceptorContext interceptorContext)
+	{
+		return Objects.isNull(blSerialProduct.getDateFirstActive()) && (interceptorContext.isNew(blSerialProduct)
+				|| (interceptorContext.isModified(blSerialProduct, ProductModel.APPROVALSTATUS)
+						|| interceptorContext.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)));
+	}
+
+	/**
+	 * Checks if is status of serial is active.
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @return true, if is status of serial is active
+	 */
+	private boolean isStatusOfSerialIsActive(final BlSerialProductModel blSerialProduct)
+	{
+		return ObjectUtils.allNotNull(blSerialProduct.getApprovalStatus(), blSerialProduct.getSerialStatus())
+				&& ArticleApprovalStatus.APPROVED.getCode().equals(blSerialProduct.getApprovalStatus().getCode())
+				&& SerialStatusEnum.ACTIVE.getCode().equals(blSerialProduct.getSerialStatus().getCode());
 	}
 	
 	/**

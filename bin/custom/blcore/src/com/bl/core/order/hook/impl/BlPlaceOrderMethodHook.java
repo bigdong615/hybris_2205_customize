@@ -9,9 +9,12 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -35,7 +38,41 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 		{
 			getModelService().refresh(order);
 			setValuesForRunTAttributes(order);
+			setDateOfSaleOnSerialForUsedGearOrder(order);
 		}
+	}
+	
+	/**
+	 * Sets the date of sale on serial for used gear order.
+	 *
+	 * @param order the new date of sale on serial for used gear order
+	 */
+	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
+	{
+		if(isUsedGearOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+				&& Objects.nonNull(order.getCreationtime()))
+		{
+			order.getEntries().forEach(entry -> {
+				if(entry.getProduct() instanceof BlSerialProductModel)
+				{
+					final BlSerialProductModel serial = (BlSerialProductModel) entry.getProduct();
+					serial.setDateOfSale(order.getCreationtime());
+					getModelService().save(serial);
+				}
+			});
+		}
+	}
+	
+	/**
+	 * Checks if is used gear order only.
+	 *
+	 * @param order the order
+	 * @return true, if is used gear order only
+	 */
+	private boolean isUsedGearOrderOnly(final OrderModel order)
+	{
+		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
 	}
 
 	/**
