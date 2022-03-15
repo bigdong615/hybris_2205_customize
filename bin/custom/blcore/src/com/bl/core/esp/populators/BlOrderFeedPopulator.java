@@ -95,7 +95,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.TYPE, getOrderType(abstractOrderModel));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
-        BlespintegrationConstants.REPLACEMENT, BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder())
+        BlespintegrationConstants.REPLACEMENT, BooleanUtils.isTrue(abstractOrderModel.getIsReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.STATUS,getRequestValue(getOrderStatus(abstractOrderModel)));
@@ -129,7 +129,7 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
         BlespintegrationConstants.TOTAL_COST, String.valueOf(getDoubleValueForRequest(abstractOrderModel.getTotalPrice())));
     createElementForRootElement(orderItemsInXMLDocument , rootOrderItems,
         BlespintegrationConstants.DISCOUNT_TEXT, StringUtils.EMPTY);
-    if(BooleanUtils.isTrue(abstractOrderModel.getIsRentalCart()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
+    if(BooleanUtils.isTrue(abstractOrderModel.getIsRentalOrder()) && BooleanUtils.isFalse(abstractOrderModel.isGiftCardOrder())) {
       createElementForRootElement(orderItemsInXMLDocument, rootOrderItems,
           BlespintegrationConstants.EXPECTED_SHIPPING_DATE,
           formatter.format(abstractOrderModel.getRentalStartDate()));
@@ -568,13 +568,13 @@ public class BlOrderFeedPopulator <SOURCE extends AbstractOrderModel, TARGET ext
     if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
       orderType.set(BlespintegrationConstants.GIFT_CARD_ORDER);
     }
-    else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
+    else if(BooleanUtils.isTrue(orderModel.getIsRetailGearOrder())){
       orderType.set(BlespintegrationConstants.NEW_GEAR_ORDER);
     }
-    else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
+    else if(BooleanUtils.isTrue(orderModel.getIsRentalOrder())){
       orderType.set(BlespintegrationConstants.RENTAL);
     }
-    else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
+    else if(BooleanUtils.isFalse(orderModel.getIsRentalOrder())){
       orderType.set(BlespintegrationConstants.USED_GEAR);
     }
 

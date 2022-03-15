@@ -21,7 +21,7 @@
 	<h5>
 		<spring:theme code="checkout.multi.order.summary" />
 	</h5>
-	<c:if test="${cartData.isNewGearOrder eq false}">
+	<c:if test="${cartData.isRetailGearOrder eq false}">
     <hr>
     <c:choose>
       <c:when test="${cartData.isRentalCart}">
@@ -45,7 +45,7 @@
 			<tr>
 				<td class="gray80">
 				<c:choose>
-          <c:when test="${cartData.isNewGearOrder eq true}">
+          <c:when test="${cartData.isRetailGearOrder eq true}">
             <spring:theme code="text.checkout.multi.newgear.order.summary.cost" />
           </c:when>
           <c:when test="${cartData.isRentalCart}">
@@ -69,7 +69,7 @@
 				</c:choose>
 				</td>
 			</tr>
-			<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
+			<c:if test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}">
 				<tr>
 					<td class="gray80"><spring:theme
 							code="text.cart.damage.waiver" /> <a href="#"
@@ -187,7 +187,7 @@
 	<c:if test="${not empty fn:escapeXml(errorMsg)}">
 		<c:set var="errormsgvalid" value="error" />
 	</c:if>
-	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isNewGearOrder eq false}">
+	<c:if test="${currentStepUrl  ne '/checkout/multi/summary/view' && cartData.isRetailGearOrder eq false}">
 		<c:url value="/cart/voucher/apply" var="voucherUrl" />
 		<form:form action="${voucherUrl}" modelAttribute="voucherForm"
 			method="POST" id="applyVoucherForm">

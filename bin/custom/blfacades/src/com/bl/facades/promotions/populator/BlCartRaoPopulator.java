@@ -26,7 +26,7 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
   public void populate(final AbstractOrderModel source, final CartRAO target)
   {
 
-    target.setRentalCart(source.getIsRentalCart());
+    target.setRentalCart(source.getIsRentalOrder());
     //added for extended order
     if(BooleanUtils.isTrue(source.getIsExtendedOrder())){
         target.setRentalDurationDays(source.getTotalExtendDays());

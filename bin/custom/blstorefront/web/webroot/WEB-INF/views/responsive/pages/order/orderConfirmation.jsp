@@ -9,7 +9,7 @@
         <c:when test="${orderData.hasGiftCart}">
         <order:blGiftCardOrderConfirmationPage/>
     	</c:when>
-    	<c:when test="${orderData.isNewGearOrder}">
+    	<c:when test="${orderData.isRetailGearOrder}">
          <order:blNewGearOrderConfirmationPage/>
       </c:when>
     	<c:when test="${orderData.isRentalCart}">

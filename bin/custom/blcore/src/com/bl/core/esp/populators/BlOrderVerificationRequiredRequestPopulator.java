@@ -67,7 +67,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
       orderVerificationRequiredEventData.setShippingMethodType(StringUtils.EMPTY);
       orderVerificationRequiredEventData.setShippingMethod(StringUtils.EMPTY);
     }
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
     {
       orderVerificationRequiredEventData
           .setArrivalDate(formatter.format(orderModel.getRentalStartDate()));

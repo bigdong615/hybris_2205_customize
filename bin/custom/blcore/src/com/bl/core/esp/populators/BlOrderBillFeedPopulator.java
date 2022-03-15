@@ -69,7 +69,7 @@ public class BlOrderBillFeedPopulator<SOURCE extends AbstractOrderModel, TARGET 
         BlespintegrationConstants.TYPE, getOrderType(abstractOrderModel));
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.REPLACEMENT,
-        BooleanUtils.isTrue(abstractOrderModel.getIsCartUsedForReplacementOrder())
+        BooleanUtils.isTrue(abstractOrderModel.getIsReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     createElementForRootElement(orderItemsInXMLDocument, rootOrderItem,
         BlespintegrationConstants.STATUS, getRequestValue(getOrderStatus(abstractOrderModel)));
