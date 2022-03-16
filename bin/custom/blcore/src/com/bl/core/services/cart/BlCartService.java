@@ -4,7 +4,6 @@ import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -163,12 +162,4 @@ public interface BlCartService extends CartService {
      * @return true, if is rental cart only
      */
     boolean isRentalCartOnly();
-    
-    /**
-     * Checks if is used order only.
-     *
-     * @param order the order
-     * @return true, if is used order only
-     */
-    boolean isUsedOrderOnly(final AbstractOrderModel order);
 }

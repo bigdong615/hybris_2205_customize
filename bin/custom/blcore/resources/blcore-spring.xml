@@ -1889,7 +1889,7 @@
     <alias name="defaultBlPlaceOrderMethodHook" alias="orderMethodHook" />
     <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
 		<property name="modelService" ref="modelService" />
-		<property name="cartService" ref="cartService"/>
+		<property name="blOrderService" ref="blOrderService"/>
 	</bean>
 	
 	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">

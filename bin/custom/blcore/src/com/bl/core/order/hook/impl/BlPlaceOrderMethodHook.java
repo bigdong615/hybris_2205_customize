@@ -10,12 +10,11 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -29,7 +28,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
 	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
-	private BlCartService cartService;
+	private BlOrderService blOrderService; 
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -51,7 +50,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	 */
 	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
 	{
-		if(getCartService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+		if(getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
 				&& Objects.nonNull(order.getCreationtime()))
 		{
 			order.getEntries().forEach(entry -> {
@@ -150,19 +149,19 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	}
 
 	/**
-	 * @return the cartService
+	 * @return the blOrderService
 	 */
-	public BlCartService getCartService()
+	public BlOrderService getBlOrderService()
 	{
-		return cartService;
+		return blOrderService;
 	}
 
 	/**
-	 * @param cartService the cartService to set
+	 * @param blOrderService the blOrderService to set
 	 */
-	public void setCartService(BlCartService cartService)
+	public void setBlOrderService(BlOrderService blOrderService)
 	{
-		this.cartService = cartService;
+		this.blOrderService = blOrderService;
 	}
 
 }

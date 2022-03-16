@@ -12,8 +12,8 @@ import com.bl.core.esp.service.impl.DefaultBlESPEventService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
-import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -216,8 +216,8 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
  	@Resource(name = "defaultBlUserService")
   private DefaultBlUserService defaultBlUserService;
  	
- 	@Resource(name = "cartService")
- 	private BlCartService cartService;
+ 	@Resource(name = "blOrderService")
+ 	private BlOrderService blOrderService;
 
     /**
      * Init cancellation order form.
@@ -844,7 +844,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void resetDateOfSaleAttributeOnSerial() {
         this.getCancelAndRefundEntries().forEach(entry -> {
-            if(getCartService().isUsedOrderOnly(this.getOrderModel()) && entry.getOrderEntry().getProduct() instanceof BlSerialProductModel) {
+            if(getBlOrderService().isUsedOrderOnly(this.getOrderModel()) && entry.getOrderEntry().getProduct() instanceof BlSerialProductModel) {
                 final BlSerialProductModel serialProductModel = (BlSerialProductModel) entry.getOrderEntry().getProduct();
                 serialProductModel.setDateOfSale(null);
                 this.getModelService().save(serialProductModel);
@@ -2102,19 +2102,19 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
     }
 
 	/**
-	 * @return the cartService
+	 * @return the blOrderService
 	 */
-	public BlCartService getCartService()
+	public BlOrderService getBlOrderService()
 	{
-		return cartService;
+		return blOrderService;
 	}
 
 	/**
-	 * @param cartService the cartService to set
+	 * @param blOrderService the blOrderService to set
 	 */
-	public void setCartService(BlCartService cartService)
+	public void setBlOrderService(BlOrderService blOrderService)
 	{
-		this.cartService = cartService;
+		this.blOrderService = blOrderService;
 	}
 
 }
