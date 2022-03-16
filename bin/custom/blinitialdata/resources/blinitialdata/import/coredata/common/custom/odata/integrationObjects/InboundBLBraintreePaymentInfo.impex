@@ -1,0 +1,33 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLBraintreePaymentInfo; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLBraintreePaymentInfo	; BrainTreePaymentInfo	; BrainTreePaymentInfo	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBraintreePaymentInfo	; Address             	; Address             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBraintreePaymentInfo	; BrainTreeCardType   	; BrainTreeCardType   	; 	; ALL_SUBTYPES           	;  
+; InboundBLBraintreePaymentInfo	; User                	; User                	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; paymentProvider      	; BrainTreePaymentInfo:paymentProvider      	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; expirationMonth      	; BrainTreePaymentInfo:expirationMonth      	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; payer                	; BrainTreePaymentInfo:payer                	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; isDepositPayment     	; BrainTreePaymentInfo:isDepositPayment     	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; user                 	; BrainTreePaymentInfo:user                 	; InboundBLBraintreePaymentInfo:User             	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; paymentId            	; BrainTreePaymentInfo:paymentId            	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; billingAddress       	; BrainTreePaymentInfo:billingAddress       	; InboundBLBraintreePaymentInfo:Address          	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; billPayment          	; BrainTreePaymentInfo:billPayment          	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; usePaymentMethodToken	; BrainTreePaymentInfo:usePaymentMethodToken	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; expirationYear       	; BrainTreePaymentInfo:expirationYear       	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; cardType             	; BrainTreePaymentInfo:cardType             	; InboundBLBraintreePaymentInfo:BrainTreeCardType	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; cardholderName       	; BrainTreePaymentInfo:cardholderName       	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; duplicate            	; BrainTreePaymentInfo:duplicate            	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; paymentMethodToken   	; BrainTreePaymentInfo:paymentMethodToken   	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; customerId           	; BrainTreePaymentInfo:customerId           	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; cardNumber           	; BrainTreePaymentInfo:cardNumber           	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; extendOrder          	; BrainTreePaymentInfo:extendOrder          	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; nonce                	; BrainTreePaymentInfo:nonce                	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; code                 	; BrainTreePaymentInfo:code                 	;                                                	; true	;  
+; InboundBLBraintreePaymentInfo:BrainTreePaymentInfo	; paymentInfo          	; BrainTreePaymentInfo:paymentInfo          	;                                                	; 	;  
+; InboundBLBraintreePaymentInfo:Address             	; addressID            	; Address:addressID                         	;                                                	; true	;  
+; InboundBLBraintreePaymentInfo:BrainTreeCardType   	; code                 	; BrainTreeCardType:code                    	;                                                	; true	;  
+; InboundBLBraintreePaymentInfo:User                	; uid                  	; User:uid                                  	;                                                	; true	;  

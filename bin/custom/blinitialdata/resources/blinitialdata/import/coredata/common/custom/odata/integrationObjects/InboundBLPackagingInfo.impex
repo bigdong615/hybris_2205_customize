@@ -1,0 +1,48 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLPackagingInfo; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPackagingInfo	; CatalogVersion     	; CatalogVersion     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPackagingInfo	; PackageTypeEnum    	; PackageTypeEnum    	; 	; ALL_SUBTYPES           	;  
+; InboundBLPackagingInfo	; Catalog            	; Catalog            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPackagingInfo	; Consignment        	; Consignment        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPackagingInfo	; BlProduct          	; BlProduct          	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPackagingInfo	; PackagingInfo      	; PackagingInfo      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPackagingInfo	; PackagingInfoStatus	; PackagingInfoStatus	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPackagingInfo:CatalogVersion     	; catalog                     	; CatalogVersion:catalog                    	; InboundBLPackagingInfo:Catalog            	; true	;  
+; InboundBLPackagingInfo:CatalogVersion     	; version                     	; CatalogVersion:version                    	;                                           	; true	;  
+; InboundBLPackagingInfo:PackageTypeEnum    	; code                        	; PackageTypeEnum:code                      	;                                           	; true	;  
+; InboundBLPackagingInfo:Catalog            	; id                          	; Catalog:id                                	;                                           	; true	;  
+; InboundBLPackagingInfo:Consignment        	; code                        	; Consignment:code                          	;                                           	; true	;  
+; InboundBLPackagingInfo:BlProduct          	; catalogVersion              	; BlProduct:catalogVersion                  	; InboundBLPackagingInfo:CatalogVersion     	; true	;  
+; InboundBLPackagingInfo:BlProduct          	; code                        	; BlProduct:code                            	;                                           	; true	;  
+; InboundBLPackagingInfo:PackagingInfo      	; numberOfRepetitions         	; PackagingInfo:numberOfRepetitions         	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; width                       	; PackagingInfo:width                       	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; height                      	; PackagingInfo:height                      	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; latePackageDate             	; PackagingInfo:latePackageDate             	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; delayedDate                 	; PackagingInfo:delayedDate                 	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; length                      	; PackagingInfo:length                      	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; inBoundTrackingNumber       	; PackagingInfo:inBoundTrackingNumber       	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; serialProducts              	; PackagingInfo:serialProducts              	; InboundBLPackagingInfo:BlProduct          	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; consignment                 	; PackagingInfo:consignment                 	; InboundBLPackagingInfo:Consignment        	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; grossWeight                 	; PackagingInfo:grossWeight                 	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; isScrapeScanCompleted       	; PackagingInfo:isScrapeScanCompleted       	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; packageType                 	; PackagingInfo:packageType                 	; InboundBLPackagingInfo:PackageTypeEnum    	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; orderCode                   	; PackagingInfo:orderCode                   	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; weightUnit                  	; PackagingInfo:weightUnit                  	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; packageId                   	; PackagingInfo:packageId                   	;                                           	; true	;  
+; InboundBLPackagingInfo:PackagingInfo      	; dimensionUnit               	; PackagingInfo:dimensionUnit               	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; subpartName                 	; PackagingInfo:subpartName                 	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; packagingInfoStatus         	; PackagingInfo:packagingInfoStatus         	; InboundBLPackagingInfo:PackagingInfoStatus	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; outBoundTrackingNumber      	; PackagingInfo:outBoundTrackingNumber      	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; labelURL                    	; PackagingInfo:labelURL                    	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; totalShippingPrice          	; PackagingInfo:totalShippingPrice          	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; shipmentIdentificationNumber	; PackagingInfo:shipmentIdentificationNumber	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; returningDate               	; PackagingInfo:returningDate               	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; insuredValue                	; PackagingInfo:insuredValue                	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; packageReturnedToWarehouse  	; PackagingInfo:packageReturnedToWarehouse  	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; graphicImage                	; PackagingInfo:graphicImage                	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfo      	; trackingNumber              	; PackagingInfo:trackingNumber              	;                                           	; 	;  
+; InboundBLPackagingInfo:PackagingInfoStatus	; code                        	; PackagingInfoStatus:code                  	;                                           	; true	;  

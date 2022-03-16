@@ -1,0 +1,37 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLSerialLog; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLSerialLog	; BlSerialLog     	; BlSerialLog     	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLSerialLog	; CatalogVersion  	; CatalogVersion  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLSerialLog	; SerialStatusEnum	; SerialStatusEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLSerialLog	; Catalog         	; Catalog         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLSerialLog	; BlSerialProduct 	; BlSerialProduct 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLSerialLog	; Order           	; Order           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLSerialLog:BlSerialLog     	; withOrderId        	; BlSerialLog:withOrderId        	; InboundBLSerialLog:Order           	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; serialsId          	; BlSerialLog:serialsId          	; InboundBLSerialLog:BlSerialProduct 	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; serialStatus       	; BlSerialLog:serialStatus       	; InboundBLSerialLog:SerialStatusEnum	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; logUserName        	; BlSerialLog:logUserName        	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; modifiedtime       	; BlSerialLog:modifiedtime       	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; creationtime       	; BlSerialLog:creationtime       	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; logChanged         	; BlSerialLog:logChanged         	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; firmwareVersion    	; BlSerialLog:firmwareVersion    	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; serialsLogID       	; BlSerialLog:serialsLogID       	;                                    	; true	;  
+; InboundBLSerialLog:BlSerialLog     	; serialNumber       	; BlSerialLog:serialNumber       	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; forSalePricingValue	; BlSerialLog:forSalePricingValue	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; willBeActiveOn     	; BlSerialLog:willBeActiveOn     	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; itemBarcode        	; BlSerialLog:itemBarcode        	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; logTime            	; BlSerialLog:logTime            	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; forSalePrice       	; BlSerialLog:forSalePrice       	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; conditions         	; BlSerialLog:conditions         	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; isAvailableForSale 	; BlSerialLog:isAvailableForSale 	;                                    	; 	;  
+; InboundBLSerialLog:BlSerialLog     	; notes              	; BlSerialLog:notes              	;                                    	; 	;  
+; InboundBLSerialLog:CatalogVersion  	; version            	; CatalogVersion:version         	;                                    	; true	;  
+; InboundBLSerialLog:CatalogVersion  	; catalog            	; CatalogVersion:catalog         	; InboundBLSerialLog:Catalog         	; true	;  
+; InboundBLSerialLog:SerialStatusEnum	; code               	; SerialStatusEnum:code          	;                                    	; true	;  
+; InboundBLSerialLog:Catalog         	; id                 	; Catalog:id                     	;                                    	; true	;  
+; InboundBLSerialLog:BlSerialProduct 	; catalogVersion     	; BlSerialProduct:catalogVersion 	; InboundBLSerialLog:CatalogVersion  	; true	;  
+; InboundBLSerialLog:BlSerialProduct 	; code               	; BlSerialProduct:code           	;                                    	; true	;  
+; InboundBLSerialLog:Order           	; code               	; Order:code                     	;                                    	; true	;  

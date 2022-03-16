@@ -1,0 +1,29 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLInventoryLocationScanHistory; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryLocationScanHistory	; BlSerialProduct               	; BlSerialProduct               	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocationScanHistory	; BlInventoryLocationScanHistory	; BlInventoryLocationScanHistory	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocationScanHistory	; BlInventoryLocation           	; BlInventoryLocation           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocationScanHistory	; CatalogVersion                	; CatalogVersion                	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocationScanHistory	; User                          	; User                          	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocationScanHistory	; Catalog                       	; Catalog                       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryLocationScanHistory:BlSerialProduct               	; catalogVersion     	; BlSerialProduct:catalogVersion                    	; InboundBLInventoryLocationScanHistory:CatalogVersion     	; true	;  
+; InboundBLInventoryLocationScanHistory:BlSerialProduct               	; code               	; BlSerialProduct:code                              	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; creationtime       	; BlInventoryLocationScanHistory:creationtime       	;                                                          	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; blInventoryLocation	; BlInventoryLocationScanHistory:blInventoryLocation	; InboundBLInventoryLocationScanHistory:BlInventoryLocation	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; scanTime           	; BlInventoryLocationScanHistory:scanTime           	;                                                          	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; modifiedtime       	; BlInventoryLocationScanHistory:modifiedtime       	;                                                          	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; serialId           	; BlInventoryLocationScanHistory:serialId           	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; serialBarcode      	; BlInventoryLocationScanHistory:serialBarcode      	;                                                          	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; ocParent           	; BlInventoryLocationScanHistory:ocParent           	;                                                          	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; serialProduct      	; BlInventoryLocationScanHistory:serialProduct      	; InboundBLInventoryLocationScanHistory:BlSerialProduct    	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocationScanHistory	; scanUser           	; BlInventoryLocationScanHistory:scanUser           	; InboundBLInventoryLocationScanHistory:User               	; 	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocation           	; code               	; BlInventoryLocation:code                          	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:BlInventoryLocation           	; inventoryLocationID	; BlInventoryLocation:inventoryLocationID           	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:CatalogVersion                	; catalog            	; CatalogVersion:catalog                            	; InboundBLInventoryLocationScanHistory:Catalog            	; true	;  
+; InboundBLInventoryLocationScanHistory:CatalogVersion                	; version            	; CatalogVersion:version                            	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:User                          	; uid                	; User:uid                                          	;                                                          	; true	;  
+; InboundBLInventoryLocationScanHistory:Catalog                       	; id                 	; Catalog:id                                        	;                                                          	; true	;  

@@ -1,0 +1,21 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLShippingCost; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLShippingCost	; ShippingCost    	; ShippingCost    	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingCost	; ZoneDeliveryMode	; ZoneDeliveryMode	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingCost	; ShippingCostEnum	; ShippingCostEnum	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLShippingCost:ShippingCost    	; shippingRateId  	; ShippingCost:shippingRateId  	;                                       	; true	;  
+; InboundBLShippingCost:ShippingCost    	; name            	; ShippingCost:name            	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; amount          	; ShippingCost:amount          	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; modifiedtime    	; ShippingCost:modifiedtime    	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; ceiling         	; ShippingCost:ceiling         	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; creationtime    	; ShippingCost:creationtime    	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; shippingCostCode	; ShippingCost:shippingCostCode	; InboundBLShippingCost:ShippingCostEnum	; 	;  
+; InboundBLShippingCost:ShippingCost    	; zoneDeliveryMode	; ShippingCost:zoneDeliveryMode	; InboundBLShippingCost:ZoneDeliveryMode	; 	;  
+; InboundBLShippingCost:ShippingCost    	; floor           	; ShippingCost:floor           	;                                       	; 	;  
+; InboundBLShippingCost:ShippingCost    	; shippingMethodId	; ShippingCost:shippingMethodId	;                                       	; 	;  
+; InboundBLShippingCost:ZoneDeliveryMode	; code            	; ZoneDeliveryMode:code        	;                                       	; true	;  
+; InboundBLShippingCost:ShippingCostEnum	; code            	; ShippingCostEnum:code        	;                                       	; true	;  

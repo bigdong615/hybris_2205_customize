@@ -1,0 +1,40 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLGiftCard; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLGiftCard	; Customer        	; Customer        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLGiftCard	; GiftCardMovement	; GiftCardMovement	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLGiftCard	; GiftCard        	; GiftCard        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLGiftCard	; Currency        	; Currency        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLGiftCard	; AbstractOrder   	; AbstractOrder   	; 	; ALL_SUBTYPES           	;  
+; InboundBLGiftCard	; Order           	; Order           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLGiftCard:Customer        	; uid          	; Customer:uid                  	;                                   	; true	;  
+; InboundBLGiftCard:GiftCardMovement	; amount       	; GiftCardMovement:amount       	;                                   	; 	;  
+; InboundBLGiftCard:GiftCardMovement	; balanceAmount	; GiftCardMovement:balanceAmount	;                                   	; 	;  
+; InboundBLGiftCard:GiftCardMovement	; order        	; GiftCardMovement:order        	; InboundBLGiftCard:Order           	; 	;  
+; InboundBLGiftCard:GiftCardMovement	; transactionId	; GiftCardMovement:transactionId	;                                   	; true	;  
+; InboundBLGiftCard:GiftCardMovement	; currency     	; GiftCardMovement:currency     	; InboundBLGiftCard:Currency        	; 	;  
+; InboundBLGiftCard:GiftCard        	; movements    	; GiftCard:movements            	; InboundBLGiftCard:GiftCardMovement	; 	;  
+; InboundBLGiftCard:GiftCard        	; name         	; GiftCard:name                 	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; order        	; GiftCard:order                	; InboundBLGiftCard:AbstractOrder   	; 	;  
+; InboundBLGiftCard:GiftCard        	; message      	; GiftCard:message              	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; issuer       	; GiftCard:issuer               	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; customer     	; GiftCard:customer             	; InboundBLGiftCard:Customer        	; 	;  
+; InboundBLGiftCard:GiftCard        	; discountID   	; GiftCard:discountID           	;                                   	; true	;  
+; InboundBLGiftCard:GiftCard        	; amount       	; GiftCard:amount               	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; active       	; GiftCard:active               	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; creationtime 	; GiftCard:creationtime         	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; startDate    	; GiftCard:startDate            	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; code         	; GiftCard:code                 	;                                   	; true	;  
+; InboundBLGiftCard:GiftCard        	; currency     	; GiftCard:currency             	; InboundBLGiftCard:Currency        	; 	;  
+; InboundBLGiftCard:GiftCard        	; endDate      	; GiftCard:endDate              	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; customerEmail	; GiftCard:customerEmail        	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; email        	; GiftCard:email                	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; balance      	; GiftCard:balance              	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; isPurchased  	; GiftCard:isPurchased          	;                                   	; 	;  
+; InboundBLGiftCard:GiftCard        	; modifiedtime 	; GiftCard:modifiedtime         	;                                   	; 	;  
+; InboundBLGiftCard:Currency        	; isocode      	; Currency:isocode              	;                                   	; true	;  
+; InboundBLGiftCard:AbstractOrder   	; code         	; AbstractOrder:code            	;                                   	; true	;  
+; InboundBLGiftCard:Order           	; code         	; Order:code                    	;                                   	; true	;  

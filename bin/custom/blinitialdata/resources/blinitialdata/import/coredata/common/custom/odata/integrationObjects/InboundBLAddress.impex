@@ -1,0 +1,33 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLAddress; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLAddress	; Country	; Country	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLAddress	; Address	; Address	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLAddress	; Region 	; Region 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLAddress:Country	; isocode             	; Country:isocode             	;                         	; true	;  
+; InboundBLAddress:Address	; url                 	; Address:url                 	;                         	; 	;  
+; InboundBLAddress:Address	; shippingAddress     	; Address:shippingAddress     	;                         	; true	;  
+; InboundBLAddress:Address	; addressID           	; Address:addressID           	;                         	; true	;  
+; InboundBLAddress:Address	; streetnumber        	; Address:streetnumber        	;                         	; true	;  
+; InboundBLAddress:Address	; postalcode          	; Address:postalcode          	;                         	; true	;  
+; InboundBLAddress:Address	; district            	; Address:district            	;                         	; true	;  
+; InboundBLAddress:Address	; region              	; Address:region              	; InboundBLAddress:Region 	; true	;  
+; InboundBLAddress:Address	; email               	; Address:email               	;                         	; true	;  
+; InboundBLAddress:Address	; phone1              	; Address:phone1              	;                         	; true	;  
+; InboundBLAddress:Address	; streetname          	; Address:streetname          	;                         	; true	;  
+; InboundBLAddress:Address	; pickStoreAddress    	; Address:pickStoreAddress    	;                         	; 	;  
+; InboundBLAddress:Address	; firstname           	; Address:firstname           	;                         	; true	;  
+; InboundBLAddress:Address	; country             	; Address:country             	; InboundBLAddress:Country	; true	;  
+; InboundBLAddress:Address	; visibleInAddressBook	; Address:visibleInAddressBook	;                         	; 	;  
+; InboundBLAddress:Address	; lastname            	; Address:lastname            	;                         	; true	;  
+; InboundBLAddress:Address	; openingDaysDetails  	; Address:openingDaysDetails  	;                         	; 	;  
+; InboundBLAddress:Address	; town                	; Address:town                	;                         	; true	;  
+; InboundBLAddress:Address	; brainTreeAddressId  	; Address:brainTreeAddressId  	;                         	; 	;  
+; InboundBLAddress:Address	; billingAddress      	; Address:billingAddress      	;                         	; 	;  
+; InboundBLAddress:Address	; original            	; Address:original            	; InboundBLAddress:Address	; 	;  
+; InboundBLAddress:Address	; upsStoreAddress     	; Address:upsStoreAddress     	;                         	; true	;  
+; InboundBLAddress:Region 	; isocode             	; Region:isocode              	;                         	; true	;  
+; InboundBLAddress:Region 	; country             	; Region:country              	; InboundBLAddress:Country	; true	;  

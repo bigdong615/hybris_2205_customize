@@ -1,0 +1,17 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLInventoryCycleCountDetails; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryCycleCountDetails	; InventoryCycleCountStatus          	; InventoryCycleCountStatus          	; 	; ALL_SUBTYPES           	;  
+; InboundBLInventoryCycleCountDetails	; BlInventoryCycleCountDetails       	; BlInventoryCycleCountDetails       	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryCycleCountDetails	; BlInventoryCycleCountProductDetails	; BlInventoryCycleCountProductDetails	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryCycleCountDetails:InventoryCycleCountStatus          	; code                           	; InventoryCycleCountStatus:code                                	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; inventoryCycleCountDetailStatus	; BlInventoryCycleCountDetails:inventoryCycleCountDetailStatus  	; InboundBLInventoryCycleCountDetails:InventoryCycleCountStatus          	; 	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; creationtime                   	; BlInventoryCycleCountDetails:creationtime                     	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; modifiedtime                   	; BlInventoryCycleCountDetails:modifiedtime                     	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; inventoryCycleCountDate        	; BlInventoryCycleCountDetails:inventoryCycleCountDate          	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; inventoryCycleCountCode        	; BlInventoryCycleCountDetails:inventoryCycleCountCode          	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountDetails       	; inventoryCycleCountSKUs        	; BlInventoryCycleCountDetails:inventoryCycleCountSKUs          	; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountProductDetails	; 	;  
+; InboundBLInventoryCycleCountDetails:BlInventoryCycleCountProductDetails	; inventoryCycleCountDayCode     	; BlInventoryCycleCountProductDetails:inventoryCycleCountDayCode	;                                                                        	; true	;  

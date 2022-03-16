@@ -1,0 +1,24 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLReadyToShipOrderItem; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLReadyToShipOrderItem	; Warehouse           	; Warehouse           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReadyToShipOrderItem	; ReadyToShipOrderItem	; ReadyToShipOrderItem	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLReadyToShipOrderItem:Warehouse           	; code           	; Warehouse:code                      	;                                        	; true	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; orderNotes     	; ReadyToShipOrderItem:orderNotes     	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; shipDate       	; ReadyToShipOrderItem:shipDate       	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; isVipOrder     	; ReadyToShipOrderItem:isVipOrder     	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; childLocation  	; ReadyToShipOrderItem:childLocation  	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; warehouse      	; ReadyToShipOrderItem:warehouse      	; InboundBLReadyToShipOrderItem:Warehouse	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; shippingMethod 	; ReadyToShipOrderItem:shippingMethod 	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; orderNumber    	; ReadyToShipOrderItem:orderNumber    	;                                        	; true	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; productCount   	; ReadyToShipOrderItem:productCount   	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; serialNumber   	; ReadyToShipOrderItem:serialNumber   	;                                        	; true	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; isUsedGearOrder	; ReadyToShipOrderItem:isUsedGearOrder	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; orderType      	; ReadyToShipOrderItem:orderType      	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; productId      	; ReadyToShipOrderItem:productId      	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; parentLocation 	; ReadyToShipOrderItem:parentLocation 	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; productName    	; ReadyToShipOrderItem:productName    	;                                        	; 	;  
+; InboundBLReadyToShipOrderItem:ReadyToShipOrderItem	; employeeName   	; ReadyToShipOrderItem:employeeName   	;                                        	; 	;  

@@ -1,0 +1,28 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLCategory; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLCategory	; Category      	; Category      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCategory	; Catalog       	; Catalog       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCategory	; CatalogVersion	; CatalogVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLCategory:Category      	; creationtime      	; Category:creationtime      	;                                 	; 	;  
+; InboundBLCategory:Category      	; name              	; Category:name              	;                                 	; 	;  
+; InboundBLCategory:Category      	; allSubcategories  	; Category:allSubcategories  	; InboundBLCategory:Category      	; 	;  
+; InboundBLCategory:Category      	; headerContent     	; Category:headerContent     	;                                 	; 	;  
+; InboundBLCategory:Category      	; displayName       	; Category:displayName       	;                                 	; 	;  
+; InboundBLCategory:Category      	; allSupercategories	; Category:allSupercategories	; InboundBLCategory:Category      	; 	;  
+; InboundBLCategory:Category      	; footerContent     	; Category:footerContent     	;                                 	; 	;  
+; InboundBLCategory:Category      	; categoryId        	; Category:categoryId        	;                                 	; true	;  
+; InboundBLCategory:Category      	; description       	; Category:description       	;                                 	; 	;  
+; InboundBLCategory:Category      	; catalogVersion    	; Category:catalogVersion    	; InboundBLCategory:CatalogVersion	; true	;  
+; InboundBLCategory:Category      	; onCategoryTree    	; Category:onCategoryTree    	;                                 	; 	;  
+; InboundBLCategory:Category      	; supercategories   	; Category:supercategories   	; InboundBLCategory:Category      	; 	;  
+; InboundBLCategory:Category      	; code              	; Category:code              	;                                 	; true	;  
+; InboundBLCategory:Category      	; facetedCategory   	; Category:facetedCategory   	;                                 	; 	;  
+; InboundBLCategory:Category      	; categories        	; Category:categories        	; InboundBLCategory:Category      	; 	;  
+; InboundBLCategory:Category      	; rentalCategory    	; Category:rentalCategory    	;                                 	; 	;  
+; InboundBLCategory:Catalog       	; id                	; Catalog:id                 	;                                 	; true	;  
+; InboundBLCategory:CatalogVersion	; catalog           	; CatalogVersion:catalog     	; InboundBLCategory:Catalog       	; true	;  
+; InboundBLCategory:CatalogVersion	; version           	; CatalogVersion:version     	;                                 	; true	;  

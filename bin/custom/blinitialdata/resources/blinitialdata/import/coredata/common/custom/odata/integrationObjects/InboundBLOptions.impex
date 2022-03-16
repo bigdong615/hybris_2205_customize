@@ -1,0 +1,34 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLOptions; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLOptions	; CatalogVersion	; CatalogVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOptions	; BlOptions     	; BlOptions     	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOptions	; BlProduct     	; BlProduct     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOptions	; OptionTypeEnum	; OptionTypeEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLOptions	; Catalog       	; Catalog       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLOptions:CatalogVersion	; version        	; CatalogVersion:version   	;                                	; true	;  
+; InboundBLOptions:CatalogVersion	; catalog        	; CatalogVersion:catalog   	; InboundBLOptions:Catalog       	; true	;  
+; InboundBLOptions:BlOptions     	; weight         	; BlOptions:weight         	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; options        	; BlOptions:options        	; InboundBLOptions:BlOptions     	; 	;  
+; InboundBLOptions:BlOptions     	; defaultOptionId	; BlOptions:defaultOptionId	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; creationtime   	; BlOptions:creationtime   	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; active         	; BlOptions:active         	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; optionId       	; BlOptions:optionId       	;                                	; true	;  
+; InboundBLOptions:BlOptions     	; name           	; BlOptions:name           	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; description    	; BlOptions:description    	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; blProducts     	; BlOptions:blProducts     	; InboundBLOptions:BlProduct     	; 	;  
+; InboundBLOptions:BlOptions     	; optionType     	; BlOptions:optionType     	; InboundBLOptions:OptionTypeEnum	; 	;  
+; InboundBLOptions:BlOptions     	; required       	; BlOptions:required       	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; code           	; BlOptions:code           	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; unitCost       	; BlOptions:unitCost       	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; unitPrice      	; BlOptions:unitPrice      	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; subOptions     	; BlOptions:subOptions     	; InboundBLOptions:BlOptions     	; 	;  
+; InboundBLOptions:BlOptions     	; altPrice       	; BlOptions:altPrice       	;                                	; 	;  
+; InboundBLOptions:BlOptions     	; modifiedtime   	; BlOptions:modifiedtime   	;                                	; 	;  
+; InboundBLOptions:BlProduct     	; code           	; BlProduct:code           	;                                	; true	;  
+; InboundBLOptions:BlProduct     	; catalogVersion 	; BlProduct:catalogVersion 	; InboundBLOptions:CatalogVersion	; true	;  
+; InboundBLOptions:OptionTypeEnum	; code           	; OptionTypeEnum:code      	;                                	; true	;  
+; InboundBLOptions:Catalog       	; id             	; Catalog:id               	;                                	; true	;  

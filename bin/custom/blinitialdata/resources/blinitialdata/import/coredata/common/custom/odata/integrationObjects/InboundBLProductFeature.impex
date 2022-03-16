@@ -1,0 +1,48 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLProductFeature; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLProductFeature	; Catalog                        	; Catalog                        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassificationAttribute        	; ClassificationAttribute        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassAttributeAssignment       	; ClassAttributeAssignment       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; Language                       	; Language                       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassificationSystemVersion    	; ClassificationSystemVersion    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassificationAttributeTypeEnum	; ClassificationAttributeTypeEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLProductFeature	; ClassificationClass            	; ClassificationClass            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassificationSystem           	; ClassificationSystem           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; CatalogVersion                 	; CatalogVersion                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ProductFeature                 	; ProductFeature                 	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; ClassificationAttributeValue   	; ClassificationAttributeValue   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductFeature	; Product                        	; Product                        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLProductFeature:Catalog                        	; id                               	; Catalog:id                                          	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationAttribute        	; systemVersion                    	; ClassificationAttribute:systemVersion               	; InboundBLProductFeature:ClassificationSystemVersion    	; true	;  
+; InboundBLProductFeature:ClassificationAttribute        	; code                             	; ClassificationAttribute:code                        	;                                                        	; true	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; classificationClass              	; ClassAttributeAssignment:classificationClass        	; InboundBLProductFeature:ClassificationClass            	; true	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; range                            	; ClassAttributeAssignment:range                      	;                                                        	; 	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; mandatory                        	; ClassAttributeAssignment:mandatory                  	;                                                        	; 	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; classificationAttribute          	; ClassAttributeAssignment:classificationAttribute    	; InboundBLProductFeature:ClassificationAttribute        	; true	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; attributeType                    	; ClassAttributeAssignment:attributeType              	; InboundBLProductFeature:ClassificationAttributeTypeEnum	; 	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; attributeValueDisplayString      	; ClassAttributeAssignment:attributeValueDisplayString	;                                                        	; 	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; multiValued                      	; ClassAttributeAssignment:multiValued                	;                                                        	; 	;  
+; InboundBLProductFeature:ClassAttributeAssignment       	; attributeValues                  	; ClassAttributeAssignment:attributeValues            	; InboundBLProductFeature:ClassificationAttributeValue   	; 	;  
+; InboundBLProductFeature:Language                       	; isocode                          	; Language:isocode                                    	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationSystemVersion    	; version                          	; ClassificationSystemVersion:version                 	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationSystemVersion    	; catalog                          	; ClassificationSystemVersion:catalog                 	; InboundBLProductFeature:ClassificationSystem           	; true	;  
+; InboundBLProductFeature:ClassificationAttributeTypeEnum	; code                             	; ClassificationAttributeTypeEnum:code                	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationClass            	; catalogVersion                   	; ClassificationClass:catalogVersion                  	; InboundBLProductFeature:ClassificationSystemVersion    	; true	;  
+; InboundBLProductFeature:ClassificationClass            	; code                             	; ClassificationClass:code                            	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationSystem           	; id                               	; ClassificationSystem:id                             	;                                                        	; true	;  
+; InboundBLProductFeature:CatalogVersion                 	; version                          	; CatalogVersion:version                              	;                                                        	; true	;  
+; InboundBLProductFeature:CatalogVersion                 	; catalog                          	; CatalogVersion:catalog                              	; InboundBLProductFeature:Catalog                        	; true	;  
+; InboundBLProductFeature:ProductFeature                 	; classificationAttributeAssignment	; ProductFeature:classificationAttributeAssignment    	; InboundBLProductFeature:ClassAttributeAssignment       	; 	;  
+; InboundBLProductFeature:ProductFeature                 	; product                          	; ProductFeature:product                              	; InboundBLProductFeature:Product                        	; true	;  
+; InboundBLProductFeature:ProductFeature                 	; language                         	; ProductFeature:language                             	; InboundBLProductFeature:Language                       	; true	;  
+; InboundBLProductFeature:ProductFeature                 	; featurePosition                  	; ProductFeature:featurePosition                      	;                                                        	; 	;  
+; InboundBLProductFeature:ProductFeature                 	; qualifier                        	; ProductFeature:qualifier                            	;                                                        	; true	;  
+; InboundBLProductFeature:ProductFeature                 	; value                            	; ProductFeature:value                                	;                                                        	; 	;  
+; InboundBLProductFeature:ClassificationAttributeValue   	; code                             	; ClassificationAttributeValue:code                   	;                                                        	; true	;  
+; InboundBLProductFeature:ClassificationAttributeValue   	; systemVersion                    	; ClassificationAttributeValue:systemVersion          	; InboundBLProductFeature:ClassificationSystemVersion    	; true	;  
+; InboundBLProductFeature:Product                        	; catalogVersion                   	; Product:catalogVersion                              	; InboundBLProductFeature:CatalogVersion                 	; true	;  
+; InboundBLProductFeature:Product                        	; code                             	; Product:code                                        	;                                                        	; true	;  

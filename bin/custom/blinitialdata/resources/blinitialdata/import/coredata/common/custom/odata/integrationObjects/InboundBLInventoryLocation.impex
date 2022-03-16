@@ -1,0 +1,21 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLInventoryLocation; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryLocation	; BlInventoryLocation            	; BlInventoryLocation            	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryLocation	; BlInventoryLocationCategoryEnum	; BlInventoryLocationCategoryEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLInventoryLocation	; InventoryLocationTypeEnum      	; InventoryLocationTypeEnum      	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryLocation:BlInventoryLocation            	; inventoryType          	; BlInventoryLocation:inventoryType          	; InboundBLInventoryLocation:InventoryLocationTypeEnum      	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; creationtime           	; BlInventoryLocation:creationtime           	;                                                           	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; parentInventoryLocation	; BlInventoryLocation:parentInventoryLocation	; InboundBLInventoryLocation:BlInventoryLocation            	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; locationCategory       	; BlInventoryLocation:locationCategory       	; InboundBLInventoryLocation:BlInventoryLocationCategoryEnum	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; active                 	; BlInventoryLocation:active                 	;                                                           	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; lastModifiedTime       	; BlInventoryLocation:lastModifiedTime       	;                                                           	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; code                   	; BlInventoryLocation:code                   	;                                                           	; true	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; name                   	; BlInventoryLocation:name                   	;                                                           	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; inventoryLocationID    	; BlInventoryLocation:inventoryLocationID    	;                                                           	; true	;  
+; InboundBLInventoryLocation:BlInventoryLocation            	; modifiedtime           	; BlInventoryLocation:modifiedtime           	;                                                           	; 	;  
+; InboundBLInventoryLocation:BlInventoryLocationCategoryEnum	; code                   	; BlInventoryLocationCategoryEnum:code       	;                                                           	; true	;  
+; InboundBLInventoryLocation:InventoryLocationTypeEnum      	; code                   	; InventoryLocationTypeEnum:code             	;                                                           	; true	;  

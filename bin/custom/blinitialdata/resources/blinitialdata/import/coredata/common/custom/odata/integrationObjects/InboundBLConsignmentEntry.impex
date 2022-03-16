@@ -1,0 +1,30 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLConsignmentEntry; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLConsignmentEntry	; Catalog           	; Catalog           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignmentEntry	; BlOptions         	; BlOptions         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignmentEntry	; AbstractOrderEntry	; AbstractOrderEntry	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignmentEntry	; Consignment       	; Consignment       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignmentEntry	; CatalogVersion    	; CatalogVersion    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignmentEntry	; BlProduct         	; BlProduct         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignmentEntry	; ConsignmentEntry  	; ConsignmentEntry  	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLConsignmentEntry:Catalog           	; id              	; Catalog:id                       	;                                             	; true	;  
+; InboundBLConsignmentEntry:BlOptions         	; optionId        	; BlOptions:optionId               	;                                             	; true	;  
+; InboundBLConsignmentEntry:AbstractOrderEntry	; entryNumber     	; AbstractOrderEntry:entryNumber   	;                                             	; true	;  
+; InboundBLConsignmentEntry:Consignment       	; code            	; Consignment:code                 	;                                             	; true	;  
+; InboundBLConsignmentEntry:CatalogVersion    	; version         	; CatalogVersion:version           	;                                             	; true	;  
+; InboundBLConsignmentEntry:CatalogVersion    	; catalog         	; CatalogVersion:catalog           	; InboundBLConsignmentEntry:Catalog           	; true	;  
+; InboundBLConsignmentEntry:BlProduct         	; code            	; BlProduct:code                   	;                                             	; true	;  
+; InboundBLConsignmentEntry:BlProduct         	; catalogVersion  	; BlProduct:catalogVersion         	; InboundBLConsignmentEntry:CatalogVersion    	; true	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; serialProducts  	; ConsignmentEntry:serialProducts  	; InboundBLConsignmentEntry:BlProduct         	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; quantityDeclined	; ConsignmentEntry:quantityDeclined	;                                             	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; shippedQuantity 	; ConsignmentEntry:shippedQuantity 	;                                             	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; consignment     	; ConsignmentEntry:consignment     	; InboundBLConsignmentEntry:Consignment       	; true	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; quantityShipped 	; ConsignmentEntry:quantityShipped 	;                                             	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; quantityPending 	; ConsignmentEntry:quantityPending 	;                                             	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; quantity        	; ConsignmentEntry:quantity        	;                                             	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; orderEntry      	; ConsignmentEntry:orderEntry      	; InboundBLConsignmentEntry:AbstractOrderEntry	; 	;  
+; InboundBLConsignmentEntry:ConsignmentEntry  	; options         	; ConsignmentEntry:options         	; InboundBLConsignmentEntry:BlOptions         	; 	;  

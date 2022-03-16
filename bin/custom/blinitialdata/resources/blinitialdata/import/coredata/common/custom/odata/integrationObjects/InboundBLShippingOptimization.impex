@@ -1,0 +1,22 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLShippingOptimization; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLShippingOptimization	; Region              	; Region              	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingOptimization	; ShippingOptimization	; ShippingOptimization	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingOptimization	; Country             	; Country             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLShippingOptimization:Region              	; country             	; Region:country                           	; InboundBLShippingOptimization:Country	; true	;  
+; InboundBLShippingOptimization:Region              	; isocode             	; Region:isocode                           	;                                      	; true	;  
+; InboundBLShippingOptimization:ShippingOptimization	; zone                	; ShippingOptimization:zone                	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; inbound             	; ShippingOptimization:inbound             	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; carrierID           	; ShippingOptimization:carrierID           	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; modifiedtime        	; ShippingOptimization:modifiedtime        	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; zip                 	; ShippingOptimization:zip                 	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; serviceDays         	; ShippingOptimization:serviceDays         	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; state               	; ShippingOptimization:state               	; InboundBLShippingOptimization:Region 	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; creationtime        	; ShippingOptimization:creationtime        	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; homeBaseID          	; ShippingOptimization:homeBaseID          	;                                      	; 	;  
+; InboundBLShippingOptimization:ShippingOptimization	; groundShippingDaysID	; ShippingOptimization:groundShippingDaysID	;                                      	; true	;  
+; InboundBLShippingOptimization:Country             	; isocode             	; Country:isocode                          	;                                      	; true	;  

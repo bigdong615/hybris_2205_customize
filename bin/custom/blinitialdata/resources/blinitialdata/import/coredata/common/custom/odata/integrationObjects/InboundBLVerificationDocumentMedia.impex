@@ -1,0 +1,26 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLVerificationDocumentMedia; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLVerificationDocumentMedia	; DocumentType             	; DocumentType             	; 	; ALL_SUBTYPES           	;  
+; InboundBLVerificationDocumentMedia	; VerificationDocumentMedia	; VerificationDocumentMedia	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLVerificationDocumentMedia	; MediaFolder              	; MediaFolder              	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLVerificationDocumentMedia	; VerificationStatusEnum   	; VerificationStatusEnum   	; 	; ALL_SUBTYPES           	;  
+; InboundBLVerificationDocumentMedia	; Customer                 	; Customer                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLVerificationDocumentMedia:DocumentType             	; code              	; DocumentType:code                           	;                                                          	; true	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; expiryDate        	; VerificationDocumentMedia:expiryDate        	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; modifiedtime      	; VerificationDocumentMedia:modifiedtime      	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; code              	; VerificationDocumentMedia:code              	;                                                          	; true	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; mime              	; VerificationDocumentMedia:mime              	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; documentType      	; VerificationDocumentMedia:documentType      	; InboundBLVerificationDocumentMedia:DocumentType          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; verificationStatus	; VerificationDocumentMedia:verificationStatus	; InboundBLVerificationDocumentMedia:VerificationStatusEnum	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; creationtime      	; VerificationDocumentMedia:creationtime      	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; customer          	; VerificationDocumentMedia:customer          	; InboundBLVerificationDocumentMedia:Customer              	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; realFileName      	; VerificationDocumentMedia:realFileName      	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; removedByCustomer 	; VerificationDocumentMedia:removedByCustomer 	;                                                          	; 	;  
+; InboundBLVerificationDocumentMedia:VerificationDocumentMedia	; folder            	; VerificationDocumentMedia:folder            	; InboundBLVerificationDocumentMedia:MediaFolder           	; 	;  
+; InboundBLVerificationDocumentMedia:MediaFolder              	; qualifier         	; MediaFolder:qualifier                       	;                                                          	; true	;  
+; InboundBLVerificationDocumentMedia:VerificationStatusEnum   	; code              	; VerificationStatusEnum:code                 	;                                                          	; true	;  
+; InboundBLVerificationDocumentMedia:Customer                 	; uid               	; Customer:uid                                	;                                                          	; true	;  

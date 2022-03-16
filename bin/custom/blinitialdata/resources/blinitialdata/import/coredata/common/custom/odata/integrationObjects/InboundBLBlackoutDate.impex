@@ -1,0 +1,14 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLBlackoutDate; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLBlackoutDate	; BlackoutDateTypeEnum          	; BlackoutDateTypeEnum          	; 	; ALL_SUBTYPES           	;  
+; InboundBLBlackoutDate	; BlackoutDateShippingMethodEnum	; BlackoutDateShippingMethodEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLBlackoutDate	; BlBlackoutDate                	; BlBlackoutDate                	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLBlackoutDate:BlackoutDateTypeEnum          	; code                 	; BlackoutDateTypeEnum:code           	;                                                     	; true	;  
+; InboundBLBlackoutDate:BlackoutDateShippingMethodEnum	; code                 	; BlackoutDateShippingMethodEnum:code 	;                                                     	; true	;  
+; InboundBLBlackoutDate:BlBlackoutDate                	; blackoutDateType     	; BlBlackoutDate:blackoutDateType     	; InboundBLBlackoutDate:BlackoutDateTypeEnum          	; true	;  
+; InboundBLBlackoutDate:BlBlackoutDate                	; blockedShippingMethod	; BlBlackoutDate:blockedShippingMethod	; InboundBLBlackoutDate:BlackoutDateShippingMethodEnum	; 	;  
+; InboundBLBlackoutDate:BlBlackoutDate                	; blackoutDate         	; BlBlackoutDate:blackoutDate         	;                                                     	; true	;  

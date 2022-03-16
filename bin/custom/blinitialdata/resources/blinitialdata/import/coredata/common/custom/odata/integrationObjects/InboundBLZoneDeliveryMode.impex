@@ -1,0 +1,21 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLZoneDeliveryMode; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLZoneDeliveryMode	; ShippingMethodTypeEnum	; ShippingMethodTypeEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLZoneDeliveryMode	; CarrierEnum           	; CarrierEnum           	; 	; ALL_SUBTYPES           	;  
+; InboundBLZoneDeliveryMode	; ShippingCostEnum      	; ShippingCostEnum      	; 	; ALL_SUBTYPES           	;  
+; InboundBLZoneDeliveryMode	; ZoneDeliveryMode      	; ZoneDeliveryMode      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLZoneDeliveryMode:ShippingMethodTypeEnum	; code              	; ShippingMethodTypeEnum:code        	;                                                 	; true	;  
+; InboundBLZoneDeliveryMode:CarrierEnum           	; code              	; CarrierEnum:code                   	;                                                 	; true	;  
+; InboundBLZoneDeliveryMode:ShippingCostEnum      	; code              	; ShippingCostEnum:code              	;                                                 	; true	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; carrier           	; ZoneDeliveryMode:carrier           	; InboundBLZoneDeliveryMode:CarrierEnum           	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; shippingMethodType	; ZoneDeliveryMode:shippingMethodType	; InboundBLZoneDeliveryMode:ShippingMethodTypeEnum	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; name              	; ZoneDeliveryMode:name              	;                                                 	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; modifiedtime      	; ZoneDeliveryMode:modifiedtime      	;                                                 	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; active            	; ZoneDeliveryMode:active            	;                                                 	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; code              	; ZoneDeliveryMode:code              	;                                                 	; true	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; shippingCostCode  	; ZoneDeliveryMode:shippingCostCode  	; InboundBLZoneDeliveryMode:ShippingCostEnum      	; 	;  
+; InboundBLZoneDeliveryMode:ZoneDeliveryMode      	; creationtime      	; ZoneDeliveryMode:creationtime      	;                                                 	; 	;  

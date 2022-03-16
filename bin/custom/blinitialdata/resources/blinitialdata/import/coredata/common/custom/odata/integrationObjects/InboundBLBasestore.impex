@@ -1,0 +1,33 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLBasestore; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLBasestore	; Language  	; Language  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBasestore	; BaseStore 	; BaseStore 	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBasestore	; Catalog   	; Catalog   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBasestore	; BaseSite  	; BaseSite  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLBasestore	; AtpFormula	; AtpFormula	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLBasestore:Language  	; isocode                           	; Language:isocode                            	;                              	; true	;  
+; InboundBLBasestore:BaseStore 	; usedGearPromotionCode             	; BaseStore:usedGearPromotionCode             	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; customerAllowedToIgnoreSuggestions	; BaseStore:customerAllowedToIgnoreSuggestions	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; usedGearPromotionDiscount         	; BaseStore:usedGearPromotionDiscount         	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; uid                               	; BaseStore:uid                               	;                              	; true	;  
+; InboundBLBasestore:BaseStore 	; dimensionalFactor                 	; BaseStore:dimensionalFactor                 	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; cmsSites                          	; BaseStore:cmsSites                          	; InboundBLBasestore:BaseSite  	; 	;  
+; InboundBLBasestore:BaseStore 	; bufferInventoryPercentage         	; BaseStore:bufferInventoryPercentage         	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; defaultAtpFormula                 	; BaseStore:defaultAtpFormula                 	; InboundBLBasestore:AtpFormula	; 	;  
+; InboundBLBasestore:BaseStore 	; vipOrderThreshold                 	; BaseStore:vipOrderThreshold                 	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; languages                         	; BaseStore:languages                         	; InboundBLBasestore:Language  	; 	;  
+; InboundBLBasestore:BaseStore 	; usedGearPromotionMessage          	; BaseStore:usedGearPromotionMessage          	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; verificationLevelEndRange         	; BaseStore:verificationLevelEndRange         	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; verificationLevelStartRange       	; BaseStore:verificationLevelStartRange       	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; catalogs                          	; BaseStore:catalogs                          	; InboundBLBasestore:Catalog   	; 	;  
+; InboundBLBasestore:BaseStore 	; usedGearCartTimer                 	; BaseStore:usedGearCartTimer                 	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; disableSaturdays                  	; BaseStore:disableSaturdays                  	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; bundleDiscount                    	; BaseStore:bundleDiscount                    	;                              	; 	;  
+; InboundBLBasestore:BaseStore 	; name                              	; BaseStore:name                              	;                              	; 	;  
+; InboundBLBasestore:Catalog   	; id                                	; Catalog:id                                  	;                              	; true	;  
+; InboundBLBasestore:BaseSite  	; uid                               	; BaseSite:uid                                	;                              	; true	;  
+; InboundBLBasestore:AtpFormula	; code                              	; AtpFormula:code                             	;                              	; true	;  

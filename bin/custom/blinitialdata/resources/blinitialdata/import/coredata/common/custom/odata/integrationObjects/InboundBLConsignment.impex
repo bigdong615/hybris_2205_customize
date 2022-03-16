@@ -1,0 +1,68 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLConsignment; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLConsignment	; PackagingInfo            	; PackagingInfo            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; DeliveryMode             	; DeliveryMode             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; ConsignmentEntry         	; ConsignmentEntry         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; Consignment              	; Consignment              	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; ConsignmentProcess       	; ConsignmentProcess       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; ConsignmentStatus        	; ConsignmentStatus        	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; AbstractOrderEntry       	; AbstractOrderEntry       	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; Media                    	; Media                    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; OptimizedShippingMethod  	; OptimizedShippingMethod  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; OptimizedShippingTypeEnum	; OptimizedShippingTypeEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; OrderTypeEnum            	; OrderTypeEnum            	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; Catalog                  	; Catalog                  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; NotesEnum                	; NotesEnum                	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; Notes                    	; Notes                    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; BlProduct                	; BlProduct                	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConsignment	; AbstractOrder            	; AbstractOrder            	; 	; ALL_SUBTYPES           	;  
+; InboundBLConsignment	; CatalogVersion           	; CatalogVersion           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLConsignment:PackagingInfo            	; packageId                         	; PackagingInfo:packageId                       	;                                               	; true	;  
+; InboundBLConsignment:DeliveryMode             	; code                              	; DeliveryMode:code                             	;                                               	; true	;  
+; InboundBLConsignment:ConsignmentEntry         	; orderEntry                        	; ConsignmentEntry:orderEntry                   	; InboundBLConsignment:AbstractOrderEntry       	; true	;  
+; InboundBLConsignment:ConsignmentEntry         	; serialProducts                    	; ConsignmentEntry:serialProducts               	; InboundBLConsignment:BlProduct                	; 	;  
+; InboundBLConsignment:ConsignmentEntry         	; shippedQuantity                   	; ConsignmentEntry:shippedQuantity              	;                                               	; 	;  
+; InboundBLConsignment:ConsignmentEntry         	; consignment                       	; ConsignmentEntry:consignment                  	; InboundBLConsignment:Consignment              	; true	;  
+; InboundBLConsignment:Consignment              	; optimizedShippingEndDate          	; Consignment:optimizedShippingEndDate          	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; packaginginfos                    	; Consignment:packaginginfos                    	; InboundBLConsignment:PackagingInfo            	; 	;  
+; InboundBLConsignment:Consignment              	; orderType                         	; Consignment:orderType                         	; InboundBLConsignment:OrderTypeEnum            	; 	;  
+; InboundBLConsignment:Consignment              	; packagingInfo                     	; Consignment:packagingInfo                     	; InboundBLConsignment:PackagingInfo            	; 	;  
+; InboundBLConsignment:Consignment              	; optimizedShippingType             	; Consignment:optimizedShippingType             	; InboundBLConsignment:OptimizedShippingMethod  	; 	;  
+; InboundBLConsignment:Consignment              	; order                             	; Consignment:order                             	; InboundBLConsignment:AbstractOrder            	; 	;  
+; InboundBLConsignment:Consignment              	; shippingLabel                     	; Consignment:shippingLabel                     	; InboundBLConsignment:Media                    	; 	;  
+; InboundBLConsignment:Consignment              	; cleanCompleteConsignment          	; Consignment:cleanCompleteConsignment          	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; code                              	; Consignment:code                              	;                                               	; true	;  
+; InboundBLConsignment:Consignment              	; status                            	; Consignment:status                            	; InboundBLConsignment:ConsignmentStatus        	; 	;  
+; InboundBLConsignment:Consignment              	; consignmentProcesses              	; Consignment:consignmentProcesses              	; InboundBLConsignment:ConsignmentProcess       	; 	;  
+; InboundBLConsignment:Consignment              	; optimizedShippingMethodType       	; Consignment:optimizedShippingMethodType       	; InboundBLConsignment:OptimizedShippingTypeEnum	; 	;  
+; InboundBLConsignment:Consignment              	; orderTransferConsignment          	; Consignment:orderTransferConsignment          	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; actualShippingDateToCustomer      	; Consignment:actualShippingDateToCustomer      	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; consignmentEntries                	; Consignment:consignmentEntries                	; InboundBLConsignment:ConsignmentEntry         	; 	;  
+; InboundBLConsignment:Consignment              	; optimizedRentalEndDateChangedByJob	; Consignment:optimizedRentalEndDateChangedByJob	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; orderNotes                        	; Consignment:orderNotes                        	; InboundBLConsignment:Notes                    	; 	;  
+; InboundBLConsignment:Consignment              	; optimizedShippingStartDate        	; Consignment:optimizedShippingStartDate        	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; trackingID                        	; Consignment:trackingID                        	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; deliveryMode                      	; Consignment:deliveryMode                      	; InboundBLConsignment:DeliveryMode             	; 	;  
+; InboundBLConsignment:Consignment              	; threeDayGroundAvailability        	; Consignment:threeDayGroundAvailability        	;                                               	; 	;  
+; InboundBLConsignment:Consignment              	; internalTransferConsignment       	; Consignment:internalTransferConsignment       	;                                               	; 	;  
+; InboundBLConsignment:ConsignmentProcess       	; code                              	; ConsignmentProcess:code                       	;                                               	; true	;  
+; InboundBLConsignment:ConsignmentStatus        	; code                              	; ConsignmentStatus:code                        	;                                               	; true	;  
+; InboundBLConsignment:AbstractOrderEntry       	; entryNumber                       	; AbstractOrderEntry:entryNumber                	;                                               	; true	;  
+; InboundBLConsignment:Media                    	; code                              	; Media:code                                    	;                                               	; true	;  
+; InboundBLConsignment:Media                    	; catalogVersion                    	; Media:catalogVersion                          	; InboundBLConsignment:CatalogVersion           	; true	;  
+; InboundBLConsignment:OptimizedShippingMethod  	; code                              	; OptimizedShippingMethod:code                  	;                                               	; true	;  
+; InboundBLConsignment:OptimizedShippingTypeEnum	; code                              	; OptimizedShippingTypeEnum:code                	;                                               	; true	;  
+; InboundBLConsignment:OrderTypeEnum            	; code                              	; OrderTypeEnum:code                            	;                                               	; true	;  
+; InboundBLConsignment:Catalog                  	; id                                	; Catalog:id                                    	;                                               	; true	;  
+; InboundBLConsignment:NotesEnum                	; code                              	; NotesEnum:code                                	;                                               	; true	;  
+; InboundBLConsignment:Notes                    	; order                             	; Notes:order                                   	; InboundBLConsignment:AbstractOrder            	; true	;  
+; InboundBLConsignment:Notes                    	; type                              	; Notes:type                                    	; InboundBLConsignment:NotesEnum                	; true	;  
+; InboundBLConsignment:BlProduct                	; code                              	; BlProduct:code                                	;                                               	; true	;  
+; InboundBLConsignment:BlProduct                	; catalogVersion                    	; BlProduct:catalogVersion                      	; InboundBLConsignment:CatalogVersion           	; true	;  
+; InboundBLConsignment:AbstractOrder            	; code                              	; AbstractOrder:code                            	;                                               	; true	;  
+; InboundBLConsignment:CatalogVersion           	; catalog                           	; CatalogVersion:catalog                        	; InboundBLConsignment:Catalog                  	; true	;  
+; InboundBLConsignment:CatalogVersion           	; version                           	; CatalogVersion:version                        	;                                               	; true	;  

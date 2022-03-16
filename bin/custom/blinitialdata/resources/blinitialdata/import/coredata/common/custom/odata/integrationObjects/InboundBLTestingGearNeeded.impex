@@ -1,0 +1,22 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLTestingGearNeeded; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLTestingGearNeeded	; BlTestingGearNeeded        	; BlTestingGearNeeded        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLTestingGearNeeded	; TestingGearNeededStatusEnum	; TestingGearNeededStatusEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLTestingGearNeeded	; BlSerialProduct            	; BlSerialProduct            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLTestingGearNeeded	; CatalogVersion             	; CatalogVersion             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLTestingGearNeeded	; Catalog                    	; Catalog                    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLTestingGearNeeded:BlTestingGearNeeded        	; serialProduct    	; BlTestingGearNeeded:serialProduct    	; InboundBLTestingGearNeeded:BlSerialProduct            	; true	;  
+; InboundBLTestingGearNeeded:BlTestingGearNeeded        	; modifiedtime     	; BlTestingGearNeeded:modifiedtime     	;                                                       	; 	;  
+; InboundBLTestingGearNeeded:BlTestingGearNeeded        	; nameOrDescription	; BlTestingGearNeeded:nameOrDescription	;                                                       	; 	;  
+; InboundBLTestingGearNeeded:BlTestingGearNeeded        	; requestStatus    	; BlTestingGearNeeded:requestStatus    	; InboundBLTestingGearNeeded:TestingGearNeededStatusEnum	; true	;  
+; InboundBLTestingGearNeeded:BlTestingGearNeeded        	; creationtime     	; BlTestingGearNeeded:creationtime     	;                                                       	; 	;  
+; InboundBLTestingGearNeeded:TestingGearNeededStatusEnum	; code             	; TestingGearNeededStatusEnum:code     	;                                                       	; true	;  
+; InboundBLTestingGearNeeded:BlSerialProduct            	; code             	; BlSerialProduct:code                 	;                                                       	; true	;  
+; InboundBLTestingGearNeeded:BlSerialProduct            	; catalogVersion   	; BlSerialProduct:catalogVersion       	; InboundBLTestingGearNeeded:CatalogVersion             	; true	;  
+; InboundBLTestingGearNeeded:CatalogVersion             	; catalog          	; CatalogVersion:catalog               	; InboundBLTestingGearNeeded:Catalog                    	; true	;  
+; InboundBLTestingGearNeeded:CatalogVersion             	; version          	; CatalogVersion:version               	;                                                       	; true	;  
+; InboundBLTestingGearNeeded:Catalog                    	; id               	; Catalog:id                           	;                                                       	; true	;  

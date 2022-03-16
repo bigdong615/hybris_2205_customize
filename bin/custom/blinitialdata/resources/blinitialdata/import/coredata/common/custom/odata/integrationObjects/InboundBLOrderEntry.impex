@@ -1,0 +1,50 @@
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLOrderEntry; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLOrderEntry	; Catalog         	; Catalog         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; BlProduct       	; BlProduct       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; BlOptions       	; BlOptions       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; Product         	; Product         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; OrderEntry      	; OrderEntry      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; Order           	; Order           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; Unit            	; Unit            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; CatalogVersion  	; CatalogVersion  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLOrderEntry	; OrderEntryStatus	; OrderEntryStatus	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLOrderEntry:Catalog         	; id                            	; Catalog:id                               	;                                     	; true	;  
+; InboundBLOrderEntry:BlProduct       	; catalogVersion                	; BlProduct:catalogVersion                 	; InboundBLOrderEntry:CatalogVersion  	; true	;  
+; InboundBLOrderEntry:BlProduct       	; code                          	; BlProduct:code                           	;                                     	; true	;  
+; InboundBLOrderEntry:BlOptions       	; optionId                      	; BlOptions:optionId                       	;                                     	; true	;  
+; InboundBLOrderEntry:Product         	; catalogVersion                	; Product:catalogVersion                   	; InboundBLOrderEntry:CatalogVersion  	; true	;  
+; InboundBLOrderEntry:Product         	; code                          	; Product:code                             	;                                     	; true	;  
+; InboundBLOrderEntry:OrderEntry      	; bundleEntry                   	; OrderEntry:bundleEntry                   	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; unit                          	; OrderEntry:unit                          	; InboundBLOrderEntry:Unit            	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; quantityStatus                	; OrderEntry:quantityStatus                	; InboundBLOrderEntry:OrderEntryStatus	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; bundleProductCode             	; OrderEntry:bundleProductCode             	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; totalPrice                    	; OrderEntry:totalPrice                    	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; gearGuardWaiverSelected       	; OrderEntry:gearGuardWaiverSelected       	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; recipientName                 	; OrderEntry:recipientName                 	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; recipientEmail                	; OrderEntry:recipientEmail                	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; gearGuardWaiverPrice          	; OrderEntry:gearGuardWaiverPrice          	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; gearGuardProFullWaiverSelected	; OrderEntry:gearGuardProFullWaiverSelected	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; calculated                    	; OrderEntry:calculated                    	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; serialProducts                	; OrderEntry:serialProducts                	; InboundBLOrderEntry:BlProduct       	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; gearGuardProFullWaiverPrice   	; OrderEntry:gearGuardProFullWaiverPrice   	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; bundleMainEntry               	; OrderEntry:bundleMainEntry               	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; aqautechProduct               	; OrderEntry:aqautechProduct               	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; order                         	; OrderEntry:order                         	; InboundBLOrderEntry:Order           	; true	;  
+; InboundBLOrderEntry:OrderEntry      	; product                       	; OrderEntry:product                       	; InboundBLOrderEntry:Product         	; true	;  
+; InboundBLOrderEntry:OrderEntry      	; quantity                      	; OrderEntry:quantity                      	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; recipientMessage              	; OrderEntry:recipientMessage              	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; entryCreated                  	; OrderEntry:entryCreated                  	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; options                       	; OrderEntry:options                       	; InboundBLOrderEntry:BlOptions       	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; basePrice                     	; OrderEntry:basePrice                     	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; noDamageWaiverSelected        	; OrderEntry:noDamageWaiverSelected        	;                                     	; 	;  
+; InboundBLOrderEntry:OrderEntry      	; entryNumber                   	; OrderEntry:entryNumber                   	;                                     	; true	;  
+; InboundBLOrderEntry:Order           	; code                          	; Order:code                               	;                                     	; true	;  
+; InboundBLOrderEntry:Unit            	; code                          	; Unit:code                                	;                                     	; true	;  
+; InboundBLOrderEntry:CatalogVersion  	; version                       	; CatalogVersion:version                   	;                                     	; true	;  
+; InboundBLOrderEntry:CatalogVersion  	; catalog                       	; CatalogVersion:catalog                   	; InboundBLOrderEntry:Catalog         	; true	;  
+; InboundBLOrderEntry:OrderEntryStatus	; code                          	; OrderEntryStatus:code                    	;                                     	; true	;  
