@@ -47,7 +47,7 @@
 				    <a href="${cart}" class="text-decoration-none">
                         <span class="step1 complete"><i class="icon-check"></i>
                             <c:choose>
-                                <c:when test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}"><spring:theme code="text.checkout.multi.order.rental"/></c:when>
+                                <c:when test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}"><spring:theme code="text.checkout.multi.order.rental"/></c:when>
                                 <c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise>
                             </c:choose>
                         </span>
@@ -75,7 +75,7 @@
 							<h1>Payment</h1>
 							<hr>
 						 <c:if test="${!cartData.hasGiftCart}">
-							<c:if test="${cartData.isRentalCart && cartData.isNewGearOrder eq false}">
+							<c:if test="${cartData.isRentalCart && cartData.isRetailGearOrder eq false}">
 							  <p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
 									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
@@ -417,7 +417,7 @@
 							         <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
 							    </c:when>
 							    <c:otherwise>
-							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isNewGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+							         <a href="${shippingPageUrl}" class="gray80"><c:choose> <c:when test="${cartData.isRetailGearOrder eq true}"><spring:theme code="text.newgear.cart.back" /></c:when><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                      <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                       <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                                </c:otherwise>
@@ -449,7 +449,7 @@
                </c:if>
                               <div class="notification notification-error d-none"id="errorMessages_voucher" ></div>
 
-               <c:if test="${cartData.isNewGearOrder eq false && cartData.isRentalCart eq true}">
+               <c:if test="${cartData.isRetailGearOrder eq false && cartData.isRentalCart eq true}">
                      <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                </c:if>
             </div>

@@ -62,7 +62,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     }
    if(BooleanUtils.isTrue(source.getIsRetailGearOrder()))
     {
-   	target.setNewGearOrder(Boolean.TRUE);
+   	target.setRetailGearOrder(Boolean.TRUE);
     }
 
    if(null != source.getRentalStartDate()){

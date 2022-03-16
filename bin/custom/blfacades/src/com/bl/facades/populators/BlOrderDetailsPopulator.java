@@ -99,7 +99,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     // To Populate Gift Card Details
     populateGiftCardDetails(source , target);
     if(BooleanUtils.isTrue(source.getIsRetailGearOrder())){
-      target.setIsNewGearOrder(source.getIsRetailGearOrder());
+      target.setIsRetailGearOrder(source.getIsRetailGearOrder());
     }
     
  // BL-1134 to add total discount with gift cart discount to display on summary section
