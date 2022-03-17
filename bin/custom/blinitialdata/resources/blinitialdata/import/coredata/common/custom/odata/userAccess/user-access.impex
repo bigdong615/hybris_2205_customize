@@ -1,3 +1,6 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/userAcccess/user-access.impex =========================");
+
+
 # Create Test Users
 $defaultPassword=monitoring
 INSERT_UPDATE Employee; UID[unique = true]            ; name                             ; description; password[default=$defaultPassword]

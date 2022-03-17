@@ -1,4 +1,7 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPaymentTransaction.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
 ; InboundBLPaymentTransaction; INBOUND 
  
 INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 

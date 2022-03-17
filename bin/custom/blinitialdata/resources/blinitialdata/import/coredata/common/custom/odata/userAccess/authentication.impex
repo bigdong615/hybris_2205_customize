@@ -1,3 +1,6 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/user-access/authentication.impex =========================");
+
+
 INSERT_UPDATE InboundChannelConfiguration; integrationObject(code)[unique = true];authenticationType(code)[default='BASIC']
 ;InboundBLWarehouse                     
 ;InboundBLStockLevel                    

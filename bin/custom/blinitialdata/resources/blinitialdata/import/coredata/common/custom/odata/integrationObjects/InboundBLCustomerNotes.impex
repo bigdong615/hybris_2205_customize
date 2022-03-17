@@ -1,4 +1,7 @@
-INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLCustomerNotes.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
 ; InboundBLCustomerNotes; INBOUND 
  
 INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
