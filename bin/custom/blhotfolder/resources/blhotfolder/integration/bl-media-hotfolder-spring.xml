@@ -72,8 +72,8 @@
 	<bean id="batchProductMediaConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
             <value>#{defaultImpexProductHeader}
-                $picture=picture(code, $catalogVersion)[cellDecorator=com.bl.batch.imports.translator.BlMediaDecoratorThumbnail]
-				$thumbnail=thumbnail(code, $catalogVersion)[cellDecorator=com.bl.batch.imports.translator.BlMediaDecoratorImage]
+                $picture=picture(code, $catalogVersion)[cellDecorator=com.bl.batch.imports.translator.BlMediaDecoratorImage]
+				$thumbnail=thumbnail(code, $catalogVersion)[cellDecorator=com.bl.batch.imports.translator.BlMediaDecoratorThumbnail]
 				$galleryImages=galleryImages(qualifier, $catalogVersion)
                 # Import product media
                 UPDATE Product;code[unique=true];$picture;$thumbnail;$galleryImages;$catalogVersion
