@@ -23,22 +23,23 @@
 
     <context:annotation-config/>
 
-	<bean id="batchProductConverterMapping"
+	
+          <bean id="batchProductConverterMapping"
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
           p:mapping="PRODUCT"
-          p:converter-ref="batchProductConverter"/>
-
+          p:converter-ref="batchProductConverter"/> 
+       
  <!-- Transformer converters mappings -->
 	<bean id="batchProductConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
 			<value>#{defaultImpexProductHeader}
 				# Insert product data
-			INSERT_UPDATE BlProduct;code[unique=true];supercategories[translator=com.bl.batch.imports.translator.BlSuperCategoryTranslator];displayName;approvalStatus(code)[cellDecorator=com.bl.batch.imports.translator.BlBillChargeTypeCellDecorator];bundleProduct[translator=com.bl.batch.imports.translator.BlBooleanTranslator];description;mpn;titleTag;UPC;techEngNotes;lrLink;alternativeProduct;procurementSource;isVideo[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forSale[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forRent[translator=com.bl.batch.imports.translator.BlBooleanTranslator];level1Required[translator=com.bl.batch.imports.translator.BlBooleanTranslator];level2Required[translator=com.bl.batch.imports.translator.BlBooleanTranslator];scheduled[translator=com.bl.batch.imports.translator.BlBooleanTranslator];firmwareVersion;batteryMaterial(code)[cellDecorator=com.bl.batch.imports.translator.BlBatteryMaterialCellDecorator];productType(code)[cellDecorator=com.bl.batch.imports.translator.BlProductTypeCellDecorator];shortDescription;purchaseNotes;displayNotes;rentalIncludes;specifications;numberSystem(code)[cellDecorator=com.bl.batch.imports.translator.BlNumberingSystemCellDecorator];weight;height;width;length;procurementCost;constrained[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isNew[translator=com.bl.batch.imports.translator.BlBooleanTranslator];usedDescription;usedIncludes;mostPopular[translator=com.bl.batch.imports.translator.BlBooleanTranslator];greatValue[translator=com.bl.batch.imports.translator.BlBooleanTranslator];staffPick[translator=com.bl.batch.imports.translator.BlBooleanTranslator];retailPrice;bufferedInventoryPercentage;isAccounting[translator=com.bl.batch.imports.translator.BlBooleanTranslator];discounted[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forSaleBasePrice;forSaleDiscount;manufacturerName;retailGear[translator=com.bl.batch.imports.translator.BlBooleanTranslator];retailGearPrice;onSale[translator=com.bl.batch.imports.translator.BlBooleanTranslator];procurementID;primarycategoryID;manufacturerAID;$catalogVersion
+			INSERT_UPDATE BlProduct;code[unique=true];supercategories[translator=com.bl.batch.imports.translator.BlSuperCategoryTranslator];displayName;approvalStatus(code)[cellDecorator=com.bl.batch.imports.translator.BlBillChargeTypeCellDecorator];bundleProduct[translator=com.bl.batch.imports.translator.BlBooleanTranslator];description;mpn;titleTag;UPC;techEngNotes;lrLink;alternativeProduct;procurementSource;isVideo[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forSale[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forRent[translator=com.bl.batch.imports.translator.BlBooleanTranslator];level1Required[translator=com.bl.batch.imports.translator.BlBooleanTranslator];level2Required[translator=com.bl.batch.imports.translator.BlBooleanTranslator];scheduled[translator=com.bl.batch.imports.translator.BlBooleanTranslator];firmwareVersion;batteryMaterial(code)[cellDecorator=com.bl.batch.imports.translator.BlBatteryMaterialCellDecorator];productType(code)[cellDecorator=com.bl.batch.imports.translator.BlProductTypeCellDecorator];shortDescription;purchaseNotes;displayNotes;rentalIncludes;specifications;numberSystem(code)[cellDecorator=com.bl.batch.imports.translator.BlNumberingSystemCellDecorator];weight;height;width;length;procurementCost;constrained[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isNew[translator=com.bl.batch.imports.translator.BlBooleanTranslator];usedDescription;usedIncludes;mostPopular[translator=com.bl.batch.imports.translator.BlBooleanTranslator];greatValue[translator=com.bl.batch.imports.translator.BlBooleanTranslator];staffPick[translator=com.bl.batch.imports.translator.BlBooleanTranslator];retailPrice;bufferedInventoryPercentage;isAccounting[translator=com.bl.batch.imports.translator.BlBooleanTranslator];discounted[translator=com.bl.batch.imports.translator.BlBooleanTranslator];forSaleBasePrice;forSaleDiscount;manufacturerName;retailGear[translator=com.bl.batch.imports.translator.BlBooleanTranslator];retailGearPrice;onSale[translator=com.bl.batch.imports.translator.BlBooleanTranslator];procurementID;primarycategoryID;manufacturerAID;keywords[translator=com.bl.batch.imports.translator.BlKeywordsTranslator];$catalogVersion
 			</value>
 		</property>
 		<property name="impexRow">
-            <value>;{+0};{1};{2};{3};{4};{5};{7};{8};{9};{10};{11};{15};{14};{16};{17};{18};{19};{20};{21};{22};{23};{24};{25};{26};{27};{28};{29};{30};{31};{32};{33};{34};{35};{36};{37};{39};{40};{41};{42};{43};{44};{45};{46};{47};{48};{49};{50};{51};{52};{53};{56};{57};{38}</value>
+            <value>;{+0};{1};{2};{3};{4};{5};{7};{8};{9};{10};{11};{15};{14};{16};{17};{18};{19};{20};{21};{22};{23};{24};{25};{26};{27};{28};{29};{30};{31};{32};{33};{34};{35};{36};{37};{39};{40};{41};{42};{43};{44};{45};{46};{47};{48};{49};{50};{51};{52};{53};{56};{57};{38};{55};</value>
         </property>
-	</bean>
+	</bean> 
 
 </beans>
