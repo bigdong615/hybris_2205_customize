@@ -1,0 +1,95 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/userAcccess/user-access.impex =========================");
+
+
+# Create Test Users
+$defaultPassword=monitoring
+INSERT_UPDATE Employee; UID[unique = true]            ; name                             ; description; password[default=$defaultPassword]
+                      ; integrationmonitoringuser ; Integration Monitoring User ; This user will have permissions to access the Inbound and Outbound Integration Monitoring OData2 web services
+                      ; integrationserviceuser    ; Integration Service User    ; This user will have permissions to access the Integration Services OData2 web service
+
+# Assign Test Users to Groups
+INSERT_UPDATE Employee; UID[unique = true]            ; groups(uid)[mode = append]
+                      ; integrationmonitoringuser ; integrationadmingroup
+                      ; integrationserviceuser    ; integrationadmingroup
+
+ 
+
+
+##########permission#######################
+
+
+$START_USERRIGHTS
+Type      ; UID                   ; MemberOfGroups ; Password ; Target                                       ; read ; change ; create ; remove
+UserGroup ; integrationadmingroup ;                ;          ;                                              ;      ;        ;        ;
+
+# Access Rights for IntegrationAdministrator Users
+          ;                       ;                ;          ; Warehouse                                              ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; StockLevel                                             ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Options                                                ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Keywords                                               ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ProductVideo                                           ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ProductFeature                                         ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ProductReference                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Notes                                                  ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryLocation                                    ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; GiftCardMovement                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; GiftCard                                               ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Address                                                ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Customer                                               ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PriceRow                                               ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PartsNeededRepairLog                                   ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; VendorRepairLog                                        ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; InHouseRepairLog                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Notes                                                  ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Consignment                                            ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ConsignmentEntry                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlStateWarehouseMapping                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryLocationScanHistory                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryScanConfiguration                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlSerialLog                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Media                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; VerificationDocumentMedia                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Category                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlPricingLogic                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlStandardPricingRatio                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlConstrainedPricingRatio                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlDamageWaiverPricing                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlockInventory                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Employee                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; UserGroup                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ShippingGroup                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; DeliveryMode                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ZoneDeliveryModeValue                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ZoneDeliveryMode                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlPickUpZoneDeliveryMode                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlRushDeliveryMode                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PartnerPickUpStore                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ShippingCost                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ReturnRequest                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlReturnEntry                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ShippingOptimization                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; OptimizedShippingMethod                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; OrderEntry                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Order                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Consignment                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ConsignmentEntry                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; Basestore                                                                   ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; ReadyToShipOrderItem                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PackagingInfo                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; CustomerNotes                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BoxSizes                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlItemsBillingCharge                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlTestingGearNeeded                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlBlackoutDate                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryCycleCount                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryCycleCountDetails                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryCycleCountProductDetails                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlInventoryCycleCountScanHistory                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PaymentTransaction                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; PaymentTransactionEntry                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BraintreePaymentInfo                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlProduct                                       ; +    ; +      ; +      ; +
+          ;                       ;                ;          ; BlSerialProduct                                       ; +    ; +      ; +      ; +
+$END_USERRIGHTS
+
+            

@@ -1,0 +1,26 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLStateWarehouseMapping.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLStateWarehouseMapping; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLStateWarehouseMapping	; BlStateWarehouseMapping	; BlStateWarehouseMapping	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLStateWarehouseMapping	; Country                	; Country                	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLStateWarehouseMapping	; Region                 	; Region                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLStateWarehouseMapping	; Warehouse              	; Warehouse              	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; isActive    	; BlStateWarehouseMapping:isActive    	;                                         	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; creationtime	; BlStateWarehouseMapping:creationtime	;                                         	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; warehouse   	; BlStateWarehouseMapping:warehouse   	; InboundBLStateWarehouseMapping:Warehouse	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; code        	; BlStateWarehouseMapping:code        	; InboundBLStateWarehouseMapping:Region   	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; region      	; BlStateWarehouseMapping:region      	;                                         	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; name        	; BlStateWarehouseMapping:name        	;                                         	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; modifiedtime	; BlStateWarehouseMapping:modifiedtime	;                                         	; 	;  
+; InboundBLStateWarehouseMapping:BlStateWarehouseMapping	; stateID     	; BlStateWarehouseMapping:stateID     	;                                         	; true	;  
+; InboundBLStateWarehouseMapping:Country                	; isocode     	; Country:isocode                     	;                                         	; true	;  
+; InboundBLStateWarehouseMapping:Region                 	; country     	; Region:country                      	; InboundBLStateWarehouseMapping:Country  	; true	;  
+; InboundBLStateWarehouseMapping:Region                 	; isocode     	; Region:isocode                      	;                                         	; true	;  
+; InboundBLStateWarehouseMapping:Warehouse              	; code        	; Warehouse:code                      	;                                         	; true	;  
+; InboundBLStateWarehouseMapping:Warehouse              	; active      	; Warehouse:active                    	;                                         	; 	;  

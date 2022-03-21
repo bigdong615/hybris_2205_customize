@@ -1,0 +1,27 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLItemsBillingCharge.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLItemsBillingCharge; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLItemsBillingCharge	; Customer                 	; Customer                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLItemsBillingCharge	; BlItemsBillingCharge     	; BlItemsBillingCharge     	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLItemsBillingCharge	; BillInfoStatus           	; BillInfoStatus           	; 	; ALL_SUBTYPES           	;  
+; InboundBLItemsBillingCharge	; ItemBillingChargeTypeEnum	; ItemBillingChargeTypeEnum	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLItemsBillingCharge:Customer                 	; uid            	; Customer:uid                        	;                                                      	; true	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; taxAmount      	; BlItemsBillingCharge:taxAmount      	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; customer       	; BlItemsBillingCharge:customer       	; InboundBLItemsBillingCharge:Customer                 	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; code           	; BlItemsBillingCharge:code           	;                                                      	; true	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; orderCode      	; BlItemsBillingCharge:orderCode      	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; unPaidBillNotes	; BlItemsBillingCharge:unPaidBillNotes	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; serialCode     	; BlItemsBillingCharge:serialCode     	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; updatedBillTime	; BlItemsBillingCharge:updatedBillTime	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; billStatus     	; BlItemsBillingCharge:billStatus     	; InboundBLItemsBillingCharge:BillInfoStatus           	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; billPaid       	; BlItemsBillingCharge:billPaid       	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; billChargeType 	; BlItemsBillingCharge:billChargeType 	; InboundBLItemsBillingCharge:ItemBillingChargeTypeEnum	; 	;  
+; InboundBLItemsBillingCharge:BlItemsBillingCharge     	; chargedAmount  	; BlItemsBillingCharge:chargedAmount  	;                                                      	; 	;  
+; InboundBLItemsBillingCharge:BillInfoStatus           	; code           	; BillInfoStatus:code                 	;                                                      	; true	;  
+; InboundBLItemsBillingCharge:ItemBillingChargeTypeEnum	; code           	; ItemBillingChargeTypeEnum:code      	;                                                      	; true	;  

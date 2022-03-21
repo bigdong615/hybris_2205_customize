@@ -1,0 +1,41 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLReturnEntry.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLReturnEntry; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLReturnEntry	; ReturnAction      	; ReturnAction      	; 	; ALL_SUBTYPES           	;  
+; InboundBLReturnEntry	; AbstractOrder     	; AbstractOrder     	; 	; ALL_SUBTYPES           	;  
+; InboundBLReturnEntry	; CatalogVersion    	; CatalogVersion    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReturnEntry	; ReturnRequest     	; ReturnRequest     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReturnEntry	; Product           	; Product           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReturnEntry	; BlReturnEntry     	; BlReturnEntry     	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReturnEntry	; Catalog           	; Catalog           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLReturnEntry	; ReturnStatus      	; ReturnStatus      	; 	; ALL_SUBTYPES           	;  
+; InboundBLReturnEntry	; AbstractOrderEntry	; AbstractOrderEntry	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLReturnEntry:ReturnAction      	; code            	; ReturnAction:code             	;                                        	; true	;  
+; InboundBLReturnEntry:AbstractOrder     	; code            	; AbstractOrder:code            	;                                        	; true	;  
+; InboundBLReturnEntry:CatalogVersion    	; version         	; CatalogVersion:version        	;                                        	; true	;  
+; InboundBLReturnEntry:CatalogVersion    	; catalog         	; CatalogVersion:catalog        	; InboundBLReturnEntry:Catalog           	; true	;  
+; InboundBLReturnEntry:ReturnRequest     	; code            	; ReturnRequest:code            	;                                        	; true	;  
+; InboundBLReturnEntry:Product           	; code            	; Product:code                  	;                                        	; true	;  
+; InboundBLReturnEntry:Product           	; catalogVersion  	; Product:catalogVersion        	; InboundBLReturnEntry:CatalogVersion    	; true	;  
+; InboundBLReturnEntry:BlReturnEntry     	; action          	; BlReturnEntry:action          	; InboundBLReturnEntry:ReturnAction      	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; modifiedtime    	; BlReturnEntry:modifiedtime    	;                                        	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; status          	; BlReturnEntry:status          	; InboundBLReturnEntry:ReturnStatus      	; true	;  
+; InboundBLReturnEntry:BlReturnEntry     	; receivedQuantity	; BlReturnEntry:receivedQuantity	;                                        	; true	;  
+; InboundBLReturnEntry:BlReturnEntry     	; expectedQuantity	; BlReturnEntry:expectedQuantity	;                                        	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; tax             	; BlReturnEntry:tax             	;                                        	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; orderEntry      	; BlReturnEntry:orderEntry      	; InboundBLReturnEntry:AbstractOrderEntry	; true	;  
+; InboundBLReturnEntry:BlReturnEntry     	; reachedDate     	; BlReturnEntry:reachedDate     	;                                        	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; notes           	; BlReturnEntry:notes           	;                                        	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; returnRequest   	; BlReturnEntry:returnRequest   	; InboundBLReturnEntry:ReturnRequest     	; 	;  
+; InboundBLReturnEntry:BlReturnEntry     	; creationtime    	; BlReturnEntry:creationtime    	;                                        	; 	;  
+; InboundBLReturnEntry:Catalog           	; id              	; Catalog:id                    	;                                        	; true	;  
+; InboundBLReturnEntry:ReturnStatus      	; code            	; ReturnStatus:code             	;                                        	; true	;  
+; InboundBLReturnEntry:AbstractOrderEntry	; entryNumber     	; AbstractOrderEntry:entryNumber	;                                        	; true	;  
+; InboundBLReturnEntry:AbstractOrderEntry	; product         	; AbstractOrderEntry:product    	; InboundBLReturnEntry:Product           	; 	;  
+; InboundBLReturnEntry:AbstractOrderEntry	; order           	; AbstractOrderEntry:order      	; InboundBLReturnEntry:AbstractOrder     	; 	;  

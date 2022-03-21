@@ -1,0 +1,19 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLDeliveryMode.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLDeliveryMode; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLDeliveryMode	; BaseStore   	; BaseStore   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLDeliveryMode	; DeliveryMode	; DeliveryMode	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLDeliveryMode:BaseStore   	; uid         	; BaseStore:uid            	;                                	; true	;  
+; InboundBLDeliveryMode:DeliveryMode	; modifiedtime	; DeliveryMode:modifiedtime	;                                	; 	;  
+; InboundBLDeliveryMode:DeliveryMode	; code        	; DeliveryMode:code        	;                                	; true	;  
+; InboundBLDeliveryMode:DeliveryMode	; creationtime	; DeliveryMode:creationtime	;                                	; 	;  
+; InboundBLDeliveryMode:DeliveryMode	; stores      	; DeliveryMode:stores      	; InboundBLDeliveryMode:BaseStore	; 	;  
+; InboundBLDeliveryMode:DeliveryMode	; name        	; DeliveryMode:name        	;                                	; 	;  
+; InboundBLDeliveryMode:DeliveryMode	; description 	; DeliveryMode:description 	;                                	; 	;  
+; InboundBLDeliveryMode:DeliveryMode	; active      	; DeliveryMode:active      	;                                	; 	;  

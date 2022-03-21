@@ -1,0 +1,17 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPartnerPickUpStore.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPartnerPickUpStore; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPartnerPickUpStore	; BlPickUpZoneDeliveryMode	; BlPickUpZoneDeliveryMode	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartnerPickUpStore	; PartnerPickUpStore      	; PartnerPickUpStore      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPartnerPickUpStore:BlPickUpZoneDeliveryMode	; code                    	; BlPickUpZoneDeliveryMode:code              	;                                                     	; true	;  
+; InboundBLPartnerPickUpStore:PartnerPickUpStore      	; name                    	; PartnerPickUpStore:name                    	;                                                     	; 	;  
+; InboundBLPartnerPickUpStore:PartnerPickUpStore      	; blPickUpZoneDeliveryMode	; PartnerPickUpStore:blPickUpZoneDeliveryMode	; InboundBLPartnerPickUpStore:BlPickUpZoneDeliveryMode	; 	;  
+; InboundBLPartnerPickUpStore:PartnerPickUpStore      	; creationtime            	; PartnerPickUpStore:creationtime            	;                                                     	; 	;  
+; InboundBLPartnerPickUpStore:PartnerPickUpStore      	; code                    	; PartnerPickUpStore:code                    	;                                                     	; true	;  
+; InboundBLPartnerPickUpStore:PartnerPickUpStore      	; modifiedtime            	; PartnerPickUpStore:modifiedtime            	;                                                     	; 	;  
