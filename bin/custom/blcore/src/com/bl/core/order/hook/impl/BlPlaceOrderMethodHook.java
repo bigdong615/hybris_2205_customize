@@ -10,11 +10,11 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -28,6 +28,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
 	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
+	private BlOrderService blOrderService; 
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -49,7 +50,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	 */
 	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
 	{
-		if(isUsedGearOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+		if(getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
 				&& Objects.nonNull(order.getCreationtime()))
 		{
 			order.getEntries().forEach(entry -> {
@@ -61,18 +62,6 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 				}
 			});
 		}
-	}
-	
-	/**
-	 * Checks if is used gear order only.
-	 *
-	 * @param order the order
-	 * @return true, if is used gear order only
-	 */
-	private boolean isUsedGearOrderOnly(final OrderModel order)
-	{
-		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
-				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
 	}
 
 	/**
@@ -157,6 +146,22 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
 	}
 
 }

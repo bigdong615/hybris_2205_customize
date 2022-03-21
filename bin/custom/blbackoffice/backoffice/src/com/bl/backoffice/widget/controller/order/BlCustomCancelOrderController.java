@@ -13,6 +13,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -214,6 +215,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
  	@Resource(name = "defaultBlUserService")
   private DefaultBlUserService defaultBlUserService;
+ 	
+ 	@Resource(name = "blOrderService")
+ 	private BlOrderService blOrderService;
 
     /**
      * Init cancellation order form.
@@ -840,25 +844,13 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
      */
     private void resetDateOfSaleAttributeOnSerial() {
         this.getCancelAndRefundEntries().forEach(entry -> {
-            if(isUsedGearOrderOnly(this.getOrderModel()) && entry.getOrderEntry().getProduct() instanceof BlSerialProductModel) {
+            if(getBlOrderService().isUsedOrderOnly(this.getOrderModel()) && entry.getOrderEntry().getProduct() instanceof BlSerialProductModel) {
                 final BlSerialProductModel serialProductModel = (BlSerialProductModel) entry.getOrderEntry().getProduct();
                 serialProductModel.setDateOfSale(null);
                 this.getModelService().save(serialProductModel);
             }
         });
     }
-
-    /**
-     * Checks if is used gear order only.
-     *
-     * @param order the order
-     * @return true, if is used gear order only
-     */
-	  private boolean isUsedGearOrderOnly(final OrderModel order)
-	  {
-	      return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder())
-            && BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
-	  }
 
     /**
      * This method will complete flow for cancel and refund
@@ -2108,5 +2100,21 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         DefaultBlUserService defaultBlUserService) {
         this.defaultBlUserService = defaultBlUserService;
     }
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
+	}
 
 }
