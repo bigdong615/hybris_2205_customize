@@ -322,7 +322,7 @@
 					<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
-					<ea:attribute qualifier="newGearInStock"/>
+					<ea:attribute qualifier="retailGearInStock"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
