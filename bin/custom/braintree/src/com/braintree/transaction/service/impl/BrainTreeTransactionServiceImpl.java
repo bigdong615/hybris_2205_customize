@@ -45,6 +45,7 @@ import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCard;
 import com.braintreegateway.PayPalAccount;
+import com.braintreegateway.PaymentMethod;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
@@ -276,8 +277,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	 * {@inheritDoc}
 	 */
 	public String getBraintreeAddressIDForLegacyPaymentMethods(final String paymentMethodToken) {
-		CreditCard card = (CreditCard) getBraintreeGateway().paymentMethod().find(paymentMethodToken);
-		return Objects.nonNull(card.getBillingAddress()) ? card.getBillingAddress().getId() : null;
+		final PaymentMethod paymentMethod = getBraintreeGateway().paymentMethod().find(paymentMethodToken);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Payment method : {} for payment method token : {}", paymentMethod, paymentMethodToken);
+		if(Objects.nonNull(paymentMethod) && paymentMethod instanceof CreditCard) {
+			final CreditCard card  = (CreditCard) paymentMethod;
+			return Objects.isNull(card.getBillingAddress()) ? null : card
+					.getBillingAddress().getId();
+		}
+		return null;
 	}
 
 	/**
