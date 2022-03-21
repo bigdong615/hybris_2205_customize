@@ -545,8 +545,8 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 		{
 			final RuleConditionData ruleConditionData = getRuleConditionDataByDefinitionId(
 					BlControllerConstants.Y_RENTAL_ARRIVAL_DATE_CONDITION);
-			final RuleParameterData ruleParameterData = getRuleParameterData(ruleConditionData);
-			if (Objects.nonNull(ruleParameterData) && ruleParameterData.getValue() instanceof Date)
+			final RuleParameterData ruleParameterData = getRuleParameterData(ruleConditionData, BlControllerConstants.RENTAL_ARRIVAL_DATE);
+			if (isOperatorEligibleForArrivalDateCheck(ruleConditionData) && Objects.nonNull(ruleParameterData) && ruleParameterData.getValue() instanceof Date)
 			{
 				final Date promoConditionArrivaldate = (Date) ruleParameterData.getValue();
 				final Date arrivalDate = Objects.nonNull(getExtendedOrder()) ? getExtendedOrder().getRentalStartDate()
@@ -576,12 +576,27 @@ public class DefaultBlPromotionValidator implements BlPromotionValidator
 	 *           the rule condition data
 	 * @return the rule parameter data
 	 */
-	private RuleParameterData getRuleParameterData(final RuleConditionData ruleConditionData)
+	private RuleParameterData getRuleParameterData(final RuleConditionData ruleConditionData, final String ruleParameterKey)
 	{
 		return Objects.nonNull(ruleConditionData)
-				&& checkIfRuleParameterDataIsAvailable(ruleConditionData, BlControllerConstants.RENTAL_ARRIVAL_DATE)
-						? ruleConditionData.getParameters().get(BlControllerConstants.RENTAL_ARRIVAL_DATE)
+				&& checkIfRuleParameterDataIsAvailable(ruleConditionData, ruleParameterKey)
+						? ruleConditionData.getParameters().get(ruleParameterKey)
 						: null;
+	}
+	
+	/**
+	 * Checks if is operator eligible for arrival date check.
+	 *
+	 * @param ruleConditionData
+	 *           the rule condition data
+	 * @return true, if is operator eligible for arrival date check
+	 */
+	private boolean isOperatorEligibleForArrivalDateCheck(final RuleConditionData ruleConditionData)
+	{
+		final RuleParameterData operatorRuleParameterData = getRuleParameterData(ruleConditionData, BlControllerConstants.OPERATOR);
+		return Objects.nonNull(operatorRuleParameterData) && operatorRuleParameterData.getValue() instanceof AmountOperator
+				&& BlControllerConstants.LESS_THAN_OR_EQUAL
+						.equals(((AmountOperator) operatorRuleParameterData.getValue()).toString());
 	}
 
 	/**
