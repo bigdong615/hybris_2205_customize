@@ -128,6 +128,12 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 	}
 
+	/**
+	 * Perform bin location update.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 */
 	private void performBinLocationUpdate(final List<String> barcodes)
 	{
 		if (barcodes.size() > BlInventoryScanLoggingConstants.TWO)
@@ -153,6 +159,14 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 	}
 
+	/**
+	 * Log unboxing bin errors.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param unboxingResultMap
+	 *           the unboxing result map
+	 */
 	private void logUnboxingBinErrors(final List<String> barcodes, final Map<Integer, Collection<String>> unboxingResultMap)
 	{
 		final List<String> successBarcodes = Lists.newArrayList(barcodes);
@@ -235,6 +249,16 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 	}
 
+	/**
+	 * Check for DPC or DC errors.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param unboxingResultMap
+	 *           the unboxing result map
+	 * @param showSuccessMsg
+	 *           the show success msg
+	 */
 	private void checkForDPCOrDCErrors(final List<String> barcodes, final Map<Integer, Collection<String>> unboxingResultMap,
 			final boolean showSuccessMsg)
 	{
@@ -258,6 +282,16 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 		}
 	}
 
+	/**
+	 * Process error code four.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param unboxingResultMap
+	 *           the unboxing result map
+	 * @param showSuccessMsg
+	 *           the show success msg
+	 */
 	private void processErrorCodeFour(final List<String> barcodes, final Map<Integer, Collection<String>> unboxingResultMap,
 			final boolean showSuccessMsg)
 	{
