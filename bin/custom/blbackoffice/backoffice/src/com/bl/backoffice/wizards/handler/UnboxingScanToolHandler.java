@@ -175,65 +175,61 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 			unboxingResultMap.forEach((errorCode, barcodeList) -> {
 				switch (errorCode)
 				{
-					case BlInventoryScanLoggingConstants.FOUR:
+					case BlInventoryScanLoggingConstants.FOUR: // handle error for dirty list
 						processErrorCodeFour(barcodes, unboxingResultMap, false);
 						successBarcodes.removeAll(barcodeList);
 						break;
-					case BlInventoryScanLoggingConstants.FIVE:
+					case BlInventoryScanLoggingConstants.FIVE: // handle error for dirty priority list
 						processErrorCodeFive(barcodes, unboxingResultMap, false);
 						successBarcodes.removeAll(barcodeList);
 						break;
-					case BlInventoryScanLoggingConstants.INT_SIX:
+					case BlInventoryScanLoggingConstants.INT_SIX: // location not found in database
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
 								BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeList);
 						successBarcodes.removeAll(barcodes);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_SEVEN:
+					case BlInventoryScanLoggingConstants.INT_SEVEN: // not a bin location
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.BIN_TYPE_ERROR_MSG,
 								BlInventoryScanLoggingConstants.BIN_TYPE_ERROR, NOTIFICATION_LEVEL_FAILURE, barcodeList);
 						successBarcodes.removeAll(barcodes);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_EIGHT:
+					case BlInventoryScanLoggingConstants.INT_EIGHT: //not a Dirty Cart or Dirty Priority Cart location
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_DPC_OR_DC_TYPE_ERROR_MSG,
 								BlInventoryScanLoggingConstants.LAST_SCAN_DPC_OR_DC_TYPE_ERROR, NOTIFICATION_LEVEL_FAILURE,
 								StringUtils.EMPTY);
 						successBarcodes.removeAll(barcodes);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_NINE:
+					case BlInventoryScanLoggingConstants.INT_NINE: // missing packages for serials
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.MISSING_BARCODE_PACKAGE_ERROR_MSG,
 								BlInventoryScanLoggingConstants.MISSING_BARCODE_PACKAGE_ERROR, NOTIFICATION_LEVEL_FAILURE, barcodeList);
 						successBarcodes.removeAll(barcodeList);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_TEN:
+					case BlInventoryScanLoggingConstants.INT_TEN: // Serial Not found in system
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
 								BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeList);
 						successBarcodes.removeAll(barcodeList);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_ELEVEN:
-						final List<String> barcodeWithNameList = new ArrayList<>();
-						getBarcodeByProductNameString(barcodeList, barcodeWithNameList);
+					case BlInventoryScanLoggingConstants.INT_ELEVEN: //dirty priority barcodes
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
 								BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_WARNING, NOTIFICATION_LEVEL_WARNING,
-								barcodeWithNameList);
+								getBarcodeByProductNameString(barcodeList));
 						break;
-					case BlInventoryScanLoggingConstants.INT_TWELVE:
+					case BlInventoryScanLoggingConstants.INT_TWELVE: //More than one location found
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
 								BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
 								StringUtils.EMPTY);
 						successBarcodes.removeAll(barcodes);
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
-					case BlInventoryScanLoggingConstants.INT_THIRTEEN:
-						final List<String> barcodeWithNameList1 = new ArrayList<>();
-						getBarcodeByProductNameString(barcodeList, barcodeWithNameList1);
+					case BlInventoryScanLoggingConstants.INT_THIRTEEN: //dirty barcodes
 						addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
 								BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE, NOTIFICATION_LEVEL_WARNING,
-								barcodeWithNameList1);
+								getBarcodeByProductNameString(barcodeList));
 						break;
 					default:
 						break;
@@ -262,16 +258,26 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private void checkForDPCOrDCErrors(final List<String> barcodes, final Map<Integer, Collection<String>> unboxingResultMap,
 			final boolean showSuccessMsg)
 	{
-		if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FOUR))
+		if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FOUR)) // handle error for dirty list
 		{
 			processErrorCodeFour(barcodes, unboxingResultMap, showSuccessMsg);
 		}
-		if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FIVE))
+		if (unboxingResultMap.containsKey(BlInventoryScanLoggingConstants.FIVE)) // handle error for dirty priority list
 		{
 			processErrorCodeFive(barcodes, unboxingResultMap, showSuccessMsg);
 		}
 	}
 
+	/**
+	 * Process error message for dirty priority serial list .
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param unboxingResultMap
+	 *           the unboxing result map
+	 * @param showSuccessMsg
+	 *           the show success msg
+	 */
 	private void processErrorCodeFive(final List<String> barcodes, final Map<Integer, Collection<String>> unboxingResultMap,
 			final boolean showSuccessMsg)
 	{
@@ -283,7 +289,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	}
 
 	/**
-	 * Process error code four.
+	 * Process error message for dirty serial list .
 	 *
 	 * @param barcodes
 	 *           the barcodes
@@ -339,7 +345,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	}
 
 	/**
-	 * Evaluate errors.
+	 * Evaluate errors if any found while performing Unboxing of Serials.
 	 *
 	 * @param barcodes
 	 *           the barcodes
@@ -347,15 +353,15 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private void evaluateErrors(final List<String> barcodes)
 	{
 		final Map<Integer, Collection<String>> unboxingResultMap = getBlInventoryScanToolService().doUnboxing(barcodes);
-		if (MapUtils.isNotEmpty(unboxingResultMap))
-		{
-			logUnboxingStatus(barcodes, unboxingResultMap);
-		}
-		else
+		if (MapUtils.isEmpty(unboxingResultMap))
 		{
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
 					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS,
 					barcodes.subList(0, barcodes.size() - 1));
+		}
+		else
+		{
+			logUnboxingStatus(barcodes, unboxingResultMap);
 		}
 	}
 
@@ -439,10 +445,9 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	 */
 	private void doAddMessageForDirtyPriortySerial(final Collection<String> dpSerials)
 	{
-		final List<String> barcodeWithNameList = new ArrayList<>();
-		getBarcodeByProductNameString(dpSerials, barcodeWithNameList);
 		addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
-				BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_WARNING, NOTIFICATION_LEVEL_WARNING, barcodeWithNameList);
+				BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_WARNING, NOTIFICATION_LEVEL_WARNING,
+				getBarcodeByProductNameString(dpSerials));
 	}
 
 	/**
@@ -523,8 +528,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private void doScanToAnotherLocationMessage(final Collection<String> dirtyErrorSerialList, final List<String> barcodes,
 			final boolean showSuccessMsg)
 	{
-		final List<String> barcodeWithNameList = new ArrayList<>();
-		getBarcodeByProductNameString(dirtyErrorSerialList, barcodeWithNameList);
+		final List<String> barcodeWithNameList = getBarcodeByProductNameString(dirtyErrorSerialList);
 		if (getBlInventoryScanToolService().getStatusOfLocationDP())
 		{
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DC_FAILURE_MSG,
@@ -554,8 +558,9 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	 *           the barcode with name list
 	 * @return the barcode by product name string
 	 */
-	private void getBarcodeByProductNameString(final Collection<String> serialBarcodeList, final List<String> barcodeWithNameList)
+	private List<String> getBarcodeByProductNameString(final Collection<String> serialBarcodeList)
 	{
+		final List<String> barcodeWithNameList = Lists.newArrayList();
 		final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
 				.getSerialProductsByBarcode(serialBarcodeList, BlInventoryScanLoggingConstants.ONLINE);
 		if (CollectionUtils.isNotEmpty(serialProductsByBarcode))
@@ -574,6 +579,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 				}
 			});
 		}
+		return barcodeWithNameList;
 	}
 
 	/**
@@ -585,15 +591,14 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private void doScanToDPCErrorMessage(final Collection<String> dirtyPriorityErrorSerialList, final List<String> barcodes,
 			final boolean showSuccessMsg)
 	{
-		final List<String> barcodeWithNameList = new ArrayList<>();
-		getBarcodeByProductNameString(dirtyPriorityErrorSerialList, barcodeWithNameList);
 		if (showSuccessMsg)
 		{
 			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
 					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS, barcodes.size());
 		}
 		addMessageToNotifyUser(BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE_MSG,
-				BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING, barcodeWithNameList);
+				BlInventoryScanLoggingConstants.UNBOX_SAN_TOOL_DPC_FAILURE, NOTIFICATION_LEVEL_WARNING,
+				getBarcodeByProductNameString(dirtyPriorityErrorSerialList));
 	}
 
 

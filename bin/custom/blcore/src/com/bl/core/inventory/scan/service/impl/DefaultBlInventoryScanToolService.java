@@ -107,7 +107,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
      */
     @Override
     public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode, final String version) {
-   	 return getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(barcode, version);
+		 return CollectionUtils.isNotEmpty(barcode) && StringUtils.isNotBlank(version)
+				 ? getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(barcode, version)
+				 : Lists.newArrayList();
     }
 
 	/**
@@ -2128,6 +2130,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		binLocation.setParentInventoryLocation(blLocalInventoryLocation);
 		modelService.save(binLocation);
 		modelService.refresh(binLocation);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BIN with code : {} scanned with Parent location with code : {}",
+				binLocation.getCode(), blLocalInventoryLocation.getCode());
 		performBinScannedSerials(barcodes, errors, binLocation, blLocalInventoryLocation, isUnboxingFlow);
 		return errors;
 	}
@@ -2190,8 +2194,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final BlInventoryLocationModel binLocation, final BlInventoryLocationModel blLocalInventoryLocation,
 			final boolean isUnboxingFlow)
 	{
-		final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion = getBlInventoryScanToolDao()
-				.getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO), BlCoreConstants.ONLINE);
+		final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion = StringUtils
+				.isNotBlank(barcodes.get(BlCoreConstants.INT_ZERO))
+						? getBlInventoryScanToolDao().getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO),
+								BlCoreConstants.ONLINE)
+						: Lists.newArrayList();
 		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion))
 		{
 			setBlInventoryLocation(blLocalInventoryLocation);
@@ -2417,13 +2424,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 					barcodesPresentInPackage);
 			if(CollectionUtils.isNotEmpty(missingSerialPackages))
 			{
-				errors.put(BlCoreConstants.INT_NINE, Lists.newArrayList(missingSerialPackages));
+				errors.put(BlCoreConstants.INT_NINE, Lists.newArrayList(missingSerialPackages)); // missing packages for serials
 			}
 			errors.putAll(doPerformDpcOrDcUnboxing(barcodesPresentInPackage, binLocation, packagingInfoModels, Maps.newHashMap()));
 		}
 		else
 		{
-			errors.put(BlCoreConstants.INT_NINE, subList);
+			errors.put(BlCoreConstants.INT_NINE, subList); // missing packages for serials
 		}		
 	}
 
@@ -2487,8 +2494,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			return errors;
 		}
 		final List<String> serialBarcodeList = barcodes.subList(0, barcodes.size() - BlCoreConstants.INT_ONE);
-		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = getBlInventoryScanToolDao()
-				.getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE);
+		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = CollectionUtils.isNotEmpty(serialBarcodeList)
+				? getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE)
+				: Lists.newArrayList();
 		if (CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
 		{
 			errors.put(BlCoreConstants.INT_TEN, serialBarcodeList); // Serial Not found in system
@@ -2560,8 +2568,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			return errors;
 		}
 		final List<String> serialBarcodeList = barcodes.subList(0, barcodes.size() - BlCoreConstants.INT_ONE);
-		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = getBlInventoryScanToolDao()
-				.getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE);
+		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = CollectionUtils.isNotEmpty(serialBarcodeList)
+				? getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE)
+				: Lists.newArrayList();
 		if (CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
 		{
 			errors.put(BlCoreConstants.INT_TEN, serialBarcodeList); // Serial Not found in system

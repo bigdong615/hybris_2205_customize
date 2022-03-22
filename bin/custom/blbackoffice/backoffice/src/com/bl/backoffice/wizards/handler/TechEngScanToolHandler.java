@@ -12,6 +12,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Lists;
 
 import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
@@ -178,19 +179,15 @@ public class TechEngScanToolHandler implements FlowActionHandler
 				switch (errorCode)
 				{
 					case BlInventoryScanLoggingConstants.ZERO: //priority serials error
-						final List<String> barcodeWithNameList = new ArrayList<>();
-						getBarcodeByProductNameString(barcodeList, barcodeWithNameList);
 						doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
 								BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
-								barcodeWithNameList);
+								getBarcodeByProductNameString(barcodeList));
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
 					case BlInventoryScanLoggingConstants.ONE: //non priority serials
-						final List<String> barcodeWithNameList1 = new ArrayList<>();
-						getBarcodeByProductNameString(barcodeList, barcodeWithNameList1);
 						doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_PRIORITY_CART_LOCATION,
 								BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
-								barcodeWithNameList1);
+								getBarcodeByProductNameString(barcodeList));
 						setAllowSuccessMsgDisplay(Boolean.FALSE);
 						break;
 					case BlInventoryScanLoggingConstants.TWO: //not a Workstation or CC or CPC or Repair Cart location
@@ -292,17 +289,14 @@ public class TechEngScanToolHandler implements FlowActionHandler
 						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, errorBarcode);
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART:
-				final List<String> barcodeWithNameList = new ArrayList<>();
-				getBarcodeByProductNameString(errorBarcode, barcodeWithNameList);
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
-						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeWithNameList);
+						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+						getBarcodeByProductNameString(errorBarcode));
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART:
-				final List<String> barcodeWithNameList1 = new ArrayList<>();
-				getBarcodeByProductNameString(errorBarcode, barcodeWithNameList1);
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_PRIORITY_CART_LOCATION,
 						BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
-						barcodeWithNameList1);
+						getBarcodeByProductNameString(errorBarcode));
 				break;
 			case BlInventoryScanLoggingConstants.SUCCESS:
 				doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
@@ -344,26 +338,31 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	 *           the barcode with name list
 	 * @return the barcode by product name string
 	 */
-	private void getBarcodeByProductNameString(final Collection<String> serialBarcodeList, final List<String> barcodeWithNameList)
+	private List<String> getBarcodeByProductNameString(final Collection<String> serialBarcodeList)
 	{
-		final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
-				.getSerialProductsByBarcode(serialBarcodeList, BlInventoryScanLoggingConstants.ONLINE);
-		if (CollectionUtils.isNotEmpty(serialProductsByBarcode))
+		final List<String> barcodeWithNameList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(serialBarcodeList))
 		{
-			final Map<String, String> barcodeByProductNameMap = getBarcodeByProductNameMap(serialProductsByBarcode);
-			serialBarcodeList.forEach(barcode -> {
-				if (barcodeByProductNameMap.containsKey(barcode))
-				{
-					barcodeWithNameList.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE)
-							.concat(barcodeByProductNameMap.get(barcode)));
-				}
-				else
-				{
-					barcodeWithNameList
-							.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE).concat(StringUtils.EMPTY));
-				}
-			});
+			final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+					.getSerialProductsByBarcode(serialBarcodeList, BlInventoryScanLoggingConstants.ONLINE);
+			if (CollectionUtils.isNotEmpty(serialProductsByBarcode))
+			{
+				final Map<String, String> barcodeByProductNameMap = getBarcodeByProductNameMap(serialProductsByBarcode);
+				serialBarcodeList.forEach(barcode -> {
+					if (barcodeByProductNameMap.containsKey(barcode))
+					{
+						barcodeWithNameList.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE)
+								.concat(barcodeByProductNameMap.get(barcode)));
+					}
+					else
+					{
+						barcodeWithNameList
+								.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE).concat(StringUtils.EMPTY));
+					}
+				});
+			}
 		}
+		return barcodeWithNameList;
 	}
 
 	/**

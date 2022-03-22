@@ -214,44 +214,37 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
 	 @Override
 	 public Collection<BlSerialProductModel> getAllSerialsByBinLocationAndVersion(final String binLocationId, final String version)
 	 {
-		 if(StringUtils.isNotBlank(binLocationId) && StringUtils.isNotBlank(version))
-		 {
-			 final String serialsOnLocation = "SELECT {bsp." + ItemModel.PK + FROM + BlSerialProductModel._TYPECODE + " as bsp} "
-					 + "WHERE {bsp:" + ProductModel.CATALOGVERSION + "} = ({{ SELECT {cv:" + ItemModel.PK + FROM
-					 + CatalogVersionModel._TYPECODE + " as cv} " + "WHERE {cv." + CatalogVersionModel.VERSION + "} = ?version and {cv."
-					 + CatalogVersionModel.CATALOG + "} = ({{SELECT {c." + ItemModel.PK + FROM + CatalogModel._TYPECODE + " as c} "
-					 + "WHERE {c." + CatalogModel.ID + "} = 'blProductCatalog'}}) }}) and {bsp:" + BlSerialProductModel.OCLOCATION
-					 + "} = ?binLocationId";
-			 final FlexibleSearchQuery query = new FlexibleSearchQuery(serialsOnLocation);
-			 query.addQueryParameter("version", version);
-			 query.addQueryParameter(BlCoreConstants.BIN_LOCATION_ID, binLocationId);
-			 final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel> search(query).getResult();
-			 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC, binLocationId);
-			 return CollectionUtils.isEmpty(results) ? Collections.emptyList() : results;
-		 }
-		 return Collections.emptyList();
+		 final String serialsOnLocation = "SELECT {bsp." + ItemModel.PK + FROM + BlSerialProductModel._TYPECODE + " as bsp} "
+				 + "WHERE {bsp:" + ProductModel.CATALOGVERSION + "} = ({{ SELECT {cv:" + ItemModel.PK + FROM
+				 + CatalogVersionModel._TYPECODE + " as cv} " + "WHERE {cv." + CatalogVersionModel.VERSION + "} = ?version and {cv."
+				 + CatalogVersionModel.CATALOG + "} = ({{SELECT {c." + ItemModel.PK + FROM + CatalogModel._TYPECODE + " as c} "
+				 + "WHERE {c." + CatalogModel.ID + "} = 'blProductCatalog'}}) }}) and {bsp:" + BlSerialProductModel.OCLOCATION
+				 + "} = ?binLocationId";
+		 final FlexibleSearchQuery query = new FlexibleSearchQuery(serialsOnLocation);
+		 query.addQueryParameter(BlCoreConstants.VERSION, version);
+		 query.addQueryParameter(BlCoreConstants.BIN_LOCATION_ID, binLocationId);
+		 final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel> search(query).getResult();
+		 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD_LOC, binLocationId);
+		 return CollectionUtils.isEmpty(results) ? Collections.emptyList() : results;
 	 }
 	 
 	 /**
 	  * {@inheritDoc}
 	  */
     @Override
-    public Collection<BlSerialProductModel> getSerialsByBarcodesAndVersion(final Collection<String> barcodes, final String version) {
-   	 if(CollectionUtils.isNotEmpty(barcodes) && StringUtils.isNotBlank(version))
-   	 {
-   		 final String query = "SELECT {bsp." + ItemModel.PK + FROM + BlSerialProductModel._TYPECODE + " as bsp} "
-    				 + "WHERE {bsp:" + ProductModel.CATALOGVERSION + "} = ({{ SELECT {cv:" + ItemModel.PK + FROM
-    				 + CatalogVersionModel._TYPECODE + " as cv} " + "WHERE {cv." + CatalogVersionModel.VERSION + "} = ?version and {cv."
-    				 + CatalogVersionModel.CATALOG + "} = ({{SELECT {c." + ItemModel.PK + FROM + CatalogModel._TYPECODE + " as c} "
-    				 + "WHERE {c." + CatalogModel.ID + "} = 'blProductCatalog'}}) }}) and {bsp:" + BlSerialProductModel.BARCODE
-    				 + "} IN (?barcodeList)";
-           final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(query);
-           fQuery.addQueryParameter("version", version);
-           fQuery.addQueryParameter("barcodeList", barcodes);
-           final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(fQuery).getResult();
-           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcodes);
-           return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
-   	 }
-   	 return Collections.emptyList();
+    public Collection<BlSerialProductModel> getSerialsByBarcodesAndVersion(final Collection<String> barcodes, final String version) 
+    {
+   	 final String query = "SELECT {bsp." + ItemModel.PK + FROM + BlSerialProductModel._TYPECODE + " as bsp} "
+ 				 + "WHERE {bsp:" + ProductModel.CATALOGVERSION + "} = ({{ SELECT {cv:" + ItemModel.PK + FROM
+ 				 + CatalogVersionModel._TYPECODE + " as cv} " + "WHERE {cv." + CatalogVersionModel.VERSION + "} = ?version and {cv."
+ 				 + CatalogVersionModel.CATALOG + "} = ({{SELECT {c." + ItemModel.PK + FROM + CatalogModel._TYPECODE + " as c} "
+ 				 + "WHERE {c." + CatalogModel.ID + "} = 'blProductCatalog'}}) }}) and {bsp:" + BlSerialProductModel.BARCODE
+ 				 + "} IN (?barcodeList)";
+        final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(query);
+        fQuery.addQueryParameter(BlCoreConstants.VERSION, version);
+        fQuery.addQueryParameter(BlCoreConstants.BARCODE_LIST, barcodes);
+        final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(fQuery).getResult();
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD, barcodes);
+        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
 }
