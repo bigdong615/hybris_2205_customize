@@ -1,21 +1,26 @@
 package com.bl.backoffice.wizards.handler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Lists;
 
 import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Maps;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
@@ -30,11 +35,14 @@ import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
  **/
 public class TechEngScanToolHandler implements FlowActionHandler
 {
+	private static final NotificationEvent.Level NOTIFICATION_LEVEL_FAILURE = NotificationEvent.Level.FAILURE;
+	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
 
 	private static final Logger LOG = Logger.getLogger(TechEngScanToolHandler.class);
 
 	private NotificationService notificationService;
 	private BlInventoryScanToolService blInventoryScanToolService;
+	private Boolean allowSuccessMsgDisplay;
 
 	/**
 	 * Perform action on scanning process.
@@ -50,27 +58,22 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	public void perform(final CustomType customType, final FlowActionHandlerAdapter flowActionHandlerAdapter,
 			final Map<String, String> dataMap)
 	{
+		setAllowSuccessMsgDisplay(Boolean.TRUE);
 		final WebScanToolData webScanToolData = flowActionHandlerAdapter.getWidgetInstanceManager().getModel()
 				.getValue(dataMap.get(BlInventoryScanLoggingConstants.WEB_SCAN_TOOL_DATA_MODEL_KEY), WebScanToolData.class);
 
 		if (Objects.isNull(webScanToolData))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-					StringUtils.EMPTY);
-			this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
-					BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
-					StringUtils.EMPTY);
+			doNotifyUser(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NOTIFICATION_LEVEL_FAILURE, StringUtils.EMPTY);
 		}
 		else
 		{
 			final List<String> barcodes = webScanToolData.getBarcodeInputField();
 			if (CollectionUtils.isEmpty(barcodes))
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
-						BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						StringUtils.EMPTY);
+				doNotifyUser(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, StringUtils.EMPTY);
 			}
 			else
 			{
@@ -97,13 +100,21 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	{
 		if (barcodes.size() >= BlInventoryScanLoggingConstants.TWO)
 		{
-			if (getBlInventoryScanToolService().checkIfFirstEntryIsLocation(barcodes))
+			if (getBlInventoryScanToolService().checkIfLocationIsBin(barcodes.get(BlInventoryScanLoggingConstants.ZERO), false))
 			{
-				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+				processScanningIfFirstScanIsBin(barcodes);
+			}
+			else if (getBlInventoryScanToolService()
+					.checkIfLocationIsBin(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE), true))
+			{
+				logTechEngErrorsForBinScan(getBlInventoryScanToolService().doSerialLocationToBinScanningForTechEng(barcodes));
+			}
+			else if (getBlInventoryScanToolService().checkIfFirstEntryIsLocation(barcodes))
+			{
+				doNotifyUser(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.FIRST_SCAN_LOCATION_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
 						StringUtils.EMPTY);
-				this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
-						BlInventoryScanLoggingConstants.FIRST_SCAN_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						StringUtils.EMPTY);
+				setAllowSuccessMsgDisplay(Boolean.FALSE);
 			}
 			else
 			{
@@ -113,11 +124,107 @@ public class TechEngScanToolHandler implements FlowActionHandler
 		}
 		else
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+			doNotifyUser(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
 					BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
-			this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
-					BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-					BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
+			setAllowSuccessMsgDisplay(Boolean.FALSE);
+		}
+	}
+
+
+	/**
+	 * Process scanning if first scan is bin.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 */
+	private void processScanningIfFirstScanIsBin(final List<String> barcodes)
+	{
+		if (barcodes.size() > BlInventoryScanLoggingConstants.TWO)
+		{
+			doNotifyUser(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG_FOR_BIN,
+					BlInventoryScanLoggingConstants.FIRST_SCAN_LOCATION_BIN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+					StringUtils.EMPTY);
+			setAllowSuccessMsgDisplay(Boolean.FALSE);
+		}
+		else
+		{
+			if (getBlInventoryScanToolService()
+					.checkIfGivenBarcodeIsValidLocation(barcodes.get(BlInventoryScanLoggingConstants.ONE)))
+			{
+				logTechEngErrorsForBinScan(getBlInventoryScanToolService().performBinToCartScanning(barcodes, false));
+			}
+			else
+			{
+				doNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, StringUtils.EMPTY);
+				setAllowSuccessMsgDisplay(Boolean.FALSE);
+			}
+		}
+	}
+
+	/**
+	 * Log tech eng errors for bin scan.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param scanningResultMap
+	 *           the scanning result map
+	 */
+	private void logTechEngErrorsForBinScan(final Map<Integer, Collection<String>> scanningResultMap)
+	{
+		if (MapUtils.isNotEmpty(scanningResultMap))
+		{
+			scanningResultMap.forEach((errorCode, barcodeList) -> {
+				switch (errorCode)
+				{
+					case BlInventoryScanLoggingConstants.ZERO: //priority serials error
+						doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
+								BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+								getBarcodeByProductNameString(barcodeList));
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.ONE: //non priority serials
+						doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_PRIORITY_CART_LOCATION,
+								BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+								getBarcodeByProductNameString(barcodeList));
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.TWO: //not a Workstation or CC or CPC or Repair Cart location
+						doNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_CPC_OR_CC_TYPE_ERROR_MSG,
+								BlInventoryScanLoggingConstants.LAST_SCAN_CPC_OR_CC_TYPE_ERROR, NOTIFICATION_LEVEL_FAILURE, barcodeList);
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.INT_SIX: // location not found in database
+						doNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+								BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeList);
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.INT_SEVEN: // not a bin location
+						doNotifyUser(BlInventoryScanLoggingConstants.BIN_TYPE_ERROR_MSG,
+								BlInventoryScanLoggingConstants.TECH_ENG_BIN_TYPE_ERROR, NOTIFICATION_LEVEL_FAILURE, barcodeList);
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.INT_TEN: // Serial Not found in system
+						doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
+								BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, barcodeList);
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					case BlInventoryScanLoggingConstants.INT_TWELVE: //More than one location found
+						doNotifyUser(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+								BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+								StringUtils.EMPTY);
+						setAllowSuccessMsgDisplay(Boolean.FALSE);
+						break;
+					default:
+						break;
+				}
+			});
+		}
+		if (getAllowSuccessMsgDisplay().booleanValue())
+		{
+			doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+					BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS, StringUtils.EMPTY);
 		}
 	}
 
@@ -137,22 +244,17 @@ public class TechEngScanToolHandler implements FlowActionHandler
 				executeLocationUpdate(barcodes);
 				break;
 			case BlInventoryScanLoggingConstants.TWO:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE,
-						NotificationEvent.Level.FAILURE, barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+				doNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+						barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 				break;
 			case BlInventoryScanLoggingConstants.THREE:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						StringUtils.EMPTY);
+				doNotifyUser(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, StringUtils.EMPTY);
 				break;
 			default:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-						StringUtils.EMPTY);
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						StringUtils.EMPTY);
+				doNotifyUser(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, StringUtils.EMPTY);
 				break;
 		}
 	}
@@ -184,26 +286,25 @@ public class TechEngScanToolHandler implements FlowActionHandler
 		{
 			case BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS:
 				doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
+						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, errorBarcode);
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART:
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
-						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
+						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+						getBarcodeByProductNameString(errorBarcode));
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART:
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_PRIORITY_CART_LOCATION,
-						BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						errorBarcode);
+						BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE,
+						getBarcodeByProductNameString(errorBarcode));
 				break;
 			case BlInventoryScanLoggingConstants.SUCCESS:
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-						StringUtils.EMPTY);
-				addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS,
-						StringUtils.EMPTY);
+				doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+						BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NOTIFICATION_LEVEL_SUCCESS, StringUtils.EMPTY);
 				break;
 			default:
 				doNotifyUser(BlInventoryScanLoggingConstants.LOG_SOMETHING_WENT_WRONG,
-						BlInventoryScanLoggingConstants.SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
+						BlInventoryScanLoggingConstants.SCAN_ERROR_FAILURE, NOTIFICATION_LEVEL_FAILURE, errorBarcode);
 				break;
 		}
 	}
@@ -221,27 +322,69 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	 *           the barcode list
 	 */
 	private void doNotifyUser(final String logMessage, final String notifyErrorType,
-			final NotificationEvent.Level notificationEventLevel, final List<String> barcodeList)
+			final NotificationEvent.Level notificationEventLevel, final Object... referenceObjects)
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.ERROR, logMessage, barcodeList);
-		addMessageToNotifyUser(notifyErrorType, notificationEventLevel, barcodeList);
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, logMessage, referenceObjects);
+		this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER, notifyErrorType,
+				notificationEventLevel, referenceObjects);
 	}
 
 	/**
-	 * Adds the message to notify user.
+	 * Gets the barcode by product name string.
 	 *
-	 * @param errorType
-	 *           the error type
-	 * @param notificationEventLevel
-	 *           the notification event level
-	 * @param referenceObjects
-	 *           the reference objects
+	 * @param serialBarcodeList
+	 *           the serial barcode list
+	 * @param barcodeWithNameList
+	 *           the barcode with name list
+	 * @return the barcode by product name string
 	 */
-	private void addMessageToNotifyUser(final String errorType, final NotificationEvent.Level notificationEventLevel,
-			final Object... referenceObjects)
+	private List<String> getBarcodeByProductNameString(final Collection<String> serialBarcodeList)
 	{
-		this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER, errorType,
-				notificationEventLevel, referenceObjects);
+		final List<String> barcodeWithNameList = Lists.newArrayList();
+		if (CollectionUtils.isNotEmpty(serialBarcodeList))
+		{
+			final Collection<BlSerialProductModel> serialProductsByBarcode = getBlInventoryScanToolService()
+					.getSerialProductsByBarcode(serialBarcodeList, BlInventoryScanLoggingConstants.ONLINE);
+			if (CollectionUtils.isNotEmpty(serialProductsByBarcode))
+			{
+				final Map<String, String> barcodeByProductNameMap = getBarcodeByProductNameMap(serialProductsByBarcode);
+				serialBarcodeList.forEach(barcode -> {
+					if (barcodeByProductNameMap.containsKey(barcode))
+					{
+						barcodeWithNameList.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE)
+								.concat(barcodeByProductNameMap.get(barcode)));
+					}
+					else
+					{
+						barcodeWithNameList
+								.add(barcode.concat(BlInventoryScanLoggingConstants.FOR_PRODUCT_MESSAGE).concat(StringUtils.EMPTY));
+					}
+				});
+			}
+		}
+		return barcodeWithNameList;
+	}
+
+	/**
+	 * Gets the barcode by product name map.
+	 *
+	 * @param serialProductsByBarcode
+	 *           the serial products by barcode
+	 * @return the barcode by product name map
+	 */
+	private Map<String, String> getBarcodeByProductNameMap(final Collection<BlSerialProductModel> serialProductsByBarcode)
+	{
+		if (CollectionUtils.isNotEmpty(serialProductsByBarcode))
+		{
+			return serialProductsByBarcode.stream().collect(Collectors.toMap(BlSerialProductModel::getBarcode, serial -> {
+				if (Objects.nonNull(serial.getBlProduct()) && StringUtils.isNotBlank(serial.getBlProduct().getName()))
+				{
+					return serial.getBlProduct().getName();
+				}
+				return StringUtils.EMPTY;
+			}));
+		}
+		return Maps.newHashMap();
 	}
 
 	/**
@@ -284,5 +427,24 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	public void setBlInventoryScanToolService(final BlInventoryScanToolService blInventoryScanToolService)
 	{
 		this.blInventoryScanToolService = blInventoryScanToolService;
+	}
+
+
+	/**
+	 * @return the allowSuccessMsgDisplay
+	 */
+	public Boolean getAllowSuccessMsgDisplay()
+	{
+		return allowSuccessMsgDisplay;
+	}
+
+
+	/**
+	 * @param allowSuccessMsgDisplay
+	 *           the allowSuccessMsgDisplay to set
+	 */
+	public void setAllowSuccessMsgDisplay(final Boolean allowSuccessMsgDisplay)
+	{
+		this.allowSuccessMsgDisplay = allowSuccessMsgDisplay;
 	}
 }
