@@ -432,13 +432,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		if(Objects.nonNull(locationModel))
 		{
-			return locationModel.getParentInventoryLocation() != null ?
-					locationModel.getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+			return Objects.isNull(locationModel.getParentInventoryLocation()) ? StringUtils.EMPTY :
+					locationModel.getParentInventoryLocation().getCode();
 		}
 		else if(Objects.nonNull(getBlInventoryLocation()))
 		{
-			return getBlInventoryLocation().getParentInventoryLocation() != null ?
-					getBlInventoryLocation().getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+			return Objects.isNull(getBlInventoryLocation().getParentInventoryLocation()) ? StringUtils.EMPTY :
+					getBlInventoryLocation().getParentInventoryLocation().getCode();
 		}
 		return StringUtils.EMPTY;
 	}
