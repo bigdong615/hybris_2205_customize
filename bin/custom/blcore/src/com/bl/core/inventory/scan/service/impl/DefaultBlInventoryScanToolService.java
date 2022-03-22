@@ -1289,28 +1289,111 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	{
 		final Map<Integer, Collection<String>> result = new HashMap<>();
 		final BlInventoryLocationModel blInventoryLocationModel = getBlInventoryLocation();
-		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final List<String> subList = barcodes.subList(BlInventoryScanLoggingConstants.INT_ZERO, barcodes.size() - BlInventoryScanLoggingConstants.ONE);
+		final List<String> missingBarcodeList = new ArrayList<>();
+		final Set<String> missingPackageBarcodeList = new HashSet<>();
+		final List<String> removedUnboxedSerialBarcodeList = new ArrayList<>();
+		final Set<String> availablePackageBarcodes = new HashSet<>();
+		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(subList,BlInventoryScanLoggingConstants.ONLINE);
+		if(CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
+		{
+			result.put(BlInventoryScanLoggingConstants.INT_TEN, subList);
+			return result;
+		}
+		else if(serialsByBarcodesAndVersion.size() != subList.size())
+		{
+			getInavlidBarcodeList(result, subList, missingBarcodeList, serialsByBarcodesAndVersion);
+		}
+		
+		removeUnboxedSerialsFromList(serialsByBarcodesAndVersion, removedUnboxedSerialBarcodeList);
+		
 		if (Objects.nonNull(blInventoryLocationModel) && Objects.nonNull(blInventoryLocationModel.getLocationCategory()))
 		{
 			final String locationCategory = blInventoryLocationModel.getLocationCategory().getCode();
 			if(BlInventoryScanUtility.getUnBoxingWorkStationLocations().contains(locationCategory))
 			{
-				final List<String> failedBarcodeList = new ArrayList<>();
-				final Collection<String> dirtyProductSerialModels = new ArrayList<>();
-				this.getResultMapForUnboxAtWorkstation(result, failedBarcodeList, dirtyProductSerialModels,
-						subList);
+				performWorkstationScanOnSerial(result, serialsByBarcodesAndVersion);
 			}
 			else
 			{
-				setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
-				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(subList);
-				final Map<Integer,List<String>> errorSerialList = new HashMap<>();
-				this.getMapForUnboxAtDPOrDC(subList, result, blInventoryLocationModel, packagingInfoModels, errorSerialList);
+				if(CollectionUtils.isNotEmpty(removedUnboxedSerialBarcodeList))
+				{
+   				setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations().contains(locationCategory));
+   				final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(removedUnboxedSerialBarcodeList);
+   				if(CollectionUtils.isEmpty(packagingInfoModels))
+   				{
+   					result.put(BlInventoryScanLoggingConstants.INT_NINE, removedUnboxedSerialBarcodeList);
+   					return result;
+   				}
+   				performSerialToDPCOrDCLocationScan(result, blInventoryLocationModel, missingPackageBarcodeList, removedUnboxedSerialBarcodeList,
+							availablePackageBarcodes, packagingInfoModels);
+				}
 			}
 
 		}
 
 		return result;
+	}
+
+	/**
+	 * This method is used to perform scan of serial on DPC or DC location
+	 * @param result
+	 * @param blInventoryLocationModel
+	 * @param missingPackageBarcodeList
+	 * @param removedUnboxedSerialBarcodeList
+	 * @param availablePackageBarcodes
+	 * @param packagingInfoModels
+	 */
+	private void performSerialToDPCOrDCLocationScan(final Map<Integer, Collection<String>> result, final BlInventoryLocationModel blInventoryLocationModel,
+			final Set<String> missingPackageBarcodeList, final List<String> removedUnboxedSerialBarcodeList,
+			final Set<String> availablePackageBarcodes, final Collection<PackagingInfoModel> packagingInfoModels)
+	{
+		Set<String> packageSerialBarcodes = new HashSet<>();
+		getSerialBarcodesFromPackages(packagingInfoModels, packageSerialBarcodes);
+		separateSerialsMissingAndPresentInPackages(removedUnboxedSerialBarcodeList,packageSerialBarcodes , missingPackageBarcodeList, availablePackageBarcodes);				
+		if(CollectionUtils.isNotEmpty(missingPackageBarcodeList))
+		{
+		result.put(BlInventoryScanLoggingConstants.INT_NINE, missingPackageBarcodeList);
+		}
+		final Map<Integer,List<String>> errorSerialList = new HashMap<>();
+		this.getMapForUnboxAtDPOrDC(Lists.newArrayList(availablePackageBarcodes), result, blInventoryLocationModel, packagingInfoModels, errorSerialList);
+	}
+
+	/**
+	 * This method is used to perform scan of serial on work station location
+	 * @param result
+	 * @param serialsByBarcodesAndVersion
+	 */
+	private void performWorkstationScanOnSerial(final Map<Integer, Collection<String>> result,
+			final Collection<BlSerialProductModel> serialsByBarcodesAndVersion)
+	{
+		final List<String> failedBarcodeList = new ArrayList<>();
+		final Collection<String> dirtyProductSerialModels = new ArrayList<>();
+		final List<String> collect = serialsByBarcodesAndVersion.stream().map(BlSerialProductModel::getBarcode).collect(Collectors.toList());
+		this.getResultMapForUnboxAtWorkstation(result, failedBarcodeList, dirtyProductSerialModels,
+				collect);
+	}
+
+	/**
+	 * This method is used to get list of invalid barcodes whose serials are not present in DB
+	 * @param result
+	 * @param subList
+	 * @param missingBarcodeList
+	 * @param serialsByBarcodesAndVersion
+	 */
+	private void getInavlidBarcodeList(final Map<Integer, Collection<String>> result, final List<String> subList,
+			final List<String> missingBarcodeList,final Collection<BlSerialProductModel> serialsByBarcodesAndVersion)
+	{
+		subList.forEach(barcode -> {
+			if (serialsByBarcodesAndVersion.stream().noneMatch(blSerial -> barcode.equals(blSerial.getBarcode())))
+			{
+				missingBarcodeList.add(barcode);
+			}
+		});
+		if(CollectionUtils.isNotEmpty(missingBarcodeList))
+		{
+			result.put(BlInventoryScanLoggingConstants.INT_TEN, missingBarcodeList);
+		}
 	}
 
 	/**
@@ -1802,8 +1885,15 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			barcodes.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode, dirtyProductSerialModels));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Failed barcode list: {}", failedBarcodeList);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dirty Priority Serials : {}", dirtyProductSerialModels);
-			result.put(BlInventoryScanLoggingConstants.ZERO, failedBarcodeList);
+			if(CollectionUtils.isNotEmpty(failedBarcodeList))
+			{
+				result.put(BlInventoryScanLoggingConstants.ZERO, failedBarcodeList);
+			}
+			
+			if(CollectionUtils.isNotEmpty(dirtyProductSerialModels))
+			{
 			result.put(BlInventoryScanLoggingConstants.ONE, dirtyProductSerialModels);
+			}
 		}
 	}
 
