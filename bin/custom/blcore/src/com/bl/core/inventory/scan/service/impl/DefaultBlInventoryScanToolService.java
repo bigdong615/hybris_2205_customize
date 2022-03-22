@@ -2,6 +2,7 @@ package com.bl.core.inventory.scan.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.BlInventoryLocationCategoryEnum;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.enums.PackagingInfoStatus;
 import com.bl.core.enums.ProductTypeEnum;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
@@ -98,6 +100,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     @Override
     public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode) {
         return getBlInventoryScanToolDao().getSerialProductsByBarcode(barcode);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode, final String version) {
+   	 return getBlInventoryScanToolDao().getSerialsByBarcodesAndVersion(barcode, version);
     }
 
 	/**
@@ -358,7 +368,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		this.updateLocationOnItemForStaged(blSerialProduct, unboxStatus, blInventoryLocationLocal);
 
 		/* Scan History Entry */
-		setBlLocationScanHistory(blSerialProduct, unboxStatus);
+		setBlLocationScanHistory(blSerialProduct, unboxStatus, blInventoryLocationLocal);
 	}
 
 	/**
@@ -390,15 +400,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param blSerialProduct
 	 *           the new bl location scan history
 	 */
-	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus)
+	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus, final BlInventoryLocationModel inventoryLocation)
 	{
 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
 				.create(BlInventoryLocationScanHistoryModel.class);
 		blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
 		blInventoryLocationScanHistory.setSerialId(blSerialProduct.getProductId());
 		blInventoryLocationScanHistory.setSerialBarcode(blSerialProduct.getBarcode());
-		blInventoryLocationScanHistory.setOcParent(blInventoryLocation.getParentInventoryLocation() != null ?
-				blInventoryLocation.getParentInventoryLocation().getCode() : StringUtils.EMPTY);
+		blInventoryLocationScanHistory.setOcParent(getParentLocationCode(inventoryLocation));
 		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
 		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
 		blInventoryLocationScanHistory.setScanTime(new Date());
@@ -409,6 +418,27 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			setLastOcLocationHistoryOnSerial(blSerialProduct, blInventoryLocationScanHistory);
 		}
+	}
+	
+	/**
+	 * Gets the parent location code from child location.
+	 *
+	 * @param locationModel the location model
+	 * @return the parent location code
+	 */
+	private String getParentLocationCode(final BlInventoryLocationModel locationModel)
+	{
+		if(Objects.nonNull(locationModel))
+		{
+			return locationModel.getParentInventoryLocation() != null ?
+					locationModel.getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+		}
+		else if(Objects.nonNull(getBlInventoryLocation()))
+		{
+			return getBlInventoryLocation().getParentInventoryLocation() != null ?
+					getBlInventoryLocation().getParentInventoryLocation().getCode() : StringUtils.EMPTY;
+		}
+		return StringUtils.EMPTY;
 	}
 
 	/**
@@ -2025,5 +2055,532 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public void setBlOrderService(BlOrderService blOrderService)
 	{
 		this.blOrderService = blOrderService;
+	}
+
+	@Override
+	public boolean checkIfLocationIsBin(final String barcode, final boolean checkInDb)
+	{
+		if (StringUtils.isNotBlank(barcode))
+		{
+			final boolean startsWithBin = barcode.startsWith(BlInventoryScanLoggingConstants.BIN);
+			if (checkInDb && startsWithBin)
+			{
+				final BlInventoryLocationModel inventoryLocationById = getInventoryLocationById(barcode);
+				if (Objects.isNull(inventoryLocationById) || Objects.isNull(inventoryLocationById.getInventoryType())
+						|| !BlInventoryScanLoggingConstants.BIN.equals(inventoryLocationById.getInventoryType().getCode()))
+				{
+					return false;
+				}
+				setBlInventoryLocation(inventoryLocationById);
+				return true;
+			}
+			return startsWithBin;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean checkIfGivenBarcodeIsValidLocation(final String barcode)
+	{
+		return StringUtils.isNotBlank(barcode)
+				&& BlInventoryScanLoggingConstants.getDefaultInventoryLocation().stream()
+						.anyMatch(location -> barcode.startsWith(location));
+	}
+
+	@Override
+	public Map<Integer, Collection<String>> performBinToCartScanning(final List<String> barcodes, final boolean isUnboxingFlow)
+	{
+		final Map<Integer, Collection<String>> errors = Maps.newHashMap();
+		final BlInventoryLocationModel binLocation = getBlInventoryScanToolDao()
+				.getInventoryLocationById(barcodes.get(BlCoreConstants.INT_ZERO));
+		final BlInventoryLocationModel blLocalInventoryLocation = getBlInventoryScanToolDao()
+				.getInventoryLocationById(barcodes.get(BlCoreConstants.INT_ONE));
+		checkForValidBinLocation(barcodes, errors, binLocation);
+		if (Objects.isNull(blLocalInventoryLocation))
+		{
+			if (errors.containsKey(BlCoreConstants.INT_SIX))
+			{
+				final List<String> collection = Lists.newArrayList(errors.get(BlCoreConstants.INT_SIX));
+				collection.add(barcodes.get(BlCoreConstants.INT_ONE));
+				errors.put(BlCoreConstants.INT_SIX, collection); // location not found in database
+			}
+			else
+			{
+				errors.put(BlCoreConstants.INT_SIX, Lists.newArrayList(barcodes.get(BlCoreConstants.INT_ONE))); // location not found in database
+			}
+			return errors;
+		}
+		else if (BooleanUtils.isTrue(isUnboxingFlow)
+				&& (Objects.isNull(blLocalInventoryLocation.getLocationCategory()) || (!BlInventoryScanUtility
+						.getDirtyPriorityCartLocations().contains(blLocalInventoryLocation.getLocationCategory().getCode())
+						&& !BlInventoryScanUtility.getDirtyCartLocations()
+								.contains(blLocalInventoryLocation.getLocationCategory().getCode()))))
+		{
+			errors.put(BlCoreConstants.INT_EIGHT, Lists.newArrayList(barcodes.get(BlCoreConstants.INT_ONE))); //not a DC or DPC location
+			return errors;
+		}
+		else if (BooleanUtils.isFalse(isUnboxingFlow) && (Objects.isNull(blLocalInventoryLocation.getLocationCategory())
+				|| isBinValidForTechEngScan(blLocalInventoryLocation)))
+		{
+			errors.put(BlCoreConstants.INT_TWO, Lists.newArrayList(barcodes.get(BlCoreConstants.INT_ONE))); //not a Workstation or CC or CPC or Repair Cart location
+			return errors;
+		}
+		binLocation.setParentInventoryLocation(blLocalInventoryLocation);
+		modelService.save(binLocation);
+		modelService.refresh(binLocation);
+		performBinScannedSerials(barcodes, errors, binLocation, blLocalInventoryLocation, isUnboxingFlow);
+		return errors;
+	}
+
+	/**
+	 * Checks if is bin valid for tech eng scan.
+	 *
+	 * @param blLocalInventoryLocation the bl local inventory location
+	 * @return true, if is bin valid for tech eng scan
+	 */
+	private boolean isBinValidForTechEngScan(final BlInventoryLocationModel blLocalInventoryLocation)
+	{
+		final List<String> listOfAllTechEngSupportedLocations = Lists.newArrayList();
+		listOfAllTechEngSupportedLocations.addAll(BlInventoryScanUtility.getTechEngCleanPriorityCartLocations());
+		listOfAllTechEngSupportedLocations.addAll(BlInventoryScanUtility.getTechEngCleanCartLocations());
+		listOfAllTechEngSupportedLocations.addAll(BlInventoryScanUtility.getTechEngRepairLocations());
+		listOfAllTechEngSupportedLocations.addAll(BlInventoryScanUtility.getTechEngWorkStationLocations());
+		return !listOfAllTechEngSupportedLocations.contains(blLocalInventoryLocation.getLocationCategory().getCode());
+	}
+
+	/**
+	 * Check for valid bin location.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param errors
+	 *           the errors
+	 * @param binLocation
+	 *           the bin location
+	 */
+	private void checkForValidBinLocation(final List<String> barcodes, final Map<Integer, Collection<String>> errors,
+			final BlInventoryLocationModel binLocation)
+	{
+		if (Objects.isNull(binLocation))
+		{
+			errors.put(BlCoreConstants.INT_SIX, Lists.newArrayList(barcodes.get(BlCoreConstants.INT_ZERO))); // location not found in database
+		}
+		else if (Objects.isNull(binLocation.getInventoryType())
+				|| !BlInventoryScanLoggingConstants.BIN.equals(binLocation.getInventoryType().getCode()))
+		{
+			errors.put(BlCoreConstants.INT_SEVEN, Lists.newArrayList(barcodes.get(BlCoreConstants.INT_ONE))); // not a bin location
+		}
+	}
+
+	/**
+	 * Perform bin scanned serials.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param errors
+	 *           the errors
+	 * @param binLocation
+	 *           the bin location
+	 * @param blLocalInventoryLocation
+	 *           the bl local inventory location
+	 * @param isUnboxingFlow
+	 *           the is unboxing flow
+	 */
+	private void performBinScannedSerials(final List<String> barcodes, final Map<Integer, Collection<String>> errors,
+			final BlInventoryLocationModel binLocation, final BlInventoryLocationModel blLocalInventoryLocation,
+			final boolean isUnboxingFlow)
+	{
+		final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion = getBlInventoryScanToolDao()
+				.getAllSerialsByBinLocationAndVersion(barcodes.get(BlCoreConstants.INT_ZERO), BlCoreConstants.ONLINE);
+		if(CollectionUtils.isNotEmpty(allSerialsByBinLocationAndVersion))
+		{
+			setBlInventoryLocation(blLocalInventoryLocation);
+			if (isUnboxingFlow)
+			{
+				performBinScannedSerialsToDPCOrDC(allSerialsByBinLocationAndVersion, errors, binLocation,
+						blLocalInventoryLocation);
+			}
+			else
+			{
+				performBinScannedSerialsToCPCOrCC(allSerialsByBinLocationAndVersion, errors, binLocation,
+						blLocalInventoryLocation);
+			}
+		}
+	}
+
+	/**
+	 * Perform bin scanned serials to CPC or CC.
+	 *
+	 * @param allSerialsByBinLocationAndVersion
+	 *           the all serials by bin location and version
+	 * @param barcodes
+	 *           the barcodes
+	 * @param errors
+	 *           the errors
+	 * @param binLocation
+	 *           the bin location
+	 * @param blLocalInventoryLocation
+	 *           the bl local inventory location
+	 */
+	private void performBinScannedSerialsToCPCOrCC(final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion,
+			final Map<Integer, Collection<String>> errors, final BlInventoryLocationModel binLocation,
+			final BlInventoryLocationModel blLocalInventoryLocation)
+	{		
+		final List<BlSerialProductModel> prioritySerials = allSerialsByBinLocationAndVersion.stream()
+				.filter(serial -> BooleanUtils.isTrue(serial.isDirtyPriorityStatus())).collect(Collectors.toList());
+		final List<BlSerialProductModel> nonPrioritySerials = allSerialsByBinLocationAndVersion.stream()
+				.filter(serial -> BooleanUtils.isFalse(serial.isDirtyPriorityStatus())).collect(Collectors.toList());
+		if (BlInventoryScanUtility.getTechEngWorkStationLocations()
+				.contains(blLocalInventoryLocation.getLocationCategory().getCode())
+				|| BlInventoryScanUtility.getTechEngRepairLocations()
+						.contains(blLocalInventoryLocation.getLocationCategory().getCode()))
+		{
+			performScanning(Lists.newArrayList(allSerialsByBinLocationAndVersion), binLocation, false);
+		}
+		else if (BlInventoryScanUtility.getTechEngCleanPriorityCartLocations()
+				.contains(blLocalInventoryLocation.getLocationCategory().getCode()))
+		{
+			performCleanPriorityCartTechEngScan(errors, prioritySerials, nonPrioritySerials, binLocation);
+		}
+		else if (BlInventoryScanUtility.getTechEngCleanCartLocations()
+				.contains(blLocalInventoryLocation.getLocationCategory().getCode()))
+		{
+			performCleanCartTechEngScan(errors, prioritySerials, nonPrioritySerials, binLocation);
+		}
+	}
+
+	/**
+	 * Perform clean cart tech eng scan.
+	 *
+	 * @param errors
+	 *           the errors
+	 * @param prioritySerials
+	 *           the priority serials
+	 * @param nonPrioritySerials
+	 *           the non priority serials
+	 * @param binLocation
+	 *           the bin location
+	 */
+	private void performCleanCartTechEngScan(final Map<Integer, Collection<String>> errors,
+			final List<BlSerialProductModel> prioritySerials, final List<BlSerialProductModel> nonPrioritySerials,
+			final BlInventoryLocationModel binLocation)
+	{
+		if (CollectionUtils.isEmpty(prioritySerials))
+		{
+			performScanning(nonPrioritySerials, binLocation, false);
+		}
+		else
+		{
+			addErrorsForSerials(errors, prioritySerials, nonPrioritySerials);
+		}
+	}
+
+	/**
+	 * Perform clean priority cart tech eng scan.
+	 *
+	 * @param errors
+	 *           the errors
+	 * @param prioritySerials
+	 *           the priority serials
+	 * @param nonPrioritySerials
+	 *           the non priority serials
+	 * @param binLocation
+	 *           the bin location
+	 */
+	private void performCleanPriorityCartTechEngScan(final Map<Integer, Collection<String>> errors,
+			final List<BlSerialProductModel> prioritySerials, final List<BlSerialProductModel> nonPrioritySerials,
+			final BlInventoryLocationModel binLocation)
+	{
+		if (CollectionUtils.isEmpty(nonPrioritySerials))
+		{
+			performScanning(prioritySerials, binLocation, true);
+		}
+		else
+		{
+			addErrorsForSerials(errors, prioritySerials, nonPrioritySerials);
+		}
+	}
+
+	/**
+	 * Perform scanning.
+	 *
+	 * @param serialsToScan
+	 *           the serials to scan
+	 * @param binLocation
+	 *           the bin location
+	 */
+	private void performScanning(final List<BlSerialProductModel> serialsToScan, final BlInventoryLocationModel binLocation, 
+			final boolean checkForDirtyStatus)
+	{
+		serialsToScan.forEach(serial -> {
+			if(checkForDirtyStatus && BooleanUtils.isTrue(serial.isDirtyPriorityStatus()))
+			{
+				serial.setDirtyPriorityStatus(Boolean.FALSE); // As per BL-822 AC.1 setting dirty to FALSE.
+			}
+			updateLocationOnItem(serial, binLocation, false);
+		});
+	}
+
+	/**
+	 * Adds the errors for serials.
+	 *
+	 * @param errors
+	 *           the errors
+	 * @param prioritySerials
+	 *           the priority serials
+	 * @param nonPrioritySerials
+	 *           the non priority serials
+	 */
+	private void addErrorsForSerials(final Map<Integer, Collection<String>> errors,
+			final List<BlSerialProductModel> prioritySerials, final List<BlSerialProductModel> nonPrioritySerials)
+	{
+		if(CollectionUtils.isNotEmpty(prioritySerials))
+		{
+			errors.put(0, prioritySerials.stream().map(BlSerialProductModel::getBarcode).collect(Collectors.toList()));//priority serials
+		}
+		if(CollectionUtils.isNotEmpty(nonPrioritySerials))
+		{
+			errors.put(1, nonPrioritySerials.stream().map(BlSerialProductModel::getBarcode).collect(Collectors.toList()));//non priority serials
+		}
+	}
+
+	/**
+	 * Perform bin scanned serials to DPC or DC.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param errors
+	 *           the errors
+	 * @param binLocation
+	 *           the bin location
+	 * @param blLocalInventoryLocation
+	 *           the bl local inventory location
+	 */
+	private void performBinScannedSerialsToDPCOrDC(final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion,
+			final Map<Integer, Collection<String>> errors, final BlInventoryLocationModel binLocation,
+			final BlInventoryLocationModel blLocalInventoryLocation)
+	{
+		setLocationDP(BlInventoryScanUtility.getDirtyPriorityCartLocations()
+				.contains(blLocalInventoryLocation.getLocationCategory().getCode()));
+		final List<String> subList = Lists.newArrayList();
+		removeUnboxedSerialsFromList(allSerialsByBinLocationAndVersion, subList);
+		if (CollectionUtils.isNotEmpty(subList))
+		{
+			processSerialParentScanning(errors, binLocation, allSerialsByBinLocationAndVersion, subList);
+		}
+	}
+
+	/**
+	 * Removes the unboxed serials from list.
+	 *
+	 * @param allSerialsByBinLocationAndVersion
+	 *           the all serials by bin location and version
+	 * @param subList
+	 *           the sub list
+	 */
+	private void removeUnboxedSerialsFromList(final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion,
+			final List<String> subList)
+	{
+		allSerialsByBinLocationAndVersion.forEach(serial -> {
+			if (!serial.getSerialStatus().getCode().equals(SerialStatusEnum.UNBOXED.getCode())
+					&& StringUtils.isNotBlank(serial.getBarcode()))
+			{
+				subList.add(serial.getBarcode());
+			}
+		});
+	}
+
+	/**
+	 * Process serial parent scanning.
+	 *
+	 * @param errors
+	 *           the errors
+	 * @param binLocation
+	 *           the bin location
+	 * @param allSerialsByBinLocationAndVersion
+	 *           the all serials by bin location and version
+	 * @param subList
+	 *           the sub list
+	 */
+	private void processSerialParentScanning(final Map<Integer, Collection<String>> errors,
+			final BlInventoryLocationModel binLocation, final Collection<BlSerialProductModel> allSerialsByBinLocationAndVersion,
+			final List<String> subList)
+	{
+		final Collection<PackagingInfoModel> packagingInfoModels = this.getPackageForSerials(subList);
+		if (CollectionUtils.isNotEmpty(packagingInfoModels))
+		{
+			final Set<String> packageSerialBarcodes = Sets.newHashSet();
+			final Set<String> missingSerialPackages = Sets.newHashSet();
+			final Set<String> barcodesPresentInPackage = Sets.newHashSet();
+			getSerialBarcodesFromPackages(packagingInfoModels, packageSerialBarcodes);
+			separateSerialsMissingAndPresentInPackages(subList, packageSerialBarcodes, missingSerialPackages,
+					barcodesPresentInPackage);
+			if(CollectionUtils.isNotEmpty(missingSerialPackages))
+			{
+				errors.put(BlCoreConstants.INT_NINE, Lists.newArrayList(missingSerialPackages));
+			}
+			errors.putAll(doPerformDpcOrDcUnboxing(barcodesPresentInPackage, binLocation, packagingInfoModels, Maps.newHashMap()));
+		}
+		else
+		{
+			errors.put(BlCoreConstants.INT_NINE, subList);
+		}		
+	}
+
+	/**
+	 * Gets the serial barcodes from packages.
+	 *
+	 * @param packagingInfoModels
+	 *           the packaging info models
+	 * @param packageSerialBarcodes
+	 *           the package serial barcodes
+	 * @return the serial barcodes from packages
+	 */
+	private void getSerialBarcodesFromPackages(final Collection<PackagingInfoModel> packagingInfoModels,
+			final Set<String> packageSerialBarcodes)
+	{
+		packagingInfoModels.forEach(pack -> pack.getSerialProducts().forEach(blSerial -> {
+			if (blSerial instanceof BlSerialProductModel)
+			{
+				packageSerialBarcodes.add(((BlSerialProductModel) blSerial).getBarcode());
+			}
+		}));
+	}
+
+	/**
+	 * Separate serials missing and present in packages.
+	 *
+	 * @param subList
+	 *           the sub list
+	 * @param packageSerialBarcodes
+	 *           the package serial barcodes
+	 * @param missingSerialPackages
+	 *           the missing serial packages
+	 * @param barcodesPresentInPackage
+	 *           the barcodes present in package
+	 */
+	private void separateSerialsMissingAndPresentInPackages(final List<String> subList, final Set<String> packageSerialBarcodes,
+			final Set<String> missingSerialPackages, final Set<String> barcodesPresentInPackage)
+	{
+		subList.forEach(serialBarcode -> {
+			if (packageSerialBarcodes.stream().anyMatch(serialBarcode::equals))
+			{
+				barcodesPresentInPackage.add(serialBarcode);
+			}
+			else
+			{
+				missingSerialPackages.add(serialBarcode);
+			}
+		});
+	}
+
+	@Override
+	public Map<Integer, Collection<String>> doSerialLocationToBinScanningForUnboxing(final List<String> barcodes)
+	{
+		final Map<Integer, Collection<String>> errors = Maps.newHashMap();
+		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
+				.collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(filteredLocationList) && filteredLocationList.size() > BlCoreConstants.INT_ONE)
+		{
+			errors.put(BlCoreConstants.INT_TWELVE, Lists.newArrayList());
+			return errors;
+		}
+		final List<String> serialBarcodeList = barcodes.subList(0, barcodes.size() - BlCoreConstants.INT_ONE);
+		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = getBlInventoryScanToolDao()
+				.getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE);
+		if (CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
+		{
+			errors.put(BlCoreConstants.INT_TEN, serialBarcodeList); // Serial Not found in system
+		}
+		else
+		{
+			final List<String> missingBarcodesInDB = Lists.newArrayList();
+			serialBarcodeList.forEach(barcode -> {
+				if (serialsByBarcodesAndVersion.stream().noneMatch(blSerial -> barcode.equals(blSerial.getBarcode())))
+				{
+					missingBarcodesInDB.add(barcode);
+				}
+			});
+			if (CollectionUtils.isNotEmpty(missingBarcodesInDB))
+			{
+				errors.put(BlCoreConstants.INT_TEN, missingBarcodesInDB); // Serial Not found in system
+			}
+			final List<String> dirtyPrioritySerialList = Lists.newArrayList();
+			final List<String> dirtySerialList = Lists.newArrayList();
+			serialsByBarcodesAndVersion.forEach(blSerialProductModel -> {
+				if (blSerialProductModel.isDirtyPriorityStatus() || doCheckDirtyPriorityStatus(blSerialProductModel))
+				{
+					dirtyPrioritySerialList.add(blSerialProductModel.getBarcode());
+				}
+				else
+				{
+					dirtySerialList.add(blSerialProductModel.getBarcode());
+				}
+				updateLocationOnItem(blSerialProductModel, getBlInventoryLocation(), Boolean.FALSE);
+			});
+			addToErrorList(errors, dirtyPrioritySerialList, dirtySerialList);
+		}
+		return errors;
+	}
+
+	/**
+	 * Adds the to error list.
+	 *
+	 * @param errors
+	 *           the errors
+	 * @param dirtyPrioritySerialList
+	 *           the dirty priority serial list
+	 * @param dirtySerialList
+	 *           the dirty serial list
+	 */
+	private void addToErrorList(final Map<Integer, Collection<String>> errors, final List<String> dirtyPrioritySerialList,
+			final List<String> dirtySerialList)
+	{
+		if (CollectionUtils.isNotEmpty(dirtyPrioritySerialList))
+		{
+			errors.put(BlCoreConstants.INT_ELEVEN, dirtyPrioritySerialList); //dirty priority barcodes
+		}
+		if (CollectionUtils.isNotEmpty(dirtySerialList))
+		{
+			errors.put(BlCoreConstants.INT_THIRTEEN, dirtySerialList); //dirty barcodes
+		}
+	}
+
+	@Override
+	public Map<Integer, Collection<String>> doSerialLocationToBinScanningForTechEng(List<String> barcodes)
+	{
+		final Map<Integer, Collection<String>> errors = Maps.newHashMap();
+		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
+				.collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(filteredLocationList) && filteredLocationList.size() > BlCoreConstants.INT_ONE)
+		{
+			errors.put(BlCoreConstants.INT_TWELVE, Lists.newArrayList()); //More than one location found
+			return errors;
+		}
+		final List<String> serialBarcodeList = barcodes.subList(0, barcodes.size() - BlCoreConstants.INT_ONE);
+		final Collection<BlSerialProductModel> serialsByBarcodesAndVersion = getBlInventoryScanToolDao()
+				.getSerialsByBarcodesAndVersion(serialBarcodeList, BlCoreConstants.ONLINE);
+		if (CollectionUtils.isEmpty(serialsByBarcodesAndVersion))
+		{
+			errors.put(BlCoreConstants.INT_TEN, serialBarcodeList); // Serial Not found in system
+		}
+		else
+		{
+			final List<String> missingBarcodesInDB = Lists.newArrayList();
+			serialBarcodeList.forEach(barcode -> {
+				if (serialsByBarcodesAndVersion.stream().noneMatch(blSerial -> barcode.equals(blSerial.getBarcode())))
+				{
+					missingBarcodesInDB.add(barcode);
+				}
+			});
+			if (CollectionUtils.isNotEmpty(missingBarcodesInDB))
+			{
+				errors.put(BlCoreConstants.INT_TEN, missingBarcodesInDB); // Serial Not found in system
+			}
+			serialsByBarcodesAndVersion.forEach(serial -> updateLocationOnItem(serial, getBlInventoryLocation(), Boolean.FALSE));
+		}
+		return errors;
 	}
 }
