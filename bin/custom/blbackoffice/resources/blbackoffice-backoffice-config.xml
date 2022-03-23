@@ -1948,7 +1948,7 @@
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+				<na:message>blbackoffice.unboxing.scan.tool.wizard.notification.barcode.batch.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
