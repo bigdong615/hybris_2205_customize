@@ -1242,27 +1242,6 @@
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
-
-	<context merge-by="type" parent="GenericItem" type="StockLevel"
-				component="editor-area">
-			<editorArea:editorArea
-				xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
-				<editorArea:tab name="hmc.properties">
-					<editorArea:section name="hmc.section.stocklevel.stock">
-						<editorArea:attribute qualifier="date">
-							<editorArea:editor-parameter>
-								<editorArea:name>timeZoneReadOnly</editorArea:name>
-								<editorArea:value>false</editorArea:value>
-							</editorArea:editor-parameter>
-							<editorArea:editor-parameter>
-								<editorArea:name>selectedTimeZone</editorArea:name>
-								<editorArea:value>GMT+00:00</editorArea:value>
-							</editorArea:editor-parameter>
-						</editorArea:attribute>
-					</editorArea:section>
-				</editorArea:tab>
-			</editorArea:editorArea>
-		</context>
 		
 	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
