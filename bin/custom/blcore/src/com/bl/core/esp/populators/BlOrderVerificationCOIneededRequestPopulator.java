@@ -7,6 +7,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.orderverification.OrderVerificationCOIneededEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationCOIneededData;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -91,6 +92,7 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
     data.setVerificationtext("Dummy verification text"); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
     data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
+    data.setCoiExpirationDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()));
     orderVerificationCOIneededEventRequest.setData(data);
   }
 

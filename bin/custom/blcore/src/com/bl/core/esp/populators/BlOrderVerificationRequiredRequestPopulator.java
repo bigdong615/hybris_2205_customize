@@ -4,6 +4,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationRequiredEventData;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
@@ -84,6 +85,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
+    orderVerificationRequiredEventData.setCoiExpirationDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()));
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }
