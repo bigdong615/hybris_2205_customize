@@ -240,8 +240,9 @@ UPDATE Country ; isocode[unique=true] ; name[lang=$lang]
                ; TW                   ; "Taiwan, China"                                
                ; TZ                   ; "Tanzania"                                     
                ; UA                   ; "Ukraine"                                      
-               ; UG                   ; "Uganda"                                       
-               ; UM                   ; "United States Minor Outlying Islands"         
+               ; UG                   ; "Uganda"
+#Commenting the beow two regions as part of BL-1860
+#               ; UM                   ; "United States Minor Outlying Islands"
                ; US                   ; "United States"                                
                ; UY                   ; "Uruguay"                                      
                ; UZ                   ; "Uzbekistan"                                   
