@@ -540,7 +540,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(maxValue, zoneDeliveryModeModel);
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
-            if (BooleanUtils.isFalse(order.getIsRentalCart())) {
+            if (BooleanUtils.isFalse(order.getIsRentalOrder())) {
                 return (shippingCostModel.getAmount() * Double.valueOf(maxValue) / BlInventoryScanLoggingConstants.TWO);
             }
             return shippingCostModel.getAmount() * Double.valueOf(maxValue);

@@ -122,7 +122,7 @@
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                   <c:choose>
-                                    <c:when test="${order.newGearOrder eq true}">
+                                    <c:when test="${order.retailGearOrder eq true}">
                                       <p class="my-2"> ${order.status.code}</p>
                                     </c:when>
                                     <c:otherwise>

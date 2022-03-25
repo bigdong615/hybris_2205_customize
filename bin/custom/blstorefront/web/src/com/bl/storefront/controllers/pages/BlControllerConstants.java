@@ -238,6 +238,8 @@ public class BlControllerConstants
 	public static final String RENTAL_CART_FALSE = "CartRAO(rentalCart == Boolean.FALSE)";
 	public static final String CHECK_FIRST_TIME_USER = "CartRAO(firstTimeCustomer == Boolean.TRUE)";
 	public static final String Y_RENTAL_CART_CONDITION = "y_rental_cart_condition";
+	public static final String OPERATOR = "operator";
+	public static final String LESS_THAN_OR_EQUAL = AmountOperator.LESS_THAN_OR_EQUAL.toString();
 
 	private BlControllerConstants()
 	{

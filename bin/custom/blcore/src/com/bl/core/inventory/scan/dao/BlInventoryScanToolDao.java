@@ -96,4 +96,27 @@ public interface BlInventoryScanToolDao {
 	 * @return BlSerialProductModel
 	 */
 	 BlSerialProductModel getSerialProductByBarcode(final String barcode);
+	 
+	 /**
+		 * Gets the all serials by bin location and version.
+		 *
+		 * @param binLocationId
+		 *           the bin location id
+		 * @param version
+		 *           the version
+		 * @return the all serials by bin location and version
+		 */
+		public Collection<BlSerialProductModel> getAllSerialsByBinLocationAndVersion(final String binLocationId, final String version);
+
+		/**
+		 * Gets the serials by barcodes and version.
+		 *
+		 * @param barcodes
+		 *           the barcodes
+		 * @param version
+		 *           the version
+		 * @return the serials by barcodes and version
+		 */
+		public Collection<BlSerialProductModel> getSerialsByBarcodesAndVersion(final Collection<String> barcodes,
+				final String version);
 }

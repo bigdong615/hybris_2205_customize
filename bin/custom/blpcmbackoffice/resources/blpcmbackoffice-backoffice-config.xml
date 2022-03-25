@@ -147,7 +147,7 @@
 					</ea:attribute>
 					<ea:attribute qualifier="titleTag" label="label.pcmbackoffice.titletag"/>
 					<ea:attribute qualifier="specifications" editor="com.hybris.cockpitng.editor.wysiwyg"/>
-					<ea:attribute qualifier="subpartsQty" />
+					<ea:attribute qualifier="subpartProducts" />
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.rentaldetails">
 					<ea:attribute qualifier="rentalVideosLink" />
@@ -322,7 +322,7 @@
 					<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
-					<ea:attribute qualifier="newGearInStock"/>
+					<ea:attribute qualifier="retailGearInStock"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">

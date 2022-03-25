@@ -1,0 +1,20 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLKeywords.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLKeywords; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLKeywords	; CatalogVersion	; CatalogVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLKeywords	; Language      	; Language      	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLKeywords	; Keyword       	; Keyword       	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLKeywords	; Catalog       	; Catalog       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLKeywords:CatalogVersion	; version       	; CatalogVersion:version	;                                 	; true	;  
+; InboundBLKeywords:CatalogVersion	; catalog       	; CatalogVersion:catalog	; InboundBLKeywords:Catalog       	; true	;  
+; InboundBLKeywords:Language      	; isocode       	; Language:isocode      	;                                 	; true	;  
+; InboundBLKeywords:Keyword       	; language      	; Keyword:language      	; InboundBLKeywords:Language      	; true	;  
+; InboundBLKeywords:Keyword       	; catalogVersion	; Keyword:catalogVersion	; InboundBLKeywords:CatalogVersion	; true	;  
+; InboundBLKeywords:Keyword       	; keyword       	; Keyword:keyword       	;                                 	; true	;  
+; InboundBLKeywords:Catalog       	; id            	; Catalog:id            	;                                 	; true	;  

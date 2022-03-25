@@ -1236,6 +1236,15 @@
 		<property name="typeCode" value="Notes"/>
 	</bean>
 
+	<alias name="blGiftCardPrepareInterceptor" alias="blGiftCardPrepareInterceptor"/>
+	<bean id="blGiftCardPrepareInterceptor" class="com.bl.core.model.interceptor.BlGiftCardPrepareInterceptor"/>
+	
+	<!-- Adding GiftCardModel interceptor to Interceptor mapping list -->
+	<bean id="blGiftCardPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blGiftCardPrepareInterceptor"/>
+		<property name="typeCode" value="GiftCard"/>
+	</bean>
+	
 	<bean id="blVerificationDocumentService" class="com.bl.core.services.documentupload.impl.DefaultBlVerificationDocumentService">
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
@@ -1869,16 +1878,6 @@
 	</bean>
 	<!-- BL-1854 End-->
 	
-	<!-- BL-1872 Start -->
-	<alias name="defaultBlTestingGearNeededPrepareInterceptor" alias="blTestingGearNeededPrepareInterceptor"/>
-    <bean id="defaultBlTestingGearNeededPrepareInterceptor"    class="com.bl.core.model.interceptor.BlTestingGearNeededPrepareInterceptor"/>
-
-    <bean id="blTestingGearNeededPrepareInterceptorrMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
-        <property name="interceptor" ref="blTestingGearNeededPrepareInterceptor"/>
-        <property name="typeCode" value="BlTestingGearNeeded"/>
-    </bean>
-    <!-- BL-1872 End -->
-    
     <!-- BL-1764 Starts -->
     <alias name="defaultBlPromotionDao" alias="promotionDao"/>
     <bean id="defaultBlPromotionDao" class="com.bl.core.dao.promotion.impl.DefaultBlPromotionDao" parent="defaultPromotionDao" />
@@ -1886,4 +1885,14 @@
     <alias alias="ruleFirstTimeUserConditionTranslator" name="defaultRuleFirstTimeUserConditionTranslator" />
     <bean id="defaultRuleFirstTimeUserConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleFirstTimeUserConditionTranslator" />
     <!-- BL-1764 Ends -->
+    
+    <alias name="defaultBlPlaceOrderMethodHook" alias="orderMethodHook" />
+    <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
+		<property name="modelService" ref="modelService" />
+		<property name="blOrderService" ref="blOrderService"/>
+	</bean>
+	
+	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="orderMethodHook" />
+	</bean>
 </beans>

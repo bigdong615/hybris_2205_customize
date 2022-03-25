@@ -1,0 +1,92 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPartsNeededRepairLog.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPartsNeededRepairLog; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPartsNeededRepairLog	; CustomerResponsibleEnum     	; CustomerResponsibleEnum     	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; CustomerCollectionStatusEnum	; CustomerCollectionStatusEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; GearGaurdEnum               	; GearGaurdEnum               	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; RepairReasonsEnum           	; RepairReasonsEnum           	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; Notes                       	; Notes                       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; Catalog                     	; Catalog                     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; ConsignmentEntry            	; ConsignmentEntry            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; AbstractOrder               	; AbstractOrder               	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; PartsNeededRepairLog        	; PartsNeededRepairLog        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; IssueFrequencyEnum          	; IssueFrequencyEnum          	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; CatalogVersion              	; CatalogVersion              	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; CatalogUnawareMedia         	; CatalogUnawareMedia         	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; RepairTechClaimEnum         	; RepairTechClaimEnum         	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; VendorsEnum                 	; VendorsEnum                 	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; RepairBlameEnum             	; RepairBlameEnum             	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; BlSerialProduct             	; BlSerialProduct             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; PartsStatusEnum             	; PartsStatusEnum             	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; CustomerChargedEnum         	; CustomerChargedEnum         	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; NotesEnum                   	; NotesEnum                   	; 	; ALL_SUBTYPES           	;  
+; InboundBLPartsNeededRepairLog	; Consignment                 	; Consignment                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPartsNeededRepairLog	; RepairLogStatusEnum         	; RepairLogStatusEnum         	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPartsNeededRepairLog:CustomerResponsibleEnum     	; code                          	; CustomerResponsibleEnum:code                       	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:CustomerCollectionStatusEnum	; code                          	; CustomerCollectionStatusEnum:code                  	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:GearGaurdEnum               	; code                          	; GearGaurdEnum:code                                 	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:RepairReasonsEnum           	; code                          	; RepairReasonsEnum:code                             	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:Notes                       	; order                         	; Notes:order                                        	; InboundBLPartsNeededRepairLog:AbstractOrder               	; 	;  
+; InboundBLPartsNeededRepairLog:Notes                       	; type                          	; Notes:type                                         	; InboundBLPartsNeededRepairLog:NotesEnum                   	; true	;  
+; InboundBLPartsNeededRepairLog:Catalog                     	; id                            	; Catalog:id                                         	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:ConsignmentEntry            	; consignment                   	; ConsignmentEntry:consignment                       	; InboundBLPartsNeededRepairLog:Consignment                 	; true	;  
+; InboundBLPartsNeededRepairLog:AbstractOrder               	; code                          	; AbstractOrder:code                                 	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; customerCharged               	; PartsNeededRepairLog:customerCharged               	; InboundBLPartsNeededRepairLog:CustomerChargedEnum         	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; costForLabor                  	; PartsNeededRepairLog:costForLabor                  	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; repairVendor                  	; PartsNeededRepairLog:repairVendor                  	; InboundBLPartsNeededRepairLog:VendorsEnum                 	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; repairReasons                 	; PartsNeededRepairLog:repairReasons                 	; InboundBLPartsNeededRepairLog:RepairReasonsEnum           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; notesForIssue                 	; PartsNeededRepairLog:notesForIssue                 	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; assessmentNotes               	; PartsNeededRepairLog:assessmentNotes               	; InboundBLPartsNeededRepairLog:Notes                       	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; selectedGearGaurd             	; PartsNeededRepairLog:selectedGearGaurd             	; InboundBLPartsNeededRepairLog:GearGaurdEnum               	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; conditionRating               	; PartsNeededRepairLog:conditionRating               	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; repairLogStatus               	; PartsNeededRepairLog:repairLogStatus               	; InboundBLPartsNeededRepairLog:RepairLogStatusEnum         	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; lastUserChangedConditionRating	; PartsNeededRepairLog:lastUserChangedConditionRating	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; totalForPartsAndLaborCost     	; PartsNeededRepairLog:totalForPartsAndLaborCost     	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; partsStatus                   	; PartsNeededRepairLog:partsStatus                   	; InboundBLPartsNeededRepairLog:PartsStatusEnum             	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; partCost                      	; PartsNeededRepairLog:partCost                      	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; consignmentEntry              	; PartsNeededRepairLog:consignmentEntry              	; InboundBLPartsNeededRepairLog:ConsignmentEntry            	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; itemBarcode                   	; PartsNeededRepairLog:itemBarcode                   	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; cause                         	; PartsNeededRepairLog:cause                         	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; issueLocation                 	; PartsNeededRepairLog:issueLocation                 	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; costForParts                  	; PartsNeededRepairLog:costForParts                  	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; labourHours                   	; PartsNeededRepairLog:labourHours                   	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; labourRate                    	; PartsNeededRepairLog:labourRate                    	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; serialCode                    	; PartsNeededRepairLog:serialCode                    	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; repairLogId                   	; PartsNeededRepairLog:repairLogId                   	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; blame                         	; PartsNeededRepairLog:blame                         	; InboundBLPartsNeededRepairLog:RepairBlameEnum             	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; lastRepairReturnDay           	; PartsNeededRepairLog:lastRepairReturnDay           	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; frequency                     	; PartsNeededRepairLog:frequency                     	; InboundBLPartsNeededRepairLog:IssueFrequencyEnum          	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; order                         	; PartsNeededRepairLog:order                         	; InboundBLPartsNeededRepairLog:AbstractOrder               	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; serialProduct                 	; PartsNeededRepairLog:serialProduct                 	; InboundBLPartsNeededRepairLog:BlSerialProduct             	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; repairTechsForClaim           	; PartsNeededRepairLog:repairTechsForClaim           	; InboundBLPartsNeededRepairLog:RepairTechClaimEnum         	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; otherRepairReasons            	; PartsNeededRepairLog:otherRepairReasons            	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; customerCollectionStatus      	; PartsNeededRepairLog:customerCollectionStatus      	; InboundBLPartsNeededRepairLog:CustomerCollectionStatusEnum	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; recommendToRepair             	; PartsNeededRepairLog:recommendToRepair             	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; otherRepairsReason            	; PartsNeededRepairLog:otherRepairsReason            	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; otherDocument                 	; PartsNeededRepairLog:otherDocument                 	; InboundBLPartsNeededRepairLog:CatalogUnawareMedia         	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; customerResponsible           	; PartsNeededRepairLog:customerResponsible           	; InboundBLPartsNeededRepairLog:CustomerResponsibleEnum     	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; creationtime                  	; PartsNeededRepairLog:creationtime                  	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; damageWaiverPaid              	; PartsNeededRepairLog:damageWaiverPaid              	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; modifiedtime                  	; PartsNeededRepairLog:modifiedtime                  	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; associatedConsignment         	; PartsNeededRepairLog:associatedConsignment         	; InboundBLPartsNeededRepairLog:Consignment                 	; 	;  
+; InboundBLPartsNeededRepairLog:PartsNeededRepairLog        	; ocLocation                    	; PartsNeededRepairLog:ocLocation                    	;                                                           	; 	;  
+; InboundBLPartsNeededRepairLog:IssueFrequencyEnum          	; code                          	; IssueFrequencyEnum:code                            	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:CatalogVersion              	; version                       	; CatalogVersion:version                             	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:CatalogVersion              	; catalog                       	; CatalogVersion:catalog                             	; InboundBLPartsNeededRepairLog:Catalog                     	; true	;  
+; InboundBLPartsNeededRepairLog:CatalogUnawareMedia         	; code                          	; CatalogUnawareMedia:code                           	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:RepairTechClaimEnum         	; code                          	; RepairTechClaimEnum:code                           	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:VendorsEnum                 	; code                          	; VendorsEnum:code                                   	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:RepairBlameEnum             	; code                          	; RepairBlameEnum:code                               	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:BlSerialProduct             	; code                          	; BlSerialProduct:code                               	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:BlSerialProduct             	; catalogVersion                	; BlSerialProduct:catalogVersion                     	; InboundBLPartsNeededRepairLog:CatalogVersion              	; true	;  
+; InboundBLPartsNeededRepairLog:PartsStatusEnum             	; code                          	; PartsStatusEnum:code                               	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:CustomerChargedEnum         	; code                          	; CustomerChargedEnum:code                           	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:NotesEnum                   	; code                          	; NotesEnum:code                                     	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:Consignment                 	; code                          	; Consignment:code                                   	;                                                           	; true	;  
+; InboundBLPartsNeededRepairLog:RepairLogStatusEnum         	; code                          	; RepairLogStatusEnum:code                           	;                                                           	; true	;  

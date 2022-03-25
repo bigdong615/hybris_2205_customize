@@ -257,6 +257,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HTML_ENABLED = "HTML Enabled";
 
 	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+	public static final String NUMERIC_VALUES = "0123456789" ;
+	public static final long SEVEN = 7 ;
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
 
@@ -535,6 +537,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String BL_ORDER_VALIDATE_INTERCEPTOR = "BlOrderValidateInterceptor";
 	public static final String BL_REPAIR_LOG_PREPARE_INTERCEPTOR = "BlRepairLogPrepareInterceptor";
+	public static final String BL_GIFT_CARD_LOG_PREPARE_INTERCEPTOR = "BlGiftCardPrepareInterceptor";
 
 	public static final String ACTIVE_STATUS = "ACTIVE";
 	public static final String PARTIALLY_UNBOXED = "PARTIALLY_UNBOXED";
@@ -588,6 +591,15 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final int INT_ONE = 1;
    public static final int INT_TWO = 2;
+   public static final int INT_SIX = 6;
+   public static final int INT_SEVEN = 7;
+   public static final int INT_EIGHT = 8;
+   public static final int INT_ZERO = 0;
+   public static final int INT_NINE = 9;
+   public static final int INT_TEN = 10;
+   public static final int INT_ELEVEN = 11;
+   public static final int INT_TWELVE = 12;
+   public static final int INT_THIRTEEN = 13;
    public static final String CARD_MASK = "******";
    public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
    public static final String MASKED_CARD_FORMAT = "****%s";
@@ -611,6 +623,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String RULE_STATUS = "ruleStatus";
 	public static final String PROMO_GROUP = "promoGroup";
+	public static final String BARCODE_LIST = "barcodeList";
 
 
 	private BlCoreConstants()

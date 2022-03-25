@@ -85,7 +85,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             data.setCustomername(getRequestValue(userModel.getName()));
         }
         data.setType(getOrderType(orderModel));
-        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
         data.setStatus(getRequestValue(getOrderStatus(orderModel)));
         data.setDateplaced(formatter.format(orderModel.getDate()));
@@ -105,7 +105,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setDiscountamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
         data.setTotalcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
         data.setDiscounttext(StringUtils.EMPTY);
-        if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+        if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
           data.setExpectedshippingdate(formatter.format(orderModel.getRentalStartDate()));
           data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
