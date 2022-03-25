@@ -1661,6 +1661,24 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+            <na:notifications eventType="firstScanLocationBinErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.first.scan.bin.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanToBeCPCOrCC" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.tech.eng.last.scan.cpc.cc.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="techEngbinTypeError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.tech.eng.not.bin.type.location</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
         </na:notification-area>
     </context>
 
@@ -1917,6 +1935,12 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+			<na:notifications eventType="firstScanLocationBinErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.first.scan.bin.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
 			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
 				<na:references linksEnabled="true">
@@ -1924,13 +1948,31 @@
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+				<na:message>blbackoffice.unboxing.scan.tool.wizard.notification.barcode.batch.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="binTypeError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.not.bin.type.location</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="lastScanToBeDPCOrDC" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.last.scan.bpc.dp.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="missingBarcodesPackage" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.serial.package.missing</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>

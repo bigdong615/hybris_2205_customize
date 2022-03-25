@@ -100,6 +100,8 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
+    public static final String BIN_TYPE_ERROR_MSG = "{} : Not a BIN type location";
+    public static final String LAST_SCAN_DPC_OR_DC_TYPE_ERROR_MSG = "If the first scan is a BIN, the second must be a Dirty Priority Cart or Dirty Cart location";
     public static final String LAST_SCAN_ERROR_FAILURE_MSG = "If the first scan is a tracking number, all following scans must be tracking numbers and the last scan must be a location";
  	public static final String MANY_LOCATION_ERROR_FAILURE_MSG = "Only a single location scan is allowed and it must be last when scanning in tracking numbers to locations";
  	public static final String FIRST_SCAN_EMPTY_ERROR_FAILURE_MSG = "First scan is blank. First scan must be an item or a BIN or a tracking number";
@@ -332,9 +334,30 @@ public class BlInventoryScanLoggingConstants {
     public static final String ICC_INPUT_EMPTY_ERROR_NOTIF_MSG = "Input fields can not be empty!!";
     public static final String FETCHING_CONSIGNMENTS_THAT_WILL_RETURN_TODAY_FOR_SERIAL = "Fetching Consignments that will return today for serial: {}";
     public static final String FIRST_SCAN_LOCATION_ERROR_FAILURE = "firstScanLocationErrorFailure";
+    public static final String FIRST_SCAN_LOCATION_BIN_ERROR_FAILURE = "firstScanLocationBinErrorFailure";
     public static final String UNBOX_SAN_TOOL_DC_FROM_DPC_FAILURE = "unboxInvalidDCLocationFromDPErrorFailure";
+    
+    public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG_FOR_BIN = "If the first scan is a BIN, only 2 scans are allowed and the second must be a location";
+    public static final String BIN_TYPE_ERROR = "binTypeError";
+    public static final String TECH_ENG_BIN_TYPE_ERROR = "techEngbinTypeError";
+    public static final String LAST_SCAN_DPC_OR_DC_TYPE_ERROR = "lastScanToBeDPCOrDC";
+    public static final String LAST_SCAN_CPC_OR_CC_TYPE_ERROR = "lastScanToBeCPCOrCC";
+    public static final String LAST_SCAN_CPC_OR_CC_TYPE_ERROR_MSG = "If the first scan is a BIN, the second must be a Tech. Eng. WorkStation OR Clean Priority Cart OR Clean Cart OR Repair Cart location";
+    public static final String MISSING_BARCODE_PACKAGE_ERROR = "missingBarcodesPackage";
+    public static final String MISSING_BARCODE_PACKAGE_ERROR_MSG = "No package created for the Serial {}. Unboxing is not successful";
+    public static final int INT_SIX = 6;
+    public static final int INT_SEVEN = 7;
+    public static final int INT_EIGHT = 8;
+    public static final int INT_ZERO = 0;
+    public static final int INT_NINE = 9;
+    public static final int INT_TEN = 10;
+    public static final int INT_ELEVEN = 11;
+    public static final int INT_TWELVE = 12;
+    public static final int INT_THIRTEEN = 13;
 
     public static final String REGEX_N = "\n";
+    public static final String ONLINE = "Online";
+    public static final String FOR_PRODUCT_MESSAGE = " for product: ";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -356,7 +379,7 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(CAW);
         defaultLocations.add(IN_HOUSE);
         defaultLocations.add(MAW);
-        defaultLocations.add(CAW);
+        defaultLocations.add(CAM);
         defaultLocations.add(BIN);
         defaultLocations.add(UNKNOWN_CARRIER);
         defaultLocations.add(ORD);

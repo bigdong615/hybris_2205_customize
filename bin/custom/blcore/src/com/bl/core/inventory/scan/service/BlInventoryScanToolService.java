@@ -299,5 +299,65 @@ public interface BlInventoryScanToolService {
 	 * @param barcodes
 	 */
 	public void updateSerialLastScanLocation(final ConsignmentModel consignmentModel,final String parentLocation);
+	
+	/**
+	 * Check if location is bin.
+	 *
+	 * @param barcode
+	 *           the barcode
+	 * @param checkInDb
+	 *           the check in db
+	 * @return true, if successful
+	 */
+	public boolean checkIfLocationIsBin(final String barcode, final boolean checkInDb);
+
+	/**
+	 * Check if given barcode is valid location.
+	 *
+	 * @param barcode
+	 *           the barcode
+	 * @return true, if successful
+	 */
+	public boolean checkIfGivenBarcodeIsValidLocation(final String barcode);
+
+	/**
+	 * Perform bin to cart scanning.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @param isUnboxingFlow
+	 *           the is unboxing flow
+	 * @return the map
+	 */
+	public Map<Integer, Collection<String>> performBinToCartScanning(final List<String> barcodes, final boolean isUnboxingFlow);
+
+	/**
+	 * Do serial location to bin scanning for unboxing.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @return the map
+	 */
+	public Map<Integer, Collection<String>> doSerialLocationToBinScanningForUnboxing(final List<String> barcodes);
+
+	/**
+	 * Do serial location to bin scanning for tech eng.
+	 *
+	 * @param barcodes
+	 *           the barcodes
+	 * @return the map
+	 */
+	public Map<Integer, Collection<String>> doSerialLocationToBinScanningForTechEng(final List<String> barcodes);
+
+	/**
+	 * Gets the serial products by barcode.
+	 *
+	 * @param barcode
+	 *           the barcode
+	 * @param version
+	 *           the version
+	 * @return the serial products by barcode
+	 */
+	public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode, final String version);
 
 }

@@ -591,6 +591,15 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final int INT_ONE = 1;
    public static final int INT_TWO = 2;
+   public static final int INT_SIX = 6;
+   public static final int INT_SEVEN = 7;
+   public static final int INT_EIGHT = 8;
+   public static final int INT_ZERO = 0;
+   public static final int INT_NINE = 9;
+   public static final int INT_TEN = 10;
+   public static final int INT_ELEVEN = 11;
+   public static final int INT_TWELVE = 12;
+   public static final int INT_THIRTEEN = 13;
    public static final String CARD_MASK = "******";
    public static final String MASKED_CARD_SEPARATOR = "\\*\\*\\*\\*\\*\\*";
    public static final String MASKED_CARD_FORMAT = "****%s";
@@ -614,6 +623,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String RULE_STATUS = "ruleStatus";
 	public static final String PROMO_GROUP = "promoGroup";
+	public static final String BARCODE_LIST = "barcodeList";
 
 
 	private BlCoreConstants()
