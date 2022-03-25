@@ -1,0 +1,71 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLCustomer.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLCustomer; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLCustomer	; GiftCard            	; GiftCard            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCustomer	; BlItemsBillingCharge	; BlItemsBillingCharge	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCustomer	; CustomerNotes       	; CustomerNotes       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCustomer	; PrincipalGroup      	; PrincipalGroup      	; 	; ALL_SUBTYPES           	;  
+; InboundBLCustomer	; BehaviorEnum        	; BehaviorEnum        	; 	; ALL_SUBTYPES           	;  
+; InboundBLCustomer	; Customer            	; Customer            	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCustomer	; Address             	; Address             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLCustomer	; CustomerNotesEnum   	; CustomerNotesEnum   	; 	; ALL_SUBTYPES           	;  
+; InboundBLCustomer	; VipTypeEnum         	; VipTypeEnum         	; 	; ALL_SUBTYPES           	;  
+; InboundBLCustomer	; LinkSourceEnum      	; LinkSourceEnum      	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLCustomer:GiftCard            	; code                  	; GiftCard:code                  	;                                       	; true	;  
+; InboundBLCustomer:BlItemsBillingCharge	; code                  	; BlItemsBillingCharge:code      	;                                       	; true	;  
+; InboundBLCustomer:CustomerNotes       	; customerNoteType      	; CustomerNotes:customerNoteType 	; InboundBLCustomer:CustomerNotesEnum   	; true	;  
+; InboundBLCustomer:CustomerNotes       	; note                  	; CustomerNotes:note             	;                                       	; 	;  
+; InboundBLCustomer:CustomerNotes       	; customer              	; CustomerNotes:customer         	; InboundBLCustomer:Customer            	; true	;  
+; InboundBLCustomer:PrincipalGroup      	; uid                   	; PrincipalGroup:uid             	;                                       	; true	;  
+; InboundBLCustomer:BehaviorEnum        	; code                  	; BehaviorEnum:code              	;                                       	; true	;  
+; InboundBLCustomer:Customer            	; addresses             	; Customer:addresses             	; InboundBLCustomer:Address             	; 	;  
+; InboundBLCustomer:Customer            	; completedOrderCount   	; Customer:completedOrderCount   	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; defaultPaymentAddress 	; Customer:defaultPaymentAddress 	; InboundBLCustomer:Address             	; 	;  
+; InboundBLCustomer:Customer            	; coiCoverageAmount     	; Customer:coiCoverageAmount     	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; badBehaviorNotes      	; Customer:badBehaviorNotes      	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; originalUid           	; Customer:originalUid           	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; badBehaviorTag        	; Customer:badBehaviorTag        	; InboundBLCustomer:BehaviorEnum        	; 	;  
+; InboundBLCustomer:Customer            	; verificationLinkSource	; Customer:verificationLinkSource	; InboundBLCustomer:LinkSourceEnum      	; 	;  
+; InboundBLCustomer:Customer            	; taxExemptState        	; Customer:taxExemptState        	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; name                  	; Customer:name                  	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; orderCount            	; Customer:orderCount            	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; creationtime          	; Customer:creationtime          	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; poEnabled             	; Customer:poEnabled             	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; customerNotes         	; Customer:customerNotes         	; InboundBLCustomer:CustomerNotes       	; 	;  
+; InboundBLCustomer:Customer            	; isTaxExempt           	; Customer:isTaxExempt           	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; kycScore              	; Customer:kycScore              	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; defaultBillingAddress 	; Customer:defaultBillingAddress 	; InboundBLCustomer:Address             	; 	;  
+; InboundBLCustomer:Customer            	; coiVerified           	; Customer:coiVerified           	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; customerID            	; Customer:customerID            	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; uid                   	; Customer:uid                   	;                                       	; true	;  
+; InboundBLCustomer:Customer            	; employee              	; Customer:employee              	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; accountNotes          	; Customer:accountNotes          	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; outstandingBills      	; Customer:outstandingBills      	; InboundBLCustomer:BlItemsBillingCharge	; 	;  
+; InboundBLCustomer:Customer            	; totalAmountPastDue    	; Customer:totalAmountPastDue    	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; allGroups             	; Customer:allGroups             	; InboundBLCustomer:PrincipalGroup      	; 	;  
+; InboundBLCustomer:Customer            	; rollingSpend          	; Customer:rollingSpend          	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; verificationNotes     	; Customer:verificationNotes     	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; taxExemptExpiry       	; Customer:taxExemptExpiry       	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; blRewards             	; Customer:blRewards             	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; taxExemptNumber       	; Customer:taxExemptNumber       	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; photoOrVideo          	; Customer:photoOrVideo          	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; verificationLink      	; Customer:verificationLink      	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; giftCard              	; Customer:giftCard              	; InboundBLCustomer:GiftCard            	; 	;  
+; InboundBLCustomer:Customer            	; braintreeCustomerId   	; Customer:braintreeCustomerId   	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; vip                   	; Customer:vip                   	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; vipType               	; Customer:vipType               	; InboundBLCustomer:VipTypeEnum         	; 	;  
+; InboundBLCustomer:Customer            	; averageGearOrderValue 	; Customer:averageGearOrderValue 	;                                       	; 	;  
+; InboundBLCustomer:Customer            	; defaultShipmentAddress	; Customer:defaultShipmentAddress	; InboundBLCustomer:Address             	; 	;  
+; InboundBLCustomer:Customer            	; coiExpirationDate     	; Customer:coiExpirationDate     	;                                       	; 	;  
+; InboundBLCustomer:Address             	; shippingAddress       	; Address:shippingAddress        	;                                       	; true	;  
+; InboundBLCustomer:Address             	; billingAddress        	; Address:billingAddress         	;                                       	; true	;  
+; InboundBLCustomer:Address             	; addressID             	; Address:addressID              	;                                       	; true	;  
+; InboundBLCustomer:CustomerNotesEnum   	; code                  	; CustomerNotesEnum:code         	;                                       	; true	;  
+; InboundBLCustomer:VipTypeEnum         	; code                  	; VipTypeEnum:code               	;                                       	; true	;  
+; InboundBLCustomer:LinkSourceEnum      	; code                  	; LinkSourceEnum:code            	;                                       	; true	;  

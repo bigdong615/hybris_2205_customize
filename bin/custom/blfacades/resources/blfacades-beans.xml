@@ -47,7 +47,7 @@
 	<property name="productType" type="java.lang.String"/>
 		<property name="isVideo" type="boolean"/>
 		<property name="retailGear" type="boolean"/>
-		<property name="isNewGearInStock" type="boolean"/>
+		<property name="isRetailGearInStock" type="boolean"/>
 		<property name="retailGearPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="specifications" type="java.lang.String"/>
 		<property name="manufacturerAID" type="java.lang.String"/>
@@ -133,10 +133,12 @@
     <property name="recipientName" type="java.lang.String" />
     <property name="recipientMessage" type="java.lang.String"/>
     <property name="messages" type="java.util.List&lt;com.bl.facades.product.data.AvailabilityMessage>"/>
-	<property name="option" type="com.bl.facades.product.data.BlOptionData"/>
+	<property name="option" type="java.util.List&lt;com.bl.facades.product.data.BlOptionData>"/>
 	<property name="aqautechProduct" type="boolean"/>
 	<property name="bundleEntry" type="boolean" />
 	<property name="selectedOptions" type="java.lang.String"/>
+	<property name="selectedProductOptions" type="com.bl.facades.product.data.BlOptionData"/>
+	<property name="mainOptionName" type="String"/>
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -193,7 +195,7 @@
 		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
 		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
 		<property name="isRentalActive" type="java.lang.Boolean"/>
-		<property name="isNewGearOrder" type="java.lang.Boolean"/>
+		<property name="isRetailGearOrder" type="java.lang.Boolean"/>
 
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
@@ -386,6 +388,7 @@
 		<property name="extendedFreeRentalDays" type="java.lang.Integer" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
     <property name="usedGearDiscount" type="java.lang.Integer" />
+    <property name="firstTimeCustomer" type="java.lang.Boolean" />
   </bean>
   
     <!-- Creating Request Data for UPS Shipment -->
@@ -643,7 +646,7 @@
 		<property name="orderDate" type="String"/>
 		<property name="rentalCart" type="Boolean"/>
 		<property name="isGiftCard" type="java.lang.Boolean"/>
-		<property name="newGearOrder" type="java.lang.Boolean"/>
+		<property name="retailGearOrder" type="java.lang.Boolean"/>
 		<property name="productDetails" type="java.util.List&lt;String>"/>
 		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
 		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>

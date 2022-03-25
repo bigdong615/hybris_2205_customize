@@ -107,7 +107,7 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
 			case "field_6":
-				if(BooleanUtils.isTrue(order.getIsRentalCart())) {
+				if(BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					final LocalDateTime rentalStartDate = getFormattedDateTime(order.getRentalStartDate());
 					final LocalDateTime rentalEndDate = getFormattedDateTime(order.getRentalEndDate());
 					customFields.put(customFieldName

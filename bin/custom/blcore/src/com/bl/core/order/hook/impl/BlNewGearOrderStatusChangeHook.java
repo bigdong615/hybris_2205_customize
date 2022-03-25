@@ -36,7 +36,7 @@ public class BlNewGearOrderStatusChangeHook implements CommercePlaceOrderMethodH
     final OrderModel order = orderModel.getOrder();
     getModelService().refresh(order);
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
-    if(BooleanUtils.isTrue(order.getIsNewGearOrder())){
+    if(BooleanUtils.isTrue(order.getIsRetailGearOrder())){
       order.setStatus(OrderStatus.SOLD);
       modelService.save(order);
       getModelService().refresh(order);

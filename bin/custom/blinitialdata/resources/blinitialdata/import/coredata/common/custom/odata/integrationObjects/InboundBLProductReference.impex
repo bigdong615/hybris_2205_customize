@@ -1,0 +1,30 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLProductReference.impex =========================");
+
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLProductReference; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLProductReference	; ProductReferenceTypeEnum	; ProductReferenceTypeEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLProductReference	; CatalogVersion          	; CatalogVersion          	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductReference	; ProductReference        	; ProductReference        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductReference	; Product                 	; Product                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProductReference	; Catalog                 	; Catalog                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLProductReference:ProductReferenceTypeEnum	; code          	; ProductReferenceTypeEnum:code 	;                                                   	; true	;  
+; InboundBLProductReference:CatalogVersion          	; version       	; CatalogVersion:version        	;                                                   	; true	;  
+; InboundBLProductReference:CatalogVersion          	; catalog       	; CatalogVersion:catalog        	; InboundBLProductReference:Catalog                 	; true	;  
+; InboundBLProductReference:ProductReference        	; active        	; ProductReference:active       	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference        	; creationtime  	; ProductReference:creationtime 	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference        	; referenceType 	; ProductReference:referenceType	; InboundBLProductReference:ProductReferenceTypeEnum	; true	;  
+; InboundBLProductReference:ProductReference        	; target        	; ProductReference:target       	; InboundBLProductReference:Product                 	; true	;  
+; InboundBLProductReference:ProductReference        	; description   	; ProductReference:description  	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference        	; source        	; ProductReference:source       	; InboundBLProductReference:Product                 	; true	;  
+; InboundBLProductReference:ProductReference        	; quantity      	; ProductReference:quantity     	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference        	; qualifier     	; ProductReference:qualifier    	;                                                   	; 	;  
+; InboundBLProductReference:ProductReference        	; preselected   	; ProductReference:preselected  	;                                                   	; 	;  
+; InboundBLProductReference:Product                 	; code          	; Product:code                  	;                                                   	; true	;  
+; InboundBLProductReference:Product                 	; catalogVersion	; Product:catalogVersion        	; InboundBLProductReference:CatalogVersion          	; true	;  
+; InboundBLProductReference:Catalog                 	; id            	; Catalog:id                    	;                                                   	; true	;  

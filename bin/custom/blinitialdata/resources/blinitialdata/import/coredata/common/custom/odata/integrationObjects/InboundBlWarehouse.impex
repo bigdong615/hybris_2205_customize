@@ -1,0 +1,14 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBlWarehouse.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLWarehouse; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLWarehouse	; Warehouse	; Warehouse	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLWarehouse:Warehouse	; creationtime	; Warehouse:creationtime	;                    	; 	;  
+; InboundBLWarehouse:Warehouse	; code        	; Warehouse:code        	;                    	; true	;  
+; InboundBLWarehouse:Warehouse	; name        	; Warehouse:name        	;                    	; 	;  
+; InboundBLWarehouse:Warehouse	; active      	; Warehouse:active      	;                    	; 	;  

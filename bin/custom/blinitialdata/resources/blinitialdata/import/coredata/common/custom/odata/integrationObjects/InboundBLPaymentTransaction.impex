@@ -1,0 +1,24 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPaymentTransaction.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPaymentTransaction; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPaymentTransaction	; Currency                  	; Currency                  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPaymentTransaction	; PaymentTransaction        	; PaymentTransaction        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPaymentTransaction	; AbstractOrder             	; AbstractOrder             	; 	; ALL_SUBTYPES           	;  
+; InboundBLPaymentTransaction	; PaymentTransactionTypeEnum	; PaymentTransactionTypeEnum	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPaymentTransaction:Currency                  	; isocode        	; Currency:isocode                  	;                                                       	; true	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; plannedAmount  	; PaymentTransaction:plannedAmount  	;                                                       	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; currency       	; PaymentTransaction:currency       	; InboundBLPaymentTransaction:Currency                  	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; transactionType	; PaymentTransaction:transactionType	; InboundBLPaymentTransaction:PaymentTransactionTypeEnum	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; order          	; PaymentTransaction:order          	; InboundBLPaymentTransaction:AbstractOrder             	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; requestId      	; PaymentTransaction:requestId      	;                                                       	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; code           	; PaymentTransaction:code           	;                                                       	; true	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; requestToken   	; PaymentTransaction:requestToken   	;                                                       	; 	;  
+; InboundBLPaymentTransaction:PaymentTransaction        	; paymentProvider	; PaymentTransaction:paymentProvider	;                                                       	; 	;  
+; InboundBLPaymentTransaction:AbstractOrder             	; code           	; AbstractOrder:code                	;                                                       	; true	;  
+; InboundBLPaymentTransaction:PaymentTransactionTypeEnum	; code           	; PaymentTransactionTypeEnum:code   	;                                                       	; true	;  

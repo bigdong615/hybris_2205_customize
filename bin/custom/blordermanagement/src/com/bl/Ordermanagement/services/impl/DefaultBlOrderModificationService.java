@@ -162,7 +162,7 @@ public class DefaultBlOrderModificationService
 				}
 				else 
 				{
-					final boolean isUsedGearOrder = consignment.getOrder().getIsRentalCart();
+					final boolean isUsedGearOrder = consignment.getOrder().getIsRentalOrder();
 					updateStockForSerial(consignment.getOptimizedShippingStartDate(),
 							isUsedGearOrder ? consignment.getOptimizedShippingEndDate() : BlDateTimeUtils.getNextYearsSameDay(), serial,isUsedGearOrder);
 				}
@@ -208,7 +208,7 @@ public class DefaultBlOrderModificationService
 	 */
 	private String getPkFromProduct(final ConsignmentEntryModel consignmentEntryModel,final BlSerialProductModel serial)
 	{
-		if (consignmentEntryModel.getConsignment().getOrder().getIsRentalCart())
+		if (consignmentEntryModel.getConsignment().getOrder().getIsRentalOrder())
 		{
 			return serial.getBlProduct().getPk().toString();
 		}

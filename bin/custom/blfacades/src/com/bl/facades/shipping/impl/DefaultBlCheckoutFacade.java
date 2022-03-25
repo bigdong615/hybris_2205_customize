@@ -155,12 +155,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                                                                             final boolean payByCustomer) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            if (BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+            if (BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())){
                 return getDeliveryModeDataForNewGear(shippingGroup, partnerZone, payByCustomer);
             }
-            else if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
+            else if (BooleanUtils.isTrue(cartModel.getIsRentalOrder()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalOrder())) {
                 return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
             } else {
                 return Collections.emptyList();
@@ -801,7 +801,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	public boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode)
 	{
 		final CartModel cartModel = getCart();
-		if(BooleanUtils.isTrue(cartModel.getIsRentalCart()))
+		if(BooleanUtils.isTrue(cartModel.getIsRentalOrder()))
 		{	
 		final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
 		return Objects.nonNull(deliveryModeModel) && deliveryModeModel instanceof ZoneDeliveryModeModel
@@ -822,7 +822,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	public boolean isShippingOnBlackoutDate(final String deliveryModeCode)
 	{
 		final CartModel cartModel = getCart();
-		if (BooleanUtils.isTrue(cartModel.getIsRentalCart()))
+		if (BooleanUtils.isTrue(cartModel.getIsRentalOrder()))
 		{
 			final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
 			if(PredicateUtils.instanceofPredicate(ZoneDeliveryModeModel.class).evaluate(deliveryModeModel))

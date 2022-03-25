@@ -124,7 +124,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					totalOptionCost += getTotalOptionPrice(e);
 				}
 			}
-			if(BooleanUtils.isFalse(order.isGiftCardOrder()) && BooleanUtils.isFalse(order.getIsNewGearOrder())){
+			if(BooleanUtils.isFalse(order.isGiftCardOrder()) && BooleanUtils.isFalse(order.getIsRetailGearOrder())){
 				final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
 				order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}",
@@ -189,7 +189,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				// subtotal
 				final double subtotal = order.getSubtotal().doubleValue();
 				//totalDamageWaiverCost
-				if (BooleanUtils.isTrue(order.getIsRentalCart())) {
+				if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 							? order.getTotalDamageWaiverCost().doubleValue()
 							: 0.0d;

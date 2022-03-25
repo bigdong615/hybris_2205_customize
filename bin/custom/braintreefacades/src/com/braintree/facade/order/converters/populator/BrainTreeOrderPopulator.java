@@ -51,7 +51,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		super.populate(source, target);
 		target.setRentalDates(getOrderRentalDates(source));
 		setGiftCardDetails(source, target);
-		target.setIsRentalCart(BooleanUtils.toBoolean(source.getIsRentalCart()));
+		target.setIsRentalCart(BooleanUtils.toBoolean(source.getIsRentalOrder()));
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
 		target.setPoNotes(source.getPoNotes());
 		target.setRentalDatesOnPrint(

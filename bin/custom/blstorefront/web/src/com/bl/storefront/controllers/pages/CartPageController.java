@@ -23,6 +23,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.promotion.validate.BlPromotionValidator;
 import com.bl.storefront.security.cookie.BlRentalDurationCookieGenerator;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
@@ -195,6 +196,9 @@ public class CartPageController extends AbstractCartPageController
 
 	@Resource(name = "blPromotionService")
 	private BlPromotionService blPromotionService;
+	
+	@Resource(name = "blPromotionValidator")
+	private BlPromotionValidator blPromotionValidator;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -217,7 +221,7 @@ public class CartPageController extends AbstractCartPageController
 		sessionService.setAttribute(BlInventoryScanLoggingConstants.IS_PAYMENT_PAGE_VISITED, false);
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-		if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())) {
+		if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())) {
 			if (getSessionService().getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER) == null ||
 					((AssistedServiceSession) getSessionService()
 							.getAttribute(BlCoreConstants.ASM_SESSION_PARAMETER)).getAgent() == null) {
@@ -509,16 +513,16 @@ public class CartPageController extends AbstractCartPageController
 					{
 						blCartService.updateGiftCardPurchaseStatus(cartModel);
 				  }
-          if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder()))
+          if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder()))
           {
             blCartService.updateNewGearPurchaseStatus(cartModel);
           }
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
+					if (BooleanUtils.isFalse(cartModel.getIsRentalOrder()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
-				}else if(BooleanUtils.isTrue(cartModel.getIsNewGearOrder())){
+				}else if(BooleanUtils.isTrue(cartModel.getIsRetailGearOrder())){
 					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
@@ -839,7 +843,7 @@ public class CartPageController extends AbstractCartPageController
 			if (bindingResult.hasErrors())
 			{
 				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
+						getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()));
 			}
 			else
 			{
@@ -848,23 +852,26 @@ public class CartPageController extends AbstractCartPageController
 				{
 					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
 					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
+							getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()));
 				}
 				else
 				{
-					voucherFacade.applyVoucher(form.getVoucherCode());
-					redirectAttributes.addFlashAttribute("successMsg",
-							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
-							{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+					if(blPromotionValidator.checkInvalidPromotions(form.getVoucherCode(), BlControllerConstants.ERROR_MSG_TYPE, null, redirectAttributes))
+					{
+						voucherFacade.applyVoucher(form.getVoucherCode());
+						redirectAttributes.addFlashAttribute("successMsg",
+								getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
+								{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+					}					
 				}
 			}
 		}
-		catch (final VoucherOperationException e)
+		catch (final Exception e)
 		{
 			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
 			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 					getMessageSource().getMessage(e.getMessage(), null,
-							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
+							getMessageSource().getMessage("promotion.validation.message.default", null, getI18nService().getCurrentLocale()),
 							getI18nService().getCurrentLocale()));
 			if (LOG.isDebugEnabled())
 			{
