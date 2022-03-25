@@ -127,7 +127,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
-        data.setCoiExpirationDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()));
+        data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
         orderConfirmationEventRequest.setData(data);
     }
 

@@ -538,7 +538,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
     * @param user user
     * @return string
    */
-    public String getCOIExpirationDateFromCustomer(final CustomerModel user) {
+    public Date getCOIExpirationDateFromCustomer(final CustomerModel user) {
         final List<Date> dateList = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(user.getVerificationDocuments())) {
             user.getVerificationDocuments().forEach(verificationDocumentMediaModel -> {
@@ -549,7 +549,7 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
             });
         }
         dateList.sort(Date::compareTo);
-        return String.valueOf(dateList.isEmpty() ? StringUtils.EMPTY : dateList.get(dateList.size()-1));
+        return dateList.isEmpty() ? null : dateList.get(dateList.size()-1);
 
     }
 

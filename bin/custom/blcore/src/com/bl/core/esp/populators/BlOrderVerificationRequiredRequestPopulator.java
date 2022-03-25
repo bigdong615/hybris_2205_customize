@@ -1,6 +1,7 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationRequiredEventData;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -85,7 +86,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
-    orderVerificationRequiredEventData.setCoiExpirationDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()));
+    orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }
