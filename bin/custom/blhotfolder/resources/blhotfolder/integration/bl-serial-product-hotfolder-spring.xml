@@ -25,7 +25,7 @@
 
 	<bean id="batchSerialProductConverterMapping"
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-          p:mapping="SERIALPRODUCT"
+          p:mapping="SERIPROD"
           p:converter-ref="batchSerialProductConverter"/>
 
  <!-- Transformer converters mappings -->
