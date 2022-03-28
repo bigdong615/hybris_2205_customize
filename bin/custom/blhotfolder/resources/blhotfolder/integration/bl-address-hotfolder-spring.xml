@@ -28,11 +28,11 @@
 		<property name="header">
 			<value>
 				# Insert Address
-				INSERT_UPDATE Address;owner(Customer.customerID);addressId[unique=true];addressType[translator=com.bl.batch.imports.translator.BlAddressTypeTranslator];postalcode;country(isocode);region(isocode);town;streetname;streetnumber;phone1;billingAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];pickStoreAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];shippingAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];upsStoreAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];email;firstname;lastname;company
+				INSERT_UPDATE Address;owner(Customer.customerID);addressId[unique=true];addressType[translator=com.bl.batch.imports.translator.BlAddressTypeTranslator];postalcode;country(isocode);region(isocode);town;streetname;streetnumber;phone1;billingAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];pickStoreAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];shippingAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];upsStoreAddress[translator=com.bl.batch.imports.translator.BlBooleanTranslator];email;firstname;lastname;company;visibleInAddressBook[translator=com.bl.batch.imports.translator.BlBooleanTranslator]
 			</value>
 		</property>
 		<property name="impexRow">
-			<value>;{1};{0};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14};{15};{16};{17};</value>
+			<value>;{1};{0};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14};{15};{16};{17};{18}</value>
 		</property>
 	</bean>
 
