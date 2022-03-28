@@ -3481,6 +3481,7 @@
 		</editorArea:editorArea>
 	</context>
 	
+	<!-- BL-1976 Start  -->
 	<context type="BlOptions" component="simple-search">
 		<yss:simple-search xmlns:yss="http://www.hybris.com/cockpitng/config/simplesearch">>
 			<yss:field xmlns="http://www.hybris.com/cockpitng/config/simplesearch" name="code"/>
@@ -3488,5 +3489,6 @@
 			<yss:field xmlns="http://www.hybris.com/cockpitng/config/simplesearch" name="name"/>
 		</yss:simple-search>
 	</context>
+	<!-- BL-1976 End  -->
 
 </config>
