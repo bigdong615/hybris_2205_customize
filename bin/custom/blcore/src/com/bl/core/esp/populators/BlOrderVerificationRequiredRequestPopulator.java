@@ -10,6 +10,7 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -86,7 +87,12 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
-    orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    
+    final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+    if(coiExpirationDateFromCustomer !=null)
+    {
+   	 orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    }
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }
