@@ -93,7 +93,10 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
     data.setVerificationtext("Dummy verification text"); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
     data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
-    data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    if(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()) !=null)
+    {
+   	data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    }
     orderVerificationCOIneededEventRequest.setData(data);
   }
 

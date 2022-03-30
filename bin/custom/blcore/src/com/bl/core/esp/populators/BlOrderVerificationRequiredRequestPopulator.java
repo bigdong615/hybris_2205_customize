@@ -86,7 +86,11 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
-    orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    
+    if(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()) !=null)
+    {
+   	 orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    }
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }
