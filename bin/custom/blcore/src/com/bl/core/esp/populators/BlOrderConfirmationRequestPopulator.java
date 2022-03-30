@@ -21,6 +21,7 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -127,9 +128,11 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
-        if(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()) !=null)
+        
+        final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+        if(coiExpirationDateFromCustomer !=null)
         {
-      	  data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+      	  data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
         }
         orderConfirmationEventRequest.setData(data);
     }
