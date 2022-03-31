@@ -1,0 +1,21 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLInventoryCycleCount.impex =========================");
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLInventoryCycleCount; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryCycleCount	; BlInventoryCycleCountDetails	; BlInventoryCycleCountDetails	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryCycleCount	; InventoryCycleCountStatus   	; InventoryCycleCountStatus   	; 	; ALL_SUBTYPES           	;  
+; InboundBLInventoryCycleCount	; BlInventoryCycleCount       	; BlInventoryCycleCount       	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryCycleCount:BlInventoryCycleCountDetails	; inventoryCycleCountCode    	; BlInventoryCycleCountDetails:inventoryCycleCountCode	;                                                          	; true	;  
+; InboundBLInventoryCycleCount:InventoryCycleCountStatus   	; code                       	; InventoryCycleCountStatus:code                      	;                                                          	; true	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; currentCycleCountEndDate   	; BlInventoryCycleCount:currentCycleCountEndDate      	;                                                          	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountActive  	; BlInventoryCycleCount:inventoryCycleCountActive     	;                                                          	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; previousCycleCountEndDate  	; BlInventoryCycleCount:previousCycleCountEndDate     	;                                                          	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; currentCycleCountStartDate 	; BlInventoryCycleCount:currentCycleCountStartDate    	;                                                          	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; previousCycleCountStartDate	; BlInventoryCycleCount:previousCycleCountStartDate   	;                                                          	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountProducts	; BlInventoryCycleCount:inventoryCycleCountProducts   	; InboundBLInventoryCycleCount:BlInventoryCycleCountDetails	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountStatus  	; BlInventoryCycleCount:inventoryCycleCountStatus     	; InboundBLInventoryCycleCount:InventoryCycleCountStatus   	; 	;  
+; InboundBLInventoryCycleCount:BlInventoryCycleCount       	; inventoryCycleCountCode    	; BlInventoryCycleCount:inventoryCycleCountCode       	;                                                          	; true	;  

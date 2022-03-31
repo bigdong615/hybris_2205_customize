@@ -55,7 +55,7 @@
 					<li class="nav-item dropdown menu-large">
 
 					<c:choose>
-					<c:when test="${childlink1.item.linkName eq 'New Gear'}">
+					<c:when test="${childlink1.item.linkName eq 'Retail Gear'}">
           <c:if test="${not empty agent.uid}">
 
  <a class="nav-link dropdown-toggle" href="#" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" data-bs-toggle="dropdown" aria-expanded="false">${childlink1.item.linkName}</a>

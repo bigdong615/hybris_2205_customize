@@ -114,7 +114,7 @@
             <value code="MONITORS"/>
             <value code="GIFTCARD"/>
             <value code="PACKAGE"/>
-            <value code="NEWGEAR"/>
+            <value code="RETAILGEAR"/>
             <value code="MANUAL"/>
         </enumtype>
 
@@ -493,7 +493,6 @@
         <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
         <maptype code="BillingChargesMap" argumenttype="java.lang.String" returntype="BlItemCharges" />
         <maptype code="InventoryCycleCountScanSKUDetails" argumenttype="BlProduct" returntype="ModifiedSerialProduct" />
-        <maptype code="SubPartProductQtyMap" argumenttype="BlProduct" returntype="java.lang.Integer" />
     </maptypes>
 
 
@@ -620,7 +619,7 @@
       </relation>
       <!-- Gift card End-->
 
-      <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
+     <!--  <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
         <deployment table="blprod2blprodrel" typecode="12221"/>
         <sourceElement qualifier="blProducts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
@@ -628,7 +627,7 @@
         <targetElement qualifier="subParts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
-      </relation>
+      </relation> -->
 
 
       <relation code="BlProduct2OptionsRelation" generate="true" localized="false"
@@ -675,6 +674,15 @@
         </sourceElement>
         <targetElement qualifier="restrictedPrincipals" type="Principal" cardinality="many" collectiontype="set" ordered="true">
           <description>Principals which are restricted to access this catalogProduct</description>
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </targetElement>
+      </relation>
+      <relation code="BlSubparts2BlProductRelation" autocreate="true" generate="true" localized="false">
+        <deployment table="Subparts2ProdRel" typecode="12244"/>
+        <sourceElement qualifier="subpartProducts" type="BlSubparts" cardinality="many">
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </sourceElement>
+        <targetElement qualifier="blProducts" type="BlProduct" cardinality="many">
           <modifiers read="true" write="true" search="true" optional="true"/>
         </targetElement>
       </relation>
@@ -1345,23 +1353,17 @@
                      <modifiers read="true" write="true" optional="false" />
                      <description>Manufacturer name for the BL Product</description>
                      </attribute>
-                   <attribute qualifier="subpartQuantity" type="java.lang.Integer">
-                     <description>It tells shipper how much quantity we need to add for this sub-part</description>
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="false" initial="true"/>
-                     <defaultvalue>Integer.valueOf(0)</defaultvalue>
-                   </attribute>
                    <attribute qualifier="retailGear" type="java.lang.Boolean">
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="false"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>Determines the product is new gear</description>
+                     <description>Determines the product is retail gear</description>
                    </attribute>
                    <attribute qualifier="retailGearPrice" type="java.math.BigDecimal">
                      <persistence type="property" />
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
-                     <description>New Gear Price field</description>
+                     <description>Retail Gear Price field</description>
                    </attribute>
                    <attribute qualifier="onSale" type="java.lang.Boolean">
                      <persistence type="property"/>
@@ -1369,11 +1371,11 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether product is OnSale or not</description>
                    </attribute>
-                   <attribute qualifier="newGearInStock" type="boolean">
+                   <attribute qualifier="retailGearInStock" type="boolean">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                     <description>To identify whether the new gear product is in Stock or not</description>
+                     <description>To identify whether the retail gear product is in Stock or not</description>
                    </attribute>
                    <attribute qualifier="bufferInvPercChangedManually" type="boolean">
                      <persistence type="property"/>
@@ -1390,11 +1392,6 @@
                      <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Primary Category Linked to the product</description>
-                   </attribute>
-                  <attribute qualifier="subpartsQty" type="SubPartProductQtyMap">
-                     <persistence type="property"/>
-                     <modifiers read="true" write="true" search="true" optional="true"/>
-                    <description>Created Map for the Subparts and related Qty</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -2261,6 +2258,23 @@
               </attribute>
             </attributes>
           </itemtype>
+          <itemtype code="BlSubparts" autocreate="true" generate="true" >
+			    <description>Contains all subparts with quantity mapping</description>
+			    <deployment table="BlSubparts" typecode="12243"/>
+			      <attributes>
+			        <attribute qualifier="subpartProduct" type="BlProduct">
+			          <persistence type="property"/>
+			          <modifiers read="true" write="true" optional="false"/>
+			          <description>SubPart BlProduct</description>
+			        </attribute>
+			        <attribute qualifier="quantity" type="java.lang.Integer">
+			          <persistence type="property"/>
+			          <modifiers read="true" write="true" optional="false"/>
+			          <description>Quantity associated to Subpart</description>
+			          <defaultvalue>Integer.valueOf(1)</defaultvalue>
+			        </attribute>
+			      </attributes>
+   		</itemtype>
         </typegroup>
 
         <typegroup name="Pricing">
@@ -2957,7 +2971,7 @@
                   </attribute>
                   <attribute qualifier="isRetailGearOrder" type="java.lang.Boolean">
                     <persistence type="property" />
-                    <description>Flag to identify the order type is new gear order or not. By using
+                    <description>Flag to identify the order type is retail gear order or not. By using
                       this flag we are stopping the order process.
                     </description>
                     <modifiers read="true" write="true" search="true" optional="true" />

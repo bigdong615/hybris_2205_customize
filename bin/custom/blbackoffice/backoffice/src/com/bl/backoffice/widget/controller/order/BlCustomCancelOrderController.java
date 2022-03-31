@@ -9,9 +9,11 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.constants.BlloggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.esp.service.impl.DefaultBlESPEventService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.core.services.cancelandrefund.service.BlCustomCancelRefundService;
 import com.bl.core.services.customer.impl.DefaultBlUserService;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -213,6 +215,9 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
 
  	@Resource(name = "defaultBlUserService")
   private DefaultBlUserService defaultBlUserService;
+ 	
+ 	@Resource(name = "blOrderService")
+ 	private BlOrderService blOrderService;
 
     /**
      * Init cancellation order form.
@@ -363,12 +368,15 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
             } else {
                 this.cancelFUllOrderByLoggingGiftCardTransactions(new StringBuilder(BlCustomCancelRefundConstants.SUCCESSFULLY_CANCELLED), totalAmountToRefund);
+                resetDateOfSaleAttributeOnSerial();
             }
         } else {
             if(Boolean.FALSE.equals(this.isAllEntriesChecked(this.cancelAndRefundEntries))) {
                 this.partiallyFullOrderRefundGCScenario(totalAmountToRefund);
+                resetDateOfSaleAttributeOnSerial();
             } else if(null != this.cancelOrder()) {
                 this.successCancelRefundWithGCIfAny(totalAmountToRefund);
+                resetDateOfSaleAttributeOnSerial();
             } else {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_CANCELLATION, this.getOrderModel().getCode());
                 this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_AS_ERROR_OCCURRED_DURING_CANCELLATION_MSG);
@@ -823,11 +831,25 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                 this.failureMessageBox(BlCustomCancelRefundConstants.FAILED_TO_CANCEL_ORDER_PLEASE_TRY_AGAIN_LATER_MSG);
             } else {
                 this.cancelRefundProcess(amount, gcAmount);
+                resetDateOfSaleAttributeOnSerial();
             }
         } else {
             this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND, this.getOrderModel().getCode());
             failureMessageBox(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_INITIATE_REFUND_MSG);
         }
+    }
+
+    /**
+     * It resets the attribute dateOfSale for returned
+     */
+    private void resetDateOfSaleAttributeOnSerial() {
+        this.getCancelAndRefundEntries().forEach(entry -> {
+            if(getBlOrderService().isUsedOrderOnly(this.getOrderModel()) && entry.getOrderEntry().getProduct() instanceof BlSerialProductModel) {
+                final BlSerialProductModel serialProductModel = (BlSerialProductModel) entry.getOrderEntry().getProduct();
+                serialProductModel.setDateOfSale(null);
+                this.getModelService().save(serialProductModel);
+            }
+        });
     }
 
     /**
@@ -1024,6 +1046,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             }
             if(refundSuccessful) {
                 this.cancelPartialRefund(totalAmt, gcAmount);
+                resetDateOfSaleAttributeOnSerial();
             }
             else {
                 this.logCancelRefundLogger(BlCustomCancelRefundConstants.ORDER_CAN_NOT_BE_CANCEL_AS_FAILED_TO_REFUND, this.getOrderModel().getCode());
@@ -2077,5 +2100,21 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         DefaultBlUserService defaultBlUserService) {
         this.defaultBlUserService = defaultBlUserService;
     }
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
+	}
 
 }

@@ -1,0 +1,20 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLEmployee.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLEmployee; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLEmployee	; Language	; Language	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLEmployee	; Currency	; Currency	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLEmployee	; Employee	; Employee	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLEmployee:Language	; isocode        	; Language:isocode        	;                           	; true	;  
+; InboundBLEmployee:Currency	; isocode        	; Currency:isocode        	;                           	; true	;  
+; InboundBLEmployee:Employee	; displayName    	; Employee:displayName    	;                           	; 	;  
+; InboundBLEmployee:Employee	; uid            	; Employee:uid            	;                           	; true	;  
+; InboundBLEmployee:Employee	; sessionLanguage	; Employee:sessionLanguage	; InboundBLEmployee:Language	; 	;  
+; InboundBLEmployee:Employee	; sessionCurrency	; Employee:sessionCurrency	; InboundBLEmployee:Currency	; 	;  
+; InboundBLEmployee:Employee	; creationtime   	; Employee:creationtime   	;                           	; 	;  
+; InboundBLEmployee:Employee	; name           	; Employee:name           	;                           	; 	;  

@@ -18,7 +18,7 @@
 <div class="col-md-6 col-lg-4">
   <div class="card">
   <c:choose>
-    <c:when test="${product.isNewGearInStock eq true}">
+    <c:when test="${product.isRetailGearInStock eq true}">
       <span class="badge badge-limited-stock"><spring:theme
           code="text.product.newgear.flag.inStock"/></span>
     </c:when>

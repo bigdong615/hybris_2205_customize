@@ -1781,6 +1781,8 @@
 	<alias name="blOrderValidateInterceptor" alias="orderValidateInterceptor"/>
 	<bean id="blOrderValidateInterceptor"	class="com.bl.core.model.interceptor.BlOrderValidateInterceptor">
 		<property name="userService" ref="userService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
 	</bean>
 
 	<bean id="blOrderValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -1889,6 +1891,7 @@
     <alias name="defaultBlPlaceOrderMethodHook" alias="orderMethodHook" />
     <bean id="defaultBlPlaceOrderMethodHook" class="com.bl.core.order.hook.impl.BlPlaceOrderMethodHook">
 		<property name="modelService" ref="modelService" />
+		<property name="blOrderService" ref="blOrderService"/>
 	</bean>
 	
 	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">

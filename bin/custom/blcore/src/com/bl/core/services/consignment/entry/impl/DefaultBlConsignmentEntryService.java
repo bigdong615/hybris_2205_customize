@@ -7,6 +7,7 @@ import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlOptionsModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.BlSubpartsModel;
 import com.bl.core.services.consignment.entry.BlConsignmentEntryService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
@@ -25,6 +26,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionExecutionBody;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,32 +180,32 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	public void setItemsMap(final ConsignmentEntryModel entry, final Set<BlSerialProductModel> serialProductModels)
 	{
 		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
-		final Map<BlProductModel, Integer> allSerialSubPartProducts = new HashMap<>();
+		final List<BlSubpartsModel> allSerialSubPartProducts = new ArrayList<>();
 		serialProductModels.forEach(serial -> {
 			itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Serial product with code {} added to the products list on consignment entry with consignment code {}",
 					serial.getCode(), entry.getConsignment().getCode());
 
-			final Map<BlProductModel, Integer> subPartsForGivenSerial =	getSessionService().executeInLocalView(new SessionExecutionBody()
+			allSerialSubPartProducts.addAll(getSessionService().executeInLocalView(new SessionExecutionBody()
 			{
 				@Override
-				public Map<BlProductModel, Integer> execute()
+				public Collection<BlSubpartsModel> execute()
 				{
 					getSearchRestrictionService().disableSearchRestrictions();
-					if (null != serial.getBlProduct() && MapUtils.isNotEmpty(serial.getBlProduct().getSubpartsQty()))
+					if (null != serial.getBlProduct() && CollectionUtils.isNotEmpty(serial.getBlProduct().getSubpartProducts()))
 					{
-						return serial.getBlProduct().getSubpartsQty();
+						return serial.getBlProduct().getSubpartProducts();
 					}
-					return Maps.newHashMap();
+					return Collections.emptyList();
 				}
-			});
-			addingSubpartToMap(allSerialSubPartProducts,subPartsForGivenSerial);
+			}));
 		});
 
 		putSubPartProductsInToItemsMap(entry, itemsMap, allSerialSubPartProducts);
 		putProductOptionsInToItemsMap(entry, itemsMap);
 		entry.setItems(itemsMap);
+
 	}
 
 	/**
@@ -239,20 +242,18 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 	 * @param allSerialSubPartProducts
 	 */
 	private void putSubPartProductsInToItemsMap(final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> itemsMap, final Map<BlProductModel, Integer> allSerialSubPartProducts)
+			final Map<String, ItemStatusEnum> itemsMap, final List<BlSubpartsModel> allSerialSubPartProducts)
 	{
 		final Map<BlProductModel, Integer> allSerialSubPartProductMap = new HashMap<>();
-		final Map<BlProductModel, Integer> subPartsMap = new HashMap<>(allSerialSubPartProducts);
-		for (final Map.Entry<BlProductModel, Integer> subPartEntry : subPartsMap.entrySet())
+		for (final BlSubpartsModel subpartModel : allSerialSubPartProducts)
 		{
-			if (null != allSerialSubPartProductMap.get(subPartEntry.getKey()))
+			if (null != allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()))
 			{
-				allSerialSubPartProductMap.put(subPartEntry.getKey(),
-						allSerialSubPartProductMap.get(subPartEntry.getValue()));
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),allSerialSubPartProductMap.get(subpartModel.getSubpartProduct()) + subpartModel.getQuantity());
 			}
 			else
 			{
-				allSerialSubPartProductMap.put(subPartEntry.getKey(), subPartEntry.getValue());
+				allSerialSubPartProductMap.put(subpartModel.getSubpartProduct(),subpartModel.getQuantity());
 			}
 		}
 		allSerialSubPartProductMap.entrySet().forEach(mapEntry -> {
@@ -275,6 +276,7 @@ public class DefaultBlConsignmentEntryService implements BlConsignmentEntryServi
 			}
 		});
 	}
+
 
 	/**
 	 * This method used to map subpart and its total count for particular serial.

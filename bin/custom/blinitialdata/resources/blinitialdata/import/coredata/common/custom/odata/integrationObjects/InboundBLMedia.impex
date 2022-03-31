@@ -1,0 +1,34 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLMedia.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLMedia; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLMedia	; MediaFormat   	; MediaFormat   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLMedia	; MediaContainer	; MediaContainer	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLMedia	; MediaFolder   	; MediaFolder   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLMedia	; Catalog       	; Catalog       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLMedia	; CatalogVersion	; CatalogVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLMedia	; Media         	; Media         	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLMedia:MediaFormat   	; qualifier     	; MediaFormat:qualifier        	;                              	; true	;  
+; InboundBLMedia:MediaContainer	; qualifier     	; MediaContainer:qualifier     	;                              	; true	;  
+; InboundBLMedia:MediaContainer	; catalogVersion	; MediaContainer:catalogVersion	; InboundBLMedia:CatalogVersion	; true	;  
+; InboundBLMedia:MediaFolder   	; qualifier     	; MediaFolder:qualifier        	;                              	; true	;  
+; InboundBLMedia:Catalog       	; id            	; Catalog:id                   	;                              	; true	;  
+; InboundBLMedia:CatalogVersion	; catalog       	; CatalogVersion:catalog       	; InboundBLMedia:Catalog       	; true	;  
+; InboundBLMedia:CatalogVersion	; version       	; CatalogVersion:version       	;                              	; true	;  
+; InboundBLMedia:Media         	; code          	; Media:code                   	;                              	; true	;  
+; InboundBLMedia:Media         	; description   	; Media:description            	;                              	; 	;  
+; InboundBLMedia:Media         	; mime          	; Media:mime                   	;                              	; 	;  
+; InboundBLMedia:Media         	; catalogVersion	; Media:catalogVersion         	; InboundBLMedia:CatalogVersion	; true	;  
+; InboundBLMedia:Media         	; mediaFormat   	; Media:mediaFormat            	; InboundBLMedia:MediaFormat   	; 	;  
+; InboundBLMedia:Media         	; folder        	; Media:folder                 	; InboundBLMedia:MediaFolder   	; 	;  
+; InboundBLMedia:Media         	; creationtime  	; Media:creationtime           	;                              	; 	;  
+; InboundBLMedia:Media         	; URL           	; Media:URL                    	;                              	; 	;  
+; InboundBLMedia:Media         	; internalURL   	; Media:internalURL            	;                              	; 	;  
+; InboundBLMedia:Media         	; modifiedtime  	; Media:modifiedtime           	;                              	; 	;  
+; InboundBLMedia:Media         	; realFileName  	; Media:realFileName           	;                              	; 	;  
+; InboundBLMedia:Media         	; mediaContainer	; Media:mediaContainer         	; InboundBLMedia:MediaContainer	; 	;  

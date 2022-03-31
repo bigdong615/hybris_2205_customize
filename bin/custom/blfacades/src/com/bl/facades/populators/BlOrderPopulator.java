@@ -47,7 +47,7 @@ public class BlOrderPopulator extends OrderPopulator
       }
     }
     if(BooleanUtils.isTrue(source.getIsRetailGearOrder())){
-      target.setIsNewGearOrder(source.getIsRetailGearOrder());
+      target.setIsRetailGearOrder(source.getIsRetailGearOrder());
     }
     target.setOrderReturnedToWarehouse(source.isOrderReturnedToWarehouse());
   }

@@ -1,0 +1,30 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLInventoryCycleCountScanHistory.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLInventoryCycleCountScanHistory; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLInventoryCycleCountScanHistory	; User                            	; User                            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryCycleCountScanHistory	; BlInventoryCycleCountScanHistory	; BlInventoryCycleCountScanHistory	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLInventoryCycleCountScanHistory	; InventoryCycleCountSerialStatus 	; InventoryCycleCountSerialStatus 	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLInventoryCycleCountScanHistory:User                            	; uid                            	; User:uid                                                        	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; barcodeNumber                  	; BlInventoryCycleCountScanHistory:barcodeNumber                  	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; serialNumber                   	; BlInventoryCycleCountScanHistory:serialNumber                   	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; orderStatus                    	; BlInventoryCycleCountScanHistory:orderStatus                    	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; inventoryCycleCountCode        	; BlInventoryCycleCountScanHistory:inventoryCycleCountCode        	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; ocParent                       	; BlInventoryCycleCountScanHistory:ocParent                       	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; productName                    	; BlInventoryCycleCountScanHistory:productName                    	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; lastOrderNumber                	; BlInventoryCycleCountScanHistory:lastOrderNumber                	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; inventoryCycleCountSerialStatus	; BlInventoryCycleCountScanHistory:inventoryCycleCountSerialStatus	; InboundBLInventoryCycleCountScanHistory:InventoryCycleCountSerialStatus	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; scannedUser                    	; BlInventoryCycleCountScanHistory:scannedUser                    	; InboundBLInventoryCycleCountScanHistory:User                           	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; productStatus                  	; BlInventoryCycleCountScanHistory:productStatus                  	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; lastOrderShippedDate           	; BlInventoryCycleCountScanHistory:lastOrderShippedDate           	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; scannedTime                    	; BlInventoryCycleCountScanHistory:scannedTime                    	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; oc                             	; BlInventoryCycleCountScanHistory:oc                             	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; inventoryCycleCountDayDate     	; BlInventoryCycleCountScanHistory:inventoryCycleCountDayDate     	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; homeBaseLocation               	; BlInventoryCycleCountScanHistory:homeBaseLocation               	;                                                                        	; 	;  
+; InboundBLInventoryCycleCountScanHistory:BlInventoryCycleCountScanHistory	; inventoryCycleCountDayCode     	; BlInventoryCycleCountScanHistory:inventoryCycleCountDayCode     	;                                                                        	; true	;  
+; InboundBLInventoryCycleCountScanHistory:InventoryCycleCountSerialStatus 	; code                           	; InventoryCycleCountSerialStatus:code                            	;                                                                        	; true	;  

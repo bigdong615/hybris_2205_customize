@@ -1,0 +1,16 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLDamageWaiverPricing.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLDamageWaiverPricing; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLDamageWaiverPricing	; RentalGearType       	; RentalGearType       	; 	; ALL_SUBTYPES           	;  
+; InboundBLDamageWaiverPricing	; BlDamageWaiverPricing	; BlDamageWaiverPricing	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLDamageWaiverPricing:RentalGearType       	; code                	; RentalGearType:code                       	;                                            	; true	;  
+; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; modifiedtime        	; BlDamageWaiverPricing:modifiedtime        	;                                            	; 	;  
+; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; damageWaiverGearType	; BlDamageWaiverPricing:damageWaiverGearType	; InboundBLDamageWaiverPricing:RentalGearType	; true	;  
+; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; waiverPercentage    	; BlDamageWaiverPricing:waiverPercentage    	;                                            	; true	;  
+; InboundBLDamageWaiverPricing:BlDamageWaiverPricing	; creationtime        	; BlDamageWaiverPricing:creationtime        	;                                            	; 	;  
