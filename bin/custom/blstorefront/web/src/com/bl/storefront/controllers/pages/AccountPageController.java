@@ -431,6 +431,7 @@ public class AccountPageController extends AbstractSearchPageController
 			setUpMetaDataForContentPage(model, orderHistoryPage);
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.orderHistory"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		model.addAttribute("blPageType",ORDER_HISTORY_CMS_PAGE);
 		return getViewForPage(model);
 	}
 
