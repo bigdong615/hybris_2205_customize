@@ -4,6 +4,7 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.DocumentType;
 import com.bl.core.enums.GearGaurdEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -22,6 +23,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
@@ -29,11 +31,7 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.xml.parsers.DocumentBuilder;
@@ -535,6 +533,25 @@ public abstract class ESPEventCommonPopulator<SOURCE extends AbstractOrderModel,
         return stringBuilder.toString();
     }
 
+
+    /* This method created to get COI expiration time from verification document
+    * @param user user
+    * @return string
+   */
+    public Date getCOIExpirationDateFromCustomer(final CustomerModel user) {
+        final List<Date> dateList = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(user.getVerificationDocuments())) {
+            user.getVerificationDocuments().forEach(verificationDocumentMediaModel -> {
+                if (StringUtils.equalsIgnoreCase(verificationDocumentMediaModel.getDocumentType().getCode() ,
+                        DocumentType.INSURANCE_CERTIFICATE.getCode())&& Objects.nonNull(verificationDocumentMediaModel.getExpiryDate())) {
+                    dateList.add(verificationDocumentMediaModel.getExpiryDate());
+                }
+            });
+        }
+        dateList.sort(Date::compareTo);
+        return dateList.isEmpty() ? null : dateList.get(dateList.size()-1);
+
+    }
 
     public ConfigurationService getConfigurationService() {
         return configurationService;

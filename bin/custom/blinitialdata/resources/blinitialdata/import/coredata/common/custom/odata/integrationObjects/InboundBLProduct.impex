@@ -6,13 +6,13 @@ INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; cod
 ; InboundBLProduct	; ProductVideo               	; ProductVideo               	; 	; ALL_SUB_AND_SUPER_TYPES	;  
 ; InboundBLProduct	; DurationEnum               	; DurationEnum               	; 	; ALL_SUBTYPES           	;  
 ; InboundBLProduct	; ProductFeature             	; ProductFeature             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; Media                      	; Media                      	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; BlSubparts                 	; BlSubparts                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; MediaContainer             	; MediaContainer             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; BlOptions                  	; BlOptions                  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; ClassificationSystem       	; ClassificationSystem       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; PriceRow                   	; PriceRow                   	; 	; ALL_SUB_AND_SUPER_TYPES	;  
-; InboundBLProduct	; ProductReference           	; ProductReference           	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLProduct	; Media                      	; Media                      	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; BlSubparts                 	; BlSubparts                 	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; MediaContainer             	; MediaContainer             	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; BlOptions                  	; BlOptions                  	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; ClassificationSystem       	; ClassificationSystem       	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; PriceRow                   	; PriceRow                   	; 	; ALL_SUB_AND_SUPER_TYPES	;
+; InboundBLProduct	; ProductReference           	; ProductReference           	; 	; ALL_SUB_AND_SUPER_TYPES	;
 ; InboundBLProduct	; ClassificationClass        	; ClassificationClass        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
 ; InboundBLProduct	; Unit                       	; Unit                       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
 ; InboundBLProduct	; CatalogVersion             	; CatalogVersion             	; 	; ALL_SUB_AND_SUPER_TYPES	;  
@@ -25,8 +25,8 @@ INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; cod
 ; InboundBLProduct	; Product                    	; Product                    	; 	; ALL_SUB_AND_SUPER_TYPES	;  
 ; InboundBLProduct	; ArticleApprovalStatus      	; ArticleApprovalStatus      	; 	; ALL_SUBTYPES           	;  
 ; InboundBLProduct	; ProductTypeEnum            	; ProductTypeEnum            	; 	; ALL_SUBTYPES           	;  
-; InboundBLProduct	; ClassificationSystemVersion	; ClassificationSystemVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
- 
+; InboundBLProduct	; ClassificationSystemVersion	; ClassificationSystemVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;
+
 INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
 ; InboundBLProduct:Catalog                    	; id                   	; Catalog:id                         	;                                             	; true	;  
 ; InboundBLProduct:ProductVideo               	; uid                  	; ProductVideo:uid                   	;                                             	; true	;  
@@ -113,7 +113,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProduct:BlProduct                  	; serialProducts       	; BlProduct:serialProducts           	; InboundBLProduct:BlSerialProduct            	; 	;  
 ; InboundBLProduct:BlProduct                  	; unit                 	; BlProduct:unit                     	; InboundBLProduct:Unit                       	; 	;  
 ; InboundBLProduct:BlProduct                  	; firmwareVersion      	; BlProduct:firmwareVersion          	;                                             	; 	;  
-; InboundBLProduct:BlProduct                  	; newGearInStock       	; BlProduct:newGearInStock           	;                                             	; 	;  
+; InboundBLProduct:BlProduct                  	; retailGearInStock    	; BlProduct:retailGearInStock           	;                                             	; 	;
 ; InboundBLProduct:BlProduct                  	; constrained          	; BlProduct:constrained              	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; displayName          	; BlProduct:displayName              	;                                             	; 	;  
 ; InboundBLProduct:BlProduct                  	; retailPrice          	; BlProduct:retailPrice              	;                                             	; 	;  
@@ -147,4 +147,4 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLProduct:ArticleApprovalStatus      	; code                 	; ArticleApprovalStatus:code         	;                                             	; true	;  
 ; InboundBLProduct:ProductTypeEnum            	; code                 	; ProductTypeEnum:code               	;                                             	; true	;  
 ; InboundBLProduct:ClassificationSystemVersion	; version              	; ClassificationSystemVersion:version	;                                             	; true	;  
-; InboundBLProduct:ClassificationSystemVersion	; catalog              	; ClassificationSystemVersion:catalog	; InboundBLProduct:ClassificationSystem       	; true	;  
+; InboundBLProduct:ClassificationSystemVersion	; catalog              	; ClassificationSystemVersion:catalog	; InboundBLProduct:ClassificationSystem       	; true	;

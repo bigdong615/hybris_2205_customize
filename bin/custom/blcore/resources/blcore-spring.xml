@@ -1781,6 +1781,8 @@
 	<alias name="blOrderValidateInterceptor" alias="orderValidateInterceptor"/>
 	<bean id="blOrderValidateInterceptor"	class="com.bl.core.model.interceptor.BlOrderValidateInterceptor">
 		<property name="userService" ref="userService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
 	</bean>
 
 	<bean id="blOrderValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >

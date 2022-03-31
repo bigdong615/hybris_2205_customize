@@ -1,19 +1,22 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
+import com.bl.core.services.customer.BlUserService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.logging.BlLogger;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
-
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.services.customer.BlUserService;
-import com.bl.logging.BlLogger;
 
 
 /**
@@ -28,6 +31,8 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 	private static final Logger LOG = Logger.getLogger(BlOrderValidateInterceptor.class);
 
 	private BlUserService userService;
+	private BlCommerceStockService blCommerceStockService;
+	private BaseStoreService baseStoreService;
 
 	@Override
 	public void onValidate(final OrderModel orderModel, final InterceptorContext interceptorContext) throws InterceptorException
@@ -58,6 +63,14 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 			{
 				throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
 			}
+			final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+			for(AbstractOrderEntryModel orderEntry : orderModel.getEntries()) {
+				final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
+						orderEntry.getProduct().getCode(), baseStore.getWarehouses(), rentalStartDate, rentalEndDate);
+				if(stockResult.getAvailableCount() == 0L) {
+					throw new InterceptorException("Stock is not available for the extended dates");
+				}
+			}
 		}
 	}
 
@@ -76,6 +89,22 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 	public void setUserService(final BlUserService userService)
 	{
 		this.userService = userService;
+	}
+
+	public BlCommerceStockService getBlCommerceStockService() {
+		return blCommerceStockService;
+	}
+
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
 	}
 
 }

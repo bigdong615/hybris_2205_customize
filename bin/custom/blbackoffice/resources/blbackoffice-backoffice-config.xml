@@ -1242,27 +1242,6 @@
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
-
-	<context merge-by="type" parent="GenericItem" type="StockLevel"
-				component="editor-area">
-			<editorArea:editorArea
-				xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
-				<editorArea:tab name="hmc.properties">
-					<editorArea:section name="hmc.section.stocklevel.stock">
-						<editorArea:attribute qualifier="date">
-							<editorArea:editor-parameter>
-								<editorArea:name>timeZoneReadOnly</editorArea:name>
-								<editorArea:value>false</editorArea:value>
-							</editorArea:editor-parameter>
-							<editorArea:editor-parameter>
-								<editorArea:name>selectedTimeZone</editorArea:name>
-								<editorArea:value>GMT+00:00</editorArea:value>
-							</editorArea:editor-parameter>
-						</editorArea:attribute>
-					</editorArea:section>
-				</editorArea:tab>
-			</editorArea:editorArea>
-		</context>
 		
 	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1661,6 +1640,24 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+            <na:notifications eventType="firstScanLocationBinErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.first.scan.bin.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanToBeCPCOrCC" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.tech.eng.last.scan.cpc.cc.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="techEngbinTypeError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.tech.eng.not.bin.type.location</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
         </na:notification-area>
     </context>
 
@@ -1917,6 +1914,12 @@
                     <na:reference placeholder="0" link="true"/>
                 </na:references>
             </na:notifications>
+			<na:notifications eventType="firstScanLocationBinErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.first.scan.bin.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
 			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
 				<na:references linksEnabled="true">
@@ -1924,13 +1927,31 @@
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="scanBatchErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+				<na:message>blbackoffice.unboxing.scan.tool.wizard.notification.barcode.batch.failure</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
 			</na:notifications>
 			<na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="binTypeError" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.not.bin.type.location</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="lastScanToBeDPCOrDC" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.last.scan.bpc.dp.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
+			</na:notifications>
+			<na:notifications eventType="missingBarcodesPackage" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.unbox.serial.package.missing</na:message>
 				<na:references linksEnabled="true">
 					<na:reference placeholder="0" link="true"/>
 				</na:references>
@@ -3459,5 +3480,15 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+	
+	<!-- BL-1976 Start  -->
+	<context type="BlOptions" component="simple-search">
+		<yss:simple-search xmlns:yss="http://www.hybris.com/cockpitng/config/simplesearch">>
+			<yss:field xmlns="http://www.hybris.com/cockpitng/config/simplesearch" name="code"/>
+			<yss:field xmlns="http://www.hybris.com/cockpitng/config/simplesearch" name="optionId"/>
+			<yss:field xmlns="http://www.hybris.com/cockpitng/config/simplesearch" name="name"/>
+		</yss:simple-search>
+	</context>
+	<!-- BL-1976 End  -->
 
 </config>
