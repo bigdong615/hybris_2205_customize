@@ -154,7 +154,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
 	 */
 	private void checkifVideoOrder(final OrderModel orderModel)
 	{
-		if (BooleanUtils.isFalse(orderModel.getIsNewGearOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
+		if (BooleanUtils.isFalse(orderModel.getIsRetailGearOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
 		{
 			final List<AbstractOrderEntryModel> newCreatedMainBundleEntry = orderModel.getEntries().stream()
 					.filter(entry -> entry.isBundleMainEntry() && !entry.isEntryCreated()).collect(Collectors.toList());

@@ -1,0 +1,21 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLShippingGroup.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLShippingGroup; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLShippingGroup	; ZoneDeliveryMode	; ZoneDeliveryMode	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingGroup	; ShippingGroup   	; ShippingGroup   	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLShippingGroup	; ShippingTypeEnum	; ShippingTypeEnum	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLShippingGroup:ZoneDeliveryMode	; code                	; ZoneDeliveryMode:code             	;                                        	; true	;  
+; InboundBLShippingGroup:ShippingGroup   	; defaultShippingGroup	; ShippingGroup:defaultShippingGroup	;                                        	; 	;  
+; InboundBLShippingGroup:ShippingGroup   	; shippingType        	; ShippingGroup:shippingType        	; InboundBLShippingGroup:ShippingTypeEnum	; 	;  
+; InboundBLShippingGroup:ShippingGroup   	; modifiedtime        	; ShippingGroup:modifiedtime        	;                                        	; 	;  
+; InboundBLShippingGroup:ShippingGroup   	; code                	; ShippingGroup:code                	;                                        	; true	;  
+; InboundBLShippingGroup:ShippingGroup   	; creationtime        	; ShippingGroup:creationtime        	;                                        	; 	;  
+; InboundBLShippingGroup:ShippingGroup   	; zoneDeliveryMode    	; ShippingGroup:zoneDeliveryMode    	; InboundBLShippingGroup:ZoneDeliveryMode	; 	;  
+; InboundBLShippingGroup:ShippingGroup   	; name                	; ShippingGroup:name                	;                                        	; 	;  
+; InboundBLShippingGroup:ShippingTypeEnum	; code                	; ShippingTypeEnum:code             	;                                        	; true	;  

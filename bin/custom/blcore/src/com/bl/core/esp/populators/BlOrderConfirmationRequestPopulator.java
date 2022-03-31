@@ -15,11 +15,13 @@ import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -84,7 +86,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
             data.setCustomername(getRequestValue(userModel.getName()));
         }
         data.setType(getOrderType(orderModel));
-        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+        data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
             ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
         data.setStatus(getRequestValue(getOrderStatus(orderModel)));
         data.setDateplaced(formatter.format(orderModel.getDate()));
@@ -104,7 +106,7 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setDiscountamount(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalDiscounts())));
         data.setTotalcost(BlDateTimeUtils.formatAmount(getDoubleValueForRequest(orderModel.getTotalPrice())));
         data.setDiscounttext(StringUtils.EMPTY);
-        if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+        if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(
             orderModel.isGiftCardOrder())) {
           data.setExpectedshippingdate(formatter.format(orderModel.getRentalStartDate()));
           data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
@@ -126,6 +128,12 @@ public class BlOrderConfirmationRequestPopulator  extends ESPEventCommonPopulato
         data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
         data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
         populateXMLData(orderModel, data);
+        
+        final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+        if(coiExpirationDateFromCustomer !=null)
+        {
+      	  data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+        }
         orderConfirmationEventRequest.setData(data);
     }
 

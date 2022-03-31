@@ -1,0 +1,34 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundPriceRow.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundPriceRow; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundPriceRow	; Catalog       	; Catalog       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundPriceRow	; DurationEnum  	; DurationEnum  	; 	; ALL_SUBTYPES           	;  
+; InboundPriceRow	; Unit          	; Unit          	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundPriceRow	; PriceRow      	; PriceRow      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundPriceRow	; Currency      	; Currency      	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundPriceRow	; Product       	; Product       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundPriceRow	; CatalogVersion	; CatalogVersion	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundPriceRow:Catalog       	; id            	; Catalog:id             	;                               	; true	;  
+; InboundPriceRow:DurationEnum  	; code          	; DurationEnum:code      	;                               	; true	;  
+; InboundPriceRow:Unit          	; code          	; Unit:code              	;                               	; true	;  
+; InboundPriceRow:PriceRow      	; productId     	; PriceRow:productId     	;                               	; true	;  
+; InboundPriceRow:PriceRow      	; unit          	; PriceRow:unit          	; InboundPriceRow:Unit          	; true	;  
+; InboundPriceRow:PriceRow      	; modifiedtime  	; PriceRow:modifiedtime  	;                               	; 	;  
+; InboundPriceRow:PriceRow      	; endTime       	; PriceRow:endTime       	;                               	; 	;  
+; InboundPriceRow:PriceRow      	; catalogVersion	; PriceRow:catalogVersion	; InboundPriceRow:CatalogVersion	; 	;  
+; InboundPriceRow:PriceRow      	; price         	; PriceRow:price         	;                               	; 	;  
+; InboundPriceRow:PriceRow      	; currency      	; PriceRow:currency      	; InboundPriceRow:Currency      	; 	;  
+; InboundPriceRow:PriceRow      	; product       	; PriceRow:product       	; InboundPriceRow:Product       	; true	;  
+; InboundPriceRow:PriceRow      	; creationtime  	; PriceRow:creationtime  	;                               	; 	;  
+; InboundPriceRow:PriceRow      	; duration      	; PriceRow:duration      	; InboundPriceRow:DurationEnum  	; true	;  
+; InboundPriceRow:Currency      	; isocode       	; Currency:isocode       	;                               	; true	;  
+; InboundPriceRow:Product       	; code          	; Product:code           	;                               	; true	;  
+; InboundPriceRow:Product       	; catalogVersion	; Product:catalogVersion 	; InboundPriceRow:CatalogVersion	; true	;  
+; InboundPriceRow:CatalogVersion	; catalog       	; CatalogVersion:catalog 	; InboundPriceRow:Catalog       	; true	;  
+; InboundPriceRow:CatalogVersion	; version       	; CatalogVersion:version 	;                               	; true	;  

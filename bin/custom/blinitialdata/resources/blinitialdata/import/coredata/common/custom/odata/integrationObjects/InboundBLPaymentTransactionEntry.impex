@@ -1,0 +1,31 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPaymentTransactionEntry.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPaymentTransactionEntry; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPaymentTransactionEntry	; PaymentTransactionEntry	; PaymentTransactionEntry	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPaymentTransactionEntry	; PaymentTransaction     	; PaymentTransaction     	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPaymentTransactionEntry	; Currency               	; Currency               	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPaymentTransactionEntry	; PaymentTransactionType 	; PaymentTransactionType 	; 	; ALL_SUBTYPES           	;  
+; InboundBLPaymentTransactionEntry	; Consignment            	; Consignment            	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; subscriptionID              	; PaymentTransactionEntry:subscriptionID              	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; submittedForSettlementAmount	; PaymentTransactionEntry:submittedForSettlementAmount	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; requestId                   	; PaymentTransactionEntry:requestId                   	;                                                        	; true	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; transactionStatus           	; PaymentTransactionEntry:transactionStatus           	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; versionID                   	; PaymentTransactionEntry:versionID                   	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; transactionStatusDetails    	; PaymentTransactionEntry:transactionStatusDetails    	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; amount                      	; PaymentTransactionEntry:amount                      	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; currency                    	; PaymentTransactionEntry:currency                    	; InboundBLPaymentTransactionEntry:Currency              	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; requestToken                	; PaymentTransactionEntry:requestToken                	;                                                        	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; code                        	; PaymentTransactionEntry:code                        	;                                                        	; true	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; type                        	; PaymentTransactionEntry:type                        	; InboundBLPaymentTransactionEntry:PaymentTransactionType	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; paymentTransaction          	; PaymentTransactionEntry:paymentTransaction          	; InboundBLPaymentTransactionEntry:PaymentTransaction    	; true	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionEntry	; consignment                 	; PaymentTransactionEntry:consignment                 	; InboundBLPaymentTransactionEntry:Consignment           	; 	;  
+; InboundBLPaymentTransactionEntry:PaymentTransaction     	; code                        	; PaymentTransaction:code                             	;                                                        	; true	;  
+; InboundBLPaymentTransactionEntry:Currency               	; isocode                     	; Currency:isocode                                    	;                                                        	; true	;  
+; InboundBLPaymentTransactionEntry:PaymentTransactionType 	; code                        	; PaymentTransactionType:code                         	;                                                        	; true	;  
+; InboundBLPaymentTransactionEntry:Consignment            	; code                        	; Consignment:code                                    	;                                                        	; true	;  

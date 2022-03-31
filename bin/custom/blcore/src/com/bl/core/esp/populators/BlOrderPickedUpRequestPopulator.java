@@ -64,7 +64,7 @@ public class BlOrderPickedUpRequestPopulator extends
       data.setCustomerName(getRequestValue(userModel.getName()));
     }
     data.setType(getOrderType(orderModel));
-    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+    data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
         ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
     data.setStatus(getRequestValue(
         Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode()
@@ -81,7 +81,7 @@ public class BlOrderPickedUpRequestPopulator extends
       data.setShippingMethod(StringUtils.EMPTY);
       data.setShippingMethodText(StringUtils.EMPTY);
     }
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
       data.setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
       data.setReturnDate(formatter.format(orderModel.getRentalEndDate()));
       data.setRentalDuration((int) getRentalDuration(orderModel));

@@ -131,7 +131,10 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 					optionsDataList.add(blOptionData);
 				});
 				target.setOption(optionsDataList);
+				if(CollectionUtils.isNotEmpty(options.iterator().next().getOptions()))
+				{
 				target.setMainOptionName(options.iterator().next().getOptions().get(0).getName());
+				}
 			}
 			if (CollectionUtils.isNotEmpty(source.getOptions()))
 			{

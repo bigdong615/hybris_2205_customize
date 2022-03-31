@@ -1,13 +1,16 @@
 package com.bl.core.esp.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.esp.dto.orderverification.OrderVerificationRequiredEventRequest;
 import com.bl.esp.dto.orderverification.data.OrderVerificationRequiredEventData;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +70,7 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
       orderVerificationRequiredEventData.setShippingMethodType(StringUtils.EMPTY);
       orderVerificationRequiredEventData.setShippingMethod(StringUtils.EMPTY);
     }
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder()))
     {
       orderVerificationRequiredEventData
           .setArrivalDate(formatter.format(orderModel.getRentalStartDate()));
@@ -84,6 +87,12 @@ public class BlOrderVerificationRequiredRequestPopulator extends ESPEventCommonP
     orderVerificationRequiredEventData.setVerificationText("verification text"); // TO-DO setting dummy value, once we get actual value then set actual one.
     orderVerificationRequiredEventData.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     orderVerificationRequiredEventData.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
+    
+    final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+    if(coiExpirationDateFromCustomer !=null)
+    {
+   	 orderVerificationRequiredEventData.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    }
     orderVerificationRequiredEventRequest.setData(orderVerificationRequiredEventData);
   }
 }

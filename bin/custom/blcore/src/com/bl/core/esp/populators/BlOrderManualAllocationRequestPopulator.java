@@ -97,7 +97,7 @@ public class BlOrderManualAllocationRequestPopulator extends
       orderManualAllocationData.setShippingMethodType(StringUtils.EMPTY);
       orderManualAllocationData.setShippingMethod(StringUtils.EMPTY);
     }
-    if (BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils
+    if (BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils
         .isFalse(orderModel.isGiftCardOrder())) {
       orderManualAllocationData
           .setExpectedShippingdate(formatter.format(orderModel.getActualRentalStartDate()));

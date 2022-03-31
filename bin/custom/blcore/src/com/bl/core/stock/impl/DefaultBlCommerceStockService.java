@@ -78,7 +78,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount)) {
 			availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
 			totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, STOCK_RESULT_MESSAGE, productCode, startDate, endDate, totalUnits, availability);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, STOCK_RESULT_MESSAGE, productCode, startDate, endDate, totalUnits, availability);
+		} else {
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total and available count of the product {} is {} and {} for the date between {} and {}", productCode, totalUnits, availability, startDate, endDate);
 		}
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
@@ -268,12 +270,14 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 					final Long availableQty = totalQty - reservedQty;
 					availability.add(availableQty);
 					totalUnits.add(totalQty);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Total count {} and available count {} for product : {} and date between : {} and {}",
+							totalQty, availableQty, productCode, startDate, endDate);
 				});
 			}
 			else
 			{
 				makeZeroAvailability(availability, totalUnits);
-				BlLogger.logFormatMessageInfo(LOG, Level.WARN, "No Stock Levels found for product : {} and date between : {} and {}",
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "No Stock Levels found for product : {} and date between : {} and {}",
 						productCode, startDate, endDate);
 			}
 		}

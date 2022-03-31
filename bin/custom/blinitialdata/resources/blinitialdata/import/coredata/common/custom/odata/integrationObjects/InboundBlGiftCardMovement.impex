@@ -1,0 +1,22 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBlGiftCardMovement.impex =========================");
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBlGiftCardMovement; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBlGiftCardMovement	; GiftCard        	; GiftCard        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBlGiftCardMovement	; Currency        	; Currency        	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBlGiftCardMovement	; GiftCardMovement	; GiftCardMovement	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBlGiftCardMovement:GiftCard        	; code         	; GiftCard:code                 	;                                   	; true	;  
+; InboundBlGiftCardMovement:Currency        	; isocode      	; Currency:isocode              	;                                   	; true	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; currency     	; GiftCardMovement:currency     	; InboundBlGiftCardMovement:Currency	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; modifiedtime 	; GiftCardMovement:modifiedtime 	;                                   	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; balanceAmount	; GiftCardMovement:balanceAmount	;                                   	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; transactionId	; GiftCardMovement:transactionId	;                                   	; true	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; committed    	; GiftCardMovement:committed    	;                                   	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; amount       	; GiftCardMovement:amount       	;                                   	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; creationtime 	; GiftCardMovement:creationtime 	;                                   	; true	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; redeemDate   	; GiftCardMovement:redeemDate   	;                                   	; 	;  
+; InboundBlGiftCardMovement:GiftCardMovement	; giftCard     	; GiftCardMovement:giftCard     	; InboundBlGiftCardMovement:GiftCard	; true	;  

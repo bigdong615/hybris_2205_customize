@@ -56,13 +56,13 @@ public class AbstractBlOrderFeedPopulater {
     if(BooleanUtils.isTrue(orderModel.isGiftCardOrder())) {
       orderType.set(BlespintegrationConstants.GIFT_CARD_ORDER);
     }
-    else if(BooleanUtils.isTrue(orderModel.getIsNewGearOrder())){
+    else if(BooleanUtils.isTrue(orderModel.getIsRetailGearOrder())){
       orderType.set(BlespintegrationConstants.NEW_GEAR_ORDER);
     }
-    else if(BooleanUtils.isTrue(orderModel.getIsRentalCart())){
+    else if(BooleanUtils.isTrue(orderModel.getIsRentalOrder())){
       orderType.set(BlespintegrationConstants.RENTAL);
     }
-    else if(BooleanUtils.isFalse(orderModel.getIsRentalCart())){
+    else if(BooleanUtils.isFalse(orderModel.getIsRentalOrder())){
       orderType.set(BlespintegrationConstants.USED_GEAR);
     }
     return orderType.get();

@@ -31,7 +31,7 @@ public class BraintreeEventPublishingSubmitOrderStrategy extends EventPublishing
 		}
 
 		// Stopping the order process in case of gift card order and new gear order.
-		if (!order.isGiftCardOrder() && BooleanUtils.isFalse(order.getIsNewGearOrder()))
+		if (!order.isGiftCardOrder() && BooleanUtils.isFalse(order.getIsRetailGearOrder()))
 		{	
 		  super.submitOrder(order);
 		}

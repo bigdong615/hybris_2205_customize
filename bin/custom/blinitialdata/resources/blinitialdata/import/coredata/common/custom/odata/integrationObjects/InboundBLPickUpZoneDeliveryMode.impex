@@ -1,0 +1,21 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPickUpZoneDeliveryMode.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPickUpZoneDeliveryMode; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPickUpZoneDeliveryMode	; BlPickUpZoneDeliveryMode	; BlPickUpZoneDeliveryMode	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPickUpZoneDeliveryMode	; Address                 	; Address                 	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; password            	; BlPickUpZoneDeliveryMode:password            	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; warehousePickUp     	; BlPickUpZoneDeliveryMode:warehousePickUp     	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; active              	; BlPickUpZoneDeliveryMode:active              	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; userName            	; BlPickUpZoneDeliveryMode:userName            	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; name                	; BlPickUpZoneDeliveryMode:name                	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; internalStoreAddress	; BlPickUpZoneDeliveryMode:internalStoreAddress	; InboundBLPickUpZoneDeliveryMode:Address	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; externalStores      	; BlPickUpZoneDeliveryMode:externalStores      	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; code                	; BlPickUpZoneDeliveryMode:code                	;                                        	; true	;  
+; InboundBLPickUpZoneDeliveryMode:BlPickUpZoneDeliveryMode	; externalStoreUrl    	; BlPickUpZoneDeliveryMode:externalStoreUrl    	;                                        	; 	;  
+; InboundBLPickUpZoneDeliveryMode:Address                 	; addressID           	; Address:addressID                            	;                                        	; true	;  

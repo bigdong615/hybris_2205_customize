@@ -17,7 +17,6 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -237,4 +236,11 @@ public interface BrainTreeTransactionService
 	 */
 	public Result<Transaction> issueBlindCredit(final PaymentTransactionEntryModel paymentTransactionEntry,
 			final BigDecimal refundAmount);
+
+	/**
+	 * It gets the Braintree address id for legacy payment methods where braintreeAddressID is not present (BL-1744)
+	 * @param paymentMethodToken the payment method token
+	 * @return braintree address id
+	 */
+	public String getBraintreeAddressIDForLegacyPaymentMethods(final String paymentMethodToken);
 }

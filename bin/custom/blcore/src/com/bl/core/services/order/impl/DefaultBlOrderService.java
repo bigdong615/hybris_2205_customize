@@ -345,4 +345,11 @@ public void setBlRepairLogDao(BlRepairLogDao blRepairLogDao)
 		this.defaultBlESPEventService = defaultBlESPEventService;
 	}
 
+	@Override
+	public boolean isUsedOrderOnly(final AbstractOrderModel order)
+	{
+		return BooleanUtils.isFalse(order.getIsRentalOrder()) && BooleanUtils.isFalse(order.isGiftCardOrder()) 
+				&& BooleanUtils.isFalse(order.getIsRetailGearOrder()) && BooleanUtils.isFalse(order.getIsReplacementOrder());
+	}
+
 }

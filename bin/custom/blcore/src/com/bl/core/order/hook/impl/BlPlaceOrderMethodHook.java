@@ -9,9 +9,12 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.services.order.BlOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
 
 
@@ -25,6 +28,7 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 {
 	private static final Logger LOG = Logger.getLogger(BlPlaceOrderMethodHook.class);
 	private ModelService modelService;
+	private BlOrderService blOrderService; 
 
 	@Override
 	public void afterPlaceOrder(final CommerceCheckoutParameter checkoutParameter, final CommerceOrderResult commerceOrderResult)
@@ -35,6 +39,28 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 		{
 			getModelService().refresh(order);
 			setValuesForRunTAttributes(order);
+			setDateOfSaleOnSerialForUsedGearOrder(order);
+		}
+	}
+	
+	/**
+	 * Sets the date of sale on serial for used gear order.
+	 *
+	 * @param order the new date of sale on serial for used gear order
+	 */
+	private void setDateOfSaleOnSerialForUsedGearOrder(final OrderModel order)
+	{
+		if(getBlOrderService().isUsedOrderOnly(order) && CollectionUtils.isNotEmpty(order.getEntries()) 
+				&& Objects.nonNull(order.getCreationtime()))
+		{
+			order.getEntries().forEach(entry -> {
+				if(entry.getProduct() instanceof BlSerialProductModel)
+				{
+					final BlSerialProductModel serial = (BlSerialProductModel) entry.getProduct();
+					serial.setDateOfSale(order.getCreationtime());
+					getModelService().save(serial);
+				}
+			});
 		}
 	}
 
@@ -47,10 +73,10 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	private void setValuesForRunTAttributes(final OrderModel order)
 	{
 		order.setRunTot_grandTotal(getGrandTotalFromOrder(order));
-		order.setRunTot_subtotal(order.getSubtotal());
-		order.setRunTot_totalOptionsCost(order.getTotalOptionsCost());
-		order.setRunTot_totalPrice(order.getTotalPrice());
-		order.setRunTot_totalTax(order.getTotalTax());
+		order.setRunTot_subtotal(getDefaultValueIfNull(order.getSubtotal()));
+		order.setRunTot_totalOptionsCost(getDefaultValueIfNull(order.getTotalOptionsCost()));
+		order.setRunTot_totalPrice(getDefaultValueIfNull(order.getTotalPrice()));
+		order.setRunTot_totalTax(getDefaultValueIfNull(order.getTotalTax()));
 		if(ObjectUtils.allNotNull(order.getRentalStartDate(),order.getRentalEndDate()))
 		{
 			order.setRunTot_daysRented(
@@ -77,6 +103,17 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 			return order.getTotalPrice();
 		}
 		return order.getGrandTotal();
+	}
+	
+	/**
+	 * Gets the default value if null.
+	 *
+	 * @param value the value
+	 * @return the default value if null
+	 */
+	private Double getDefaultValueIfNull(final Double value)
+	{
+		return ObjectUtils.defaultIfNull(value, Double.valueOf(0.0d)); 
 	}
 
 	@Override
@@ -109,6 +146,22 @@ public class BlPlaceOrderMethodHook implements CommercePlaceOrderMethodHook
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	/**
+	 * @return the blOrderService
+	 */
+	public BlOrderService getBlOrderService()
+	{
+		return blOrderService;
+	}
+
+	/**
+	 * @param blOrderService the blOrderService to set
+	 */
+	public void setBlOrderService(BlOrderService blOrderService)
+	{
+		this.blOrderService = blOrderService;
 	}
 
 }

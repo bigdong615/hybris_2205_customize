@@ -82,7 +82,7 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ " AND {o:status} IN ({{select {os:pk} from {OrderStatus as os} where {os:code} = 'RECEIVED'}})";
 
 	private static final String GET_COMPLETED_RENTAL_ORDERS_FOR_SHARE_A_SALE = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALCART + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
+			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISRENTALORDER + "} = ?isRentalCart and {o:" + OrderModel.SHAREASALESENT + "} = ?shareASaleSent and {o:" + OrderModel.STATUS + "} = ({{select {type:" + ItemModel.PK + "} from {" + OrderStatus._TYPECODE
 			+ " as type} where {type:code} = ?code}})";
 
 	private static final String GET_ONE_YEAR_OLD_COMPLETED_ORDERS = "SELECT {" + ItemModel.PK + "} FROM {"
@@ -132,9 +132,9 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String GET_ORDERS_TO_VOID_TRANSACTION  = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + OrderModel.ISAUTHORIZATIONVOIDED +
 			"} =?isAuthorizationVoided AND {o:" + OrderModel.ISEXTENDEDORDER + "} =?isExtendedOrder AND "
-			+ "{o:" + OrderModel.ISCARTUSEDFORREPLACEMENTORDER + "} =?isReplacementOrder AND "
+			+ "{o:" + OrderModel.ISREPLACEMENTORDER + "} =?isReplacementOrder AND "
 			+ "{o:" + OrderModel.GIFTCARDORDER + "} =?isGiftCardOrder AND "
-			+ "{o:" + OrderModel.ISNEWGEARORDER + "} =?isNewGearOrder AND "
+			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
 			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
 	/**

@@ -1,0 +1,35 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLStocklevel.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLStockLevel; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLStockLevel	; InStockStatus   	; InStockStatus   	; 	; ALL_SUBTYPES           	;  
+; InboundBLStockLevel	; Warehouse       	; Warehouse       	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLStockLevel	; SerialStatusEnum	; SerialStatusEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLStockLevel	; StockLevel      	; StockLevel      	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLStockLevel:InStockStatus   	; code                     	; InStockStatus:code                  	;                                     	; true	;  
+; InboundBLStockLevel:Warehouse       	; active                   	; Warehouse:active                    	;                                     	; true	;  
+; InboundBLStockLevel:Warehouse       	; code                     	; Warehouse:code                      	;                                     	; true	;  
+; InboundBLStockLevel:SerialStatusEnum	; code                     	; SerialStatusEnum:code               	;                                     	; true	;  
+; InboundBLStockLevel:StockLevel      	; modifiedtime             	; StockLevel:modifiedtime             	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; reservedStatus           	; StockLevel:reservedStatus           	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; bufferedInventory        	; StockLevel:bufferedInventory        	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; inStockStatus            	; StockLevel:inStockStatus            	; InboundBLStockLevel:InStockStatus   	; 	;  
+; InboundBLStockLevel:StockLevel      	; date                     	; StockLevel:date                     	;                                     	; true	;  
+; InboundBLStockLevel:StockLevel      	; available                	; StockLevel:available                	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; maxStockLevelHistoryCount	; StockLevel:maxStockLevelHistoryCount	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; releaseDate              	; StockLevel:releaseDate              	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; serialStatus             	; StockLevel:serialStatus             	; InboundBLStockLevel:SerialStatusEnum	; 	;  
+; InboundBLStockLevel:StockLevel      	; serialProductCode        	; StockLevel:serialProductCode        	;                                     	; true	;  
+; InboundBLStockLevel:StockLevel      	; bin                      	; StockLevel:bin                      	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; hardAssigned             	; StockLevel:hardAssigned             	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; order                    	; StockLevel:order                    	;                                     	; true	;  
+; InboundBLStockLevel:StockLevel      	; warehouse                	; StockLevel:warehouse                	; InboundBLStockLevel:Warehouse       	; 	;  
+; InboundBLStockLevel:StockLevel      	; maxPreOrder              	; StockLevel:maxPreOrder              	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; creationtime             	; StockLevel:creationtime             	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; reserved                 	; StockLevel:reserved                 	;                                     	; 	;  
+; InboundBLStockLevel:StockLevel      	; productCode              	; StockLevel:productCode              	;                                     	; 	;  

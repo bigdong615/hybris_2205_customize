@@ -80,7 +80,7 @@ public class BlOrderExceptionsRequestPopulator  extends ESPEventCommonPopulator<
     orderExceptionsData.setDateplaced(formatter.format(orderModel.getDate()));
     orderExceptionsData.setOrderstatus(getRequestValue(Objects.isNull(orderModel.getStatus()) ? StringUtils.EMPTY :orderModel.getStatus().getCode()));
     orderExceptionsData.setOrdersubstatus(getSubStatusFromOrder(orderModel));
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(
         orderModel.isGiftCardOrder())) {
       orderExceptionsData
           .setActualreturndate(formatter.format(orderModel.getActualRentalEndDate()));

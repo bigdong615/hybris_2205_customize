@@ -153,7 +153,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         return consignment;
       }
 
-      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
+      if (BooleanUtils.isTrue(order.getIsRentalOrder())) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
         if (null != result.getSerialProductMap()) {
