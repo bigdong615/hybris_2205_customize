@@ -35,10 +35,12 @@
 		<p class="overline">${product.manufacturer}</p>
 	  </c:if>
  <h3 class="product">
+	 <div class="sizeAdj-6">
  <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
             <a href="${usedGearUrl}" role="button"  class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
              data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
              <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
+	 </div>
   </h3>
 		<ycommerce:testId code="product_wholeProduct">
 
@@ -49,7 +51,8 @@
 					</c:forEach>
 				</div>
 			</c:if>
-	<h6 class="price">
+	<h4 class="price">
+		<div class="sizeAdj-6">
 	<!-- BL-926: Added condition for Gift Card as per requirement --> 
 	<c:choose>
 	    <c:when test="${product.productType eq 'GIFTCARD'}">
@@ -67,7 +70,8 @@
 					<format:price priceData="${product.serialfinalSalePrice}" />
 				</c:otherwise>
 			</c:choose>
-	</h6>
+		</div>
+	</h4>
 	<c:if test="${product.ugPromotionMessage ne null && product.serialPromotionPrice.value > 0 && product.onSale eq true}">
   	<p class="sale"><span class="saleprice"><format:price	priceData="${product.serialPromotionPrice}" />&nbsp;&nbsp;${fn:escapeXml(product.ugPromotionMessage)} </p>
 	</c:if>

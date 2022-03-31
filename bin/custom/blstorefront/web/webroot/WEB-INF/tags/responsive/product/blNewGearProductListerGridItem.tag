@@ -29,12 +29,14 @@
   	</c:choose>
     <product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
     <h3 class="product">
+        <div class="sizeAdj-6">
      <c:url var="newGearUrl" value="/buy/product/${product.code}"/>
      <a href="${newGearUrl}" role="button"  class="js-pdplinkUrl" data-productCode="${product.code}">
        <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
+        </div>
     </h3>
 		<ycommerce:testId code="product_wholeProduct">
-		  <h6 class="price"><format:price priceData="${product.retailGearPrice}"/></h6>
+            <h4 class="price"><div class="sizeAdj-6"><format:price priceData="${product.retailGearPrice}"/></div></h4>
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
