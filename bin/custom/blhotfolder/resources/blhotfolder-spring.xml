@@ -28,6 +28,7 @@
 	<import resource="classpath:/blhotfolder/integration/bl-price-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-media-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-serial-product-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-inventory-hotfolder-spring.xml"/>
 	
 	<beans profile="cloud">
 		<import
