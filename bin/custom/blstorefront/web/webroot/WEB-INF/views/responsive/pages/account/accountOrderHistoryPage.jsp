@@ -25,8 +25,8 @@
                 				</p>
                 		</div>
                 		<c:url value="/contactus" var="link"/>
-                		
-            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
                 	</div>
                 </c:if>
                 <c:if test="${not empty searchPageData.results}">
@@ -267,6 +267,7 @@
                 		<div class="account-orderhistory-pagination">
                 			<nav:pagination searchPageData="${searchPageData}" searchUrl="${searchUrl}" /> </div>
                 			<c:url value="/contactus" var="link"/>
-            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
                               	</div>
                 	</c:if>
