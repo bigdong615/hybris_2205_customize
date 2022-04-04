@@ -113,6 +113,9 @@ UserGroup ; backofficeproductmanagergroup ;                ;          ;         
           ;                               ;                ;          ; ItemTestingStatusEnum        ; +    ;        ;        ;        ;   ;
           ;                               ;                ;          ; RepairReasonsEnum            ; +    ;        ;        ;        ;   ;
           ;                               ;                ;          ; ConditionRatingValueEnum     ; +    ;        ;        ;        ;   ;
+          ;                               ;                ;          ; BlSubparts2BlProductRelation ; +    ;  +     ;        ;
+          ;                               ;                ;          ; BlSubparts 					 ; +    ;  +     ;+       ;
+          ;                               ;                ;          ; BlSubparts.subpartProduct	 ; +    ;  +     ;        ;
 
 $END_USERRIGHTS; ; ; ; ;
 
@@ -602,6 +605,9 @@ UserGroup;pcminventorymanagergroup;;;;;;;;
 ;;;;ItemTestingStatusEnum;+;;;;;
 ;;;;RepairReasonsEnum;+;;;;;
 ;;;;ConditionRatingValueEnum;+;;;;;
+;;;; BlSubparts2BlProductRelation;+;+;;
+;;;; BlSubparts;+;+;+;
+;;;; BlSubparts.subpartProduct;+;+;;
 
 $END_USERRIGHTS;;;;;
 

@@ -13,6 +13,7 @@ import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -93,7 +94,12 @@ public class BlOrderVerificationCOIneededRequestPopulator extends
     data.setVerificationtext("Dummy verification text"); //TODO NOSONAR setting dummy value here, once we get the confirmation, will set the actual value
     data.setTotalvalue(isOrderAllowToGetTotalValueFromOrder(orderModel) ? getTotalValueFromOrder(orderModel) : null);
     data.setReturningcustomer(String.valueOf(isReturningCustomer(orderModel)));
-    data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser()),BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    
+    final Date coiExpirationDateFromCustomer = getCOIExpirationDateFromCustomer((CustomerModel) orderModel.getUser());
+    if(coiExpirationDateFromCustomer !=null)
+    {
+   	data.setCoiExpirationDate(BlDateTimeUtils.convertDateToStringDate(coiExpirationDateFromCustomer,BlCoreConstants.COI_EXPIRATION_DATE_FORMAT));
+    }
     orderVerificationCOIneededEventRequest.setData(data);
   }
 
