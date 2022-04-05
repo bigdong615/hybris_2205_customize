@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2020 SAP SE or an SAP affiliate company.  All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+	<bean id="batchOrderEntryConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="ORDERENTRY"
+          p:converter-ref="batchOrderEntryConverter"/>
+
+ <!-- Transformer converters mappings -->
+	<bean id="batchOrderEntryConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				# ImpEx for importing data
+				$productCatalog=blProductCatalog
+				$productCatalogName=Bl Product Catalog
+				$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+				INSERT_UPDATE OrderEntry;entryNumber;order(code)[unique=true];product(code, $catalogVersion)[unique=true];serialProducts(code, $catalogVersion);aqautechProduct[translator=com.bl.batch.imports.translator.BlBooleanTranslator];basePrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];bundleEntry[translator=com.bl.batch.imports.translator.BlBooleanTranslator];bundleMainEntry[translator=com.bl.batch.imports.translator.BlBooleanTranslator];bundleProductCode;calculated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];entryCreated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];gearGuardProFullWaiverPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];gearGuardProFullWaiverSelected[translator=com.bl.batch.imports.translator.BlBooleanTranslator];gearGuardWaiverPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];gearGuardWaiverSelected[translator=com.bl.batch.imports.translator.BlBooleanTranslator];noDamageWaiverSelected[translator=com.bl.batch.imports.translator.BlBooleanTranslator];options;quantity;quantityStatus;recipientEmail;recipientMessage;recipientName;totalPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];unit(code)
+			</value>
+		</property>
+		<property name="impexRow">
+			<value>;{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14};{15};{16};{17};{18};{19};{20};{21};{22};{23}</value>
+		</property>
+	</bean>
+
+</beans>
