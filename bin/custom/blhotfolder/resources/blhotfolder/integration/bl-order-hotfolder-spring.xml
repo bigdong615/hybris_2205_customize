@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [y] hybris Platform Copyright (c) 2020 SAP SE or an SAP affiliate company. 
+	All rights reserved. This software is the confidential and proprietary information 
+	of SAP ("Confidential Information"). You shall not disclose such Confidential 
+	Information and shall use it only in accordance with the terms of the license 
+	agreement you entered into with SAP. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:annotation-config />
+
+	<bean id="batchOrderConverterMapping"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+		p:mapping="ORDER" p:converter-ref="batchOrderConverter" />
+
+	<!-- Transformer converters mappings -->
+	<bean id="batchOrderConverter"
+		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				# Insert Categories
+				INSERT_UPDATE ORDER;code[unique=true];actualRentalEndDate[dateformat=dd.MM.yyyy hh:mm:ss];actualRentalStartDate[dateformat=dd.MM.yyyy hh:mm:ss];appliedCouponCodes;avalaraTaxCalculated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];calculated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];currency(isocode)[default='USD'];date[dateformat=dd.MM.yyyy hh:mm:ss];deliveryAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];deliveryCost[translator=com.bl.batch.imports.translator.BlDoubleTranslator];deliveryMode(code);deliveryNotes;depositAmountTotal[translator=com.bl.batch.imports.translator.BlDoubleTranslator];depositPaymentInfo(code,duplicate[default=false]);dimensionalWeight[translator=com.bl.batch.imports.translator.BlDoubleTranslator];extendRentalEndDate[dateformat=dd.MM.yyyy hh:mm:ss];extendRentalStartDate[dateformat=dd.MM.yyyy hh:mm:ss];extendedOrderCopyList;extendOrderStatus(code);giftCardCost[translator=com.bl.batch.imports.translator.BlDoubleTranslator];giftCardOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];grandTotal[translator=com.bl.batch.imports.translator.BlDoubleTranslator];internalTransferOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isAuthorised[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isCaptured[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isReplacementOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isExtendedOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isRetailGearOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isOrderTaxExempt[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isRentalOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isVideoOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];isVipOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];net[translator=com.bl.batch.imports.translator.BlBooleanTranslator];orderCompletedDate[dateformat=dd.MM.yyyy hh:mm:ss];orderReturnedToWarehouse[translator=com.bl.batch.imports.translator.BlBooleanTranslator];orderType(code);originalOrderTotalAmount[translator=com.bl.batch.imports.translator.BlDoubleTranslator];paymentAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];paymentInfo(code,duplicate[default=false]);pickUpPersonEmail;pickUpPersonFirstName;pickUpPersonLastName;pickUpPersonPhone;poNotes;poNumber;refundShippingTotalAmount[translator=com.bl.batch.imports.translator.BlDoubleTranslator];refundTaxTotalAmount[translator=com.bl.batch.imports.translator.BlDoubleTranslator];refundTotalAmount[translator=com.bl.batch.imports.translator.BlDoubleTranslator];rentalEndDate[dateformat=dd.MM.yyyy hh:mm:ss];rentalStartDate[dateformat=dd.MM.yyyy hh:mm:ss];returnRequestForOrder(code);shareASaleSent[translator=com.bl.batch.imports.translator.BlBooleanTranslator];site(uid);status(code);store(uid);subtotal[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalDamageWaiverCost[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalDiscounts[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalExtendDays[com.bl.batch.imports.translator.BlIntTranslator];totalOptionsCost[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalRefundedAmount[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalTax[translator=com.bl.batch.imports.translator.BlDoubleTranslator];totalWeight[translator=com.bl.batch.imports.translator.BlDoubleTranslator];user(uid);verificationLevel;verificationStatus(code);RunTot_grandTotal[translator=com.bl.batch.imports.translator.BlDoubleTranslator];RunTot_subtotal[translator=com.bl.batch.imports.translator.BlDoubleTranslator];RunTot_totalOptionsCost[translator=com.bl.batch.imports.translator.BlDoubleTranslator];RunTot_totalPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];RunTot_totalTax[translator=com.bl.batch.imports.translator.BlDoubleTranslator];isLatestOrder[translator=com.bl.batch.imports.translator.BlBooleanTranslator];RunTot_daysRented[com.bl.batch.imports.translator.BlIntTranslator]
+				
+			</value>
+		</property>
+		<property name="impexRow">
+			<value>;{+0};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14};{15};{16};{17};{18};{80};{81};{19};{20};{21};{22};{23};{24};{25};{26};{27};{28};{29};{30};{35};{36};{37};{38};{39};{41};{42};{43};{44};{45};{46};{47};{48};{49};{50};{51};{52};{53};{54};{55};{56};{57};{58};{59};{60};{61};{62};{63};{64};{65};{66};{68};{69};{70};{71};{73};{74};{75};{76};{77};{78};{79}</value>
+		</property>
+	</bean>
+	
+	
+</beans>
