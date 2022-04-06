@@ -773,6 +773,15 @@
           <defaultvalue>Boolean.FALSE</defaultvalue>
           <description>Defines Flag for Non-Refundable Deposit Amount</description>
         </attribute>
+        <attribute autocreate="true" qualifier="orderID" type="java.lang.String" generate="true">
+		  <persistence type="property" />
+		  <modifiers read="true" write="true" search="true" optional="true" unique="true" />
+		  <custom-properties>
+			<property name="hmcIndexField">
+			<value>"thefield"</value>
+		  </property>
+	</custom-properties>
+</attribute>
       </attributes>
       </itemtype>
 
