@@ -780,8 +780,8 @@
 			<property name="hmcIndexField">
 			<value>"thefield"</value>
 		  </property>
-	</custom-properties>
-</attribute>
+		  </custom-properties>
+	   </attribute>
       </attributes>
       </itemtype>
 
