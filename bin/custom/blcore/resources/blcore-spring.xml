@@ -1897,4 +1897,15 @@
 	<bean id="commerceOrderMethodHookMergeDirective" depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="orderMethodHook" />
 	</bean>
+	
+	<alias alias="blOrderIDGenerator" name="defaultBlOrderIDGenerator"/>
+	<bean id="defaultBlOrderIDGenerator"
+	      class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.order.id.name}"/>
+		<property name="digits" value="${keygen.order.id.digits}"/>
+		<property name="start" value="${keygen.order.id.start}"/>
+		<property name="type" value="${keygen.order.id.type}"/>
+		<property name="template" value="${keygen.order.id.template}"/>
+	</bean>
+	
 </beans>
