@@ -99,7 +99,7 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 						&& orderModel.getOrderID().equals(orderModel.getCode()))) {
 					orderModel.setOrderID((String) this.blOrderIDGenerator.generate());
 				}
-			} else if(Objects.isNull(orderModel.getCode())){
+			} else if(Objects.isNull(orderModel.getOrderID())){
 				orderModel.setOrderID(orderModel.getCode());
 			}
 		}
