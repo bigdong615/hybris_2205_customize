@@ -25,14 +25,8 @@
 	<title>
 		<c:choose>
 			<c:when test="${pageType=='CATEGORY'||pageType=='PRODUCTSEARCH'}">
-				<c:choose>
-					<c:when test="${facetValue.name == 'category' && not empty facetData.code }">
-						${facetData.code} | Shipped To You | BorrowLenses
-					</c:when>
-					<c:otherwise>
-						${not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle'}
-					</c:otherwise>
-				</c:choose>
+				<c:set var="titleParts" value="${fn:split(not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle', '|')}" />
+				${titleParts[0]} Rentals | Shipped To You | BorrowLenses
 			</c:when>
 			<c:otherwise>
 				${not empty pageTitle? pageTitle:not empty cmsPage.title? fn:escapeXml(cmsPage.title):'AcceleratorTitle'}
