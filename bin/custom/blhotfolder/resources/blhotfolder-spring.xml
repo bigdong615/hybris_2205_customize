@@ -22,8 +22,8 @@
 	<import resource="classpath:/blhotfolder/integration/bl-payment-info-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-options-main-hotfolder-spring.xml"/>
-	 <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
-	
+<!-- 	 <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
+ -->	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-bundle-productmapping-hotfolder-spring.xml"/>
