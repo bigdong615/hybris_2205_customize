@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2020 SAP SE or an SAP affiliate company.  All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+	<bean id="batchOptionsMainConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="OPTIONSMAIN"
+          p:converter-ref="batchOptionsMainConverter"/>
+
+ <!-- Transformer converters mappings -->
+	<bean id="batchOptionsMainConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>#{defaultImpexProductHeader}
+				# Insert options main
+				INSERT_UPDATE BlOptions;optionId[unique=true];optionType(code)[cellDecorator=com.bl.batch.imports.translator.BlOptionTypeCellDecorator];code;name;description;unitCost;altPrice;unitPrice;active[translator=com.bl.batch.imports.translator.BlBooleanTranslator];required[translator=com.bl.batch.imports.translator.BlBooleanTranslator];defaultOptionId;weight
+			</value>
+		</property>
+		<property name="impexRow">
+            <value>;{+0};{1};{+2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12}</value>
+        </property>
+	</bean>
+
+</beans>

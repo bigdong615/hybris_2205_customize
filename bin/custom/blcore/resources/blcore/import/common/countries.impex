@@ -235,8 +235,9 @@ INSERT_UPDATE Country ; isocode[unique=true] ; name[lang=en]                    
                       ; TW                   ; "Taiwan, China"                                
                       ; TZ                   ; "Tanzania"                                     
                       ; UA                   ; "Ukraine"                                      
-                      ; UG                   ; "Uganda"                                       
-                      ; UM                   ; "United States Minor Outlying Islands"         
+                      ; UG                   ; "Uganda"
+#Commenting the beow two regions as part of BL-1860
+#                      ; UM                   ; "United States Minor Outlying Islands"
                       ; US                   ; "United States"                                
                       ; UY                   ; "Uruguay"                                      
                       ; UZ                   ; "Uzbekistan"                                   
@@ -313,9 +314,10 @@ INSERT_UPDATE Region ; country(isocode) ; isocode[unique=true] ; isocodeShort ; 
                      ; US               ; US-AS                ; AS           ; "American Samoa"                       
                      ; US               ; US-GU                ; GU           ; "Guam"                                 
                      ; US               ; US-MP                ; MP           ; "Northern Mariana Islands"             
-                     ; US               ; US-PR                ; PR           ; "Puerto Rico"                          
-                     ; US               ; US-UM                ; UM           ; "United States Minor Outlying Islands" 
-                     ; US               ; US-VI                ; VI           ; "United States Virgin Islands"         
+                     ; US               ; US-PR                ; PR           ; "Puerto Rico"
+#Commenting the beow two regions as part of BL-1860
+#                     ; US               ; US-UM                ; UM           ; "United States Minor Outlying Islands"
+#                     ; US               ; US-VI                ; VI           ; "United States Virgin Islands"
                      
 #                    
 # ISO 3166-2:CA      

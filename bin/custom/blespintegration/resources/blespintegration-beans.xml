@@ -183,6 +183,10 @@
 		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
 		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
+		</property>
+
 	</bean>
 
 	<!-- Order verification more info Event data Request Object -->
@@ -329,6 +333,9 @@
 		</property>
 		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
 		</property>
 	</bean>
 	<!-- Order verification COI needed Event  ends -->
@@ -501,6 +508,9 @@
 		</property>
 		<property name="totalvalue" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("Total Value")</annotations>
+		</property>
+		<property name="coiExpirationDate" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("COI Expiration Date")</annotations>
 		</property>
 	</bean>
 	<!-- Order Verification Required Event data Object End-->
