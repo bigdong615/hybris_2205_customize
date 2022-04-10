@@ -31,7 +31,7 @@
     <import resource="classpath:/blhotfolder/integration/bl-order-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-inventory-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-orderentry-hotfolder-spring.xml"/>
-
+	<import resource="classpath:/blhotfolder/integration/bl-inbound-hotfolder-spring.xml"/>
 	
 	<beans profile="cloud">
 		<import
