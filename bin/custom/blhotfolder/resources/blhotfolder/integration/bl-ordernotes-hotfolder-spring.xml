@@ -20,7 +20,7 @@
 
 	<bean id="batchOrderNotesConverterMapping"
 		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-		p:mapping="ORDERNOTES" p:converter-ref="batchOrderNotesConverter" />
+		p:mapping="NOTES" p:converter-ref="batchOrderNotesConverter" />
 
 	<!-- Transformer converters mappings -->
 	<bean id="batchOrderNotesConverter"
