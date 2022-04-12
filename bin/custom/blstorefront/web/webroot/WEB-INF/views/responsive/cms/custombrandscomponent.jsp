@@ -16,18 +16,20 @@
 	</li>
 </c:if>
 <!-- BL-345 : Homepage Mobile They Borrow From Us Section --> 
-<c:if test="${positionAttribute == 'MobileHomePageBorrowFromUsSectionSlot'}">
+<!--BL-2010 :- commented out code for "they borrow from us section" -->
+<!-- <c:if test="${positionAttribute == 'MobileHomePageBorrowFromUsSectionSlot'}">
 	<li class="splide__slide my-auto">
 		<c:url value="${feature.urlLink}" var="brandUrl" />
 		<a href="${brandUrl}"><img src="${feature.media.url}"></a>
 	</li>
-</c:if>
+</c:if> -->
 <!-- Homepage Desktop They Borrow From Us Section --> 
-<c:if test="${positionAttribute == 'HomePageBorrowFromUsSectionSlot'}">
-	<li class="my-auto">
+<!--BL-2010 :- commented out code for "they borrow from us section" -->
+<!--<c:if test="${positionAttribute == 'HomePageBorrowFromUsSectionSlot'}"> 
+ 	<li class="my-auto">
 	<c:url value="${feature.urlLink}" var="brandUrl" />
 	<a href="${brandUrl}"><img src="${feature.media.url}"></a>
-	</li>
-</c:if>
+	</li> 
+</c:if> -->
 
 

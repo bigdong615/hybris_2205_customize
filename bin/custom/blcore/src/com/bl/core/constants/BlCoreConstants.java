@@ -471,6 +471,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ITEM_NOTES_ROOT_ELEMENT = "notes";
 
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
+	public static final String COI_EXPIRATION_DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 	public static final String CUSTOMER_CHECKOUT_ORDER_NOTES = "CUSTOMER_CHECKOUT_ORDER_NOTES";
 	public static final String RENTAL = "Rental";
 	public static final String UN_BOXED = "UNBOXED_COMPLETELY";
