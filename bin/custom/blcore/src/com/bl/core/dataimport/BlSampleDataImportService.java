@@ -4,6 +4,7 @@
 package com.bl.core.dataimport;
 
 import de.hybris.platform.commerceservices.dataimport.impl.SampleDataImportService;
+import de.hybris.platform.util.Config;
 
 
 /**
@@ -29,9 +30,17 @@ public class BlSampleDataImportService extends SampleDataImportService
 	{
 		//super.importProductCatalog(extensionName, productCatalogName);
 		//importing custom product data impexes
-		getSetupImpexService().importImpexFile(
-				String.format("/%s/import/sampledata/productCatalogs/sampledata_custom_product_data_sequence.impex", extensionName),
-				false);
+		if (Config.getBoolean("test.data", false))
+		{
+			getSetupImpexService().importImpexFile(String.format(
+					"/%s/import/sampledata/productCatalogs/sampledata_custom_product_data_sequence.impex", extensionName), false);
+		}
+		else
+		{
+			getSetupImpexService().importImpexFile(
+					String.format("/%s/import/sampledata/productCatalogs/proddata_custom_product_data_sequence.impex", extensionName),
+					false);
+		}
 	}
 
 	/**
