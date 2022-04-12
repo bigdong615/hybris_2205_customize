@@ -27,10 +27,13 @@
 		class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
 		<property name="header">
 			<value>
-				# Insert outboundflow
+			
+	$productCatalog=blProductCatalog
+    $productCatalogName=Bl Product Catalog
+   $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+				
+  INSERT_UPDATE PackagingInfo;orderCode;serialProducts(code,$catalogVersion);packageId[unique=true];width;height;length;dimensionUnit;grossWeight;weightUnit;labelURL;totalShippingPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];shipmentIdentificationNumber;outBoundTrackingNumber;inBoundTrackingNumber;graphicImage;hTMLImage;consignment(code)
 	
- INSERT_UPDATE PackagingInfo;orderCode;serialProducts;packageId[unique=true];width;height;length;dimensionUnit;grossWeight;weightUnit;labelURL;totalShippingPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];shipmentIdentificationNumber;outBoundTrackingNumber;inBoundTrackingNumber;graphicImage;hTMLImage;consignment(code)
-		
 			</value>
 		</property>
 		<property name="impexRow">
