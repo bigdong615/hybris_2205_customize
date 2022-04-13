@@ -1,0 +1,17 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs categories.impex =========================");
+
+# Macros / Replacement Parameter definitions
+$productCatalog = blProductCatalog
+$productCatalogName = BL Product Catalog
+
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default=$productCatalog:Staged]
+$supercategories = source(code, $catalogVersion)[unique=true]
+$categories = target(code, $catalogVersion)[unique=true]
+
+####### BL - Root Category
+INSERT_UPDATE Category; code[unique = true]    ; active; name[lang = en]  ; onCategoryTree; displayName      ; titleTag; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion;rentalCategory
+                      ; rentalgear             ; true  ; Rental Gear      ; true          ; Rental Gear      ;;;;true

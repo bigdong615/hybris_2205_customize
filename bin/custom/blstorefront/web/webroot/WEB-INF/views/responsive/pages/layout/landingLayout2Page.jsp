@@ -153,36 +153,38 @@
 	</section>
 	<section>
 		<div class="container">
-			<div id="credibility" class="row justify-content-center mt-5">
-				<div class="col-lg-11 col-xl-9">
-					<h5>
+
+			<!--BL-2010 :- commented out code for "they borrow from us section" -->
+		<!--	<div id="credibility" class="row justify-content-center mt-5">
+				<div class="col-lg-11 col-xl-9"> -->
+				<!--	<h5>
 						<cms:pageSlot position="HomePageTheyBorrowFromUsTitleSlot"
 							var="feature">
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
-					</h5>
-					<ul class="brand-logos pt-4 d-none d-md-flex">
-						<cms:pageSlot position="HomePageBorrowFromUsSectionSlot"
-							var="feature">
+					</h5>  -->
+				<!--	<ul class="brand-logos pt-4 d-none d-md-flex"> -->
+						<cms:pageSlot position="HomePageBorrowFromUsSectionSlot" var="feature">
 							<cms:component component="${feature}" />
-						</cms:pageSlot>
-					</ul>
+						</cms:pageSlot> 
+					<!-- </ul>  -->
 					<!-- BL-345 : HomePage Mobile Device They Borrow from us section -->
-					<div class="logo-slider splide mt-5 d-block d-md-none">
+					<!--BL-2010 :- commented out code for "they borrow from us section" -->
+				<!-- <div class="logo-slider splide mt-5 d-block d-md-none">
 						<div class="splide__track">
-							<ul class="splide__list">
+							<ul class="splide__list"> -->
 								<cms:pageSlot position="MobileHomePageBorrowFromUsSectionSlot"
 									var="feature">
 									<cms:component component="${feature}" />
 								</cms:pageSlot>
-							</ul>
+						<!--	</ul>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
-			</div>
+			</div> -->	
 			<div id="stories" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
 					<h5>
