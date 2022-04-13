@@ -59,4 +59,12 @@ public interface BlOrderService {
   public void createAndSetBundleOrderEntriesInOrder(final OrderModel orderModel);
 
   public void createAllEntryForBundleProduct(final AbstractOrderEntryModel entryModel);
+  
+  /**
+   * Checks if is used order only.
+   *
+   * @param order the order
+   * @return true, if is used order only
+   */
+  boolean isUsedOrderOnly(final AbstractOrderModel order);
 }

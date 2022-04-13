@@ -239,7 +239,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .notification-tip.cc { background-image: url(../assets/notification-tip-cc.svg); background-position: 12px 18px; }
 .notification-tip.link { background-image: url(../assets/notification-tip-link.svg); }
 .notification-tip.info { background-image: url(../assets/notification-top-info.svg); }
-.notification.no-orders { border-left: none; text-align: center; margin: 30px auto; max-width: 500px; padding: 80px; background-color: #ededed; border-radius: 12px; }
+.notification.no-orders { margin-top: 20px;display: block;padding: 16px;border-left: 4px solid;border-radius: 6px;padding-left: 50px;background-position: 12px 18px;background-repeat: no-repeat;font-size: 14px; }
 /* Sliders */
 .splide { margin-bottom: 60px; }
 .splide__track { margin: 0 50px; }
@@ -626,7 +626,7 @@ footer .social a:hover { opacity: .7; }
 #accountMenu > h6 { padding-left: 40px; background: url(../assets/icon-account-teal.svg) no-repeat left center; }
 #accountMenu p a { text-decoration: none; }
 #accountMenu p a.active { font-weight: 700; }
-#accountContent h1 { font-size: 34px; line-height: 40px; }
+/* #accountContent h1 { font-size: 34px; line-height: 40px; } */
 .order-block, .extend-order { padding: 30px 0 20px; border-top: 1px solid #D4D3D3; }
 #accountContent .order-block:nth-child(1) { border-top: none; }
 .order-block i.icon-dots { display: inline-block; width:36px; height: 42px; }

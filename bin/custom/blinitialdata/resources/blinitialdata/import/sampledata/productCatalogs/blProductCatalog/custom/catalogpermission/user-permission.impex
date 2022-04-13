@@ -55,5 +55,13 @@ INSERT_UPDATE CatalogVersion ; catalog(id)[unique=true] ; version[unique=true] ;
                              ; blProductCatalog         ; Staged               ; unboxingmemberusergroup          ; unboxingmemberusergroup           
                              ; blProductCatalog         ; Online               ; unboxingmemberusergroup          ; unboxingmemberusergroup           
                              ; blClassification         ; 1.0                  ; unboxingmemberusergroup          ; unboxingmemberusergroup           
-                             ; blClassification         ; 1.0                  ; unboxingteamuser                 ; unboxingteamuser                  
-                             
+                             ; blClassification         ; 1.0                  ; unboxingteamuser                 ; unboxingteamuser
+
+
+INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; readPrincipals(uid)[mode=append]; writePrincipals(uid)[mode=append]
+                            ; blProductCatalog; Staged              ; integrationadmingroup   ; integrationadmingroup
+                            ; blProductCatalog; Online              ; integrationadmingroup   ; integrationadmingroup
+                            ; blClassification; 1.0                 ; integrationadmingroup    ; integrationadmingroup
+                            ; blClassification; 1.0                 ; integrationmonitoringtestuser; integrationmonitoringtestuser
+                            ; blClassification; 1.0                 ; integrationserviceuser   ; integrationserviceuser
+

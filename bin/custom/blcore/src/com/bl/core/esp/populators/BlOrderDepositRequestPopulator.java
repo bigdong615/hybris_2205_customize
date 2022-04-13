@@ -74,7 +74,7 @@ public class BlOrderDepositRequestPopulator extends ESPEventCommonPopulator<Orde
       data.setShippingmethod(StringUtils.EMPTY);
     }
 
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
+    if(BooleanUtils.isTrue(orderModel.getIsRentalOrder()) && BooleanUtils.isFalse(orderModel.isGiftCardOrder())) {
       data.setExpectedshipping(formatter.format(orderModel.getActualRentalStartDate()));
       data.setArrivaldate(formatter.format(orderModel.getRentalStartDate()));
       data.setReturndate(formatter.format(orderModel.getRentalEndDate()));

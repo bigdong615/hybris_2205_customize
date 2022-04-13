@@ -49,25 +49,12 @@ public class DefaultBlCouponFacade implements BlCouponFacade {
     final DefaultBlCouponService var10002 = getDefaultBlCouponService();
     var10002.getClass();
     final CouponResponse couponResponse = applyIfCartExists(voucherCode , var10002::redeemCouponForExtendOrder);
-
-    OrderModel orderModel = null;
-    if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() && BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode().equalsIgnoreCase(getOrderCodeFromRequest(referer))){
-      orderModel = BlExtendOrderUtils.getCurrentExtendOrderToSession();
-    }
-
-    else {
-      final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-      orderModel = getCustomerAccountService()
-          .getOrderForCode((CustomerModel) getUserService().getCurrentUser(), getOrderCodeFromRequest(referer),
-              baseStoreModel);
-    }
-    final OrderData orderData = new OrderData();
-    getBlDefaultExtendOrderConverter().convert(orderModel , orderData);
+    
     if (BooleanUtils.isNotTrue(couponResponse.getSuccess())) {
       errorList.add(couponResponse.getMessage());
     }
 
-    return orderData;
+    return getOrderDataForExtendedOrder(referer);
   }
 
   /**
@@ -136,7 +123,27 @@ public class DefaultBlCouponFacade implements BlCouponFacade {
     final int size = split.length -1;
     return split[size];
   }
+  
+  @Override
+  public OrderData getOrderDataForExtendedOrder(final String referer)
+  {
+	  OrderModel orderModel = null;
+	  if (null != BlExtendOrderUtils.getCurrentExtendOrderToSession()
+			  && BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode().equalsIgnoreCase(getOrderCodeFromRequest(referer)))
+	  {
+		  orderModel = BlExtendOrderUtils.getCurrentExtendOrderToSession();
+	  }
 
+	  else
+	  {
+		  final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+		  orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
+				  getOrderCodeFromRequest(referer), baseStoreModel);
+	  }
+	  final OrderData orderData = new OrderData();
+	  getBlDefaultExtendOrderConverter().convert(orderModel, orderData);
+	  return orderData;
+  }
 
   public DefaultBlCouponService getDefaultBlCouponService() {
     return defaultBlCouponService;

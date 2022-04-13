@@ -1,0 +1,16 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLConstrainedPricingRatio.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code) 
+; InboundBLConstrainedPricingRatio; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLConstrainedPricingRatio	; BlConstrainedPricingRatio	; BlConstrainedPricingRatio	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLConstrainedPricingRatio	; DurationEnum             	; DurationEnum             	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLConstrainedPricingRatio:BlConstrainedPricingRatio	; pricingRatio	; BlConstrainedPricingRatio:pricingRatio	;                                              	; true	;  
+; InboundBLConstrainedPricingRatio:BlConstrainedPricingRatio	; modifiedtime	; BlConstrainedPricingRatio:modifiedtime	;                                              	; 	;  
+; InboundBLConstrainedPricingRatio:BlConstrainedPricingRatio	; creationtime	; BlConstrainedPricingRatio:creationtime	;                                              	; 	;  
+; InboundBLConstrainedPricingRatio:BlConstrainedPricingRatio	; duration    	; BlConstrainedPricingRatio:duration    	; InboundBLConstrainedPricingRatio:DurationEnum	; true	;  
+; InboundBLConstrainedPricingRatio:DurationEnum             	; code        	; DurationEnum:code                     	;                                              	; true	;  

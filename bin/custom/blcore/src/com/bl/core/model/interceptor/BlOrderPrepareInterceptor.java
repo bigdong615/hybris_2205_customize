@@ -34,6 +34,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
@@ -84,11 +85,25 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 	@Resource(name = "blConsignmentEntryService")
 	BlConsignmentEntryService blConsignmentEntryService;
 
+	@Resource(name = "blOrderIDGenerator")
+	private KeyGenerator blOrderIDGenerator;
+
   @Override
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
-	  
-	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalCart() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
+
+  	if(abstractOrderModel instanceof OrderModel) {
+			final OrderModel orderModel = (OrderModel) abstractOrderModel;
+			if (BooleanUtils.isTrue(orderModel.getIsExtendedOrder())) {
+				if(Objects.isNull(orderModel.getOrderID()) || (Objects.nonNull(orderModel.getOrderID())
+						&& orderModel.getOrderID().equals(orderModel.getCode()))) {
+					orderModel.setOrderID((String) this.blOrderIDGenerator.generate());
+				}
+			} else if(Objects.isNull(orderModel.getOrderID())){
+				orderModel.setOrderID(orderModel.getCode());
+			}
+		}
+	  if (getDefaultBlUserService().isCsUser() && abstractOrderModel.getIsRentalOrder() && (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALSTARTDATE)
 				|| interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.RENTALENDDATE)))
 		{
 			modifyOrderDate(abstractOrderModel);

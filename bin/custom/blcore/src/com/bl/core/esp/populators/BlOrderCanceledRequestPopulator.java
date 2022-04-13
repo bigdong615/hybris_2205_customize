@@ -69,7 +69,7 @@ public class BlOrderCanceledRequestPopulator extends ESPEventCommonPopulator<Ord
 		data.setTemplate(getRequestValue(
 				getConfigurationService().getConfiguration().getString(BlCoreConstants.ORDER_CANCELED_EVENT_TEMPLATE)));
 		data.setType(getOrderType(orderModel));
-		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsCartUsedForReplacementOrder())
+		data.setReplacement(BooleanUtils.isTrue(orderModel.getIsReplacementOrder())
 				? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		data.setStatus(getRequestValue(Objects.nonNull(orderModel.getStatus()) ? orderModel.getStatus().getCode() : StringUtils.EMPTY));
 		data.setDateplaced(formatter.format(orderModel.getDate()));

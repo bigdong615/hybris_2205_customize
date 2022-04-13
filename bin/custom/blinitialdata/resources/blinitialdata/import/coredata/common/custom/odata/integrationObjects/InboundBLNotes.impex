@@ -1,0 +1,23 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLNotes.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLNotes; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLNotes	; Consignment  	; Consignment  	; 	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLNotes	; Notes        	; Notes        	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLNotes	; AbstractOrder	; AbstractOrder	; 	; ALL_SUBTYPES           	;  
+; InboundBLNotes	; NotesEnum    	; NotesEnum    	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLNotes:Consignment  	; code        	; Consignment:code  	;                             	; true	;  
+; InboundBLNotes:Notes        	; modifiedtime	; Notes:modifiedtime	;                             	; 	;  
+; InboundBLNotes:Notes        	; consignment 	; Notes:consignment 	; InboundBLNotes:Consignment  	; 	;  
+; InboundBLNotes:Notes        	; userID      	; Notes:userID      	;                             	; 	;  
+; InboundBLNotes:Notes        	; order       	; Notes:order       	; InboundBLNotes:AbstractOrder	; 	;  
+; InboundBLNotes:Notes        	; note        	; Notes:note        	;                             	; 	;  
+; InboundBLNotes:Notes        	; creationtime	; Notes:creationtime	;                             	; true	;  
+; InboundBLNotes:Notes        	; type        	; Notes:type        	; InboundBLNotes:NotesEnum    	; true	;  
+; InboundBLNotes:AbstractOrder	; code        	; AbstractOrder:code	;                             	; true	;  
+; InboundBLNotes:NotesEnum    	; code        	; NotesEnum:code    	;                             	; true	;  

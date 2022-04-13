@@ -24,6 +24,9 @@
 
                 				</p>
                 		</div>
+                		<c:url value="/contactus" var="link"/>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
                 	</div>
                 </c:if>
                 <c:if test="${not empty searchPageData.results}">
@@ -122,7 +125,7 @@
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                   <c:choose>
-                                    <c:when test="${order.newGearOrder eq true}">
+                                    <c:when test="${order.retailGearOrder eq true}">
                                       <p class="my-2"> ${order.status.code}</p>
                                     </c:when>
                                     <c:otherwise>
@@ -263,6 +266,8 @@
                 		</c:forEach>
                 		<div class="account-orderhistory-pagination">
                 			<nav:pagination searchPageData="${searchPageData}" searchUrl="${searchUrl}" /> </div>
-                	</div>
-                	</div>
-								</c:if>
+                			<c:url value="/contactus" var="link"/>
+                		<c:set var ="notificationDate" value="${jalosession.tenant.config.getParameter('bl.order.history.notification.message.date')}"/>
+            <div class="mt-2 notification notification-warning"><spring:theme code="text.myaccount.notification.message.order.history" arguments="${fn:escapeXml(notificationDate)}" htmlEscape="false"/> <a href="${link}"> <spring:theme code="text.myaccount.contactus.message.order.history"/></a></div>
+                              	</div>
+                	</c:if>

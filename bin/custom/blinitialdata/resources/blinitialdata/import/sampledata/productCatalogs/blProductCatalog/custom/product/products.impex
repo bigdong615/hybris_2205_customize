@@ -12,7 +12,7 @@ $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[defa
 $superCategories=supercategories(code, $catalogVersion)
 $approved=approvalstatus(code)[default='approved']
 
-INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; productId[unique=true] ; code[unique=true]                                                ; $superCategories          ; name[lang=en]                                                         ; procurementCost ; displayName                                                           ; procurementSource   ; mpn            ; upc            ; productType(code)                      ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName[default='Other'] ; retailPrice ;subpartQuantity[default=0]
+INSERT_UPDATE BlProduct ; $catalogVersion ; $approved ; productId[unique=true] ; code[unique=true]                                                ; $superCategories          ; name[lang=en]                                                         ; procurementCost ; displayName                                                           ; procurementSource   ; mpn            ; upc            ; productType(code)                      ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName[default='Other'] ; retailPrice
 #cameras
                         ;                 ;           ; 81                     ; Canon_Rebel_XTi                                                  ; cameras,canon             ; Canon_Rebel_XTi                                                       ; 0               ; Canon_Rebel_XTi                                                       ; CAEDRXTIB           ; NA             ; NA             ; CAMERAS                                ; true    ; false   ; false          ; false          ; BARCODE            ; true      ; false   ; 2               ; Canon            ; 1000
                         ;                 ;           ; 88                     ; Canon-EOS-1D-Mark-II                                             ; cameras,canon             ; Canon EOS 1D Mark II                                                  ; 0               ; Canon EOS 1D Mark II                                                  ; NA                  ; NA             ; NA             ; CAMERAS                                ; true    ; false   ; false          ; false          ; BARCODE            ; false     ; false   ; 2               ; Canon            ; 1000
@@ -216,30 +216,6 @@ $productCatalogName=BL Product Catalog
 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
 $subParts=target(code, $catalogVersion)[unique=true]
 $blProducts=source(code, $catalogVersion)[unique=true]
-
-
-
-INSERT_UPDATE BlProduct2BlProductRelation;$blProducts;$subParts;
-                                         ;Canon-EF-100-400mm-f4556L-IS-USM    ;77mm_front_cap
-                                         ;Canon_EF_17-40mm_f4L_USM            ;77mm_front_cap
-                                         ;Canon_EF_300mm_F_4_IS               ;77mm_front_cap
-                                         ;Canon_EF_70-200mm_f4_IS             ;77mm_front_cap
-                                         ;Canon_16-35_F2.8_L                  ;77mm_front_cap
-                                         ;Canon_24-70mm_f2.8_L                ;77mm_front_cap
-                                         ;Canon_100mm_f2.8_Macro              ;77mm_front_cap
-                                         ;Canon_24-105mm_f4_IS                ;77mm_front_cap
-                                         ;Canon_17-55_f2.8_IS_EF-S            ;77mm_front_cap
-                                         ;Canon_50mm_f1.2_L                   ;77mm_front_cap
-                                         ;Nikon_17-55mm_f2.8_AF-S_ED_DX       ;77mm_front_cap
-                                         ;Nikon_10.5mm_f2.8_Fisheye           ;77mm_front_cap
-                                         ;Nikon_80-400mm_f4.5-5.6D_ED_VR      ;77mm_front_cap
-                                         ;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon;77mm_front_cap
-                                         ;Nikon_18-200_f3.5-5.6_AF-S_VR       ;77mm_front_cap
-                                         ;Nikon_14mm_f2.8_AF_ED               ;77mm_front_cap
-                                         ;Nikon_70-200_f2.8_VR                ;77mm_front_cap
-                                         ;Nikon_17-35mm_f2.8 AF-S_IF_ED       ;77mm_front_cap
-                                         ;Nikon_85mm_f1.4_AF                  ;77mm_front_cap
-                                         ;Nikkor_105mm_f2.8_Micro_AF-S_VR     ;77mm_front_cap
 
 # BL-500 Added for testing aquatech products
                                         ; Canon_60mm_Aquatech                   ;77mm_front_cap

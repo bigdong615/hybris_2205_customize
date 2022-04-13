@@ -167,6 +167,8 @@
       <extension name='braintreefacades' />
       <extension name='braintreehac' />
       <extension name='tealiumiqaddon' />
+    <extension name="integrationmonitoringbackoffice" />
+    <extension name="outboundsyncbackoffice" />
 
 	<extension name='blhotfolder' />
   </extensions>

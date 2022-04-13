@@ -21,12 +21,25 @@
 	<import resource="classpath:/blhotfolder/integration/bl-billing-charges-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-payment-info-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-hotfolder-spring.xml"/>
-	
+	<import resource="classpath:/blhotfolder/integration/bl-options-main-hotfolder-spring.xml"/>
+<!-- 	 <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
+ -->	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-bundle-productmapping-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-price-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-media-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-serial-product-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-order-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-inventory-hotfolder-spring.xml"/>
+
+	<import resource="classpath:/blhotfolder/integration/bl-orderentry-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-inbound-hotfolder-spring.xml"/>
+
+    <import resource="classpath:/blhotfolder/integration/bl-ordernotes-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-outboundflow-hotfolder-spring.xml"/>
+    
+
 	
 	<import resource="classpath:/blhotfolder/integration/bl-classificationclass-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-classificationattribute-hotfolder-spring.xml"/>

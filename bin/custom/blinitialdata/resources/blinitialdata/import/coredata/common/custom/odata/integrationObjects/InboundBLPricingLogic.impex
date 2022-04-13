@@ -1,0 +1,20 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/common/odata/integrationObjects/InboundBLPricingLogic.impex =========================");
+
+
+INSERT_UPDATE IntegrationObject; code[unique = true]; integrationType(code)
+; InboundBLPricingLogic; INBOUND 
+ 
+INSERT_UPDATE IntegrationObjectItem; integrationObject(code)[unique = true]; code[unique = true]; type(code); root[default = false]; itemTypeMatch(code) 
+; InboundBLPricingLogic	; BlPricingLogic 	; BlPricingLogic 	; true	; ALL_SUB_AND_SUPER_TYPES	;  
+; InboundBLPricingLogic	; PricingTierEnum	; PricingTierEnum	; 	; ALL_SUBTYPES           	;  
+; InboundBLPricingLogic	; ProductTypeEnum	; ProductTypeEnum	; 	; ALL_SUBTYPES           	;  
+ 
+INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationObject(code), code)[unique = true]; attributeName[unique = true]; attributeDescriptor(enclosingType(code), qualifier); returnIntegrationObjectItem(integrationObject(code), code); unique[default = false]; autoCreate[default = false] 
+; InboundBLPricingLogic:BlPricingLogic 	; pctOfRetail 	; BlPricingLogic:pctOfRetail 	;                                      	; true	;  
+; InboundBLPricingLogic:BlPricingLogic 	; creationtime	; BlPricingLogic:creationtime	;                                      	; 	;  
+; InboundBLPricingLogic:BlPricingLogic 	; greaterThan 	; BlPricingLogic:greaterThan 	;                                      	; 	;  
+; InboundBLPricingLogic:BlPricingLogic 	; productType 	; BlPricingLogic:productType 	; InboundBLPricingLogic:ProductTypeEnum	; true	;  
+; InboundBLPricingLogic:BlPricingLogic 	; lessThan    	; BlPricingLogic:lessThan    	;                                      	; 	;  
+; InboundBLPricingLogic:BlPricingLogic 	; tier        	; BlPricingLogic:tier        	; InboundBLPricingLogic:PricingTierEnum	; true	;  
+; InboundBLPricingLogic:PricingTierEnum	; code        	; PricingTierEnum:code       	;                                      	; true	;  
+; InboundBLPricingLogic:ProductTypeEnum	; code        	; ProductTypeEnum:code       	;                                      	; true	;  

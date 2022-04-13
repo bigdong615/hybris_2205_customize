@@ -33,7 +33,7 @@
         </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
                 <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart"
-                 <c:if test="${product.isNewGearInStock eq false}"> disabled</c:if>  data-product-code="${product.code}">
+                 <c:if test="${product.isRetailGearInStock eq false}"> disabled</c:if>  data-product-code="${product.code}">
                       <spring:theme code="text.add.to.cart" />
 						    </button>
 						</form:form>
