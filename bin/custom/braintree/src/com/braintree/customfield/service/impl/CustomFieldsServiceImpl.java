@@ -76,17 +76,17 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 		customFieldName = customFieldName
 				.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", "");
 		switch (customFieldName) {
-			case "field_1":
+			case "order_count":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
 						String.valueOf(customer.getOrderCount()));
 				break;
-			case "field_2":
+			case "incompleted_order_count":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
 						String.valueOf(customer.getInprocessOrderCount()));
 				break;
-			case "field_3":
+			case "outstanding_bill":
 				StringBuilder outstandingBill = new StringBuilder();
 				customer.getOutstandingBills().forEach(bill ->
 					outstandingBill.append(bill.getBillChargeType()
@@ -94,19 +94,19 @@ public class CustomFieldsServiceImpl implements CustomFieldsService
 				customFields.put(customFieldName
 						.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""), outstandingBill.toString());
 				break;
-			case "field_4":
+			case "average_order_value":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
 						String.valueOf(BigDecimal.valueOf(customer.getAverageGearOrderValue()).setScale(
 								BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
-			case "field_5":
+			case "sum_of_gear_value_in_pre_shipping_status":
 				customFields.put(customFieldName
 								.replaceFirst(BraintreeConstants.BRAINTRE_CUSTOM_FIELD_GENERAL_KEY + ".", ""),
 						String.valueOf(BigDecimal.valueOf(customer.getGearValueOrdersInProgress())
 								.setScale(BlInventoryScanLoggingConstants.TWO, RoundingMode.HALF_EVEN)));
 				break;
-			case "field_6":
+			case "rental_duration":
 				if(BooleanUtils.isTrue(order.getIsRentalOrder())) {
 					final LocalDateTime rentalStartDate = getFormattedDateTime(order.getRentalStartDate());
 					final LocalDateTime rentalEndDate = getFormattedDateTime(order.getRentalEndDate());
