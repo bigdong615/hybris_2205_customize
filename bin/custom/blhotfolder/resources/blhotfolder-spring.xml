@@ -38,8 +38,8 @@
 
     <import resource="classpath:/blhotfolder/integration/bl-ordernotes-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-outboundflow-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-consignmententry-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-consignment-hotfolder-spring.xml"/>
-       
 
 	
 	<beans profile="cloud">
