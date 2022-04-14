@@ -23,25 +23,26 @@
 
     <context:annotation-config/>
 
-    <bean id="batchInventoryConverterMapping"
+	<bean id="batchConsignmentEntryConverterMapping"
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-          p:mapping="INVENTORY"
-          p:converter-ref="batchStockConverter"/>
+          p:mapping="CONENTRY"
+          p:converter-ref="batchConsignmentEntryConverter"/>
 
-    <!-- Transformer converters mappings -->
-    <bean id="batchStockConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
-        <property name="header">
-            <value>#{defaultImpexProductHeader}
-                # Insert Stock
-                $productCatalog=blProductCatalog
+ <!-- Transformer converters mappings -->
+	<bean id="batchConsignmentEntryConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+				$productCatalog=blProductCatalog
                 $productCatalogName=Bl Product Catalog
                 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-                INSERT_UPDATE StockLevel;order(code);serialProductCode;product(code, $catalogVersion)[unique=true];date[dateformat=dd.MM.yyyy HH:mm:ss];warehouse(code)[unique=true];reservedStatus[translator=com.bl.batch.imports.translator.BlBooleanTranslator];hardAssigned[translator=com.bl.batch.imports.translator.BlBooleanTranslator];productCode;serialStatus(code);available
-            </value>
-        </property>
-        <property name="impexRow">
-            <value>;{0};{1};{2};{3};{4};{5};{6};{7};{8};{9}</value>
-        </property>
-    </bean>
+		
+           INSERT_UPDATE ConsignmentEntry;consignment(code)[unique=true];quantity;serialProducts(code,$catalogVersion)[unique=true];items(key,value(code));options;billingCharges;orderEntry(order(code),product(code,$catalogVersion))
+
+			</value>
+		</property>
+		<property name="impexRow">
+			<value>;{0};{1};{2};{3};{4};{5};{6}</value>
+		</property>
+	</bean>
 
 </beans>
