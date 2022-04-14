@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd 
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config/> 
+	
+	
+	<!-- ################### Category Category Relation Mapping ######################### -->	
+	
+	<bean id="classificationCategoriesRelationConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="CLASSIFICATIONCATEGORIESRELATION"
+          p:converter-ref="classificationCategoriesRelationConverter"/>
+ 
+	<bean id="classificationCategoriesRelationConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+			# Insert Classification Categories Relation
+			#% impex.enableCodeExecution(true);
+			$productCatalog=blProductCatalog
+			$productCatalogName=BL Product Catalog
+			$classificationCatalog=blClassification
+		
+			$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+			$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+			$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+			$class=classificationClass(ClassificationClass.code,$classCatalogVersion)[unique=true]
+			$supercategories=supercategories(code,catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0']))[mode=append]
+			$categories=target(code, $catalogVersion)[unique=true]
+			
+			# Links ClassificationClasses to Categories
+
+			UPDATE Category ; code[unique=true] ; $catalogVersion ; $supercategories ;
+			</value>
+		</property>
+		<property name="impexRow">
+            <value>;{0};;{1};</value>
+        </property>
+	</bean>
+	
+</beans>

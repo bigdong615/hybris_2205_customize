@@ -42,6 +42,14 @@
     <import resource="classpath:/blhotfolder/integration/bl-consignment-hotfolder-spring.xml"/>
 
 	
+	<import resource="classpath:/blhotfolder/integration/bl-classificationclass-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattribute-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattributeassignment-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattributevalue-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationcategoriesrelation-hotfolder-spring.xml"/>
+	
+	
+	
 	<beans profile="cloud">
 		<import
 			resource="classpath:/blhotfolder/integration/hot-folder-bl-cloud-spring.xml" />
