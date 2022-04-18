@@ -76,6 +76,7 @@
 									</span>
 
 									<p class="card-actions mb-0">
+									    <!-- Edit link is hidden as per BL-2096 -->
 										<%-- <a href="#" class="edit-cc-form" data-id="${paymentInfo.id}">Edit</a> --%>
 										<a href="#" class="delete-link"
 											data-payment-id="${paymentInfo.id}"
