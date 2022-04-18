@@ -76,8 +76,8 @@
 									</span>
 
 									<p class="card-actions mb-0">
-										<a href="#" class="edit-cc-form" data-id="${paymentInfo.id}">Edit</a><a
-											href="#" class="delete-link"
+										<%-- <a href="#" class="edit-cc-form" data-id="${paymentInfo.id}">Edit</a> --%>
+										<a href="#" class="delete-link"
 											data-payment-id="${paymentInfo.id}"
 											data-tokan="${paymentInfo.paymentMethodToken}"
 											data-bs-toggle="modal" data-bs-target="#clearCartWarning">Remove</a>
