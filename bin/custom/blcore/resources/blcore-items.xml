@@ -3217,6 +3217,12 @@
 	                    <description>Total of total number of days extended for all the previous extended orders including original order</description>
 	                </attribute>
                 	<!-- BL-1678 End -->
+                	<attribute qualifier="isSAPOrder" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been placed through storefront</description>
+                    </attribute>
             </attributes>
             </itemtype>
 
