@@ -83,7 +83,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 								// BL-689: below line added
 								$("#errorMessages_sigin_pwd").removeClass("d-none");
 							}
@@ -155,7 +155,7 @@ ACC.account = {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
 				}
-				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 				$("#errorMessages_sigin_pwd").removeClass("d-none");
 			} else {
 				$("#errorMessages_sigin_pwd").html("");
