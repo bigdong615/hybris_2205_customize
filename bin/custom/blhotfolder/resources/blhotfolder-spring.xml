@@ -23,8 +23,8 @@
 	<import resource="classpath:/blhotfolder/integration/bl-product-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-options-main-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
-     <import resource="classpath:/blhotfolder/integration/bl-inventory-location-hotfolder-spring.xml"/>
-     <import resource="classpath:/blhotfolder/integration/bl-serial-product-order-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-inventory-location-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-serial-product-order-hotfolder-spring.xml"/>
  	
 	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
@@ -40,7 +40,7 @@
 
     <import resource="classpath:/blhotfolder/integration/bl-ordernotes-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-outboundflow-hotfolder-spring.xml"/>
-	<import resource="classpath:/blhotfolder/integration/bl-consignmententry-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-consignmententry-hotfolder-spring.xml"/>
     <import resource="classpath:/blhotfolder/integration/bl-consignment-hotfolder-spring.xml"/>
 
 	
@@ -49,6 +49,9 @@
 	<import resource="classpath:/blhotfolder/integration/bl-classificationattributeassignment-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-classificationattributevalue-hotfolder-spring.xml"/>
 	<import resource="classpath:/blhotfolder/integration/bl-classificationcategoriesrelation-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-productclassmapping-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-enumproductmapping-hotfolder-spring.xml"/>
+	
 	
 	
 	
