@@ -35,7 +35,7 @@
 				$productCatalog=blProductCatalog
 				$productCatalogName=Bl Product Catalog
 				$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-				INSERT_UPDATE ProductReference ; source(code,$catalogVersion)[unique=true] ; target(code,$catalogVersion)[unique=true] ; referenceType(code) ; active[default=true]; preselected[default=true];quantity
+				INSERT_UPDATE ProductReference ; source(code,$catalogVersion)[unique=true] ; target(code,$catalogVersion)[unique=true] ; referenceType(code) ; quantity; active[default=true]; preselected[default=true]
 			</value>
 		</property>
 		<property name="impexRow">

@@ -27,7 +27,7 @@
 	
 	<bean id="batchProductRecommendationConverterMapping"
           class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
-          p:mapping="PRODUCTRECOMMENDATIONS"
+          p:mapping="BLPRODUCTRECOMMENDATIONS"
           p:converter-ref="batchProductRecommendationConverter"/>
 
  <!-- Transformer converters mappings -->
