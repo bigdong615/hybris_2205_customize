@@ -137,6 +137,13 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
 			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
+	private static final String GET_ALL_LEGACY_ORDERS_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+			+ OrderModel._TYPECODE + " AS o} WHERE "
+					+ "{o:" + AbstractOrderModel.ISSAPORDER + "} = ?isSAPOrder AND "
+					+ "{o:" + AbstractOrderModel.ISRENTALORDER + "} = ?isRentalOrder AND "
+					+ "{o:" + AbstractOrderModel.GIFTCARDORDER + "} = ?isGiftCardOrder AND "
+					+ "{o:" + AbstractOrderModel.ISRETAILGEARORDER + "} = ?isRetailGearOrder";
+	
 	/**
  	* {@inheritDoc}
  	*/
@@ -522,5 +529,23 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 
 	public void setBaseStoreService(BaseStoreService baseStoreService) {
 		this.baseStoreService = baseStoreService;
+	}
+
+	@Override
+	public List<OrderModel> getAllLegacyOrders()
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ALL_LEGACY_ORDERS_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.IS_SAP_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_RENTAL_ORDER, Boolean.TRUE);
+		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_RETAIL_GEAR_ORDER, Boolean.FALSE);
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<OrderModel> orders = result.getResult();
+		if (CollectionUtils.isEmpty(orders)) {
+			BlLogger.logMessage(LOG , Level.INFO , "No Legacy rental orders found");
+			return Collections.emptyList();
+		}
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Number of Legacy rental orders found : {}", orders.size());
+		return orders;
 	}
 }

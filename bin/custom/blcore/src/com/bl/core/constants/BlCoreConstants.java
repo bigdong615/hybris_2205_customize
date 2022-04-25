@@ -625,6 +625,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RULE_STATUS = "ruleStatus";
 	public static final String PROMO_GROUP = "promoGroup";
 	public static final String BARCODE_LIST = "barcodeList";
+	public static final String IS_SAP_ORDER = "isSAPOrder";
+	public static final String IS_RENTAL_ORDER = "isRentalOrder";
+	public static final String IS_RETAIL_GEAR_ORDER = "isRetailGearOrder";
 
 
 	private BlCoreConstants()
