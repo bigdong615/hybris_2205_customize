@@ -36,7 +36,7 @@
                 $productCatalog=blProductCatalog
                 $productCatalogName=Bl Product Catalog
                 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-                INSERT_UPDATE BlSerialProduct;code[unique];barcode[unique=true];blProduct(code,$catalogVersion);$catalogVersion;numberSystem(code);productType(code);cosmeticRating(code);functionalRating(code);serialStatus(code);ocLocation;lastLocationScanParent;associatedOrder(code);noDaysRented;firmwareVersion;repairReasons(code);otherRepairsReason;testingStatus(code);gearRated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];userChangedConditionRating;hardAssigned[translator=com.bl.batch.imports.translator.BlBooleanTranslator]
+                INSERT_UPDATE BlSerialProduct;code[unique];barcode[unique=true];blProduct(code,$catalogVersion);$catalogVersion;numberSystem(code);productType(code);cosmeticRating(code);functionalRating(code);serialStatus(code);ocLocation;lastLocationScanParent;associatedOrder(code,orderID);noDaysRented;firmwareVersion;repairReasons(code);otherRepairsReason;testingStatus(code);gearRated[translator=com.bl.batch.imports.translator.BlBooleanTranslator];userChangedConditionRating;hardAssigned[translator=com.bl.batch.imports.translator.BlBooleanTranslator]
 
             </value>
         </property>

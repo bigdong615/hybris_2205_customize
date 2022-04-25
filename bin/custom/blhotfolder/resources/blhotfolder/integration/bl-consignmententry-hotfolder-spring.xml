@@ -36,7 +36,7 @@
                 $productCatalogName=Bl Product Catalog
                 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
 		
-           INSERT_UPDATE ConsignmentEntry;consignment(code)[unique=true];quantity;serialProducts(code,$catalogVersion);items(key,value(code));options;billingCharges;orderEntry(order(code),product(code,$catalogVersion))[unique=true]
+           INSERT_UPDATE ConsignmentEntry;consignment(code)[unique=true];quantity;serialProducts(code,$catalogVersion);items(key,value(code));options;billingCharges;orderEntry(order(code,orderID),product(code,$catalogVersion))[unique=true]
 
 			</value>
 		</property>

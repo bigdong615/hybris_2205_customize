@@ -28,7 +28,7 @@
 		<property name="header">
 			<value>
 				# Insert order
-				INSERT_UPDATE CONSIGNMENT;code[unique=true];shippingAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];deliveryMode(code);status(code);optimizedShippingStartDate[dateformat=dd.MM.yyyy hh:mm:ss];optimizedShippingEndDate[dateformat=dd.MM.yyyy hh:mm:ss];optimizedShippingType(code);optimizedShippingMethodType(code);orderType(code);cleanCompleteConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];internalTransferConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];orderTransferConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];actualShippingDateToCustomer[dateformat=dd.MM.yyyy hh:mm:ss];warehouse(code);order(code)
+				INSERT_UPDATE CONSIGNMENT;code[unique=true];shippingAddress[translator=com.bl.batch.imports.translator.BlAddressIdTranslator];deliveryMode(code);status(code);optimizedShippingStartDate[dateformat=dd.MM.yyyy hh:mm:ss];optimizedShippingEndDate[dateformat=dd.MM.yyyy hh:mm:ss];optimizedShippingType(code);optimizedShippingMethodType(code);orderType(code);cleanCompleteConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];internalTransferConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];orderTransferConsignment[translator=com.bl.batch.imports.translator.BlBooleanTranslator];actualShippingDateToCustomer[dateformat=dd.MM.yyyy hh:mm:ss];warehouse(code);order(code,orderID)
 				
 			</value>
 		</property>
