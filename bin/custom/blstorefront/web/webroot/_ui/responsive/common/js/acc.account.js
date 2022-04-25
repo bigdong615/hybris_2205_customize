@@ -189,7 +189,7 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or Password was incorrect");
+							$("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="/blstorefront/login/pw/request">reset your password</a>');
 							isLoginError = true;
 						} 
 						else if(response === 'login.error.account.deactivate.title') 
@@ -243,7 +243,8 @@ ACC.account = {
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or Password was incorrect");
+				$("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="/blstorefront/login/pw/request">reset your password</a>');
+
 			}
 		});
 
