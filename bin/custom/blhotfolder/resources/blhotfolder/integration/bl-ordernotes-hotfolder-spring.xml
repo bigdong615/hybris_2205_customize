@@ -28,7 +28,7 @@
 		<property name="header">
 			<value>
 				#Insert orderNodes
-				INSERT_UPDATE NOTES;order(code)[unique=true];type(code);note;userID(uid)
+				INSERT_UPDATE NOTES;order(code)[unique=true];type(code)[unique=true];note;userID(uid)
 				
 			</value>
 		</property>
