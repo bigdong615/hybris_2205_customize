@@ -137,12 +137,17 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			+ "{o:" + OrderModel.ISRETAILGEARORDER + "} =?isNewGearOrder AND "
 			+ "{o:" + OrderModel.ORIGINALVERSION + "} is null AND datediff(mi,{o:" + OrderModel.CREATIONTIME + "},current_timestamp) > ?timer";
 
-	private static final String GET_ALL_LEGACY_ORDERS_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
+	private static final String GET_ALL_RENTAL_LEGACY_ORDERS_QUERY = "SELECT {o:" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE "
-					+ "{o:" + AbstractOrderModel.ISSAPORDER + "} = ?isSAPOrder AND "
+					+ "{o:" + AbstractOrderModel.STATUS + "} = ({{SELECT {os:" + ItemModel.PK + "} from {"+ OrderStatus._TYPECODE + " AS os} where {os:code} = ?orderStatus}}) AND "
+					+ "({o:" + AbstractOrderModel.ISSAPORDER + "} IS NULL OR "
+					+ "{o:" + AbstractOrderModel.ISSAPORDER + "} = ?isSAPOrder ) AND "
 					+ "{o:" + AbstractOrderModel.ISRENTALORDER + "} = ?isRentalOrder AND "
 					+ "{o:" + AbstractOrderModel.GIFTCARDORDER + "} = ?isGiftCardOrder AND "
-					+ "{o:" + AbstractOrderModel.ISRETAILGEARORDER + "} = ?isRetailGearOrder";
+					+ "{o:" + AbstractOrderModel.ISRETAILGEARORDER + "} = ?isRetailGearOrder AND "
+					+ "{o:" + AbstractOrderModel.ISREPLACEMENTORDER + "} = ?isReplacementOrder AND "
+					+ "{o:" + AbstractOrderModel.ISEXTENDEDORDER + "} = ?isExtendedOrder AND "
+					+ "{o:" + AbstractOrderModel.INTERNALTRANSFERORDER + "} = ?internalTransferOrder" ;
 	
 	/**
  	* {@inheritDoc}
@@ -534,11 +539,15 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	@Override
 	public List<OrderModel> getAllLegacyOrders()
 	{
-		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ALL_LEGACY_ORDERS_QUERY);
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ALL_RENTAL_LEGACY_ORDERS_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.QRY_ORDER_STATUS, OrderStatus.PENDING.getCode());
 		fQuery.addQueryParameter(BlCoreConstants.IS_SAP_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(BlCoreConstants.IS_RENTAL_ORDER, Boolean.TRUE);
 		fQuery.addQueryParameter(IS_GIFT_CARD_ORDER, Boolean.FALSE);
 		fQuery.addQueryParameter(BlCoreConstants.IS_RETAIL_GEAR_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_REPLACEMENT_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.IS_EXTENDED_ORDER, Boolean.FALSE);
+		fQuery.addQueryParameter(BlCoreConstants.INTERNAL_TRANSFER_ORDER, Boolean.FALSE);
 		final SearchResult result = getFlexibleSearchService().search(fQuery);
 		final List<OrderModel> orders = result.getResult();
 		if (CollectionUtils.isEmpty(orders)) {

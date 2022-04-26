@@ -628,6 +628,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String IS_SAP_ORDER = "isSAPOrder";
 	public static final String IS_RENTAL_ORDER = "isRentalOrder";
 	public static final String IS_RETAIL_GEAR_ORDER = "isRetailGearOrder";
+	public static final String QRY_ORDER_STATUS = "orderStatus";
+	public static final String IS_REPLACEMENT_ORDER = "isReplacementOrder";
+	public static final String IS_EXTENDED_ORDER = "isExtendedOrder";
+	public static final String INTERNAL_TRANSFER_ORDER = "internalTransferOrder";
 
 
 	private BlCoreConstants()
