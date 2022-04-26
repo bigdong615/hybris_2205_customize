@@ -162,6 +162,7 @@
 					<ea:attribute qualifier="onSale"/>
 					<ea:attribute qualifier="bufferedInventoryPercentage"/>
 					<ea:attribute qualifier="bufferInvPercChangedManually"/>
+					<ea:attribute qualifier="bundleProduct"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -323,6 +324,8 @@
 					<ea:attribute qualifier="retailPrice"/>
 					<ea:attribute qualifier="upc"/>
 					<ea:attribute qualifier="retailGearInStock"/>
+					<ea:attribute qualifier="retailGearPrice"/>
+					<ea:attribute qualifier="retailGear"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
