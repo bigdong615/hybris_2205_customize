@@ -45,7 +45,7 @@ public class BlFutureOrderAllocationJob extends AbstractJobPerformable<CronJobMo
 			BlLogger.logMessage(LOG, Level.INFO, "BlFutureOrderAllocationJob : perform : No Legacy Rental Orders Found");
 			return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
 		}
-		final Date currentDate = new Date();
+
 		//filtering fetched legacy order with future rental dates
 		final List<OrderModel> futureLegacyRentlOrders = allLegacyOrders.stream().filter(order -> {
 			if (Objects.isNull(order.getRentalStartDate()))
@@ -55,8 +55,7 @@ public class BlFutureOrderAllocationJob extends AbstractJobPerformable<CronJobMo
 						order.getCode());
 				return false;
 			}
-			return DateUtils.isSameDay(currentDate, order.getRentalStartDate())
-					|| order.getRentalStartDate().compareTo(currentDate) > 0;
+			return isEligibleForFutureAllocation(order);
 		}).collect(Collectors.toList());
 		//performing submission of order for allocation process.
 		futureLegacyRentlOrders.forEach(legacyOrder -> {
@@ -74,6 +73,20 @@ public class BlFutureOrderAllocationJob extends AbstractJobPerformable<CronJobMo
 			}
 		});
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+	}
+
+	/**
+	 * Checks if order is eligible for future allocation.
+	 *
+	 * @param order
+	 *           the order
+	 * @return true, if is eligible for future allocation
+	 */
+	private boolean isEligibleForFutureAllocation(final OrderModel order)
+	{
+		final Date currentDate = new Date();
+		return (DateUtils.isSameDay(currentDate, order.getRentalStartDate())
+				|| order.getRentalStartDate().compareTo(currentDate) > 0) && (CollectionUtils.isEmpty(order.getConsignments()));
 	}
 
 	/**
