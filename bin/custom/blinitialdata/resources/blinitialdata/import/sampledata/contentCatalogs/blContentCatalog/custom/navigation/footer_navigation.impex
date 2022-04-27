@@ -65,7 +65,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; WhyBLNavLink          ; Why BL Nav Link          ; "#" ; WhyBLNavLink          ; WhyBLNavLink          
                                ;                         ; TestimonialsNavLink   ; Testimonials Nav Link    ; "#" ; TestimonialsNavLink   ; TestimonialsNavLink   
                                ;                         ; BLPartnernersNavLink  ; BL Partnerners Nav Link  ; "#" ; BLPartnernersNavLink  ; BLPartnernersNavLink  
-                               ;                         ; AffiliatesNavLink     ; Affiliates Nav Link      ; "/affiliatePage" ; AffiliatesNavLink     ; AffiliatesNavLink
+                               ;                         ; AffiliatesNavLink     ; Affiliates Nav Link      ; "/affiliate" ; AffiliatesNavLink     ; AffiliatesNavLink
                                ;                         ; PressNavLink          ; Press Nav Link           ; "#" ; PressNavLink          ; PressNavLink          
                                ;                         ; CareersNavLink        ; Careers Nav Link         ; "#" ; CareersNavLink        ; CareersNavLink        
                                ;                         ; HelpNavLink           ; Help Nav Link            ; "#" ; HelpNavLink           ; HelpNavLink           
