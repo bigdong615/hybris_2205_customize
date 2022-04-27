@@ -1,0 +1,93 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+#
+# Import the CMS content for the Borrow Lenses site
+#
+ 
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Online])[default=$contentCatalog:Online]
+$lang=en
+$picture=media(code, $contentCV); 
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+$jarResourceCms=$config-jarResourceCmsValue    
+
+###  Page Template For Borrow Lenses MaintenanceUs Page  ###                                                                                                                           
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
+                           ;                         ; maintenancePageTemplate ; Maintenance Page Template ; maintenance/maintenancePage ; $jarResourceCms/structure-view/structure_maintenancePageTemplate.vm                                      ; CategoryPage,ContentPage  
+     
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='maintenancePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
+                              ; Section2Slot                  ;                                             ;                           ; wide
+                              ; Section3Slot                  ;                                             ;                           ; wide
+                              ; Section4Slot                  ;                                             ;                           ; wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='maintenancePageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
+                                     ;                         ; PromoBannerSlot-maintenancePage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
+                                     ;                         ; SiteLogoHeaderSlot-maintenancePage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
+                                     ;                         ; FooterSlot-maintenancePage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
+                                     ;                         ; FooterSubscriptionSlot-maintenancePage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
+                                     ;                         ; FooterCopyRightslot-maintenancePage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
+                                     ;                         ; SocialMediaSectionSlot-maintenancePage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+
+#### maintenance page
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; maintenanceSection1Slot     ; maintenance Section1 Slot              ; true
+                         ;                          ; maintenanceSection2Slot     ; maintenance Section2 Slot              ; true
+                         ;                          ; maintenanceSection3Slot     ; maintenance Section3 Slot              ; true  
+                         ;                          ; maintenanceSection4Slot     ; maintenance Section4 Slot              ; true
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; maintenancePage ; Maintenance Page ; maintenancePageTemplate           ; /maintenance
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='maintenancePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; Section1Slot-maintenancePage             ; Section1Slot            ;                                                       ; maintenanceSection1Slot                   ; true
+                                 ;                         ; Section2Slot-maintenancePage             ; Section2Slot            ;                                                       ; maintenanceSection2Slot                   ; true
+                                 ;                         ; Section3Slot-maintenancePage             ; Section3Slot            ;                                                       ; maintenanceSection3Slot                   ; true
+                                 ;                         ; Section4Slot-maintenancePage             ; Section4Slot            ;                                                       ; maintenanceSection4Slot                   ; true
+
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
+                              ;                         ; maintenanceBannerComponent ; Maintenance Section Component ; maintenanceBannerComponent ;
+
+## Title
+UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; content[lang=$lang]                                                                                                                                                                                                                            
+                                   ;                         ; maintenancePromoBannerComponent ; "<p id=""desktopMessage"" class=""body14 d-none d-md-block"">Sorry, we are down for scheduled maintenance but we'll be back up soon.</p><p id=""mobileMessage"" class=""body14 d-block d-md-none"">Sorry, we are down for scheduled maintenance but we'll be back up soon.</p>" 
+ 
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; maintenanceCMSParagraphTitleComponent   ; maintenance Title Component        ; maintenanceCMSParagraphTitleComponent      ; "<h1 class=""text-center"">We’ll be right back!</h1>"
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; maintenanceCMSParagraphNoticeComponent   ; maintenance Top Notice Component        ; maintenanceCMSParagraphNoticeComponent      ; "Sorry, we are down for scheduled maintenance but wil be back online shortly. If you have immediate questions, feel free to email us at <a href=""mailto:help@borrowlenses.com"">help@borrowlenses.com<a/>."
+
+
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; maintenanceSection1Slot        ; maintenanceCMSParagraphTitleComponent
+                          ;                    ; maintenanceSection2Slot        ; maintenanceCMSParagraphNoticeComponent
+                          ;                    ; maintenanceSection3Slot        ; 
+                          ;                    ; PromoBannerSlot        ; maintenancePromoBannerComponent
