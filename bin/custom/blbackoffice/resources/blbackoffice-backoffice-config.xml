@@ -1701,6 +1701,9 @@
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:type-node code="Consignment" id="Shipment"/>
 			<n:type-node code="FrontDeskQueue" id="FrontDeskQueue"/>
+			<n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
 
@@ -1710,6 +1713,9 @@
 				<n:type-node code="PulledOrdersQueue" id="CleanCompleteOrderQueue"/>
 				<n:type-node code="OrdersAwaitingQueue" id="IncompleteOrdersQueue"/>
 				<n:type-node code="ShippingCompleteOrderQueue" id="ShippingCompleteOrderQueue"/>
+				<n:navigation-node id="blinventoryscan_name">
+					<n:navigation-node id="WebScanTool"/>
+				</n:navigation-node>		
 			</n:explorer-tree>
 		</context>
 
@@ -2203,6 +2209,9 @@
 			<n:navigation-node id="Customers">
 				<n:type-node code="Customer" id="Customer"/>
 			</n:navigation-node>
+			<n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
 
@@ -2683,7 +2692,10 @@
 			</n:navigation-node>
 			<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 			<n:type-node id="RepairLog" code="BlRepairLog"/>   
-			<n:type-node id="Order" code="Order"/>            
+			<n:type-node id="Order" code="Order"/>    
+			<n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>        
         </n:explorer-tree>
     </context>
     
@@ -2692,6 +2704,9 @@
             <n:type-node id="RepairLog" code="BlRepairLog"/>
             <n:type-node id="RemainingRepairItems" code="RemainingRepairItems"/>
             <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+            <n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
         </n:explorer-tree>
     </context>
     
@@ -2701,6 +2716,9 @@
             <n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
             <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
             <n:type-node id="Consignment" code="Consignment"/>
+            <n:navigation-node id="blinventoryscan_name">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
         </n:explorer-tree>
     </context>
     
