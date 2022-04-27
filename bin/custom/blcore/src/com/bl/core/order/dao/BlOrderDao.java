@@ -124,5 +124,12 @@ public interface BlOrderDao extends OrderDao
 	 * @return list of orders
 	 */
 	public List<OrderModel> getOrdersToVoidTransactions();
+	
+	/**
+	 * Gets the all legacy orders.
+	 *
+	 * @return the all legacy orders
+	 */
+	List<OrderModel> getAllLegacyOrders();
 
 }

@@ -1911,4 +1911,9 @@
 		<property name="template" value="${keygen.order.id.template}"/>
 	</bean>
 	
+	<bean id="blFutureOrderAllocationJob" class="com.bl.core.job.BlFutureOrderAllocationJob" parent="abstractJobPerformable">
+		<property name="blOrderDao" ref="orderDao"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
+	</bean>
+	
 </beans>

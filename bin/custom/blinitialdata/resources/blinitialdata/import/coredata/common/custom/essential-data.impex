@@ -568,3 +568,9 @@ $de.hybris.platform.core.Registry.getApplicationContext().getBean(de.hybris.plat
 UPDATE AttributeDescriptor ; qualifier[unique=true] ; enclosingType(code)[unique=true] ; description[lang=en]
 ;billPaid;BlItemsBillingCharge;"Value = TRUE means Bill is COMPLETE
 Value = FALSE means Bill is INCOMPLETE"
+
+INSERT_UPDATE ServicelayerJob ; code[unique=true]          ; springId[unique=true]      
+                              ; blFutureOrderAllocationJob ; blFutureOrderAllocationJob 
+
+INSERT_UPDATE CronJob ; code[unique=true]                    ; job(code)                  ; sessionLanguage(isoCode)[default = en] ; active ;  
+                      ; blFutureOrderAllocationJob 			 ; blFutureOrderAllocationJob ;                                        ; true   ;  
