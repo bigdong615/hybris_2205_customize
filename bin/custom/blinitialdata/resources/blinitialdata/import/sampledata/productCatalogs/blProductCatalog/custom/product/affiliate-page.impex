@@ -17,7 +17,7 @@
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $lang=en
-
+$picture=media(code, $contentCV); 
 
 # Import modulegen config properties into impex macros
 UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
@@ -33,6 +33,8 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
                         ;                          ; affiliateSection2Slot     ; affiliate Section2 Slot              ; true
                         ;                          ; affiliateSection3Slot     ; affiliate Section3 Slot              ; true
                         ;                          ; affiliateSection4Slot     ; affiliate Section4 Slot              ; true
+                        ;                          ; affiliateSection5Slot     ; affiliate Section5 Slot              ; true
+                        ;                          ; affiliateSection6Slot     ; affiliate Section6 Slot              ; true
 
 ###  Define Content SlotNames  ###
 INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='affiliatePageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
@@ -81,7 +83,6 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileMiniCartSlot-AffiliatePage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                      ;                         ; SocialMediaSectionSlot-AffiliatePage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
                                      ;                         ; TopHeaderSlot-AffiliatePage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
-									 ;                         ; Sectiont1Slot-AffiliatePage              ; Section1Slot        ;                                                                           ; Section1Slot                   ; true
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='affiliatePage'] ; contentSlot(uid,$contentCV)[unique=true]
@@ -89,50 +90,46 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; affiliateSection2Slot                   ; true
                                  ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; affiliateSection3Slot                   ; true
                                  ;                         ; Section4Slot-AffiliatePage             ; Section4Slot            ;                                                       ; affiliateSection4Slot                   ; true
-
+                                 ;                         ; Section5Slot-AffiliatePage             ; Section5Slot            ;                                                       ; affiliateSection5Slot                   ; true
+                                 ;                         ; Section6Slot-AffiliatePage             ; Section6Slot            ;                                                       ; affiliateSection6Slot                   ; true
 
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; affiliatePage ; Affiliate Page ; affiliatePageTemplate           ; /affiliatePage
+                          ;                    ; affiliatePage ; Affiliate Page ; affiliatePageTemplate           ; /affiliate
 
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
-                                    ;                    ; affiliateCMSParagraphComponent   ; Affiliate Page Component        ; affiliateCMSParagraphComponent      ; "BorrowLenses' mission is to advance the photographic and cinematic dreams of our customers by delivering superior, cutting-edge gear and providing exceptional customer service. Rent, shoot, return - it's as easy as that. You choose what you want, when you want to receive it, and for how long you want to rent it for. We ship the gear directly to you, or to one of our many convenient pick-up locations. Your specially-packaged gear comes with a prepaid return label for ship-back ease. Our entire rental process is done completely through our website but if you ever have a special request you can call us and talk to a real person working at one of our two main headquarters in California and Massachusetts."
+                                    ;                    ; affiliateCMSParagraphComponent   ; Affiliate Page Component        ; affiliateCMSParagraphComponent      ; "<p>BorrowLenses' mission is to advance the photographic and cinematic dreams of our customers by delivering superior, cutting-edge gear and providing exceptional customer service. Rent, shoot, return - it's as easy as that. You choose what you want, when you want to receive it, and for how long you want to rent it for. We ship the gear directly to you, or to one of our many convenient pick-up locations. Your specially-packaged gear comes with a prepaid return label for ship-back ease. Our entire rental process is done completely through our website but if you ever have a special request you can call us and talk to a real person working at one of our two main headquarters in California and Massachusetts.</p>"
+# CMS Link Components
+INSERT_UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];name;url;&linkRef;&componentRef;target(code)[default='sameWindow'];;;
+;;AffiliateGetStartedLink;AffiliateGetStartedLink;/affiliate;AffiliateGetStartedLink;AffiliateGetStartedLink;;;;
+
+UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];linkName[lang=$lang]
+ ;;AffiliateGetStartedLink;"Get Started"
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSParagraphTitleComponent   ; Affiliate Page Title Component        ; affiliateCMSParagraphTitleComponent      ; "START EARNING TODAY"
+
 
 INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]              ; name                  ; &componentRef                ;
                                           ;                         ; PromoBannerComponent ; Promo Banner Component ; PromoBannerComponent ; "#"
 
 
-###  Assign Components to the Slots  ###
-UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                   ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; affiliateSection3Slot        ; affiliateCMSParagraphComponent
-                   ;                    ; affiliateSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
 
-#### ContactUs page
-INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
-                         ;                          ; contactUsSection1Slot     ; contactUs Section1 Slot              ; true
-                         ;                          ; contactUsSection2Slot     ; contactUs Section2 Slot              ; true
-                         ;                          ; contactUsSection3Slot     ; contactUs Section3 Slot              ; true
-                         ;                          ; contactUsSection4Slot     ; contactUs Section4 Slot              ; true
+INSERT_UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; urlLink ; $picture[lang=$lang]         ; rentProData                 ; borrowData                    
+                                              ;                         ; RotatingAffiliatedPageImagesComponent ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; ; pexels-taryn-elliott-5271713.mp4      ;  ;
 
-INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; contactUsPage ; Contact Us Page ; affiliatePageTemplate           ; /contactus
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSAccordianTitleComponent   ; Affiliate Accordian Title Component        ; affiliateCMSAccordianTitleComponent      ; "<h3>Tools for success</h3>"
 
-########################### Define Content slots for page######################
-INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='contactUsPage'] ; contentSlot(uid,$contentCV)[unique=true]
-                                 ;                         ; Section1Slot-contactUsPage             ; Section1Slot            ;                                                       ; contactUsSection1Slot                   ; true
-                                 ;                         ; Section2Slot-contactUsPage             ; Section2Slot            ;                                                       ; contactUsSection2Slot                   ; true
-                                 ;                         ; Section3Slot-contactUsPage             ; Section3Slot            ;                                                       ; contactUsSection3Slot                   ; true
-                                 ;                         ; Section4Slot-contactUsPage             ; Section4Slot            ;                                                       ; contactUsSection4Slot                   ; true
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; affiliateCMSAccordianComponent   ; Affiliate Accordian Component        ; affiliateCMSAccordianComponent      ; "Accordion Title 1,Accordion Content 1,Accordion Title 2,Accordion Content 2,Accordion Title 3,Accordion Content 3,Accordion Title 4,Accordion Content 4"
 
-INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
-                                         ;                    ; contactUsCMSParagraphComponent   ; Contact Us Page Component        ; contactUsCMSParagraphComponent   ;""   ; "<a style="" text-decoration:none;"" id=""liveagent_button_online_5731I0000005Sk4"" href=""#"" onclick=""liveagent.startChat('5731I0000005Sk4')"" name=""&amp;lid=GlobalHeader_live-chat clickGA""><span class=""expertHelpIcon"">Live Chat</span></a>"
-
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
-                              ;                         ; contactUsBannerComponent ; Contact Us  Section Component ; contactUsBannerComponent ;
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
-                          ;                    ; contactUsSection1Slot        ; contactUsCMSParagraphComponent
-                          ;                    ; contactUsSection2Slot        ; contactUsBannerComponent
-                          ;                    ; contactUsSection3Slot        ;
-                          ;                    ; contactUsSection4Slot        ; RentingGearIsEasySelectDates,RentingGearIsEasyGearArrives,RentingGearIsEasyShoot,RentingGearIsEasyReturns
+                   ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphTitleComponent
+                   ;                    ; affiliateSection2Slot        ; affiliateCMSParagraphComponent
+                   ;                    ; affiliateSection3Slot        ; AffiliateGetStartedLink
+                   ;                    ; affiliateSection4Slot        ; RotatingAffiliatedPageImagesComponent
+                   ;                    ; affiliateSection5Slot        ; affiliateCMSAccordianTitleComponent
+                   ;                    ; affiliateSection6Slot        ; affiliateCMSAccordianComponent
+

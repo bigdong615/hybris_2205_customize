@@ -243,3 +243,36 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
 
 }
 $(".js-hr-tag").last().hide();
+
+$(document).ready(function() {
+    var accordianData = $('.accordion-data > .content').text();
+    var aff_accordian = "";
+    if (accordianData) {
+        accordianData = accordianData.split(',');
+        if (accordianData.length > 0) {
+            accordianData.forEach(function(data, index) {
+                if ((index + 1) % 2 == 0) {
+                    aff_accordian += '<div class="accordion-content"><p>' + data + '</p></div>'
+                } else {
+                    aff_accordian += '<h4 class="accordion-title">' + data + '</h4>';
+                }
+            });
+            $('.accordion-container').append(aff_accordian);
+        }
+    }
+    $(".accordion-content").css("display", "none");
+    $(".accordion-title").on('click', function() {
+        $(".accordion-title").not(this).removeClass("open");
+        $(".accordion-title").not(this).next().slideUp(300);
+        $(this).toggleClass("open");
+        $(this).next().slideToggle(300);
+    });
+		if($('.contact-live-chat').length > 0){
+			liveagent.init(
+			"https://d.la2-c1-iad.salesforceliveagent.com/chat",
+			"5721I0000005VsD",
+			"00D1I000002xB0t"
+			);
+		}
+	  
+});
