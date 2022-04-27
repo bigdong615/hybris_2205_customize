@@ -1,0 +1,121 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+#
+# Import the CMS content for the Borrow Lenses site
+#
+ 
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Online])[default=$contentCatalog:Online]
+$lang=en
+$picture=media(code, $contentCV); 
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true] 
+$jarResourceCms=$config-jarResourceCmsValue    
+
+###  Page Template For Borrow Lenses ContactUs Page  ###                                                                                                                           
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; name                    ; frontendTemplateName      ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true] 
+                           ;                         ; contactUsPageTemplate ; ContactUs Page Template ; contactus/contactusPage ; $jarResourceCms/structure-view/structure_conatctusPageTemplate.vm                                      ; CategoryPage,ContentPage  
+     
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='contactUsPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox
+                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot                    ;                                                                             ;                           ; wide
+                              ; Section1Slot                   ;                                             ;                           ; wide
+                              ; Section2Slot                  ;                                             ;                           ; wide
+                              ; Section3Slot                  ;                                             ;                           ; wide
+                              ; Section4Slot                  ;                                             ;                          ;wide                                               
+                              ; Section5Slot                  ;                                             ;                           ; wide
+                              ; Section6Slot                  ;                                             ;                          ;wide
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='contactUsPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
+                                     ;                         ; PromoBannerSlot-ConatctUsPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true           
+                                     ;                         ; SiteLogoHeaderSlot-ConatctUsPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true           
+                                     ;                         ; NavigationPromoSlot-ConatctUsPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true           
+                                     ;                         ; NavigationBarSlot-ConatctUsPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true           
+                                     ;                         ; NavigationBarMobileSlot-ConatctUsPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true           
+                                     ;                         ; HeaderLinkForSupportSlot-ConatctUsPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true           
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-ConatctUsPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true           
+                                     ;                         ; MiniCartSlot-ConatctUsPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true           
+                                     ;                         ; FooterSlot-ConatctUsPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
+                                     ;                         ; FooterSubscriptionSlot-ConatctUsPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
+                                     ;                         ; FooterCopyRightslot-ConatctUsPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-ConatctUsPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-ConatctUsPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-ConatctUsPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-ConatctUsPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                     ;                         ; MobileMiniCartSlot-ConatctUsPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
+                                     ;                         ; SocialMediaSectionSlot-ConatctUsPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-ConatctUsPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
+
+#### ContactUs page
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; contactUsSection1Slot     ; contactUs Section1 Slot              ; true
+                         ;                          ; contactUsSection2Slot     ; contactUs Section2 Slot              ; true
+                         ;                          ; contactUsSection3Slot     ; contactUs Section3 Slot              ; true
+                         ;                          ; contactUsSection4Slot     ; contactUs Section4 Slot              ; true
+                         ;                          ; contactUsSection5Slot     ; contactUs Section5 Slot              ; true
+                         ;                          ; contactUsSection6Slot     ; contactUs Section6 Slot              ; true
+
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                    ; contactUsPage ; Contact Us Page ; contactUsPageTemplate           ; /contactus
+
+########################### Define Content slots for page######################
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='contactUsPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; Section1Slot-contactUsPage             ; Section1Slot            ;                                                       ; contactUsSection1Slot                   ; true
+                                 ;                         ; Section2Slot-contactUsPage             ; Section2Slot            ;                                                       ; contactUsSection2Slot                   ; true
+                                 ;                         ; Section3Slot-contactUsPage             ; Section3Slot            ;                                                       ; contactUsSection3Slot                   ; true
+                                 ;                         ; Section4Slot-contactUsPage             ; Section4Slot            ;                                                       ; contactUsSection4Slot                   ; true
+                                 ;                         ; Section5Slot-contactUsPage             ; Section5Slot            ;                                                       ; contactUsSection5Slot                   ; true
+                                 ;                         ; Section6Slot-contactUsPage             ; Section6Slot            ;                                                       ; contactUsSection6Slot                   ; true
+
+
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                          ; &componentRef         ;  medias(code)
+                              ;                         ; contactUsBannerComponent ; Contact Us  Section Component ; contactUsBannerComponent ;
+
+## Title
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; conatctUsCMSParagraphTitleComponent   ; conatctUs Title Component        ; conatctUsCMSParagraphTitleComponent      ; "<h1 class=""text-center"">Contact Us</h1>"
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
+                                    ;                    ; conatctUsCMSParagraphNoticeComponent   ; conatctUs Top Notice Component        ; conatctUsCMSParagraphNoticeComponent      ; "Before you reach out you may want to check out our <a href=""/faqs"">FAQs</a>."
+
+INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; contactUs1CMSParagraphComponent   ; Contact Us Page Component        ; contactUs1CMSParagraphComponent   ;""   ;    "<div class=""row""> <div class=""col-12""> <h1 class=""float-start"">Customer Service</h1> <div id=""livechat_online"" style=""display: none""> <a href=""#"" onclick=""liveChatClick()"" class=""btn btn-sm btn-primary float-end"" ><span class=""icon-chat""></span>Live Chat</a > </div> <div id=""liveagent_offline"" style=""display: none""></div> </div> </div> <hr class=""mb-4"" /> <div class=""reviewCart p-0 border-0""> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Email</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80""> <a class=""lightteal"" href=""mailto:help@borrowlenses.com"" >help@borrowlenses.com</a > </p> </div> </div> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Phone</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80"">(844) 853.6737 x2</p> </div> </div> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Hours</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80""> M-F 7am - 6pm PST<br /> Sat CLOSED<br /> Sun CLOSED </p> </div> </div> </div> <h1 class=""text-start"">Gear Support</h1> <hr class=""mb-4"" /> <div class=""reviewCart p-0 border-0""> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Phone</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80"">(844) 853.6737 x3</p> </div> </div> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Hours</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80""> M-F 7am - 6pm PST<br /> Sat CLOSED<br /> Sun CLOSED </p> </div> </div> </div> <h1 class=""text-start"">Verification Department</h1> <hr class=""mb-4"" /> <div class=""reviewCart p-0 border-0""> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Email</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80""> <a class=""lightteal"" href=""mailto:verify@borrowlenses.com"" >verify@borrowlenses.com</a > </p> </div> </div> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Phone</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80"">(844) 853.6737 x4</p> </div> </div> <div class=""row""> <div class=""col-2 col-xl-1 col-lg-1 col-md-1""> <b class=""gray100"">Hours</b> </div> <div class=""col-9 text-start""> <p class=""body14 gray80""> M-F 7am - 6pm PST<br /> Sat CLOSED<br /> Sun CLOSED </p> </div> </div> </div> <h1 class=""text-start"">Our Locations</h1> <hr class=""mb-4"" /> <div class=""reviewCart p-0 border-0""> <div class=""row""> <div class=""col-xl-4 col-lg-4 col-md-4 text-start""> <span class=""badge badge-limited-stock mb-2"" >West Coast HQ</span > <b class=""gray100 mb-2"">San Fransciso Area</b> <p class=""body14 gray80""> 1664 Industrial Road<br />San Carlos, CA 94070 </p> </div> <div class=""col-xl-4 col-lg-4 col-md-4 text-start""> <span class=""badge badge-limited-stock mb-2"" >East Coast HQ</span > <b class=""gray100 mb-2"">Boston Area</b> <p class=""body14 gray80""> 425 Waverley Oaks Rd, Ste 208<br />Waltham, MA 02452 </p> </div> <div class=""col-xl-4 col-lg-4 col-md-4 text-start""> <br /> <b class=""gray100 mt-2 mb-2"">Many more locations…</b> <p class=""body14 gray80""> We have many places<br />you can ship or pick up gear. </p> <a class=""lightteal"" href=""#"">See more locations</a> </div> </div> </div> </div> <div class=""col-lg-4 offset-lg-1 d-lg-block sticky-lg-top mt-5 mt-md-0"" >"
+
+
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; contactUsSection1Slot        ; conatctUsCMSParagraphTitleComponent
+                          ;                    ; contactUsSection2Slot        ; conatctUsCMSParagraphNoticeComponent
+                          ;                    ; contactUsSection3Slot        ; contactUs1CMSParagraphComponent
+                          ;                    ; contactUsSection4Slot        ; 
+                          ;                    ; contactUsSection5Slot        ; 
+                          ;                    ; contactUsSection6Slot        ; 
