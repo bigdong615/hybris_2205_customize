@@ -12,6 +12,11 @@ import org.springframework.validation.Validator;
 
 import com.bl.storefront.forms.BlUpdatePwdForm;
 
+/** 
+ * @author Aditi
+ * Created validator for BL-2094 : Password Policy - InfoSec updates 
+ * To Update validation on reset password.
+ */
 
 @Component("blUpdatePasswordFormValidator")
 public class BlUpdatePasswordFormValidator implements Validator
@@ -22,6 +27,9 @@ public class BlUpdatePasswordFormValidator implements Validator
 		return BlUpdatePwdForm.class.equals(aClass);
 	}
 
+	/**
+	 * This method is used to validate password during reset password
+	 */
 	@Override
 	public void validate(Object object, Errors errors)
 	{

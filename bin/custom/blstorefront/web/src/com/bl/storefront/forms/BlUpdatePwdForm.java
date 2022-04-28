@@ -7,7 +7,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
-/**
+/** 
+ * @author Aditi
+ * Create form for BL-2094 : Password Policy - InfoSec updates 
+ * To Update validation on reset password.
  * Form object for updating the password.
  */
 public class BlUpdatePwdForm
