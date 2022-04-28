@@ -1,11 +1,13 @@
 package com.bl.storefront.controllers.pages;
 
+import static de.hybris.platform.testframework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorservices.storefront.util.PageTitleResolver;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.ForgottenPwdForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePwdForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.UpdatePasswordFormValidator;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
@@ -13,19 +15,23 @@ import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSPageService;
 import de.hybris.platform.cms2.servicelayer.services.CMSPreviewService;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.BDDMockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.support.BindingAwareModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static de.hybris.platform.testframework.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.bl.storefront.forms.BlUpdatePwdForm;
 
 @UnitTest
 public class PasswordResetPageControllerTest {
@@ -65,7 +71,7 @@ public class PasswordResetPageControllerTest {
     @Mock
     private Breadcrumb breadcrumb;
     @Mock
-    private UpdatePwdForm form;
+    private BlUpdatePwdForm form;
     @Mock
     private RedirectAttributes redirectModel;
     @Mock
