@@ -1,4 +1,4 @@
-<textarea class="form-control" rows="4">
+<textarea readonly class="form-control" rows="4">
 THIS EQUIPMENT LEASE (&#034;Lease&#034;) is made and effective by clicking on the &#034;Place Your Order&#034; button, by and between BorrowLenses.com, (&#034;Lessor&#034;), and current user (&#034;Lessee&#034;).  By clicking on the &#034;Place Your Order&#034; button, Lessee agrees to be bound by these terms and conditions, whether or not Lessee has read them.  Lessor may at its sole discretion modify these terms and conditions at any time and any modifications shall become effective immediately as posted on this site.  By clicking on the &#034;Place Your Order&#034; button, Lessee indicates acceptance of the modified terms and conditions. 
 
 NOW, THEREFORE, in consideration of the mutual covenants and promises hereinafter set forth, the parties hereto agree as follows: 
