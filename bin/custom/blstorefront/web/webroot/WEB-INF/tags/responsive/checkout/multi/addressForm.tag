@@ -22,7 +22,7 @@
                             </option>
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">              
                             <option value="${deliveryAddress.id}">
-                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
+                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.region.isocodeShort}, ${deliveryAddress.postalCode}
                             </option>
                 </c:forEach>
                 <option value="newAddress" id="#newAddress" style=" display: none;">
