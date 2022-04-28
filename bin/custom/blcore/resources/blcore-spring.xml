@@ -1879,6 +1879,9 @@
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 	<!-- BL-1854 End-->
+	<bean id="blAddressDao" class="com.bl.core.dao.impl.BlAddressDaoImpl">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		</bean>
 	
     <!-- BL-1764 Starts -->
     <alias name="defaultBlPromotionDao" alias="promotionDao"/>
