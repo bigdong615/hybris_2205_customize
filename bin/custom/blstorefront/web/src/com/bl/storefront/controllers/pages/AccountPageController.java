@@ -26,6 +26,7 @@ import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.ReturnOrderForm;
 import com.bl.storefront.forms.VerificationDocumentForm;
 import com.bl.storefront.promotion.validate.BlPromotionValidator;
+import com.bl.storefront.validator.BlPasswordValidator;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -300,6 +301,9 @@ public class AccountPageController extends AbstractSearchPageController
 	
 	@Resource(name = "blPromotionValidator")
 	private BlPromotionValidator blPromotionValidator;
+	
+	@Resource(name = "blPasswordValidator")
+	private BlPasswordValidator blPasswordValidator;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -730,7 +734,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String updatePassword(final UpdatePasswordForm updatePasswordForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
-		getPasswordValidator().validate(updatePasswordForm, bindingResult);
+		getBlPasswordValidator().validate(updatePasswordForm, bindingResult);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_PASSWORD_PAGE_IDENTIFIER);
 		if (!bindingResult.hasErrors())
 		{
@@ -1591,5 +1595,21 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderModel order = blOrderFacade.getOrderModelFromOrderCode(orderCode);
 		blReturnOrderFacade.createReturnRequest(order, productList);
 		return REDIRECT_PREFIX + ROOT;
+	}
+
+	/**
+	 * @return the blPasswordValidator
+	 */
+	public BlPasswordValidator getBlPasswordValidator()
+	{
+		return blPasswordValidator;
+	}
+
+	/**
+	 * @param blPasswordValidator the blPasswordValidator to set
+	 */
+	public void setBlPasswordValidator(BlPasswordValidator blPasswordValidator)
+	{
+		this.blPasswordValidator = blPasswordValidator;
 	}
 }

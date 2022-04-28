@@ -10,7 +10,7 @@ public class BlControllerConstants
 	public static final String REGISTER_CHECKPASSWORD_INVALID = "register.checkPwd.invalid";
 	public static final String REGISTER_PASSWORD_INVALID = "register.pwd.invalid";
 	public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
-	public static final int PASSWORD_MIN_LENGTH = 6;
+	public static final int PASSWORD_MIN_LENGTH = 8;
 	public static final int PASSWORD_MAX_LENGTH = 255;
 	public static final int EMAIL_MAX_LENGTH = 255;
 	public static final String DUBLICATE_UID_ERROR = "registration.error.account.exists.title";

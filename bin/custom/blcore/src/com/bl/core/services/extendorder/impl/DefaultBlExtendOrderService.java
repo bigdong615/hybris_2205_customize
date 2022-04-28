@@ -109,6 +109,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
     extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
     extendOrderModel.setIsLatestOrder(true);
+    extendOrderModel.setIsSAPOrder(Boolean.TRUE);
   }
 
   /**
