@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd 
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config/> 
+	
+	
+	<!-- ################### Classification Attribute Assignment ######################### -->	
+	
+	<bean id="classificationAttributeAssignmentConverterMapping"
+          class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.mapping.impl.DefaultConverterMapping"
+          p:mapping="CLASSATTRIBUTE"
+          p:converter-ref="classificationAttributeAssignmentConverter"/>
+ 
+	<bean id="classificationAttributeAssignmentConverter" class="de.hybris.platform.acceleratorservices.dataimport.batch.converter.impl.DefaultImpexConverter">
+		<property name="header">
+			<value>
+			# Insert Classification Attribute Assignments
+			$classificationCatalog=blClassification
+			$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+			$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+			$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+			$class=classificationClass(ClassificationClass.code,$classCatalogVersion)[unique=true]
+			$attribute=classificationAttribute(code,$classSystemVersion)[unique=true]
+			$unit=unit(code,$classSystemVersion)
+			
+			INSERT_UPDATE ClassAttributeAssignment;$class;$attribute;position;$unit;attributeType(code[default=string]);multiValued[default=false];range[default=false];localized[default=true];attributeValues(code, $classSystemVersion)
+			</value>
+		</property>
+		<property name="impexRow">
+            <value>;{+0};{+1};{2};;{3};{4};;;{5};</value>
+        </property>
+	</bean>
+	
+</beans>
+

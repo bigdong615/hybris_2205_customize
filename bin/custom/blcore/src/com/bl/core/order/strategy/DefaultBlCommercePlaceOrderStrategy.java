@@ -89,6 +89,7 @@ public class DefaultBlCommercePlaceOrderStrategy  extends DefaultCommercePlaceOr
           getModelService().save(orderModel.getPaymentInfo());
         }
         setPickFormDetailsInAddress(orderModel);
+        orderModel.setIsSAPOrder(Boolean.TRUE);
         getModelService().save(orderModel);
         // Transfer promotions to the order
         getPromotionsService().transferPromotionsToOrder(cartModel, orderModel, false);

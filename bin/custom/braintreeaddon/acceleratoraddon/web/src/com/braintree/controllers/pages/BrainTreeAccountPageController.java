@@ -187,82 +187,82 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
-
-	@RequestMapping(value = "/edit-payment-method", method = RequestMethod.GET)
-	@RequireHardLogIn
-	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
-                                    @RequestParam(value = "cardholder", required = false) final String cardholder,
-                                    @RequestParam(value = "errorMessage", required = false) final String errorMessage,
-                                    @RequestParam(value = "expirationDate", required = false) final String expirationDate) throws CMSItemNotFoundException
-	{
-		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
-				getMessageSource().getMessage("text.account.paymentDetails", null, getI18nService().getCurrentLocale()), null));
-		breadcrumbs.add(new Breadcrumb("#",getLocalizedString("text.account.paymentMethod.editPaymentMethod"), null));
-
-		storeCmsPageInModel(model, getContentPageForLabelOrId(EDIT_PAYMENT_METHOD_CMS_PAGE));
-		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(EDIT_PAYMENT_METHOD_CMS_PAGE));
-		List<AddressData> addressBook = userFacade.getAddressBook();
-		CCPaymentInfoData ccPaymentInfo = userFacade.getCCPaymentInfoForCode(paymentMethodId);
-
-		if (errorMessage != null && !model.containsAttribute("accErrorMsgs"))
-		{
-			GlobalMessages.addErrorMessage(model, errorMessage);
-		}
-
-		model.addAttribute("errorMessage", cardholder);
-		model.addAttribute("cardholder", cardholder);
-		model.addAttribute("expirationDate", expirationDate);
-		model.addAttribute("ccPaymentInfo", ccPaymentInfo);
-		model.addAttribute("deliveryAddresses", addressBook);
-		model.addAttribute("breadcrumbs", breadcrumbs);
-		model.addAttribute("selectedPaymentMethodId", paymentMethodId);
-		model.addAttribute("metaRobots", "noindex,nofollow");
-		return getViewForPage(model);
-	}
-
-	@RequestMapping(value = "/edit-payment-method", method = RequestMethod.POST)
-	@RequireHardLogIn
-	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
-                                    @RequestParam(value = "billingAddressId") final String billingAddressId,
-                                    @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
-                                    @RequestParam(value = "default_Card") final String defaultCard,
-									final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
-	{
-		try
-		{
-			String updatedexpirationDate = expirationDate.replace(",", "");
-			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(updatedexpirationDate, cvv);
-			if (validationMessage != null && StringUtils.isNotBlank(validationMessage.getMessageKey()))
-			{
-				String localizedErrorMessage = getLocalizedString(validationMessage.getMessageKey());
-				LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.");
-				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
-				return redirectToEditPage(paymentMethodId, updatedexpirationDate, redirectAttributes, localizedErrorMessage);
-			}
-			else
-			{
-				CCPaymentInfoData ccPaymentInfo = userFacade.getCCPaymentInfoForCode(paymentMethodId);
-
-				List<AddressData> addressBook = userFacade.getAddressBook();
-				AddressData addressData = getAddressForPaymentInfo(ccPaymentInfo, billingAddressId, addressBook);
-
-				userFacade.editPaymentMethod(ccPaymentInfo, updatedexpirationDate, cvv, addressData, defaultCard);
-			}
-		}
-		catch (AdapterException e)
-		{
-			String localizedErrorMessage = getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.general")
-					+ e.getMessage();
-			LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.", e);
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
-
-			return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
-		}
-		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-				getLocalizedString("text.account.profile.paymentCart.editPaymentMethod.success"));
-		return REDIRECT_TO_PAYMENT_INFO_PAGE;
-	}
+/** The below changes have been commented out as per BL-2096 **/
+//	@RequestMapping(value = "/edit-payment-method", method = RequestMethod.GET)
+//	@RequireHardLogIn
+//	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
+//                                    @RequestParam(value = "cardholder", required = false) final String cardholder,
+//                                    @RequestParam(value = "errorMessage", required = false) final String errorMessage,
+//                                    @RequestParam(value = "expirationDate", required = false) final String expirationDate) throws CMSItemNotFoundException
+//	{
+//		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
+//		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
+//				getMessageSource().getMessage("text.account.paymentDetails", null, getI18nService().getCurrentLocale()), null));
+//		breadcrumbs.add(new Breadcrumb("#",getLocalizedString("text.account.paymentMethod.editPaymentMethod"), null));
+//
+//		storeCmsPageInModel(model, getContentPageForLabelOrId(EDIT_PAYMENT_METHOD_CMS_PAGE));
+//		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(EDIT_PAYMENT_METHOD_CMS_PAGE));
+//		List<AddressData> addressBook = userFacade.getAddressBook();
+//		CCPaymentInfoData ccPaymentInfo = userFacade.getCCPaymentInfoForCode(paymentMethodId);
+//
+//		if (errorMessage != null && !model.containsAttribute("accErrorMsgs"))
+//		{
+//			GlobalMessages.addErrorMessage(model, errorMessage);
+//		}
+//
+//		model.addAttribute("errorMessage", cardholder);
+//		model.addAttribute("cardholder", cardholder);
+//		model.addAttribute("expirationDate", expirationDate);
+//		model.addAttribute("ccPaymentInfo", ccPaymentInfo);
+//		model.addAttribute("deliveryAddresses", addressBook);
+//		model.addAttribute("breadcrumbs", breadcrumbs);
+//		model.addAttribute("selectedPaymentMethodId", paymentMethodId);
+//		model.addAttribute("metaRobots", "noindex,nofollow");
+//		return getViewForPage(model);
+//	}
+//
+//	@RequestMapping(value = "/edit-payment-method", method = RequestMethod.POST)
+//	@RequireHardLogIn
+//	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
+//                                    @RequestParam(value = "billingAddressId") final String billingAddressId,
+//                                    @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
+//                                    @RequestParam(value = "default_Card") final String defaultCard,
+//									final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+//	{
+//		try
+//		{
+//			String updatedexpirationDate = expirationDate.replace(",", "");
+//			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(updatedexpirationDate, cvv);
+//			if (validationMessage != null && StringUtils.isNotBlank(validationMessage.getMessageKey()))
+//			{
+//				String localizedErrorMessage = getLocalizedString(validationMessage.getMessageKey());
+//				LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.");
+//				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
+//				return redirectToEditPage(paymentMethodId, updatedexpirationDate, redirectAttributes, localizedErrorMessage);
+//			}
+//			else
+//			{
+//				CCPaymentInfoData ccPaymentInfo = userFacade.getCCPaymentInfoForCode(paymentMethodId);
+//
+//				List<AddressData> addressBook = userFacade.getAddressBook();
+//				AddressData addressData = getAddressForPaymentInfo(ccPaymentInfo, billingAddressId, addressBook);
+//
+//				userFacade.editPaymentMethod(ccPaymentInfo, updatedexpirationDate, cvv, addressData, defaultCard);
+//			}
+//		}
+//		catch (AdapterException e)
+//		{
+//			String localizedErrorMessage = getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.general")
+//					+ e.getMessage();
+//			LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.", e);
+//			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
+//
+//			return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
+//		}
+//		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+//				getLocalizedString("text.account.profile.paymentCart.editPaymentMethod.success"));
+//		return REDIRECT_TO_PAYMENT_INFO_PAGE;
+//	}
 
 	private String redirectToEditPage(final String paymentMethodId,  final String expirationDate,
                                       RedirectAttributes redirectAttributes, final String localizedErrorMessage)
@@ -740,7 +740,6 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	 * @param model
 	 * @return String. for the order
 	 * @throws CMSItemNotFoundException
-	 * @throws CalculationException
 	 */
 	@PostMapping(value = "/applyGiftCard")
 	@ResponseBody

@@ -83,7 +83,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 								// BL-689: below line added
 								$("#errorMessages_sigin_pwd").removeClass("d-none");
 							}
@@ -155,7 +155,7 @@ ACC.account = {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
 				}
-				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
+				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 8 characters long");
 				$("#errorMessages_sigin_pwd").removeClass("d-none");
 			} else {
 				$("#errorMessages_sigin_pwd").html("");
@@ -189,7 +189,8 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or Password was incorrect");
+							var resetPasswrdUrl = ACC.config.encodedContextPath + "/login/pw/request";
+              $("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="' + resetPasswrdUrl + '">reset your password</a>');
 							isLoginError = true;
 						} 
 						else if(response === 'login.error.account.deactivate.title') 
@@ -243,7 +244,9 @@ ACC.account = {
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or Password was incorrect");
+				var resetPasswrdUrl = ACC.config.encodedContextPath + "/login/pw/request";
+        $("#errorMessages_login").html('Your login was incorrect, ' + '<a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password popup-reset-password" data-link="' + resetPasswrdUrl + '">reset your password</a>');
+
 			}
 		});
 

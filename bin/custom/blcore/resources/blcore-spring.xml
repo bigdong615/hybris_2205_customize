@@ -1879,6 +1879,9 @@
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
 	<!-- BL-1854 End-->
+	<bean id="blAddressDao" class="com.bl.core.dao.impl.BlAddressDaoImpl">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		</bean>
 	
     <!-- BL-1764 Starts -->
     <alias name="defaultBlPromotionDao" alias="promotionDao"/>
@@ -1906,6 +1909,11 @@
 		<property name="start" value="${keygen.order.id.start}"/>
 		<property name="type" value="${keygen.order.id.type}"/>
 		<property name="template" value="${keygen.order.id.template}"/>
+	</bean>
+	
+	<bean id="blFutureOrderAllocationJob" class="com.bl.core.job.BlFutureOrderAllocationJob" parent="abstractJobPerformable">
+		<property name="blOrderDao" ref="orderDao"/>
+		<property name="eventPublishingSubmitOrderStrategy" ref="eventPublishingSubmitOrderStrategy"/>
 	</bean>
 	
 </beans>
