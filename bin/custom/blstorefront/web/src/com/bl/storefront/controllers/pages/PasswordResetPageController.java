@@ -16,6 +16,8 @@ import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commerceservices.customer.TokenInvalidatedException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.forms.BlUpdatePwdForm;
+import com.bl.storefront.validator.BlUpdatePasswordFormValidator;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -58,7 +60,9 @@ public class PasswordResetPageController extends AbstractPageController
 
 	@Resource(name = "updatePasswordFormValidator")
 	private UpdatePasswordFormValidator updatePasswordFormValidator;
-
+	
+	@Resource(name = "blUpdatePasswordFormValidator")
+	private BlUpdatePasswordFormValidator blUpdatePasswordFormValidator;
 
 	@RequestMapping(value = "/request", method = RequestMethod.GET)
 	public String getPasswordRequest(final Model model) throws CMSItemNotFoundException
@@ -150,7 +154,7 @@ public class PasswordResetPageController extends AbstractPageController
 		{
 			return REDIRECT_HOME;
 		}
-		final UpdatePwdForm form = new UpdatePwdForm();
+		final BlUpdatePwdForm form = new BlUpdatePwdForm();
 		form.setToken(token);
 		model.addAttribute(form);
 		final ContentPageModel updatePwdPage = getContentPageForLabelOrId(UPDATE_PWD_CMS_PAGE);
@@ -160,11 +164,11 @@ public class PasswordResetPageController extends AbstractPageController
 		return ControllerConstants.Views.Pages.Password.PasswordResetChangePage;
 	}
 
-	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public String changePassword(@Valid final UpdatePwdForm form, final BindingResult bindingResult, final Model model,
+	@RequestMapping(value = "/change", method = RequestMethod.POST)	
+	public String changePassword(@Valid final BlUpdatePwdForm form, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
-		getUpdatePasswordFormValidator().validate(form, bindingResult);
+		getBlUpdatePasswordFormValidator().validate(form, bindingResult);
 		if (bindingResult.hasErrors())
 		{
 			prepareErrorMessage(model, UPDATE_PWD_CMS_PAGE);
@@ -211,5 +215,21 @@ public class PasswordResetPageController extends AbstractPageController
 	public UpdatePasswordFormValidator getUpdatePasswordFormValidator()
 	{
 		return updatePasswordFormValidator;
+	}
+
+	/**
+	 * @return the blUpdatePasswordFormValidator
+	 */
+	public BlUpdatePasswordFormValidator getBlUpdatePasswordFormValidator()
+	{
+		return blUpdatePasswordFormValidator;
+	}
+
+	/**
+	 * @param blUpdatePasswordFormValidator the blUpdatePasswordFormValidator to set
+	 */
+	public void setBlUpdatePasswordFormValidator(BlUpdatePasswordFormValidator blUpdatePasswordFormValidator)
+	{
+		this.blUpdatePasswordFormValidator = blUpdatePasswordFormValidator;
 	}
 }
