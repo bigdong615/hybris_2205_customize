@@ -62,7 +62,7 @@ function reverseTraverseOnShipping() {
                     select = document.getElementById('ship-it-savedAddresses');
                     var opt = document.createElement('option');
                     opt.value = data.id;
-                    opt.innerHTML = data.line1 + ", " + data.town + ", " + data.country.isocode + ", " + data.postalCode;
+                    opt.innerHTML = data.line1 + ", " + data.town + ", "+ data.region.isocodeShort + ", " + data.postalCode;
                     select.appendChild(opt);
                     $("#ship-it-savedAddresses option[value='"+data.id+"']").attr('selected', 'selected');
                 }
