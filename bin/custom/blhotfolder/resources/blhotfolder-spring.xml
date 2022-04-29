@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:annotation-config/>    
+
+	<import resource="classpath:/blhotfolder/integration/bl-category-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-customer-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-address-hotfolder-spring.xml"/>
+	
+	<import resource="classpath:/blhotfolder/integration/bl-billing-charges-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-payment-info-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-product-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-options-main-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-options-sub-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-inventory-location-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-serial-product-order-hotfolder-spring.xml"/>
+ 	
+	<import resource="classpath:/blhotfolder/integration/bl-verificationdocumentmedia-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-product-recommendation-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-bundle-productmapping-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-price-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-media-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-serial-product-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-order-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-inventory-hotfolder-spring.xml"/>
+
+	<import resource="classpath:/blhotfolder/integration/bl-orderentry-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-inbound-hotfolder-spring.xml"/>
+
+    <import resource="classpath:/blhotfolder/integration/bl-ordernotes-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-outboundflow-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-consignmententry-hotfolder-spring.xml"/>
+    <import resource="classpath:/blhotfolder/integration/bl-consignment-hotfolder-spring.xml"/>
+
+	
+	<import resource="classpath:/blhotfolder/integration/bl-classificationclass-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattribute-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattributeassignment-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationattributevalue-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-classificationcategoriesrelation-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-productclassmapping-hotfolder-spring.xml"/>
+	<import resource="classpath:/blhotfolder/integration/bl-enumproductmapping-hotfolder-spring.xml"/>
+	
+	
+	
+	
+	<beans profile="cloud">
+		<import
+			resource="classpath:/blhotfolder/integration/hot-folder-bl-cloud-spring.xml" />
+	</beans>
+	<beans profile="local">
+		<import
+			resource="classpath:/blhotfolder/integration/hot-folder-bl-local-spring.xml" />
+	</beans>
+
+
+</beans>
