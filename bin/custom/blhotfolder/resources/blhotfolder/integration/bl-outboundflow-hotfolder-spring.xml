@@ -30,7 +30,7 @@
 			
 	$productCatalog=blProductCatalog
     $productCatalogName=Bl Product Catalog
-   $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+   $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Online'])[unique=true,default=$productCatalog:Online]
 				
   INSERT_UPDATE PackagingInfo;orderCode;serialProducts(code,$catalogVersion);packageId[unique=true];width;height;length;dimensionUnit;grossWeight;weightUnit;labelURL;totalShippingPrice[translator=com.bl.batch.imports.translator.BlDoubleTranslator];shipmentIdentificationNumber;outBoundTrackingNumber;inBoundTrackingNumber;graphicImage;hTMLImage;consignment(code)
 	
