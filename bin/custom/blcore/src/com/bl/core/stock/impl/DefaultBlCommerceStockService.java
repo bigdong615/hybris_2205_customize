@@ -639,7 +639,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 //				newRentalEndDate).stream().filter(stockLevel -> !stockLevel.getReservedStatus()).collect(Collectors.toList());
 //		if (CollectionUtils.isNotEmpty(stockLevels))
 //		{
-			return getNextDateIfStockNotAvailable(productCode, warehouses, (int) getNumberOfDays(newRentalStartDate, newRentalEndDate),
+			return getNextDateIfStockNotAvailable(productCode, warehouses,
 					qtyToCheck, newRentalStartDate, newRentalEndDate, listOfBlackOutDates, lastDateToCheck, numberOfDaysToAdd);
 //		}
 //		return getNextDate(1, newRentalEndDate, listOfBlackOutDates);
@@ -686,24 +686,26 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	private Date getNextDateIfStockNotAvailable(final String productCode,
 			final Collection<WarehouseModel> warehouses,
-			final int numberOfDays, final int qtyToCheck, final Date newRentalStartDate,
+			final int qtyToCheck, final Date newRentalStartDate,
 			final Date newRentalEndDate, final List<Date> listOfBlackOutDates,
 			final Date lastDateToCheck, final int numberOfDaysToAdd)
 	{
-		for (Date startDate = newRentalStartDate, endDate = newRentalEndDate; endDate.before(lastDateToCheck);
+		for (Date startDate = newRentalStartDate, endDate = newRentalEndDate; endDate.compareTo(lastDateToCheck) <= 0;
 				startDate = getNextDate(1, startDate, listOfBlackOutDates), endDate = BlDateTimeUtils
-						.addDaysInRentalDates(numberOfDaysToAdd, BlDateTimeUtils.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT), listOfBlackOutDates)) {
+						.addDaysInRentalDates(numberOfDaysToAdd, BlDateTimeUtils.convertDateToStringDate(startDate, BlCoreConstants.DATE_FORMAT), listOfBlackOutDates)) {
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Next Dates to check availability is {} and {}", startDate,
 					endDate);
 			final Collection<StockLevelModel> stockLevelModels = getStockForDate(productCode, warehouses, startDate,
 					endDate).stream().filter(stockLevel -> !stockLevel.getReservedStatus()).collect(Collectors.toList());
+			final int numberOfDays = (int) getNumberOfDays(startDate, endDate);
 			final Long availableQty = getStockLevels(stockLevelModels, numberOfDays);
 			BlLogger.logFormatMessageInfo(LOG, Level.INFO,
 				"Available Stock dates map size : {} and number of days : {} and dates are : {} and {} for qty : {}",
 				availableQty, numberOfDays, startDate, endDate, qtyToCheck);
 			if (availableQty.intValue() >= qtyToCheck)
 			{
-				return startDate;
+				return BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+						BlDateTimeUtils.convertDateToStringDate(startDate, BlCoreConstants.DATE_FORMAT), listOfBlackOutDates);
 			}
 		}
 //		if (stockLevelsSerialwise.size() == numberOfDays)
