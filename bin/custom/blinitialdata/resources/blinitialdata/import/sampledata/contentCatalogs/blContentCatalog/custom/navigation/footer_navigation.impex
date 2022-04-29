@@ -69,7 +69,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; PressNavLink          ; Press Nav Link           ; "#" ; PressNavLink          ; PressNavLink          
                                ;                         ; CareersNavLink        ; Careers Nav Link         ; "#" ; CareersNavLink        ; CareersNavLink        
                                ;                         ; HelpNavLink           ; Help Nav Link            ; "#" ; HelpNavLink           ; HelpNavLink           
-                               ;                         ; HowItWorksNavLink     ; HowIt Works Nav Link     ; "#" ; HowItWorksNavLink     ; HowItWorksNavLink     
+                               ;                         ; HowItWorksNavLink     ; HowIt Works Nav Link     ; "/howitwork" ; HowItWorksNavLink     ; HowItWorksNavLink     
                                ;                         ; PickUpLocationNavLink ; PickUp Location Nav Link ; "#" ; PickUpLocationNavLink ; PickUpLocationNavLink 
                                ;                         ; LeaseAggrementNavLink ; Lease Aggrement Nav Link ; "#" ; LeaseAggrementNavLink ; LeaseAggrementNavLink 
                                ;                         ; DamageWaiverNavLink   ; Damage Waiver Nav Link   ; "#" ; DamageWaiverNavLink   ; DamageWaiverNavLink   
@@ -88,12 +88,10 @@ INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[uni
 INSERT_UPDATE CustomFooterSubscriptionComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef               ; placeHolder         ; footerAddress                                                                                                                                                                                                              
                                                 ;                         ; FooterSubscriptionComponent ; Footer Subscription Component ; FooterSubscriptionComponent ; "Get email updates" ; "<p><b>BorrowLenses</b>San Francisco, CA<br>Boston, MA</p><p class=""links""><a href=""tel:844.853.6737"">844.853.6737</a><br><a href=""mailto:info@borrowlenses.com"" class=""email-link"">info@borrowlenses.com</a></p>"
 
-INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef                ;  medias(code)
- #                             ;                         ; socialMediaSectionComponent ; Social Media Section Component ; socialMediaSectionComponent ;  /images/logo-youtube1.svg,/images/logo-instagram1.svg,/images/logo-facebook1.svg
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV) 
                    ;                         ; FooterSlot             ; FooterNavigationComponent     
                    ;                         ; FooterCopyRightslot    ; CopyRightParagraphComponent1  
                    ;                         ; FooterSubscriptionSlot ; FooterSubscriptionComponent
-                   ;                         ; SocialMediaSectionSlot     ; socialMediaSectionComponent
+                   ;                         ; SocialMediaSectionSlot     ; 
