@@ -2265,16 +2265,22 @@
 			      <attributes>
 			        <attribute qualifier="subpartProduct" type="BlProduct">
 			          <persistence type="property"/>
-			          <modifiers read="true" write="true" optional="false"/>
+			          <modifiers unique="true" read="true" write="true" optional="false"/>
 			          <description>SubPart BlProduct</description>
 			        </attribute>
 			        <attribute qualifier="quantity" type="java.lang.Integer">
 			          <persistence type="property"/>
-			          <modifiers read="true" write="true" optional="false"/>
+			          <modifiers unique="true" read="true" write="true" optional="false"/>
 			          <description>Quantity associated to Subpart</description>
 			          <defaultvalue>Integer.valueOf(1)</defaultvalue>
 			        </attribute>
 			      </attributes>
+			      <indexes>
+			        <index name="BlSubpartsIdx" unique="true">
+			            <key attribute="subpartProduct" />
+			            <key attribute="quantity" />
+			        </index>
+    			  </indexes>
    		</itemtype>
         </typegroup>
 
