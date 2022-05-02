@@ -1004,3 +1004,18 @@ color:#fff !important;
       width: 46% !important;
   }
 }
+
+.blockquote.green {
+  border-left: 3px solid #52BFC0;
+}
+
+.blockquote.yellow {
+  border-left: 3px solid #F5A24F;
+}
+
+.blockquote.redbrdr {
+  border-left: 3px solid #E64B4F;
+}
+.body14 {
+  font-size: 14px;
+}
