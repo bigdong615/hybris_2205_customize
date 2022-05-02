@@ -3,6 +3,7 @@ package com.bl.facades.cart.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.BlackoutDateTypeEnum;
 import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlOptionsModel;
@@ -649,8 +650,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		final CartModel cartModel = getBlCartService().getSessionCart();
 		if (Objects.nonNull(sessionRentalDate) && Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries()))
 		{
-			final Date startDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedFromDate(), BlFacadesConstants.DATE_FORMAT);
-			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
+			final List<Date> blackOutDates = blDatePickerService.getAllBlackoutDatesForGivenType(
+					BlackoutDateTypeEnum.HOLIDAY);
+			final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS, sessionRentalDate.getSelectedFromDate(), blackOutDates);
+			final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS, sessionRentalDate.getSelectedToDate(), blackOutDates);
 
 			final List<String> listOfProductCodes =  cartModel.getEntries().stream().filter(cartEntry -> !((BlProductModel)cartEntry.getProduct()).isBundleProduct())
 					.map(cartEntry -> cartEntry.getProduct().getCode())
