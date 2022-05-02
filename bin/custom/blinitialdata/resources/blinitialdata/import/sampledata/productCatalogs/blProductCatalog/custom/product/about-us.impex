@@ -82,7 +82,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; TopHeaderSlot-AboutUsPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; aboutUsPage ; About Us Page ; aboutUsPageTemplate           ; /aboubtus
+                          ;                    ; aboutUsPage ; About Us Page ; aboutUsPageTemplate           ; /aboutus
 #### AboutUs page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
                          ;                          ; AboutUsSection1Slot     ; AboutUs Section1 Slot              ; true

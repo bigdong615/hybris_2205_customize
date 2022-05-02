@@ -59,7 +59,7 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]           ; $contentCV[uniqu
                                  ; ContactUsNavNodeEntry      ;                         ; ContactUs Nav Node Entry       ; ContactUsNavNode         ; ContactUsNavLink                                       
 
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]      ; name                     ; url ; &linkRef              ; &componentRef         ; target(code)[default='sameWindow'] 
-                               ;                         ; AboutNavLink          ; About Nav Link           ; "#" ; AboutNavLink          ; AboutNavLink          
+                               ;                         ; AboutNavLink          ; About Nav Link           ; "/aboutus" ; AboutNavLink          ; AboutNavLink          
                                ;                         ; SupportNavLink        ; Support Nav Link         ; "#" ; SupportNavLink        ; SupportNavLink        
 #                              ;                         ; BorrowLensesNavLink   ; Borrow Lenses Nav Link   ; "#" ; BorrowLensesNavLink   ; BorrowLensesNavLink   
                                ;                         ; WhyBLNavLink          ; Why BL Nav Link          ; "#" ; WhyBLNavLink          ; WhyBLNavLink          
