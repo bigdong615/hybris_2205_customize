@@ -1019,3 +1019,38 @@ color:#fff !important;
 .body14 {
   font-size: 14px;
 }
+
+.specialofferpage h6.alert {
+  display: inline-block;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#about-us{
+  padding: 60px 0;
+  background-color: white;
+  border-top: 1px solid #D4D3D3;
+  border-bottom: 1px solid #D4D3D3;
+  padding-bottom: 50px;
+  margin-top: 10px;
+} 
+.about-us h1{
+  margin-bottom: 1rem!important;
+}
+
+.aboutquote {
+  position: relative;
+}
+
+.aboutquote .quotebox {
+  position: absolute;
+  padding: 30px 40px 20px;
+  left: 10%;
+  bottom: -5%;
+  background: #fff;
+  width: 31%;
+  border-radius: 10px;
+  box-shadow: 0 4px 13px rgb(0 0 0 / 30%);
+  text-align: left;
+}
