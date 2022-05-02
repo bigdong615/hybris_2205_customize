@@ -39,7 +39,7 @@ public class BlPasswordValidator implements Validator
 		final String newPasswd = passwordForm.getNewPassword();
 		final String checkPasswd = passwordForm.getCheckNewPassword();
 
-		validatePassword(errors, currPasswd, newPasswd, checkPasswd);
+		validatePassword(errors, currPasswd, newPasswd);
 		comparePassword(errors, newPasswd, checkPasswd);
 	}
 
@@ -71,7 +71,7 @@ public class BlPasswordValidator implements Validator
 	 * @param newPasswd
 	 * @param checkPasswd
 	 */
-	private void validatePassword(final Errors errors, final String currPasswd, final String newPasswd, final String checkPasswd)
+	private void validatePassword(final Errors errors, final String currPasswd, final String newPasswd)
 	{
 		if (StringUtils.isEmpty(currPasswd))
 		{
