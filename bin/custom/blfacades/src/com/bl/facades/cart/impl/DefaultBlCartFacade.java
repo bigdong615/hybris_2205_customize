@@ -206,9 +206,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   }
 	/**
 	 * Update cart options on entry
-	 * @param AbstractOrderEntryModel
+	 * @param orderEntry
 	 *           the orderEntry
-	 * @param CartModel
+	 * @param cartModel
 	 *           the cartModel
 	 */
   private void updateCartOptionEntry(final AbstractOrderEntryModel orderEntry, final CartModel cartModel ){
@@ -233,7 +233,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 *           the quantity
 	 * @param serialCode
 	 *           the serial code
-	 * @param GiftCardPurchaseForm
+	 * @param giftCardForm
 	 *           the giftCardForm
 	 * @return CartModificationData
 	 * @throws CommerceCartModificationException
