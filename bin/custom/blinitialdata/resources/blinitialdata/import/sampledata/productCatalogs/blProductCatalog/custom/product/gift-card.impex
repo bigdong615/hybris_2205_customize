@@ -24,7 +24,7 @@ $lang=en
  
 INSERT_UPDATE Media ; $catalogVersion[unique=true] ; code[unique=true]                    ; realfilename           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText ; folder(qualifier)[default='images'] ; mediaFormat(qualifier) 
                     ;                              ; /images/theme/BL-GC-Image-small.jpg  ; BL-GC-Image-Large.jpg  ; $siteResource/images/theme/BL-GC-Image-small.jpg                           ; image/png+xml                 ;         ;                                     ; 96Wx96H                
-                    ;                              ; /images/theme/BL-GC-Image-medium.jpg ; BL-GC-Image-medium.jpg ; $siteResource/images/theme/BL-GC-Image-medium.jpg                          ; image/png+xml                 ;         ;                                     ; 300Wx300H              
+                    ;                              ; /images/theme/BL-GC-Image-medium.jpg ; BL-GC-Image-medium.jpg ; $siteResource/images/theme/BL-GC-Image-medium.jpg                          ; image/png+xml                 ;         ;                                     ; 500Wx500H
                     ;                              ; /images/theme/BL-GC-Image-Large.jpg  ; BL-GC-Image-Large.jpg  ; $siteResource/images/theme/BL-GC-Image-Large.jpg                           ; image/png+xml                 ;         ;                                     ; 515Wx515H              
 
                     

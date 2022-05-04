@@ -603,7 +603,7 @@
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight  : 380,
+                                                 fixedHeight  : 500,
                                              } );
 
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
@@ -640,7 +640,7 @@
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
+                                                 fixedHeight : 500,
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
@@ -930,7 +930,7 @@
                  pagination : false,
                  arrows     : true,
                  keyboard   : false,
-                 fixedHeight : 380,
+                 fixedHeight : 500,
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
@@ -963,7 +963,7 @@
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
+                                                 fixedHeight : 500,
                                              } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
@@ -1068,7 +1068,7 @@
                  pagination : false,
                  arrows     : true,
                  keyboard   : false,
-                 fixedHeight : 380,
+                 fixedHeight : 500,
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
@@ -1101,7 +1101,7 @@
                                                  pagination : false,
                                                  arrows     : true,
                                                  keyboard   : false,
-                                                 fixedHeight : 380,
+                                                 fixedHeight : 500,
                                              } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }

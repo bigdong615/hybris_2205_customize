@@ -215,7 +215,7 @@ public class BatchIntegrationTest extends ServicelayerTest
 				writer.println("test.jpg");
 			}
 		});
-		verifyMedia(product.getPicture(), "300Wx300H");
+		verifyMedia(product.getPicture(), "500Wx500H");
 		verifyMedia(product.getThumbnail(), "96Wx96H");
 		verifyMedia(product.getThumbnails().iterator().next(), "96Wx96H");
 		verifyMedia(product.getDetail().iterator().next(), "1200Wx1200H");
@@ -234,13 +234,13 @@ public class BatchIntegrationTest extends ServicelayerTest
 				verifyMedia(media, "30Wx30H");
 			}
 		}
-		verifyMedia(product.getNormal().iterator().next(), "300Wx300H");
+		verifyMedia(product.getNormal().iterator().next(), "500Wx500H");
 		final MediaContainerModel container = product.getGalleryImages().iterator().next();
 		final Set<String> formats = new HashSet<String>();
 		formats.add("30Wx30H");
 		formats.add("65Wx65H");
 		formats.add("96Wx96H");
-		formats.add("300Wx300H");
+		formats.add("500Wx500H");
 		formats.add("515Wx515H");
 		formats.add("1200Wx1200H");
 		final Set<String> containerFormats = new HashSet<String>();
