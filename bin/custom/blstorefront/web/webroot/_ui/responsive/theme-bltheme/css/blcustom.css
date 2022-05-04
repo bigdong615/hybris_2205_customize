@@ -1035,7 +1035,7 @@ color:#fff !important;
   padding-bottom: 50px;
   margin-top: 10px;
 } 
-.about-us h1{
+.about-us h1, .special h1, .special p{
   margin-bottom: 1rem!important;
 }
 
