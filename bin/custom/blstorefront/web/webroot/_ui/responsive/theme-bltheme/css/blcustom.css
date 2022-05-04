@@ -1054,3 +1054,26 @@ color:#fff !important;
   box-shadow: 0 4px 13px rgb(0 0 0 / 30%);
   text-align: left;
 }
+
+#affiliate {
+  background-color: #fff;
+}
+
+#affiliate #productExtras {
+  margin-bottom: 100px;
+}
+
+#affiliate .headingbox h5{
+  margin: 0 !important;
+}
+
+#affiliate  #productExtras h5 {
+  padding: 10px 30px 10px 10px;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 25px;
+}
+
+#affiliate .img-fluid {
+  margin-bottom: 60px;
+}

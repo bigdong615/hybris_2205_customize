@@ -24,16 +24,17 @@
 				<cms:pageSlot position="Section4Slot" var="feature">
 					<cms:component component="${feature}" />
 				</cms:pageSlot>
-				<div class="container2">
-					<cms:pageSlot position="Section5Slot" var="feature">
-						<cms:component component="${feature}" />
-					</cms:pageSlot>
-					<cms:pageSlot position="Section6Slot" var="feature">
-						<cms:component component="${feature}" element="div" class="accordion-data" />
-					</cms:pageSlot>
-					<div id="affiliate-accordion" class="accordion-container">
-					</div>
-				</div>
+				
+			</div>
+			<div class="container2 row justify-content-center" id="affiliate">
+				<div class="col-xl-8 col-lg-12 col-md-12">
+				<cms:pageSlot position="Section5Slot" var="feature">
+					<cms:component component="${feature}" />
+				</cms:pageSlot>
+				<cms:pageSlot position="Section6Slot" var="feature">
+					<cms:component component="${feature}" />
+				</cms:pageSlot>
+			</div>
 			</div>
 		</div>
 	</section>
