@@ -56,7 +56,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLVendorRepairLog:VendorRepairLog             	; lastRepairReturnDay           	; VendorRepairLog:lastRepairReturnDay           	;                                                      	; 	;  
 ; InboundBLVendorRepairLog:VendorRepairLog             	; customerCollectionStatus      	; VendorRepairLog:customerCollectionStatus      	; InboundBLVendorRepairLog:CustomerCollectionStatusEnum	; 	;  
 ; InboundBLVendorRepairLog:VendorRepairLog             	; labourHours                   	; VendorRepairLog:labourHours                   	;                                                      	; 	;  
-; InboundBLVendorRepairLog:VendorRepairLog             	; otherRepairReasons            	; VendorRepairLog:otherRepairReasons            	;                                                      	; 	;  
+; InboundBLVendorRepairLog:VendorRepairLog             	; otherRepairsReason            	; VendorRepairLog:otherRepairsReason            	;                                                      	; 	;  
 ; InboundBLVendorRepairLog:VendorRepairLog             	; estimateNote                  	; VendorRepairLog:estimateNote                  	;                                                      	; 	;  
 ; InboundBLVendorRepairLog:VendorRepairLog             	; conditionRating               	; VendorRepairLog:conditionRating               	;                                                      	; 	;  
 ; InboundBLVendorRepairLog:VendorRepairLog             	; recommendToRepair             	; VendorRepairLog:recommendToRepair             	;                                                      	; 	;  
