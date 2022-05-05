@@ -60,7 +60,7 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; repairLogId                   	; InHouseRepairLog:repairLogId                   	;                                                       	; true	;  
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; creationtime                  	; InHouseRepairLog:creationtime                  	;                                                       	; 	;  
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; costForParts                  	; InHouseRepairLog:costForParts                  	;                                                       	; 	;  
-; InboundBLInHouseRepairLog:InHouseRepairLog            	; otherRepairReasons            	; InHouseRepairLog:otherRepairReasons            	;                                                       	; 	;  
+; InboundBLInHouseRepairLog:InHouseRepairLog            	; otherRepairsReason            	; InHouseRepairLog:otherRepairsReason            	;                                                       	; 	;  
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; customerResponsible           	; InHouseRepairLog:customerResponsible           	; InboundBLInHouseRepairLog:CustomerResponsibleEnum     	; 	;  
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; labourRate                    	; InHouseRepairLog:labourRate                    	;                                                       	; 	;  
 ; InboundBLInHouseRepairLog:InHouseRepairLog            	; damageWaiverPaid              	; InHouseRepairLog:damageWaiverPaid              	;                                                       	; 	;  

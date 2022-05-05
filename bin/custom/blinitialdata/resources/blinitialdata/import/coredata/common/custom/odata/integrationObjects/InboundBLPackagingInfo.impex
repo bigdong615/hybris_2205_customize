@@ -47,5 +47,5 @@ INSERT_UPDATE IntegrationObjectItemAttribute; integrationObjectItem(integrationO
 ; InboundBLPackagingInfo:PackagingInfo      	; insuredValue                	; PackagingInfo:insuredValue                	;                                           	; 	;  
 ; InboundBLPackagingInfo:PackagingInfo      	; packageReturnedToWarehouse  	; PackagingInfo:packageReturnedToWarehouse  	;                                           	; 	;  
 ; InboundBLPackagingInfo:PackagingInfo      	; graphicImage                	; PackagingInfo:graphicImage                	;                                           	; 	;  
-; InboundBLPackagingInfo:PackagingInfo      	; trackingNumber              	; PackagingInfo:trackingNumber              	;                                           	; 	;  
+#; InboundBLPackagingInfo:PackagingInfo      	; trackingNumber              	; PackagingInfo:trackingNumber              	;                                           	; 	;  
 ; InboundBLPackagingInfo:PackagingInfoStatus	; code                        	; PackagingInfoStatus:code                  	;                                           	; true	;  

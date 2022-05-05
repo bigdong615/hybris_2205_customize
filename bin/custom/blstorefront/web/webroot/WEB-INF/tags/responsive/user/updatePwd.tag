@@ -17,7 +17,7 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-8 justify-content-center">
                             <div class="notification notification-warning mt-4"><spring:theme code="text.account.profile.resetPassword.securityTips"/></div>
-                            <form:form method="post" modelAttribute="updatePwdForm" class="my-4">
+                            <form:form method="post" modelAttribute="blUpdatePwdForm" class="my-4">
                            <formElement:formPasswordBox idKey="password" labelKey="" path="pwd"
                                                                 placeholder="updatePwd.pwd" inputCSS="form-control mb-3" mandatory="true"/>
                             <formElement:formPasswordBox idKey="" labelKey="updatePwd.checkPwd"
