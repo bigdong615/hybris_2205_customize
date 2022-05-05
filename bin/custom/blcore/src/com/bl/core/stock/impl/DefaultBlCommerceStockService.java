@@ -305,8 +305,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @param totalUnits the total count
 	 */
 	private void makeZeroAvailability(final List<Long> availability, final List<Long> totalUnits) {
-		availability.add(Long.valueOf(0));
-		totalUnits.add(Long.valueOf(0));
+//		availability.add(Long.valueOf(0));
+//		totalUnits.add(Long.valueOf(0));
 	}
 	
 	/**
