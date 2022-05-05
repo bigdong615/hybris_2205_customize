@@ -42,7 +42,7 @@
             orderItems: [
            <c:forEach items="${orderData.entries}" var="entry" varStatus="loop"> 
 		      {
-		    	page_id: '${entry.product.code}',  
+		    	page_id: '${fn:substring(entry.product.code, 0, 41)}',
 	    		product_name: '${ycommerce:encodeUrl(entry.product.name)}',
               	unit_price: ${entry.basePrice.value},
 	    		quantity: ${entry.quantity} 
