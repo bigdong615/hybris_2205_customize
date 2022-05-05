@@ -85,6 +85,8 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name 
                           ;                    ; aboutUsPage ; About Us Page ; aboutUsPageTemplate           ; /aboutus
 #### AboutUs page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; AboutUsHomePageBannerSearchBoxSlot     ; AboutUs search Slot              ; true
+                         ;                          ; AboutUsSection0Slot     ; AboutUs Section0 Slot              ; true
                          ;                          ; AboutUsSection1Slot     ; AboutUs Section1 Slot              ; true
                          ;                          ; AboutUsSection2Slot     ; AboutUs Section2 Slot              ; true
                          ;                          ; AboutUsSection3Slot     ; AboutUs Section3 Slot              ; true
@@ -97,6 +99,8 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='aboutUsPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-AboutUsPage             ; HomePageBannerSearchBoxSlot            ;                         ; AboutUsHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-AboutUsPage             ; Section0Slot            ;                                                       ; AboutUsSection0Slot                   ; true
                                  ;                         ; Section1Slot-AboutUsPage             ; Section1Slot            ;                                                       ; AboutUsSection1Slot                   ; true
                                  ;                         ; Section2Slot-AboutUsPage             ; Section2Slot            ;                                                       ; AboutUsSection2Slot                   ; true
                                  ;                         ; Section3Slot-AboutUsPage             ; Section3Slot            ;                                                       ; AboutUsSection3Slot                   ; true
@@ -108,6 +112,10 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; Section9Slot-AboutUsPage             ; Section9Slot            ;                                                       ; AboutUsSection9Slot                   ; true
 
 ## Title
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; AboutUsCMSBreadcrumbBlComponent   ; AboutUs Breadcrumb Component         ; AboutUsCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""/"">Home</a> &gt; <a href=""#"">AboutUs</a></div></div></div>"
+
+
 INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]; htmlDescription[lang=$lang]
                                     ;                    ; AboutUsPageCMSParagraphTitleComponent   ; AboutUs  Title Component        ; AboutUsPageCMSParagraphTitleComponent      ; ; "<h1 class=""mb-3"">We&apos;re your</h1> <h6 class=""alert alert-promo"">behind-the-scenes</h6> <h1 class=""mb-5"">production crew</h1> <p class=""mb-5"">Our team of expert photographers and videographers are here to ensure that you rent the right gear every time. We work meticulously to clean, inspect, test and prep every order so you have the right gear every time, with no surprises. Because that’s exactly how we would want it if it was our shoot.</p>"
 
@@ -134,6 +142,8 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
                                          ;                    ; AboutUsPageWorkWithUsCustomBLParagraphComponent   ; AboutUs Page Work With Us Component        ; AboutUsPageWorkWithUsCustomBLParagraphComponent   ;""   ; "<div class=""row justify-content-center mb-5""> <div class=""col-xl-5 col-lg-5 col-md-6""> <img class=""img-fluid"" src=""/blstorefront/_ui/responsive/theme-bltheme/images/aboutus/workwithus.png""> </div> <div class=""col-xl-5 col-lg-6 col-md-6 my-auto px-4""> <h4 class=""mb-4 mt-3"">Want to work with us?</h4> <p class=""mb-4"">Are you a creator looking for a full time role or someone local who just wants to work with an exciting team? We&aposre always looking to add to our family of Gearheads.</p> <p><a href=""https://support.borrowlenses.com/s/article/careers"" class=""btn btn-primary mt-2"">JOIN US</a></p> </div> </div>"
 
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; AboutUsSection0Slot        ; AboutUsCMSBreadcrumbBlComponent
+                          ;                    ; AboutUsHomePageBannerSearchBoxSlot ; BlSearchBox
                           ;                    ; AboutUsSection1Slot        ; AboutUsPageCMSParagraphTitleComponent
                           ;                    ; AboutUsSection2Slot        ; AboutUsPageCMSParagraphImgComponent
                           ;                    ; AboutUsSection3Slot        ; AboutUsPageInfoCustomBLParagraphComponent

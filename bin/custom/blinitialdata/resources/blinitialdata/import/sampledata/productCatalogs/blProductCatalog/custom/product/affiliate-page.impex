@@ -29,6 +29,8 @@ INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]     ; na
                            ;                         ; affiliatePageTemplate ; Affiliate Page Template ; affiliate/affiliatePage ; $jarResourceCms/structure-view/structure_affiliatePageTemplate.vm                                      ; CategoryPage,ContentPage  
                            
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                        ;                          ; affiliateHomePageBannerSearchBoxSlot     ; affiliate search Slot              ; true
+                        ;                          ; affiliateSection0Slot     ; affiliate Section0 Slot              ; true
                         ;                          ; affiliateSection1Slot     ; affiliate Section1 Slot              ; true
                         ;                          ; affiliateSection2Slot     ; affiliate Section2 Slot              ; true
                         ;                          ; affiliateSection3Slot     ; affiliate Section3 Slot              ; true
@@ -86,6 +88,9 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='affiliatePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-AffiliatePage             ; HomePageBannerSearchBoxSlot            ;                         ; affiliateHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-AffiliatePage             ; Section0Slot            ;                                                       ; affiliateSection0Slot                   ; true
+                                 ;                         ; Section0Slot-AffiliatePage             ; Section0Slot            ;                                                       ; affiliateSection0Slot                   ; true
                                  ;                         ; Section1Slot-AffiliatePage             ; Section1Slot            ;                                                       ; affiliateSection1Slot                   ; true
                                  ;                         ; Section2Slot-AffiliatePage             ; Section2Slot            ;                                                       ; affiliateSection2Slot                   ; true
                                  ;                         ; Section3Slot-AffiliatePage             ; Section3Slot            ;                                                       ; affiliateSection3Slot                   ; true
@@ -104,6 +109,9 @@ INSERT_UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];name;url
 
 UPDATE CMSLinkComponent;$contentCV[unique=true];uid[unique=true];linkName[lang=$lang]
  ;;AffiliateGetStartedLink;"Get Started"
+
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; affiliateCMSBreadcrumbBlComponent   ; Affiliate Breadcrumb Component         ; affiliateCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""#"">Home</a> &gt; <a href=""#"">Affiliate</a></div></div></div>"
 
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
                                     ;                    ; affiliateCMSParagraphTitleComponent   ; Affiliate Page Title Component        ; affiliateCMSParagraphTitleComponent      ; "START EARNING TODAY"
@@ -126,10 +134,12 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                   ;                    ; affiliateSection0Slot        ; affiliateCMSBreadcrumbBlComponent
                    ;                    ; affiliateSection1Slot        ; affiliateCMSParagraphTitleComponent
                    ;                    ; affiliateSection2Slot        ; affiliateCMSParagraphComponent
                    ;                    ; affiliateSection3Slot        ; AffiliateGetStartedLink
                    ;                    ; affiliateSection4Slot        ; RotatingAffiliatedPageImagesComponent
                    ;                    ; affiliateSection5Slot        ; affiliateCMSAccordianTitleComponent
                    ;                    ; affiliateSection6Slot        ; affiliateCMSAccordianBlComponent
+                   ;                    ; affiliateHomePageBannerSearchBoxSlot ; BlSearchBox
 

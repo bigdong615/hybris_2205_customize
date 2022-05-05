@@ -1077,3 +1077,11 @@ color:#fff !important;
 #affiliate .img-fluid {
   margin-bottom: 60px;
 }
+
+.pad-none {
+  padding: 0!important;
+}
+
+.search-container {
+  margin: 15px auto 30px;
+}

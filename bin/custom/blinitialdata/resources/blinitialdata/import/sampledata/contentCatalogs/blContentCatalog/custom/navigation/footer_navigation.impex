@@ -69,8 +69,8 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; PressNavLink          ; Press Nav Link           ; "#" ; PressNavLink          ; PressNavLink          
                                ;                         ; CareersNavLink        ; Careers Nav Link         ; "#" ; CareersNavLink        ; CareersNavLink        
                                ;                         ; HelpNavLink           ; Help Nav Link            ; "#" ; HelpNavLink           ; HelpNavLink           
-                               ;                         ; HowItWorksNavLink     ; HowIt Works Nav Link     ; "/howitwork" ; HowItWorksNavLink     ; HowItWorksNavLink     
-                               ;                         ; PickUpLocationNavLink ; PickUp Location Nav Link ; "#" ; PickUpLocationNavLink ; PickUpLocationNavLink 
+                               ;                         ; HowItWorksNavLink     ; HowIt Works Nav Link     ; "/howitworks" ; HowItWorksNavLink     ; HowItWorksNavLink     
+                               ;                         ; PickUpLocationNavLink ; PickUp Location Nav Link ; "/ship-or-pickup" ; PickUpLocationNavLink ; PickUpLocationNavLink 
                                ;                         ; LeaseAggrementNavLink ; Lease Aggrement Nav Link ; "#" ; LeaseAggrementNavLink ; LeaseAggrementNavLink 
                                ;                         ; DamageWaiverNavLink   ; Damage Waiver Nav Link   ; "#" ; DamageWaiverNavLink   ; DamageWaiverNavLink   
                                ;                         ; ContactUsNavLink      ; ContactUs Nav Link       ; "/contactus" ; ContactUsNavLink      ; ContactUsNavLink

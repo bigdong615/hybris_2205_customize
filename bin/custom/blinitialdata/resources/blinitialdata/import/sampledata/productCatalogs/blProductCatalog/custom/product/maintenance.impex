@@ -15,7 +15,7 @@
  
 #% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_homepage.impex =========================");
 $contentCatalog=blContentCatalog
-$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Online])[default=$contentCatalog:Online]
 $lang=en
 $picture=media(code, $contentCV); 
 
@@ -57,6 +57,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
 
 #### maintenance page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                        ;                           ; maintenanceHomePageBannerSearchBoxSlot     ; maintenance search Slot              ; true
+                         ;                          ; maintenanceSection0Slot     ; maintenance Section0 Slot              ; true
                          ;                          ; maintenanceSection1Slot     ; maintenance Section1 Slot              ; true
                          ;                          ; maintenanceSection2Slot     ; maintenance Section2 Slot              ; true
                          ;                          ; maintenanceSection3Slot     ; maintenance Section3 Slot              ; true  
@@ -67,6 +69,8 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name 
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='maintenancePage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-maintenancePage             ; HomePageBannerSearchBoxSlot            ;                         ; maintenanceHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-maintenancePage             ; Section0Slot            ;                                                       ; maintenanceSection0Slot                   ; true
                                  ;                         ; Section1Slot-maintenancePage             ; Section1Slot            ;                                                       ; maintenanceSection1Slot                   ; true
                                  ;                         ; Section2Slot-maintenancePage             ; Section2Slot            ;                                                       ; maintenanceSection2Slot                   ; true
                                  ;                         ; Section3Slot-maintenancePage             ; Section3Slot            ;                                                       ; maintenanceSection3Slot                   ; true
@@ -76,6 +80,10 @@ INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]      
                               ;                         ; maintenanceBannerComponent ; Maintenance Section Component ; maintenanceBannerComponent ;
 
 ## Title
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; maintenanceCMSBreadcrumbBlComponent   ; maintenance Breadcrumb Component         ; maintenanceCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""/"">Home</a> &gt; <a href=""#"">Maintenance</a></div></div></div>"
+
+
 INSERT_UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true]     ; content[lang=$lang]                                                                                                                                                                                                                            
                                    ;                         ; maintenancePromoBannerComponent ; "<p id=""desktopMessage"" class=""body14 d-none d-md-block"">Sorry, we are down for scheduled maintenance but we'll be back up soon.</p><p id=""mobileMessage"" class=""body14 d-block d-md-none"">Sorry, we are down for scheduled maintenance but we'll be back up soon.</p>" 
  
@@ -92,6 +100,8 @@ UPDATE CustomPromoMessageComponent ; $contentCV[unique=true] ; uid[unique=true] 
 
 
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; maintenanceSection0Slot        ; maintenanceCMSBreadcrumbBlComponent
+                          ;                    ; maintenanceHomePageBannerSearchBoxSlot ; BlSearchBox
                           ;                    ; maintenanceSection1Slot        ; maintenanceCMSParagraphTitleComponent
                           ;                    ; maintenanceSection2Slot        ; maintenanceCMSParagraphNoticeComponent
                           ;                    ; maintenanceSection3Slot        ; 

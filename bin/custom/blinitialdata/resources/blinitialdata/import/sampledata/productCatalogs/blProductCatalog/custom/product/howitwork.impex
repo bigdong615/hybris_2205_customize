@@ -82,9 +82,11 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; TopHeaderSlot-HowItWorkPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]   ; name     ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='false'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
-                          ;                    ; howItworkPage ; How It work Page ; howitworkPageTemplate           ; /howitwork
+                          ;                    ; howItworkPage ; How It work Page ; howitworkPageTemplate           ; /howitworks
 #### HowItWork page
 INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]            ; name                        ; active
+                         ;                          ; HowItWorkHomePageBannerSearchBoxSlot     ; HowItWork search Slot              ; true
+                         ;                          ; HowItWorkSection0Slot     ; HowItWork Section0 Slot              ; true
                          ;                          ; HowItWorkSection1Slot     ; HowItWork Section1 Slot              ; true
                          ;                          ; HowItWorkSection2Slot     ; HowItWork Section2 Slot              ; true
                          ;                          ; HowItWorkSection3Slot     ; HowItWork Section3 Slot              ; true
@@ -97,6 +99,8 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]        
 
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]   ; page(uid,$contentCV)[unique=true][default='howItworkPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ; SearchBoxSlot-HowItWorkPage             ; HomePageBannerSearchBoxSlot            ;                         ; HowItWorkHomePageBannerSearchBoxSlot                   ; true
+                                 ;                         ; Section0Slot-HowItWorkPage             ; Section0Slot            ;                                                       ; HowItWorkSection0Slot                   ; true
                                  ;                         ; Section1Slot-HowItWorkPage             ; Section1Slot            ;                                                       ; HowItWorkSection1Slot                   ; true
                                  ;                         ; Section2Slot-HowItWorkPage             ; Section2Slot            ;                                                       ; HowItWorkSection2Slot                   ; true
                                  ;                         ; Section3Slot-HowItWorkPage             ; Section3Slot            ;                                                       ; HowItWorkSection3Slot                   ; true
@@ -108,6 +112,9 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; Section9Slot-HowItWorkPage             ; Section9Slot            ;                                                       ; HowItWorkSection9Slot                   ; true
 
 ## Title
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef     ;content[lang=$lang]           ; htmlDescription[lang=$lang]
+                                         ;                    ; HowItWorkCMSBreadcrumbBlComponent   ; HowItWork Breadcrumb Component         ; HowItWorkCMSBreadcrumbBlComponent   ;""   ;   "<div class=""row justify-content-center""><div class=""col-12""><div class=""breadcrumbs my-4 position-relative""><a href=""/"">Home</a> &gt; <a href=""#"">How It Works</a></div></div></div>"
+
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                      ; name                            ; &componentRef               ; content[lang=$lang]
                                     ;                    ; HowItWorkCMSParagraphTitleComponent   ; HowItWork Title Component        ; HowItWorkCMSParagraphTitleComponent      ; "<h1 class=""text-center"">How BL makes it<br>easy to rent online</h1>"
 
@@ -140,6 +147,8 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
 
 
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]    ; cmsComponents(uid,$contentCV)
+                          ;                    ; HowItWorkSection0Slot        ; HowItWorkCMSBreadcrumbBlComponent
+                          ;                    ; HowItWorkHomePageBannerSearchBoxSlot ; BlSearchBox
                           ;                    ; HowItWorkSection1Slot        ; HowItWorkCMSParagraphTitleComponent
                           ;                    ; HowItWorkSection2Slot        ; HowItWorkCMSParagraphNoticeComponent
                           ;                    ; HowItWorkSection3Slot        ; RotatingHowitWorkPageImagesComponent

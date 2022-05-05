@@ -5,9 +5,16 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
-	<div class="screen"></div>
-	<section id="confirmationWindow">
+	<div class="container search-container">
+		<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
+			<cms:component component="${feature}" />
+		</cms:pageSlot>
+	</div>
+	<section id="confirmationWindow" class="pad-none">
 		<div class="container">
+			<cms:pageSlot position="Section0Slot" var="feature">
+				<cms:component component="${feature}" />
+			</cms:pageSlot>
 			<div class="main-section-affiliate">
 				<cms:pageSlot position="Section1Slot" var="feature">
 					<h1>
@@ -24,17 +31,17 @@
 				<cms:pageSlot position="Section4Slot" var="feature">
 					<cms:component component="${feature}" />
 				</cms:pageSlot>
-				
+
 			</div>
 			<div class="container2 row justify-content-center" id="affiliate">
 				<div class="col-xl-8 col-lg-12 col-md-12">
-				<cms:pageSlot position="Section5Slot" var="feature">
-					<cms:component component="${feature}" />
-				</cms:pageSlot>
-				<cms:pageSlot position="Section6Slot" var="feature">
-					<cms:component component="${feature}" />
-				</cms:pageSlot>
-			</div>
+					<cms:pageSlot position="Section5Slot" var="feature">
+						<cms:component component="${feature}" />
+					</cms:pageSlot>
+					<cms:pageSlot position="Section6Slot" var="feature">
+						<cms:component component="${feature}" />
+					</cms:pageSlot>
+				</div>
 			</div>
 		</div>
 	</section>
