@@ -86,6 +86,7 @@ public final class BlInventoryScanUtility
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART);
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_GEAR_SHIPPING_MOBILE_CART);
 		cleanCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_MOBILE_LAUNDRY_BIN);
+		cleanCartLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return cleanCartLocations;
 	}
 
@@ -100,6 +101,7 @@ public final class BlInventoryScanUtility
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_PRIORITY_GEAR_CART);
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.CLEAN_PRIORITY_MOBILE_CART);
 		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.VIP_CLEAN_PRIORITY_GEAR);
+		cleanPriorityCartLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return cleanPriorityCartLocations;
 	}
 
@@ -118,6 +120,7 @@ public final class BlInventoryScanUtility
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_CABINET);
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_SHELF);
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_MOBILE_LAUNDRY_BIN);
+		repairLocations.add(BlInventoryScanLoggingConstants.SCRAPPED);
 		return repairLocations;
 	}
 
@@ -211,6 +214,9 @@ public final class BlInventoryScanUtility
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CARRIER);
 		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.FRONT_DESK_SHIPPING_BIN);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.CART_HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.HARD_ASSIGNED_WAITING_PAYMENT_RESOLUTION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.HARD_ASSIGNED_AND_BOXED_GEAR);
 		shippingAllowedLocation.addAll(getTechEngCleanCartLocations());
 		shippingAllowedLocation.addAll(getTechEngCleanPriorityCartLocations());
 		return shippingAllowedLocation;
@@ -254,6 +260,8 @@ public final class BlInventoryScanUtility
 		final List<String> dirtyCartLocations = new ArrayList<>();
 		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_GEAR_MOBILE_CART);
 		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_MOBILE_LAUNDRY_BIN);
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_GEAR_CAGE);
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_MOBILE_CART);
 		return dirtyCartLocations;
 	}
 
@@ -268,6 +276,8 @@ public final class BlInventoryScanUtility
 		final List<String> dirtyPriorityCartLocations = new ArrayList<>();
 		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_GEAR);
 		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_MOBILE_CART);
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.CART_DIRTY_PRIORITY);
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY);
 		return dirtyPriorityCartLocations;
 	}
 }
