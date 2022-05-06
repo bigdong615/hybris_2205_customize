@@ -73,7 +73,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public boolean capturePaymentForOrder(final OrderModel order) {
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
-			if(CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getTotalPrice() == 0.0D) {
+			if(CollectionUtils.isNotEmpty(order.getGiftCard()) && Double.compare(order.getTotalPrice(), 0.0) == 0) {
 				BlLogger.logMessage(LOG, Level.INFO, "The total amount is 0 on this order {} as gift card has been applied", order.getCode());
 				return checkCapturePaymentSuccess(order, Boolean.TRUE);
 			}

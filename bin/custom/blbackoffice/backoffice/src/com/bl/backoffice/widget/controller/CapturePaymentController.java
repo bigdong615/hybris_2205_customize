@@ -93,7 +93,7 @@ public class CapturePaymentController extends DefaultWidgetController {
             return;
         }
         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
-            if(getOrderModel().getTotalPrice() == 0.0D && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
+            if(Double.compare(getOrderModel().getTotalPrice(), 0.0) == 0 && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
                 showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
             } else {
                 showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
