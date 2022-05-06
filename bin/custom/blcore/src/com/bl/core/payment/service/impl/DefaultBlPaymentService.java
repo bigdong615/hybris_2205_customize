@@ -73,10 +73,15 @@ public class DefaultBlPaymentService implements BlPaymentService
 	public boolean capturePaymentForOrder(final OrderModel order) {
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
-			if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
+			if(CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getTotalPrice() == 0.0D) {
+				BlLogger.logMessage(LOG, Level.INFO, "The total amount is 0 on this order {} as gift card has been applied", order.getCode());
+				return checkCapturePaymentSuccess(order, Boolean.TRUE);
+			}
+			else if(authEntry != null && authEntry.getAmount().intValue() > BlInventoryScanLoggingConstants.ONE) {
 				return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().captureAuthorizationTransaction(
 						order, authEntry.getAmount(), authEntry.getRequestId()));
-			} else {
+			}
+			else {
 				if(order.getTotalPrice() > BlInventoryScanLoggingConstants.ZERO) {
 					return checkCapturePaymentSuccess(order, getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(
 							order, BigDecimal.valueOf(order.getTotalPrice()), Boolean.TRUE, null));
@@ -133,6 +138,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 			});
 			order.setStatus(OrderStatus.SHIPPED);
 			order.setIsCaptured(Boolean.TRUE);
+			order.setIsAuthorised(Boolean.TRUE);
 			getModelService().save(order);
 			getModelService().refresh(order);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Status updated to {} for order {}",order.getStatus(),order.getCode());

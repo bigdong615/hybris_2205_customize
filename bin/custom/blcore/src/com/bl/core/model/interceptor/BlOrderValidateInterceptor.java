@@ -6,6 +6,7 @@ import com.bl.core.services.customer.BlUserService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -37,7 +38,7 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 	@Override
 	public void onValidate(final OrderModel orderModel, final InterceptorContext interceptorContext) throws InterceptorException
 	{
-		validateRentalDateChange(orderModel);
+		validateRentalDateChange(orderModel, interceptorContext);
 	}
 
 	/**
@@ -46,10 +47,12 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 	 *
 	 * @param orderModel
 	 *           the order model
+	 * @param interceptorContext
 	 * @throws InterceptorException
 	 *            the interceptor exception
 	 */
-	private void validateRentalDateChange(final OrderModel orderModel) throws InterceptorException
+	private void validateRentalDateChange(final OrderModel orderModel,
+			final InterceptorContext interceptorContext) throws InterceptorException
 	{
 		if (getUserService().isCsUser() && ObjectUtils.allNotNull(orderModel.getRentalStartDate(), orderModel.getRentalEndDate()))
 		{
@@ -63,12 +66,16 @@ public class BlOrderValidateInterceptor implements ValidateInterceptor<OrderMode
 			{
 				throw new InterceptorException("Rental Start Date should not be a date later than Rental End Date");
 			}
-			final BaseStoreModel baseStore = getBaseStoreService().getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
-			for(AbstractOrderEntryModel orderEntry : orderModel.getEntries()) {
-				final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
-						orderEntry.getProduct().getCode(), baseStore.getWarehouses(), rentalStartDate, rentalEndDate);
-				if(stockResult.getAvailableCount() == 0L) {
-					throw new InterceptorException("Stock is not available for the extended dates");
+			if(interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALSTARTDATE)|| interceptorContext.isModified(orderModel, AbstractOrderModel.RENTALENDDATE)) {
+				final BaseStoreModel baseStore = getBaseStoreService()
+						.getBaseStoreForUid(BlCoreConstants.BASE_STORE_ID);
+				for (AbstractOrderEntryModel orderEntry : orderModel.getEntries()) {
+					final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
+							orderEntry.getProduct().getCode(), baseStore.getWarehouses(), rentalStartDate,
+							rentalEndDate);
+					if (stockResult.getAvailableCount() == 0L) {
+						throw new InterceptorException("Stock is not available for the extended dates");
+					}
 				}
 			}
 		}

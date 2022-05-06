@@ -44,6 +44,7 @@ public class CapturePaymentController extends DefaultWidgetController {
     private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
     private static final String ERR_MESG_FOR_ORDER_TRANSFER = "error.message.payment.capture.order.transfer";
     private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "success.message.payment.captured";
+    private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD = "success.message.payment.captured.giftCard";
     private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
     private static final String MESSAGE_BOX_TITLE = "payment.capture.message.box.title";
     private static final String CANCEL_BUTTON = "cancelChanges";
@@ -92,7 +93,11 @@ public class CapturePaymentController extends DefaultWidgetController {
             return;
         }
         if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
-            showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+            if(getOrderModel().getTotalPrice() == 0.0D && CollectionUtils.isNotEmpty(getOrderModel().getGiftCard())) {
+                showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED_GIFT_CARD));
+            } else {
+                showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+            }
         } else {
             BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
             showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED), true);
